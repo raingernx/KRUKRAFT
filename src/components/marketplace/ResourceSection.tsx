@@ -10,8 +10,9 @@ interface ResourceSectionProps {
 }
 
 /**
- * Horizontal-scroll card strip used on the marketplace home page.
- * Each card is fixed-width; overflow creates a scrollable row.
+ * Resource section used on the marketplace home page.
+ * Uses the same auto-fill grid as the rest of the marketplace so cards
+ * are wide on large screens instead of trapped in a fixed-width scroll strip.
  */
 export function ResourceSection({
   title,
@@ -39,22 +40,16 @@ export function ResourceSection({
         )}
       </div>
 
-      {/* Horizontal scroll row */}
-      <div className="relative">
-        {/* Fade edge — right side */}
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-surface-50 to-transparent" />
-
-        <div className="flex gap-6 overflow-x-auto pb-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-          {resources.map((resource) => (
-            <div key={resource.id} className="w-[220px] flex-shrink-0">
-              <ResourceCard
-                resource={resource}
-                variant="marketplace"
-                owned={ownedIds.includes(resource.id)}
-              />
-            </div>
-          ))}
-        </div>
+      {/* Auto-fill grid — cards fill available width, min 280px each */}
+      <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
+        {resources.map((resource) => (
+          <ResourceCard
+            key={resource.id}
+            resource={resource}
+            variant="marketplace"
+            owned={ownedIds.includes(resource.id)}
+          />
+        ))}
       </div>
     </section>
   );

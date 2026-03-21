@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { requireSession } from "@/lib/auth/require-session";
 import { prisma } from "@/lib/prisma";
 import { LibraryGridClient } from "@/components/library/LibraryGridClient";
+import { LastPurchaseRecovery } from "@/components/library/LastPurchaseRecovery";
 import Link from "next/link";
 import { BookOpen, Download } from "lucide-react";
 import { formatDate } from "@/lib/format";
@@ -56,11 +56,29 @@ async function getLibrary(userId: string): Promise<LibraryItem[]> {
     }));
 }
 
-export default async function DashboardLibraryPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) redirect("/auth/login?next=/dashboard/library");
+/** @see src/app/(dashboard)/dashboard/library/page.tsx for implementation notes. */
+const RECENT_PURCHASE_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
-  const resources = await getLibrary(session.user.id);
+export default async function DashboardLibraryPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | undefined>>;
+}) {
+  const { userId } = await requireSession("/dashboard/library");
+
+  const resources = await getLibrary(userId);
+
+  const params = searchParams ? await searchParams : {};
+  const isReturningFromCheckout = params.payment === "success";
+
+  const mostRecent = resources[0] ?? null;
+  const isRecentlyCompleted =
+    mostRecent !== null &&
+    Date.now() - new Date(mostRecent.purchasedAt).getTime() <
+      RECENT_PURCHASE_WINDOW_MS;
+
+  const showRecoveryBlock = isReturningFromCheckout && isRecentlyCompleted;
+  const showPendingState = isReturningFromCheckout && !isRecentlyCompleted;
 
   const lastOpened = resources[0] ?? null;
   const lastDownload =
@@ -79,6 +97,13 @@ export default async function DashboardLibraryPage() {
             </p>
           </div>
         </div>
+
+        {(showRecoveryBlock || showPendingState) && (
+          <LastPurchaseRecovery
+            item={showRecoveryBlock ? mostRecent : null}
+            isPending={showPendingState}
+          />
+        )}
 
         {resources.length > 0 && (
           <>

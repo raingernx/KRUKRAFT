@@ -1,5 +1,5 @@
 import { upsertCompletedFreePurchase } from "@/repositories/purchases/purchase.repository";
-import { findResourceById } from "@/repositories/resources/resource.repository";
+import { findDownloadableResourceById } from "@/repositories/resources/resource.repository";
 
 export class LibraryServiceError extends Error {
   status: number;
@@ -13,9 +13,11 @@ export class LibraryServiceError extends Error {
 }
 
 export async function addFreeResourceToLibrary(userId: string, resourceId: string) {
-  const resource = await findResourceById(resourceId);
+  // findDownloadableResourceById filters status = PUBLISHED and deletedAt IS NULL
+  // at the query level, so a null result covers not-found, unpublished, and deleted.
+  const resource = await findDownloadableResourceById(resourceId);
 
-  if (!resource || resource.status !== "PUBLISHED") {
+  if (!resource) {
     throw new LibraryServiceError(404, { error: "Resource not found." });
   }
 

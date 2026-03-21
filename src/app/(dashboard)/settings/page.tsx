@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { requireSession } from "@/lib/auth/require-session";
 import { prisma } from "@/lib/prisma";
 import { getUserPreferences } from "@/lib/preferences";
 import { PageContentNarrow } from "@/design-system";
@@ -13,15 +12,14 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/auth/login?next=/settings");
+  const { userId } = await requireSession("/settings");
 
   const [user, preferences] = await Promise.all([
     prisma.user.findUnique({
-      where: { id: session.user.id },
+      where: { id: userId },
       select: { name: true, email: true, image: true, createdAt: true },
     }),
-    getUserPreferences(session.user.id),
+    getUserPreferences(userId),
   ]);
 
   return (

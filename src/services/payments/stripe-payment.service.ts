@@ -1,3 +1,4 @@
+import Stripe from "stripe";
 import { z } from "zod";
 import { logActivity } from "@/lib/activity";
 import { stripe, SUBSCRIPTION_PLANS, type SubscriptionPlan } from "@/lib/stripe";
@@ -45,6 +46,66 @@ async function ensureStripeCustomer(userId: string) {
   return { user, customerId };
 }
 
+// ── Stale-customer recovery ───────────────────────────────────────────────────
+
+/**
+ * Returns true when `err` is the Stripe "No such customer" error that occurs
+ * after switching API keys (test ↔ live) or after a customer is deleted in
+ * the Stripe dashboard.
+ */
+function isNoSuchCustomerError(err: unknown): boolean {
+  return (
+    err instanceof Stripe.errors.StripeInvalidRequestError &&
+    err.code === "resource_missing" &&
+    err.param === "customer"
+  );
+}
+
+type CheckoutUser = NonNullable<Awaited<ReturnType<typeof findCheckoutUserById>>>;
+
+/**
+ * Creates a fresh Stripe customer for `user`, persists the new ID to the DB,
+ * and returns it. Called only after we detect that the stored customer ID is
+ * no longer valid in the current Stripe environment.
+ */
+async function recoverStripeCustomer(
+  user: CheckoutUser,
+): Promise<string> {
+  const customer = await stripe.customers.create({
+    email: user.email ?? undefined,
+    name: user.name ?? undefined,
+    metadata: { userId: user.id },
+  });
+  await updateUserStripeCustomerId(user.id, customer.id);
+  return customer.id;
+}
+
+/**
+ * Thin wrapper around `stripe.checkout.sessions.create` that transparently
+ * recovers from a stale / missing Stripe customer ID.
+ *
+ * On first attempt: uses `customerId` as supplied.
+ * On "No such customer" error: creates a new Stripe customer, persists the
+ *   new ID, swaps it into `params`, and retries exactly once.
+ * Any other error — or a second failure — propagates normally.
+ */
+async function createCheckoutSessionWithRecovery(
+  params: Stripe.Checkout.SessionCreateParams,
+  user: CheckoutUser,
+): Promise<Stripe.Checkout.Session> {
+  try {
+    return await stripe.checkout.sessions.create(params);
+  } catch (err) {
+    if (!isNoSuchCustomerError(err)) throw err;
+
+    const freshCustomerId = await recoverStripeCustomer(user);
+    return stripe.checkout.sessions.create({
+      ...params,
+      customer: freshCustomerId,
+    });
+  }
+}
+
 export async function createLegacyStripeCheckout(body: unknown, userId: string) {
   const resourceId =
     typeof body === "object" && body !== null && "resourceId" in body
@@ -73,7 +134,7 @@ export async function createLegacyStripeCheckout(body: unknown, userId: string) 
     throw new PaymentServiceError(409, { error: "You already own this resource." });
   }
 
-  const { customerId } = await ensureStripeCustomer(userId);
+  const { user, customerId } = await ensureStripeCustomer(userId);
 
   const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
 
@@ -97,25 +158,28 @@ export async function createLegacyStripeCheckout(body: unknown, userId: string) 
     ...buildPurchaseSnapshot(resource),
   });
 
-  const checkoutSession = await stripe.checkout.sessions.create({
-    customer: customerId,
-    mode: "payment",
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${baseUrl}/resources?payment=success`,
-    cancel_url: `${baseUrl}/resources/${resourceId}?payment=cancelled`,
-    metadata: {
-      purchaseId: purchase.id,
-      userId,
-      resourceId,
-    },
-    payment_intent_data: {
+  const checkoutSession = await createCheckoutSessionWithRecovery(
+    {
+      customer: customerId,
+      mode: "payment",
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${baseUrl}/checkout/success?slug=${encodeURIComponent(resource.slug)}`,
+      cancel_url: `${baseUrl}/checkout/cancel?slug=${encodeURIComponent(resource.slug)}`,
       metadata: {
         purchaseId: purchase.id,
         userId,
         resourceId,
       },
+      payment_intent_data: {
+        metadata: {
+          purchaseId: purchase.id,
+          userId,
+          resourceId,
+        },
+      },
     },
-  });
+    user,
+  );
 
   await setPurchaseStripeSessionId(purchase.id, checkoutSession.id);
 
@@ -173,34 +237,37 @@ export async function createStripeCheckout(body: unknown, userId: string) {
       ...buildPurchaseSnapshot(resource),
     });
 
-    const checkoutSession = await stripe.checkout.sessions.create({
-      customer: customerId,
-      mode: "payment",
-      line_items: [
-        {
-          price_data: {
-            currency: "thb",
-            unit_amount: resource.price,
-            product_data: { name: resource.title },
+    const checkoutSession = await createCheckoutSessionWithRecovery(
+      {
+        customer: customerId,
+        mode: "payment",
+        line_items: [
+          {
+            price_data: {
+              currency: "thb",
+              unit_amount: resource.price,
+              product_data: { name: resource.title },
+            },
+            quantity: 1,
           },
-          quantity: 1,
-        },
-      ],
-      success_url: `${baseUrl}/resources/id/${resourceId}?payment=success`,
-      cancel_url: `${baseUrl}/resources/id/${resourceId}?payment=cancelled`,
-      metadata: {
-        purchaseId: purchase.id,
-        userId: user.id,
-        resourceId,
-      },
-      payment_intent_data: {
+        ],
+        success_url: `${baseUrl}/checkout/success?slug=${encodeURIComponent(resource.slug)}`,
+        cancel_url: `${baseUrl}/checkout/cancel?slug=${encodeURIComponent(resource.slug)}`,
         metadata: {
           purchaseId: purchase.id,
           userId: user.id,
           resourceId,
         },
+        payment_intent_data: {
+          metadata: {
+            purchaseId: purchase.id,
+            userId: user.id,
+            resourceId,
+          },
+        },
       },
-    });
+      user,
+    );
 
     await setPurchaseStripeSessionId(purchase.id, checkoutSession.id);
 
@@ -210,14 +277,17 @@ export async function createStripeCheckout(body: unknown, userId: string) {
   const plan = parsed.data.plan as SubscriptionPlan;
   const priceId = SUBSCRIPTION_PLANS[plan];
 
-  const checkoutSession = await stripe.checkout.sessions.create({
-    customer: customerId,
-    mode: "subscription",
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${baseUrl}/dashboard?subscription=success`,
-    cancel_url: `${baseUrl}/pricing?subscription=cancelled`,
-    subscription_data: { metadata: { userId: user.id, plan } },
-  });
+  const checkoutSession = await createCheckoutSessionWithRecovery(
+    {
+      customer: customerId,
+      mode: "subscription",
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${baseUrl}/dashboard?subscription=success`,
+      cancel_url: `${baseUrl}/pricing?subscription=cancelled`,
+      subscription_data: { metadata: { userId: user.id, plan } },
+    },
+    user,
+  );
 
   return { data: { url: checkoutSession.url } };
 }

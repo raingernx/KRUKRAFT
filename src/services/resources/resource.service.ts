@@ -17,6 +17,7 @@ import {
   findPublicResources,
   findRecommendedResourcesByLevelsExcludingIds,
   findRecommendedResourcesExcludingIds,
+  findTopTrendingInCategoriesExcludingIds,
   findResourceById,
   findResourceBySlug,
   findTagBySlug,
@@ -308,6 +309,29 @@ export async function getRecommendedResourcesByLevels(
 ) {
   const resources = await findRecommendedResourcesByLevelsExcludingIds(
     levels,
+    excludedResourceIds,
+    limit,
+  );
+
+  return resources.map((resource) => ({
+    ...resource,
+    previewUrl: resource.previewUrl ?? resource.previews?.[0]?.imageUrl ?? null,
+  }));
+}
+
+/**
+ * Returns top trending resources within the given categories, excluding owned IDs.
+ * Used for the Phase 1 personalised "Recommended for you" section.
+ * Ordered by trendingScore → purchases → createdAt so that results are ranked
+ * by engagement recency rather than just newness.
+ */
+export async function getTopTrendingInCategories(
+  categoryIds: string[],
+  excludedResourceIds: string[],
+  limit: number = 8,
+) {
+  const resources = await findTopTrendingInCategoriesExcludingIds(
+    categoryIds,
     excludedResourceIds,
     limit,
   );

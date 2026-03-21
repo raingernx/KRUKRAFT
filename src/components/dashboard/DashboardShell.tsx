@@ -8,7 +8,6 @@ import type { DashboardUser } from "./DashboardLayout";
 import { routes } from "@/lib/routes";
 import { getDashboardNav } from "@/lib/dashboard/getDashboardNav";
 import { getDashboardShellVariant } from "@/lib/dashboard/dashboard-permissions";
-import { PageContentWide } from "@/design-system";
 import { DashboardShell as SharedDashboardShell } from "@/components/layout/dashboard/DashboardShell";
 import { usePlatformConfig } from "@/components/providers/PlatformConfigProvider";
 
@@ -76,7 +75,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
         <DashboardTopbar user={user} onMenuToggle={onMenuToggle} />
       )}
     >
-      <PageContentWide>{children}</PageContentWide>
+      {children}
     </SharedDashboardShell>
   );
 }

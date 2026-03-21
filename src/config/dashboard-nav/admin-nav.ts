@@ -1,14 +1,20 @@
 import {
   Activity,
   BarChart,
+  FlaskConical,
   Folder,
   LayoutDashboard,
   Megaphone,
+  PenSquare,
+  Rocket,
   Settings as SettingsIcon,
   ShieldCheck,
   ShoppingCart,
+  SlidersHorizontal,
   Star,
   Tag,
+  Tags,
+  Type,
   Users,
 } from "lucide-react";
 import type { DashboardNavSection } from "@/components/layout/dashboard/dashboard-nav.types";
@@ -21,6 +27,9 @@ export const ADMIN_DASHBOARD_NAV_SECTIONS: DashboardNavSection[] = [
     items: [
       { href: routes.admin, label: "Dashboard", icon: LayoutDashboard, exact: true },
       { href: routes.adminAnalytics, label: "Analytics", icon: BarChart },
+      { href: routes.adminRecommendationReport, label: "Rec. Experiment", icon: FlaskConical },
+      { href: routes.adminCreatorActivation, label: "Creator Activation", icon: Rocket },
+      { href: routes.adminRankingDebug, label: "Ranking Debug", icon: SlidersHorizontal },
     ],
   },
   {
@@ -29,7 +38,15 @@ export const ADMIN_DASHBOARD_NAV_SECTIONS: DashboardNavSection[] = [
     items: [
       { href: routes.adminResources, label: "Resources", icon: Folder },
       { href: routes.adminCategories, label: "Categories", icon: Tag },
+      { href: routes.adminTags, label: "Tags", icon: Tags },
       { href: routes.adminReviews, label: "Reviews", icon: Star },
+    ],
+  },
+  {
+    id: "creators",
+    label: "Creators",
+    items: [
+      { href: routes.adminCreators, label: "Applications", icon: PenSquare },
     ],
   },
   {
@@ -60,6 +77,7 @@ export const ADMIN_DASHBOARD_NAV_SECTIONS: DashboardNavSection[] = [
     label: "System",
     items: [
       { href: routes.adminSettings, label: "Settings", icon: SettingsIcon },
+      { href: routes.adminTypographySettings, label: "Typography", icon: Type },
     ],
   },
 ];

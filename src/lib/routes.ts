@@ -69,12 +69,16 @@ export const routes = {
   adminOrders: "/admin/orders",
   adminReviews: "/admin/reviews",
   adminAnalytics: "/admin/analytics",
+  adminRecommendationReport: "/admin/analytics/recommendations",
+  adminCreatorActivation: "/admin/analytics/creator-activation",
+  adminRankingDebug: "/admin/analytics/ranking",
   adminActivity: "/admin/activity",
   adminAudit: "/admin/audit",
   adminHeroes: "/admin/heroes",
   adminNewHero: "/admin/heroes/new",
   adminSettings: "/admin/settings",
   adminTypographySettings: "/admin/settings/typography",
+  adminCreators: "/admin/creators",
 
   /**
    * Admin edit page for a specific resource.

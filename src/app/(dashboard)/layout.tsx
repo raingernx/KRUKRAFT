@@ -8,19 +8,27 @@ interface DashboardGroupLayoutProps {
   children: ReactNode;
 }
 
+/** Safe fallback used when the session is absent or creator-state lookup fails. */
+const CREATOR_ACCESS_FALLBACK = {
+  eligible: false,
+  canCreate: false,
+  role: null as null,
+  resourceCount: 0,
+  creatorEnabled: false,
+  creatorStatus: "INACTIVE" as const,
+  applicationStatus: "NOT_APPLIED" as const,
+};
+
 export default async function DashboardGroupLayout({
   children,
 }: DashboardGroupLayoutProps) {
   const session = await getServerSession(authOptions);
+
+  // Resolve creator access only after confirming a valid userId exists.
+  // The .catch() ensures a transient DB error never crashes the dashboard shell.
   const creatorAccess = session?.user?.id
-    ? await getCreatorAccessState(session.user.id)
-    : {
-        eligible: false,
-        canCreate: false,
-        role: null,
-        resourceCount: 0,
-        creatorEnabled: false,
-      };
+    ? await getCreatorAccessState(session.user.id).catch(() => CREATOR_ACCESS_FALLBACK)
+    : CREATOR_ACCESS_FALLBACK;
 
   const user = {
     name: session?.user?.name ?? null,

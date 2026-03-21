@@ -14,7 +14,7 @@ import {
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { Navbar } from "@/components/layout/Navbar";
-import { PageContainer, PageContentWide } from "@/design-system";
+import { Container } from "@/components/layout/container";
 import { ResourceGrid } from "@/components/resources/ResourceGrid";
 import { ResourceCard, type ResourceCardData } from "@/components/resources/ResourceCard";
 import { HeroSearch } from "@/components/marketplace/HeroSearch";
@@ -38,11 +38,22 @@ import {
   type DiscoverData,
 } from "@/services/discover.service";
 import { getMarketplaceResources } from "@/services/resource.service";
+import { cookies } from "next/headers";
+import { normaliseSortParam, SORT_OPTIONS } from "@/config/sortOptions";
+import {
+  RANKING_EXPERIMENT_COOKIE,
+  isValidRankingVariant,
+  variantToSort,
+} from "@/lib/ranking-experiment";
 import { getOwnedResourceIds, getUserLearningProfile } from "@/services/purchase.service";
 import {
   getNewResourcesInCategories,
   getRecommendedResourcesByLevels,
 } from "@/services/resources/resource.service";
+import { getBehaviorBasedRecommendations, getPhase1Recommendations } from "@/services/recommendations/behavior-profile.service";
+import { assignRecommendationVariant, RECOMMENDATION_EXPERIMENT_ID } from "@/lib/recommendations/experiment";
+import { RecommendationSection } from "@/components/recommendations/RecommendationSection";
+import { recordAnalyticsEvent } from "@/analytics/event.service";
 
 export const dynamic = "force-dynamic";
 
@@ -85,10 +96,11 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
   } = resolvedParams;
   const search = getSearchParamValue(rawSearch)?.trim();
   const category = getSearchParamValue(rawCategory)?.trim();
-  const price = getSearchParamValue(rawPrice)?.trim();
+  const rawPriceValue = getSearchParamValue(rawPrice)?.trim() ?? "";
+  const price = rawPriceValue === "free" || rawPriceValue === "paid" ? rawPriceValue : "";
   const featured = getSearchParamValue(rawFeatured)?.trim();
   const tag = getSearchParamValue(rawTag)?.trim();
-  const sort = getSearchParamValue(rawSort)?.trim() || "newest";
+  const sort = normaliseSortParam(getSearchParamValue(rawSort));
   const pageParam = getSearchParamValue(rawPage)?.trim();
 
   const currentPage = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
@@ -98,6 +110,28 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
 
   const session = await getServerSession(authOptions);
   const userId  = session?.user?.id;
+
+  // ── Ranking experiment: override sort based on assigned variant ─────────────
+  //
+  // Variant A (control)  → sort = "newest"
+  // Variant B (treatment) → sort = "recommended"
+  //
+  // The cookie is set by middleware on first page visit. On the rare first
+  // request where the cookie is not yet present (race between middleware set
+  // and this read), `variantToSort` safely falls back to "newest".
+  //
+  // This override applies to the listing/search view only (isDiscoverMode=false).
+  // The discover-mode homepage uses a separate curated data pipeline that is
+  // not affected by this experiment.
+  let effectiveSort: string = sort;
+  try {
+    const cookieStore = await cookies();
+    const rawVariant = cookieStore.get(RANKING_EXPERIMENT_COOKIE)?.value;
+    effectiveSort = variantToSort(isValidRankingVariant(rawVariant) ? rawVariant : null);
+  } catch {
+    // Cookie read failure must never disrupt the page. Fall back to "newest".
+    effectiveSort = "newest";
+  }
 
   // ── Mode-specific data ──────────────────────────────────────────────────────
 
@@ -128,7 +162,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
       price,
       featured: featured === "true",
       tag,
-      sort,
+      sort: effectiveSort,
       page:     currentPage,
       pageSize: ITEMS_PER_PAGE,
     });
@@ -146,19 +180,68 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
   if (isDiscoverMode && userId) {
     learningProfile = await getUserLearningProfile(userId);
   }
-  const personalizedCategoryIds = learningProfile?.topCategories.map((category) => category.id) ?? [];
+  // Category of the most recently purchased resource — used for the "Because you studied X"
+  // section so the title and the card results actually agree on the same subject.
+  // Distinct from personalizedCategoryIds (all top categories) which is only used for levels.
+  const recentCategoryId = learningProfile?.recentCategoryId ?? null;
   const personalizedLevelIds = learningProfile?.preferredLevels ?? [];
-  const [becauseYouStudied, recommendedForLevel] =
+  const topCategoryIds = learningProfile?.topCategories.map((c) => c.id) ?? [];
+  const ownedArr = Array.from(ownedIds);
+
+  // Global trending (owned already excluded at render time; Phase 2 uses this
+  // as a final fallback when the behavior profile is empty or too weak).
+  const globalFiltered = isDiscoverMode
+    ? (discoverData?.recommended as ResourceCardData[] ?? []).filter((r) => !ownedIds.has(r.id))
+    : [];
+
+  // A/B experiment: stable 50/50 split per authenticated user.
+  // Guests always see the generic global feed (no variant assigned).
+  const recommendationVariant = userId ? assignRecommendationVariant(userId) : null;
+
+  const [becauseYouStudied, recommendedForLevel, recommendedForYou] =
     isDiscoverMode && userId && learningProfile?.hasHistory
       ? await Promise.all([
-          personalizedCategoryIds.length > 0
-            ? getNewResourcesInCategories(personalizedCategoryIds, Array.from(ownedIds), 4)
-            : [],
+          recentCategoryId
+            ? getNewResourcesInCategories([recentCategoryId], ownedArr, 5)
+            : Promise.resolve([]),
           personalizedLevelIds.length > 0
-            ? getRecommendedResourcesByLevels(personalizedLevelIds, Array.from(ownedIds), 4)
-            : [],
+            ? getRecommendedResourcesByLevels(personalizedLevelIds, ownedArr, 4)
+            : Promise.resolve([]),
+          // Variant A → Phase 1 (category-trending control arm)
+          // Variant B → Phase 2 (behavior-based treatment arm)
+          recommendationVariant === "phase1"
+            ? getPhase1Recommendations(topCategoryIds, ownedIds, globalFiltered, 5)
+            : getBehaviorBasedRecommendations(
+                userId,
+                ownedIds,
+                topCategoryIds,
+                globalFiltered,
+                5,
+              ),
         ])
-      : [[], []];
+      : [[], [], globalFiltered.slice(0, 5) as ResourceCardData[]];
+
+  // Record recommendation impressions (fire-and-forget, non-blocking).
+  // One RESOURCE_VIEW event per shown resource, tagged with experiment context,
+  // so per-resource and per-variant CTR can be queried from analytics_events.
+  if (userId && recommendationVariant && (recommendedForYou as ResourceCardData[]).length > 0) {
+    void Promise.all(
+      (recommendedForYou as ResourceCardData[]).map((r, position) =>
+        recordAnalyticsEvent({
+          eventType:  "RESOURCE_VIEW",
+          userId,
+          resourceId: r.id,
+          metadata: {
+            source:     "recommendation_impression",
+            experiment: RECOMMENDATION_EXPERIMENT_ID,
+            variant:    recommendationVariant,
+            section:    "recommended_for_you",
+            position,
+          },
+        }).catch(() => undefined),
+      ),
+    );
+  }
   const discoverResourceCount = discoverCategoriesWithCount.reduce(
     (sum, item) => sum + item._count.resources,
     0,
@@ -167,17 +250,25 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
     category === "all"
       ? "All categories"
       : categories.find((item) => item.slug === category)?.name ?? "Browse resources";
+  const sortLabel = SORT_OPTIONS.find((o) => o.value === sort)?.label ?? "Newest";
+  const hasActiveFilters = !!(search?.trim() || price !== "" || sort !== "newest" || tag || featured === "true");
+  const resultsContext = buildResultsContext(total, activeCategoryName, category, search, price, formatNumber);
+  // Only spotlight resources that have an actual image — a hero card with no
+  // thumbnail looks empty and actively undermines the "top pick" framing.
+  // withPreview maps previews[0].imageUrl → previewUrl, so that's the check.
+  const spotlightCandidate = resources[0] ?? null;
   const spotlightResource =
     !isDiscoverMode &&
-    resources.length > 0 &&
+    spotlightCandidate !== null &&
+    !!spotlightCandidate.previewUrl &&
     !search?.trim() &&
-    ["trending", "popular", "downloads", "newest"].includes(sort)
-      ? resources[0]
+    ["trending", "downloads", "newest"].includes(sort)
+      ? spotlightCandidate
       : null;
   const spotlightLabel =
     sort === "trending"
       ? "Trending this week"
-      : sort === "popular" || sort === "downloads"
+      : sort === "downloads"
         ? "Popular right now"
         : activeCategoryName !== "Browse resources"
           ? `Top in ${activeCategoryName}`
@@ -190,7 +281,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
     !tag &&
     !price &&
     featured !== "true" &&
-    ["trending", "popular", "downloads", "newest"].includes(sort);
+    ["trending", "downloads", "newest"].includes(sort);
   const rankedResources = canShowCategoryRanks
     ? resources.map((resource, index) => ({
         ...resource,
@@ -205,7 +296,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
         socialProofLabel:
           sort === "trending" && index < 2
             ? "Trending fast this week"
-            : (sort === "popular" || sort === "downloads") && index < 2
+            : sort === "downloads" && index < 2
               ? "High demand right now"
               : resource.socialProofLabel ?? null,
       }))
@@ -218,15 +309,35 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
       <Navbar />
 
       <main className="flex-1">
-        <PageContainer className="py-8 sm:py-10 lg:py-12">
-          <PageContentWide className="space-y-8 sm:space-y-10 lg:space-y-12">
 
-          {/* ── Hero (discover only) ──────────────────────────────────────── */}
-          {isDiscoverMode && (
-            <section>
+        {/* ── Announcement bar + Hero (discover only) ─────────────────── */}
+        {isDiscoverMode && (
+          <section className="w-full px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
+            <div className="mx-auto max-w-[1600px] space-y-4">
+
+              {/* Announcement bar */}
+              <div className="flex items-center justify-center gap-2.5 rounded-2xl border border-surface-200 bg-surface-50 px-5 py-2.5 text-center">
+                <span
+                  className="inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500"
+                  aria-hidden="true"
+                />
+                <p className="text-xs font-medium text-text-secondary">
+                  New: Discover top-rated study resources curated by educators.{" "}
+                  <span className="font-semibold text-text-primary">
+                    Explore the library →
+                  </span>
+                </p>
+              </div>
+
+              {/* Hero banner */}
               <HeroBanner config={heroConfig} />
-            </section>
-          )}
+
+            </div>
+          </section>
+        )}
+
+        <Container className="space-y-12 sm:space-y-14 lg:space-y-16 py-12 sm:py-14 lg:py-16">
+          <>
 
           {/* ── Category nav + Search (always visible) ────────────────────── */}
           <section className="rounded-[32px] border border-surface-200 bg-white/90 p-4 shadow-card sm:p-5 lg:p-6">
@@ -236,16 +347,16 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                   <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted">
                     {isDiscoverMode ? "Discover" : "Browse"}
                   </p>
-                  <h1 className="font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">
+                  <h1 className="max-w-3xl font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">
                     {isDiscoverMode
                       ? "A calmer way to discover standout study resources"
                       : `Explore ${activeCategoryName}`}
                   </h1>
-                  <p className="text-sm leading-6 text-text-secondary">
-                    {isDiscoverMode
-                      ? "Browse curated collections, trending picks, and new releases from educators and creators in one focused library."
-                      : "Refine the library with search and filters, then scan results in a cleaner, more editorial layout."}
-                  </p>
+                  {isDiscoverMode && (
+                    <p className="max-w-2xl text-sm leading-6 text-text-secondary">
+                      Browse curated collections, trending picks, and new releases from educators and creators in one focused library.
+                    </p>
+                  )}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <span className="inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-3 py-1 text-[12px] font-medium text-text-secondary">
@@ -256,7 +367,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                   <span className="inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-3 py-1 text-[12px] font-medium text-text-secondary">
                     {isDiscoverMode
                       ? `${formatNumber(discoverResourceCount)} resources`
-                      : `Sorted by ${sort}`}
+                      : `Sorted by: ${sortLabel}`}
                   </span>
                 </div>
               </div>
@@ -288,7 +399,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
           {/* ════════════════════════════════════════════════════════════════ */}
           {/* DISCOVER MODE — curated sections, no sidebar                    */}
           {/* ════════════════════════════════════════════════════════════════ */}
-          <div className={isDiscoverMode ? "space-y-14 lg:space-y-16" : undefined}>
+          <div className={isDiscoverMode ? "space-y-16 lg:space-y-20" : undefined}>
             {isDiscoverMode && discoverData && (
               <>
 
@@ -303,7 +414,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                       Jump straight into curated collections with the clearest entry point for each subject area.
                     </p>
                   </div>
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                  <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
                     {discoverCategoriesWithCount.map((cat) => {
                       const Icon  = getCategoryIcon(cat.slug);
                       const color = getCategoryColor(cat.slug);
@@ -341,7 +452,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                     description="Ranked by recent sales momentum, recent revenue, rating quality, and review volume to surface the strongest current picks."
                     viewAllHref="/resources?sort=trending&category=all"
                   />
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+                  <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
                     {(discoverData.trending as ResourceCardData[]).map((resource, index) => (
                       <ResourceCard
                         key={resource.id}
@@ -392,24 +503,21 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                 </section>
               )}
 
-              {/* Recommended for you */}
-              {becauseYouStudied.length > 0 && learningProfile?.recentStudyTitle && (
+              {/* Because you studied X — only shown when user has real purchase history in a specific category */}
+              {becauseYouStudied.length > 0 && learningProfile?.recentStudyTitle && learningProfile?.recentCategoryName && (
                 <section className="space-y-5">
                   <SectionHeader
                     title={`Because you studied ${learningProfile.recentStudyTitle}`}
-                    description="A personalized set of follow-on resources shaped by the subjects you already chose."
-                    viewAllHref="/resources?sort=trending&category=all"
+                    description={`More resources in ${learningProfile.recentCategoryName} you haven't tried yet.`}
+                    viewAllHref={`/resources?category=all&sort=newest`}
                   />
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+                  <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
                     {(becauseYouStudied as ResourceCardData[]).map((resource) => (
                       <ResourceCard
                         key={resource.id}
                         resource={{
                           ...resource,
-                          socialProofLabel:
-                            learningProfile?.recentCategoryName && resource.category?.name === learningProfile.recentCategoryName
-                              ? `Because you studied ${learningProfile.recentCategoryName}`
-                              : resource.socialProofLabel ?? null,
+                          socialProofLabel: `More in ${learningProfile.recentCategoryName}`,
                         }}
                         variant="marketplace"
                         owned={ownedIds.has(resource.id)}
@@ -419,14 +527,14 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                 </section>
               )}
 
-              {recommendedForLevel.length > 0 && learningProfile?.preferredLevels.length > 0 && (
+              {recommendedForLevel.length > 0 && (learningProfile?.preferredLevels?.length ?? 0) > 0 && (
                 <section className="space-y-5">
                   <SectionHeader
                     title="Recommended for your level"
                     description="Deterministic picks shaped by the difficulty level your recent purchases suggest."
                     viewAllHref="/resources?sort=trending&category=all"
                   />
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+                  <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
                     {(recommendedForLevel as ResourceCardData[]).map((resource) => (
                       <ResourceCard
                         key={resource.id}
@@ -442,23 +550,31 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                 </section>
               )}
 
-              {discoverData.recommended.length > 0 && (
+              {recommendedForYou.length > 0 && (
                 <section className="space-y-5">
                   <SectionHeader
-                    title="Recommended for you"
-                    description="A focused set of picks to help you keep momentum without sorting through the whole library."
+                    title={learningProfile?.hasHistory ? "Recommended for you" : "Popular right now"}
+                    description={learningProfile?.hasHistory
+                      ? "A focused set of picks to help you keep momentum without sorting through the whole library."
+                      : "Top resources other learners are exploring this week."}
                     viewAllHref="/resources?sort=trending&category=all"
                   />
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-                    {(discoverData.recommended as ResourceCardData[]).map((resource) => (
-                      <ResourceCard
-                        key={resource.id}
-                        resource={resource}
-                        variant="marketplace"
-                        owned={ownedIds.has(resource.id)}
-                      />
-                    ))}
-                  </div>
+                  <RecommendationSection
+                    variant={recommendationVariant}
+                    section="recommended_for_you"
+                  >
+                    <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+                      {(recommendedForYou as ResourceCardData[]).map((resource) => (
+                        <div key={resource.id} data-resource-id={resource.id}>
+                          <ResourceCard
+                            resource={resource}
+                            variant="marketplace"
+                            owned={ownedIds.has(resource.id)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </RecommendationSection>
                 </section>
               )}
 
@@ -470,7 +586,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                     description="Fresh additions from creators and educators, surfaced with the newest material first."
                     viewAllHref="/resources?sort=newest&category=all"
                   />
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+                  <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
                     {(discoverData.newReleases as ResourceCardData[]).map((resource) => (
                       <ResourceCard
                         key={resource.id}
@@ -490,7 +606,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                     title="Featured picks"
                     viewAllHref="/resources?sort=featured&category=all"
                   />
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+                  <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
                     {(discoverData.featured as ResourceCardData[]).map((resource) => (
                       <ResourceCard
                         key={resource.id}
@@ -510,7 +626,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                     title="Free resources"
                     viewAllHref="/resources?price=free&category=all"
                   />
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+                  <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
                     {(discoverData.freeResources as ResourceCardData[]).map((resource) => (
                       <ResourceCard
                         key={resource.id}
@@ -530,7 +646,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                     title="Most downloaded"
                     viewAllHref="/resources?sort=downloads&category=all"
                   />
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+                  <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
                     {(discoverData.mostDownloaded as ResourceCardData[]).map((resource, index) => (
                       <ResourceCard
                         key={resource.id}
@@ -559,21 +675,25 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
             {!isDiscoverMode && (
               <section className="rounded-[32px] border border-surface-200 bg-white/85 p-4 shadow-card sm:p-5 lg:p-6">
                 <div className="space-y-6">
-                  <div className="flex flex-col gap-3 border-b border-surface-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div className="flex flex-col gap-2 border-b border-surface-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
                     <div className="space-y-1">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted">
                         Results
                       </p>
-                      <h2 className="font-display text-xl font-semibold tracking-tight text-text-primary sm:text-2xl">
+                      <h2 className="max-w-3xl font-display text-xl font-semibold tracking-tight text-text-primary sm:text-2xl">
                         {activeCategoryName}
                       </h2>
-                      <p className="text-sm leading-6 text-text-secondary">
-                        Refine by price, type, or difficulty to find the right resource faster.
-                      </p>
+                      {resultsContext && (
+                        <p className="text-sm leading-6 text-text-secondary">
+                          {resultsContext}
+                        </p>
+                      )}
                     </div>
-                    <p className="text-sm font-medium text-text-secondary">
-                      {total === 1 ? "1 resource" : `${formatNumber(total)} resources`}
-                    </p>
+                    {totalPages > 1 && (
+                      <p className="shrink-0 text-sm text-text-secondary">
+                        Page {safePage} of {totalPages}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
@@ -652,6 +772,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                       total={total}
                       page={safePage}
                       totalPages={totalPages}
+                      hasActiveFilters={hasActiveFilters}
                     />
                   </div>
                 </div>
@@ -660,11 +781,48 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
             )}
           </div>
 
-          </PageContentWide>
-        </PageContainer>
+          </>
+        </Container>
       </main>
     </div>
   );
+}
+
+// ── Results context summary ────────────────────────────────────────────────────
+
+/**
+ * Returns a concise, human-readable summary of the current category-mode
+ * results. Used in the results section sub-header so users always know
+ * exactly what the grid represents without reading a generic instruction.
+ *
+ * Returns null when total is 0 — empty states are handled by ResourceGrid.
+ */
+function buildResultsContext(
+  total: number,
+  activeCategoryName: string,
+  category: string | undefined,
+  search: string | undefined,
+  price: string,
+  formatNum: (n: number) => string,
+): string | null {
+  if (total === 0) return null;
+
+  const n = total === 1 ? "1 resource" : `${formatNum(total)} resources`;
+  const inAll  = "across all categories";
+  const inCat  = `in ${activeCategoryName}`;
+  const scope  = category === "all" ? inAll : inCat;
+  const term   = search?.trim();
+
+  if (term) {
+    return `${n} ${scope} matching "${term}"`;
+  }
+  if (price === "free") {
+    return `${n} available for free ${scope}`;
+  }
+  if (price === "paid") {
+    return `${n} available ${scope}`;
+  }
+  return `${n} ${scope}`;
 }
 
 // ── Category icon and color mapping ───────────────────────────────────────────

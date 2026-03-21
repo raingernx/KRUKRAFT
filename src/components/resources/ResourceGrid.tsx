@@ -2,12 +2,15 @@
 
 import { useRef, Suspense } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { useSearchParams, usePathname } from "next/navigation";
+import { BookOpen, Search } from "lucide-react";
 import { ResourceCard, ResourceCardSkeleton, type ResourceCardData } from "./ResourceCard";
 import { ResourcePagination } from "./ResourcePagination";
 
+// Auto-fill: cards are at least 280 px wide and grow equally to fill available space.
+// Naturally produces ~2 cols on mobile, ~3 on tablet, ~4-5 on desktop, ~5-6 on 1600px.
 export const RESOURCE_GRID_CLASSES =
-  "grid grid-cols-1 gap-4 items-stretch sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4 xl:gap-6";
+  "grid items-stretch gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]";
 
 interface ResourceGridProps {
   resources: ResourceCardData[];
@@ -17,6 +20,12 @@ interface ResourceGridProps {
   totalPages: number;
   /** Pass true while a parent is streaming / loading */
   loading?: boolean;
+  /**
+   * True when search, price, sort (non-default), tag, or featured filters are
+   * active. Changes the empty state copy to guide the user toward clearing
+   * filters rather than implying no content exists in the section.
+   */
+  hasActiveFilters?: boolean;
 }
 
 export function ResourceGrid({
@@ -26,7 +35,11 @@ export function ResourceGrid({
   page,
   totalPages,
   loading = false,
+  hasActiveFilters = false,
 }: ResourceGridProps) {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   // ── Loading skeleton ────────────────────────────────────────────────────────
   if (loading) {
     return (
@@ -43,20 +56,53 @@ export function ResourceGrid({
 
   // ── Empty state ─────────────────────────────────────────────────────────────
   if (resources.length === 0) {
+    // Build a URL that keeps only the category param, stripping everything else
+    // (search / price / sort / tag / featured / page) so the grid is reset.
+    const clearFiltersParams = new URLSearchParams();
+    const category = searchParams.get("category");
+    if (category) clearFiltersParams.set("category", category);
+    const clearFiltersHref = clearFiltersParams.size > 0
+      ? `${pathname}?${clearFiltersParams.toString()}`
+      : pathname;
+
+    if (hasActiveFilters) {
+      return (
+        <div className="animate-fade-in rounded-[28px] border border-surface-200 bg-white px-6 py-16 text-center shadow-card sm:px-8 sm:py-20">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-50">
+            <Search className="h-7 w-7 text-zinc-300" />
+          </div>
+          <p className="mt-5 text-lg font-semibold tracking-tight text-zinc-900">
+            Nothing matched these filters
+          </p>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-zinc-500">
+            Try a different keyword, broaden your price range, or clear the filters to see everything.
+          </p>
+          <Link
+            href={clearFiltersHref}
+            className="mt-5 inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-4 py-2 text-sm font-medium text-text-primary transition hover:border-surface-300 hover:bg-white"
+          >
+            Clear filters
+          </Link>
+        </div>
+      );
+    }
+
     return (
       <div className="animate-fade-in rounded-[28px] border border-surface-200 bg-white px-6 py-16 text-center shadow-card sm:px-8 sm:py-20">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-50">
-          <Search className="h-7 w-7 text-zinc-300" />
+          <BookOpen className="h-7 w-7 text-zinc-300" />
         </div>
-        <p className="mt-5 text-lg font-semibold tracking-tight text-zinc-900">No resources found</p>
+        <p className="mt-5 text-lg font-semibold tracking-tight text-zinc-900">
+          Nothing here yet
+        </p>
         <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-zinc-500">
-          Try broadening your filters or return to the main library to start a wider browse.
+          This section is still growing. Check back soon or explore what else is available.
         </p>
         <Link
           href="/resources"
           className="mt-5 inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-4 py-2 text-sm font-medium text-text-primary transition hover:border-surface-300 hover:bg-white"
         >
-          Browse all resources
+          Explore all resources
         </Link>
       </div>
     );

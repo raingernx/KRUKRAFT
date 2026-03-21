@@ -1,6 +1,8 @@
 import Stripe from "stripe";
 import { recordPurchaseAnalytics } from "@/analytics/event.service";
 import { stripe } from "@/lib/stripe";
+import { logActivity } from "@/lib/activity";
+import { sendPurchaseConfirmationEmail } from "@/services/email/email.service";
 import {
   completeRecoveredPurchase,
   completeStripePurchaseByPaymentIntent,
@@ -73,41 +75,46 @@ async function handleStripePayment(session: Stripe.Checkout.Session) {
   let userId = session.metadata?.userId ?? null;
   let resourceId = session.metadata?.resourceId ?? null;
 
-  let completion = await completeStripePurchaseBySession(sessionId);
+  // ── Path 1: match by session ID ──────────────────────────────────────────
+  // Return immediately on any match (whether just-completed or already-done)
+  // so that the payment-intent match path below is never reached for the same
+  // event.  This is the primary idempotency gate: a session can only ever
+  // match once, and side effects fire only when completed=true (first match).
+  const sessionCompletion = await completeStripePurchaseBySession(sessionId);
 
-  if (completion.completed && paymentIntentId) {
-    await setPurchaseStripePaymentIntentIdBySession(
-      sessionId,
-      paymentIntentId,
-    ).catch((error) =>
-      console.warn(
-        "[WEBHOOK] Could not write stripePaymentIntentId:",
-        error?.code,
+  if (sessionCompletion.matched) {
+    if (sessionCompletion.completed && paymentIntentId) {
+      await setPurchaseStripePaymentIntentIdBySession(
+        sessionId,
         paymentIntentId,
-      ),
-    );
+      ).catch((error) =>
+        console.warn(
+          "[WEBHOOK] Could not write stripePaymentIntentId:",
+          error?.code,
+          paymentIntentId,
+        ),
+      );
+    }
+
+    if (sessionCompletion.completed) {
+      await recordStripePurchaseAnalytics({ sessionId, paymentIntentId });
+    }
+
+    return; // matched — nothing more to do regardless of completed flag
   }
 
-  if (completion.completed) {
-    await recordStripePurchaseAnalytics({
-      sessionId,
-      paymentIntentId,
-    });
-  }
+  // ── Path 2: fallback match by payment intent ID ───────────────────────────
+  // Reached only when the session ID was not found in our DB (e.g. purchase
+  // row was created before session ID was stored).  Same early-return guard.
+  if (paymentIntentId) {
+    const intentCompletion = await completeStripePurchaseByPaymentIntent(paymentIntentId);
 
-  if (!completion.matched && paymentIntentId) {
-    completion = await completeStripePurchaseByPaymentIntent(paymentIntentId);
-  }
-
-  if (completion.completed) {
-    await recordStripePurchaseAnalytics({
-      sessionId,
-      paymentIntentId,
-    });
-  }
-
-  if (completion.matched) {
-    return;
+    if (intentCompletion.matched) {
+      if (intentCompletion.completed) {
+        await recordStripePurchaseAnalytics({ sessionId, paymentIntentId });
+      }
+      return; // matched — nothing more to do
+    }
   }
 
   if ((!userId || !resourceId) && paymentIntentId) {
@@ -247,4 +254,24 @@ async function recordStripePurchaseAnalytics(
   }).catch((error) => {
     console.error("[WEBHOOK] Failed to record Stripe purchase analytics:", error);
   });
+
+  void logActivity({
+    userId: context.userId,
+    action: "PURCHASE_COMPLETED_WEBHOOK",
+    entity: "purchase",
+    entityId: context.purchaseId,
+    metadata: {
+      purchaseId: context.purchaseId,
+      resourceId: context.resourceId,
+      provider: "STRIPE",
+      amount: context.amount,
+    },
+  });
+
+  // Fire post-purchase confirmation email. Non-blocking — a send failure
+  // must never affect webhook reliability or purchase completion.
+  void sendPurchaseConfirmationEmail({
+    userId: context.userId,
+    resourceId: context.resourceId,
+  }).catch(() => {});
 }

@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { requireSession } from "@/lib/auth/require-session";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import {
@@ -48,12 +47,11 @@ const PRO_BENEFITS = [
 ];
 
 export default async function SubscriptionPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) redirect("/auth/login?next=/subscription");
+  const { userId } = await requireSession("/subscription");
 
   const platform = await getPlatform();
   const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
+    where: { id: userId },
     select: {
       subscriptionStatus: true,
       subscriptionPlan: true,

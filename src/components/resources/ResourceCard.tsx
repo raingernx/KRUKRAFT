@@ -7,6 +7,7 @@ import { FileText, Download, Eye, ExternalLink, Star, ArrowRight } from "lucide-
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/design-system";
 import { PriceBadge } from "@/components/ui/PriceBadge";
+import { formatPrice } from "@/lib/format";
 import { formatNumber } from "@/lib/format";
 import { isPreviewSupported } from "@/lib/preview/previewPolicy";
 
@@ -100,6 +101,12 @@ function isNewResource(createdAt?: Date | string): boolean {
   return (Date.now() - d.getTime()) / 86_400_000 < 14;
 }
 
+/** True when a library purchase happened within the last 7 days. */
+function isRecentlyPurchased(downloadedAt?: Date): boolean {
+  if (!downloadedAt) return false;
+  return (Date.now() - new Date(downloadedAt).getTime()) / 86_400_000 < 7;
+}
+
 function getDownloadedLabel(downloadedAt?: Date) {
   if (!downloadedAt) return null;
   return `Downloaded ${formatDistanceToNow(downloadedAt, { addSuffix: true })}`;
@@ -128,12 +135,25 @@ function ResourceBadge({
     return <span className={`${base} bg-amber-50 text-amber-600`}>Featured</span>;
   }
   if (isFree) {
-    return <span className={`${base} bg-green-50 text-green-600`}>Free</span>;
+    return <span className={`${base} bg-green-50 text-green-600`}>Free to keep</span>;
   }
   if (isNew) {
     return <span className={`${base} bg-blue-50 text-blue-600`}>New</span>;
   }
   return null;
+}
+
+/* ── Hover label ────────────────────────────────────────────────────────── */
+
+/**
+ * Returns the intent-revealing label shown on the card hover overlay.
+ * Owned → "Open", free → "Get for free", paid → "Get · ฿X".
+ * price is expected in minor units (satang / cents).
+ */
+function getHoverLabel(isOwned: boolean, isFree: boolean, price?: number): string {
+  if (isOwned) return "Open";
+  if (isFree) return "Get for free";
+  return `Get · ${formatPrice((price ?? 0) / 100)}`;
 }
 
 /* ── Card Body ───────────────────────────────────────────────────────────── */
@@ -163,19 +183,27 @@ function CardBody({
   const [imageError, setImageError] = useState(false);
   const [isNew, setIsNew] = useState(false);
   const [downloadedLabel, setDownloadedLabel] = useState<string | null>(null);
+  const [downloadClicked, setDownloadClicked] = useState(false);
   const thumbnail =
     resource.thumbnailUrl ??
     resource.previewImages?.[0] ??
     resource.previewUrl ??
     null;
 
-  const thumbImgClass = isMarketplace
-    ? "h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-    : "h-full w-full object-cover transition-transform duration-300";
+  // Hero is a link card too, so it gets the same subtle scale-105 on hover
+  const thumbImgClass =
+    isMarketplace || isHero
+      ? "h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+      : "h-full w-full object-cover transition-transform duration-300";
 
-  const thumbWrapperClass = `relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl rounded-b-none bg-gradient-to-br from-surface-100 via-surface-50 to-surface-100${
-    isMarketplace ? " h-[224px] sm:h-[248px]" : ""
-  }`;
+  // marketplace: fixed heights keep the grid row uniform
+  // hero: 16:9 + max-h cap — prominent but not page-dominating
+  // library/compact: classic 4:3 ratio
+  const thumbWrapperClass = isMarketplace
+    ? "relative h-[224px] sm:h-[248px] w-full overflow-hidden rounded-t-2xl rounded-b-none bg-gradient-to-br from-surface-100 via-surface-50 to-surface-100"
+    : isHero
+      ? "relative aspect-[16/9] max-h-[420px] w-full overflow-hidden rounded-t-2xl rounded-b-none bg-gradient-to-br from-surface-100 via-surface-50 to-surface-100"
+      : "relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl rounded-b-none bg-gradient-to-br from-surface-100 via-surface-50 to-surface-100";
 
   const articleClass =
     isMarketplace
@@ -188,14 +216,16 @@ function CardBody({
   const showPrice = variant !== "library";
   const socialProofLabel =
     resource.socialProofLabel ??
-    (typeof resource.downloadCount === "number" && resource.downloadCount >= 100
+    (typeof resource.downloadCount === "number" && resource.downloadCount >= 25
       ? `${formatNumber(resource.downloadCount)} learners used this`
       : null);
 
   useEffect(() => {
-    setIsNew(isNewResource(resource.createdAt));
+    const newByAge = isNewResource(resource.createdAt);
+    const newByPurchase = variant === "library" && isRecentlyPurchased(resource.downloadedAt);
+    setIsNew(newByAge || newByPurchase);
     setDownloadedLabel(getDownloadedLabel(resource.downloadedAt));
-  }, [resource.createdAt, resource.downloadedAt]);
+  }, [resource.createdAt, resource.downloadedAt, variant]);
 
   return (
     <article className={articleClass}>
@@ -220,11 +250,11 @@ function CardBody({
           </div>
         )}
 
-        {/* Hover overlay: "View details →" — marketplace only; library has no overlay */}
+        {/* Hover overlay — price-aware intent label: "Open" | "Get for free" | "Get · ฿X" */}
         {isMarketplace && (
           <div className="absolute inset-0 flex items-end justify-end bg-gradient-to-t from-zinc-900/30 to-transparent p-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             <span className="flex items-center gap-1 rounded-xl bg-white/90 px-2.5 py-1.5 text-[11px] font-semibold text-zinc-800 shadow-sm backdrop-blur-sm">
-              View details
+              {getHoverLabel(isOwned, isFree, resource.price)}
               <ArrowRight className="h-3 w-3" aria-hidden />
             </span>
           </div>
@@ -246,7 +276,9 @@ function CardBody({
       </div>
 
       {/* ── Body: Title + Price → Author + Category → Meta / CTAs ── */}
-      <div className="flex flex-1 flex-col space-y-3 p-5">
+      {/* gap-3 instead of space-y-3: gap doesn't use margins, so mt-auto on the CTA row works correctly */}
+      {/* hero uses p-4 (tighter) to keep proportions compact; all others use p-5 */}
+      <div className={`flex flex-1 flex-col gap-3 ${isHero ? "p-4" : "p-5"}`}>
         {/* Title + price badge */}
         <div className="space-y-2">
           <div className="flex items-start justify-between gap-3">
@@ -316,11 +348,15 @@ function CardBody({
           ) : null}
         </div>
 
-        {/* Library CTAs stay at the bottom */}
+        {/* Library CTAs — pinned to bottom via mt-auto; pt-4 gives consistent gap above buttons */}
         {variant === "library" && resource.id && resource.slug && (
-          <div className="mt-auto flex flex-wrap gap-2 pt-1">
-            <Button asChild size="sm" className="flex-1 gap-1.5">
-              <a href={`/api/download/${resource.id}`}>
+          <div className="mt-auto pt-4">
+            <div className="flex flex-wrap items-center gap-2">
+            <Button asChild size="sm" className="h-9 flex-1 gap-1.5">
+              <a
+                href={`/api/download/${resource.id}`}
+                onClick={() => setDownloadClicked(true)}
+              >
                 <span className="inline-flex items-center gap-1.5">
                   <Download className="h-3.5 w-3.5" />
                   <span>Download</span>
@@ -328,7 +364,7 @@ function CardBody({
               </a>
             </Button>
             {isPreviewSupported(resource.mimeType) && (
-              <Button asChild variant="outline" size="sm" className="flex-1 gap-1.5">
+              <Button asChild variant="outline" size="sm" className="h-9 flex-1 gap-1.5">
                 <a
                   href={`/api/preview/${resource.id}`}
                   target="_blank"
@@ -341,7 +377,7 @@ function CardBody({
                 </a>
               </Button>
             )}
-            <Button asChild variant="outline" size="sm" className="flex-1 gap-1.5">
+            <Button asChild variant="outline" size="sm" className="h-9 flex-1 gap-1.5">
               <Link href={`/resources/${resource.slug}`}>
                 <span className="inline-flex items-center gap-1.5">
                   <ExternalLink className="h-3.5 w-3.5" />
@@ -349,6 +385,19 @@ function CardBody({
                 </span>
               </Link>
             </Button>
+            </div>
+            {downloadClicked && (
+              <p className="mt-2.5 flex items-center gap-1.5 text-[12px] text-emerald-700">
+                <span className="font-medium">Downloaded ✓</span>
+                <span className="text-zinc-300" aria-hidden>—</span>
+                <Link
+                  href={resource.category?.slug ? `/categories/${resource.category.slug}` : "/resources"}
+                  className="text-zinc-500 underline underline-offset-2 hover:text-zinc-700"
+                >
+                  Want more like this?
+                </Link>
+              </p>
+            )}
           </div>
         )}
       </div>

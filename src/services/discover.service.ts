@@ -142,10 +142,10 @@ export const getDiscoverData = unstable_cache(
         findNewestResourceIds(8),
       ),
       rememberJson(CACHE_KEYS.featuredResources, CACHE_TTLS.homepageList, () =>
-        findFeaturedResourceIds(4),
+        findFeaturedResourceIds(8),
       ),
       rememberJson(CACHE_KEYS.freeResources, CACHE_TTLS.homepageList, () =>
-        findFreeResourceIds(4),
+        findFreeResourceIds(8),
       ),
       rememberJson(CACHE_KEYS.topCreator, CACHE_TTLS.homepageList, () =>
         findTopCreatorThisWeek(),
@@ -165,12 +165,12 @@ export const getDiscoverData = unstable_cache(
         : findFallbackResourceIds(8, { createdAt: "desc" }),
       featuredIdsFromStats.length > 0
         ? featuredIdsFromStats
-        : findFallbackResourceIds(4, [{ downloadCount: "desc" }, { createdAt: "desc" }], {
+        : findFallbackResourceIds(8, [{ downloadCount: "desc" }, { createdAt: "desc" }], {
             featured: true,
           }),
       freeIdsFromStats.length > 0
         ? freeIdsFromStats
-        : findFallbackResourceIds(4, [{ downloadCount: "desc" }, { createdAt: "desc" }], {
+        : findFallbackResourceIds(8, [{ downloadCount: "desc" }, { createdAt: "desc" }], {
             isFree: true,
           }),
     ]);
@@ -195,11 +195,11 @@ export const getDiscoverData = unstable_cache(
         )
         .map(withPreview);
 
-    const trending = trendingResources.slice(0, 4);
-    const newReleases = mapSection(newestIds).slice(0, 4);
-    const featured = mapSection(featuredIds).slice(0, 4);
-    const freeResources = mapSection(freeIds).slice(0, 4);
-    const mostDownloaded = mapSection(popularIds).slice(0, 4);
+    const trending = trendingResources.slice(0, 5);
+    const newReleases = mapSection(newestIds).slice(0, 5);
+    const featured = mapSection(featuredIds).slice(0, 5);
+    const freeResources = mapSection(freeIds).slice(0, 5);
+    const mostDownloaded = mapSection(popularIds).slice(0, 5);
     const recommended = trendingResources.slice(0, 8);
 
     return {

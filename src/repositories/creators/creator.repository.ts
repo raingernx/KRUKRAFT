@@ -1,4 +1,4 @@
-import { Prisma, type CreatorStatus } from "@prisma/client";
+import { Prisma, type CreatorStatus, type CreatorApplicationStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export interface CreatorResourceFilters {
@@ -122,6 +122,7 @@ export async function findCreatorAccessContext(userId: string) {
       role: true,
       creatorEnabled: true,
       creatorStatus: true,
+      creatorApplicationStatus: true,
       _count: {
         select: {
           resources: {
@@ -342,6 +343,124 @@ export async function enableCreatorAccessRecord(userId: string) {
     });
   }
 }
+
+// ── Creator application lifecycle ─────────────────────────────────────────────
+
+export interface CreatorApplicationInput {
+  creatorDisplayName: string;
+  creatorSlug: string;
+  creatorBio: string;
+}
+
+export async function submitCreatorApplicationRecord(
+  userId: string,
+  data: CreatorApplicationInput,
+) {
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      creatorDisplayName:       data.creatorDisplayName,
+      creatorSlug:              data.creatorSlug,
+      creatorBio:               data.creatorBio,
+      creatorApplicationStatus: "PENDING",
+      appliedAt:                new Date(),
+      // Clear any previous rejection reason
+      rejectionReason:          null,
+      reviewedAt:               null,
+    },
+    select: { id: true, creatorApplicationStatus: true, appliedAt: true },
+  });
+}
+
+export async function findCreatorApplicationRecord(userId: string) {
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      creatorDisplayName:       true,
+      creatorSlug:              true,
+      creatorBio:               true,
+      creatorApplicationStatus: true,
+      appliedAt:                true,
+      reviewedAt:               true,
+      rejectionReason:          true,
+    },
+  });
+}
+
+export async function findPendingCreatorApplications() {
+  return prisma.user.findMany({
+    where: { creatorApplicationStatus: "PENDING" },
+    orderBy: { appliedAt: "asc" },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      creatorDisplayName:       true,
+      creatorSlug:              true,
+      creatorBio:               true,
+      creatorApplicationStatus: true,
+      appliedAt:                true,
+    },
+  });
+}
+
+export async function findAllCreatorApplications() {
+  return prisma.user.findMany({
+    where: {
+      creatorApplicationStatus: { not: "NOT_APPLIED" },
+    },
+    orderBy: { appliedAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      creatorDisplayName:       true,
+      creatorSlug:              true,
+      creatorBio:               true,
+      creatorApplicationStatus: true,
+      appliedAt:                true,
+      reviewedAt:               true,
+      rejectionReason:          true,
+    },
+  });
+}
+
+export async function approveCreatorApplicationRecord(userId: string) {
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      creatorApplicationStatus: "APPROVED",
+      creatorEnabled:           true,
+      creatorStatus:            "ACTIVE",
+      reviewedAt:               new Date(),
+      rejectionReason:          null,
+    },
+    select: { id: true, creatorApplicationStatus: true, creatorEnabled: true },
+  });
+}
+
+export async function rejectCreatorApplicationRecord(
+  userId: string,
+  reason: string,
+) {
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      creatorApplicationStatus: "REJECTED",
+      reviewedAt:               new Date(),
+      rejectionReason:          reason.trim() || null,
+      // Keep creatorEnabled false and status INACTIVE
+    },
+    select: { id: true, creatorApplicationStatus: true },
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function findCreatorCategories() {
   return prisma.category.findMany({
@@ -569,6 +688,31 @@ export async function getCreatorResourcePerformance(
         b.salesCount - a.salesCount ||
         b.updatedAt.getTime() - a.updatedAt.getTime(),
     );
+}
+
+/**
+ * Returns the single most-recently-updated DRAFT resource for a creator,
+ * or null if none exist.  Used to power the "continue editing" CTA.
+ */
+export async function findMostRecentCreatorDraft(authorId: string) {
+  return prisma.resource.findFirst({
+    where: {
+      authorId,
+      status: "DRAFT",
+      deletedAt: null,
+    },
+    orderBy: { updatedAt: "desc" },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      isFree: true,
+      price: true,
+      fileUrl: true,
+      updatedAt: true,
+      status: true,
+    },
+  });
 }
 
 export async function findCreatorResourceStatusSummary(

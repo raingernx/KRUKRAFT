@@ -61,8 +61,8 @@ export async function createXenditCheckout(body: unknown, userId: string) {
       description: resource.title,
       currency: "THB",
       payerEmail: user.email ?? undefined,
-      successRedirectUrl: `${baseUrl}/resources?payment=success`,
-      failureRedirectUrl: `${baseUrl}/resources/id/${resourceId}?payment=cancelled`,
+      successRedirectUrl: `${baseUrl}/checkout/success?slug=${encodeURIComponent(resource.slug)}`,
+      failureRedirectUrl: `${baseUrl}/checkout/cancel?slug=${encodeURIComponent(resource.slug)}`,
       customer: {
         givenNames: user.name ?? undefined,
         email: user.email ?? undefined,

@@ -1,22 +1,27 @@
 import { existsSync, createReadStream } from "fs";
 import { stat } from "fs/promises";
 import { getServerSession } from "next-auth";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { recordAnalyticsEvent } from "@/analytics/event.service";
 import { logActivity } from "@/lib/activity";
 import { authOptions } from "@/lib/auth";
+import {
+  RANKING_EXPERIMENT_COOKIE,
+  isValidRankingVariant,
+} from "@/lib/ranking-experiment";
 import { checkRateLimit, getClientIp, LIMITS } from "@/lib/rate-limit";
 import { storage } from "@/lib/storage";
 import {
-  findCompletedPurchaseByUserAndResource,
+  countDownloadEventsByUserAndResource,
   recordDownloadAnalytics,
 } from "@/repositories/purchases/purchase.repository";
 import { findDownloadableResourceById } from "@/repositories/resources/resource.repository";
+import { getCompletedPurchase } from "@/services/purchase.service";
 
 const ALLOWED_DOWNLOAD_HOSTS = [
   "cdn.studyplatform.com",
   "storage.googleapis.com",
-  "your-bucket.s3.amazonaws.com",
 ] as const;
 
 export async function handleResourceDownload(
@@ -63,19 +68,32 @@ export async function handleResourceDownload(
       );
     }
 
-    if (!resource.isFree) {
-      const purchase = await findCompletedPurchaseByUserAndResource(
-        userId,
-        resourceId,
-      );
+    // Verify a COMPLETED purchase exists for all resources — free and paid.
+    //
+    // Free resources: users must add the resource to their library first
+    // (POST /api/library/add), which creates a COMPLETED purchase with
+    // paymentProvider = "FREE".  This ensures:
+    //   - the resource appears in the user's library
+    //   - download analytics are attributed to a purchase
+    //   - UI and API agree on what "owned" means
+    //
+    // Paid resources: a COMPLETED purchase is created by the Stripe/Xendit
+    // webhook after payment is confirmed.
+    //
+    // In both cases the rule is identical: status = COMPLETED.
+    const purchase = await getCompletedPurchase(userId, resourceId);
 
-      if (!purchase) {
-        return NextResponse.json(
-          { error: "Forbidden. You have not purchased this resource." },
-          { status: 403 },
-        );
-      }
+    if (!purchase) {
+      const message = resource.isFree
+        ? "Please add this resource to your library before downloading."
+        : "Forbidden. You have not purchased this resource.";
+      return NextResponse.json({ error: message }, { status: 403 });
     }
+
+    // FIRST_PAID_DOWNLOAD fires only for paid resources.
+    // For free resources completedPurchaseId stays null — the "first claim"
+    // analytics event is recorded by the library/add route, not here.
+    const completedPurchaseId = resource.isFree ? null : purchase.id;
 
     if (!resource.fileKey && !resource.fileUrl) {
       return NextResponse.json(
@@ -85,6 +103,33 @@ export async function handleResourceDownload(
     }
 
     recordDownloadSideEffects(resourceId, userId, ip);
+
+    // Fire FIRST_PAID_DOWNLOAD when this is a paid resource and the user
+    // has no prior DownloadEvent for it.  Non-blocking; never affects the
+    // response.  Must run after the purchase gate passes (completedPurchaseId
+    // non-null) so free resources are never included in this metric.
+    if (completedPurchaseId !== null) {
+      // Read ranking experiment variant to attach to the FIRST_PAID_DOWNLOAD
+      // event. Failures are silently swallowed — analytics must never block
+      // the download response.
+      let rankingVariant: string | null = null;
+      try {
+        const cookieStore = await cookies();
+        const raw = cookieStore.get(RANKING_EXPERIMENT_COOKIE)?.value;
+        rankingVariant = isValidRankingVariant(raw) ? raw : null;
+      } catch {
+        // Variant unknown — event will be stored with rankingVariant: null.
+      }
+
+      recordFirstPaidDownloadIfApplicable(
+        resourceId,
+        userId,
+        resource.authorId,
+        completedPurchaseId,
+        rankingVariant,
+      );
+    }
+
     recordAnalyticsEvent({
       eventType: "RESOURCE_DOWNLOAD",
       userId,
@@ -135,6 +180,52 @@ function recordDownloadSideEffects(
     entity: "Resource",
     entityId: resourceId,
   }).catch(() => {});
+
+  logActivity({
+    userId,
+    action: "DOWNLOAD_STARTED",
+    entity: "Resource",
+    entityId: resourceId,
+    metadata: { resourceId, userId },
+  }).catch(() => {});
+}
+
+/**
+ * Fires a FIRST_PAID_DOWNLOAD activity event when this is the user's first
+ * successful download of a paid resource.
+ *
+ * Detection: count existing DownloadEvent rows for this user + resource pair.
+ * Because this runs before recordDownloadAnalytics creates the new event, a
+ * count of 0 means no prior download has ever been recorded.
+ *
+ * This is the clean paid-activation signal — it is:
+ *   - scoped to paid resources only (free resources never reach this path)
+ *   - scoped to the first download per user per resource (subsequent
+ *     downloads don't re-fire)
+ *   - non-blocking (never affects the download response)
+ *   - independent of DOWNLOAD_STARTED, which fires for all downloads
+ */
+function recordFirstPaidDownloadIfApplicable(
+  resourceId: string,
+  userId: string,
+  creatorId: string,
+  purchaseId: string,
+  rankingVariant: string | null,
+) {
+  countDownloadEventsByUserAndResource(userId, resourceId)
+    .then((priorCount) => {
+      if (priorCount > 0) return; // not the first download — do nothing
+      return logActivity({
+        userId,
+        action: "FIRST_PAID_DOWNLOAD",
+        entity: "Resource",
+        entityId: resourceId,
+        metadata: { resourceId, userId, purchaseId, creatorId, rankingVariant },
+      });
+    })
+    .catch(() => {
+      // Analytics must never break the download flow.
+    });
 }
 
 async function serveFileKey(

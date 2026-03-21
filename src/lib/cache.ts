@@ -34,6 +34,7 @@ export const CACHE_KEYS = {
   platformTypographySettings: "platform_typography_settings",
   resourceStats: (resourceId: string) => `resource_stats:${resourceId}`,
   creatorStats: (creatorId: string) => `creator_stats:${creatorId}`,
+  behaviorProfile: (userId: string) => `behavior_profile:${userId}`,
 } as const;
 
 export async function getCachedJson<T>(key: string): Promise<T | null> {

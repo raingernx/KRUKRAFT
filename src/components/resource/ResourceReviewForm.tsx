@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Textarea } from "@/design-system";
 
@@ -22,7 +22,18 @@ export function ResourceReviewForm({
 }: ResourceReviewFormProps) {
   const router = useRouter();
   const [rating, setRating] = useState<number>(existingReview?.rating ?? 5);
-  const [comment, setComment] = useState(existingReview?.body ?? "");
+  // Initialise empty; useEffect below syncs from existingReview once it arrives
+  // (router.refresh() delivers a new prop reference — useState init only runs on mount)
+  const [comment, setComment] = useState("");
+
+  useEffect(() => {
+    if (existingReview) {
+      setComment(existingReview.body ?? "");
+    } else {
+      setComment("");
+    }
+  }, [existingReview]);
+
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -68,6 +79,7 @@ export function ResourceReviewForm({
       }
 
       setSuccess(existingReview ? "Your review was updated." : "Your review was published.");
+      setComment("");
       router.refresh();
     } catch (reviewError) {
       setError(reviewError instanceof Error ? reviewError.message : "Failed to save your review.");

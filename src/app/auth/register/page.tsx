@@ -203,11 +203,11 @@ export default function RegisterPage() {
 
             <p className="mt-4 text-center text-[11px] text-zinc-400">
               By creating an account you agree to our{" "}
-              <Link href="#" className="underline underline-offset-2 hover:text-zinc-600 transition-colors">
+              <Link href="/terms" className="underline underline-offset-2 hover:text-zinc-600 transition-colors">
                 Terms
               </Link>{" "}
               and{" "}
-              <Link href="#" className="underline underline-offset-2 hover:text-zinc-600 transition-colors">
+              <Link href="/privacy" className="underline underline-offset-2 hover:text-zinc-600 transition-colors">
                 Privacy Policy
               </Link>.
             </p>

@@ -40,7 +40,7 @@ export function ResourceReviews({ reviews, resourceTitle }: ResourceReviewsProps
       </div>
       {reviews.length === 0 ? (
         <div className="mt-3 rounded-xl border border-dashed border-zinc-200 bg-white px-4 py-6 text-center text-[13px] text-zinc-500">
-          <p>Reviews for {resourceTitle} will appear here.</p>
+          <p>No reviews yet — be the first to share your experience.</p>
         </div>
       ) : (
         <ul className="mt-3 space-y-4">

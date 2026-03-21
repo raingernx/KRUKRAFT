@@ -3,6 +3,7 @@ import {
   CircleUser,
   FileText,
   LayoutDashboard,
+  Plus,
   ShoppingBag,
   Sparkles,
 } from "lucide-react";
@@ -28,6 +29,11 @@ export const CREATOR_DASHBOARD_NAV_SECTION: DashboardNavSection = {
       href: routes.creatorResources,
       label: "Resources",
       icon: FileText,
+    },
+    {
+      href: routes.creatorNewResource,
+      label: "New Resource",
+      icon: Plus,
     },
     {
       href: routes.creatorSales,

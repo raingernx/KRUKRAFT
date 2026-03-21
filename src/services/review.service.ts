@@ -10,11 +10,11 @@ import {
   updateReviewRecord,
 } from "@/repositories/reviews/review.repository";
 import {
-  findCompletedPurchaseByUserAndResource,
   findCompletedSalesCountByResource,
   findCompletedSalesCountsByResourceIds,
 } from "@/repositories/purchases/purchase.repository";
 import { findAdminActor, findResourceById } from "@/repositories/resources/resource.repository";
+import { hasPurchased } from "@/services/purchase.service";
 
 export class ReviewServiceError extends Error {
   status: number;
@@ -72,8 +72,8 @@ export async function createReview(
     });
   }
 
-  const purchase = await findCompletedPurchaseByUserAndResource(userId, resourceId);
-  if (!purchase) {
+  const owned = await hasPurchased(userId, resourceId);
+  if (!owned) {
     throw new ReviewServiceError(403, {
       error: "You can only review resources you own.",
     });
@@ -123,8 +123,8 @@ export async function updateReview(
     });
   }
 
-  const purchase = await findCompletedPurchaseByUserAndResource(userId, resourceId);
-  if (!purchase) {
+  const owned = await hasPurchased(userId, resourceId);
+  if (!owned) {
     throw new ReviewServiceError(403, {
       error: "You can only review resources you own.",
     });

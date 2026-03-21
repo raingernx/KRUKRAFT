@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Navbar } from "@/components/layout/Navbar";
-import { PageContainer, PageContentWide } from "@/design-system";
+import { Container } from "@/components/layout/container";
 import { ResourceGrid, RESOURCE_GRID_CLASSES } from "@/components/resources/ResourceGrid";
 import { ResourceCardSkeleton } from "@/components/resources/ResourceCard";
 import { Badge } from "@/components/ui/Badge";
@@ -81,13 +81,11 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <Navbar />
 
       {/* Hero banner */}
-      <div
-        className={`relative overflow-hidden bg-gradient-to-br ${meta.color} px-4 pb-12 pt-10 sm:px-6 lg:px-8 lg:pb-14 lg:pt-12`}
-      >
+      <div className={`relative overflow-hidden bg-gradient-to-br ${meta.color}`}>
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/5 blur-3xl" />
         </div>
-        <PageContentWide className="relative space-y-6">
+        <Container className="relative space-y-6 pb-12 pt-10 lg:pb-14 lg:pt-12">
           <Link
             href="/resources"
             className="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-white/70 hover:text-white transition-colors"
@@ -113,13 +111,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               {total} resource{total !== 1 ? "s" : ""}
             </Badge>
           </div>
-        </PageContentWide>
+        </Container>
       </div>
 
       {/* Resources */}
       <main className="flex-1">
-        <PageContainer className="py-8 sm:py-10 lg:py-12">
-          <PageContentWide className="space-y-6">
+        <Container className="py-12 sm:py-14 lg:py-16">
+          <div className="space-y-6">
             <div className="rounded-[32px] border border-surface-200 bg-white/85 p-4 shadow-card sm:p-5 lg:p-6">
               <div className="mb-6 flex flex-col gap-3 border-b border-surface-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
                 <div className="space-y-1">
@@ -154,8 +152,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 />
               </Suspense>
             </div>
-          </PageContentWide>
-        </PageContainer>
+          </div>
+        </Container>
       </main>
     </div>
   );

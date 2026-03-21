@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { requireSession } from "@/lib/auth/require-session";
 import { prisma } from "@/lib/prisma";
 import { LibraryGridClient } from "@/components/library/LibraryGridClient";
+import { LastPurchaseRecovery } from "@/components/library/LastPurchaseRecovery";
 import Link from "next/link";
 import { BookOpen, Download } from "lucide-react";
 import { formatDate } from "@/lib/format";
@@ -56,11 +56,37 @@ async function getLibrary(userId: string): Promise<LibraryItem[]> {
     }));
 }
 
-export default async function DashboardLibraryPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) redirect("/auth/login?next=/dashboard/library");
+/**
+ * A COMPLETED purchase is considered "just purchased" when its createdAt is
+ * within this window.  Covers all realistic webhook processing delays while
+ * preventing a stale old purchase from being mislabelled as newly bought.
+ */
+const RECENT_PURCHASE_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
-  const resources = await getLibrary(session.user.id);
+export default async function DashboardLibraryPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | undefined>>;
+}) {
+  const { userId } = await requireSession("/dashboard/library");
+
+  const resources = await getLibrary(userId);
+
+  const params = searchParams ? await searchParams : {};
+  const isReturningFromCheckout = params.payment === "success";
+
+  // Derive recovery state from existing data — no extra query.
+  // resources is sorted createdAt DESC, so resources[0] is always the newest
+  // COMPLETED purchase.  A 15-minute recency window prevents a stale older
+  // purchase from being surfaced as "just purchased".
+  const mostRecent = resources[0] ?? null;
+  const isRecentlyCompleted =
+    mostRecent !== null &&
+    Date.now() - new Date(mostRecent.purchasedAt).getTime() <
+      RECENT_PURCHASE_WINDOW_MS;
+
+  const showRecoveryBlock = isReturningFromCheckout && isRecentlyCompleted;
+  const showPendingState = isReturningFromCheckout && !isRecentlyCompleted;
 
   const lastOpened = resources[0] ?? null;
   const lastDownload =
@@ -79,6 +105,16 @@ export default async function DashboardLibraryPage() {
             </p>
           </div>
         </div>
+
+        {/* Post-payment recovery — shown when arriving from checkout success page.
+            Rendered whether or not the grid has items: pending state covers the
+            empty-library race condition, confirmed state surfaces the download. */}
+        {(showRecoveryBlock || showPendingState) && (
+          <LastPurchaseRecovery
+            item={showRecoveryBlock ? mostRecent : null}
+            isPending={showPendingState}
+          />
+        )}
 
         {resources.length > 0 && (
           <>
@@ -161,14 +197,14 @@ export default async function DashboardLibraryPage() {
               Your library is empty
             </h2>
             <p className="mt-1.5 max-w-sm text-[13px] text-zinc-500">
-              Browse the marketplace to find study guides, templates, and more.
+              Everything you get or purchase lands here. Find your first resource and start building your collection.
             </p>
             <Link
               href="/resources"
               className="mt-5 inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-[13px] font-semibold text-white hover:bg-zinc-700"
             >
               <BookOpen className="h-4 w-4" />
-              Browse marketplace
+              Find your first resource
             </Link>
           </div>
         )}

@@ -3,10 +3,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { logActivity } from "@/lib/activity";
 import { Navbar } from "@/components/layout/Navbar";
-import { PageContainer, PageContentWide } from "@/design-system";
-import { AlertCircle, BookOpen, CheckCircle } from "lucide-react";
+import { Container } from "@/components/layout/container";
+import { AlertCircle, BookOpen, CheckCircle, Download } from "lucide-react";
 import Link from "next/link";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, formatFileSize, formatNumber } from "@/lib/format";
 import { ResourceHeader } from "@/components/resource/ResourceHeader";
 import { ResourceGallery } from "@/components/resource/ResourceGallery";
 import { PurchaseCard } from "@/components/resource/PurchaseCard";
@@ -17,6 +17,8 @@ import { CreatorCard } from "@/components/resource/CreatorCard";
 import { RelatedResources } from "@/components/resource/RelatedResources";
 import { ResourceReviews } from "@/components/resource/ResourceReviews";
 import { ResourceReviewForm } from "@/components/resource/ResourceReviewForm";
+import { PendingPurchasePoller } from "@/components/checkout/PendingPurchasePoller";
+import { AutoScrollOnSuccess } from "@/components/resource/AutoScrollOnSuccess";
 import { getOwnedIdsFromSet, hasPurchased } from "@/services/purchase.service";
 import { getPublicResourcePageData } from "@/services/resource.service";
 import {
@@ -200,6 +202,13 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
     typeof resolvedSearchParams.payment === "string"
       ? resolvedSearchParams.payment
       : undefined;
+
+  // True when the user has just returned from a payment provider but the
+  // webhook has not yet flipped their Purchase row to COMPLETED.
+  // Guard: requires an authenticated session — anonymous users can never own.
+  const isReturningFromCheckout = paymentStatus === "success";
+  const isPendingPurchase = isReturningFromCheckout && !isOwned && !!userId;
+
   const fallbackPreviewUrl = resource.previewUrl ?? resource.previews[0]?.imageUrl ?? null;
   const includedFiles = buildIncludedFiles(resource);
   const identityTargets = buildIdentityTargets(resource);
@@ -244,161 +253,236 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
     comparisonAnchor,
   };
 
+  const currentIsFree = resource.isFree || resource.price === 0;
+  const currentPrice = resource.price ?? 0;
+  const currentRating = trustSummary.averageRating ?? 0;
+  const currentSales = trustSummary.totalSales ?? 0;
+  const currentDownloads = resource.resourceStat?.downloads ?? resource.downloadCount ?? 0;
+
+  const relatedResourcesWithBadges = relatedResources.map((r) => {
+    const relatedIsFree = r.isFree || (r.price ?? 0) === 0;
+    let badge: string | null = null;
+    if (relatedIsFree && !currentIsFree) {
+      badge = "Free alternative";
+    } else if (!relatedIsFree && !currentIsFree && (r.price ?? 0) < currentPrice) {
+      badge = "Cheaper";
+    } else if ((r.rating ?? 0) > currentRating && currentRating > 0) {
+      badge = "Higher rated";
+    } else if ((r.salesCount ?? 0) > currentSales && currentSales > 0) {
+      badge = "More popular";
+    } else if ((r.downloadCount ?? 0) > currentDownloads && currentDownloads > 0) {
+      badge = "More downloads";
+    }
+    return badge ? { ...r, highlightBadge: badge } : r;
+  });
+
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
 
       <main className="flex-1 bg-zinc-50">
-        <PageContainer className="py-8 sm:py-10 lg:py-12">
-          <PageContentWide className="space-y-8 lg:space-y-10">
-            <section className="rounded-[32px] border border-surface-200 bg-gradient-to-br from-white via-white to-brand-50/30 p-4 shadow-card sm:p-6 lg:p-8">
-              <div className="space-y-6 lg:space-y-8">
-                <ResourceHeader
-                  breadcrumb={[
-                    { label: "Home", href: "/" },
-                    ...(resource.category
-                      ? [{ label: resource.category.name, href: `/categories/${resource.category.slug}` }]
-                      : []),
-                  ]}
-                  title={resource.title}
-                  creatorName={resource.author.name}
-                  creatorHref={resource.author.id ? `/creators/${resource.author.id}` : null}
-                  featured={resource.featured}
-                  averageRating={trustSummary.averageRating}
-                  reviewCount={trustSummary.totalReviews}
-                  salesCount={trustSummary.totalSales}
-                  downloadCount={resource.resourceStat?.downloads ?? resource.downloadCount}
-                />
+        <Container className="py-10 sm:py-12 lg:py-14">
+          <div className="space-y-6 lg:space-y-8">
 
-                {/* Payment feedback banners */}
-                {paymentStatus === "success" && (
-                  <div className="space-y-4 rounded-2xl border border-emerald-100 bg-emerald-50 px-5 py-4 shadow-sm">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" />
-                      <div>
-                        <p className="text-[14px] font-semibold text-emerald-800">Payment successful!</p>
-                        <p className="mt-0.5 text-[13px] text-emerald-700">
-                          Your purchase is being confirmed. Head to{" "}
-                          <Link href="/library" className="underline underline-offset-2">
-                            My Library
-                          </Link>{" "}
-                          to access your download once it appears.
-                        </p>
-                      </div>
-                    </div>
-                    {relatedResources.length > 0 && (
-                      <div className="rounded-2xl border border-emerald-200 bg-white/80 p-4">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700">
-                          Next best action
-                        </p>
-                        <p className="mt-1 text-[13px] text-emerald-900">
-                          Keep going with similar resources from the same study flow.
-                        </p>
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {relatedResources.slice(0, 2).map((related) => (
-                            <Link
-                              key={related.id}
-                              href={`/resources/${related.slug}`}
-                              className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[12px] font-medium text-emerald-800 transition hover:bg-emerald-100"
-                            >
-                              {related.title}
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
+            {/* ── Full-width header ───────────────────────────────────────── */}
+            <ResourceHeader
+              breadcrumb={[
+                { label: "Home", href: "/" },
+                ...(resource.category
+                  ? [{ label: resource.category.name, href: `/categories/${resource.category.slug}` }]
+                  : []),
+              ]}
+              title={resource.title}
+              creatorName={resource.author.name}
+              creatorHref={resource.author.creatorSlug ? `/creators/${resource.author.creatorSlug}` : null}
+              featured={resource.featured}
+              averageRating={trustSummary.averageRating}
+              reviewCount={trustSummary.totalReviews}
+              salesCount={trustSummary.totalSales}
+              downloadCount={resource.resourceStat?.downloads ?? resource.downloadCount}
+            />
 
-                {paymentStatus === "cancelled" && (
-                  <div className="flex items-start gap-3 rounded-2xl border border-amber-100 bg-amber-50 px-5 py-4 shadow-sm">
-                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
-                    <p className="text-[13px] text-amber-700">
-                      Payment was cancelled. You have not been charged.
+            {/* Payment feedback banners */}
+            {/*
+              Confirmed — webhook already processed before the user landed.
+              Show a brief reassurance notice. The PurchaseCard below already
+              displays the Download button in owned state.
+            */}
+            {isReturningFromCheckout && isOwned && (
+              <div className="flex items-center justify-between gap-4 rounded-2xl border border-emerald-100 bg-emerald-50 px-5 py-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" />
+                  <div>
+                    <p className="text-[14px] font-semibold text-emerald-800">
+                      Payment confirmed — your file is ready.
+                    </p>
+                    <p className="mt-0.5 text-[13px] text-emerald-700">
+                      Added to your library.
                     </p>
                   </div>
+                </div>
+                {hasFile && (
+                  <a
+                    href={`/api/download/${resource.id}`}
+                    className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-emerald-700"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    Download instantly
+                  </a>
                 )}
+              </div>
+            )}
 
-                {/* Gallery: thumbnails | preview | purchase card (3 columns on lg, equal height) */}
-                <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[80px_1fr_320px]">
+            {paymentStatus === "cancelled" && (
+              <div className="flex items-start gap-3 rounded-2xl border border-amber-100 bg-amber-50 px-5 py-4">
+                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
+                <p className="text-[13px] text-amber-700">
+                  Payment was cancelled. You have not been charged.
+                </p>
+              </div>
+            )}
+
+            <AutoScrollOnSuccess enabled={isReturningFromCheckout && isOwned} />
+
+            {/* ── Main two-column grid ────────────────────────────────────── */}
+            {/*
+              Desktop: col-1 row-1 = Gallery, col-1 row-2 = content,
+                       col-2 rows 1-2 = sticky PurchaseCard
+              Mobile:  Gallery (order-1) → PurchaseCard (order-2) → content (order-3)
+            */}
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] items-start">
+
+              {/* GALLERY — order-1 mobile, col-1 row-1 desktop */}
+              <div className="order-1 lg:col-start-1 lg:row-start-1">
+                <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-[80px_minmax(0,1fr)]">
                   <ResourceGallery
                     previews={resource.previews}
                     resourceTitle={resource.title}
                     fallbackImageUrl={fallbackPreviewUrl}
                   />
-                  <div className="order-3 h-full min-h-0">
-                    <PurchaseCard
-                      resource={purchaseCardResource}
-                      isOwned={isOwned}
-                      hasFile={hasFile}
-                      session={session}
-                    />
-                  </div>
                 </div>
               </div>
-            </section>
 
-            {/* Sections: About → Included files → Tags → Creator card → Related resources */}
-            <div className="space-y-10 lg:space-y-12">
-              <section className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-                <div className="rounded-2xl border border-surface-200 bg-white p-5 shadow-card sm:p-6">
-                  <div className="space-y-1">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-                      What you&apos;ll achieve
-                    </p>
-                    <h2 className="font-display text-lg font-semibold text-zinc-900">
-                      Move faster with a clearer study path
-                    </h2>
-                  </div>
-                  <ul className="mt-4 space-y-3">
-                    {outcomePoints.map((point) => (
-                      <li key={point} className="flex gap-3 text-[14px] leading-7 text-zinc-600">
-                        <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-500" />
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              {/* CONTENT — order-3 mobile, col-1 row-2 desktop */}
+              <div className="order-3 space-y-8 lg:col-start-1 lg:row-start-2">
 
-                <div className="rounded-2xl border border-surface-200 bg-white p-5 shadow-card sm:p-6">
-                  <div className="space-y-1">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-                      Best for
-                    </p>
-                    <h2 className="font-display text-lg font-semibold text-zinc-900">
-                      Learners who want a stronger starting point
-                    </h2>
-                  </div>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {identityTargets.map((target) => (
-                      <span
-                        key={target}
-                        className="inline-flex rounded-full border border-surface-200 bg-surface-50 px-3 py-1.5 text-[13px] font-medium text-zinc-700"
-                      >
-                        {target}
+                {/* 1. What's included */}
+                {((purchaseCardResource.fileSize != null && purchaseCardResource.fileSize > 0) || purchaseCardResource.type || hasFile) && (
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-2xl border border-surface-200 bg-white px-5 py-3 text-[13px] text-zinc-500">
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+                      What&apos;s included
+                    </span>
+                    {purchaseCardResource.type && (
+                      <span className="font-medium text-zinc-700">
+                        {purchaseCardResource.type === "PDF" ? "PDF document" : purchaseCardResource.type}
                       </span>
-                    ))}
+                    )}
+                    {purchaseCardResource.fileSize != null && purchaseCardResource.fileSize > 0 && (
+                      <span>{formatFileSize(purchaseCardResource.fileSize)}</span>
+                    )}
+                    {hasFile && (
+                      <span className="text-emerald-600">✓ Ready to download</span>
+                    )}
                   </div>
-                  <p className="mt-4 text-[13px] leading-6 text-zinc-500">
-                    A good fit if you want less guesswork, a cleaner study workflow, and something you can revisit when it matters.
-                  </p>
-                </div>
-              </section>
+                )}
 
-              <ResourceDescription title="About" description={resource.description} />
-              <ResourceFiles files={includedFiles} />
-              {userId && isOwned ? (
-                <ResourceReviewForm
-                  resourceId={resource.id}
-                  resourceTitle={resource.title}
-                  existingReview={viewerReview}
-                />
-              ) : null}
-              <ResourceReviews reviews={reviews} resourceTitle={resource.title} />
-              <TagList tags={resource.tags.map((rt) => rt.tag)} />
-              <CreatorCard creator={{ id: resource.author.id, name: resource.author.name, image: resource.author.image }} />
-              <RelatedResources resources={relatedResources} ownedIds={ownedRelatedIds} />
+                {/* 3. Value sections */}
+                <section className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
+                  <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-5">
+                    <div className="space-y-1">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
+                        What you&apos;ll achieve
+                      </p>
+                      <h2 className="font-display text-xl font-semibold text-zinc-900">
+                        Move faster with a clearer study path
+                      </h2>
+                    </div>
+                    <ul className="mt-4 space-y-3">
+                      {outcomePoints.map((point) => (
+                        <li key={point} className="flex gap-3 text-[14px] leading-7 text-zinc-600">
+                          <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-500" />
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-5">
+                    <div className="space-y-1">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
+                        Best for
+                      </p>
+                      <h2 className="font-display text-xl font-semibold text-zinc-900">
+                        Learners who want a stronger starting point
+                      </h2>
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {identityTargets.map((target) => (
+                        <span
+                          key={target}
+                          className="inline-flex rounded-full border border-surface-200 bg-surface-50 px-3 py-1.5 text-[13px] font-medium text-zinc-700"
+                        >
+                          {target}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="mt-4 text-[13px] leading-6 text-zinc-500">
+                      A good fit if you want less guesswork, a cleaner study workflow, and something you can revisit when it matters.
+                    </p>
+                  </div>
+                </section>
+
+                {/* 4. About */}
+                <ResourceDescription title="About" description={resource.description} />
+
+                {/* 5. Included files */}
+                <ResourceFiles files={includedFiles} />
+
+                {/* 6. Reviews */}
+                <ResourceReviews reviews={reviews} resourceTitle={resource.title} />
+
+                {/* 7. Review form — owners only, after reviews */}
+                {userId && isOwned ? (
+                  <ResourceReviewForm
+                    resourceId={resource.id}
+                    resourceTitle={resource.title}
+                    existingReview={viewerReview}
+                  />
+                ) : null}
+
+                {/* 8. Tags */}
+                <TagList tags={resource.tags.map((rt) => rt.tag)} />
+
+                {/* 9. Creator */}
+                <CreatorCard creator={{ id: resource.author.id, name: resource.author.name, image: resource.author.image, creatorSlug: resource.author.creatorSlug }} />
+
+              </div>
+
+              {/* PURCHASE CARD — order-2 mobile, col-2 rows 1–2 desktop */}
+              <aside id="purchase-card" className="order-2 self-start lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-24">
+                {/*
+                  isPendingPurchase: user just paid but webhook hasn't
+                  processed yet. Show the polling confirmation card instead
+                  of PurchaseCard to prevent a 403 on an early download
+                  attempt. Once router.refresh() sees isOwned=true the
+                  Server Component re-renders this slot with PurchaseCard.
+                */}
+                {isPendingPurchase ? (
+                  <PendingPurchasePoller resourceTitle={resource.title} />
+                ) : (
+                  <PurchaseCard
+                    resource={purchaseCardResource}
+                    isOwned={isOwned}
+                    hasFile={hasFile}
+                    session={session}
+                    isReturningFromCheckout={isReturningFromCheckout && isOwned}
+                  />
+                )}
+              </aside>
             </div>
+
+            {/* ── Related resources — outside the two-column grid ─────────── */}
+            <RelatedResources resources={relatedResourcesWithBadges} ownedIds={ownedRelatedIds} />
 
             {/* Back link */}
             <div className="border-t border-surface-200 pt-6">
@@ -410,8 +494,9 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
                 Discover more resources
               </Link>
             </div>
-          </PageContentWide>
-        </PageContainer>
+
+          </div>
+        </Container>
       </main>
     </div>
   );

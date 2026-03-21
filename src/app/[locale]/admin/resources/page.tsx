@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
-import { BookOpen, Plus } from "lucide-react";
+import { BookOpen, Plus, Upload } from "lucide-react";
 
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -188,6 +188,17 @@ export default async function AdminResourcesPage({
             <Link href="/admin/resources/trash">
               <BookOpen className="h-4 w-4 text-text-secondary" />
               <span>View Trash</span>
+            </Link>
+          </Button>
+          <Button
+            asChild
+            size="sm"
+            variant="outline"
+            className="inline-flex items-center gap-2"
+          >
+            <Link href="/admin/resources/bulk">
+              <Upload className="h-4 w-4 text-text-secondary" />
+              <span>Bulk Upload</span>
             </Link>
           </Button>
           <Button asChild size="sm" className="inline-flex items-center gap-2">

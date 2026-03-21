@@ -5,7 +5,6 @@ import { Topbar } from "./Topbar";
 import { AdminUXProvider } from "@/features/admin-ux/AdminUXProvider";
 import { NotificationStack } from "@/components/admin/NotificationStack";
 import { CommandPalette } from "@/components/CommandPalette";
-import { PageContentWide } from "@/design-system";
 import { DashboardShell } from "@/components/layout/dashboard/DashboardShell";
 import { getDashboardNav } from "@/lib/dashboard/getDashboardNav";
 import { getDashboardShellVariant } from "@/lib/dashboard/dashboard-permissions";
@@ -51,7 +50,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           />
         )}
       >
-        <PageContentWide>{children}</PageContentWide>
+        {children}
       </DashboardShell>
       <CommandPalette />
     </AdminUXProvider>

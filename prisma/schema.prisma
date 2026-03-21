@@ -65,6 +65,13 @@ enum CreatorStatus {
   SUSPENDED
 }
 
+enum CreatorApplicationStatus {
+  NOT_APPLIED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id             String    @id @default(cuid())
   name           String?
@@ -77,9 +84,13 @@ model User {
   creatorSlug        String?   @unique
   creatorBio         String?   @db.Text
   creatorBanner      String?
-  creatorEnabled     Boolean   @default(false)
-  creatorStatus      CreatorStatus @default(INACTIVE)
-  creatorSocialLinks Json?
+  creatorEnabled            Boolean                  @default(false)
+  creatorStatus             CreatorStatus            @default(INACTIVE)
+  creatorApplicationStatus  CreatorApplicationStatus @default(NOT_APPLIED)
+  appliedAt                 DateTime?
+  reviewedAt                DateTime?
+  rejectionReason           String?
+  creatorSocialLinks        Json?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 

@@ -1,4 +1,6 @@
 import { verifyXenditWebhook } from "@/lib/xendit";
+import { logActivity } from "@/lib/activity";
+import { sendPurchaseConfirmationEmail } from "@/services/email/email.service";
 import {
   completeRecoveredPurchase,
   completeXenditPurchaseById,
@@ -165,4 +167,24 @@ async function recordXenditPurchaseAnalytics(
   }).catch((error) => {
     console.error("[XENDIT WEBHOOK] Failed to record purchase analytics:", error);
   });
+
+  void logActivity({
+    userId: context.userId,
+    action: "PURCHASE_COMPLETED_WEBHOOK",
+    entity: "purchase",
+    entityId: context.purchaseId,
+    metadata: {
+      purchaseId: context.purchaseId,
+      resourceId: context.resourceId,
+      provider: "XENDIT",
+      amount: context.amount,
+    },
+  });
+
+  // Fire post-purchase confirmation email. Non-blocking — a send failure
+  // must never affect webhook reliability or purchase completion.
+  void sendPurchaseConfirmationEmail({
+    userId: context.userId,
+    resourceId: context.resourceId,
+  }).catch(() => {});
 }

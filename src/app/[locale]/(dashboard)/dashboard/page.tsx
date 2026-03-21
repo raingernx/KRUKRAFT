@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import Link from "next/link";
 import Image from "next/image";
 import { authOptions } from "@/lib/auth";
+import { requireSession } from "@/lib/auth/require-session";
 import {
   BookOpen,
   Download,
@@ -90,12 +90,11 @@ function formatLevelLabel(level?: "BEGINNER" | "INTERMEDIATE" | "ADVANCED") {
 }
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) redirect("/auth/login?next=/dashboard");
+  const { userId, session } = await requireSession("/dashboard");
 
   const [purchases, totalDownloads] = await Promise.all([
-    getUserPurchases(session.user.id),
-    getUserDownloadCount(session.user.id),
+    getUserPurchases(userId),
+    getUserDownloadCount(userId),
   ]);
   const ownedResourceIds = purchases.map((purchase) => purchase.resource.id);
   const learningProfile = buildDashboardLearningProfile(purchases);

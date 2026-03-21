@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -12,6 +10,7 @@ import {
   Clock,
 } from "lucide-react";
 import { authOptions } from "@/lib/auth";
+import { requireSession } from "@/lib/auth/require-session";
 import { prisma } from "@/lib/prisma";
 import { formatDate, formatPrice } from "@/lib/format";
 import { getPlatform } from "@/services/platform.service";
@@ -67,11 +66,10 @@ const STATUS_CONFIG = {
 };
 
 export default async function PurchasesPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) redirect("/auth/login?next=/dashboard/purchases");
+  const { userId } = await requireSession("/dashboard/purchases");
 
   const platform = await getPlatform();
-  const purchases = await getPurchases(session.user.id);
+  const purchases = await getPurchases(userId);
 
   const totalSpent = purchases
     .filter((p) => p.status === "COMPLETED")

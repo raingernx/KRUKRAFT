@@ -248,6 +248,27 @@ export async function countDownloadEventsByUser(userId: string) {
   });
 }
 
+/**
+ * Returns the number of DownloadEvent rows that exist for a specific
+ * user + resource pair.
+ *
+ * Used by the download service to determine whether the current download
+ * is the user's first ever for this resource.  Because this is read before
+ * the new DownloadEvent is created in the same request, a count of 0 means
+ * no prior download exists — i.e. this is the first one.
+ *
+ * DownloadEvent creation itself is deduplicated by a 60-second window, so
+ * this count reliably represents distinct download sessions, not raw clicks.
+ */
+export async function countDownloadEventsByUserAndResource(
+  userId: string,
+  resourceId: string,
+): Promise<number> {
+  return prisma.downloadEvent.count({
+    where: { userId, resourceId },
+  });
+}
+
 export async function findDownloadHistoryByUser(userId: string) {
   return prisma.downloadEvent.findMany({
     where: { userId },
@@ -567,6 +588,45 @@ export async function completeRecoveredPurchase(
     }
 
     return { matched: Boolean(existing), completed: true, resourceId: input.resourceId };
+  });
+}
+
+// ── Per-user download signals (Phase 2 behavior profiling) ───────────────────
+
+export interface UserDownloadSignal {
+  createdAt: Date;
+  resource: {
+    id: string;
+    category: { id: string; name: string; slug: string } | null;
+    tags: Array<{ tag: { id: string; slug: string } }>;
+  };
+}
+
+/**
+ * Returns DownloadEvent rows for the given user since the provided date.
+ * Used by the Phase 2 recommendation engine to compute tag/category weights.
+ */
+export async function findUserDownloadSignalsInWindow(
+  userId: string,
+  since: Date,
+): Promise<UserDownloadSignal[]> {
+  return prisma.downloadEvent.findMany({
+    where: {
+      userId,
+      createdAt: { gte: since },
+    },
+    select: {
+      createdAt: true,
+      resource: {
+        select: {
+          id: true,
+          category: { select: { id: true, name: true, slug: true } },
+          tags: { select: { tag: { select: { id: true, slug: true } } } },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 100,
   });
 }
 

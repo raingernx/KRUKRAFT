@@ -1,7 +1,9 @@
-import type { CreatorStatus, UserRole } from "@prisma/client";
+import type { CreatorStatus, UserRole, CreatorApplicationStatus } from "@prisma/client";
+import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { z } from "zod";
 import { CACHE_KEYS, CACHE_TAGS, CACHE_TTLS, rememberJson } from "@/lib/cache";
+import { logActivity } from "@/lib/activity";
 import { slugify } from "@/lib/utils";
 import { findCreatorStatByCreatorId } from "@/repositories/analytics/analytics.repository";
 import { getCreatorPayouts, sumCreatorPayouts } from "@/repositories/payouts/payout.repository";
@@ -9,6 +11,7 @@ import {
   createCreatorResourceRecord,
   enableCreatorAccessRecord,
   findCreatorAccessContext,
+  findMostRecentCreatorDraft,
   findCreatorCategories,
   findCreatorDownloadSeries,
   findCreatorEarningsTotals,
@@ -34,6 +37,13 @@ import {
   getCreatorResourceReviewSummaries,
   type CreatorResourceFilters,
   getCreatorVisibleRatingDistribution,
+  submitCreatorApplicationRecord,
+  findCreatorApplicationRecord,
+  findPendingCreatorApplications,
+  findAllCreatorApplications,
+  approveCreatorApplicationRecord,
+  rejectCreatorApplicationRecord,
+  type CreatorApplicationInput,
 } from "@/repositories/creators/creator.repository";
 import { findResourceBySlug } from "@/repositories/resources/resource.repository";
 
@@ -138,6 +148,7 @@ export interface CreatorAccessState {
   resourceCount: number;
   creatorEnabled: boolean;
   creatorStatus: CreatorStatus;
+  applicationStatus: CreatorApplicationStatus;
 }
 
 export interface CreatorMetrics {
@@ -261,6 +272,16 @@ export interface CreatorResourceStatusSummary {
   draft: number;
   published: number;
   archived: number;
+}
+
+export interface DashboardRecentSale {
+  id: string;
+  resourceTitle: string;
+  resourceSlug: string;
+  buyerName: string;
+  amount: number;
+  creatorShare: number;
+  createdAt: Date;
 }
 
 export interface CreatorSocialLinks {
@@ -556,23 +577,35 @@ function mapTopResource(resource: CreatorManagementResource): TopResource {
   };
 }
 
-export async function getCreatorAccessState(userId: string): Promise<CreatorAccessState> {
+const CREATOR_ACCESS_STATE_EMPTY: CreatorAccessState = {
+  eligible: false,
+  canCreate: false,
+  role: null,
+  resourceCount: 0,
+  creatorEnabled: false,
+  creatorStatus: "INACTIVE",
+  applicationStatus: "NOT_APPLIED",
+};
+
+export const getCreatorAccessState = cache(async function getCreatorAccessState(
+  userId: string,
+): Promise<CreatorAccessState> {
+  // Guard: never allow an empty/undefined userId to reach Prisma.
+  // session.user.id can be undefined at runtime despite the TypeScript type.
+  if (!userId) {
+    return CREATOR_ACCESS_STATE_EMPTY;
+  }
+
   const context = await findCreatorAccessContext(userId);
 
   if (!context) {
-    return {
-      eligible: false,
-      canCreate: false,
-      role: null,
-      resourceCount: 0,
-      creatorEnabled: false,
-      creatorStatus: "INACTIVE",
-    };
+    return CREATOR_ACCESS_STATE_EMPTY;
   }
 
   const resourceCount = context._count.resources;
   const creatorEnabled = context.creatorEnabled;
   const creatorStatus = context.creatorStatus;
+  const applicationStatus = context.creatorApplicationStatus;
   const explicitEligible = creatorEnabled && creatorStatus === "ACTIVE";
   const legacyEligible =
     context.role === "INSTRUCTOR" || resourceCount > 0;
@@ -585,8 +618,9 @@ export async function getCreatorAccessState(userId: string): Promise<CreatorAcce
     resourceCount,
     creatorEnabled,
     creatorStatus,
+    applicationStatus,
   };
-}
+});
 
 export async function isCreatorEligible(userId: string) {
   return (await getCreatorAccessState(userId)).eligible;
@@ -696,6 +730,29 @@ export async function getCreatorDashboardPerformance(
   }));
 }
 
+export async function getCreatorRecentSalesForDashboard(
+  userId: string,
+): Promise<DashboardRecentSale[]> {
+  await requireCreatorAccess(userId);
+
+  const raw = await findCreatorRecentSales(userId, 5);
+
+  return raw
+    .filter((sale) => sale.purchase.status === "COMPLETED")
+    .map((sale) => ({
+      id: sale.id,
+      resourceTitle: sale.resource.title,
+      resourceSlug: sale.resource.slug,
+      buyerName:
+        sale.purchase.user.name ??
+        sale.purchase.user.email ??
+        "New customer",
+      amount: sale.amount,
+      creatorShare: sale.creatorShare,
+      createdAt: sale.createdAt,
+    }));
+}
+
 export async function getCreatorBalance(userId: string): Promise<CreatorBalance> {
   await requireCreatorAccess(userId);
 
@@ -736,6 +793,26 @@ export async function getCreatorResourceStatusSummary(
 }
 
 export type CreatorResource = Awaited<ReturnType<typeof getCreatorResources>>[number];
+
+export interface CreatorDraft {
+  id: string;
+  title: string;
+  description: string;
+  isFree: boolean;
+  price: number;
+  fileUrl: string | null;
+  updatedAt: Date;
+  status: string;
+}
+
+/**
+ * Returns the most recently updated DRAFT resource owned by this creator,
+ * or null if none exist. Used to power the "continue editing" CTA.
+ */
+export async function getCreatorMostRecentDraft(userId: string): Promise<CreatorDraft | null> {
+  await requireCreatorAccess(userId);
+  return findMostRecentCreatorDraft(userId);
+}
 
 export async function getCreatorResourceManagementData(
   userId: string,
@@ -955,6 +1032,86 @@ export async function activateCreatorAccess(userId: string) {
   return getCreatorAccessState(userId);
 }
 
+// ── Creator Application Flow ──────────────────────────────────────────────────
+
+export interface CreatorApplicationFormInput {
+  creatorDisplayName: string;
+  creatorSlug: string;
+  creatorBio: string;
+}
+
+const CreatorApplicationSchema = z.object({
+  creatorDisplayName: z.string().min(2, "Display name must be at least 2 characters.").max(64),
+  creatorSlug: z
+    .string()
+    .min(2, "Slug must be at least 2 characters.")
+    .max(48)
+    .regex(/^[a-z0-9-]+$/, "Slug may only contain lowercase letters, numbers, and hyphens."),
+  creatorBio: z.string().max(500, "Bio must be 500 characters or fewer.").optional(),
+});
+
+export async function submitCreatorApplication(userId: string, input: unknown) {
+  const state = await getCreatorAccessState(userId);
+
+  if (state.applicationStatus === "PENDING") {
+    throw new CreatorServiceError(409, { error: "Your application is already under review." });
+  }
+  if (state.applicationStatus === "APPROVED" || state.eligible) {
+    throw new CreatorServiceError(409, { error: "You already have creator access." });
+  }
+
+  const parsed = CreatorApplicationSchema.safeParse(input);
+  if (!parsed.success) {
+    const { flattened, fieldErrors } = buildFieldErrors(parsed.error);
+    throw new CreatorServiceError(400, {
+      error: "Validation failed.",
+      fields: fieldErrors,
+      errors: { fieldErrors: flattened.fieldErrors, formErrors: flattened.formErrors },
+    });
+  }
+
+  const slug = parsed.data.creatorSlug;
+  const existing = await findCreatorSlugOwner(slug);
+  if (existing && existing.id !== userId) {
+    throw new CreatorServiceError(409, {
+      error: "That creator slug is already in use.",
+      fields: { creatorSlug: "That creator slug is already in use." },
+    });
+  }
+
+  await submitCreatorApplicationRecord(userId, {
+    creatorDisplayName: parsed.data.creatorDisplayName.trim(),
+    creatorSlug: slug,
+    creatorBio: parsed.data.creatorBio?.trim() ?? "",
+  });
+}
+
+export async function approveCreatorApplication(userId: string) {
+  const record = await findCreatorApplicationRecord(userId);
+  if (!record) throw new CreatorServiceError(404, { error: "No application found for this user." });
+  if (record.creatorApplicationStatus !== "PENDING") {
+    throw new CreatorServiceError(409, { error: "Application is not in PENDING state." });
+  }
+  await approveCreatorApplicationRecord(userId);
+}
+
+export async function rejectCreatorApplication(userId: string, reason: string) {
+  const record = await findCreatorApplicationRecord(userId);
+  if (!record) throw new CreatorServiceError(404, { error: "No application found for this user." });
+  if (record.creatorApplicationStatus !== "PENDING") {
+    throw new CreatorServiceError(409, { error: "Application is not in PENDING state." });
+  }
+  await rejectCreatorApplicationRecord(userId, reason);
+}
+
+export async function getPendingCreatorApplications() {
+  return findPendingCreatorApplications();
+}
+
+export async function getAllCreatorApplications() {
+  return findAllCreatorApplications();
+}
+
 export async function updateCreatorProfile(userId: string, input: unknown) {
   await requireCreatorAccess(userId);
 
@@ -1112,12 +1269,21 @@ export async function createCreatorResource(userId: string, input: unknown) {
   }
 
   const previewUrls = normalizePreviewUrls(parsed.data.previewUrls);
-  const slug = await generateUniqueResourceSlug(
-    parsed.data.slug?.trim() || parsed.data.title,
-    userId,
-  );
+  const [slug, existingSummary] = await Promise.all([
+    generateUniqueResourceSlug(
+      parsed.data.slug?.trim() || parsed.data.title,
+      userId,
+    ),
+    findCreatorResourceStatusSummary(userId),
+  ]);
 
-  return createCreatorResourceRecord({
+  const isFirstResource =
+    (existingSummary.draft ?? 0) +
+      (existingSummary.published ?? 0) +
+      (existingSummary.archived ?? 0) ===
+    0;
+
+  const resource = await createCreatorResourceRecord({
     userId,
     title: parsed.data.title.trim(),
     slug,
@@ -1134,6 +1300,18 @@ export async function createCreatorResource(userId: string, input: unknown) {
     previewUrl: previewUrls[0] ?? null,
     previewUrls,
   });
+
+  if (isFirstResource) {
+    void logActivity({
+      userId,
+      action: "creator_first_resource_draft_created",
+      entity: "resource",
+      entityId: resource.id,
+      metadata: { status: resource.status, title: resource.title },
+    });
+  }
+
+  return resource;
 }
 
 export async function updateCreatorResource(userId: string, resourceId: string, input: unknown) {
@@ -1246,7 +1424,21 @@ export async function publishCreatorResource(userId: string, resourceId: string)
   await requireCreatorAccess(userId);
   await ensureCreatorResourcePublishable(userId, resourceId);
 
-  return applyCreatorResourceStatus(userId, resourceId, "PUBLISHED");
+  const summaryBefore = await findCreatorResourceStatusSummary(userId);
+  const isFirstPublish = (summaryBefore.published ?? 0) === 0;
+
+  const result = await applyCreatorResourceStatus(userId, resourceId, "PUBLISHED");
+
+  if (isFirstPublish) {
+    void logActivity({
+      userId,
+      action: "creator_first_resource_published",
+      entity: "resource",
+      entityId: resourceId,
+    });
+  }
+
+  return result;
 }
 
 export async function unpublishCreatorResource(userId: string, resourceId: string) {

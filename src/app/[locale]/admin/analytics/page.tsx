@@ -12,6 +12,8 @@ import {
   Users,
   Package,
   BarChart2,
+  FlaskConical,
+  ArrowRight,
 } from "lucide-react";
 
 export const metadata = {
@@ -286,6 +288,34 @@ export default async function AdminAnalyticsPage() {
             </ul>
           )}
         </Card>
+      </div>
+
+      {/* ── Experiments ───────────────────────────────────────────────────── */}
+      <div>
+        <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-text-muted">
+          Experiments
+        </p>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Link
+            href="/admin/analytics/recommendations"
+            className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-xl"
+          >
+            <Card className="p-5 transition-shadow group-hover:shadow-md">
+              <div className="flex items-start justify-between">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                  <FlaskConical className="h-4 w-4" />
+                </span>
+                <ArrowRight className="h-4 w-4 text-text-muted opacity-0 transition-opacity group-hover:opacity-100" />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-text-primary">
+                Recommendation Experiment
+              </p>
+              <p className="mt-0.5 text-xs text-text-secondary">
+                Phase 1 vs Phase 2 · CTR, clicks, purchases
+              </p>
+            </Card>
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,22 +1,25 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface Command {
   id: string;
   label: string;
+  href?: string;
   hint?: string;
 }
 
 const BASE_COMMANDS: Command[] = [
-  { id: "search-resources", label: "Search resources" },
-  { id: "search-users", label: "Search users" },
-  { id: "go-orders", label: "Go to orders" },
-  { id: "open-analytics", label: "Open analytics" },
-  { id: "open-settings", label: "Open settings" },
+  { id: "search-resources", label: "Search resources",  href: "/resources" },
+  { id: "search-users",     label: "Search users",      href: "/admin/users" },
+  { id: "go-orders",        label: "Go to orders",      href: "/admin/orders" },
+  { id: "open-analytics",   label: "Open analytics",    href: "/admin/analytics" },
+  { id: "open-settings",    label: "Open settings",     href: "/admin/settings" },
 ];
 
 export function CommandPalette() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -87,7 +90,10 @@ export function CommandPalette() {
               key={cmd.id}
               type="button"
               className="flex w-full items-center justify-between px-4 py-3 text-left text-sm hover:bg-muted"
-              onClick={close}
+              onClick={() => {
+                close();
+                if (cmd.href) router.push(cmd.href);
+              }}
             >
               <span>{cmd.label}</span>
               {cmd.hint && (

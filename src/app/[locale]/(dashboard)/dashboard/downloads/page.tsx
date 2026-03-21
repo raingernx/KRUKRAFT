@@ -1,9 +1,8 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import Link from "next/link";
 import Image from "next/image";
 import { Download, FileText, BookOpen } from "lucide-react";
 import { authOptions } from "@/lib/auth";
+import { requireSession } from "@/lib/auth/require-session";
 import { formatDate, formatFileSize } from "@/lib/format";
 import { getUserDownloadHistory } from "@/services/purchase.service";
 
@@ -19,10 +18,9 @@ function safeFormatFileSize(bytes: number | null): string {
 }
 
 export default async function DownloadsPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) redirect("/auth/login?next=/dashboard/downloads");
+  const { userId } = await requireSession("/dashboard/downloads");
 
-  const downloads = await getUserDownloadHistory(session.user.id);
+  const downloads = await getUserDownloadHistory(userId);
 
   return (
     <div>

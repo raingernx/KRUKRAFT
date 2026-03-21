@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { formatNumber } from "@/lib/format";
 import { SORT_OPTIONS, normaliseSortParam } from "@/config/sortOptions";
 
@@ -30,6 +30,9 @@ export function FilterBar({ total }: Props) {
   const sort  = normaliseSortParam(searchParams.get("sort"));
   const price = searchParams.get("price") ?? "";
 
+  // True when either filter control is in a non-default state
+  const hasActiveFilterControls = price !== "" || sort !== "newest";
+
   function update(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
     const isEmpty = value === "" || (key === "sort" && value === "newest");
@@ -42,6 +45,14 @@ export function FilterBar({ total }: Props) {
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
+  function clearFilterControls() {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("price");
+    params.delete("sort");
+    params.delete("page");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  }
+
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-surface-200 bg-white p-3 shadow-card sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:p-4">
       {/* Result count */}
@@ -49,7 +60,7 @@ export function FilterBar({ total }: Props) {
         {total === 1 ? "1 resource" : `${formatNumber(total)} resources`}
       </p>
 
-      {/* Filter selects */}
+      {/* Filter selects + clear */}
       <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:items-center">
         <FilterSelect
           value={price}
@@ -63,6 +74,17 @@ export function FilterBar({ total }: Props) {
           onChange={(v) => update("sort", v)}
           aria-label="Sort resources"
         />
+        {hasActiveFilterControls && (
+          <button
+            type="button"
+            onClick={clearFilterControls}
+            aria-label="Clear sort and price filters"
+            className="col-span-2 inline-flex items-center justify-center gap-1.5 rounded-xl border border-surface-200 bg-surface-50 px-3 py-2 text-xs font-medium text-text-secondary transition hover:border-surface-300 hover:bg-white sm:col-span-1"
+          >
+            <X className="h-3.5 w-3.5" />
+            Clear
+          </button>
+        )}
       </div>
     </div>
   );

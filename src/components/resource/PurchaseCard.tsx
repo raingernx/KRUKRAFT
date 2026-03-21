@@ -22,20 +22,16 @@ const TYPE_LABELS: Record<string, string> = {
 
 const CTA_COPY = {
   free: {
-    kicker: "Free resource",
-    description: "Start with a ready-to-use resource instead of piecing study material together yourself.",
-    proof: "No charge. Add it once and come back to it any time from your library.",
+    kicker: "Free to keep",
+    proof: "No card needed. Add it to your library and download any time.",
   },
   paid: {
     kicker: "One-time purchase",
-    description:
-      "Get straight to focused study with one complete resource instead of starting from a blank page.",
-    proof: "Pay once. Keep it in your library and download it whenever you need a refresher.",
+    proof: "Pay once. Yours forever — re-download any time, no subscription needed.",
   },
   owned: {
-    kicker: "Already in your library",
-    description: "You already have what you need to pick this back up and keep moving.",
-    proof: "Authenticated access protects creator files.",
+    kicker: "In your library",
+    proof: "Your download is ready whenever you need it.",
   },
 } as const;
 
@@ -105,6 +101,8 @@ interface PurchaseCardProps {
   isOwned: boolean;
   hasFile: boolean;
   session: { user?: { id?: string; subscriptionStatus?: string } } | null;
+  /** True when the user has just returned from a successful payment. Used for visual emphasis only. */
+  isReturningFromCheckout?: boolean;
 }
 
 export async function PurchaseCard({
@@ -112,6 +110,7 @@ export async function PurchaseCard({
   isOwned,
   hasFile,
   session,
+  isReturningFromCheckout = false,
 }: PurchaseCardProps) {
   const platform = await getPlatform();
   const isFree = resource.isFree || resource.price === 0;
@@ -167,16 +166,19 @@ export async function PurchaseCard({
   return (
     <div className="flex h-full min-h-0 flex-col justify-between rounded-2xl border border-surface-200 bg-white p-6 shadow-card-lg">
       <div className="space-y-4">
-        <div className="space-y-1">
-          {resource.author.name && (
-            <p className="text-[13px] text-zinc-500">by {resource.author.name}</p>
-          )}
-          {resource.category ? (
-            <p className="text-[12px] font-medium uppercase tracking-[0.16em] text-brand-600/80">
-              {resource.category.name}
-            </p>
-          ) : null}
-        </div>
+        {(resource.author.name || resource.category) && (
+          <p className="text-[13px] text-zinc-500">
+            {resource.author.name ? `by ${resource.author.name}` : null}
+            {resource.author.name && resource.category ? (
+              <span className="mx-1.5 text-zinc-300">·</span>
+            ) : null}
+            {resource.category ? (
+              <span className="font-medium uppercase tracking-[0.14em] text-brand-600/80 text-[12px]">
+                {resource.category.name}
+              </span>
+            ) : null}
+          </p>
+        )}
 
         <div className="space-y-2">
           <span className="inline-flex items-center rounded-full bg-surface-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-600">
@@ -185,9 +187,9 @@ export async function PurchaseCard({
           <p className="text-3xl font-bold tracking-tight text-zinc-900">
             <PriceLabel price={resource.price} isFree={isFree} />
           </p>
-          <p className="text-[13px] leading-6 text-zinc-500">
-            {ctaCopy.description}
-          </p>
+          {!isFree && !isOwned && resource.price > 0 && resource.price < 10000 && (
+            <p className="text-[12px] text-zinc-400">≈ less than a coffee ☕</p>
+          )}
           {summaryParts.length > 0 && (
             <p className="text-[12px] font-medium text-zinc-600">
               {summaryParts.join(" · ")}
@@ -212,6 +214,36 @@ export async function PurchaseCard({
           </div>
         )}
 
+        {!isOwned && !isFree && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-emerald-700">
+            <span>✓ Instant access</span>
+            <span aria-hidden className="text-emerald-300">·</span>
+            <span>✓ No subscription</span>
+            <span aria-hidden className="text-emerald-300">·</span>
+            <span>✓ Yours forever</span>
+          </div>
+        )}
+
+        {!isOwned && isFree && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-emerald-700">
+            <span>✓ Free · no card needed</span>
+            <span aria-hidden className="text-emerald-300">·</span>
+            <span>✓ Instant download</span>
+            <span aria-hidden className="text-emerald-300">·</span>
+            <span>✓ Keep forever</span>
+          </div>
+        )}
+
+        {!isOwned && ((resource.salesCount ?? 0) >= 10 || resource.downloadCount >= 50) && (
+          <p className="text-[12px] font-medium text-zinc-500">
+            {(resource.salesCount ?? 0) >= 10
+              ? `Used by ${formatNumber(resource.salesCount ?? 0)}+ teachers`
+              : resource.category
+                ? `Popular in ${resource.category.name}`
+                : `${formatNumber(resource.downloadCount)}+ learners have this`}
+          </p>
+        )}
+
         {recentActivityLabel && !isOwned && (
           <div className="rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3 shadow-sm">
             <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-brand-700">
@@ -225,20 +257,9 @@ export async function PurchaseCard({
         )}
 
         <div className="rounded-2xl bg-surface-50 p-4">
-          <div className="mb-3 space-y-1">
-            <p className="text-[13px] font-semibold text-zinc-900">
-              Get instant access
-            </p>
-            <p className="text-[12px] leading-5 text-zinc-500">{ctaCopy.proof}</p>
-            {!isOwned && (
-              <p className="text-[12px] leading-5 text-zinc-500">
-                Start now instead of figuring it out alone later.
-              </p>
-            )}
-            {!isOwned && hasFile && (
-              <p className="text-[12px] font-medium text-emerald-700">
-                Instant access after purchase. No waiting for approval.
-              </p>
+          <div className={isOwned ? "mb-3 space-y-1" : "mb-3"}>
+            {isOwned && (
+              <p className="text-[12px] leading-5 text-zinc-500">{ctaCopy.proof}</p>
             )}
             {!isOwned && resource.comparisonAnchor && (
               <p className="text-[12px] leading-5 text-zinc-500">
@@ -252,18 +273,26 @@ export async function PurchaseCard({
               <div className="flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-3">
                 <CheckCircle className="h-4 w-4 shrink-0 text-emerald-500" />
                 <p className="text-[13px] font-medium text-emerald-700">
-                  You own this resource
+                  Added to your library
                 </p>
               </div>
               {hasFile ? (
                 <div className="flex flex-col gap-2">
                   <a
                     href={`/api/download/${resource.id}`}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-zinc-700"
+                    className={[
+                      "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-brand-700 ring-1 ring-brand-600/30 ring-offset-1",
+                      isReturningFromCheckout
+                        ? "ring-2 ring-emerald-400/60 ring-offset-2 animate-fade-in"
+                        : "",
+                    ].join(" ")}
                   >
                     <Download className="h-4 w-4" />
-                    Download
+                    Download instantly
                   </a>
+                  <p className="text-center text-[11px] text-zinc-400">
+                    Instant download · Yours forever
+                  </p>
                   {isPreviewSupported(resource.mimeType) && (
                     <a
                       href={`/api/preview/${resource.id}`}
@@ -278,7 +307,7 @@ export async function PurchaseCard({
                 </div>
               ) : (
                 <p className="text-center text-[12px] text-zinc-400">
-                  File not yet available.
+                  File not yet available — check back soon.
                 </p>
               )}
             </div>

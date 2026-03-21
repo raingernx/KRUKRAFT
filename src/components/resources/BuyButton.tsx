@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/design-system";
-import { CreditCard, QrCode, Download, Lock, BookmarkPlus, CheckCircle } from "lucide-react";
+import { AlertCircle, CreditCard, QrCode, Download, Lock, CheckCircle } from "lucide-react";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +24,18 @@ const buyButtonToneClassName = {
     "bg-orange-500 text-white hover:bg-orange-600 active:bg-orange-700 focus-visible:ring-orange-400/50",
 } as const;
 
+function InlineError({ message }: { message: string }) {
+  return (
+    <div
+      role="alert"
+      className="flex items-start gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2.5"
+    >
+      <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-500" aria-hidden />
+      <p className="text-[12px] leading-5 text-red-700">{message}</p>
+    </div>
+  );
+}
+
 export function BuyButton({
   resourceId,
   price,
@@ -31,19 +43,37 @@ export function BuyButton({
   owned,
   hasFile = false,
 }: BuyButtonProps) {
-  // Local owned state allows the UI to update immediately after "Add to Library"
-  // while router.refresh() re-hydrates the full page in the background.
+  // Local owned state — flips optimistically after a successful free claim so
+  // the download button appears immediately before router.refresh() completes.
   const [localOwned, setLocalOwned] = useState(owned);
+
+  const [justClaimed, setJustClaimed] = useState(false);
+  const justClaimedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clean up the micro-reward timer if the component unmounts mid-animation.
+  useEffect(() => {
+    return () => {
+      if (justClaimedTimerRef.current) clearTimeout(justClaimedTimerRef.current);
+    };
+  }, []);
 
   const [loadingStripe, setLoadingStripe] = useState(false);
   const [loadingXendit, setLoadingXendit] = useState(false);
   const [loadingLibrary, setLoadingLibrary] = useState(false);
   const [libraryError, setLibraryError] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  // Flips to true just before browser navigation so button copy updates.
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  // Tracks whether a provider redirect has been triggered. Prevents the
+  // finally block from clearing the loading spinner while the browser is
+  // still mid-navigation to the checkout page.
+  const redirectingRef = useRef(false);
 
   const { data: session } = useSession();
   const router = useRouter();
 
-  // ── Owned state (either from server or after optimistic add-to-library) ──
+  // ── Owned state (either from server or after optimistic free claim) ───────
   if (localOwned) {
     return (
       <div className="space-y-3">
@@ -56,7 +86,7 @@ export function BuyButton({
               className={cn("gap-2", buyButtonToneClassName.dark)}
             >
               <Download className="h-4 w-4" />
-              Download
+              Download now
             </Button>
           </a>
         ) : (
@@ -79,6 +109,16 @@ export function BuyButton({
     );
   }
 
+  // ── Free claim micro-reward ───────────────────────────────────────────────
+  if (justClaimed) {
+    return (
+      <div className="flex items-center justify-center gap-2 rounded-xl bg-emerald-50 px-5 py-3 text-[14px] font-semibold text-emerald-700 animate-fade-in">
+        <CheckCircle className="h-4 w-4 text-emerald-500" />
+        Saved to your library
+      </div>
+    );
+  }
+
   // ── Free resource — not yet in library ───────────────────────────────────
   if (isFree) {
     const handleAddToLibrary = async () => {
@@ -89,17 +129,20 @@ export function BuyButton({
       setLoadingLibrary(true);
       setLibraryError(null);
       try {
-        const res = await fetch("/api/library/add", {
+        const res = await fetch("/api/checkout/free", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ resourceId }),
         });
         const json = await res.json();
         if (res.ok && json.success) {
-          // Optimistic update — show download button immediately
-          setLocalOwned(true);
-          // Then refresh server data so My Library page reflects the new record
-          router.refresh();
+          // Brief reward moment before settling into the owned/download state.
+          setJustClaimed(true);
+          justClaimedTimerRef.current = setTimeout(() => {
+            setJustClaimed(false);
+            setLocalOwned(true);
+            router.refresh();
+          }, 600);
         } else {
           setLibraryError(json.error ?? "Something went wrong. Please try again.");
         }
@@ -120,16 +163,14 @@ export function BuyButton({
           fullWidth
           className="gap-2"
         >
-          <BookmarkPlus className="h-4 w-4" />
-          Add to Library · Free
+          <Download className="h-4 w-4" />
+          Get for free
         </Button>
 
-        {libraryError && (
-          <p className="text-center text-[12px] text-red-600">{libraryError}</p>
-        )}
+        {libraryError && <InlineError message={libraryError} />}
 
         <p className="flex items-center justify-center gap-1.5 text-xs text-gray-400">
-          <Lock className="h-3 w-3" /> Free · Secure download after adding
+          <Lock className="h-3 w-3" /> No card needed · Yours to keep forever
         </p>
       </div>
     );
@@ -142,20 +183,38 @@ export function BuyButton({
       return;
     }
     setLoadingStripe(true);
+    setCheckoutError(null);
     try {
-      const res = await fetch("/api/stripe/checkout", {
+      const res = await fetch("/api/checkout/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode: "payment", resourceId }),
+        body: JSON.stringify({ provider: "stripe", resourceId }),
       });
       const json = await res.json();
       if (json.data?.url) {
+        // Fire-and-forget before navigating. keepalive ensures the request
+        // survives the page navigation to the Stripe checkout page.
+        void fetch("/api/analytics/activity", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "CHECKOUT_REDIRECTED",
+            metadata: { resourceId, provider: "stripe", price, isFree: false },
+          }),
+          keepalive: true,
+        });
+        // Mark as redirecting so finally does not clear the spinner while
+        // the browser is still navigating to the Stripe checkout page.
+        setIsRedirecting(true);
+        redirectingRef.current = true;
         window.location.href = json.data.url;
-      } else {
-        alert(json.error ?? "Something went wrong. Please try again.");
+        return;
       }
+      setCheckoutError(json.error ?? "Payment couldn't start. Try again.");
+    } catch {
+      setCheckoutError("Network issue. Check your connection and try again.");
     } finally {
-      setLoadingStripe(false);
+      if (!redirectingRef.current) setLoadingStripe(false);
     }
   };
 
@@ -165,20 +224,37 @@ export function BuyButton({
       return;
     }
     setLoadingXendit(true);
+    setCheckoutError(null);
     try {
-      const res = await fetch("/api/checkout/xendit", {
+      const res = await fetch("/api/checkout/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resourceId }),
+        body: JSON.stringify({ provider: "xendit", resourceId }),
       });
       const json = await res.json();
       if (json.data?.url) {
+        // Fire-and-forget before navigating. keepalive ensures the request
+        // survives the page navigation to the Xendit checkout page.
+        void fetch("/api/analytics/activity", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "CHECKOUT_REDIRECTED",
+            metadata: { resourceId, provider: "xendit", price, isFree: false },
+          }),
+          keepalive: true,
+        });
+        // Same as Stripe — keep spinner active during navigation.
+        setIsRedirecting(true);
+        redirectingRef.current = true;
         window.location.href = json.data.url;
-      } else {
-        alert(json.error ?? "Something went wrong. Please try again.");
+        return;
       }
+      setCheckoutError(json.error ?? "Payment couldn't start. Try again.");
+    } catch {
+      setCheckoutError("Network issue. Check your connection and try again.");
     } finally {
-      setLoadingXendit(false);
+      if (!redirectingRef.current) setLoadingXendit(false);
     }
   };
 
@@ -196,7 +272,9 @@ export function BuyButton({
         className={cn("gap-2 shadow-md", buyButtonToneClassName.accent)}
       >
         <CreditCard className="h-4 w-4" />
-        Pay with Card · {formatPrice(price)}
+        {isRedirecting
+          ? "Taking you to checkout…"
+          : `Get instant access — ${formatPrice(price)}`}
       </Button>
       <Button
         onClick={handleXendit}
@@ -208,11 +286,20 @@ export function BuyButton({
         className="gap-2"
       >
         <QrCode className="h-4 w-4" />
-        Pay with Bank / QR · {formatPrice(price)}
+        {isRedirecting ? "Redirecting…" : `Pay via QR / Bank · ${formatPrice(price)}`}
       </Button>
-      <p className="flex items-center justify-center gap-1.5 text-xs text-gray-400">
-        <Lock className="h-3 w-3" /> Secure checkout · Card or Bank transfer
-      </p>
+
+      {checkoutError && <InlineError message={checkoutError} />}
+
+      {isRedirecting ? (
+        <p className="flex items-center justify-center gap-1.5 text-xs text-gray-400">
+          <Lock className="h-3 w-3" /> Secured by Stripe · You&apos;ll return here after payment
+        </p>
+      ) : (
+        <p className="flex items-center justify-center gap-1.5 text-xs text-gray-400">
+          <Lock className="h-3 w-3" /> Secure checkout · Pay once, keep forever
+        </p>
+      )}
     </div>
   );
 }

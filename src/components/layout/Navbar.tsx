@@ -9,13 +9,12 @@ import {
   LogOut,
   LayoutDashboard,
   BookOpen,
-  Upload,
   ShoppingBag,
   Settings,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { AccountTrigger } from "@/components/layout/account/AccountTrigger";
-import { PageContainer, PageContentWide } from "@/design-system";
+import { Container } from "@/components/layout/container";
 import { NavbarBrand } from "@/components/layout/NavbarBrand";
 import { NavbarItem } from "@/components/layout/navbar/NavbarItem";
 
@@ -46,8 +45,7 @@ export function Navbar() {
     <header className="sticky top-0 z-40 w-full border-b border-surface-200 bg-white/95 backdrop-blur-sm">
 
       {/* ── Main bar ─────────────────────────────────────────────────────── */}
-      <PageContainer>
-        <PageContentWide className="flex h-16 items-center justify-between gap-4 lg:gap-8">
+      <Container className="flex h-16 items-center justify-between gap-4 lg:gap-8">
 
         <NavbarBrand />
 
@@ -128,7 +126,7 @@ export function Navbar() {
                           </span>
                         </Link>
                         <Link
-                          href="/dashboard/resources"
+                          href="/dashboard/library"
                           onClick={() => setUserMenuOpen(false)}
                           className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-text-secondary transition-colors hover:bg-surface-50 hover:text-text-primary"
                         >
@@ -151,23 +149,6 @@ export function Navbar() {
                               aria-hidden
                             />
                             <span>Purchases</span>
-                          </span>
-                        </Link>
-
-                        <div className="my-1.5 border-t border-surface-100" />
-
-                        {/* Upload Resource */}
-                        <Link
-                          href="/upload"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-text-secondary transition-colors hover:bg-surface-50 hover:text-text-primary"
-                        >
-                          <span className="inline-flex items-center gap-2.5">
-                            <Upload
-                              className="h-3.5 w-3.5 text-text-muted"
-                              aria-hidden
-                            />
-                            <span>Upload Resource</span>
                           </span>
                         </Link>
 
@@ -227,8 +208,7 @@ export function Navbar() {
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
-        </PageContentWide>
-      </PageContainer>
+      </Container>
 
       {/* ── Mobile drawer ────────────────────────────────────────────────── */}
       {mobileOpen && (

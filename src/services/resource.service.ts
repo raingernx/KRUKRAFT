@@ -14,8 +14,12 @@
 import { unstable_cache } from "next/cache";
 import { CACHE_TAGS, CACHE_TTLS } from "@/lib/cache";
 import { prisma } from "@/lib/prisma";
-import { LISTED_RESOURCE_WHERE } from "@/lib/query/resourceFilters";
+import { LISTED_RESOURCE_WHERE, PUBLIC_RESOURCE_WHERE } from "@/lib/query/resourceFilters";
 import { RESOURCE_CARD_SELECT } from "@/lib/query/resourceSelect";
+import {
+  findActivationRankedResources,
+  type FindActivationRankedResourcesRow,
+} from "@/repositories/resources/resource.repository";
 import { withPreview } from "@/services/discover.service";
 import { attachResourceTrustSignals } from "@/services/review.service";
 
@@ -62,6 +66,7 @@ const RESOURCE_DETAIL_SELECT = {
       id: true,
       name: true,
       image: true,
+      creatorSlug: true,
     },
   },
   category: {
@@ -130,6 +135,31 @@ const RELATED_RESOURCE_SELECT = {
   },
 } as const;
 
+// ── Activation ranking transform ──────────────────────────────────────────────
+
+/**
+ * Transforms a flat raw-SQL activation-ranked row into the nested shape that
+ * `withPreview` and `attachResourceTrustSignals` expect — identical to what
+ * Prisma returns when using `RESOURCE_CARD_SELECT`.
+ */
+function toActivationRankedCardShape(row: FindActivationRankedResourcesRow) {
+  return {
+    id:            row.id,
+    title:         row.title,
+    slug:          row.slug,
+    price:         row.price,
+    isFree:        row.isFree,
+    featured:      row.featured,
+    downloadCount: row.downloadCount,
+    createdAt:     row.createdAt,
+    author:   { name: row.authorName ?? null },
+    category: row.categoryId !== null
+      ? { id: row.categoryId, name: row.categoryName ?? "", slug: row.categorySlug ?? "" }
+      : null,
+    previews: row.previewImageUrl ? [{ imageUrl: row.previewImageUrl }] : [],
+  };
+}
+
 // ── Filtered marketplace listing ──────────────────────────────────────────────
 
 export interface MarketplaceFilters {
@@ -196,7 +226,7 @@ async function loadMarketplaceResources(filters: MarketplaceFilters) {
     price,
     featured,
     tag,
-    sort     = "newest",
+    sort     = "recommended",
     page     = 1,
     pageSize = 20,
   } = filters;
@@ -235,6 +265,37 @@ async function loadMarketplaceResources(filters: MarketplaceFilters) {
     };
   }
 
+  // ── Activation-weighted "recommended" sort ─────────────────────────────────
+  if (sort === "recommended") {
+    const isFreeFilter =
+      price === "free" ? true : price === "paid" ? false : undefined;
+
+    const [{ rows, total }, categories] = await Promise.all([
+      findActivationRankedResources({
+        categoryId,
+        tagSlug:  trimmedTag,
+        search:   trimmedSearch,
+        isFree:   isFreeFilter,
+        featured: featured || undefined,
+        page,
+        pageSize,
+      }),
+      prisma.category.findMany({ orderBy: { name: "asc" } }),
+    ]);
+
+    const resources = await attachResourceTrustSignals(
+      rows.map((row) => withPreview(toActivationRankedCardShape(row))),
+    );
+
+    return {
+      resources,
+      total,
+      totalPages: Math.max(1, Math.ceil(total / pageSize)),
+      categories,
+    };
+  }
+  // ── All other sort values use the standard Prisma path ─────────────────────
+
   const categoryWhere = categoryId ? { categoryId } : {};
 
   const priceWhere =
@@ -247,7 +308,7 @@ async function loadMarketplaceResources(filters: MarketplaceFilters) {
     : {};
 
   const where = {
-    ...LISTED_RESOURCE_WHERE,
+    ...PUBLIC_RESOURCE_WHERE,
     ...searchWhere,
     ...categoryWhere,
     ...priceWhere,

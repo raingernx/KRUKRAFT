@@ -12,6 +12,11 @@ import {
   Users,
   Package,
   BarChart2,
+  FlaskConical,
+  Rocket,
+  ShoppingCart,
+  SlidersHorizontal,
+  ArrowRight,
 } from "lucide-react";
 
 export const metadata = {
@@ -98,10 +103,10 @@ export default async function AdminAnalyticsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-h2 font-semibold tracking-tight text-text-primary">
+        <h1 className="max-w-3xl font-display text-h2 font-semibold tracking-tight text-text-primary">
           Analytics
         </h1>
-        <p className="mt-1 text-meta text-text-secondary">
+        <p className="mt-1 max-w-2xl text-meta text-text-secondary">
           High-level metrics and trends for your marketplace.
         </p>
       </div>
@@ -180,7 +185,7 @@ export default async function AdminAnalyticsPage() {
       </div>
 
       {/* ── Charts ────────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 2xl:grid-cols-4">
         {/* Daily downloads */}
         <Card className="p-5">
           <div className="mb-4">
@@ -286,6 +291,114 @@ export default async function AdminAnalyticsPage() {
             </ul>
           )}
         </Card>
+      </div>
+
+      {/* ── Experiments ───────────────────────────────────────────────────── */}
+      <div>
+        <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-text-muted">
+          Experiments
+        </p>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-4">
+          <Link
+            href="/admin/analytics/recommendations"
+            className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-xl"
+          >
+            <Card className="p-5 transition-shadow group-hover:shadow-md">
+              <div className="flex items-start justify-between">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                  <FlaskConical className="h-4 w-4" />
+                </span>
+                <ArrowRight className="h-4 w-4 text-text-muted opacity-0 transition-opacity group-hover:opacity-100" />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-text-primary">
+                Recommendation Experiment
+              </p>
+              <p className="mt-0.5 text-xs text-text-secondary">
+                Phase 1 vs Phase 2 · CTR, clicks, purchases
+              </p>
+            </Card>
+          </Link>
+
+          <Link
+            href="/admin/analytics/creator-activation"
+            className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-xl"
+          >
+            <Card className="p-5 transition-shadow group-hover:shadow-md">
+              <div className="flex items-start justify-between">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                  <Rocket className="h-4 w-4" />
+                </span>
+                <ArrowRight className="h-4 w-4 text-text-muted opacity-0 transition-opacity group-hover:opacity-100" />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-text-primary">
+                Creator Activation Funnel
+              </p>
+              <p className="mt-0.5 text-xs text-text-secondary">
+                First-run view → click → draft → published
+              </p>
+            </Card>
+          </Link>
+
+          <Link
+            href="/admin/analytics/purchases"
+            className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-xl"
+          >
+            <Card className="p-5 transition-shadow group-hover:shadow-md">
+              <div className="flex items-start justify-between">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                  <ShoppingCart className="h-4 w-4" />
+                </span>
+                <ArrowRight className="h-4 w-4 text-text-muted opacity-0 transition-opacity group-hover:opacity-100" />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-text-primary">
+                Purchase Funnel
+              </p>
+              <p className="mt-0.5 text-xs text-text-secondary">
+                Sessions started → completed · free claims · revenue
+              </p>
+            </Card>
+          </Link>
+
+          <Link
+            href="/admin/analytics/ranking"
+            className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-xl"
+          >
+            <Card className="p-5 transition-shadow group-hover:shadow-md">
+              <div className="flex items-start justify-between">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                  <SlidersHorizontal className="h-4 w-4" />
+                </span>
+                <ArrowRight className="h-4 w-4 text-text-muted opacity-0 transition-opacity group-hover:opacity-100" />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-text-primary">
+                Ranking Debug
+              </p>
+              <p className="mt-0.5 text-xs text-text-secondary">
+                Score breakdown · purchases · activation · recency
+              </p>
+            </Card>
+          </Link>
+
+          <Link
+            href="/admin/analytics/ranking-experiment"
+            className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-xl"
+          >
+            <Card className="p-5 transition-shadow group-hover:shadow-md">
+              <div className="flex items-start justify-between">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                  <BarChart2 className="h-4 w-4" />
+                </span>
+                <ArrowRight className="h-4 w-4 text-text-muted opacity-0 transition-opacity group-hover:opacity-100" />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-text-primary">
+                Ranking Experiment
+              </p>
+              <p className="mt-0.5 text-xs text-text-secondary">
+                A vs B · checkout starts · conversion · paid activation
+              </p>
+            </Card>
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,12 +1,10 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
-import { PageContainer, PageContentWide } from "@/design-system";
+import { Container } from "@/components/layout/container";
 
 const CREATORS_LINKS = [
   { href: "/resources", label: "Sell resources" },
   { href: "/membership", label: "Membership" },
-  { href: "#", label: "Creator guidelines" },
-  { href: "#", label: "Help center" },
 ];
 
 const RESOURCES_LINKS = [
@@ -14,13 +12,6 @@ const RESOURCES_LINKS = [
   { href: "/resources?price=free", label: "Free resources" },
   { href: "/categories/mathematics", label: "Mathematics" },
   { href: "/categories/science", label: "Science" },
-];
-
-const COMPANY_LINKS = [
-  { href: "#", label: "About" },
-  { href: "#", label: "Blog" },
-  { href: "#", label: "Contact" },
-  { href: "#", label: "Careers" },
 ];
 
 const LEGAL_LINKS = [
@@ -36,9 +27,8 @@ interface FooterProps {
 export function Footer({ platformName }: FooterProps) {
   return (
     <footer className="border-t border-zinc-100 bg-white">
-      <PageContainer className="py-14">
-        <PageContentWide>
-        <div className="grid gap-10 md:grid-cols-5">
+      <Container className="py-14">
+        <div className="grid gap-10 md:grid-cols-4">
           {/* Brand */}
           <div>
             <Logo variant="full" size="sm" />
@@ -73,25 +63,6 @@ export function Footer({ platformName }: FooterProps) {
             </h3>
             <ul className="mt-4 space-y-2.5">
               {RESOURCES_LINKS.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-[13px] text-zinc-500 transition-colors hover:text-zinc-900"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h3 className="text-[10px] font-semibold uppercase tracking-widest text-zinc-400">
-              Company
-            </h3>
-            <ul className="mt-4 space-y-2.5">
-              {COMPANY_LINKS.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
@@ -150,8 +121,7 @@ export function Footer({ platformName }: FooterProps) {
             </Link>
           </div>
         </div>
-        </PageContentWide>
-      </PageContainer>
+      </Container>
     </footer>
   );
 }

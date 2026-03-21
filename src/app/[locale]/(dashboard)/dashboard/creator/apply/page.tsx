@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import {
   BarChart2,
   DollarSign,
@@ -8,6 +7,7 @@ import {
   Upload,
 } from "lucide-react";
 import { authOptions } from "@/lib/auth";
+import { requireSession } from "@/lib/auth/require-session";
 import { BecomeCreatorButton } from "@/components/creator/BecomeCreatorButton";
 import { PageContent } from "@/design-system";
 import { routes } from "@/lib/routes";
@@ -20,12 +20,9 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function CreatorApplyPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    redirect("/auth/login?next=/dashboard/creator/apply");
-  }
+  const { userId } = await requireSession("/dashboard/creator/apply");
 
-  const access = await getCreatorAccessState(session.user.id);
+  const access = await getCreatorAccessState(userId);
   if (access.eligible) {
     redirect(routes.creatorDashboard);
   }

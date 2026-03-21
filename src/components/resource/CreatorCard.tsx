@@ -6,6 +6,7 @@ export interface CreatorCardCreator {
   id: string;
   name: string | null;
   image: string | null;
+  creatorSlug: string | null;
   bio?: string | null;
 }
 
@@ -32,12 +33,14 @@ export async function CreatorCard({ creator }: CreatorCardProps) {
           <p className="mt-0.5 text-[13px] text-zinc-600 line-clamp-2">
             {creator.bio ?? `Creator on ${platform.platformShortName}`}
           </p>
-          <Link
-            href={`/creators/${creator.id}`}
-            className="mt-3 inline-flex rounded-full border border-surface-200 bg-surface-50 px-3 py-1.5 text-[13px] font-medium text-blue-600 transition hover:border-surface-300 hover:bg-white hover:text-blue-700"
-          >
-            View profile
-          </Link>
+          {creator.creatorSlug && (
+            <Link
+              href={`/creators/${creator.creatorSlug}`}
+              className="mt-3 inline-flex rounded-full border border-surface-200 bg-surface-50 px-3 py-1.5 text-[13px] font-medium text-blue-600 transition hover:border-surface-300 hover:bg-white hover:text-blue-700"
+            >
+              View profile
+            </Link>
+          )}
         </div>
       </div>
     </section>

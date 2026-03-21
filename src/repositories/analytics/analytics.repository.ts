@@ -697,3 +697,145 @@ export async function findPlatformStatsSince(since: Date) {
     orderBy: { date: "asc" },
   });
 }
+
+// ── Recommendation experiment reporting ───────────────────────────────────────
+
+export interface RecommendationVariantMetricsRow {
+  variant:     string;
+  impressions: number;
+  clicks:      number;
+  uniqueUsers: number;
+}
+
+export interface RecommendationPurchaseRow {
+  variant:             string;
+  purchasesAfterClick: number;
+}
+
+/**
+ * Aggregates impression and click counts (plus unique user reach) from
+ * `analytics_events` rows where `metadata->>'experiment'` matches the given
+ * experimentId, grouped by `metadata->>'variant'`.
+ *
+ * Rows are filtered to `createdAt >= since` so reports can be scoped to any
+ * rolling window.
+ */
+export async function findRecommendationExperimentMetrics(
+  experimentId: string,
+  since: Date,
+): Promise<RecommendationVariantMetricsRow[]> {
+  return prisma.$queryRaw<RecommendationVariantMetricsRow[]>`
+    SELECT
+      metadata->>'variant' AS variant,
+      COUNT(*) FILTER (
+        WHERE metadata->>'source' = 'recommendation_impression'
+      )::int AS impressions,
+      COUNT(*) FILTER (
+        WHERE metadata->>'source' = 'recommendation_click'
+      )::int AS clicks,
+      COUNT(DISTINCT "userId") FILTER (
+        WHERE metadata->>'source' = 'recommendation_impression'
+      )::int AS "uniqueUsers"
+    FROM "analytics_events"
+    WHERE metadata->>'experiment' = ${experimentId}
+      AND "createdAt" >= ${since}
+      AND (
+        metadata->>'source' = 'recommendation_impression'
+        OR metadata->>'source' = 'recommendation_click'
+      )
+    GROUP BY metadata->>'variant'
+  `;
+}
+
+/**
+ * For each variant, counts recommendation clicks that were followed by a
+ * completed purchase of the same resource by the same user within 7 days.
+ *
+ * Uses `RESOURCE_PURCHASE` events for purchase detection so no extra tables
+ * are required.  Only considers clicks from `createdAt >= since`.
+ */
+export async function findRecommendationPurchasesAfterClick(
+  experimentId: string,
+  since: Date,
+): Promise<RecommendationPurchaseRow[]> {
+  return prisma.$queryRaw<RecommendationPurchaseRow[]>`
+    WITH clicks AS (
+      SELECT
+        "userId",
+        "resourceId",
+        "createdAt",
+        metadata->>'variant' AS variant
+      FROM "analytics_events"
+      WHERE metadata->>'experiment' = ${experimentId}
+        AND metadata->>'source'     = 'recommendation_click'
+        AND "createdAt" >= ${since}
+        AND "userId"     IS NOT NULL
+        AND "resourceId" IS NOT NULL
+    ),
+    first_purchases AS (
+      SELECT
+        "userId",
+        "resourceId",
+        MIN("createdAt") AS "firstPurchaseAt"
+      FROM "analytics_events"
+      WHERE "eventType"  = 'RESOURCE_PURCHASE'
+        AND "userId"     IS NOT NULL
+        AND "resourceId" IS NOT NULL
+      GROUP BY "userId", "resourceId"
+    )
+    SELECT
+      c.variant,
+      COUNT(*)::int AS "purchasesAfterClick"
+    FROM clicks c
+    INNER JOIN first_purchases fp
+      ON  fp."userId"     = c."userId"
+      AND fp."resourceId" = c."resourceId"
+      AND fp."firstPurchaseAt" >= c."createdAt"
+      AND fp."firstPurchaseAt" <= c."createdAt" + INTERVAL '7 days'
+    GROUP BY c.variant
+  `;
+}
+
+// ── Per-user behavior signals ─────────────────────────────────────────────────
+
+export interface UserAnalyticsEventSignal {
+  eventType: AnalyticsEventType;
+  createdAt: Date;
+  resource: {
+    id: string;
+    category: { id: string; name: string; slug: string } | null;
+    tags: Array<{ tag: { id: string; slug: string } }>;
+  } | null;
+}
+
+/**
+ * Returns analytics events (VIEW, LIKE, BOOKMARK) for the given user since
+ * the provided date.  Used by the Phase 2 behavior-based recommendation engine
+ * to build a weighted interest profile.
+ */
+export async function findUserAnalyticsEventSignals(
+  userId: string,
+  since: Date,
+): Promise<UserAnalyticsEventSignal[]> {
+  return prisma.analyticsEvent.findMany({
+    where: {
+      userId,
+      createdAt: { gte: since },
+      eventType: { in: ["RESOURCE_VIEW", "RESOURCE_LIKE", "RESOURCE_BOOKMARK"] },
+      resourceId: { not: null },
+    },
+    select: {
+      eventType: true,
+      createdAt: true,
+      resource: {
+        select: {
+          id: true,
+          category: { select: { id: true, name: true, slug: true } },
+          tags: { select: { tag: { select: { id: true, slug: true } } } },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 200,
+  });
+}

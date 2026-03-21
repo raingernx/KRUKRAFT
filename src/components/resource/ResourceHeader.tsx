@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Download, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { formatNumber } from "@/lib/format";
 
 export interface ResourceHeaderBreadcrumb {
@@ -57,7 +57,7 @@ export function ResourceHeader({
             Featured
           </span>
         )}
-        <h1 className="font-display text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
+        <h1 className="max-w-3xl font-display text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
           {title}
         </h1>
       </div>
@@ -76,30 +76,27 @@ export function ResourceHeader({
       )}
 
       {(hasReviews || hasSales || hasDownloads) && (
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-zinc-500">
+        <p className="flex flex-wrap items-center gap-x-1.5 text-[13px] text-zinc-500">
           {hasReviews && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-100 bg-amber-50 px-3 py-1 text-amber-700">
-              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" aria-hidden />
-              <span className="font-semibold">{averageRating?.toFixed(1)}</span>
-              <span>
-                from {formatNumber(reviewCount)} {reviewCount === 1 ? "review" : "reviews"}
+            <>
+              <span className="inline-flex items-center gap-1">
+                <Star className="h-3 w-3 fill-amber-400 text-amber-400" aria-hidden />
+                <span className="font-medium text-zinc-700">{averageRating?.toFixed(1)}</span>
+                <span>from {formatNumber(reviewCount)} {reviewCount === 1 ? "review" : "reviews"}</span>
               </span>
-            </span>
+              {(hasSales || hasDownloads) && <span aria-hidden className="text-zinc-300">·</span>}
+            </>
           )}
-
-          {hasSales && (
-            <span className="inline-flex items-center rounded-full border border-surface-200 bg-white px-3 py-1 text-zinc-600">
-              {formatNumber(salesCount)} {salesCount === 1 ? "sale" : "sales"}
-            </span>
-          )}
-
           {hasDownloads && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-surface-200 bg-white px-3 py-1 text-zinc-600">
-              <Download className="h-3.5 w-3.5" aria-hidden />
+            <>
               <span>{formatNumber(downloadCount)} downloads</span>
-            </span>
+              {hasSales && <span aria-hidden className="text-zinc-300">·</span>}
+            </>
           )}
-        </div>
+          {hasSales && (
+            <span>{formatNumber(salesCount)} {salesCount === 1 ? "teacher" : "teachers"} bought this</span>
+          )}
+        </p>
       )}
     </header>
   );

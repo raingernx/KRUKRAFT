@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import Link from "next/link";
 import Image from "next/image";
 import { authOptions } from "@/lib/auth";
+import { requireSession } from "@/lib/auth/require-session";
 import {
   BookOpen,
   Download,
@@ -90,12 +90,11 @@ function formatLevelLabel(level?: "BEGINNER" | "INTERMEDIATE" | "ADVANCED") {
 }
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) redirect("/auth/login?next=/dashboard");
+  const { userId, session } = await requireSession("/dashboard");
 
   const [purchases, totalDownloads] = await Promise.all([
-    getUserPurchases(session.user.id),
-    getUserDownloadCount(session.user.id),
+    getUserPurchases(userId),
+    getUserDownloadCount(userId),
   ]);
   const ownedResourceIds = purchases.map((purchase) => purchase.resource.id);
   const learningProfile = buildDashboardLearningProfile(purchases);
@@ -163,7 +162,7 @@ export default async function DashboardPage() {
           <h1 className="font-display text-h2 font-semibold tracking-tight text-neutral-900">
             Welcome back, {firstName} 👋
           </h1>
-          <p className="mt-1 text-[14px] text-neutral-500">
+          <p className="mt-1 max-w-2xl text-[14px] text-neutral-500">
             Here&apos;s an overview of your learning activity.
           </p>
         </div>
@@ -191,7 +190,7 @@ export default async function DashboardPage() {
         )}
 
         {/* ── Stats Grid ────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 xl:gap-6">
           {STATS.map((stat) => {
           const Icon = stat.icon;
 
@@ -467,7 +466,7 @@ export default async function DashboardPage() {
                 <h2 className="text-[15px] font-semibold text-neutral-900">
                   Continue learning
                 </h2>
-                <p className="mt-0.5 text-[12px] text-neutral-400">
+                <p className="mt-0.5 max-w-2xl text-[12px] text-neutral-400">
                   {becauseYouPickedUp
                     ? `Because you picked up ${becauseYouPickedUp}, here are the strongest next steps to keep your study flow moving.`
                     : continueLearningCategory
@@ -533,7 +532,7 @@ export default async function DashboardPage() {
                     ? `New in ${multiCategoryLabel[0]}`
                     : "New in your categories"}
                 </h2>
-                <p className="mt-0.5 text-[12px] text-neutral-400">
+                <p className="mt-0.5 max-w-2xl text-[12px] text-neutral-400">
                   {multiCategoryLabel.length === 1
                     ? `Newer releases in ${multiCategoryLabel[0]} so your next session starts with familiar context.`
                     : `Fresh releases across ${multiCategoryLabel.slice(0, 2).join(" and ")} so coming back feels tailored instead of random.`}
@@ -546,7 +545,7 @@ export default async function DashboardPage() {
                 Browse more →
               </Link>
             </div>
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-6 xl:gap-8 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
               {newInCategories.map((resource) => (
                 <Link
                   key={resource.id}
@@ -600,7 +599,7 @@ export default async function DashboardPage() {
                 <h2 className="text-[15px] font-semibold text-neutral-900">
                   Recommended for your level
                 </h2>
-                <p className="mt-0.5 text-[12px] text-neutral-400">
+                <p className="mt-0.5 max-w-2xl text-[12px] text-neutral-400">
                   Because your recent library leans {levelLabel.toLowerCase()}, these picks should
                   feel closer to your current pace.
                 </p>

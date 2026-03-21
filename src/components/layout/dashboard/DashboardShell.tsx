@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import { PageContainer } from "@/design-system";
+import { Container } from "@/components/layout/container";
 import type {
   DashboardNavSection,
   DashboardShellVariant,
@@ -73,7 +73,7 @@ export function DashboardShell({
           onMenuToggle: () => setSidebarOpen((open) => !open),
         })}
         <main className={cn("flex-1 min-w-0 overflow-y-auto py-6 sm:py-8", mainClassName)}>
-          <PageContainer>{children}</PageContainer>
+          <Container>{children}</Container>
         </main>
         {afterMain}
       </div>

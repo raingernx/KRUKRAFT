@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { requireSession } from "@/lib/auth/require-session";
 import { routes } from "@/lib/routes";
 import { getCreatorAccessState } from "@/services/creator.service";
 
@@ -11,11 +11,8 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function DashboardResourcesCompatibilityPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    redirect("/auth/login?next=/dashboard/resources");
-  }
+  const { userId } = await requireSession("/dashboard/resources");
 
-  const access = await getCreatorAccessState(session.user.id);
+  const access = await getCreatorAccessState(userId);
   redirect(access.eligible ? routes.creatorResources : routes.creatorApply);
 }

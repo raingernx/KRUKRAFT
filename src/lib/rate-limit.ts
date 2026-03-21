@@ -98,6 +98,9 @@ export const LIMITS = {
 
   /** Hero analytics: 30 per minute per IP to reduce impression/click spam. */
   heroAnalytics: makeLimiter(30, 60),
+
+  /** Recommendation analytics: 60 per minute per IP (5 impressions × ~12 page loads). */
+  recommendationAnalytics: makeLimiter(60, 60),
 } as const;
 
 // ── Public helper ─────────────────────────────────────────────────────────────

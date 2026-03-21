@@ -8,17 +8,18 @@
  * change for bookmarked/shared URLs, so treat them like a public API.
  */
 export const SORT_OPTIONS = [
-  { value: "trending",   label: "Trending"          },
-  { value: "newest",     label: "Newest"            },
-  { value: "downloads",  label: "Most downloaded"   },
-  { value: "price_asc",  label: "Price: Low → High" },
-  { value: "price_desc", label: "Price: High → Low" },
+  { value: "recommended", label: "Recommended"       },
+  { value: "trending",    label: "Trending"          },
+  { value: "newest",      label: "Newest"            },
+  { value: "downloads",   label: "Most downloaded"   },
+  { value: "price_asc",   label: "Price: Low → High" },
+  { value: "price_desc",  label: "Price: High → Low" },
 ] as const;
 
 export type SortValue = (typeof SORT_OPTIONS)[number]["value"];
 
 /** Default sort applied when the ?sort= param is absent. */
-export const DEFAULT_SORT: SortValue = "newest";
+export const DEFAULT_SORT: SortValue = "recommended";
 
 /**
  * Maps legacy or non-standard sort param values to a canonical SortValue.

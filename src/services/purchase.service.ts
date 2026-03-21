@@ -46,6 +46,20 @@ export async function getOwnedIdsFromSet(
 // ── Checkout helpers ──────────────────────────────────────────────────────────
 
 /**
+ * Returns the completed Purchase record for a user+resource pair, or null.
+ *
+ * Identical rule to hasPurchased — status must be COMPLETED — but returns
+ * the record instead of a boolean.  Use this when the caller needs the
+ * purchase ID (e.g. to attribute a download to a specific purchase).
+ */
+export async function getCompletedPurchase(
+  userId: string,
+  resourceId: string,
+): Promise<{ id: string } | null> {
+  return findCompletedPurchaseByUserAndResource(userId, resourceId);
+}
+
+/**
  * Returns the existing Purchase row for a user+resource pair, or null.
  * Used by checkout routes for idempotency / duplicate-purchase guards.
  */
@@ -80,6 +94,7 @@ export async function getUserPurchaseHistory(userId: string) {
 export interface UserLearningProfile {
   hasHistory: boolean;
   recentStudyTitle: string | null;
+  recentCategoryId: string | null;
   recentCategoryName: string | null;
   topCategories: Array<{
     id: string;
@@ -100,6 +115,7 @@ export async function getUserLearningProfile(
     return {
       hasHistory: false,
       recentStudyTitle: null,
+      recentCategoryId: null,
       recentCategoryName: null,
       topCategories: [],
       preferredLevels: [],
@@ -141,6 +157,7 @@ export async function getUserLearningProfile(
   return {
     hasHistory: true,
     recentStudyTitle: rows[0]?.resource.title ?? null,
+    recentCategoryId: rows[0]?.resource.category?.id ?? null,
     recentCategoryName: rows[0]?.resource.category?.name ?? null,
     topCategories: Array.from(categoryScores.values())
       .sort((left, right) => right.score - left.score)
