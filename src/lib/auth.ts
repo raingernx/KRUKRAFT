@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
+import { isMissingTableError } from "./prismaErrors";
 
 // ── JWT role cache ────────────────────────────────────────────────────────────
 //
@@ -139,14 +140,19 @@ export const authOptions: NextAuthOptions = {
           token.subscriptionStatus = cached.subscriptionStatus ?? undefined;
         } else {
           // Cache miss — query the DB and refresh the cache.
-          const dbUser = await prisma.user.findUnique({
-            where: { id: userId },
-            select: { role: true, subscriptionStatus: true },
-          });
-          if (dbUser) {
-            token.role = dbUser.role;
-            token.subscriptionStatus = dbUser.subscriptionStatus ?? undefined;
-            setCachedRole(userId, dbUser.role, dbUser.subscriptionStatus);
+          try {
+            const dbUser = await prisma.user.findUnique({
+              where: { id: userId },
+              select: { role: true, subscriptionStatus: true },
+            });
+            if (dbUser) {
+              token.role = dbUser.role;
+              token.subscriptionStatus = dbUser.subscriptionStatus ?? undefined;
+              setCachedRole(userId, dbUser.role, dbUser.subscriptionStatus);
+            }
+          } catch (error) {
+            if (!isMissingTableError(error)) throw error;
+            // User table missing (local dev schema drift) — keep existing token values.
           }
         }
       }

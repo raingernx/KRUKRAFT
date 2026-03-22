@@ -2,6 +2,7 @@ import { cookies, headers } from "next/headers";
 import { cache } from "react";
 import { getCachedEligibleHomepageHeroes } from "@/lib/cache/heroCache";
 import { findFallbackHero, findLegacyHomepageHero } from "@/repositories/heroes/hero.repository";
+import { isMissingTableError } from "@/lib/prismaErrors";
 import type {
   HeroBadgeBgColor,
   HeroBadgeTextColor,
@@ -293,33 +294,39 @@ async function applyExperimentAssignments(candidates: HeroCandidate[], seed: str
 
 const resolveHomepageHeroCached = cache(
   async (userId?: string | null): Promise<ResolvedHomepageHeroConfig | null> => {
-    const eligibleHeroes = await getCachedEligibleHomepageHeroes();
+    try {
+      const eligibleHeroes = await getCachedEligibleHomepageHeroes();
 
-    if (eligibleHeroes.length > 0) {
-      const topPriority = eligibleHeroes[0].priority;
-      const priorityBucket = eligibleHeroes.filter(
-        (candidate) => candidate.priority === topPriority,
-      );
+      if (eligibleHeroes.length > 0) {
+        const topPriority = eligibleHeroes[0].priority;
+        const priorityBucket = eligibleHeroes.filter(
+          (candidate) => candidate.priority === topPriority,
+        );
 
-      const seed = await getSelectionSeed({ userId });
-      const experimentCandidates = await applyExperimentAssignments(priorityBucket, seed);
-      const selectedGroup = chooseAbGroup(experimentCandidates, seed);
-      const abCandidates = experimentCandidates.filter(
-        (candidate) =>
-          (normalizeOptionalString(candidate.abGroup) ?? "__default__") === selectedGroup,
-      );
-      const selectedHero = chooseWeightedHero(abCandidates, seed);
+        const seed = await getSelectionSeed({ userId });
+        const experimentCandidates = await applyExperimentAssignments(priorityBucket, seed);
+        const selectedGroup = chooseAbGroup(experimentCandidates, seed);
+        const abCandidates = experimentCandidates.filter(
+          (candidate) =>
+            (normalizeOptionalString(candidate.abGroup) ?? "__default__") === selectedGroup,
+        );
+        const selectedHero = chooseWeightedHero(abCandidates, seed);
 
-      return toResolvedConfig(selectedHero, "cms");
+        return toResolvedConfig(selectedHero, "cms");
+      }
+
+      const fallbackHero = await findFallbackHero();
+      if (fallbackHero) {
+        return toResolvedConfig(fallbackHero, "fallback");
+      }
+
+      const legacyFallbackHero = await findLegacyHomepageHero();
+      return toResolvedConfig(legacyFallbackHero, "fallback");
+    } catch (error) {
+      if (!isMissingTableError(error)) throw error;
+      // Hero table missing (local dev schema drift) — render page without a hero.
+      return null;
     }
-
-    const fallbackHero = await findFallbackHero();
-    if (fallbackHero) {
-      return toResolvedConfig(fallbackHero, "fallback");
-    }
-
-    const legacyFallbackHero = await findLegacyHomepageHero();
-    return toResolvedConfig(legacyFallbackHero, "fallback");
   },
 );
 

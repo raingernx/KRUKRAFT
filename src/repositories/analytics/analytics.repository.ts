@@ -1,5 +1,6 @@
 import { Prisma, type AnalyticsEventType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { isMissingTableError } from "@/lib/prismaErrors";
 
 export interface CreateAnalyticsEventInput {
   eventType: AnalyticsEventType;
@@ -377,20 +378,25 @@ export async function upsertPlatformStats(rows: UpsertPlatformStatInput[]) {
 }
 
 export async function findTopTrendingResourceIds(limit: number) {
-  const rows = await prisma.resourceStat.findMany({
-    select: { resourceId: true },
-    orderBy: [{ trendingScore: "desc" }, { downloads: "desc" }],
-    take: limit,
-  });
-
-  return rows.map((row) => row.resourceId);
+  try {
+    const rows = await prisma.resourceStat.findMany({
+      select: { resourceId: true },
+      orderBy: [{ trendingScore: "desc" }, { downloads: "desc" }],
+      take: limit,
+    });
+    return rows.map((row) => row.resourceId);
+  } catch (error) {
+    if (!isMissingTableError(error)) throw error;
+    return [];
+  }
 }
 
 export async function findTrendingResourceSignals(
   since: Date,
   limit: number,
 ): Promise<TrendingResourceSignalRow[]> {
-  return prisma.$queryRaw<TrendingResourceSignalRow[]>`
+  try {
+    return await prisma.$queryRaw<TrendingResourceSignalRow[]>`
     SELECT
       r.id AS "resourceId",
       r."createdAt" AS "publishedAt",
@@ -457,138 +463,178 @@ export async function findTrendingResourceSignals(
       r."createdAt" DESC
     LIMIT ${limit}
   `;
+  } catch (error) {
+    if (!isMissingTableError(error)) throw error;
+    return [];
+  }
 }
 
 export async function findTopDownloadedResourceIds(limit: number) {
-  const rows = await prisma.resourceStat.findMany({
-    select: { resourceId: true },
-    orderBy: [
-      { downloads: "desc" },
-      { purchases: "desc" },
-      { trendingScore: "desc" },
-    ],
-    take: limit,
-  });
-
-  return rows.map((row) => row.resourceId);
+  try {
+    const rows = await prisma.resourceStat.findMany({
+      select: { resourceId: true },
+      orderBy: [
+        { downloads: "desc" },
+        { purchases: "desc" },
+        { trendingScore: "desc" },
+      ],
+      take: limit,
+    });
+    return rows.map((row) => row.resourceId);
+  } catch (error) {
+    if (!isMissingTableError(error)) throw error;
+    return [];
+  }
 }
 
 export async function findNewestResourceIds(limit: number) {
-  const rows = await prisma.$queryRaw<ResourceIdRow[]>`
-    SELECT rs."resourceId"
-    FROM "resource_stats" rs
-    INNER JOIN "Resource" r
-      ON r.id = rs."resourceId"
-    WHERE r."deletedAt" IS NULL
-      AND r.status = 'PUBLISHED'
-    ORDER BY r."createdAt" DESC
-    LIMIT ${limit}
-  `;
-
-  return rows.map((row) => row.resourceId);
+  try {
+    const rows = await prisma.$queryRaw<ResourceIdRow[]>`
+      SELECT rs."resourceId"
+      FROM "resource_stats" rs
+      INNER JOIN "Resource" r
+        ON r.id = rs."resourceId"
+      WHERE r."deletedAt" IS NULL
+        AND r.status = 'PUBLISHED'
+      ORDER BY r."createdAt" DESC
+      LIMIT ${limit}
+    `;
+    return rows.map((row) => row.resourceId);
+  } catch (error) {
+    if (!isMissingTableError(error)) throw error;
+    return [];
+  }
 }
 
 export async function findFeaturedResourceIds(limit: number) {
-  const rows = await prisma.$queryRaw<ResourceIdRow[]>`
-    SELECT rs."resourceId"
-    FROM "resource_stats" rs
-    INNER JOIN "Resource" r
-      ON r.id = rs."resourceId"
-    WHERE r."deletedAt" IS NULL
-      AND r.status = 'PUBLISHED'
-      AND r.featured = true
-    ORDER BY rs."trendingScore" DESC, rs.purchases DESC, rs.downloads DESC
-    LIMIT ${limit}
-  `;
-
-  return rows.map((row) => row.resourceId);
+  try {
+    const rows = await prisma.$queryRaw<ResourceIdRow[]>`
+      SELECT rs."resourceId"
+      FROM "resource_stats" rs
+      INNER JOIN "Resource" r
+        ON r.id = rs."resourceId"
+      WHERE r."deletedAt" IS NULL
+        AND r.status = 'PUBLISHED'
+        AND r.featured = true
+      ORDER BY rs."trendingScore" DESC, rs.purchases DESC, rs.downloads DESC
+      LIMIT ${limit}
+    `;
+    return rows.map((row) => row.resourceId);
+  } catch (error) {
+    if (!isMissingTableError(error)) throw error;
+    return [];
+  }
 }
 
 export async function findFreeResourceIds(limit: number) {
-  const rows = await prisma.$queryRaw<ResourceIdRow[]>`
-    SELECT rs."resourceId"
-    FROM "resource_stats" rs
-    INNER JOIN "Resource" r
-      ON r.id = rs."resourceId"
-    WHERE r."deletedAt" IS NULL
-      AND r.status = 'PUBLISHED'
-      AND r."isFree" = true
-    ORDER BY rs."trendingScore" DESC, rs.downloads DESC, rs.purchases DESC
-    LIMIT ${limit}
-  `;
-
-  return rows.map((row) => row.resourceId);
+  try {
+    const rows = await prisma.$queryRaw<ResourceIdRow[]>`
+      SELECT rs."resourceId"
+      FROM "resource_stats" rs
+      INNER JOIN "Resource" r
+        ON r.id = rs."resourceId"
+      WHERE r."deletedAt" IS NULL
+        AND r.status = 'PUBLISHED'
+        AND r."isFree" = true
+      ORDER BY rs."trendingScore" DESC, rs.downloads DESC, rs.purchases DESC
+      LIMIT ${limit}
+    `;
+    return rows.map((row) => row.resourceId);
+  } catch (error) {
+    if (!isMissingTableError(error)) throw error;
+    return [];
+  }
 }
 
 export async function findResourceStatByResourceId(resourceId: string) {
-  return prisma.resourceStat.findUnique({
-    where: { resourceId },
-  });
+  try {
+    return await prisma.resourceStat.findUnique({
+      where: { resourceId },
+    });
+  } catch (error) {
+    if (!isMissingTableError(error)) throw error;
+    return null;
+  }
 }
 
 export async function findCreatorStatByCreatorId(creatorId: string) {
-  return prisma.creatorStat.findUnique({
-    where: { creatorId },
-  });
+  try {
+    return await prisma.creatorStat.findUnique({
+      where: { creatorId },
+    });
+  } catch (error) {
+    if (!isMissingTableError(error)) throw error;
+    return null;
+  }
 }
 
 export async function findTopCreatorThisWeek(): Promise<TopCreatorThisWeekRow | null> {
-  return prisma.creatorStat.findFirst({
-    where: {
-      resources: { gt: 0 },
-      creator: {
-        creatorStatus: "ACTIVE",
-        creatorSlug: { not: null },
+  try {
+    return await prisma.creatorStat.findFirst({
+      where: {
+        resources: { gt: 0 },
+        creator: {
+          creatorStatus: "ACTIVE",
+          creatorSlug: { not: null },
+        },
+        OR: [
+          { last7dRevenue: { gt: 0 } },
+          { last30dDownloads: { gt: 0 } },
+          { totalSales: { gt: 0 } },
+        ],
       },
-      OR: [
-        { last7dRevenue: { gt: 0 } },
-        { last30dDownloads: { gt: 0 } },
-        { totalSales: { gt: 0 } },
+      orderBy: [
+        { last7dRevenue: "desc" },
+        { last30dDownloads: "desc" },
+        { totalSales: "desc" },
+        { resources: "desc" },
       ],
-    },
-    orderBy: [
-      { last7dRevenue: "desc" },
-      { last30dDownloads: "desc" },
-      { totalSales: "desc" },
-      { resources: "desc" },
-    ],
-    select: {
-      creatorId: true,
-      resources: true,
-      totalSales: true,
-      last30dDownloads: true,
-      last7dRevenue: true,
-      creator: {
-        select: {
-          name: true,
-          image: true,
-          creatorDisplayName: true,
-          creatorSlug: true,
-          creatorBio: true,
+      select: {
+        creatorId: true,
+        resources: true,
+        totalSales: true,
+        last30dDownloads: true,
+        last7dRevenue: true,
+        creator: {
+          select: {
+            name: true,
+            image: true,
+            creatorDisplayName: true,
+            creatorSlug: true,
+            creatorBio: true,
+          },
         },
       },
-    },
-  });
+    });
+  } catch (error) {
+    if (!isMissingTableError(error)) throw error;
+    return null;
+  }
 }
 
 export async function findTopResourcesByDownloads(limit: number) {
-  return prisma.resourceStat.findMany({
-    select: {
-      resourceId: true,
-      downloads: true,
-      purchases: true,
-      revenue: true,
-      resource: {
-        select: {
-          id: true,
-          title: true,
-          slug: true,
+  try {
+    return await prisma.resourceStat.findMany({
+      select: {
+        resourceId: true,
+        downloads: true,
+        purchases: true,
+        revenue: true,
+        resource: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+          },
         },
       },
-    },
-    orderBy: [{ downloads: "desc" }, { purchases: "desc" }],
-    take: limit,
-  });
+      orderBy: [{ downloads: "desc" }, { purchases: "desc" }],
+      take: limit,
+    });
+  } catch (error) {
+    if (!isMissingTableError(error)) throw error;
+    return [];
+  }
 }
 
 export async function findTopResourcesByCreator(

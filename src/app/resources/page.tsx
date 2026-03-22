@@ -12,7 +12,9 @@ import {
   Palette,
 } from "lucide-react";
 import { getServerSession } from "next-auth";
+import type { Session } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { isMissingTableError } from "@/lib/prismaErrors";
 import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/components/layout/container";
 import { ResourceGrid } from "@/components/resources/ResourceGrid";
@@ -108,7 +110,13 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
   // Discover = no category selected; Category = any category (including "all")
   const isDiscoverMode = !category;
 
-  const session = await getServerSession(authOptions);
+  let session: Session | null = null;
+  try {
+    session = await getServerSession(authOptions);
+  } catch (error) {
+    if (!isMissingTableError(error)) throw error;
+    // Auth tables missing in local dev — treat as unauthenticated.
+  }
   const userId  = session?.user?.id;
 
   // ── Ranking experiment: override sort based on assigned variant ─────────────
@@ -146,39 +154,58 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
   let learningProfile: Awaited<ReturnType<typeof getUserLearningProfile>> | null = null;
 
   if (isDiscoverMode) {
-    const [heroResult, categoriesWithCount, data] = await Promise.all([
-      getHeroConfig({ userId }),
-      getDiscoverCategories(),
-      getDiscoverData(),
-    ]);
-    heroConfig     = heroResult;
-    categories     = categoriesWithCount.map((c) => ({ id: c.id, name: c.name, slug: c.slug }));
-    discoverData   = data;
-    discoverCategoriesWithCount = categoriesWithCount;
+    try {
+      const [heroResult, categoriesWithCount, data] = await Promise.all([
+        getHeroConfig({ userId }),
+        getDiscoverCategories(),
+        getDiscoverData(),
+      ]);
+      heroConfig     = heroResult;
+      categories     = categoriesWithCount.map((c) => ({ id: c.id, name: c.name, slug: c.slug }));
+      discoverData   = data;
+      discoverCategoriesWithCount = categoriesWithCount;
+    } catch (error) {
+      if (!isMissingTableError(error)) throw error;
+      // DB schema missing in local dev — render with empty discover data.
+    }
   } else {
-    const data = await getMarketplaceResources({
-      search,
-      category,
-      price,
-      featured: featured === "true",
-      tag,
-      sort: effectiveSort,
-      page:     currentPage,
-      pageSize: ITEMS_PER_PAGE,
-    });
-    resources   = data.resources as ResourceCardData[];
-    total       = data.total;
-    categories  = data.categories;
-    totalPages  = data.totalPages;
-    safePage    = Math.min(currentPage, totalPages);
+    try {
+      const data = await getMarketplaceResources({
+        search,
+        category,
+        price,
+        featured: featured === "true",
+        tag,
+        sort: effectiveSort,
+        page:     currentPage,
+        pageSize: ITEMS_PER_PAGE,
+      });
+      resources   = data.resources as ResourceCardData[];
+      total       = data.total;
+      categories  = data.categories;
+      totalPages  = data.totalPages;
+      safePage    = Math.min(currentPage, totalPages);
+    } catch (error) {
+      if (!isMissingTableError(error)) throw error;
+      // DB schema missing in local dev — render empty marketplace.
+    }
     discoverCategoriesWithCount = [];
   }
 
   // ── Owned IDs (both modes) ──────────────────────────────────────────────────
 
-  const ownedIds = userId ? await getOwnedResourceIds(userId) : new Set<string>();
+  let ownedIds = new Set<string>();
+  try {
+    if (userId) ownedIds = await getOwnedResourceIds(userId);
+  } catch (error) {
+    if (!isMissingTableError(error)) throw error;
+  }
   if (isDiscoverMode && userId) {
-    learningProfile = await getUserLearningProfile(userId);
+    try {
+      learningProfile = await getUserLearningProfile(userId);
+    } catch (error) {
+      if (!isMissingTableError(error)) throw error;
+    }
   }
   // Category of the most recently purchased resource — used for the "Because you studied X"
   // section so the title and the card results actually agree on the same subject.

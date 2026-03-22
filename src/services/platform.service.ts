@@ -6,6 +6,7 @@ import {
 } from "@/repositories/platformSettings.repository";
 import { CACHE_KEYS, CACHE_TAGS, CACHE_TTLS } from "@/lib/cache";
 import { PLATFORM_DEFAULTS } from "@/lib/platform/platform-defaults";
+import { isMissingTableError } from "@/lib/prismaErrors";
 import type {
   PlatformConfig,
   PlatformEmailDefaults,
@@ -114,8 +115,14 @@ export function resolvePlatformConfig(
 }
 
 export async function getPlatformConfig() {
-  const settings = await readPlatformSettings();
-  return resolvePlatformConfig(settings);
+  try {
+    const settings = await readPlatformSettings();
+    return resolvePlatformConfig(settings);
+  } catch (error) {
+    if (!isMissingTableError(error)) throw error;
+    // PlatformSettings table missing (local dev schema drift) — use defaults.
+    return resolvePlatformConfig(null);
+  }
 }
 
 export const getPlatform = cache(getPlatformConfig);
