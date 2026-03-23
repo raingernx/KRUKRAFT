@@ -1,7 +1,7 @@
 "use client";
 
-import { usePathname, useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { useState, useTransition } from "react";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 export interface ChipCategory {
@@ -11,17 +11,18 @@ export interface ChipCategory {
 }
 
 /**
- * Discover — removes the category param and navigates to the current
- * current path.
- * is present. Never treat category=all as Discover.
+ * Discover button — removes the category param and navigates to the current
+ * path. Never treat category=all as Discover.
  */
 export function DiscoverButton() {
+  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+
   const category = searchParams.get("category");
   const isDiscover = category === null;
 
-  // Build discover URL: current path, all params except category
   const discoverUrl = (() => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete("category");
@@ -30,20 +31,29 @@ export function DiscoverButton() {
     return qs ? `${pathname}?${qs}` : pathname;
   })();
 
+  function handleClick() {
+    startTransition(() => {
+      router.push(discoverUrl, { scroll: false });
+    });
+  }
+
   return (
-    <Link
-      href={discoverUrl}
-      scroll={false}
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={isPending}
+      aria-label="Discover resources"
+      aria-busy={isPending}
       className={cn(
         "inline-flex min-h-10 shrink-0 items-center gap-2 rounded-lg border px-3.5 py-2 text-sm font-medium transition sm:px-4",
         isDiscover
           ? "border-blue-600 bg-blue-600 text-white"
-          : "border-zinc-200 text-zinc-600 hover:bg-zinc-50"
+          : "border-zinc-200 text-zinc-600 hover:bg-zinc-50",
+        isPending && "cursor-wait opacity-70"
       )}
-      aria-label="Discover resources"
     >
       Discover
-    </Link>
+    </button>
   );
 }
 
@@ -52,23 +62,32 @@ interface CategoryChipsProps {
 }
 
 /**
- * Category filter chips. Links stay on the current path
- * 
- * are never needed and searchParams always reach the server component.
+ * Category filter chips. Each chip navigates to the current path with only
+ * the category param swapped. Uses useTransition so the clicked chip shows
+ * an optimistic active state immediately while the route is loading.
  */
 export function CategoryChips({ categories }: CategoryChipsProps) {
+  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
+  const [isPending, startTransition] = useTransition();
+  const [pendingSlug, setPendingSlug] = useState<string | null>(null);
 
+  const category = searchParams.get("category");
   const isAll = category === "all";
 
-  /** Build a URL on the current path with only the category param swapped. */
   function chipUrl(slug: string): string {
     const params = new URLSearchParams(searchParams.toString());
     params.set("category", slug);
     params.delete("page");
     return `${pathname}?${params.toString()}`;
+  }
+
+  function navigate(slug: string) {
+    setPendingSlug(slug);
+    startTransition(() => {
+      router.push(chipUrl(slug), { scroll: false });
+    });
   }
 
   return (
@@ -77,13 +96,21 @@ export function CategoryChips({ categories }: CategoryChipsProps) {
       aria-label="Filter by category"
       className="flex shrink-0 items-center gap-2 pr-3"
     >
-      <Chip label="All" href={chipUrl("all")} active={isAll} />
+      <Chip
+        label="All"
+        active={isAll}
+        pending={pendingSlug === "all" && isPending}
+        anyPending={isPending}
+        onClick={() => navigate("all")}
+      />
       {categories.map((cat) => (
         <Chip
           key={cat.id}
           label={cat.name}
-          href={chipUrl(cat.slug)}
           active={category === cat.slug}
+          pending={pendingSlug === cat.slug && isPending}
+          anyPending={isPending}
+          onClick={() => navigate(cat.slug)}
         />
       ))}
     </div>
@@ -94,25 +121,39 @@ export function CategoryChips({ categories }: CategoryChipsProps) {
 
 function Chip({
   label,
-  href,
   active,
+  pending,
+  anyPending,
+  onClick,
 }: {
   label: string;
-  href: string;
   active: boolean;
+  /** This specific chip is the navigation target (optimistic active). */
+  pending: boolean;
+  /** Any chip navigation is in-flight. */
+  anyPending: boolean;
+  onClick: () => void;
 }) {
   return (
-    <Link
-      href={href}
-      scroll={false}
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={anyPending}
+      aria-pressed={active}
+      aria-busy={pending}
       className={cn(
         "inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-medium transition",
-        active
+        // Active or optimistically-pending target → blue
+        active || pending
           ? "border-blue-600 bg-blue-600 text-white"
-          : "border-zinc-200 text-zinc-600 hover:bg-zinc-50"
+          : "border-zinc-200 text-zinc-600 hover:bg-zinc-50",
+        // The chip being navigated to: cursor-wait + slight fade
+        pending && "cursor-wait opacity-75",
+        // Non-target chips dim while any navigation is pending
+        anyPending && !pending && !active && "opacity-40"
       )}
     >
       {label}
-    </Link>
+    </button>
   );
 }
