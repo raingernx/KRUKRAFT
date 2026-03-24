@@ -115,14 +115,14 @@ export const getDiscoverData = unstable_cache(
   async function _getDiscoverData() {
     logPerformanceEvent("cache_execute:getDiscoverData");
     const [
-      trendingResources,
+      trendingIds,
       popularIdsFromStats,
       newestIdsFromStats,
       featuredIdsFromStats,
       freeIdsFromStats,
       topCreator,
     ] = await Promise.all([
-      getTrendingResources(8),
+      getTrendingResourceIds(8),
       rememberJson(CACHE_KEYS.popularResources, CACHE_TTLS.homepageList, () =>
         findTopDownloadedResourceIds(8),
       ),
@@ -161,7 +161,7 @@ export const getDiscoverData = unstable_cache(
 
     const resourceIds = Array.from(
       new Set([
-        ...trendingResources.map((resource) => resource.id),
+        ...trendingIds,
         ...popularIds,
         ...newestIds,
         ...featuredIds,
@@ -179,6 +179,7 @@ export const getDiscoverData = unstable_cache(
         )
         .map(withPreview);
 
+    const trendingResources = mapSection(trendingIds);
     const trending = trendingResources.slice(0, 5);
     const newReleases = mapSection(newestIds).slice(0, 5);
     const featured = mapSection(featuredIds).slice(0, 5);
