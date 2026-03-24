@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Container } from "@/components/layout/container";
@@ -53,7 +53,9 @@ export function DashboardShell({
 
   return (
     <div className="flex min-h-screen bg-surface-50">
-      <DashboardNavigationFeedback />
+      <Suspense fallback={null}>
+        <DashboardNavigationFeedback />
+      </Suspense>
       <DashboardSidebar
         variant={variant}
         sections={sections}
