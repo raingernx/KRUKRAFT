@@ -53,39 +53,42 @@ export function withPreview<
   };
 }
 
+async function getTrendingResourceIds(limit = 8) {
+  return rememberJson<string[]>(
+    `${CACHE_KEYS.trendingResources}:${limit}`,
+    CACHE_TTLS.homepageList,
+    async () => {
+      const since = new Date(Date.now() - DAY_MS * TRENDING_WINDOW_DAYS);
+      const candidates = await findTrendingResourceSignals(since, Math.max(limit * 4, 24));
+
+      if (candidates.length === 0) {
+        return findTopTrendingResourceIds(limit);
+      }
+
+      return candidates
+        .map((candidate) => ({
+          resourceId: candidate.resourceId,
+          trendScore: calculateTrendingScore({
+            recentDownloads: candidate.recentDownloads,
+            recentSales: candidate.recentSales,
+            recentRevenue: candidate.recentRevenue,
+            averageRating: candidate.averageRating,
+            reviewCount: candidate.reviewCount,
+            ageInDays: Math.max(
+              0,
+              (Date.now() - candidate.publishedAt.getTime()) / DAY_MS,
+            ),
+          }),
+        }))
+        .sort((left, right) => right.trendScore - left.trendScore)
+        .slice(0, limit)
+        .map((row) => row.resourceId);
+    },
+  );
+}
+
 export async function getTrendingResources(limit = 8) {
-  const since = new Date(Date.now() - DAY_MS * TRENDING_WINDOW_DAYS);
-  const candidates = await findTrendingResourceSignals(since, Math.max(limit * 4, 24));
-
-  if (candidates.length === 0) {
-    const fallbackIds = await findTopTrendingResourceIds(limit);
-    const fallbackPool = await loadDiscoverResourcesByIds(fallbackIds);
-
-    return fallbackIds
-      .map((id) => fallbackPool.get(id))
-      .filter((resource): resource is NonNullable<typeof resource> => Boolean(resource))
-      .map(withPreview);
-  }
-
-  const rankedIds = candidates
-    .map((candidate) => ({
-      resourceId: candidate.resourceId,
-      trendScore: calculateTrendingScore({
-        recentDownloads: candidate.recentDownloads,
-        recentSales: candidate.recentSales,
-        recentRevenue: candidate.recentRevenue,
-        averageRating: candidate.averageRating,
-        reviewCount: candidate.reviewCount,
-        ageInDays: Math.max(
-          0,
-          (Date.now() - candidate.publishedAt.getTime()) / DAY_MS,
-        ),
-      }),
-    }))
-    .sort((left, right) => right.trendScore - left.trendScore)
-    .slice(0, limit)
-    .map((row) => row.resourceId);
-
+  const rankedIds = await getTrendingResourceIds(limit);
   const pool = await loadDiscoverResourcesByIds(rankedIds);
 
   return rankedIds
