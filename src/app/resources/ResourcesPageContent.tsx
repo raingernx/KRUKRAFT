@@ -26,6 +26,7 @@ import { MobileFilterDialog } from "@/components/marketplace/MobileFilterDialog"
 import { CreatorCTA } from "@/components/discover/CreatorCTA";
 import { BlogSection } from "@/components/discover/BlogSection";
 import { EmailSignup } from "@/components/discover/EmailSignup";
+import { CategoryBrowseCardLink } from "@/components/marketplace/CategoryBrowseCardLink";
 import { formatNumber, formatPrice } from "@/lib/format";
 import {
   getDiscoverData,
@@ -50,7 +51,7 @@ import { RecommendationSection } from "@/components/recommendations/Recommendati
 import { ResourcesIntroSectionSkeleton } from "@/components/skeletons/ResourcesIntroSectionSkeleton";
 import { recordAnalyticsEvents } from "@/analytics/event.service";
 
-const ITEMS_PER_PAGE = 20;
+const ITEMS_PER_PAGE = 12;
 
 type ResourcesPageContentProps = {
   isDiscoverMode: boolean;
@@ -244,11 +245,6 @@ export async function ResourcesPageContent({
                     <p className="text-sm leading-6 text-text-secondary">{resultsContext}</p>
                   ) : null}
                 </div>
-                {totalPages > 1 ? (
-                  <p className="shrink-0 text-sm text-text-secondary">
-                    Page {safePage} of {totalPages}
-                  </p>
-                ) : null}
               </div>
 
               <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
@@ -321,6 +317,7 @@ export async function ResourcesPageContent({
                     page={safePage}
                     totalPages={totalPages}
                     hasActiveFilters={hasActiveFilters}
+                    progressiveLoad
                   />
                 </div>
               </div>
@@ -478,11 +475,12 @@ async function ResourcesDiscoverDeferredSections({
             {discoverCategoriesWithCount.map((cat) => {
               const Icon = getCategoryIcon(cat.slug);
               const color = getCategoryColor(cat.slug);
+              const href = `/resources?category=${encodeURIComponent(cat.slug)}`;
 
               return (
-                <Link
+                <CategoryBrowseCardLink
                   key={cat.id}
-                  href={`/resources?category=${encodeURIComponent(cat.slug)}`}
+                  href={href}
                   className="group block rounded-[24px] border border-surface-200 bg-white p-5 shadow-card transition duration-200 hover:-translate-y-1 hover:border-surface-300 hover:shadow-card-lg"
                 >
                   <div className="flex items-center gap-4">
@@ -500,7 +498,7 @@ async function ResourcesDiscoverDeferredSections({
                       </span>
                     </div>
                   </div>
-                </Link>
+                </CategoryBrowseCardLink>
               );
             })}
           </div>

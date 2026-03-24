@@ -1,16 +1,18 @@
 "use client";
 
-import { useRef, Suspense } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, usePathname } from "next/navigation";
 import { BookOpen, Search } from "lucide-react";
+import { Button } from "@/design-system";
 import { ResourceCard, ResourceCardSkeleton, type ResourceCardData } from "./ResourceCard";
-import { ResourcePagination } from "./ResourcePagination";
 
 // Auto-fill: cards are at least 280 px wide and grow equally to fill available space.
 // Naturally produces ~2 cols on mobile, ~3 on tablet, ~4-5 on desktop, ~5-6 on 1600px.
 export const RESOURCE_GRID_CLASSES =
   "grid items-stretch gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]";
+
+const LISTING_BATCH_SIZE = 12;
 
 interface ResourceGridProps {
   resources: ResourceCardData[];
@@ -26,6 +28,7 @@ interface ResourceGridProps {
    * filters rather than implying no content exists in the section.
    */
   hasActiveFilters?: boolean;
+  progressiveLoad?: boolean;
 }
 
 export function ResourceGrid({
@@ -36,9 +39,21 @@ export function ResourceGrid({
   totalPages,
   loading = false,
   hasActiveFilters = false,
+  progressiveLoad = false,
 }: ResourceGridProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const gridContainerRef = useRef<HTMLDivElement>(null);
+  const queryKey = `${pathname}?${searchParams.toString()}`;
+  const [visibleResources, setVisibleResources] = useState(resources);
+  const [nextPage, setNextPage] = useState(page + 1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  useEffect(() => {
+    setVisibleResources(resources);
+    setNextPage(page + 1);
+    setIsLoadingMore(false);
+  }, [resources, page, total, queryKey]);
 
   // ── Loading skeleton ────────────────────────────────────────────────────────
   if (loading) {
@@ -107,14 +122,51 @@ export function ResourceGrid({
       </div>
     );
   }
+  const displayedResources = progressiveLoad ? visibleResources : resources;
+  const loadedCount = displayedResources.length;
+  const hasMore = progressiveLoad && loadedCount < total && nextPage <= totalPages;
 
-  const gridContainerRef = useRef<HTMLDivElement>(null);
+  async function handleLoadMore() {
+    if (!hasMore || isLoadingMore) {
+      return;
+    }
+
+    setIsLoadingMore(true);
+
+    try {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", String(nextPage));
+      params.set("pageSize", String(LISTING_BATCH_SIZE));
+
+      const response = await fetch(`/api/resources?${params.toString()}`, {
+        credentials: "same-origin",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to load more resources");
+      }
+
+      const json = await response.json();
+      const nextResources = (json.data?.resources ?? json.data?.items ?? []) as ResourceCardData[];
+
+      setVisibleResources((current) => {
+        const seen = new Set(current.map((resource) => resource.id));
+        return [
+          ...current,
+          ...nextResources.filter((resource) => !seen.has(resource.id)),
+        ];
+      });
+      setNextPage((current) => current + 1);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }
 
   return (
     <div ref={gridContainerRef} className="space-y-8 animate-fade-in">
       {/* ── Grid: consistent height, no vertical stretch; 16:10 thumb prevents layout shift ── */}
       <div className={RESOURCE_GRID_CLASSES}>
-        {resources.map((resource) => (
+        {displayedResources.map((resource) => (
           <ResourceCard
             key={resource.id}
             resource={resource}
@@ -124,14 +176,26 @@ export function ResourceGrid({
         ))}
       </div>
 
-      {/* ── Pagination ─────────────────────────────────────────────────────── */}
-      <Suspense fallback={null}>
-        <ResourcePagination
-          page={page}
-          totalPages={totalPages}
-          gridContainerRef={gridContainerRef}
-        />
-      </Suspense>
+      {progressiveLoad ? (
+        <div className="flex flex-col items-center gap-4 pt-2">
+          <p className="text-sm text-text-secondary">
+            Showing {loadedCount} of {total} resource{total === 1 ? "" : "s"}
+          </p>
+
+          {hasMore ? (
+            <Button
+              type="button"
+              variant="secondary"
+              size="lg"
+              onClick={() => void handleLoadMore()}
+              disabled={isLoadingMore}
+              loading={isLoadingMore}
+            >
+              {isLoadingMore ? "Loading more…" : "Load more"}
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }
