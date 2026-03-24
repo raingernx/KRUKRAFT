@@ -30,10 +30,10 @@ interface ResourceFilesProps {
 export function ResourceFiles({ files }: ResourceFilesProps) {
   if (files.length === 0) {
     return (
-      <section id="included" className="rounded-2xl border border-surface-200 bg-white p-5 shadow-card sm:p-6">
+      <section id="included" className="space-y-4 border-t border-surface-200 pt-6">
         <h2 className="font-display text-lg font-semibold text-zinc-900">Included files</h2>
-        <div className="mt-3 rounded-xl border border-zinc-200 bg-surface-50 px-4 py-4">
-          <p className="text-[13px] text-zinc-500">
+        <div className="rounded-xl border border-surface-200 bg-surface-50 px-4 py-4">
+          <p className="text-small leading-6 text-zinc-500">
             File details for this resource will appear here once the creator uploads the final
             asset.
           </p>
@@ -43,9 +43,9 @@ export function ResourceFiles({ files }: ResourceFilesProps) {
   }
 
   return (
-    <section id="included" className="rounded-2xl border border-surface-200 bg-white p-5 shadow-card sm:p-6">
+    <section id="included" className="space-y-4 border-t border-surface-200 pt-6">
       <h2 className="font-display text-lg font-semibold text-zinc-900">Included files</h2>
-      <ul className="mt-3 divide-y divide-zinc-100 rounded-xl border border-zinc-200 bg-surface-50">
+      <ul className="divide-y divide-surface-200 rounded-xl border border-surface-200 bg-surface-50">
         {files.map((file, i) => (
           <li
             key={file.name + (file.size ?? "") + i}
@@ -53,10 +53,10 @@ export function ResourceFiles({ files }: ResourceFilesProps) {
           >
             <span className="flex items-center gap-3 min-w-0">
               {getFileIcon(file.name)}
-              <span className="text-[13px] font-medium text-zinc-900 truncate">{file.name}</span>
+              <span className="text-small font-medium text-zinc-900 truncate">{file.name}</span>
             </span>
             {file.size != null && (
-              <span className="text-[13px] text-zinc-500 shrink-0">
+              <span className="shrink-0 text-small text-zinc-500">
                 {formatFileSize(file.size)}
               </span>
             )}

@@ -4,7 +4,7 @@ import { formatNumber } from "@/lib/format";
 
 /**
  * StudyDock Stat Card. Used in dashboard and admin panels.
- * Style: rounded-xl, border-zinc-200, bg-white, p-5.
+ * Style: quiet surface, subtle border, medium radius, p-5.
  * Layout: metric label, then metric value (e.g. "Downloads" / "1,240").
  */
 interface StatCardProps {
@@ -21,13 +21,13 @@ export function StatCard({ label, value, icon, className }: StatCardProps) {
   return (
     <div
       className={cn(
-        "min-w-0 rounded-xl border border-zinc-200 bg-white p-5",
+        "min-w-0 rounded-xl border border-border-subtle bg-white p-5 shadow-none",
         className
       )}
     >
       {icon && <div className="mb-2 flex justify-start">{icon}</div>}
-      <p className="text-xs font-medium text-zinc-500">{label}</p>
-      <p className="mt-1 truncate text-lg font-semibold tabular-nums text-zinc-900">
+      <p className="text-caption text-text-secondary">{label}</p>
+      <p className="mt-1 truncate text-lg font-semibold tabular-nums text-text-primary">
         {displayValue}
       </p>
     </div>

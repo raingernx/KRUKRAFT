@@ -14,7 +14,7 @@ const Switch = React.forwardRef<
       ref={ref}
       disabled={disabled}
       className={cn(
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:ring-offset-2",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40 focus-visible:ring-offset-2",
         disabled && "cursor-not-allowed opacity-60",
         className,
       )}

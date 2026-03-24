@@ -13,6 +13,7 @@
  *                             whole calendar day is included
  */
 
+import { unstable_cache } from "next/cache";
 import {
   getRecommendationImpressions,
   getRecommendationClicks,
@@ -20,6 +21,7 @@ import {
   getRecommendationPurchases,
   type DateFilter,
 } from "@/repositories/analytics/recommendation-report.repository";
+import { CACHE_TTLS } from "@/lib/cache";
 import { RECOMMENDATION_EXPERIMENT_ID } from "@/lib/recommendations/experiment";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -155,23 +157,37 @@ export async function getRecommendationReport(
     options.start,
     options.end,
   );
+  const filterStart = toDateStr(startDate);
+  const filterEnd = toDateStr(endDate);
 
-  const filter: DateFilter = { start: startDate, end: endDate };
+  return unstable_cache(
+    async function _getRecommendationReport() {
+      const filter: DateFilter = { start: startDate, end: endDate };
 
-  const [impressions, clicks, users, purchases] = await Promise.all([
-    getRecommendationImpressions(experimentId, filter),
-    getRecommendationClicks(experimentId, filter),
-    getRecommendationUniqueUsers(experimentId, filter),
-    getRecommendationPurchases(experimentId, filter),
-  ]);
+      const [impressions, clicks, users, purchases] = await Promise.all([
+        getRecommendationImpressions(experimentId, filter),
+        getRecommendationClicks(experimentId, filter),
+        getRecommendationUniqueUsers(experimentId, filter),
+        getRecommendationPurchases(experimentId, filter),
+      ]);
 
-  return {
-    experimentId,
-    generatedAt:    new Date().toISOString(),
-    filterStart:    toDateStr(startDate),
-    filterEnd:      toDateStr(endDate),
-    isDefaultRange,
-    phase1: variantMetrics("phase1", impressions, clicks, users, purchases),
-    phase2: variantMetrics("phase2", impressions, clicks, users, purchases),
-  };
+      return {
+        experimentId,
+        generatedAt: new Date().toISOString(),
+        filterStart,
+        filterEnd,
+        isDefaultRange,
+        phase1: variantMetrics("phase1", impressions, clicks, users, purchases),
+        phase2: variantMetrics("phase2", impressions, clicks, users, purchases),
+      };
+    },
+    [
+      "admin-recommendation-report",
+      experimentId,
+      filterStart,
+      filterEnd,
+      isDefaultRange ? "default" : "explicit",
+    ],
+    { revalidate: CACHE_TTLS.publicPage },
+  )();
 }

@@ -48,7 +48,7 @@ export function ResourceGallery({
     return (
       <>
         <div className="hidden lg:order-1 lg:block lg:w-20 lg:shrink-0" aria-hidden />
-        <div className="relative order-1 flex w-full items-center justify-center overflow-hidden rounded-xl bg-zinc-100 aspect-[4/3] min-h-[420px] lg:order-2">
+        <div className="relative order-1 flex w-full items-center justify-center overflow-hidden rounded-xl border border-surface-200 bg-surface-50 aspect-[4/3] min-h-[420px] lg:order-2">
           <div className="flex flex-col items-center gap-2 text-center text-zinc-400">
             <FileText className="h-10 w-10" />
             <span className="text-sm font-medium">No preview images</span>
@@ -108,7 +108,7 @@ export function ResourceGallery({
 
           {/* Counter in lightbox */}
           {total > 1 && (
-            <span className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 text-[12px] font-medium text-white">
+            <span className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 text-caption font-medium text-white">
               {activeIndex + 1} / {total}
             </span>
           )}
@@ -145,10 +145,10 @@ export function ResourceGallery({
                     onClick={() => setActive(globalIndex)}
                     aria-label={`View preview ${globalIndex + 1}`}
                     className={[
-                      "relative aspect-square w-16 shrink-0 overflow-hidden rounded-lg border-2 transition lg:w-20",
+                      "relative aspect-square w-16 shrink-0 overflow-hidden rounded-lg border transition lg:w-20",
                       globalIndex === activeIndex
-                        ? "border-brand-600 shadow-sm"
-                        : "border-zinc-200 opacity-60 hover:border-zinc-400 hover:opacity-100",
+                        ? "border-primary-500 ring-1 ring-primary-500/20"
+                        : "border-surface-200 opacity-70 hover:border-zinc-300 hover:opacity-100",
                     ].join(" ")}
                   >
                     <Image
@@ -190,7 +190,7 @@ export function ResourceGallery({
         type="button"
         onClick={() => setZoomed(true)}
         aria-label="Enlarge preview"
-        className="group relative order-1 w-full cursor-zoom-in overflow-hidden rounded-xl bg-zinc-100 aspect-[4/3] min-h-[420px] lg:order-2"
+        className="group relative order-1 w-full cursor-zoom-in overflow-hidden rounded-xl border border-surface-200 bg-surface-50 aspect-[4/3] min-h-[420px] lg:order-2"
       >
         <Image
           src={current.imageUrl}
@@ -201,15 +201,14 @@ export function ResourceGallery({
         />
 
         {/* Enlarge badge — visual hint only, top-right, visible on hover */}
-        <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/50 px-2.5 py-1.5 text-[11px] font-medium text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
-          <ZoomIn className="h-3 w-3" />
-          Enlarge
+        <span className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full bg-white/90 p-2 text-zinc-600 opacity-100 shadow-sm transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
+          <ZoomIn className="h-3.5 w-3.5" />
         </span>
 
         {/* Counter + depth label */}
         {total > 1 && (
-          <span className="absolute bottom-2 right-3 rounded-full bg-black/50 px-2 py-0.5 text-[11px] font-medium text-white">
-            {activeIndex + 1} / {total} previews
+          <span className="absolute bottom-3 left-3 rounded-full bg-white/90 px-2.5 py-1 text-caption font-medium text-zinc-600 shadow-sm">
+            {activeIndex + 1} / {total}
           </span>
         )}
       </button>

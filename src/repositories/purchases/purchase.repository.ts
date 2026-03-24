@@ -88,6 +88,23 @@ const PURCHASE_PREFERENCE_SIGNAL_SELECT = {
   },
 } as const;
 
+const LIBRARY_LIST_ITEM_SELECT = {
+  id: true,
+  createdAt: true,
+  resource: {
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      previewUrl: true,
+      mimeType: true,
+      type: true,
+      author: { select: { name: true } },
+      category: { select: { slug: true } },
+    },
+  },
+} as const;
+
 const DOWNLOAD_EVENT_WITH_RESOURCE_SELECT = {
   id: true,
   createdAt: true,
@@ -216,10 +233,56 @@ export async function findCompletedSalesCountsByResourceIds(resourceIds: string[
   });
 }
 
+export async function findAdminResourcePurchaseSummaries(resourceIds: string[]) {
+  if (resourceIds.length === 0) {
+    return [];
+  }
+
+  return prisma.purchase.groupBy({
+    by: ["resourceId"],
+    where: {
+      resourceId: { in: resourceIds },
+    },
+    _count: {
+      _all: true,
+    },
+    _sum: {
+      amount: true,
+    },
+  });
+}
+
 export async function findCompletedPurchasesByUser(userId: string) {
   return prisma.purchase.findMany({
     where: { userId, status: "COMPLETED" },
     select: PURCHASE_LIST_ITEM_SELECT,
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function findAdminOrders(params: {
+  where: Prisma.PurchaseWhereInput;
+  take: number;
+}) {
+  return prisma.purchase.findMany({
+    take: params.take,
+    orderBy: { createdAt: "desc" },
+    where: params.where,
+    select: {
+      id: true,
+      amount: true,
+      status: true,
+      createdAt: true,
+      user: { select: { name: true, email: true } },
+      resource: { select: { title: true } },
+    },
+  });
+}
+
+export async function findCompletedLibraryItemsByUser(userId: string) {
+  return prisma.purchase.findMany({
+    where: { userId, status: "COMPLETED" },
+    select: LIBRARY_LIST_ITEM_SELECT,
     orderBy: { createdAt: "desc" },
   });
 }
@@ -241,6 +304,26 @@ export async function findPurchaseHistoryByUser(userId: string) {
     where: { userId },
     select: PURCHASE_LIST_ITEM_SELECT,
     orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function getAdminTotalRevenue() {
+  return prisma.purchase.aggregate({
+    _sum: { amount: true },
+    where: { status: "COMPLETED" },
+  });
+}
+
+export async function getAdminOrdersTodayCount() {
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  return prisma.purchase.aggregate({
+    _count: true,
+    where: {
+      status: "COMPLETED",
+      createdAt: { gte: startOfToday },
+    },
   });
 }
 

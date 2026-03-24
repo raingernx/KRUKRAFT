@@ -4,6 +4,9 @@ import Link from "next/link";
 import { authOptions } from "@/lib/auth";
 import { getRankingDebugReport } from "@/services/analytics/ranking-debug.service";
 import { SlidersHorizontal, ExternalLink } from "lucide-react";
+import { Button, Input, Select } from "@/design-system";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { TableToolbar } from "@/components/admin/table";
 
 export const metadata = {
   title: "Ranking Debug – Admin",
@@ -86,24 +89,17 @@ export default async function RankingDebugPage({
   const activeFilterCount = [category, search, price].filter(Boolean).length;
 
   return (
-    <div className="space-y-8 px-6 py-8">
+    <div className="space-y-8">
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
-            Ranking Debug
-          </h1>
-          <p className="mt-1 max-w-2xl text-sm text-zinc-500">
-            Shows how each published resource scores under the{" "}
-            <span className="font-medium text-zinc-700">recommended</span> sort formula.
-            Top 50 results. Read-only — this page has no effect on live rankings.
-          </p>
-        </div>
+        <AdminPageHeader
+          title="Ranking Debug"
+          description="Shows how each published resource scores under the recommended sort formula. Top 50 results. Read-only."
+        />
 
-        {/* Formula legend */}
-        <div className="shrink-0 rounded-2xl border border-zinc-200 bg-zinc-50 px-5 py-4 text-xs text-zinc-500">
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
+        <div className="shrink-0 rounded-xl border border-border-subtle bg-surface-50 px-5 py-4 text-small text-text-secondary">
+          <p className="mb-2 font-ui text-caption text-text-muted">
             Score formula
           </p>
           <p className="font-mono leading-relaxed">
@@ -120,7 +116,7 @@ export default async function RankingDebugPage({
             <span className="text-blue-600">recency</span>
             {" × 0.1"}
           </p>
-          <p className="mt-2 text-[10px] leading-relaxed text-zinc-400">
+          <p className="mt-2 text-caption leading-relaxed text-text-muted">
             activation = (fpd + 3) / (purchases + 6) — Laplace prior 0.500
             <br />
             recency = 1.0 for age &lt; 7 days, else 7 / ageDays
@@ -130,25 +126,23 @@ export default async function RankingDebugPage({
 
       {/* ── Filters ─────────────────────────────────────────────────────────── */}
       <section aria-label="Filters">
-        <form
-          method="get"
-          className="flex flex-wrap items-end gap-3 rounded-2xl border border-zinc-200 bg-white px-5 py-4"
-        >
+        <form method="get">
+          <TableToolbar className="rounded-xl px-5 py-4">
           {/* Search */}
           <div className="flex flex-col gap-1">
             <label
               htmlFor="search"
-              className="text-[10px] font-medium uppercase tracking-wide text-zinc-400"
+              className="font-ui text-caption text-text-muted"
             >
               Search title
             </label>
-            <input
+            <Input
               id="search"
               name="search"
               type="text"
               defaultValue={search}
               placeholder="e.g. Math worksheet"
-              className="w-56 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+              className="w-full sm:w-56"
             />
           </div>
 
@@ -156,15 +150,14 @@ export default async function RankingDebugPage({
           <div className="flex flex-col gap-1">
             <label
               htmlFor="category"
-              className="text-[10px] font-medium uppercase tracking-wide text-zinc-400"
+              className="font-ui text-caption text-text-muted"
             >
               Category
             </label>
-            <select
+            <Select
               id="category"
               name="category"
               defaultValue={category}
-              className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
             >
               <option value="">All categories</option>
               {report.categories.map((c) => (
@@ -172,42 +165,38 @@ export default async function RankingDebugPage({
                   {c.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {/* Price */}
           <div className="flex flex-col gap-1">
             <label
               htmlFor="price"
-              className="text-[10px] font-medium uppercase tracking-wide text-zinc-400"
+              className="font-ui text-caption text-text-muted"
             >
               Price
             </label>
-            <select
+            <Select
               id="price"
               name="price"
               defaultValue={price}
-              className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
             >
               <option value="">All</option>
               <option value="free">Free only</option>
               <option value="paid">Paid only</option>
-            </select>
+            </Select>
           </div>
 
           {/* Actions */}
           <div className="flex items-end gap-2">
-            <button
-              type="submit"
-              className="flex items-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
-            >
+            <Button type="submit" size="sm" className="flex items-center gap-1.5 whitespace-nowrap">
               <SlidersHorizontal className="h-3.5 w-3.5" />
               Apply
-            </button>
+            </Button>
             {activeFilterCount > 0 && (
               <a
                 href="/admin/analytics/ranking"
-                className="rounded-lg border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50"
+                className="rounded-lg border border-border-subtle px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-50"
               >
                 Clear
               </a>
@@ -216,8 +205,8 @@ export default async function RankingDebugPage({
 
           {/* Active filter indicator */}
           {activeFilterCount > 0 && (
-            <p className="flex items-center gap-1.5 text-[11px] text-zinc-400 lg:ml-auto">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-indigo-400" />
+            <p className="flex items-center gap-1.5 font-ui text-caption text-text-muted lg:ml-auto">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary-400" />
               {activeFilterCount} filter{activeFilterCount > 1 ? "s" : ""} active
               {category && (
                 <span className="ml-1 font-medium text-zinc-600">
@@ -231,60 +220,61 @@ export default async function RankingDebugPage({
               )}
             </p>
           )}
+          </TableToolbar>
         </form>
       </section>
 
       {/* ── Results table ────────────────────────────────────────────────────── */}
       <section aria-label="Ranking results">
         <div className="mb-3 flex items-baseline justify-between">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
+          <p className="font-ui text-caption text-text-muted">
             Results — top {report.rows.length} by score
           </p>
-          <p className="text-[11px] text-zinc-400">
+          <p className="text-caption text-text-muted">
             Score range: 0 – {fmtScore(report.maxScore)}
           </p>
         </div>
 
         {report.rows.length === 0 ? (
-          <div className="rounded-2xl border border-zinc-200 bg-white px-6 py-12 text-center text-sm text-zinc-400">
+          <div className="rounded-xl border border-border-subtle bg-white px-6 py-12 text-center text-small text-text-muted">
             No published resources match the current filters.
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white">
+          <div className="overflow-x-auto rounded-xl border border-border-subtle bg-white">
             <table className="w-full min-w-[900px] text-sm">
               <thead>
-                <tr className="border-b border-zinc-100 bg-zinc-50">
-                  <th className="w-10 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                <tr className="border-b border-border-subtle bg-surface-50/80">
+                  <th className="w-10 px-4 py-3 text-left font-ui text-caption text-text-muted">
                     #
                   </th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-5 py-3 text-left font-ui text-caption text-text-muted">
                     Resource
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-4 py-3 text-right font-ui text-caption text-text-muted">
                     Purchases
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-4 py-3 text-right font-ui text-caption text-text-muted">
                     FPD
                   </th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-5 py-3 text-right font-ui text-caption text-text-muted">
                     Activation
                   </th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-5 py-3 text-right font-ui text-caption text-text-muted">
                     Recency
                   </th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-5 py-3 text-right font-ui text-caption text-text-muted">
                     Score
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-border-subtle/60">
                 {report.rows.map((row, i) => (
                   <tr
                     key={row.id}
                     className="group transition-colors hover:bg-zinc-50/60"
                   >
                     {/* Rank */}
-                    <td className="px-4 py-3 text-[11px] font-bold tabular-nums text-zinc-400">
+                    <td className="px-4 py-3 font-ui text-caption font-semibold tabular-nums text-text-muted">
                       {i + 1}
                     </td>
 
@@ -302,7 +292,7 @@ export default async function RankingDebugPage({
                             <ExternalLink className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-50" />
                           </Link>
                           {row.categoryName && (
-                            <p className="mt-0.5 text-[11px] text-zinc-400">
+                            <p className="mt-0.5 text-caption text-text-muted">
                               {row.categoryName}
                             </p>
                           )}
@@ -351,7 +341,7 @@ export default async function RankingDebugPage({
 
                     {/* Final score + proportional bar */}
                     <td className="px-5 py-3 text-right">
-                      <span className="block tabular-nums font-bold text-zinc-900">
+                      <span className="block tabular-nums font-semibold text-zinc-900">
                         {fmtScore(row.score)}
                       </span>
                       <ScoreBar value={row.score} max={report.maxScore} />
@@ -362,8 +352,8 @@ export default async function RankingDebugPage({
             </table>
 
             {/* Column legend */}
-            <div className="border-t border-zinc-100 bg-zinc-50 px-5 py-3">
-              <div className="flex flex-wrap gap-x-6 gap-y-1 text-[10px] text-zinc-400">
+            <div className="border-t border-border-subtle bg-surface-50/80 px-5 py-3">
+              <div className="flex flex-wrap gap-x-6 gap-y-1 text-caption text-text-muted">
                 <span>
                   <span className="font-semibold text-zinc-600">FPD</span>
                   {" "}= FIRST_PAID_DOWNLOAD events (unique buyer activations)
@@ -388,29 +378,29 @@ export default async function RankingDebugPage({
 
       {/* ── Score weight visualiser ──────────────────────────────────────────── */}
       <section aria-label="Weight breakdown">
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
+        <p className="mb-3 font-ui text-caption text-text-muted">
           Weight breakdown — top 10
         </p>
-        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+        <div className="overflow-hidden rounded-xl border border-border-subtle bg-white">
           <table className="w-full min-w-[700px] text-sm">
             <thead>
-              <tr className="border-b border-zinc-100 bg-zinc-50">
-                <th className="w-10 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">
+              <tr className="border-b border-border-subtle bg-surface-50/80">
+                <th className="w-10 px-4 py-3 text-left font-ui text-caption text-text-muted">
                   #
                 </th>
-                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                <th className="px-5 py-3 text-left font-ui text-caption text-text-muted">
                   Resource
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-violet-500">
+                <th className="px-4 py-3 text-right font-ui text-caption text-violet-500">
                   Volume ×0.6
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-emerald-600">
+                <th className="px-4 py-3 text-right font-ui text-caption text-emerald-600">
                   Activation ×0.3
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-blue-500">
+                <th className="px-4 py-3 text-right font-ui text-caption text-blue-500">
                   Recency ×0.1
                 </th>
-                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-indigo-600">
+                <th className="px-5 py-3 text-right font-ui text-caption text-indigo-600">
                   Total
                 </th>
               </tr>
@@ -423,7 +413,7 @@ export default async function RankingDebugPage({
 
                 return (
                   <tr key={row.id} className="transition-colors hover:bg-zinc-50/60">
-                    <td className="px-4 py-3 text-[11px] font-bold tabular-nums text-zinc-400">
+                    <td className="px-4 py-3 font-ui text-caption font-semibold tabular-nums text-text-muted">
                       {i + 1}
                     </td>
                     <td className="px-5 py-3 font-medium text-zinc-800">{row.title}</td>
@@ -446,7 +436,7 @@ export default async function RankingDebugPage({
               })}
             </tbody>
           </table>
-          <div className="border-t border-zinc-100 bg-zinc-50 px-5 py-3 text-[10px] text-zinc-400">
+          <div className="border-t border-border-subtle bg-surface-50/80 px-5 py-3 text-caption text-text-muted">
             Each column shows its weighted contribution to the total score. Adjust weight
             multipliers in{" "}
             <code className="rounded bg-zinc-200 px-1 font-mono text-zinc-600">
@@ -458,7 +448,7 @@ export default async function RankingDebugPage({
       </section>
 
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
-      <div className="border-t border-zinc-100 pt-4 text-[11px] text-zinc-400">
+      <div className="border-t border-border-subtle pt-4 text-caption text-text-muted">
         Generated at {report.generatedAt} · shows top 50 published resources ·{" "}
         <span className="font-medium text-zinc-600">read-only</span>
       </div>

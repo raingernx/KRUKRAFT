@@ -47,10 +47,10 @@ export function DiscoverButton() {
       aria-label="Discover resources"
       aria-busy={isPending}
       className={cn(
-        "inline-flex min-h-10 shrink-0 items-center gap-2 rounded-lg border px-3.5 py-2 text-sm font-medium transition sm:px-4",
+        "inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-small transition sm:px-4",
         isDiscover
-          ? "border-blue-600 bg-blue-600 text-white"
-          : "border-zinc-200 text-zinc-600 hover:bg-zinc-50",
+          ? "border-primary-200 bg-primary-50 text-primary-700"
+          : "border-border-subtle bg-white/90 text-text-secondary hover:border-surface-300 hover:bg-white hover:text-text-primary",
         isPending && "cursor-wait opacity-70"
       )}
     >
@@ -97,7 +97,7 @@ export function CategoryChips({ categories }: CategoryChipsProps) {
     <div
       role="navigation"
       aria-label="Filter by category"
-      className="flex shrink-0 items-center gap-2 pr-3"
+      className="flex shrink-0 items-center gap-1.5 pr-3"
     >
       <Chip
         label="All"
@@ -145,11 +145,11 @@ function Chip({
       aria-pressed={active}
       aria-busy={pending}
       className={cn(
-        "inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-medium transition",
+        "inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-3 py-1.5 text-caption transition sm:text-small",
         // Active or optimistically-pending target → blue
         active || pending
-          ? "border-blue-600 bg-blue-600 text-white"
-          : "border-zinc-200 text-zinc-600 hover:bg-zinc-50",
+          ? "border-primary-200 bg-primary-50 text-primary-700"
+          : "border-transparent bg-transparent text-text-secondary hover:border-surface-200 hover:bg-white hover:text-text-primary",
         // The chip being navigated to: cursor-wait + slight fade
         pending && "cursor-wait opacity-75",
         // Non-target chips dim while any navigation is pending

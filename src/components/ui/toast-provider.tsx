@@ -149,11 +149,11 @@ function ToastItem({
       }`}
     >
       <div
-        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] ${ICON_CLASS[type]}`}
+        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-caption ${ICON_CLASS[type]}`}
       >
         {ICON[type]}
       </div>
-      <p className="min-w-0 flex-1 text-[13px] font-medium leading-normal text-text-primary">
+      <p className="min-w-0 flex-1 text-small text-text-primary">
         {title}
       </p>
       <button

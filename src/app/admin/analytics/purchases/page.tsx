@@ -17,6 +17,9 @@ import {
   CreditCard,
   ArrowDown,
 } from "lucide-react";
+import { Button, Input } from "@/design-system";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { TableToolbar } from "@/components/admin/table";
 
 export const metadata = {
   title: "Purchase Analytics – Admin",
@@ -90,10 +93,10 @@ function PresetButtons({
           <a
             key={p.label}
             href={href}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+            className={`whitespace-nowrap rounded-full px-3 py-1 font-ui text-caption font-medium transition-colors ${
               isActive
-                ? "bg-zinc-900 text-white"
-                : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-700"
+                ? "bg-primary-700 text-white"
+                : "bg-surface-100 text-text-secondary hover:bg-surface-200 hover:text-text-primary"
             }`}
           >
             {p.label}
@@ -120,17 +123,17 @@ function StatCard({
   accent: string;
 }) {
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-5">
+    <div className="rounded-xl border border-border-subtle bg-white p-4">
       <span
         className={`flex h-9 w-9 items-center justify-center rounded-xl ${accent}`}
       >
         <Icon className="h-4 w-4" />
       </span>
-      <p className="mt-3 text-2xl font-bold tabular-nums tracking-tight text-zinc-900">
+      <p className="mt-3 text-2xl font-semibold tabular-nums tracking-tight text-text-primary">
         {value}
       </p>
-      <p className="mt-0.5 text-xs font-medium text-zinc-600">{label}</p>
-      {sub && <p className="mt-1 text-[11px] text-zinc-400">{sub}</p>}
+      <p className="mt-0.5 text-small font-medium text-text-secondary">{label}</p>
+      {sub && <p className="mt-1 text-caption text-text-muted">{sub}</p>}
     </div>
   );
 }
@@ -146,7 +149,7 @@ function SparkBar({
 }) {
   if (data.length === 0) {
     return (
-      <div className="flex h-12 items-center justify-center text-xs text-zinc-300">
+      <div className="flex h-12 items-center justify-center text-caption text-text-muted">
         No data
       </div>
     );
@@ -190,7 +193,7 @@ function FunnelRow({
         {/* Stage label */}
         <td className="px-5 py-4">
           <p className="text-sm font-semibold text-zinc-800">{step.label}</p>
-          <p className="mt-0.5 font-mono text-[10px] uppercase tracking-widest text-zinc-400">
+          <p className="mt-0.5 font-mono text-caption text-text-muted">
             {step.action}
           </p>
         </td>
@@ -215,7 +218,7 @@ function FunnelRow({
               >
                 {fmtPct(step.rateFromPrev)}
               </span>
-              <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+              <span className="font-ui text-caption font-medium text-text-muted">
                 {step.rateLabel}
               </span>
             </div>
@@ -282,71 +285,60 @@ export default async function PurchaseAnalyticsPage({
   const funnelTopCount = report.funnelSteps[0]?.count ?? 0;
 
   return (
-    <div className="space-y-10 px-6 py-8">
+    <div className="space-y-10">
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
-            Purchase Analytics
-          </h1>
-          <p className="mt-1 text-sm text-zinc-500">
-            Full purchase funnel, revenue, and resource performance.
-          </p>
-        </div>
-
-        {/* Date range controls */}
+      <AdminPageHeader
+        title="Purchase Analytics"
+        description="Full purchase funnel, revenue, and resource performance."
+      />
+      <TableToolbar className="items-start justify-between gap-4">
+        <PresetButtons start={start} end={end} />
         <div className="shrink-0">
-          <PresetButtons start={start} end={end} />
-          <form method="get" className="mt-2 flex items-end gap-2">
+          <form method="get" className="flex flex-wrap items-end gap-2.5">
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="start"
-                className="text-[10px] font-medium uppercase tracking-wide text-zinc-400"
+                className="font-ui text-caption text-text-muted"
               >
                 From
               </label>
-              <input
+              <Input
                 id="start"
                 name="start"
                 type="date"
                 defaultValue={start ?? ""}
-                className="w-36 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full sm:w-36"
               />
             </div>
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="end"
-                className="text-[10px] font-medium uppercase tracking-wide text-zinc-400"
+                className="font-ui text-caption text-text-muted"
               >
                 To
               </label>
-              <input
+              <Input
                 id="end"
                 name="end"
                 type="date"
                 defaultValue={end ?? ""}
-                className="w-36 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full sm:w-36"
               />
             </div>
-            <button
-              type="submit"
-              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
-            >
-              Apply
-            </button>
+            <Button type="submit" size="sm" className="whitespace-nowrap">Apply</Button>
           </form>
-          <p className="mt-2 flex items-center gap-1.5 text-[11px] text-zinc-400">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          <p className="mt-2 flex items-center gap-1.5 font-ui text-caption text-text-muted">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-success-400" />
             {rangeLabel}
             {report.isDefaultRange && <span>(default)</span>}
           </p>
         </div>
-      </div>
+      </TableToolbar>
 
       {/* ── Summary cards ───────────────────────────────────────────────────── */}
       <section aria-label="Summary">
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
+        <p className="mb-3 font-ui text-caption text-text-muted">
           Summary
         </p>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7">
@@ -405,30 +397,30 @@ export default async function PurchaseAnalyticsPage({
       {/* ── Funnel table ─────────────────────────────────────────────────────── */}
       <section aria-label="Purchase funnel">
         <div className="mb-3 flex items-baseline justify-between">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
+          <p className="font-ui text-caption text-text-muted">
             Checkout funnel
           </p>
-          <p className="text-[11px] text-zinc-400">
+          <p className="text-caption text-text-muted">
             Source: ActivityLog events · step-to-step conversion
           </p>
         </div>
 
         {funnelTopCount === 0 ? (
-          <div className="rounded-2xl border border-zinc-200 bg-white px-6 py-10 text-center text-sm text-zinc-400">
+          <div className="rounded-xl border border-border-subtle bg-white px-6 py-10 text-center text-small text-text-muted">
             No checkout events recorded in this date range.
           </div>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+          <div className="overflow-hidden rounded-xl border border-border-subtle bg-white">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-zinc-100 bg-zinc-50">
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                <tr className="border-b border-border-subtle bg-surface-50/80">
+                  <th className="px-5 py-3 text-left font-ui text-caption text-text-muted">
                     Stage
                   </th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-5 py-3 text-left font-ui text-caption text-text-muted">
                     Events
                   </th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-5 py-3 text-right font-ui text-caption text-text-muted">
                     vs previous
                   </th>
                 </tr>
@@ -446,7 +438,7 @@ export default async function PurchaseAnalyticsPage({
             </table>
 
             {/* Rates summary strip */}
-            <div className="border-t border-zinc-100 bg-zinc-50 px-5 py-3">
+            <div className="border-t border-border-subtle bg-surface-50/80 px-5 py-3">
               <div className="flex flex-wrap gap-x-6 gap-y-1.5">
                 {[
                   { label: "Redirect rate", value: report.redirectRate },
@@ -456,7 +448,7 @@ export default async function PurchaseAnalyticsPage({
                   { label: "Paid activation rate", value: report.paidActivationRate },
                 ].map(({ label, value }) => (
                   <div key={label} className="flex items-center gap-2">
-                    <span className="text-[11px] text-zinc-500">{label}</span>
+                    <span className="text-caption text-text-secondary">{label}</span>
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${rateTone(value)}`}
                     >
@@ -472,28 +464,28 @@ export default async function PurchaseAnalyticsPage({
 
       {/* ── Provider breakdown ───────────────────────────────────────────────── */}
       <section aria-label="Provider breakdown">
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
+        <p className="mb-3 font-ui text-caption text-text-muted">
           Provider breakdown
         </p>
         {report.providerBreakdown.length === 0 ? (
-          <div className="rounded-2xl border border-zinc-200 bg-white px-6 py-10 text-center text-sm text-zinc-400">
+          <div className="rounded-xl border border-border-subtle bg-white px-6 py-10 text-center text-small text-text-muted">
             No completed purchases in this date range.
           </div>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+          <div className="overflow-hidden rounded-xl border border-border-subtle bg-white">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-zinc-100 bg-zinc-50">
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                <tr className="border-b border-border-subtle bg-surface-50/80">
+                  <th className="px-5 py-3 text-left font-ui text-caption text-text-muted">
                     Provider
                   </th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-5 py-3 text-right font-ui text-caption text-text-muted">
                     Purchases
                   </th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-5 py-3 text-right font-ui text-caption text-text-muted">
                     Share
                   </th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-5 py-3 text-right font-ui text-caption text-text-muted">
                     Revenue
                   </th>
                 </tr>
@@ -537,7 +529,7 @@ export default async function PurchaseAnalyticsPage({
                     <tr className="bg-zinc-50/60">
                       <td
                         colSpan={4}
-                        className="px-5 py-2 text-[11px] font-semibold uppercase tracking-wide text-zinc-400"
+                        className="px-5 py-2 font-ui text-caption text-text-muted"
                       >
                         Revenue split (all providers)
                       </td>
@@ -567,22 +559,22 @@ export default async function PurchaseAnalyticsPage({
       {/* ── Daily charts ─────────────────────────────────────────────────────── */}
       {report.dailySeries.length > 0 && (
         <section aria-label="Daily trends">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
+          <p className="mb-3 font-ui text-caption text-text-muted">
             Daily trends
           </p>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {/* Paid completions */}
-            <div className="rounded-2xl border border-zinc-200 bg-white p-5">
+            <div className="rounded-xl border border-border-subtle bg-white p-5">
               <p className="text-sm font-semibold text-zinc-900">
                 Paid completions per day
               </p>
-              <p className="mt-0.5 text-[11px] text-zinc-400">
+              <p className="mt-0.5 text-caption text-text-muted">
                 Confirmed paid purchases by day of session.
               </p>
               <div className="mt-4">
                 <SparkBar data={dailyPaidData} colorClass="bg-violet-400" />
               </div>
-              <div className="mt-2 flex items-center justify-between text-[10px] text-zinc-400">
+              <div className="mt-2 flex items-center justify-between text-caption text-text-muted">
                 <span>{dailyPaidData[0]?.date ?? ""}</span>
                 <span>Total: {fmt(report.sessionsCompleted)}</span>
                 <span>{dailyPaidData[dailyPaidData.length - 1]?.date ?? ""}</span>
@@ -590,17 +582,17 @@ export default async function PurchaseAnalyticsPage({
             </div>
 
             {/* Free claims */}
-            <div className="rounded-2xl border border-zinc-200 bg-white p-5">
+            <div className="rounded-xl border border-border-subtle bg-white p-5">
               <p className="text-sm font-semibold text-zinc-900">
                 Free claims per day
               </p>
-              <p className="mt-0.5 text-[11px] text-zinc-400">
+              <p className="mt-0.5 text-caption text-text-muted">
                 Free resource adds by day.
               </p>
               <div className="mt-4">
                 <SparkBar data={dailyFreeData} colorClass="bg-amber-400" />
               </div>
-              <div className="mt-2 flex items-center justify-between text-[10px] text-zinc-400">
+              <div className="mt-2 flex items-center justify-between text-caption text-text-muted">
                 <span>{dailyFreeData[0]?.date ?? ""}</span>
                 <span>Total: {fmt(report.freeClaims)}</span>
                 <span>{dailyFreeData[dailyFreeData.length - 1]?.date ?? ""}</span>
@@ -612,28 +604,28 @@ export default async function PurchaseAnalyticsPage({
 
       {/* ── Top resources ────────────────────────────────────────────────────── */}
       <section aria-label="Top resources">
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
+        <p className="mb-3 font-ui text-caption text-text-muted">
           Top paid resources
         </p>
         {report.topResources.length === 0 ? (
-          <div className="rounded-2xl border border-zinc-200 bg-white px-6 py-10 text-center text-sm text-zinc-400">
+          <div className="rounded-xl border border-border-subtle bg-white px-6 py-10 text-center text-small text-text-muted">
             No paid purchases in this date range.
           </div>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+          <div className="overflow-hidden rounded-xl border border-border-subtle bg-white">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-zinc-100 bg-zinc-50">
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                <tr className="border-b border-border-subtle bg-surface-50/80">
+                  <th className="px-5 py-3 text-left font-ui text-caption text-text-muted">
                     #
                   </th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-5 py-3 text-left font-ui text-caption text-text-muted">
                     Resource
                   </th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-5 py-3 text-right font-ui text-caption text-text-muted">
                     Purchases
                   </th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                  <th className="px-5 py-3 text-right font-ui text-caption text-text-muted">
                     Revenue
                   </th>
                 </tr>
@@ -644,7 +636,7 @@ export default async function PurchaseAnalyticsPage({
                     key={r.resourceId}
                     className="transition-colors hover:bg-zinc-50/60"
                   >
-                    <td className="w-10 px-5 py-3 text-[11px] font-bold tabular-nums text-zinc-400">
+                    <td className="w-10 px-5 py-3 font-ui text-caption font-semibold tabular-nums text-text-muted">
                       {i + 1}
                     </td>
                     <td className="px-5 py-3">
@@ -652,7 +644,7 @@ export default async function PurchaseAnalyticsPage({
                         href={`/resources/${r.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium text-zinc-800 hover:text-blue-600 hover:underline"
+                        className="font-medium text-zinc-800 hover:text-primary-700 hover:underline"
                       >
                         {r.title}
                       </Link>
@@ -672,7 +664,7 @@ export default async function PurchaseAnalyticsPage({
       </section>
 
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
-      <div className="border-t border-zinc-100 pt-4 text-[11px] text-zinc-400">
+      <div className="border-t border-border-subtle pt-4 text-caption text-text-muted">
         Generated at {report.generatedAt}
       </div>
     </div>

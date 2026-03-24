@@ -12,7 +12,7 @@ export interface DataTableProps {
 
 /**
  * Admin data table wrapper. Use with TableToolbar, thead/tbody, TablePagination, TableEmptyState.
- * Provides consistent border, shadow, overflow.
+ * Provides consistent border, spacing, and overflow behavior.
  */
 export function DataTable({
   children,
@@ -22,7 +22,7 @@ export function DataTable({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-2xl border border-border-subtle bg-white shadow-card",
+        "overflow-hidden rounded-xl border border-border-subtle bg-white",
         className
       )}
     >
@@ -82,7 +82,7 @@ export function DataTableRow({
   return (
     <tr
       className={cn(
-        "bg-white transition-colors hover:bg-surface-50",
+        "bg-white transition-colors hover:bg-surface-50/55",
         onClick && "cursor-pointer",
         className
       )}
@@ -113,7 +113,7 @@ export function DataTableCell({
   return (
     <td
       className={cn(
-        "px-2 py-3 align-middle text-text-primary",
+        "px-4 py-3 align-middle text-text-primary",
         alignClass,
         className
       )}
@@ -143,7 +143,7 @@ export function DataTableHeadCell({
   return (
     <th
       className={cn(
-        "px-2 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary",
+        "px-4 py-2.5 font-ui text-caption text-text-muted whitespace-nowrap",
         alignClass,
         className
       )}

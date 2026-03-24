@@ -54,10 +54,19 @@ export function DashboardSidebar({
   };
 
   const resolvedHeader = header ?? <Logo variant="full" size="md" />;
+  const isDashboardVariant = variant !== "admin";
 
   const content = (
-    <SidebarContainer className="h-full shrink-0">
-      <div className="flex h-14 flex-shrink-0 items-center justify-between border-b border-neutral-100 px-6">
+    <SidebarContainer
+      className={cn(
+        "h-full shrink-0",
+        isDashboardVariant &&
+          "[&_a[aria-current='page']]:!bg-primary-50 [&_a[aria-current='page']]:!text-primary-800 [&_a[aria-current='page']]:!shadow-none [&_a[aria-current='page']]:!font-semibold [&_a[aria-current='page']_svg]:!text-primary-700 [&_a[aria-current='page']_span.ml-auto]:!bg-primary-100 [&_a[aria-current='page']_span.ml-auto]:!text-primary-700",
+        variant === "admin" &&
+          "[&_a]:min-h-10 [&_a]:rounded-lg [&_a]:px-3 [&_a]:py-2 [&_a]:text-sm [&_a]:text-text-secondary [&_a:hover]:bg-surface-50 [&_a:hover]:text-text-primary [&_a_svg]:text-text-muted [&_a[aria-current='page']]:!bg-surface-100 [&_a[aria-current='page']]:!text-text-primary [&_a[aria-current='page']]:!shadow-none [&_a[aria-current='page']]:!font-semibold [&_a[aria-current='page']_svg]:!text-primary-700 [&_a[aria-current='page']_span.ml-auto]:!bg-primary-100 [&_a[aria-current='page']_span.ml-auto]:!text-primary-700"
+      )}
+    >
+      <div className="flex h-14 flex-shrink-0 items-center justify-between border-b border-neutral-100 px-5 lg:px-6">
         {resolvedHeader}
         <button
           type="button"
@@ -78,16 +87,26 @@ export function DashboardSidebar({
         />
       ) : null}
 
-      {topSlot ? <div className="flex-shrink-0 px-5 pt-4">{topSlot}</div> : null}
+      {topSlot ? (
+        <div className="flex-shrink-0 px-4 pt-4 lg:px-5">{topSlot}</div>
+      ) : null}
 
-      <SidebarNav className={cn("pt-4", variant === "admin" && "pt-5")}>
+      <SidebarNav
+        className={cn(
+          "pt-4",
+          isDashboardVariant &&
+            "[&_p]:tracking-[0.08em] [&_p]:text-neutral-500 [&_ul]:space-y-1",
+          variant === "admin" &&
+            "pt-5 [&_p]:mb-2 [&_p]:mt-0 [&_p]:px-2 [&_p]:font-ui [&_p]:text-caption [&_p]:tracking-[0.08em] [&_p]:text-text-muted [&_ul]:space-y-1"
+        )}
+      >
         {sections.map((section, index) => (
           <DashboardSidebarSection
             key={section.id}
             section={section}
             activeMatcher={isActive}
             onNavigate={onClose}
-            className={cn(index > 0 && "mt-7")}
+            className={cn(index > 0 && "mt-6")}
           />
         ))}
       </SidebarNav>

@@ -40,11 +40,11 @@ export function TablePagination({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center justify-between gap-3 border-t border-border-subtle bg-surface-50/60 px-4 py-3 text-sm text-text-secondary",
+        "flex flex-wrap items-center justify-between gap-3 border-t border-border-subtle bg-surface-50/70 px-4 py-3 text-small text-text-secondary",
         className
       )}
     >
-      <div>
+      <div className="min-w-0">
         {totalItems != null && from != null && to != null && (
           <PaginationInfo>
             Showing {from}–{to} of {totalItems} {entityLabel}

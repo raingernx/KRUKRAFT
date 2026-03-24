@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { getServerSession } from "next-auth";
-import type { Session } from "next-auth";
 import { cookies } from "next/headers";
 import { authOptions } from "@/lib/auth";
 import { Navbar } from "@/components/layout/Navbar";
@@ -41,12 +40,30 @@ function getSearchParamValue(value: SearchParamValue) {
 function hasSessionTokenCookie(
   cookieStore: Awaited<ReturnType<typeof cookies>>,
 ) {
-  return cookieStore.getAll().some(({ name }) =>
-    name === "next-auth.session-token" ||
-    name === "__Secure-next-auth.session-token" ||
-    name === "authjs.session-token" ||
-    name === "__Secure-authjs.session-token",
+  return (
+    cookieStore.has("next-auth.session-token") ||
+    cookieStore.has("__Secure-next-auth.session-token") ||
+    cookieStore.has("authjs.session-token") ||
+    cookieStore.has("__Secure-authjs.session-token")
   );
+}
+
+async function getOptionalSessionUserId(
+  cookieStore: Awaited<ReturnType<typeof cookies>> | null,
+) {
+  if (!cookieStore || !hasSessionTokenCookie(cookieStore)) {
+    return undefined;
+  }
+
+  try {
+    return (await getServerSession(authOptions))?.user?.id;
+  } catch (error) {
+    if (!isMissingTableError(error)) {
+      throw error;
+    }
+
+    return undefined;
+  }
 }
 
 export default async function ResourcesPage({ searchParams }: ResourcesPageProps) {
@@ -80,16 +97,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
     cookieStore = null;
   }
 
-  let session: Session | null = null;
-  if (cookieStore && hasSessionTokenCookie(cookieStore)) {
-    try {
-      session = await getServerSession(authOptions);
-    } catch (error) {
-      if (!isMissingTableError(error)) throw error;
-    }
-  }
-
-  const userId = session?.user?.id;
+  const userId = await getOptionalSessionUserId(cookieStore);
 
   let effectiveSort = sort;
   if (cookieStore) {
@@ -106,26 +114,36 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
 
       <main className="flex-1">
         {isDiscoverMode ? (
-          <section className="w-full px-4 pt-4 sm:px-6 sm:pt-6 lg:px-8">
-            <div className="mx-auto max-w-[1600px] space-y-4">
-              <div className="flex items-center justify-center gap-2.5 rounded-2xl border border-surface-200 bg-surface-50 px-5 py-2.5 text-center">
+          <section className="relative overflow-hidden border-b border-surface-200/80 bg-[radial-gradient(circle_at_top_left,rgba(224,231,255,0.78),transparent_32%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
+            <Container className="space-y-4 py-4 sm:space-y-5 sm:py-6 lg:space-y-6 lg:py-7">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-text-secondary">
                 <span
                   className="inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500"
                   aria-hidden="true"
                 />
-                <p className="text-xs font-medium text-text-secondary">
-                  New: Discover top-rated study resources curated by educators.{" "}
-                  <span className="font-semibold text-text-primary">
-                    Explore the library →
-                  </span>
+                <p className="font-medium text-text-primary">
+                  Curated by educators and creators
+                </p>
+                <span className="hidden text-text-muted sm:inline">•</span>
+                <p className="hidden sm:block">
+                  New releases, trending picks, and focused collections in one calmer library.
                 </p>
               </div>
-              <ResourcesDiscoverHero userId={userId} />
-            </div>
+              <ResourcesDiscoverHero
+                userId={userId}
+                className="min-h-[440px] rounded-[26px] border-white/70 bg-surface-100 sm:min-h-[500px] lg:min-h-[540px]"
+              />
+            </Container>
           </section>
         ) : null}
 
-        <Container className="space-y-12 py-12 sm:space-y-14 sm:py-14 lg:space-y-16 lg:py-16">
+        <Container
+          className={
+            isDiscoverMode
+              ? "space-y-10 pb-12 pt-5 sm:space-y-12 sm:pb-14 sm:pt-6 lg:space-y-14 lg:pb-16 lg:pt-8"
+              : "space-y-12 py-12 sm:space-y-14 sm:py-14 lg:space-y-16 lg:py-16"
+          }
+        >
           <Suspense fallback={<ResourcesContentFallback isDiscoverMode={isDiscoverMode} />}>
             <ResourcesPageContent
               isDiscoverMode={isDiscoverMode}

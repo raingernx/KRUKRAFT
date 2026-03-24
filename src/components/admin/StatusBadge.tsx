@@ -2,7 +2,13 @@ import type { ResourceStatus } from "@prisma/client";
 
 type Status = ResourceStatus | (string & {});
 
-export type StatusBadgeTone = "success" | "warning" | "danger" | "muted";
+export type StatusBadgeTone =
+  | "success"
+  | "warning"
+  | "danger"
+  | "muted"
+  | "info"
+  | "accent";
 
 interface StatusBadgeProps {
   status: Status;
@@ -10,13 +16,16 @@ interface StatusBadgeProps {
   label?: string;
   /** Override the colour tone (useful for non-resource statuses). */
   tone?: StatusBadgeTone;
+  className?: string;
 }
 
 const TONE_CLASSES: Record<StatusBadgeTone, string> = {
-  success: "bg-emerald-50 text-emerald-700",
-  warning: "bg-amber-50 text-amber-700",
-  danger:  "bg-danger-50 text-danger-600",
-  muted:   "bg-surface-100 text-text-secondary",
+  success: "bg-success-50 text-success-700",
+  warning: "bg-warning-50 text-warning-700",
+  danger: "bg-danger-50 text-danger-700",
+  muted: "bg-surface-100 text-text-secondary",
+  info: "bg-info-50 text-info-700",
+  accent: "bg-primary-50 text-primary-700",
 };
 
 const STATUS_LABELS: Record<ResourceStatus, string> = {
@@ -31,7 +40,12 @@ const STATUS_TONES: Record<ResourceStatus, StatusBadgeTone> = {
   ARCHIVED: "warning",
 };
 
-export function StatusBadge({ status, label, tone }: StatusBadgeProps) {
+export function StatusBadge({
+  status,
+  label,
+  tone,
+  className,
+}: StatusBadgeProps) {
   const key = status as ResourceStatus;
   const resolvedLabel = label ?? STATUS_LABELS[key] ?? status;
   const resolvedTone: StatusBadgeTone = tone ?? STATUS_TONES[key] ?? "muted";
@@ -39,8 +53,10 @@ export function StatusBadge({ status, label, tone }: StatusBadgeProps) {
   return (
     <span
       className={[
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
+        "inline-flex h-6 shrink-0 items-center whitespace-nowrap rounded-full px-2.5 font-medium",
+        "font-ui text-caption",
         TONE_CLASSES[resolvedTone],
+        className,
       ].join(" ")}
     >
       {resolvedLabel}

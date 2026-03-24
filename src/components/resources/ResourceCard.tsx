@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FileText, Download, Eye, ExternalLink, Star, ArrowRight } from "lucide-react";
+import { FileText, Download, Eye, ExternalLink, Star } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/design-system";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
-import { PriceBadge } from "@/components/ui/PriceBadge";
 import { formatPrice } from "@/lib/format";
 import { formatNumber } from "@/lib/format";
 import { isPreviewSupported } from "@/lib/preview/previewPolicy";
@@ -117,45 +116,27 @@ function getDownloadedLabel(downloadedAt?: Date) {
 /* ── Badge ───────────────────────────────────────────────────────────────── */
 
 function ResourceBadge({
-  isFree,
   featured,
   isNew,
   isOwned,
 }: {
-  isFree: boolean;
   featured?: boolean;
   isNew: boolean;
   isOwned: boolean;
 }) {
   const base =
-    "absolute top-2 left-2 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide shadow-sm";
+    "absolute left-3 top-3 rounded-full border px-2.5 py-1 text-caption font-medium backdrop-blur-sm";
 
   if (isOwned) {
-    return <span className={`${base} bg-violet-50 text-violet-600`}>Owned</span>;
+    return <span className={`${base} border-primary-100 bg-primary-50/95 text-primary-700`}>Owned</span>;
   }
   if (featured) {
-    return <span className={`${base} bg-amber-50 text-amber-600`}>Featured</span>;
-  }
-  if (isFree) {
-    return <span className={`${base} bg-green-50 text-green-600`}>Free to keep</span>;
+    return <span className={`${base} border-amber-100 bg-amber-50/95 text-amber-700`}>Featured</span>;
   }
   if (isNew) {
-    return <span className={`${base} bg-blue-50 text-blue-600`}>New</span>;
+    return <span className={`${base} border-info-100 bg-info-50/95 text-info-700`}>New</span>;
   }
   return null;
-}
-
-/* ── Hover label ────────────────────────────────────────────────────────── */
-
-/**
- * Returns the intent-revealing label shown on the card hover overlay.
- * Owned → "Open", free → "Get for free", paid → "Get · ฿X".
- * price is expected in minor units (satang / cents).
- */
-function getHoverLabel(isOwned: boolean, isFree: boolean, price?: number): string {
-  if (isOwned) return "Open";
-  if (isFree) return "Get for free";
-  return `Get · ${formatPrice((price ?? 0) / 100)}`;
 }
 
 /* ── Card Body ───────────────────────────────────────────────────────────── */
@@ -185,9 +166,12 @@ function CardBody({
   const showRating = typeof resource.rating === "number" && resource.rating > 0;
   const showSalesCount = typeof resource.salesCount === "number" && resource.salesCount > 0;
   const [imageError, setImageError] = useState(false);
-  const [isNew, setIsNew] = useState(false);
-  const [downloadedLabel, setDownloadedLabel] = useState<string | null>(null);
   const [downloadClicked, setDownloadClicked] = useState(false);
+  const isNew =
+    isNewResource(resource.createdAt) ||
+    (variant === "library" && isRecentlyPurchased(resource.downloadedAt));
+  const downloadedLabel =
+    variant === "library" ? getDownloadedLabel(resource.downloadedAt) : null;
   const thumbnail =
     resource.thumbnailUrl ??
     resource.previewImages?.[0] ??
@@ -197,25 +181,25 @@ function CardBody({
   // Hero is a link card too, so it gets the same subtle scale-105 on hover
   const thumbImgClass =
     isMarketplace || isHero
-      ? "h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-      : "h-full w-full object-cover transition-transform duration-300";
+      ? "h-full w-full object-cover"
+      : "h-full w-full object-cover";
 
   // marketplace: fixed heights keep the grid row uniform
   // hero: 16:9 + max-h cap — prominent but not page-dominating
   // library/compact: classic 4:3 ratio
   const thumbWrapperClass = isMarketplace
-    ? "relative h-[224px] sm:h-[248px] w-full overflow-hidden rounded-t-2xl rounded-b-none bg-gradient-to-br from-surface-100 via-surface-50 to-surface-100"
+    ? "relative h-[220px] w-full overflow-hidden rounded-t-xl rounded-b-none bg-surface-100 sm:h-[240px]"
     : isHero
-      ? "relative aspect-[16/9] max-h-[420px] w-full overflow-hidden rounded-t-2xl rounded-b-none bg-gradient-to-br from-surface-100 via-surface-50 to-surface-100"
-      : "relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl rounded-b-none bg-gradient-to-br from-surface-100 via-surface-50 to-surface-100";
+      ? "relative aspect-[16/9] max-h-[420px] w-full overflow-hidden rounded-t-xl rounded-b-none bg-surface-100"
+      : "relative aspect-[4/3] w-full overflow-hidden rounded-t-xl rounded-b-none bg-surface-100";
 
   const articleClass = cn(
     isMarketplace
-      ? "flex h-full w-full flex-col overflow-hidden rounded-2xl border border-surface-200 bg-white shadow-card transition-all duration-200 sm:hover:-translate-y-1 sm:hover:border-surface-300 sm:hover:shadow-card-lg"
+      ? "flex h-full w-full flex-col overflow-hidden rounded-xl border border-border-subtle bg-white transition-colors duration-150 sm:hover:border-surface-300"
       : isHero
-        ? "flex h-full w-full flex-col overflow-hidden rounded-2xl border border-surface-200 bg-white shadow-card transition-all duration-200"
-        : "flex h-full w-full flex-col overflow-hidden rounded-2xl border border-surface-200 bg-white shadow-card transition-all duration-200",
-    isNavigating && "scale-[0.99] border-brand-200 opacity-80 ring-2 ring-brand-200/70 ring-offset-2",
+        ? "flex h-full w-full flex-col overflow-hidden rounded-xl border border-border-subtle bg-white transition-colors duration-150"
+        : "flex h-full w-full flex-col overflow-hidden rounded-xl border border-border-subtle bg-white transition-colors duration-150",
+    isNavigating && "border-primary-200 opacity-80 ring-2 ring-primary-200/70 ring-offset-2",
   );
 
   const categoryName = resource.category?.name;
@@ -225,13 +209,21 @@ function CardBody({
     (typeof resource.downloadCount === "number" && resource.downloadCount >= 25
       ? `${formatNumber(resource.downloadCount)} learners used this`
       : null);
-
-  useEffect(() => {
-    const newByAge = isNewResource(resource.createdAt);
-    const newByPurchase = variant === "library" && isRecentlyPurchased(resource.downloadedAt);
-    setIsNew(newByAge || newByPurchase);
-    setDownloadedLabel(getDownloadedLabel(resource.downloadedAt));
-  }, [resource.createdAt, resource.downloadedAt, variant]);
+  const ratingLabel =
+    typeof resource.rating === "number" && resource.rating > 0
+      ? resource.rating.toFixed(1)
+      : null;
+  const trustLabel =
+    socialProofLabel ??
+    (showRating && showSalesCount
+      ? `${ratingLabel} rating · ${formatNumber(resource.salesCount ?? 0)} sales`
+      : showRating
+        ? `${ratingLabel} rating`
+        : showSalesCount
+          ? `${formatNumber(resource.salesCount ?? 0)} sales`
+          : null);
+  const priceLabel = isFree ? "Free" : formatPrice((resource.price ?? 0) / 100);
+  const priceContext = isFree ? "Instant download" : "One-time purchase";
 
   return (
     <article className={articleClass}>
@@ -250,32 +242,21 @@ function CardBody({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/80 shadow-sm">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/80">
               <FileText className="h-6 w-6 text-neutral-300" aria-hidden />
             </div>
           </div>
         )}
 
-        {/* Hover overlay — price-aware intent label: "Open" | "Get for free" | "Get · ฿X" */}
-        {isMarketplace && (
-          <div className="absolute inset-0 flex items-end justify-end bg-gradient-to-t from-zinc-900/30 to-transparent p-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-            <span className="flex items-center gap-1 rounded-xl bg-white/90 px-2.5 py-1.5 text-[11px] font-semibold text-zinc-800 shadow-sm backdrop-blur-sm">
-              {getHoverLabel(isOwned, isFree, resource.price)}
-              <ArrowRight className="h-3 w-3" aria-hidden />
-            </span>
-          </div>
-        )}
-
         {/* Badge */}
         <ResourceBadge
-          isFree={isFree}
           featured={resource.featured}
           isNew={isNew}
           isOwned={isOwned}
         />
 
         {resource.highlightBadge ? (
-          <span className="absolute right-2 top-2 rounded-full bg-zinc-900/85 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm backdrop-blur-sm">
+          <span className="absolute right-3 top-3 rounded-full border border-white/80 bg-white/92 px-2.5 py-1 text-caption font-medium text-text-primary backdrop-blur-sm">
             {resource.highlightBadge}
           </span>
         ) : null}
@@ -285,72 +266,53 @@ function CardBody({
       {/* gap-3 instead of space-y-3: gap doesn't use margins, so mt-auto on the CTA row works correctly */}
       {/* hero uses p-4 (tighter) to keep proportions compact; all others use p-5 */}
       <div className={`flex flex-1 flex-col gap-3 ${isHero ? "p-4" : "p-5"}`}>
-        {/* Title + price badge */}
         <div className="space-y-2">
-          <div className="flex items-start justify-between gap-3">
-            <h3
-              className="line-clamp-2 text-[15px] font-semibold leading-snug tracking-[0.01em] text-neutral-900"
-            >
-              {resource.title}
-            </h3>
-            {showPrice && (
-              <PriceBadge
-                priceMinorUnits={Number(resource.price ?? 0)}
-                isFree={isFree}
-              />
-            )}
-          </div>
-          {isMarketplace && description ? (
-            <p className="line-clamp-2 text-[13px] leading-6 text-zinc-500">
+          <h3 className="line-clamp-2 text-base font-semibold leading-snug text-text-primary">
+            {resource.title}
+          </h3>
+          <p className="text-small text-text-secondary">
+            by <span className="font-medium text-text-primary">{authorName}</span>
+            {categoryName ? (
+              <>
+                <span className="px-1 text-text-muted" aria-hidden>
+                  •
+                </span>
+                <span>{categoryName}</span>
+              </>
+            ) : null}
+          </p>
+          {(isMarketplace || isHero) && description ? (
+            <p className="line-clamp-2 text-small leading-6 text-text-secondary">
               {description}
             </p>
           ) : null}
         </div>
 
-        {/* Author + category */}
-        <p className="text-xs text-muted-foreground">
-          {categoryName ? (
-            <>
-              by {authorName} in {categoryName}
-            </>
-          ) : (
-            <>by {authorName}</>
-          )}
-        </p>
-
-        {/* Meta (library info, rating) */}
-        <div className="space-y-1.5 pt-1">
+        <div className="mt-auto space-y-2 pt-2">
           {variant === "library" && resource.downloadedAt && downloadedLabel && (
-            <p className="text-[11px] text-neutral-400">
+            <p className="text-caption text-text-muted">
               {downloadedLabel}
             </p>
           )}
 
-          {(showRating || showSalesCount) && (
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-neutral-500">
-              {showRating && (
-                <span className="flex items-center gap-0.5">
-                  <Star
-                    className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400"
-                    aria-hidden
-                  />
-                  <span>{resource.rating?.toFixed(1)}</span>
-                </span>
-              )}
-
-              {showRating && showSalesCount && <span aria-hidden>•</span>}
-
-              {showSalesCount && (
-                <span>
-                  {formatNumber(resource.salesCount ?? 0)}{" "}
-                  {(resource.salesCount ?? 0) === 1 ? "sale" : "sales"}
-                </span>
-              )}
+          {trustLabel ? (
+            <div className="flex items-center gap-1.5 text-caption text-text-muted">
+              {showRating && !socialProofLabel ? (
+                <Star className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-400" aria-hidden />
+              ) : null}
+              <span>{trustLabel}</span>
             </div>
-          )}
+          ) : null}
 
-          {socialProofLabel ? (
-            <p className="text-[11px] font-medium text-blue-600">{socialProofLabel}</p>
+          {showPrice ? (
+            <div className="flex items-end justify-between gap-3 border-t border-surface-100 pt-3">
+              <div className="min-w-0">
+                <p className={cn("text-lg font-semibold leading-none", isFree ? "text-emerald-700" : "text-text-primary")}>
+                  {priceLabel}
+                </p>
+                <p className="text-caption text-text-muted">{isOwned ? "Available in your library" : priceContext}</p>
+              </div>
+            </div>
           ) : null}
         </div>
 
@@ -397,9 +359,9 @@ function CardBody({
             </Button>
             </div>
             {downloadClicked && (
-              <p className="mt-2.5 flex items-center gap-1.5 text-[12px] text-emerald-700">
+              <p className="mt-2.5 flex items-center gap-1.5 text-caption text-emerald-700">
                 <span className="font-medium">Downloaded ✓</span>
-                <span className="text-zinc-300" aria-hidden>—</span>
+                <span className="text-zinc-300" aria-hidden>•</span>
                 <Link
                   href={resource.category?.slug ? `/categories/${resource.category.slug}` : "/resources"}
                   className="text-zinc-500 underline underline-offset-2 hover:text-zinc-700"
@@ -429,7 +391,7 @@ function CardBody({
  * <ResourceCard resource={resource} variant="library" />
  * <ResourceCard resource={resource} variant="hero" size="lg" owned={true} />
  */
-export function ResourceCard({
+function ResourceCardInner({
   resource,
   variant = "marketplace",
   size = "md",
@@ -481,7 +443,7 @@ export function ResourceCard({
     return (
       <IntentPrefetchLink
         href={`/resources/${resource.slug}`}
-        className="group block h-full w-full cursor-pointer rounded-2xl"
+        className="group block h-full w-full cursor-pointer rounded-xl"
         aria-busy={isNavigating}
         onClick={handleNavigationStart}
         prefetchScope="resource-card-grid"
@@ -498,5 +460,8 @@ export function ResourceCard({
     </div>
   );
 }
+
+export const ResourceCard = memo(ResourceCardInner);
+ResourceCard.displayName = "ResourceCard";
 
 export { ResourceCardSkeleton } from "./ResourceCardSkeleton";

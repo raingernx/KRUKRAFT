@@ -4,12 +4,34 @@ export const typography = {
   ui: "var(--font-ui)",
   mono: "var(--font-mono)",
   scale: {
-    display: "text-display",
-    h1: "text-h1",
-    h2: "text-h2",
-    h3: "text-h3",
-    body: "text-base",
-    small: "text-sm",
+    display: {
+      className: "text-display",
+      weight: "font-semibold",
+    },
+    h1: {
+      className: "text-h1",
+      weight: "font-semibold",
+    },
+    h2: {
+      className: "text-h2",
+      weight: "font-semibold",
+    },
+    h3: {
+      className: "text-h3",
+      weight: "font-semibold",
+    },
+    body: {
+      className: "text-body",
+      weight: "font-normal",
+    },
+    small: {
+      className: "text-small",
+      weight: "font-normal",
+    },
+    caption: {
+      className: "text-caption",
+      weight: "font-medium",
+    },
   },
   utility: {
     heading: "font-heading",

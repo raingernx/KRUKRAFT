@@ -12,8 +12,8 @@ interface TopbarProps {
 
 /** Top bar for admin / dashboard. Optional search and actions. */
 export function Topbar({
-  title = "Admin",
-  subtitle = "Control panel",
+  title = "Admin workspace",
+  subtitle = "Operations",
   children,
   onMenuToggle,
 }: TopbarProps & { onMenuToggle?: () => void }) {
@@ -22,14 +22,16 @@ export function Topbar({
       variant="admin"
       onMenuToggle={onMenuToggle}
       left={
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-tightest text-text-muted">
+        <div className="min-w-0">
+          <p className="font-ui text-caption text-text-muted">
             {title}
           </p>
-          <p className="text-sm font-semibold text-text-primary">{subtitle}</p>
+          <p className="truncate text-small font-medium text-text-primary">
+            {subtitle}
+          </p>
         </div>
       }
-      rightClassName="gap-4"
+      rightClassName="gap-3"
       right={
         children ?? (
           <>

@@ -40,7 +40,7 @@ export function PickerActionButton({
       variant={variant ?? "outline"}
       size={size ?? "sm"}
       className={cn(
-        "h-9 gap-1.5 px-4 text-[12px] font-medium",
+        "h-9 gap-1.5 px-4 text-caption",
         variant === "outline" || variant == null ? pickerActionToneClasses[tone] : null,
         actionStyle === "dashed" && "border-dashed",
         className,
@@ -141,7 +141,7 @@ export function PickerDropzoneShell({
   return (
     <div
       className={cn(
-        "flex min-h-[120px] flex-col items-center justify-center rounded-xl border border-dashed px-4 py-6 text-center text-[13px] transition",
+        "flex min-h-[120px] flex-col items-center justify-center rounded-xl border border-dashed px-4 py-6 text-center text-small transition",
         reject
           ? "border-red-300"
           : active

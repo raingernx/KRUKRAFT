@@ -317,13 +317,13 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
   }
 
   return (
-    <div className="min-w-0 w-full overflow-hidden rounded-2xl border border-border-subtle bg-white shadow-card">
+    <div className="min-w-0 w-full overflow-hidden rounded-xl border border-border-subtle bg-white">
       {hasSelection && (
-        <div className="flex flex-col gap-1 border-b border-border-subtle bg-surface-50 px-4 py-2 text-xs text-text-secondary sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 border-b border-border-subtle bg-surface-50/80 px-4 py-2.5 text-small text-text-secondary sm:flex-row sm:items-center sm:justify-between">
           <div className="font-medium text-text-secondary">
             {selectedCount} resource{selectedCount === 1 ? "" : "s"} selected
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
             <Button
               type="button"
               size="xs"
@@ -400,7 +400,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
         <table className="w-full text-left text-sm">
           <thead className="border-b border-border-subtle bg-surface-50/80">
             <tr>
-              <th className="px-3 py-3">
+              <th className="px-4 py-2.5">
                 <input
                   type="checkbox"
                   aria-label="Select all"
@@ -408,19 +408,19 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                   onChange={toggleSelectAll}
                 />
               </th>
-              <th className="px-2 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+              <th className="px-4 py-2.5 font-ui text-caption text-text-muted">
                 Resource
               </th>
-              <th className="px-2 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+              <th className="px-4 py-2.5 font-ui text-caption text-text-muted">
                 Creator
               </th>
-              <th className="px-2 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+              <th className="px-4 py-2.5 font-ui text-caption text-text-muted">
                 Listing
               </th>
-              <th className="px-2 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+              <th className="px-4 py-2.5 font-ui text-caption text-text-muted">
                 Performance
               </th>
-              <th className="px-3 py-3 text-right text-xs font-medium uppercase tracking-tightest text-text-secondary">
+              <th className="px-4 py-2.5 text-right font-ui text-caption text-text-muted">
                 Actions
               </th>
             </tr>
@@ -444,10 +444,10 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
               return (
                 <tr
                   key={resource.id}
-                  className="bg-white transition-colors hover:bg-surface-50"
+                  className="bg-white transition-colors hover:bg-surface-50/55"
                 >
                   {/* Select checkbox */}
-                  <td className="px-3 py-3 align-middle">
+                  <td className="px-4 py-3 align-middle">
                     <input
                       type="checkbox"
                       aria-label={`Select ${resource.title || "resource"}`}
@@ -457,7 +457,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                   </td>
 
                   {/* Resource */}
-                  <td className="px-2 py-3">
+                  <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-surface-100">
                         {resource.previewUrl ? (
@@ -477,7 +477,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                         <p className="truncate text-sm font-medium text-text-primary">
                           {displayTitle}
                         </p>
-                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text-muted">
+                        <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-caption text-text-muted">
                           <span className="truncate">/resources/{resource.slug}</span>
                           <span>•</span>
                           <span>{formatDate(resource.createdAt)}</span>
@@ -493,13 +493,13 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                   </td>
 
                   {/* Creator */}
-                  <td className="px-2 py-3 align-middle">
+                  <td className="px-4 py-3 align-middle">
                     <div className="min-w-0">
-                      <p className="truncate text-sm text-text-secondary">
+                      <p className="truncate text-small text-text-secondary">
                         {resource.author?.name ?? "Unknown"}
                       </p>
                       {resource.author?.email && (
-                        <p className="truncate text-xs text-text-muted">
+                        <p className="truncate text-caption text-text-muted">
                           {resource.author.email}
                         </p>
                       )}
@@ -507,22 +507,22 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                   </td>
 
                   {/* Listing */}
-                  <td className="px-2 py-3 align-middle">
-                    <div className="space-y-2">
-                      <span className="inline-flex rounded-full bg-surface-100 px-2.5 py-0.5 text-xs font-medium text-text-secondary">
+                  <td className="px-4 py-3 align-middle">
+                    <div className="space-y-1.5">
+                      <span className="inline-flex h-6 items-center rounded-full bg-surface-100 px-2.5 font-ui text-caption text-text-secondary">
                         {resource.isFree || resource.price === 0
                           ? "Free"
                           : formatPrice(resource.price / 100)}
                       </span>
-                      <div>
+                      <div className="flex items-center">
                         <StatusBadge status={resource.status} />
                       </div>
                     </div>
                   </td>
 
                   {/* Performance */}
-                  <td className="px-2 py-3 align-middle">
-                    <div className="space-y-1 text-xs text-text-secondary">
+                  <td className="px-4 py-3 align-middle">
+                    <div className="space-y-1 text-caption text-text-secondary">
                       <div className="flex items-center justify-between gap-3">
                         <span className="text-text-muted">Downloads</span>
                         <span className="font-medium text-text-primary">{resource.downloads}</span>
@@ -541,9 +541,9 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                   </td>
 
                   {/* Actions */}
-                  <td className="px-3 py-3 align-middle text-right">
+                  <td className="px-4 py-3 align-middle text-right">
                     {confirmDeleteId === resource.id ? (
-                      <div className="flex flex-col items-end gap-2 text-right text-xs text-danger-600">
+                      <div className="flex flex-col items-end gap-1.5 text-right text-caption text-danger-600">
                         <div className="flex items-center gap-2">
                           <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-danger-50">
                             <Trash2 className="h-3.5 w-3.5 text-danger-600" />
@@ -704,7 +704,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
       </div>
       {showBulkDeleteConfirm && hasSelection && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="mx-4 w-full max-w-md rounded-2xl border border-border-subtle bg-white p-6 shadow-card-lg">
+          <div className="mx-4 w-full max-w-md rounded-xl border border-border-subtle bg-white p-6 shadow-card-lg">
             <h2 className="text-base font-semibold text-text-primary">
               Delete {selectedCount} resource{selectedCount === 1 ? "" : "s"}?
             </h2>
@@ -742,7 +742,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
       )}
       {showMoveCategoryModal && hasSelection && categories && categories.length > 0 && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="mx-4 w-full max-w-md rounded-2xl border border-border-subtle bg-white p-6 shadow-card-lg">
+          <div className="mx-4 w-full max-w-md rounded-xl border border-border-subtle bg-white p-6 shadow-card-lg">
             <h2 className="text-base font-semibold text-text-primary">
               Move {selectedCount} resource{selectedCount === 1 ? "" : "s"} to category
             </h2>
@@ -782,7 +782,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                 type="button"
                 size="sm"
                 variant="outline"
-                className="border-brand-200 text-brand-700 hover:bg-brand-50 hover:text-brand-800"
+                className="border-primary-200 text-primary-700 hover:bg-primary-50 hover:text-primary-800"
                 disabled={bulkLoading === "moveToCategory" || !moveCategoryId}
                 onClick={handleBulkMoveToCategory}
               >

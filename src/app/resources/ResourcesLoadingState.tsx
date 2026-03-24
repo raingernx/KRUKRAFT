@@ -9,7 +9,7 @@ import { ResourcesRouteSkeleton } from "@/components/skeletons/ResourcesRouteSke
 export function ResourcesLoadingState({
   heroConfig,
 }: {
-  heroConfig: HomepageHeroConfig;
+  heroConfig?: HomepageHeroConfig;
 }) {
   const selectedSegment = useSelectedLayoutSegment();
   const searchParams = useSearchParams();

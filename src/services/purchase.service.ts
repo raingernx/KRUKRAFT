@@ -2,6 +2,7 @@ import { unstable_cache } from "next/cache";
 import {
   countDownloadEventsByUser,
   findCompletedPurchaseByUserAndResource,
+  findCompletedLibraryItemsByUser,
   findCompletedPurchasesByUser,
   findRecentPurchasePreferenceSignalsByUser,
   findCompletedResourceIdsByUser,
@@ -45,6 +46,29 @@ export async function getOwnedIdsFromSet(
   return purchases.map((p) => p.resourceId);
 }
 
+export async function getOwnedDetailState(
+  userId: string | undefined,
+  resourceId: string,
+  relatedResourceIds: string[],
+) {
+  if (!userId) {
+    return {
+      isOwned: false,
+      ownedRelatedIds: [] as string[],
+    };
+  }
+
+  const ownedIds = await getOwnedIdsFromSet(userId, [
+    resourceId,
+    ...relatedResourceIds,
+  ]);
+
+  return {
+    isOwned: ownedIds.includes(resourceId),
+    ownedRelatedIds: ownedIds.filter((id) => id !== resourceId),
+  };
+}
+
 // ── Checkout helpers ──────────────────────────────────────────────────────────
 
 /**
@@ -75,6 +99,25 @@ export async function getExistingPurchase(userId: string, resourceId: string) {
  */
 export async function getUserPurchases(userId: string) {
   return findCompletedPurchasesByUser(userId);
+}
+
+export async function getUserLibraryItems(userId: string) {
+  const purchases = await findCompletedLibraryItemsByUser(userId);
+
+  return purchases
+    .filter((purchase) => Boolean(purchase.resource))
+    .map((purchase) => ({
+      purchaseId: purchase.id,
+      purchasedAt: purchase.createdAt,
+      id: purchase.resource.id,
+      slug: purchase.resource.slug,
+      title: purchase.resource.title,
+      authorName: purchase.resource.author?.name ?? null,
+      previewUrl: purchase.resource.previewUrl ?? null,
+      mimeType: purchase.resource.mimeType ?? null,
+      type: purchase.resource.type,
+      categorySlug: purchase.resource.category?.slug ?? null,
+    }));
 }
 
 export async function getUserDownloadCount(userId: string) {

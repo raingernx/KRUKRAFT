@@ -2,8 +2,20 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { Button, Input, Select } from "@/design-system";
+import { Input, Select } from "@/design-system";
 import { formatDate } from "@/lib/format";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import {
+  DataTable,
+  DataTableBody,
+  DataTableCell,
+  DataTableHeadCell,
+  DataTableHeader,
+  DataTableRow,
+  TableEmptyState,
+  TablePagination,
+  TableToolbar,
+} from "@/components/admin/table";
 
 interface AuditTrailItem {
   id: string;
@@ -107,23 +119,17 @@ export function AuditTrailClient({
   return (
     <div className="min-w-0 space-y-8">
       {/* Header */}
-      <div className="flex min-w-0 flex-wrap items-end justify-between gap-4 border-b border-surface-200 pb-4">
-        <div>
-          <h1 className="font-display text-h2 font-semibold tracking-tight text-text-primary">
-            Audit Trail
-          </h1>
-          <p className="mt-1 text-meta text-text-secondary">
-            Monitor important admin actions across the platform.
-          </p>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Audit Trail"
+        description="Monitor important admin actions across the platform."
+      />
 
       {/* Filters */}
-      <div className="flex min-w-0 flex-wrap items-end gap-3 rounded-2xl border border-border-subtle bg-white px-4 py-3 shadow-card">
+      <TableToolbar>
         <div className="w-full max-w-xs space-y-1.5">
           <label
             htmlFor="actionFilter"
-            className="text-xs font-semibold uppercase tracking-tightest text-text-secondary"
+            className="font-ui text-caption text-text-muted"
           >
             Action type
           </label>
@@ -144,7 +150,7 @@ export function AuditTrailClient({
         <div className="w-full max-w-xs space-y-1.5">
           <label
             htmlFor="adminFilter"
-            className="text-xs font-semibold uppercase tracking-tightest text-text-secondary"
+            className="font-ui text-caption text-text-muted"
           >
             Admin
           </label>
@@ -166,7 +172,7 @@ export function AuditTrailClient({
           <div className="space-y-1.5">
             <label
               htmlFor="from"
-              className="text-xs font-semibold uppercase tracking-tightest text-text-secondary"
+              className="font-ui text-caption text-text-muted"
             >
               From
             </label>
@@ -181,7 +187,7 @@ export function AuditTrailClient({
           <div className="space-y-1.5">
             <label
               htmlFor="to"
-              className="text-xs font-semibold uppercase tracking-tightest text-text-secondary"
+              className="font-ui text-caption text-text-muted"
             >
               To
             </label>
@@ -194,100 +200,68 @@ export function AuditTrailClient({
             />
           </div>
         </div>
-      </div>
+      </TableToolbar>
 
       {/* Table */}
-      <div className="min-w-0 w-full overflow-hidden rounded-2xl border border-border-subtle bg-white shadow-card">
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-border-subtle bg-surface-50/80">
-              <tr>
-                <th className="px-2 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+      <DataTable minWidth="min-w-full">
+        <DataTableHeader>
+          <tr>
+            <DataTableHeadCell className="px-2">
                   Admin
-                </th>
-                <th className="px-3 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3">
                   Action
-                </th>
-                <th className="px-3 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3">
                   Entity
-                </th>
-                <th className="px-3 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3">
                   Date
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border-subtle/60">
-              {items.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={4}
-                    className="px-6 py-10 text-center text-sm text-text-secondary"
-                  >
-                    No audit events found for the current filters.
-                  </td>
-                </tr>
-              ) : (
-                items.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="bg-white transition-colors hover:bg-surface-50"
-                  >
-                    <td className="px-2 py-3 align-middle">
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-text-primary">
-                          {item.admin.name}
-                        </p>
-                        {item.admin.email && (
-                          <p className="truncate text-xs text-text-muted">
-                            {item.admin.email}
-                          </p>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-3 py-3 align-middle text-sm text-text-secondary">
-                      {item.action}
-                    </td>
-                    <td className="px-3 py-3 align-middle text-sm text-text-secondary">
-                      {item.entityType}
-                      {item.entityId && ` #${item.entityId}`}
-                    </td>
-                    <td className="px-3 py-3 align-middle text-sm text-text-secondary">
-                      {formatDate(new Date(item.createdAt))}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination */}
-        <div className="flex items-center justify-between border-t border-border-subtle bg-surface-50/60 px-4 py-3 text-xs text-text-secondary">
-          <span>
-            Page {page} of {totalPages}
-          </span>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={page <= 1}
-              onClick={() => handlePageChange(page - 1)}
-            >
-              Previous
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={page >= totalPages}
-              onClick={() => handlePageChange(page + 1)}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      </div>
+            </DataTableHeadCell>
+          </tr>
+        </DataTableHeader>
+        <DataTableBody>
+          {items.length === 0 ? (
+            <TableEmptyState
+              message="No audit events found"
+              description="Try widening the date range or clearing the current filters."
+            />
+          ) : (
+            items.map((item) => (
+              <DataTableRow key={item.id}>
+                <DataTableCell className="px-2">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-text-primary">
+                      {item.admin.name}
+                    </p>
+                    {item.admin.email && (
+                      <p className="truncate text-caption text-text-muted">
+                        {item.admin.email}
+                      </p>
+                    )}
+                  </div>
+                </DataTableCell>
+                <DataTableCell className="px-3 text-text-secondary">
+                  {item.action}
+                </DataTableCell>
+                <DataTableCell className="px-3 text-text-secondary">
+                  {item.entityType}
+                  {item.entityId && ` #${item.entityId}`}
+                </DataTableCell>
+                <DataTableCell className="px-3 text-text-secondary">
+                  {formatDate(new Date(item.createdAt))}
+                </DataTableCell>
+              </DataTableRow>
+            ))
+          )}
+        </DataTableBody>
+        <TablePagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          className="px-4 py-2.5"
+        />
+      </DataTable>
     </div>
   );
 }

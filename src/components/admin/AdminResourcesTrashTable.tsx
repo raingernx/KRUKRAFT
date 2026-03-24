@@ -4,8 +4,17 @@ import { useState } from "react";
 import { Trash2, RotateCcw } from "lucide-react";
 
 import { RowActions, RowActionButton } from "@/design-system";
-import { Badge } from "@/components/ui/Badge";
 import { formatDate } from "@/lib/format";
+import { StatusBadge } from "@/components/admin/StatusBadge";
+import {
+  DataTable,
+  DataTableBody,
+  DataTableCell,
+  DataTableHeadCell,
+  DataTableHeader,
+  DataTableRow,
+  TableEmptyState,
+} from "@/components/admin/table";
 
 export interface TrashResourceRow {
   id: string;
@@ -65,43 +74,31 @@ export function AdminResourcesTrashTable({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border-subtle bg-white shadow-card">
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className="border-b border-border-subtle bg-surface-50/80">
-            <tr>
-              <th className="px-4 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+    <DataTable minWidth="min-w-[720px]">
+      <DataTableHeader>
+        <tr>
+          <DataTableHeadCell>
                 Resource
-              </th>
-              <th className="px-3 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+          </DataTableHeadCell>
+          <DataTableHeadCell className="px-3">
                 Creator
-              </th>
-              <th className="px-3 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+          </DataTableHeadCell>
+          <DataTableHeadCell className="px-3">
                 Deleted At
-              </th>
-              <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-tightest text-text-secondary">
+          </DataTableHeadCell>
+          <DataTableHeadCell align="right">
                 Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border-subtle/60">
-            {resources.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={4}
-                  className="px-6 py-10 text-center text-sm text-text-secondary"
-                >
-                  No resources in trash.
-                </td>
-              </tr>
-            ) : (
-              resources.map((resource) => (
-                <tr
-                  key={resource.id}
-                  className="bg-white transition-colors hover:bg-surface-50"
-                >
+          </DataTableHeadCell>
+        </tr>
+      </DataTableHeader>
+      <DataTableBody>
+        {resources.length === 0 ? (
+          <TableEmptyState message="No resources in trash" />
+        ) : (
+          resources.map((resource) => (
+            <DataTableRow key={resource.id}>
                   {/* Resource */}
-                  <td className="px-4 py-3 align-middle">
+                  <DataTableCell>
                     <div className="flex items-center gap-3">
                       <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-danger-50">
                         <Trash2 className="h-4 w-4 text-danger-600" />
@@ -111,38 +108,36 @@ export function AdminResourcesTrashTable({
                           <p className="truncate text-sm font-medium text-text-primary">
                             {resource.title}
                           </p>
-                          <Badge variant="destructive" className="text-[11px]">
-                            In trash
-                          </Badge>
+                          <StatusBadge status="trash" label="In trash" tone="danger" />
                         </div>
-                        <p className="truncate text-xs text-text-muted">
+                        <p className="truncate text-caption text-text-muted">
                           /resources/{resource.slug}
                         </p>
                       </div>
                     </div>
-                  </td>
+                  </DataTableCell>
 
                   {/* Creator */}
-                  <td className="px-3 py-3 align-middle">
+                  <DataTableCell className="px-3">
                     <div className="min-w-0">
                       <p className="truncate text-sm text-text-secondary">
                         {resource.author?.name ?? "Unknown"}
                       </p>
                       {resource.author?.email && (
-                        <p className="truncate text-xs text-text-muted">
+                        <p className="truncate text-caption text-text-muted">
                           {resource.author.email}
                         </p>
                       )}
                     </div>
-                  </td>
+                  </DataTableCell>
 
                   {/* Deleted at */}
-                  <td className="px-3 py-3 align-middle text-sm text-text-secondary">
+                  <DataTableCell className="px-3 text-text-secondary">
                     {formatDate(resource.deletedAt)}
-                  </td>
+                  </DataTableCell>
 
                   {/* Actions */}
-                  <td className="px-4 py-3 align-middle text-right">
+                  <DataTableCell align="right">
                     <RowActions>
                       <RowActionButton
                         type="button"
@@ -162,13 +157,11 @@ export function AdminResourcesTrashTable({
                         Delete
                       </RowActionButton>
                     </RowActions>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+                  </DataTableCell>
+            </DataTableRow>
+          ))
+        )}
+      </DataTableBody>
+    </DataTable>
   );
 }

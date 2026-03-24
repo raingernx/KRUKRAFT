@@ -23,27 +23,65 @@ export type UserPreferences = {
 
 type PreferenceUpdate = Partial<UserPreferences>;
 
-export async function getUserPreferences(userId: string) {
+const USER_PREFERENCE_SELECT = {
+  language: true,
+  theme: true,
+  currency: true,
+  timezone: true,
+  emailNotifications: true,
+  purchaseReceipts: true,
+  productUpdates: true,
+  marketingEmails: true,
+} as const;
+
+export const DEFAULT_USER_PREFERENCES: UserPreferences = {
+  language: "en",
+  theme: "system",
+  currency: "USD",
+  timezone: "UTC",
+  emailNotifications: true,
+  purchaseReceipts: true,
+  productUpdates: true,
+  marketingEmails: false,
+};
+
+export async function getUserPreferences(userId: string): Promise<UserPreferences> {
   // Guard: ensure the User row exists before touching UserPreference.
-  // A missing user means the JWT is stale (account deleted) — propagate as
-  // a thrown error so the caller can redirect rather than hit a FK violation.
+  // A missing user usually means the session is stale in local/dev. Return
+  // safe defaults so settings can render instead of crashing the page.
   const userExists = await prisma.user.findUnique({
     where: { id: userId },
     select: { id: true },
   });
 
   if (!userExists) {
-    throw new Error(`getUserPreferences: user ${userId} not found`);
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`getUserPreferences: user ${userId} not found; returning defaults`);
+    }
+
+    return DEFAULT_USER_PREFERENCES;
   }
 
   // upsert instead of findUnique → create:
   //  - avoids a FK violation when userId is valid but preferences don't exist yet
   //  - eliminates the TOCTOU race if two requests arrive simultaneously
-  return prisma.userPreference.upsert({
+  const preferences = await prisma.userPreference.upsert({
     where: { userId },
     update: {},
     create: { userId },
+    select: USER_PREFERENCE_SELECT,
   });
+
+  return {
+    language: preferences.language as Language,
+    theme: preferences.theme as Theme,
+    currency: preferences.currency as Currency,
+    timezone: preferences.timezone as Timezone,
+    emailNotifications: preferences.emailNotifications,
+    purchaseReceipts: preferences.purchaseReceipts,
+    productUpdates: preferences.productUpdates,
+    marketingEmails: preferences.marketingEmails,
+  };
 }
 
 export async function updateUserPreferences(userId: string, data: PreferenceUpdate) {
@@ -84,4 +122,3 @@ export async function updateUserPreferences(userId: string, data: PreferenceUpda
     },
   });
 }
-

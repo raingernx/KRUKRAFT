@@ -39,7 +39,7 @@ export function ResourceHeader({
 
   return (
     <header className="space-y-4">
-      <nav className="flex flex-wrap items-center gap-2 text-[13px] text-zinc-400">
+      <nav className="flex flex-wrap items-center gap-2 text-caption text-zinc-400">
         {breadcrumb.map((item) => (
           <span key={item.href} className="flex items-center gap-2">
             <Link href={item.href} className="transition hover:text-zinc-600">
@@ -51,9 +51,9 @@ export function ResourceHeader({
         <span className="truncate text-zinc-600">{title}</span>
       </nav>
 
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         {featured && (
-          <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-amber-600">
+          <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-caption font-semibold text-amber-700">
             Featured
           </span>
         )}
@@ -62,42 +62,53 @@ export function ResourceHeader({
         </h1>
       </div>
 
-      {creatorName && (
-        <p className="text-[14px] text-zinc-500">
-          Created by{" "}
-          {creatorHref ? (
-            <Link href={creatorHref} className="font-medium hover:text-zinc-700 underline-offset-2 hover:underline">
-              {creatorName}
-            </Link>
-          ) : (
-            <span className="font-medium text-zinc-700">{creatorName}</span>
-          )}
-        </p>
-      )}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-small text-zinc-500">
+        {creatorName && (
+          <span className="inline-flex items-center gap-1.5">
+            <span>Created by</span>
+            {creatorHref ? (
+              <Link
+                href={creatorHref}
+                className="font-medium text-zinc-700 transition hover:text-primary-700"
+              >
+                {creatorName}
+              </Link>
+            ) : (
+              <span className="font-medium text-zinc-700">{creatorName}</span>
+            )}
+          </span>
+        )}
 
-      {(hasReviews || hasSales || hasDownloads) && (
-        <p className="flex flex-wrap items-center gap-x-1.5 text-[13px] text-zinc-500">
-          {hasReviews && (
-            <>
-              <span className="inline-flex items-center gap-1">
-                <Star className="h-3 w-3 fill-amber-400 text-amber-400" aria-hidden />
+        {(creatorName && (hasReviews || hasSales || hasDownloads)) && (
+          <span aria-hidden className="text-zinc-300">
+            ·
+          </span>
+        )}
+
+        {(hasReviews || hasSales || hasDownloads) && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            {hasReviews && (
+              <span className="inline-flex items-center gap-1.5">
+                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" aria-hidden />
                 <span className="font-medium text-zinc-700">{averageRating?.toFixed(1)}</span>
-                <span>from {formatNumber(reviewCount)} {reviewCount === 1 ? "review" : "reviews"}</span>
+                <span>
+                  {formatNumber(reviewCount)} {reviewCount === 1 ? "review" : "reviews"}
+                </span>
               </span>
-              {(hasSales || hasDownloads) && <span aria-hidden className="text-zinc-300">·</span>}
-            </>
-          )}
-          {hasDownloads && (
-            <>
-              <span>{formatNumber(downloadCount)} downloads</span>
-              {hasSales && <span aria-hidden className="text-zinc-300">·</span>}
-            </>
-          )}
-          {hasSales && (
-            <span>{formatNumber(salesCount)} {salesCount === 1 ? "teacher" : "teachers"} bought this</span>
-          )}
-        </p>
-      )}
+            )}
+            {hasDownloads && (
+              <span>
+                {formatNumber(downloadCount)} downloads
+              </span>
+            )}
+            {hasSales && (
+              <span>
+                {formatNumber(salesCount)} {salesCount === 1 ? "teacher" : "teachers"} bought this
+              </span>
+            )}
+          </div>
+        )}
+      </div>
     </header>
   );
 }

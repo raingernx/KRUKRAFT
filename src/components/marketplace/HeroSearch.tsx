@@ -3,6 +3,15 @@
 import { useState, useEffect, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { SearchInput } from "@/design-system";
+import { cn } from "@/lib/utils";
+
+type HeroSearchVariant = "hero" | "listing";
+
+interface HeroSearchProps {
+  variant?: HeroSearchVariant;
+  className?: string;
+  placeholder?: string;
+}
 
 /**
  * Large hero-sized search bar for the Marketplace page.
@@ -10,7 +19,11 @@ import { SearchInput } from "@/design-system";
  * Uses useTransition so the form shows a pending state immediately while
  * the route is loading — eliminates the frozen-click feeling on submit.
  */
-export function HeroSearch() {
+export function HeroSearch({
+  variant = "hero",
+  className,
+  placeholder = "Search worksheets, flashcards, notes…",
+}: HeroSearchProps) {
   const router       = useRouter();
   const pathname     = usePathname();
   const searchParams = useSearchParams();
@@ -56,13 +69,18 @@ export function HeroSearch() {
       aria-busy={isPending}
     >
       <SearchInput
-        variant="hero"
+        variant={variant === "hero" ? "hero" : "default"}
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="Search worksheets, flashcards, notes…"
+        placeholder={placeholder}
         onClear={handleClear}
         disabled={isPending}
+        className={cn(
+          variant === "listing" &&
+            "rounded-full border-border-subtle bg-white/95 py-2.5 pl-11 pr-11 text-small shadow-none sm:pl-11 sm:pr-11",
+          className,
+        )}
       />
     </form>
   );

@@ -66,7 +66,13 @@ type ResourcesPageContentProps = {
   userId?: string;
 };
 
-export async function ResourcesDiscoverHero({ userId }: { userId?: string }) {
+export async function ResourcesDiscoverHero({
+  userId,
+  className,
+}: {
+  userId?: string;
+  className?: string;
+}) {
   let heroConfig: Awaited<ReturnType<typeof getHeroConfig>> = null;
 
   try {
@@ -77,7 +83,7 @@ export async function ResourcesDiscoverHero({ userId }: { userId?: string }) {
     }
   }
 
-  return <HeroBanner config={heroConfig} />;
+  return <HeroBanner config={heroConfig} className={className} />;
 }
 
 export async function ResourcesPageContent({
@@ -180,148 +186,128 @@ export async function ResourcesPageContent({
 
   return (
     <>
-      <section className="rounded-[32px] border border-surface-200 bg-white/90 p-4 shadow-card sm:p-5 lg:p-6">
-        <div className="space-y-5">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-2xl space-y-2">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-                {isDiscoverMode ? "Discover" : "Browse"}
+      <section className="space-y-5 border-b border-surface-200/80 pb-7 sm:space-y-6 sm:pb-8">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl space-y-3">
+            <p className="font-ui text-caption tracking-[0.12em] text-text-muted">
+              Browse
+            </p>
+            <h1 className="max-w-3xl font-display text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl">
+              {`Explore ${activeCategoryName}`}
+            </h1>
+            {resultsContext ? (
+              <p className="max-w-2xl text-small leading-6 text-text-secondary">
+                {resultsContext}
               </p>
-              <h1 className="max-w-3xl font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">
-                {isDiscoverMode
-                  ? "A calmer way to discover standout study resources"
-                  : `Explore ${activeCategoryName}`}
-              </h1>
-              {isDiscoverMode ? (
-                <p className="max-w-2xl text-sm leading-6 text-text-secondary">
-                  Browse curated collections, trending picks, and new releases from educators and creators in one focused library.
-                </p>
-              ) : null}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-3 py-1 text-[12px] font-medium text-text-secondary">
-                {`${formatNumber(total)} results`}
-              </span>
-              <span className="inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-3 py-1 text-[12px] font-medium text-text-secondary">
-                {`Sorted by: ${sortLabel}`}
-              </span>
-            </div>
+            ) : null}
+          </div>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-text-secondary">
+            <span className="font-medium text-text-primary">
+              {formatNumber(total)} results
+            </span>
+            <span className="text-text-muted" aria-hidden>
+              •
+            </span>
+            <span>{`Sorted by ${sortLabel}`}</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+          <div className="flex min-w-0 items-center gap-3 overflow-hidden sm:gap-4">
+            <Suspense fallback={<DiscoverFallback />}>
+              <DiscoverButton />
+            </Suspense>
+            <div className="hidden h-6 w-px shrink-0 bg-surface-200 sm:block" aria-hidden />
+            <ScrollableCategoryNav>
+              <Suspense fallback={<ChipsFallback />}>
+                <CategoryChips categories={categories as ChipCategory[]} />
+              </Suspense>
+            </ScrollableCategoryNav>
           </div>
 
-          <div className="h-px bg-gradient-to-r from-surface-200 via-surface-100 to-transparent" aria-hidden />
-
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
-            <div className="flex min-w-0 items-center gap-3 overflow-hidden sm:gap-4">
-              <Suspense fallback={<DiscoverFallback />}>
-                <DiscoverButton />
-              </Suspense>
-              <div className="h-6 w-px shrink-0 bg-zinc-200" aria-hidden />
-              <ScrollableCategoryNav>
-                <Suspense fallback={<ChipsFallback />}>
-                  <CategoryChips categories={categories as ChipCategory[]} />
-                </Suspense>
-              </ScrollableCategoryNav>
-            </div>
-
-            <div className="w-full shrink-0 lg:max-w-lg">
-              <Suspense fallback={<SearchFallback />}>
-                <HeroSearch />
-              </Suspense>
-            </div>
+          <div className="w-full shrink-0 lg:max-w-md">
+            <Suspense fallback={<SearchFallback />}>
+              <HeroSearch variant="listing" />
+            </Suspense>
           </div>
         </div>
       </section>
-      <section className="rounded-[32px] border border-surface-200 bg-white/85 p-4 shadow-card sm:p-5 lg:p-6">
-            <div className="space-y-6">
-              <div className="flex flex-col gap-2 border-b border-surface-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
-                <div className="space-y-1">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-                    Results
-                  </p>
-                  <h2 className="max-w-3xl font-display text-xl font-semibold tracking-tight text-text-primary sm:text-2xl">
-                    {activeCategoryName}
-                  </h2>
-                  {resultsContext ? (
-                    <p className="text-sm leading-6 text-text-secondary">{resultsContext}</p>
-                  ) : null}
-                </div>
-              </div>
 
-              <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
-                <div className="hidden lg:block">
-                  <Suspense fallback={<SidebarFallback />}>
-                    <FilterSidebar categories={categories as FilterCategory[]} />
-                  </Suspense>
-                </div>
+      <section className="space-y-6">
+        <div className="flex flex-col gap-6 lg:flex-row lg:gap-10">
+          <div className="hidden lg:block">
+            <Suspense fallback={<SidebarFallback />}>
+              <FilterSidebar categories={categories as FilterCategory[]} />
+            </Suspense>
+          </div>
 
-                <div className="min-w-0 flex-1 space-y-5">
-                  <div className="lg:hidden">
-                    <MobileFilterDialog categories={categories as FilterCategory[]} />
-                  </div>
-
-                  <Suspense fallback={<FilterBarFallback />}>
-                    <FilterBar total={total} />
-                  </Suspense>
-
-                  {spotlightResource ? (
-                    <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
-                      <div className="mb-3 flex items-center justify-between gap-3">
-                        <div>
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-600">
-                            {spotlightLabel}
-                          </p>
-                          <p className="mt-1 text-sm text-zinc-600">
-                            A strong starting point in {activeCategoryName.toLowerCase()} if you
-                            want the clearest signal first.
-                          </p>
-                        </div>
-                        <Link
-                          href={`/resources/${spotlightResource.slug}`}
-                          className="hidden items-center gap-1 text-sm font-semibold text-blue-700 hover:text-blue-800 sm:inline-flex"
-                        >
-                          View resource
-                          <ArrowRight className="h-4 w-4" />
-                        </Link>
-                      </div>
-                      <ResourceCard
-                        resource={{
-                          ...spotlightResource,
-                          highlightBadge: spotlightLabel,
-                        }}
-                        variant="hero"
-                        owned={ownedIds.has(spotlightResource.id)}
-                      />
-                    </div>
-                  ) : null}
-
-                  {search?.trim() ? (
-                    <p className="text-sm text-zinc-500">
-                      {total === 0 ? (
-                        <>
-                          No results for{" "}
-                          <strong className="text-zinc-900">&ldquo;{search.trim()}&rdquo;</strong>.
-                        </>
-                      ) : (
-                        <>
-                          Showing results for{" "}
-                          <strong className="text-zinc-900">&ldquo;{search.trim()}&rdquo;</strong>
-                        </>
-                      )}
-                    </p>
-                  ) : null}
-
-                  <ResourceGrid
-                    resources={rankedResources}
-                    ownedIds={Array.from(ownedIds)}
-                    total={total}
-                    page={safePage}
-                    totalPages={totalPages}
-                    hasActiveFilters={hasActiveFilters}
-                    progressiveLoad
-                  />
-                </div>
-              </div>
+          <div className="min-w-0 flex-1 space-y-6">
+            <div className="lg:hidden">
+              <MobileFilterDialog categories={categories as FilterCategory[]} />
             </div>
+
+            <Suspense fallback={<FilterBarFallback />}>
+              <FilterBar total={total} />
+            </Suspense>
+
+            {spotlightResource ? (
+              <div className="rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50/85 to-white p-4 sm:p-5">
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                  <div className="space-y-1.5">
+                    <p className="font-ui text-caption tracking-[0.12em] text-primary-700">
+                      {spotlightLabel}
+                    </p>
+                    <p className="max-w-2xl text-small leading-6 text-text-secondary">
+                      Start with the clearest signal in {activeCategoryName.toLowerCase()} before
+                      you scan the rest of the collection.
+                    </p>
+                  </div>
+                  <Link
+                    href={`/resources/${spotlightResource.slug}`}
+                    className="inline-flex items-center gap-1 text-small font-medium text-primary-700 transition hover:text-primary-800"
+                  >
+                    View resource
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+                <ResourceCard
+                  resource={{
+                    ...spotlightResource,
+                    highlightBadge: spotlightLabel,
+                  }}
+                  variant="hero"
+                  owned={ownedIds.has(spotlightResource.id)}
+                />
+              </div>
+            ) : null}
+
+            {search?.trim() ? (
+              <p className="text-small text-text-secondary">
+                {total === 0 ? (
+                  <>
+                    No results for{" "}
+                    <strong className="text-text-primary">&ldquo;{search.trim()}&rdquo;</strong>.
+                  </>
+                ) : (
+                  <>
+                    Showing results for{" "}
+                    <strong className="text-text-primary">&ldquo;{search.trim()}&rdquo;</strong>.
+                  </>
+                )}
+              </p>
+            ) : null}
+
+            <ResourceGrid
+              resources={rankedResources}
+              ownedIds={Array.from(ownedIds)}
+              total={total}
+              page={safePage}
+              totalPages={totalPages}
+              hasActiveFilters={hasActiveFilters}
+              progressiveLoad
+            />
+          </div>
+        </div>
       </section>
     </>
   );
@@ -377,50 +363,38 @@ function DiscoverIntroSection({
   resourceCount: number;
 }) {
   return (
-    <section className="rounded-[32px] border border-surface-200 bg-white/90 p-4 shadow-card sm:p-5 lg:p-6">
-      <div className="space-y-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl space-y-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-              Discover
-            </p>
-            <h1 className="max-w-3xl font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">
-              A calmer way to discover standout study resources
-            </h1>
-            <p className="max-w-2xl text-sm leading-6 text-text-secondary">
-              Browse curated collections, trending picks, and new releases from educators and creators in one focused library.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <span className="inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-3 py-1 text-[12px] font-medium text-text-secondary">
-              {`${formatNumber(categoryCount)} categories`}
-            </span>
-            <span className="inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-3 py-1 text-[12px] font-medium text-text-secondary">
-              {`${formatNumber(resourceCount)} resources`}
-            </span>
-          </div>
+      <section className="space-y-4 border-b border-surface-200/80 pb-7 sm:space-y-5 sm:pb-8">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-small text-text-secondary">
+        <p>
+          <span className="font-semibold text-text-primary">{formatNumber(categoryCount)}</span>{" "}
+          categories
+        </p>
+        <span className="text-text-muted" aria-hidden>
+          •
+        </span>
+        <p>
+          <span className="font-semibold text-text-primary">{formatNumber(resourceCount)}</span>{" "}
+          resources
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+        <div className="flex min-w-0 items-center gap-3 overflow-hidden sm:gap-4">
+          <Suspense fallback={<DiscoverFallback />}>
+            <DiscoverButton />
+          </Suspense>
+          <div className="hidden h-6 w-px shrink-0 bg-surface-200 sm:block" aria-hidden />
+          <ScrollableCategoryNav>
+            <Suspense fallback={<ChipsFallback />}>
+              <CategoryChips categories={categories} />
+            </Suspense>
+          </ScrollableCategoryNav>
         </div>
 
-        <div className="h-px bg-gradient-to-r from-surface-200 via-surface-100 to-transparent" aria-hidden />
-
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
-          <div className="flex min-w-0 items-center gap-3 overflow-hidden sm:gap-4">
-            <Suspense fallback={<DiscoverFallback />}>
-              <DiscoverButton />
-            </Suspense>
-            <div className="h-6 w-px shrink-0 bg-zinc-200" aria-hidden />
-            <ScrollableCategoryNav>
-              <Suspense fallback={<ChipsFallback />}>
-                <CategoryChips categories={categories} />
-              </Suspense>
-            </ScrollableCategoryNav>
-          </div>
-
-          <div className="w-full shrink-0 lg:max-w-lg">
-            <Suspense fallback={<SearchFallback />}>
-              <HeroSearch />
-            </Suspense>
-          </div>
+        <div className="w-full shrink-0 lg:max-w-md">
+          <Suspense fallback={<SearchFallback />}>
+            <HeroSearch variant="listing" />
+          </Suspense>
         </div>
       </div>
     </section>
@@ -481,7 +455,7 @@ async function ResourcesDiscoverDeferredSections({
                 <CategoryBrowseCardLink
                   key={cat.id}
                   href={href}
-                  className="group block rounded-[24px] border border-surface-200 bg-white p-5 shadow-card transition duration-200 hover:-translate-y-1 hover:border-surface-300 hover:shadow-card-lg"
+                  className="group block rounded-[22px] border border-surface-200 bg-white p-5 transition-colors duration-150 hover:border-surface-300"
                 >
                   <div className="flex items-center gap-4">
                     <span
@@ -530,10 +504,10 @@ async function ResourcesDiscoverDeferredSections({
       ) : null}
 
       {discoverData.topCreator?.creator.creatorSlug ? (
-        <section className="rounded-[28px] border border-blue-100 bg-gradient-to-r from-blue-50 to-sky-50 p-5 shadow-card">
+        <section className="rounded-[22px] border border-surface-200 bg-surface-50/75 p-4 sm:p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-600">
+              <p className="font-ui text-caption tracking-[0.12em] text-primary-700">
                 Top creator this week
               </p>
               <h2 className="mt-2 text-xl font-semibold tracking-tight text-zinc-900">
@@ -552,9 +526,9 @@ async function ResourcesDiscoverDeferredSections({
                 </p>
               ) : null}
             </div>
-            <IntentPrefetchLink
+              <IntentPrefetchLink
               href={`/creators/${discoverData.topCreator.creator.creatorSlug}`}
-              className="inline-flex items-center gap-2 self-start rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-zinc-800 lg:self-auto"
+              className="inline-flex items-center gap-2 self-start rounded-full border border-border-subtle bg-white px-4 py-2 text-sm font-semibold text-primary-700 transition hover:border-surface-300 hover:bg-white lg:self-auto"
               prefetchMode="viewport"
               prefetchScope="top-creator-cta"
               prefetchLimit={1}
@@ -817,11 +791,11 @@ function SectionHeader({
       </div>
       <Link
         href={viewAllHref}
-        className="group inline-flex items-center gap-1 self-start rounded-full px-2.5 py-1 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50 hover:text-brand-700 sm:self-auto"
+        className="group inline-flex items-center gap-1 self-start rounded-full px-2.5 py-1 text-small font-medium text-primary-700 transition-colors hover:bg-primary-50 hover:text-primary-800 sm:self-auto"
       >
         <span className="inline-flex items-center gap-1">
           <span>View all</span>
-          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          <ArrowRight className="h-3.5 w-3.5" />
         </span>
       </Link>
     </div>
@@ -829,12 +803,12 @@ function SectionHeader({
 }
 
 function DiscoverFallback() {
-  return <div className="h-9 w-24 animate-pulse rounded-lg bg-surface-100" />;
+  return <div className="h-9 w-24 animate-pulse rounded-full bg-surface-100" />;
 }
 
 function SearchFallback() {
   return (
-    <div className="h-11 w-full animate-pulse rounded-2xl border border-surface-200 bg-white shadow-sm" />
+    <div className="h-11 w-full animate-pulse rounded-full border border-border-subtle bg-white" />
   );
 }
 
@@ -854,13 +828,11 @@ function ChipsFallback() {
 
 function FilterBarFallback() {
   return (
-    <div className="rounded-2xl border border-surface-200 bg-white p-4 shadow-card">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="h-4 w-24 animate-pulse rounded bg-surface-100" />
-        <div className="flex gap-2">
-          <div className="h-10 w-28 animate-pulse rounded-lg bg-surface-100" />
-          <div className="h-10 w-32 animate-pulse rounded-lg bg-surface-100" />
-        </div>
+    <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="h-4 w-24 animate-pulse rounded bg-surface-100" />
+      <div className="flex gap-2">
+        <div className="h-10 w-28 animate-pulse rounded-full bg-surface-100" />
+        <div className="h-10 w-32 animate-pulse rounded-full bg-surface-100" />
       </div>
     </div>
   );
@@ -868,11 +840,11 @@ function FilterBarFallback() {
 
 function SidebarFallback() {
   return (
-    <div className="w-[260px] flex-shrink-0 space-y-4">
+    <div className="w-[252px] flex-shrink-0 space-y-5">
       {[80, 120, 80, 60].map((height, index) => (
         <div
           key={index}
-          className="animate-pulse rounded-2xl border border-surface-200 bg-white shadow-card"
+          className="animate-pulse border-b border-surface-200/80 bg-transparent"
           style={{ height }}
         />
       ))}
@@ -892,7 +864,7 @@ function DiscoverSectionsFallback() {
           {Array.from({ length: 6 }).map((_, index) => (
             <div
               key={index}
-              className="h-[72px] animate-pulse rounded-[24px] border border-surface-200 bg-white shadow-card"
+              className="h-[72px] animate-pulse rounded-[24px] border border-surface-200 bg-white"
             />
           ))}
         </div>
@@ -941,29 +913,24 @@ export function ResourcesContentFallback({ isDiscoverMode }: { isDiscoverMode: b
           ))}
         </div>
       ) : (
-        <section className="rounded-[32px] border border-surface-200 bg-white/85 p-4 shadow-card sm:p-5 lg:p-6">
-          <div className="space-y-6">
-            <div className="flex flex-col gap-2 border-b border-surface-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
-              <div className="space-y-1">
-                <div className="h-3 w-16 animate-pulse rounded bg-surface-100" />
-                <div className="h-7 w-48 animate-pulse rounded-lg bg-surface-100 sm:h-8" />
-                <div className="h-4 w-72 animate-pulse rounded bg-surface-100" />
-              </div>
-              <div className="h-4 w-24 animate-pulse rounded bg-surface-100" />
+        <section className="space-y-6">
+          <div className="space-y-4 border-b border-surface-200/80 pb-8">
+            <div className="h-3 w-16 animate-pulse rounded bg-surface-100" />
+            <div className="h-8 w-56 animate-pulse rounded-lg bg-surface-100" />
+            <div className="h-4 w-72 animate-pulse rounded bg-surface-100" />
+          </div>
+
+          <div className="flex flex-col gap-6 lg:flex-row lg:gap-10">
+            <div className="hidden lg:block">
+              <SidebarFallback />
             </div>
 
-            <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
-              <div className="hidden lg:block">
-                <SidebarFallback />
-              </div>
-
-              <div className="min-w-0 flex-1 space-y-5">
-                <FilterBarFallback />
-                <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-                  {Array.from({ length: 8 }).map((_, index) => (
-                    <ResourceCardSkeleton key={index} />
-                  ))}
-                </div>
+            <div className="min-w-0 flex-1 space-y-5">
+              <FilterBarFallback />
+              <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <ResourceCardSkeleton key={index} />
+                ))}
               </div>
             </div>
           </div>

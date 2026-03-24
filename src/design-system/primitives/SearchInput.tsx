@@ -47,10 +47,10 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
     const searchIcon = startAdornment ?? (
       <Search
         className={cn(
-          "pointer-events-none absolute top-1/2 -translate-y-1/2 text-text-muted",
+          "pointer-events-none absolute inset-y-0 left-0 text-text-muted",
           variant === "hero"
-            ? "left-3.5 h-4 w-4 sm:left-4 sm:h-5 sm:w-5"
-            : "left-4 h-4 w-4",
+            ? "h-full w-12 p-4 sm:w-14 sm:p-[18px]"
+            : "h-full w-11 p-3.5",
         )}
         aria-hidden
       />
@@ -63,10 +63,10 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
           onClick={onClear}
           aria-label={clearLabel}
           className={cn(
-            "absolute top-1/2 -translate-y-1/2 text-text-muted transition-colors hover:text-text-primary",
+            "absolute inset-y-0 right-0 text-text-muted transition-colors hover:text-text-primary",
             variant === "hero"
-              ? "right-3 rounded-full p-1 sm:right-4"
-              : "right-4",
+              ? "w-12 rounded-full p-4 sm:w-14 sm:p-[18px]"
+              : "w-11 p-3.5",
           )}
         >
           <X className="h-4 w-4" />
@@ -76,8 +76,10 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
     const loadingIndicator = loading ? (
       <Loader2
         className={cn(
-          "absolute top-1/2 -translate-y-1/2 animate-spin text-text-muted",
-          variant === "hero" ? "right-3 h-4 w-4 sm:right-4 sm:h-5 sm:w-5" : "right-4 h-4 w-4",
+          "absolute inset-y-0 right-0 animate-spin text-text-muted",
+          variant === "hero"
+            ? "h-full w-12 p-4 sm:w-14 sm:p-[18px]"
+            : "h-full w-11 p-3.5",
         )}
       />
     ) : null;
@@ -94,16 +96,16 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
           className={cn(
             variant === "hero"
               ? [
-                  "w-full rounded-xl border border-surface-200 bg-white sm:rounded-2xl",
-                  "py-3 pl-11 pr-11 text-sm text-text-primary sm:py-4 sm:pl-12 sm:pr-12 sm:text-base",
-                  "shadow-card-md placeholder:text-text-muted",
-                  "outline-none transition-all duration-150",
-                  "focus:border-brand-400 focus:shadow-card-lg focus:ring-3 focus:ring-brand-500/15",
+                  "w-full rounded-2xl border border-border-subtle bg-white",
+                  "py-3.5 pl-12 pr-12 text-sm text-text-primary sm:py-4 sm:pl-14 sm:pr-14 sm:text-base",
+                  "placeholder:text-text-muted",
+                  "outline-none transition-colors duration-150",
+                  "focus:border-primary-500 focus:ring-2 focus:ring-primary-500/15",
                 ]
               : [
-                  "w-full rounded-xl border border-border-subtle bg-white px-11 py-3 text-sm",
-                  "text-text-primary placeholder:text-text-muted shadow-sm outline-none transition",
-                  "focus:ring-2 focus:ring-brand-500",
+                  "w-full rounded-xl border border-border-subtle bg-white py-2.5 pl-11 pr-11 text-sm",
+                  "text-text-primary placeholder:text-text-muted outline-none transition-colors",
+                  "focus:border-primary-500 focus:ring-2 focus:ring-primary-500/15",
                 ],
             className,
           )}

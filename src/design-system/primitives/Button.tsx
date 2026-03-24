@@ -14,6 +14,7 @@ export type ButtonVariant =
   | "ghost"
   | "danger"
   | "destructive"
+  | "accent"
   | "link"
 
 export type ButtonSize = "xs" | "sm" | "md" | "lg" | "icon"
@@ -35,6 +36,7 @@ const VARIANT_MAP: Record<ButtonVariant, NonNullable<UIButtonProps["variant"]>> 
   ghost: "ghost",
   danger: "danger",
   destructive: "destructive",
+  accent: "accent",
   link: "link",
 }
 

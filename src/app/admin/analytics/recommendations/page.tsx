@@ -8,7 +8,11 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-} from "@/design-system/primitives/Card";
+  Button,
+  Input,
+} from "@/design-system";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { TableToolbar } from "@/components/admin/table";
 
 export const metadata = {
   title: "Recommendation Experiment – Admin",
@@ -73,10 +77,10 @@ function PresetButtons({ start, end }: { start: string | null; end: string | nul
           <a
             key={p.label}
             href={href}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+            className={`whitespace-nowrap rounded-full px-3 py-1 font-ui text-caption font-medium transition-colors ${
               isActive
-                ? "bg-zinc-900 text-white"
-                : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-700"
+                ? "bg-primary-700 text-white"
+                : "bg-surface-100 text-text-secondary hover:bg-surface-200 hover:text-text-primary"
             }`}
           >
             {p.label}
@@ -90,10 +94,10 @@ function PresetButtons({ start, end }: { start: string | null; end: string | nul
 function StatRow({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
     <div className="flex items-center justify-between py-2">
-      <span className="text-sm text-zinc-500">{label}</span>
-      <span className="text-sm font-semibold tabular-nums text-zinc-900">
+      <span className="text-small text-text-secondary">{label}</span>
+      <span className="text-small font-semibold tabular-nums text-text-primary">
         {value}
-        {sub && <span className="ml-1.5 text-[11px] font-normal text-zinc-400">{sub}</span>}
+        {sub && <span className="ml-1.5 text-caption font-normal text-text-muted">{sub}</span>}
       </span>
     </div>
   );
@@ -113,22 +117,22 @@ function VariantCard({
       ? ["Phase 2", "Behavior-based · treatment arm"]
       : ["Phase 1", "Category-trending · control arm"];
 
-  const accentBorder = accent === "blue" ? "border-blue-200" : "border-zinc-200";
-  const ctrColor     = accent === "blue" ? "text-blue-600" : "text-zinc-800";
+  const accentBorder = accent === "blue" ? "border-primary-200" : "border-border-subtle";
+  const ctrColor     = accent === "blue" ? "text-primary-700" : "text-text-primary";
 
   return (
-    <Card className={`rounded-2xl border ${accentBorder} p-0`}>
-      <CardHeader className="border-b border-surface-100 px-6 pb-4 pt-5">
+    <Card className={`rounded-xl border ${accentBorder} p-0`}>
+      <CardHeader className="border-b border-border-subtle px-5 pb-4 pt-4.5">
         <div className="flex items-start justify-between">
           <div>
-            <CardTitle className="text-base font-semibold text-zinc-900">{title}</CardTitle>
-            <CardDescription className="mt-0.5 text-xs text-zinc-400">{desc}</CardDescription>
+            <CardTitle className="text-base font-semibold text-text-primary">{title}</CardTitle>
+            <CardDescription className="mt-0.5 text-caption text-text-muted">{desc}</CardDescription>
           </div>
           <span
-            className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+            className={`rounded-full px-2.5 py-0.5 font-ui text-caption font-semibold ${
               accent === "blue"
-                ? "bg-blue-50 text-blue-600"
-                : "bg-zinc-100 text-zinc-500"
+                ? "bg-primary-50 text-primary-700"
+                : "bg-surface-100 text-text-secondary"
             }`}
           >
             {phase}
@@ -137,15 +141,15 @@ function VariantCard({
 
         {/* CTR — primary KPI, prominent */}
         <div className="mt-4">
-          <p className={`text-3xl font-bold tabular-nums ${ctrColor}`}>
+          <p className={`text-3xl font-semibold tabular-nums ${ctrColor}`}>
             {fmtPct(metrics.ctr)}
           </p>
-          <p className="mt-0.5 text-xs text-zinc-400">Click-through rate</p>
+          <p className="mt-0.5 text-caption text-text-muted">Click-through rate</p>
         </div>
       </CardHeader>
 
-      <CardContent className="px-6 py-1">
-        <div className="divide-y divide-zinc-100">
+      <CardContent className="px-5 py-1">
+        <div className="divide-y divide-border-subtle/60">
           <StatRow label="Impressions" value={fmt(metrics.impressions)} />
           <StatRow label="Clicks"      value={fmt(metrics.clicks)} />
           <StatRow label="Users"       value={fmt(metrics.users)}     sub="unique" />
@@ -241,83 +245,75 @@ export default async function RecommendationExperimentPage({
   ];
 
   return (
-    <div className="space-y-8 px-6 py-8">
+    <div className="space-y-8">
 
       {/* ── 1. Header ────────────────────────────────────────────────────── */}
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
-            Recommendation Experiment
-          </h1>
-          <p className="mt-1 text-sm text-zinc-500">
-            Phase 1 vs Phase 2 performance ·{" "}
-            <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-600">
+      <AdminPageHeader
+        title="Recommendation Experiment"
+        description={
+          <>
+            Phase 1 vs Phase 2 performance.{" "}
+            <code className="rounded bg-surface-100 px-1.5 py-0.5 font-mono text-caption text-text-secondary">
               {report.experimentId}
             </code>
-          </p>
-        </div>
-
-        {/* Date range controls */}
+          </>
+        }
+      />
+      <TableToolbar className="items-start justify-between gap-4">
+        <PresetButtons start={start} end={end} />
         <div className="shrink-0">
-          <PresetButtons start={start} end={end} />
-          <form method="get" className="mt-2 flex items-end gap-2">
+          <form method="get" className="flex flex-wrap items-end gap-2.5">
             <div className="flex flex-col gap-1">
-              <label htmlFor="start" className="text-[10px] font-medium uppercase tracking-wide text-zinc-400">
+              <label htmlFor="start" className="font-ui text-caption text-text-muted">
                 From
               </label>
-              <input
+              <Input
                 id="start"
                 name="start"
                 type="date"
                 defaultValue={start ?? ""}
-                className="w-36 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full sm:w-36"
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="end" className="text-[10px] font-medium uppercase tracking-wide text-zinc-400">
+              <label htmlFor="end" className="font-ui text-caption text-text-muted">
                 To
               </label>
-              <input
+              <Input
                 id="end"
                 name="end"
                 type="date"
                 defaultValue={end ?? ""}
-                className="w-36 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full sm:w-36"
               />
             </div>
-            <button
-              type="submit"
-              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
-            >
-              Apply
-            </button>
+            <Button type="submit" size="sm">Apply</Button>
           </form>
-          {/* Active range indicator */}
-          <p className="mt-2 flex items-center gap-1.5 text-[11px] text-zinc-400">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          <p className="mt-2 flex items-center gap-1.5 font-ui text-caption text-text-muted">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-success-400" />
             {rangeLabel}
             {report.isDefaultRange && <span>(default)</span>}
           </p>
         </div>
-      </div>
+      </TableToolbar>
 
       {/* ── 2. Top-level summary numbers ─────────────────────────────────── */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         {[
           { label: "Total impressions", value: fmt(totalImpressions),  sub: "Both variants" },
           { label: "Total clicks",      value: fmt(totalClicks),       sub: "Both variants" },
           { label: "Overall CTR",       value: fmtPct(overallCtr),     sub: "clicks / impressions" },
         ].map(({ label, value, sub }) => (
-          <div key={label} className="rounded-2xl border border-zinc-200 bg-white p-5">
-            <p className="text-2xl font-bold tabular-nums text-zinc-900">{value}</p>
-            <p className="mt-0.5 text-xs font-medium text-zinc-500">{label}</p>
-            <p className="mt-1 text-[11px] text-zinc-400">{sub}</p>
+          <div key={label} className="rounded-xl border border-border-subtle bg-white p-4">
+            <p className="text-2xl font-semibold tabular-nums text-text-primary">{value}</p>
+            <p className="mt-0.5 text-small font-medium text-text-secondary">{label}</p>
+            <p className="mt-1 text-caption text-text-muted">{sub}</p>
           </div>
         ))}
       </div>
 
       {/* ── 3. Comparison banner ─────────────────────────────────────────── */}
-      <div className={`rounded-2xl border px-6 py-4 ${bannerBg}`}>
+      <div className={`rounded-xl border px-5 py-3.5 ${bannerBg}`}>
         {winner === null ? (
           <p className="text-sm font-medium">
             Both variants have equal CTR — not enough data yet to determine a winner.
@@ -334,7 +330,7 @@ export default async function RecommendationExperimentPage({
 
       {/* ── 4. KPI cards — Phase 1 | Phase 2 ────────────────────────────── */}
       <div>
-        <h2 className="mb-4 text-lg font-medium text-zinc-700">Variant breakdown</h2>
+        <h2 className="mb-4 font-display text-h3 font-semibold text-text-primary">Variant breakdown</h2>
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           <VariantCard phase="phase1" metrics={phase1} accent="neutral" />
           <VariantCard phase="phase2" metrics={phase2} accent="blue" />
@@ -343,26 +339,26 @@ export default async function RecommendationExperimentPage({
 
       {/* ── 5. Comparison table ──────────────────────────────────────────── */}
       <div>
-        <h2 className="mb-4 text-lg font-medium text-zinc-700">Side-by-side comparison</h2>
-        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+        <h2 className="mb-4 font-display text-h3 font-semibold text-text-primary">Side-by-side comparison</h2>
+        <div className="overflow-hidden rounded-xl border border-border-subtle bg-white">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-zinc-100 bg-zinc-50">
-                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">
+              <tr className="border-b border-border-subtle bg-surface-50/80">
+                <th className="px-5 py-3 font-ui text-caption text-text-muted">
                   Metric
                 </th>
-                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                <th className="px-5 py-3 text-right font-ui text-caption text-text-muted">
                   Phase 1
                 </th>
-                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                <th className="px-5 py-3 text-right font-ui text-caption text-text-muted">
                   Phase 2
                 </th>
-                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                <th className="px-5 py-3 text-right font-ui text-caption text-text-muted">
                   Delta
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-border-subtle/60">
               {tableRows.map((row) => (
                 <tr key={row.label} className="hover:bg-zinc-50/60 transition-colors">
                   <td className="px-5 py-3 font-medium text-zinc-700">{row.label}</td>
@@ -388,14 +384,14 @@ export default async function RecommendationExperimentPage({
             </tbody>
           </table>
         </div>
-        <p className="mt-2 text-[11px] text-zinc-400">
+        <p className="mt-2 text-caption text-text-muted">
           Delta = Phase 2 vs Phase 1. CTR delta shown in percentage points (pp).
           Positive is better for all metrics.
         </p>
       </div>
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between border-t border-zinc-100 pt-4 text-[11px] text-zinc-400">
+      <div className="flex items-center justify-between border-t border-border-subtle pt-4 text-caption text-text-muted">
         <span>Generated at {report.generatedAt}</span>
         <a
           href={rawJsonHref}

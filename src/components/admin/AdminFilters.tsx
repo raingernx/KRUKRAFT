@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { Search } from "lucide-react";
 import { Input } from "@/design-system";
 import { cn } from "@/lib/utils";
 
@@ -31,14 +32,26 @@ export function AdminFilters({
   }
 
   return (
-    <div className={cn("max-w-xs", className)}>
-      <Input
-        type="search"
-        placeholder={searchPlaceholder}
-        value={value}
-        onChange={handleChange}
-        className="w-full"
-      />
+    <div className={cn("min-w-[220px] max-w-sm flex-1", className)}>
+      <label
+        htmlFor={`admin-filter-${searchParam}`}
+        className="mb-1 block font-ui text-caption text-text-muted"
+      >
+        Search
+      </label>
+      <div className="relative">
+        <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-text-muted">
+          <Search className="h-4 w-4" />
+        </span>
+        <Input
+          id={`admin-filter-${searchParam}`}
+          type="search"
+          placeholder={searchPlaceholder}
+          value={value}
+          onChange={handleChange}
+          className="w-full pl-9"
+        />
+      </div>
     </div>
   );
 }

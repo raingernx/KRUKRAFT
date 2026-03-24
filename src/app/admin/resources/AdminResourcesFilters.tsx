@@ -8,6 +8,7 @@ import { Button, Input, Select } from "@/design-system";
 import { useDebounce } from "@/hooks/useDebounce";
 import { AdminResourcesClearButton } from "./AdminResourcesClearButton";
 import { FilterChips } from "@/components/admin/FilterChips";
+import { TableToolbar } from "@/components/admin/table";
 import {
   SavedFiltersDropdown,
   type SavedFilterPresetId,
@@ -122,135 +123,134 @@ export function AdminResourcesFilters({
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit}
-        className="mb-2 flex min-w-0 flex-wrap items-end gap-3 rounded-2xl border border-border-subtle bg-white px-4 py-3 shadow-card"
-      >
-        <div className="flex min-w-[220px] flex-1 flex-col gap-1">
-        <label
-          htmlFor="q"
-          className="text-xs font-semibold uppercase tracking-tightest text-text-secondary"
-        >
-          Search
-        </label>
-        <div className="relative">
-          <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-            <Search className="h-4 w-4 text-text-muted" />
-          </span>
-          <Input
-            id="q"
-            name="q"
-            value={filters.search}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, search: e.target.value }))
-            }
-            onKeyDown={handleSearchKeyDown}
-            placeholder="Search by title or creator…"
-            className="pl-9"
-          />
-        </div>
-        </div>
+      <form onSubmit={handleSubmit} className="mb-2">
+        <TableToolbar className="gap-3.5">
+          <div className="flex min-w-[220px] flex-1 flex-col gap-1">
+            <label
+              htmlFor="q"
+              className="font-ui text-caption text-text-muted"
+            >
+              Search
+            </label>
+            <div className="relative">
+              <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+                <Search className="h-4 w-4 text-text-muted" />
+              </span>
+              <Input
+                id="q"
+                name="q"
+                value={filters.search}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, search: e.target.value }))
+                }
+                onKeyDown={handleSearchKeyDown}
+                placeholder="Search by title or creator…"
+                className="pl-9"
+              />
+            </div>
+          </div>
 
-        <div className="flex w-full flex-col gap-1 sm:w-40">
-        <label
-          htmlFor="status"
-          className="text-xs font-semibold uppercase tracking-tightest text-text-secondary"
-        >
-          Status
-        </label>
-        <Select
-          id="status"
-          name="status"
-          value={filters.status}
-          onChange={(e) =>
-            setFilters((prev) => ({ ...prev, status: e.target.value }))
-          }
-        >
-          <option value="">All statuses</option>
-          <option value="DRAFT">Draft</option>
-          <option value="PUBLISHED">Published</option>
-          <option value="ARCHIVED">Archived</option>
-        </Select>
-        </div>
-
-        <div className="flex w-full flex-col gap-1 sm:w-52">
-        <label
-          htmlFor="categoryId"
-          className="text-xs font-semibold uppercase tracking-tightest text-text-secondary"
-        >
-          Category
-        </label>
-        <Select
-          id="categoryId"
-          name="categoryId"
-          value={filters.categoryId}
-          onChange={(e) =>
-            setFilters((prev) => ({ ...prev, categoryId: e.target.value }))
-          }
-        >
-          <option value="">All categories</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </Select>
-        </div>
-
-        <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
-          <SavedFiltersDropdown
-            currentFilters={filters}
-            onApplyPreset={(preset: SavedFilterPresetId) => {
-              let next: FilterState = filters;
-              const extras: Record<string, string | undefined> = {};
-
-              if (preset === "all") {
-                next = { search: "", status: "", categoryId: "" };
-                extras.minRevenueCents = undefined;
-                extras.free = undefined;
-              } else if (preset === "published") {
-                next = { ...filters, status: "PUBLISHED" };
-              } else if (preset === "draft") {
-                next = { ...filters, status: "DRAFT" };
-              } else if (preset === "highRevenue") {
-                next = { ...filters };
-                extras.minRevenueCents = "100000"; // $1,000 in cents
-              } else if (preset === "free") {
-                next = { ...filters };
-                extras.free = "1";
+          <div className="flex w-full flex-col gap-1 sm:w-40">
+            <label
+              htmlFor="status"
+              className="font-ui text-caption text-text-muted"
+            >
+              Status
+            </label>
+            <Select
+              id="status"
+              name="status"
+              value={filters.status}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, status: e.target.value }))
               }
+            >
+              <option value="">All statuses</option>
+              <option value="DRAFT">Draft</option>
+              <option value="PUBLISHED">Published</option>
+              <option value="ARCHIVED">Archived</option>
+            </Select>
+          </div>
 
-              setFilters(next);
+          <div className="flex w-full flex-col gap-1 sm:w-52">
+            <label
+              htmlFor="categoryId"
+              className="font-ui text-caption text-text-muted"
+            >
+              Category
+            </label>
+            <Select
+              id="categoryId"
+              name="categoryId"
+              value={filters.categoryId}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, categoryId: e.target.value }))
+              }
+            >
+              <option value="">All categories</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </Select>
+          </div>
 
-              const params = new URLSearchParams();
-              if (next.search.trim()) params.set("q", next.search.trim());
-              if (next.status) params.set("status", next.status);
-              if (next.categoryId) params.set("categoryId", next.categoryId);
-              if (extras.minRevenueCents)
-                params.set("minRevenueCents", extras.minRevenueCents);
-              if (extras.free) params.set("free", extras.free);
-              const qs = params.toString();
+          <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+            <SavedFiltersDropdown
+              currentFilters={filters}
+              onApplyPreset={(preset: SavedFilterPresetId) => {
+                let next: FilterState = filters;
+                const extras: Record<string, string | undefined> = {};
 
-              const href = qs
-                ? `/admin/resources?${qs}`
-                : "/admin/resources";
-              router.replace(href);
-            }}
-          />
-          <AdminResourcesClearButton
-            hasFilters={hasFilters}
-            onClear={handleClear}
-          />
-          <Button
-            type="submit"
-            variant="outline"
-            size="sm"
-            className="inline-flex items-center gap-1"
-          >
-            <Filter className="h-3.5 w-3.5" />
-            Apply
-          </Button>
-        </div>
+                if (preset === "all") {
+                  next = { search: "", status: "", categoryId: "" };
+                  extras.minRevenueCents = undefined;
+                  extras.free = undefined;
+                } else if (preset === "published") {
+                  next = { ...filters, status: "PUBLISHED" };
+                } else if (preset === "draft") {
+                  next = { ...filters, status: "DRAFT" };
+                } else if (preset === "highRevenue") {
+                  next = { ...filters };
+                  extras.minRevenueCents = "100000"; // $1,000 in cents
+                } else if (preset === "free") {
+                  next = { ...filters };
+                  extras.free = "1";
+                }
+
+                setFilters(next);
+
+                const params = new URLSearchParams();
+                if (next.search.trim()) params.set("q", next.search.trim());
+                if (next.status) params.set("status", next.status);
+                if (next.categoryId) params.set("categoryId", next.categoryId);
+                if (extras.minRevenueCents)
+                  params.set("minRevenueCents", extras.minRevenueCents);
+                if (extras.free) params.set("free", extras.free);
+                const qs = params.toString();
+
+                const href = qs
+                  ? `/admin/resources?${qs}`
+                  : "/admin/resources";
+                router.replace(href);
+              }}
+            />
+            <AdminResourcesClearButton
+              hasFilters={hasFilters}
+              onClear={handleClear}
+            />
+            <Button
+              type="submit"
+              variant="outline"
+              size="sm"
+              className="inline-flex items-center gap-1"
+            >
+              <Filter className="h-3.5 w-3.5" />
+              Apply
+            </Button>
+          </div>
+        </TableToolbar>
       </form>
 
       <FilterChips

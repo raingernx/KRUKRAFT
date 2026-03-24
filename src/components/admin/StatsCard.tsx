@@ -19,15 +19,15 @@ export function StatsCard({ downloads, purchases, reviews }: StatsCardProps) {
   ] as const;
 
   return (
-    <div className="min-w-0 rounded-2xl border border-surface-200 bg-white p-5 shadow-card">
-      <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+    <div className="min-w-0 rounded-xl border border-border-subtle bg-white p-5">
+      <h3 className="mb-4 font-ui text-caption text-text-muted">
         Stats
       </h3>
       <div className="grid grid-cols-3 gap-4">
         {metrics.map(({ label, value }) => (
           <div key={label} className="min-w-0">
-            <p className="text-xs font-medium text-zinc-500">{label}</p>
-            <p className="mt-1 truncate text-lg font-semibold tabular-nums text-zinc-900">
+            <p className="text-small text-text-secondary">{label}</p>
+            <p className="mt-1 truncate text-lg font-semibold tabular-nums text-text-primary">
               {formatNumber(value)}
             </p>
           </div>

@@ -35,11 +35,11 @@ function Input({
         {...props}
       />
       {error ? (
-        <p id={errorId} className="text-xs text-red-600">
+        <p id={errorId} className="text-caption text-red-600">
           {error}
         </p>
       ) : hint ? (
-        <p id={hintId} className={cn("text-xs text-text-muted")}>
+        <p id={hintId} className={cn("text-caption text-text-muted")}>
           {hint}
         </p>
       ) : null}

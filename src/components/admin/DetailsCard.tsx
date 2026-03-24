@@ -21,18 +21,18 @@ export function DetailsCard({
   ] as const;
 
   return (
-    <div className="w-full rounded-2xl border border-surface-200 bg-white p-5 shadow-card">
-      <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+    <div className="w-full rounded-xl border border-border-subtle bg-white p-5">
+      <h3 className="mb-4 font-ui text-caption text-text-muted">
         Details
       </h3>
-      <dl className="space-y-3 text-xs">
+      <dl className="space-y-3 text-small">
         {rows.map(({ label, value }) => (
           <div
             key={label}
             className="flex items-start justify-between gap-4"
           >
-            <dt className="shrink-0 text-zinc-500">{label}</dt>
-            <dd className="min-w-0 truncate text-right font-medium text-zinc-900">
+            <dt className="shrink-0 text-text-secondary">{label}</dt>
+            <dd className="min-w-0 truncate text-right font-medium text-text-primary">
               {value}
             </dd>
           </div>

@@ -4,7 +4,6 @@ import {
   CheckCircle,
   Download,
   Eye,
-  Lock,
   ShieldCheck,
   Sparkles,
   Star,
@@ -160,82 +159,91 @@ export async function PurchaseCard({
     hasReviews ? `${resource.averageRating!.toFixed(1)}★` : null,
     resource.levelLabel ?? null,
     TYPE_LABELS[resource.type] ?? resource.type,
-    resource.outcomeHint ?? null,
   ].filter(Boolean) as string[];
+  const benefitItems = isOwned
+    ? []
+    : isFree
+      ? ["No card needed", "Instant download", "Keep forever"]
+      : ["Instant access", "One-time purchase", "Re-download any time"];
 
   return (
-    <div className="flex h-full min-h-0 flex-col justify-between rounded-2xl border border-surface-200 bg-white p-6 shadow-card-lg">
-      <div className="space-y-4">
+    <div className="flex h-full min-h-0 flex-col justify-between rounded-xl border border-surface-200 bg-white p-5 sm:p-6">
+      <div className="space-y-5">
         {(resource.author.name || resource.category) && (
-          <p className="text-[13px] text-zinc-500">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-caption text-zinc-500">
             {resource.author.name ? `by ${resource.author.name}` : null}
             {resource.author.name && resource.category ? (
-              <span className="mx-1.5 text-zinc-300">·</span>
+              <span aria-hidden className="text-zinc-300">·</span>
             ) : null}
             {resource.category ? (
-              <span className="font-medium uppercase tracking-[0.14em] text-brand-600/80 text-[12px]">
+              <span className="font-medium text-primary-700">
                 {resource.category.name}
               </span>
             ) : null}
           </p>
         )}
 
-        <div className="space-y-2">
-          <span className="inline-flex items-center rounded-full bg-surface-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-600">
+        <div className="space-y-2.5">
+          <span className="inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-2.5 py-1 text-caption font-semibold text-zinc-600">
             {ctaCopy.kicker}
           </span>
-          <p className="text-3xl font-bold tracking-tight text-zinc-900">
-            <PriceLabel price={resource.price} isFree={isFree} />
-          </p>
-          {!isFree && !isOwned && resource.price > 0 && resource.price < 10000 && (
-            <p className="text-[12px] text-zinc-400">≈ less than a coffee ☕</p>
-          )}
+          <div className="space-y-1.5">
+            <p className="text-3xl font-bold tracking-tight text-zinc-900">
+              <PriceLabel price={resource.price} isFree={isFree} />
+            </p>
+            {!isOwned && (
+              <p className="max-w-sm text-small leading-6 text-zinc-600">
+                {ctaCopy.proof}
+              </p>
+            )}
+            {isOwned && (
+              <p className="max-w-sm text-small leading-6 text-zinc-600">
+                {ctaCopy.proof}
+              </p>
+            )}
+          </div>
           {summaryParts.length > 0 && (
-            <p className="text-[12px] font-medium text-zinc-600">
+            <p className="text-caption font-medium text-zinc-600">
               {summaryParts.join(" · ")}
             </p>
           )}
         </div>
 
         {trustItems.length > 0 && (
-          <div className="grid grid-cols-1 gap-3 rounded-2xl border border-surface-200 bg-surface-50 p-4 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 border-y border-surface-200 py-4 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
             {trustItems.map((item) => (
-              <div key={item.label} className="rounded-xl bg-white px-3 py-3 shadow-sm">
-                <div className="flex items-center gap-2 text-[12px] font-medium text-zinc-500">
+              <div key={item.label} className="space-y-1.5">
+                <div className="flex items-center gap-2 text-caption font-medium text-zinc-500">
                   {item.icon}
                   <span>{item.label}</span>
                 </div>
-                <p className="mt-2 text-lg font-semibold tracking-tight text-zinc-900">
+                <p className="text-lg font-semibold tracking-tight text-zinc-900">
                   {item.value}
                 </p>
-                <p className="text-[12px] text-zinc-500">{item.meta}</p>
+                <p className="text-caption text-zinc-500">{item.meta}</p>
               </div>
             ))}
           </div>
         )}
 
-        {!isOwned && !isFree && (
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-emerald-700">
-            <span>✓ Instant access</span>
-            <span aria-hidden className="text-emerald-300">·</span>
-            <span>✓ No subscription</span>
-            <span aria-hidden className="text-emerald-300">·</span>
-            <span>✓ Yours forever</span>
-          </div>
-        )}
-
-        {!isOwned && isFree && (
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-emerald-700">
-            <span>✓ Free · no card needed</span>
-            <span aria-hidden className="text-emerald-300">·</span>
-            <span>✓ Instant download</span>
-            <span aria-hidden className="text-emerald-300">·</span>
-            <span>✓ Keep forever</span>
+        {benefitItems.length > 0 && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-zinc-600">
+            {benefitItems.map((item, index) => (
+              <span key={item} className="inline-flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span>{item}</span>
+                {index < benefitItems.length - 1 ? (
+                  <span aria-hidden className="ml-1 text-zinc-300">
+                    ·
+                  </span>
+                ) : null}
+              </span>
+            ))}
           </div>
         )}
 
         {!isOwned && ((resource.salesCount ?? 0) >= 10 || resource.downloadCount >= 50) && (
-          <p className="text-[12px] font-medium text-zinc-500">
+          <p className="text-caption font-medium text-zinc-500">
             {(resource.salesCount ?? 0) >= 10
               ? `Used by ${formatNumber(resource.salesCount ?? 0)}+ teachers`
               : resource.category
@@ -245,73 +253,59 @@ export async function PurchaseCard({
         )}
 
         {recentActivityLabel && !isOwned && (
-          <div className="rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3 shadow-sm">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-brand-700">
+          <div className="rounded-xl border border-primary-100 bg-primary-50/60 px-4 py-3">
+            <p className="text-caption font-semibold text-primary-700/90">
               {recentActivityHeading}
             </p>
-            <p className="mt-1 text-[13px] font-medium text-brand-900">{recentActivityLabel}</p>
-            <p className="mt-1 text-[12px] text-brand-700">
-              Learners are actively using this resource right now.
-            </p>
+            <p className="mt-1 text-small font-medium text-primary-900">{recentActivityLabel}</p>
           </div>
         )}
 
-        <div className="rounded-2xl bg-surface-50 p-4">
-          <div className={isOwned ? "mb-3 space-y-1" : "mb-3"}>
-            {isOwned && (
-              <p className="text-[12px] leading-5 text-zinc-500">{ctaCopy.proof}</p>
-            )}
-            {!isOwned && resource.comparisonAnchor && (
-              <p className="text-[12px] leading-5 text-zinc-500">
-                {resource.comparisonAnchor.label}
-              </p>
-            )}
-          </div>
-
+        <div className="space-y-3 border-t border-surface-200 pt-4">
           {isOwned && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-3">
-                <CheckCircle className="h-4 w-4 shrink-0 text-emerald-500" />
-                <p className="text-[13px] font-medium text-emerald-700">
-                  Added to your library
-                </p>
-              </div>
-              {hasFile ? (
-                <div className="flex flex-col gap-2">
-                  <a
-                    href={`/api/download/${resource.id}`}
-                    className={[
-                      "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-brand-700 ring-1 ring-brand-600/30 ring-offset-1",
-                      isReturningFromCheckout
-                        ? "ring-2 ring-emerald-400/60 ring-offset-2 animate-fade-in"
-                        : "",
-                    ].join(" ")}
-                  >
-                    <Download className="h-4 w-4" />
-                    Download instantly
-                  </a>
-                  <p className="text-center text-[11px] text-zinc-400">
-                    Instant download · Yours forever
-                  </p>
-                  {isPreviewSupported(resource.mimeType) && (
-                    <a
-                      href={`/api/preview/${resource.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-5 py-2.5 text-[13px] font-medium text-zinc-700 transition hover:bg-zinc-50"
-                    >
-                      <Eye className="h-3.5 w-3.5" />
-                      Preview
-                    </a>
-                  )}
-                </div>
-              ) : (
-                <p className="text-center text-[12px] text-zinc-400">
-                  File not yet available — check back soon.
-                </p>
-              )}
+            <div className="flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-3">
+              <CheckCircle className="h-4 w-4 shrink-0 text-emerald-500" />
+              <p className="text-small font-medium text-emerald-700">
+                Added to your library
+              </p>
             </div>
           )}
+
+          {isOwned &&
+            (hasFile ? (
+              <div className="flex flex-col gap-2">
+                <a
+                  href={`/api/download/${resource.id}`}
+                  className={[
+                    "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-primary-700 ring-1 ring-primary-600/20 ring-offset-1",
+                    isReturningFromCheckout
+                      ? "ring-2 ring-emerald-400/60 ring-offset-2 animate-fade-in"
+                      : "",
+                  ].join(" ")}
+                >
+                  <Download className="h-4 w-4" />
+                  Download instantly
+                </a>
+                {isPreviewSupported(resource.mimeType) && (
+                  <a
+                    href={`/api/preview/${resource.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-surface-200 bg-white px-5 py-2.5 text-[13px] font-medium text-zinc-700 transition hover:bg-surface-50"
+                  >
+                    <Eye className="h-3.5 w-3.5" />
+                    Preview
+                  </a>
+                )}
+                <p className="text-center text-caption text-zinc-400">
+                  Secure, authenticated download
+                </p>
+              </div>
+            ) : (
+              <p className="text-center text-caption text-zinc-400">
+                File not yet available — check back soon.
+              </p>
+            ))}
 
           {!isOwned && isFree &&
             (session?.user ? (
@@ -326,7 +320,7 @@ export async function PurchaseCard({
             ) : (
               <Link
                 href={`/auth/login?next=/resources/${resource.slug}`}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-[14px] font-semibold text-white shadow-sm transition hover:bg-blue-700"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-primary-700"
               >
                 Sign in to Download
               </Link>
@@ -346,28 +340,21 @@ export async function PurchaseCard({
               <div className="space-y-3">
                 <Link
                   href={`/auth/login?next=/resources/${resource.slug}`}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-[14px] font-semibold text-white shadow-sm transition hover:bg-blue-700"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-primary-700"
                 >
                   Sign in to Buy
                 </Link>
-                <p className="text-center text-[12px] text-zinc-400">
+                <p className="text-center text-caption text-zinc-400">
                   Create a free account to purchase.
                 </p>
               </div>
             ))}
         </div>
 
-        {isOwned && hasFile && (
-          <p className="flex items-center justify-center gap-1.5 text-[11px] text-zinc-400">
-            <Lock className="h-3 w-3" />
-            Secure, authenticated download
-          </p>
-        )}
       </div>
 
-      <div className="space-y-4">
-        <div className="rounded-2xl border border-surface-200 bg-surface-50 p-4">
-          <dl className="space-y-2 text-[13px]">
+      <div className="space-y-4 border-t border-surface-200 pt-4">
+        <dl className="space-y-2.5 text-small">
             <div className="flex justify-between gap-3">
               <dt className="text-zinc-500">Format</dt>
               <dd className="font-medium text-zinc-900">
@@ -430,25 +417,24 @@ export async function PurchaseCard({
               </div>
             )}
           </dl>
-        </div>
 
-        <div className="space-y-2 rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-brand-50/30 p-4 text-sm">
+        <div className="space-y-2">
           {isMember ? (
-            <p className="font-medium text-emerald-700">
+            <p className="text-small font-medium text-emerald-700">
               Member pricing is already active on your account
             </p>
           ) : (
             <>
-              <p className="font-medium text-zinc-900">
+              <p className="text-small font-medium text-zinc-900">
                 Save more with {platform.platformShortName} Plus
               </p>
-              <p className="text-muted-foreground">
+              <p className="text-small leading-6 text-zinc-500">
                 Members unlock discounted pricing and a faster path to repeat
                 downloads.
               </p>
               <Link
                 href="/membership"
-                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-brand-200 bg-white px-4 py-2.5 text-sm font-medium text-brand-700 transition hover:bg-brand-50"
+                className="inline-flex items-center gap-2 text-small font-medium text-primary-700 transition hover:text-primary-800"
               >
                 <Sparkles className="h-4 w-4" />
                 Explore membership

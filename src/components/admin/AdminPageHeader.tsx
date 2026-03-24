@@ -2,7 +2,7 @@ import * as React from "react";
 
 interface AdminPageHeaderProps {
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   /** Action buttons rendered on the right side of the header */
   actions?: React.ReactNode;
 }
@@ -21,17 +21,20 @@ export function AdminPageHeader({
   actions,
 }: AdminPageHeaderProps) {
   return (
-    <div className="flex min-w-0 flex-wrap items-end justify-between gap-4 border-b border-surface-200 pb-4">
-      <div>
-        <h1 className="font-display text-h2 font-semibold tracking-tight text-text-primary">
+    <div className="flex min-w-0 flex-wrap items-start justify-between gap-4 border-b border-border-subtle pb-4 sm:items-end">
+      <div className="min-w-0">
+        <p className="font-ui text-caption text-text-muted">Admin</p>
+        <h1 className="mt-1 font-display text-h2 font-semibold tracking-tight text-text-primary">
           {title}
         </h1>
         {description && (
-          <p className="mt-1 text-meta text-text-secondary">{description}</p>
+          <p className="mt-1.5 max-w-2xl text-small text-text-secondary">
+            {description}
+          </p>
         )}
       </div>
       {actions && (
-        <div className="flex flex-wrap items-center gap-2">{actions}</div>
+        <div className="flex flex-wrap items-center gap-2.5">{actions}</div>
       )}
     </div>
   );

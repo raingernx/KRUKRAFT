@@ -1,4 +1,3 @@
-import { authOptions } from "@/lib/auth";
 import { requireSession } from "@/lib/auth/require-session";
 import { prisma } from "@/lib/prisma";
 import { getUserPreferences } from "@/lib/preferences";

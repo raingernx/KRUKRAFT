@@ -107,7 +107,7 @@ function DropdownLabel({
     <DropdownPrimitive.Label
       data-slot="dropdown-label"
       className={cn(
-        "px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-text-muted",
+        "px-3 py-1.5 font-ui text-caption tracking-[0.12em] text-text-muted",
         inset && "pl-8",
         className
       )}

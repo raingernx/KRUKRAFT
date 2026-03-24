@@ -3,8 +3,18 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { Users, Package, CreditCard, Download } from "lucide-react";
 import { Card } from "@/design-system";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { formatNumber, formatDate, formatPrice } from "@/lib/format";
 import { getAdminDashboardOverview } from "@/services/analytics.service";
+import {
+  DataTable,
+  DataTableBody,
+  DataTableCell,
+  DataTableHeadCell,
+  DataTableHeader,
+  DataTableRow,
+  TableEmptyState,
+} from "@/components/admin/table";
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -34,191 +44,123 @@ export default async function AdminDashboardPage() {
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="space-y-8 lg:space-y-10">
-      <section className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-          Overview
-        </p>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="font-display text-h2 font-semibold tracking-tight text-text-primary">
-              Admin dashboard
-            </h1>
-            <p className="mt-1 text-meta text-text-secondary">
-              Track marketplace health, new activity, and the operating metrics that matter most.
-            </p>
-          </div>
-          <p className="text-xs text-text-muted">
+    <div className="space-y-7">
+      <AdminPageHeader
+        title="Admin dashboard"
+        description="Track marketplace health, operational activity, and the metrics that matter most."
+        actions={
+          <p className="text-small text-text-muted">
             Revenue tracked: {formatPrice(metrics.totalRevenue / 100)}
           </p>
-        </div>
-      </section>
+        }
+      />
 
-      {/* Stat cards */}
       <section>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-          <Card className="rounded-2xl p-6 shadow-card">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-meta font-medium text-text-muted">
-                  Total resources
-                </p>
-                <p className="mt-2 text-3xl font-bold tracking-tight text-text-primary">
-                  {formatNumber(metrics.totalResources)}
-                </p>
+        <Card className="overflow-hidden rounded-xl p-0">
+          <div className="grid grid-cols-1 divide-y divide-border-subtle md:grid-cols-2 md:divide-x md:divide-y-0 xl:grid-cols-4">
+            {[
+              {
+                label: "Resources",
+                value: formatNumber(metrics.totalResources),
+                icon: Package,
+                tone: "text-primary-700",
+              },
+              {
+                label: "Users",
+                value: formatNumber(metrics.totalUsers),
+                icon: Users,
+                tone: "text-text-secondary",
+              },
+              {
+                label: "Purchases",
+                value: formatNumber(metrics.totalPurchases),
+                icon: CreditCard,
+                tone: "text-warning-700",
+              },
+              {
+                label: "Downloads",
+                value: formatNumber(metrics.totalDownloads),
+                icon: Download,
+                tone: "text-success-700",
+              },
+            ].map(({ label, value, icon: Icon, tone }) => (
+              <div key={label} className="flex items-start justify-between gap-3 px-5 py-3.5">
+                <div className="min-w-0">
+                  <p className="text-small text-text-secondary">{label}</p>
+                  <p className="mt-1 text-[1.375rem] font-semibold tracking-tight text-text-primary">
+                    {value}
+                  </p>
+                </div>
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-100">
+                  <Icon className={`h-4 w-4 ${tone}`} />
+                </span>
               </div>
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50">
-                <Package className="h-5 w-5 text-brand-600" />
-              </span>
-            </div>
-          </Card>
-
-          <Card className="rounded-2xl p-6 shadow-card">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-meta font-medium text-text-muted">
-                  Total users
-                </p>
-                <p className="mt-2 text-3xl font-bold tracking-tight text-text-primary">
-                  {formatNumber(metrics.totalUsers)}
-                </p>
-              </div>
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-100">
-                <Users className="h-5 w-5 text-text-muted" />
-              </span>
-            </div>
-          </Card>
-
-          <Card className="rounded-2xl p-6 shadow-card">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-meta font-medium text-text-muted">
-                  Total purchases
-                </p>
-                <p className="mt-2 text-3xl font-bold tracking-tight text-text-primary">
-                  {formatNumber(metrics.totalPurchases)}
-                </p>
-              </div>
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-highlight-50">
-                <CreditCard className="h-5 w-5 text-highlight-600" />
-              </span>
-            </div>
-          </Card>
-
-          <Card className="rounded-2xl p-6 shadow-card">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-meta font-medium text-text-muted">
-                  Total downloads
-                </p>
-                <p className="mt-2 text-3xl font-bold tracking-tight text-text-primary">
-                  {formatNumber(metrics.totalDownloads)}
-                </p>
-              </div>
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-success-50">
-                <Download className="h-5 w-5 text-success-600" />
-              </span>
-            </div>
-          </Card>
-        </div>
+            ))}
+          </div>
+        </Card>
       </section>
 
-      {/* Recent activity */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="font-display text-h3 font-semibold text-text-primary">
-              Recent activity
-            </h2>
-            <p className="mt-1 text-sm text-text-secondary">
-              Latest purchases and newly uploaded resources across the platform.
-            </p>
-          </div>
+      <section className="space-y-3">
+        <div>
+          <h2 className="font-display text-h3 font-semibold text-text-primary">
+            Recent activity
+          </h2>
+          <p className="mt-1 text-small text-text-secondary">
+            Latest purchases and newly uploaded resources across the platform.
+          </p>
         </div>
 
-        <Card className="overflow-hidden rounded-2xl shadow-card">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-border-subtle bg-surface-50/70">
-              <tr>
-                <th className="px-5 py-2.5 text-meta font-medium text-text-muted">
-                  Type
-                </th>
-                <th className="px-3 py-2.5 text-meta font-medium text-text-muted">
-                  User
-                </th>
-                <th className="px-3 py-2.5 text-meta font-medium text-text-muted">
-                  Resource
-                </th>
-                <th className="px-3 py-2.5 text-meta font-medium text-text-muted">
-                  Action
-                </th>
-                <th className="px-3 py-2.5 text-meta font-medium text-text-muted">
-                  Date
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border-subtle/60">
-              {recentPurchases.length === 0 && recentResources.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="px-5 py-6 text-center text-sm text-text-muted"
-                  >
-                    No recent activity yet.
-                  </td>
-                </tr>
-              ) : (
-                [
-                  // Purchase events
-                  ...recentPurchases.map((purchase) => ({
-                    id: `purchase-${purchase.id}`,
-                    type: "Purchase",
-                    user: purchase.user.name ?? purchase.user.email ?? "Unknown",
-                    resource: purchase.resource.title,
-                    action:
-                      purchase.amount === 0
-                        ? "Claimed free resource"
-                        : "Purchased resource",
-                    date: purchase.createdAt,
-                  })),
-                  // New resource events
-                  ...recentResources.map((resource) => ({
-                    id: `resource-${resource.id}`,
-                    type: "Resource",
-                    user: resource.author?.name ?? "Unknown creator",
-                    resource: resource.title,
-                    action: "Uploaded new resource",
-                    date: resource.createdAt,
-                  })),
-                ]
-                  .sort(
-                    (a, b) =>
-                      b.date.getTime() - a.date.getTime()
-                  )
-                  .slice(0, 10)
-                  .map((event) => (
-                    <tr key={event.id} className="bg-white/80">
-                      <td className="px-5 py-3 text-sm font-medium text-text-primary">
-                        {event.type}
-                      </td>
-                      <td className="px-3 py-3 text-sm text-text-secondary">
-                        {event.user}
-                      </td>
-                      <td className="px-3 py-3 text-sm text-text-secondary">
-                        {event.resource}
-                      </td>
-                      <td className="px-3 py-3 text-sm text-text-secondary">
-                        {event.action}
-                      </td>
-                      <td className="px-3 py-3 text-sm text-text-secondary">
-                        {formatDate(event.date)}
-                      </td>
-                    </tr>
-                  ))
-              )}
-            </tbody>
-          </table>
-        </Card>
+        <DataTable minWidth="min-w-[760px]">
+          <DataTableHeader>
+            <tr>
+              <DataTableHeadCell>Type</DataTableHeadCell>
+              <DataTableHeadCell>User</DataTableHeadCell>
+              <DataTableHeadCell>Resource</DataTableHeadCell>
+              <DataTableHeadCell>Action</DataTableHeadCell>
+              <DataTableHeadCell>Date</DataTableHeadCell>
+            </tr>
+          </DataTableHeader>
+          <DataTableBody>
+            {recentPurchases.length === 0 && recentResources.length === 0 ? (
+              <TableEmptyState message="No recent activity yet." />
+            ) : (
+              [
+                ...recentPurchases.map((purchase) => ({
+                  id: `purchase-${purchase.id}`,
+                  type: "Purchase",
+                  user: purchase.user.name ?? purchase.user.email ?? "Unknown",
+                  resource: purchase.resource.title,
+                  action:
+                    purchase.amount === 0
+                      ? "Claimed free resource"
+                      : "Purchased resource",
+                  date: purchase.createdAt,
+                })),
+                ...recentResources.map((resource) => ({
+                  id: `resource-${resource.id}`,
+                  type: "Resource",
+                  user: resource.author?.name ?? "Unknown creator",
+                  resource: resource.title,
+                  action: "Uploaded new resource",
+                  date: resource.createdAt,
+                })),
+              ]
+                .sort((a, b) => b.date.getTime() - a.date.getTime())
+                .slice(0, 10)
+                .map((event) => (
+                  <DataTableRow key={event.id}>
+                    <DataTableCell className="font-medium">{event.type}</DataTableCell>
+                    <DataTableCell className="text-text-secondary">{event.user}</DataTableCell>
+                    <DataTableCell className="text-text-secondary">{event.resource}</DataTableCell>
+                    <DataTableCell className="text-text-secondary">{event.action}</DataTableCell>
+                    <DataTableCell className="text-text-secondary">
+                      {formatDate(event.date)}
+                    </DataTableCell>
+                  </DataTableRow>
+                ))
+            )}
+          </DataTableBody>
+        </DataTable>
       </section>
     </div>
   );

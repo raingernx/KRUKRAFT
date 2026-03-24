@@ -19,12 +19,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   const sidebarFooter = (
     <div className="flex items-center gap-3">
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold">
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-100 text-sm font-semibold text-text-secondary">
         AU
       </div>
       <div className="flex flex-col leading-tight">
-        <p className="text-sm font-semibold text-foreground">Admin User</p>
-        <p className="text-xs text-muted-foreground">Administrator</p>
+        <p className="text-small font-medium text-text-primary">Admin access</p>
+        <p className="text-caption text-text-muted">Administrator</p>
       </div>
     </div>
   );
@@ -35,16 +35,17 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         variant={shellVariant}
         sections={getDashboardNav({ area: "admin" })}
         sidebarHeader={
-          <p className="text-xs font-semibold uppercase tracking-tightest text-text-secondary">
-            Admin
+          <p className="font-ui text-small font-medium text-text-primary">
+            Admin workspace
           </p>
         }
         sidebarFooter={sidebarFooter}
-        contentClassName="bg-muted-50"
+        contentClassName="bg-surface-50"
+        mainClassName="py-4 sm:py-5 lg:py-5"
         afterMain={<NotificationStack />}
         renderTopbar={({ onMenuToggle }) => (
           <Topbar
-            title="Admin"
+            title="Admin workspace"
             subtitle="Control panel"
             onMenuToggle={onMenuToggle}
           />

@@ -10,7 +10,7 @@ import { ResourceCard, ResourceCardSkeleton, type ResourceCardData } from "./Res
 // Auto-fill: cards are at least 280 px wide and grow equally to fill available space.
 // Naturally produces ~2 cols on mobile, ~3 on tablet, ~4-5 on desktop, ~5-6 on 1600px.
 export const RESOURCE_GRID_CLASSES =
-  "grid items-stretch gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]";
+  "grid items-stretch gap-5 lg:gap-6 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]";
 
 const LISTING_BATCH_SIZE = 12;
 
@@ -58,7 +58,7 @@ export function ResourceGrid({
   // ── Loading skeleton ────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="space-y-4 animate-fade-in">
+      <div className="space-y-4">
         <div className="h-4 w-32 rounded skeleton" />
         <div className={RESOURCE_GRID_CLASSES}>
           {Array.from({ length: 8 }).map((_, i) => (
@@ -82,19 +82,19 @@ export function ResourceGrid({
 
     if (hasActiveFilters) {
       return (
-        <div className="animate-fade-in rounded-[28px] border border-surface-200 bg-white px-6 py-16 text-center shadow-card sm:px-8 sm:py-20">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-50">
+        <div className="rounded-2xl border border-border-subtle bg-white px-6 py-14 text-center sm:px-8 sm:py-16">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-surface-200 bg-surface-50">
             <Search className="h-7 w-7 text-zinc-300" />
           </div>
           <p className="mt-5 text-lg font-semibold tracking-tight text-zinc-900">
             Nothing matched these filters
           </p>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-zinc-500">
-            Try a different keyword, broaden your price range, or clear the filters to see everything.
+            Try a broader keyword or clear a few filters to reopen the full library.
           </p>
           <Link
             href={clearFiltersHref}
-            className="mt-5 inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-4 py-2 text-sm font-medium text-text-primary transition hover:border-surface-300 hover:bg-white"
+            className="mt-5 inline-flex items-center rounded-full border border-border-subtle bg-white px-4 py-2 text-sm font-medium text-text-primary transition hover:border-surface-300 hover:bg-surface-50"
           >
             Clear filters
           </Link>
@@ -103,19 +103,19 @@ export function ResourceGrid({
     }
 
     return (
-      <div className="animate-fade-in rounded-[28px] border border-surface-200 bg-white px-6 py-16 text-center shadow-card sm:px-8 sm:py-20">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-50">
+        <div className="rounded-2xl border border-border-subtle bg-white px-6 py-14 text-center sm:px-8 sm:py-16">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-surface-200 bg-surface-50">
           <BookOpen className="h-7 w-7 text-zinc-300" />
         </div>
         <p className="mt-5 text-lg font-semibold tracking-tight text-zinc-900">
-          Nothing here yet
+          No resources here yet
         </p>
         <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-zinc-500">
-          This section is still growing. Check back soon or explore what else is available.
+          This collection is still growing. Explore the full library or check back soon for new releases.
         </p>
         <Link
           href="/resources"
-          className="mt-5 inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-4 py-2 text-sm font-medium text-text-primary transition hover:border-surface-300 hover:bg-white"
+          className="mt-5 inline-flex items-center rounded-full border border-border-subtle bg-white px-4 py-2 text-sm font-medium text-text-primary transition hover:border-surface-300 hover:bg-surface-50"
         >
           Explore all resources
         </Link>
@@ -163,7 +163,7 @@ export function ResourceGrid({
   }
 
   return (
-    <div ref={gridContainerRef} className="space-y-8 animate-fade-in">
+    <div ref={gridContainerRef} className="space-y-8">
       {/* ── Grid: consistent height, no vertical stretch; 16:10 thumb prevents layout shift ── */}
       <div className={RESOURCE_GRID_CLASSES}>
         {displayedResources.map((resource) => (
@@ -177,8 +177,8 @@ export function ResourceGrid({
       </div>
 
       {progressiveLoad ? (
-        <div className="flex flex-col items-center gap-4 pt-2">
-          <p className="text-sm text-text-secondary">
+        <div className="flex flex-col items-center gap-3 border-t border-surface-200/80 pt-5">
+          <p className="text-small text-text-secondary">
             Showing {loadedCount} of {total} resource{total === 1 ? "" : "s"}
           </p>
 
@@ -186,7 +186,7 @@ export function ResourceGrid({
             <Button
               type="button"
               variant="secondary"
-              size="lg"
+              size="md"
               onClick={() => void handleLoadMore()}
               disabled={isLoadingMore}
               loading={isLoadingMore}

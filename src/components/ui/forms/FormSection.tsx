@@ -11,7 +11,7 @@ export interface FormSectionProps {
 }
 
 /**
- * Admin form section: rounded-xl border, p-6, space-y-6.
+ * Admin form section: quiet surface, subtle border, p-6, space-y-6.
  * Structure: Title, optional Description, then Children.
  */
 export function FormSection({
@@ -23,14 +23,14 @@ export function FormSection({
   return (
     <section
       className={cn(
-        "rounded-xl border border-zinc-200 bg-white p-6 space-y-6",
+        "space-y-6 rounded-xl border border-border-subtle bg-white p-6 shadow-none",
         className
       )}
     >
       <div>
-        <h3 className="text-sm font-semibold text-zinc-900">{title}</h3>
+        <h3 className="text-sm font-semibold text-text-primary">{title}</h3>
         {description && (
-          <p className="mt-1 text-sm text-zinc-500">{description}</p>
+          <p className="mt-1 text-small text-text-secondary">{description}</p>
         )}
       </div>
       {children}

@@ -1,13 +1,23 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { Card } from "@/design-system";
 import { Input } from "@/design-system";
 import { Button } from "@/design-system";
 import { formatPrice, formatNumber, formatDate } from "@/lib/format";
 import { StatusBadge, type StatusBadgeTone } from "@/components/admin/StatusBadge";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import {
+  DataTable,
+  DataTableBody,
+  DataTableCell,
+  DataTableHeadCell,
+  DataTableHeader,
+  DataTableRow,
+  TableEmptyState,
+  TableToolbar,
+} from "@/components/admin/table";
+import { getAdminOrdersPageData } from "@/services/admin-operations.service";
 
 export const metadata = {
   title: "Orders – Admin",
@@ -46,58 +56,16 @@ export default async function AdminOrdersPage({
   const from = resolvedSearchParams.from ? new Date(resolvedSearchParams.from) : null;
   const to = resolvedSearchParams.to ? new Date(resolvedSearchParams.to) : null;
 
-  const where: any = {};
-
-  if (statusFilter && ["COMPLETED", "REFUNDED", "FAILED"].includes(statusFilter)) {
-    where.status = statusFilter;
-  }
-
-  if (from || to) {
-    where.createdAt = {};
-    if (from && !isNaN(from.getTime())) {
-      where.createdAt.gte = from;
-    }
-    if (to && !isNaN(to.getTime())) {
-      where.createdAt.lte = to;
-    }
-  }
-
-  const [orders, revenueAgg, ordersTodayAgg] = await Promise.all([
-    prisma.purchase.findMany({
-      take: 50,
-      orderBy: { createdAt: "desc" },
-      where,
-      include: {
-        user: { select: { name: true, email: true } },
-        resource: { select: { title: true } },
-      },
-    }),
-    prisma.purchase.aggregate({
-      _sum: { amount: true },
-      where: { status: "COMPLETED" },
-    }),
-    (() => {
-      const startOfToday = new Date();
-      startOfToday.setHours(0, 0, 0, 0);
-      return prisma.purchase.aggregate({
-        _count: true,
-        where: {
-          status: "COMPLETED",
-          createdAt: { gte: startOfToday },
-        },
-      });
-    })(),
-  ]);
-
-  const totalRevenue = revenueAgg._sum.amount ?? 0;
-  const ordersToday = ordersTodayAgg._count ?? 0;
-
-  const completedOrders = orders.filter((o) => o.status === "COMPLETED");
-  const averageOrderValue =
-    completedOrders.length > 0
-      ? completedOrders.reduce((sum, o) => sum + o.amount, 0) /
-        completedOrders.length
-      : 0;
+  const {
+    orders,
+    totalRevenue,
+    ordersToday,
+    averageOrderValue,
+  } = await getAdminOrdersPageData({
+    statusFilter,
+    from,
+    to,
+  });
 
   return (
     <div className="min-w-0 space-y-8">
@@ -108,42 +76,42 @@ export default async function AdminOrdersPage({
       />
 
       {/* Stats */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         <Card className="p-4">
-          <p className="text-xs font-semibold uppercase tracking-tightest text-text-muted">
+          <p className="font-ui text-caption text-text-muted">
             Total revenue
           </p>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
+          <p className="mt-2 text-2xl font-semibold tracking-tight text-text-primary">
             {formatPrice(totalRevenue / 100)}
           </p>
         </Card>
 
         <Card className="p-4">
-          <p className="text-xs font-semibold uppercase tracking-tightest text-text-muted">
+          <p className="font-ui text-caption text-text-muted">
             Orders today
           </p>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
+          <p className="mt-2 text-2xl font-semibold tracking-tight text-text-primary">
             {formatNumber(ordersToday)}
           </p>
         </Card>
 
         <Card className="p-4">
-          <p className="text-xs font-semibold uppercase tracking-tightest text-text-muted">
+          <p className="font-ui text-caption text-text-muted">
             Average order value
           </p>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-text-primary">
+          <p className="mt-2 text-2xl font-semibold tracking-tight text-text-primary">
             {formatPrice(averageOrderValue / 100)}
           </p>
         </Card>
       </div>
 
       {/* Filters */}
-      <div className="rounded-2xl border border-border-subtle bg-white px-4 py-3 shadow-card">
-        <form className="flex flex-wrap items-end gap-4">
-          <div className="flex flex-col gap-1">
+      <TableToolbar>
+        <form className="flex flex-1 flex-wrap items-end gap-x-3 gap-y-2.5">
+          <div className="flex w-full flex-col gap-1 sm:w-auto">
             <label
               htmlFor="status"
-              className="text-xs font-semibold uppercase tracking-tightest text-text-secondary"
+              className="font-ui text-caption text-text-muted"
             >
               Status
             </label>
@@ -151,7 +119,7 @@ export default async function AdminOrdersPage({
               id="status"
               name="status"
               defaultValue={statusFilter}
-              className="input-base w-40"
+              className="input-base w-full sm:w-40"
             >
               <option value="">All</option>
               <option value="COMPLETED">Completed</option>
@@ -160,10 +128,10 @@ export default async function AdminOrdersPage({
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
+          <div className="flex w-full flex-col gap-1 sm:w-auto">
             <label
               htmlFor="from"
-              className="text-xs font-semibold uppercase tracking-tightest text-text-secondary"
+              className="font-ui text-caption text-text-muted"
             >
               From
             </label>
@@ -172,13 +140,14 @@ export default async function AdminOrdersPage({
               name="from"
               type="date"
               defaultValue={resolvedSearchParams.from}
+              className="w-full sm:w-40"
             />
           </div>
 
-          <div className="flex flex-col gap-1">
+          <div className="flex w-full flex-col gap-1 sm:w-auto">
             <label
               htmlFor="to"
-              className="text-xs font-semibold uppercase tracking-tightest text-text-secondary"
+              className="font-ui text-caption text-text-muted"
             >
               To
             </label>
@@ -187,97 +156,90 @@ export default async function AdminOrdersPage({
               name="to"
               type="date"
               defaultValue={resolvedSearchParams.to}
+              className="w-full sm:w-40"
             />
           </div>
 
-          <div className="ml-auto">
+          <div className="w-full sm:ml-auto sm:w-auto">
             <Button type="submit" variant="outline" size="sm">
               Apply filters
             </Button>
           </div>
         </form>
-      </div>
+      </TableToolbar>
 
       {/* Orders table */}
-      <div className="min-w-0 w-full overflow-hidden rounded-2xl border border-border-subtle bg-white shadow-card">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] text-left text-sm">
-            <thead className="border-b border-border-subtle bg-surface-50/80">
-              <tr>
-                <th className="px-2 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+      <DataTable minWidth="min-w-[900px]">
+        <DataTableHeader>
+          <tr>
+            <DataTableHeadCell className="px-2">
                   Order ID
-                </th>
-                <th className="px-3 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3">
                   User
-                </th>
-                <th className="px-3 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3">
                   Resource
-                </th>
-                <th className="px-3 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3">
                   Price
-                </th>
-                <th className="px-3 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3">
                   Status
-                </th>
-                <th className="px-3 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3">
                   Created
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border-subtle/60">
-              {orders.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="px-5 py-6 text-center text-sm text-text-muted"
-                  >
-                    No orders found for this filter.
-                  </td>
-                </tr>
-              ) : (
-                orders.map((order) => {
-                  const badge = STATUS_BADGE[order.status] ?? {
-                    label: order.status,
-                    tone: "muted" as StatusBadgeTone,
-                  };
+            </DataTableHeadCell>
+          </tr>
+        </DataTableHeader>
+        <DataTableBody>
+          {orders.length === 0 ? (
+            <TableEmptyState
+              message="No orders found"
+              description="Try widening the date range or clearing the current status filter."
+            />
+          ) : (
+            orders.map((order) => {
+              const badge = STATUS_BADGE[order.status] ?? {
+                label: order.status,
+                tone: "muted" as StatusBadgeTone,
+              };
 
-                  return (
-                    <tr key={order.id} className="bg-white transition-colors hover:bg-surface-50">
-                      <td className="px-2 py-3 text-sm font-mono text-text-secondary">
-                        {order.id}
-                      </td>
-                      <td className="px-3 py-3 text-sm text-text-secondary">
-                        <div className="flex flex-col">
-                          <span>{order.user.name ?? "Unknown"}</span>
-                          <span className="text-xs text-text-muted">
-                            {order.user.email}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-3 py-3 text-sm text-text-secondary">
-                        {order.resource.title}
-                      </td>
-                      <td className="px-3 py-3 text-sm text-text-secondary tabular-nums">
-                        {formatPrice(order.amount / 100)}
-                      </td>
-                      <td className="px-3 py-3 text-sm text-text-secondary">
-                        <StatusBadge
-                          status={order.status}
-                          label={badge.label}
-                          tone={badge.tone}
-                        />
-                      </td>
-                      <td className="px-3 py-3 text-sm text-text-secondary">
-                        {formatDate(order.createdAt)}
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+              return (
+                <DataTableRow key={order.id}>
+                  <DataTableCell className="px-2 font-mono text-sm text-text-secondary">
+                    {order.id}
+                  </DataTableCell>
+                  <DataTableCell className="px-3 text-text-secondary">
+                    <div className="flex flex-col">
+                      <span>{order.user.name ?? "Unknown"}</span>
+                      <span className="text-caption text-text-muted">
+                        {order.user.email}
+                      </span>
+                    </div>
+                  </DataTableCell>
+                  <DataTableCell className="px-3 text-text-secondary">
+                    {order.resource.title}
+                  </DataTableCell>
+                  <DataTableCell className="px-3 tabular-nums text-text-secondary">
+                    {formatPrice(order.amount / 100)}
+                  </DataTableCell>
+                  <DataTableCell className="px-3 text-text-secondary">
+                    <StatusBadge
+                      status={order.status}
+                      label={badge.label}
+                      tone={badge.tone}
+                    />
+                  </DataTableCell>
+                  <DataTableCell className="px-3 text-text-secondary">
+                    {formatDate(order.createdAt)}
+                  </DataTableCell>
+                </DataTableRow>
+              );
+            })
+          )}
+        </DataTableBody>
+      </DataTable>
     </div>
   );
 }

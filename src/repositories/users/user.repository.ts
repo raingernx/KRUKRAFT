@@ -39,3 +39,31 @@ export async function activateUserStripeSubscription(
     },
   });
 }
+
+export async function findAdminUsers(params: {
+  query?: string;
+  take: number;
+}) {
+  const query = params.query?.trim();
+
+  return prisma.user.findMany({
+    take: params.take,
+    orderBy: { createdAt: "desc" },
+    where: query
+      ? {
+          OR: [
+            { name: { contains: query, mode: "insensitive" } },
+            { email: { contains: query, mode: "insensitive" } },
+          ],
+        }
+      : undefined,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      createdAt: true,
+      _count: { select: { resources: true } },
+    },
+  });
+}

@@ -4,6 +4,9 @@ import { authOptions } from "@/lib/auth";
 import { getRankingExperimentReport } from "@/services/analytics/ranking-experiment.service";
 import { type RankingVariantRow } from "@/services/analytics/ranking-experiment.service";
 import { SlidersHorizontal, Info } from "lucide-react";
+import { Button, Input } from "@/design-system";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { TableToolbar } from "@/components/admin/table";
 
 export const metadata = {
   title: "Ranking Experiment – Admin",
@@ -123,26 +126,18 @@ export default async function RankingExperimentPage({
   const variants = report.variants;
 
   return (
-    <div className="space-y-8 px-6 py-8">
+    <div className="space-y-8">
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
-            Ranking Experiment
-          </h1>
-          <p className="mt-1 max-w-2xl text-sm text-zinc-500">
-            Compares buyer-funnel metrics between{" "}
-            <span className="font-medium text-zinc-700">Control (Baseline)</span>
-            {" — newest sort — and "}
-            <span className="font-medium text-indigo-700">Variant (Recommended)</span>
-            {" — activation-weighted sort. Read-only — no effect on live ranking."}
-          </p>
-        </div>
+        <AdminPageHeader
+          title="Ranking Experiment"
+          description="Compares buyer-funnel metrics between the baseline newest sort and the recommended activation-weighted variant."
+        />
 
         {/* Arm legend */}
-        <div className="shrink-0 rounded-2xl border border-zinc-200 bg-zinc-50 px-5 py-4 text-xs text-zinc-500">
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
+        <div className="shrink-0 rounded-xl border border-border-subtle bg-surface-50 px-5 py-4 text-small text-text-secondary">
+          <p className="mb-2 font-ui text-caption text-text-muted">
             Experiment arms
           </p>
           <div className="space-y-1.5">
@@ -168,7 +163,7 @@ export default async function RankingExperimentPage({
               </span>
             </div>
           </div>
-          <p className="mt-2 text-[10px] text-zinc-400">
+          <p className="mt-2 text-caption text-text-muted">
             Cookie: <code className="font-mono">ranking_variant</code> · 30-day lifetime
           </p>
         </div>
@@ -176,90 +171,84 @@ export default async function RankingExperimentPage({
 
       {/* ── Date range filter ────────────────────────────────────────────────── */}
       <section aria-label="Date range filter">
-        <form
-          method="get"
-          className="flex flex-wrap items-end gap-3 rounded-2xl border border-zinc-200 bg-white px-5 py-4"
-        >
+        <form method="get">
+          <TableToolbar className="px-5 py-4">
           <div className="flex flex-col gap-1">
             <label
               htmlFor="start"
-              className="text-[10px] font-medium uppercase tracking-wide text-zinc-400"
+              className="font-ui text-caption text-text-muted"
             >
               From
             </label>
-            <input
+            <Input
               id="start"
               name="start"
               type="date"
               defaultValue={startParam}
-              className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
             />
           </div>
 
           <div className="flex flex-col gap-1">
             <label
               htmlFor="end"
-              className="text-[10px] font-medium uppercase tracking-wide text-zinc-400"
+              className="font-ui text-caption text-text-muted"
             >
               To
             </label>
-            <input
+            <Input
               id="end"
               name="end"
               type="date"
               defaultValue={endParam}
-              className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
             />
           </div>
 
           <div className="flex items-end gap-2">
-            <button
-              type="submit"
-              className="flex items-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
-            >
+            <Button type="submit" size="sm" className="flex items-center gap-1.5 whitespace-nowrap">
               <SlidersHorizontal className="h-3.5 w-3.5" />
               Apply
-            </button>
+            </Button>
             {hasFilters && (
               <a
                 href="/admin/analytics/ranking-experiment"
-                className="rounded-lg border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50"
+                className="rounded-lg border border-border-subtle px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-50"
               >
                 Reset
               </a>
             )}
           </div>
 
-          <p className="flex items-center gap-1.5 text-[11px] text-zinc-400 lg:ml-auto">
+          <p className="flex items-center gap-1.5 font-ui text-caption text-text-muted lg:ml-auto">
             {report.isDefaultRange
               ? "Showing last 30 days (default)"
               : `${report.filterStart} — ${report.filterEnd}`}
           </p>
+          </TableToolbar>
         </form>
       </section>
 
       {/* ── Comparison table ─────────────────────────────────────────────────── */}
       <section aria-label="Variant comparison">
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
+        <p className="mb-3 font-ui text-caption text-text-muted">
           Per-variant metrics
         </p>
 
         {variants.length === 0 ? (
-          <div className="rounded-2xl border border-zinc-200 bg-white px-6 py-12 text-center text-sm text-zinc-400">
+          <div className="rounded-xl border border-border-subtle bg-white px-6 py-12 text-center text-small text-text-muted">
             No attributed events in this date range. Widen the window or wait for more data.
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white">
+          <div className="overflow-x-auto rounded-xl border border-border-subtle bg-white">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-zinc-100">
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400 bg-white min-w-[200px]">
+                <tr className="border-b border-border-subtle">
+                  <th className="min-w-[200px] bg-white px-5 py-3 text-left font-ui text-caption text-text-muted">
                     Metric
                   </th>
                   {variants.map((row) => (
                     <th
                       key={row.variant}
-                      className={`px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide ${variantHeaderBg(row.variant)}`}
+                      className={`px-5 py-3 text-right font-ui text-caption ${variantHeaderBg(row.variant)}`}
                     >
                       <span className={variantHeaderAccent(row.variant)}>
                         {row.label}
@@ -269,7 +258,7 @@ export default async function RankingExperimentPage({
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-border-subtle/60">
 
                 {/* Checkout starts */}
                 <MetricRow
@@ -343,11 +332,11 @@ export default async function RankingExperimentPage({
             </table>
 
             {/* ── Attribution footnotes ──────────────────────────────────────── */}
-            <div className="border-t border-zinc-100 bg-zinc-50 px-5 py-4">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-400">
+            <div className="border-t border-border-subtle bg-surface-50/80 px-5 py-4">
+              <p className="mb-2 font-ui text-caption text-text-muted">
                 Attribution notes
               </p>
-              <ul className="space-y-1 text-[10px] text-zinc-400">
+              <ul className="space-y-1 text-caption text-text-muted">
                 <li>
                   <span className="font-semibold text-zinc-600">Checkout starts, FPD</span>
                   {" — "}
@@ -383,7 +372,7 @@ export default async function RankingExperimentPage({
       </section>
 
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
-      <div className="border-t border-zinc-100 pt-4 text-[11px] text-zinc-400">
+      <div className="border-t border-border-subtle pt-4 text-caption text-text-muted">
         Generated at {report.generatedAt} ·{" "}
         {report.isDefaultRange
           ? "last 30 days"

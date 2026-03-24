@@ -19,8 +19,8 @@ export async function CreatorCard({ creator }: CreatorCardProps) {
   const displayName = creator.name ?? "Creator";
 
   return (
-    <section className="rounded-2xl border border-surface-200 bg-white p-5 shadow-card sm:p-6">
-      <h2 className="mb-4 font-display text-lg font-semibold text-zinc-900">Creator</h2>
+    <section className="space-y-4 border-t border-surface-200 pt-6">
+      <h2 className="font-display text-lg font-semibold text-zinc-900">Creator</h2>
       <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
         <Avatar
           src={creator.image}
@@ -30,13 +30,13 @@ export async function CreatorCard({ creator }: CreatorCardProps) {
         />
         <div className="flex-1 min-w-0">
           <p className="font-medium text-zinc-900 truncate">{displayName}</p>
-          <p className="mt-0.5 text-[13px] text-zinc-600 line-clamp-2">
+          <p className="mt-1 text-small leading-6 text-zinc-600 line-clamp-2">
             {creator.bio ?? `Creator on ${platform.platformShortName}`}
           </p>
           {creator.creatorSlug && (
             <IntentPrefetchLink
               href={`/creators/${creator.creatorSlug}`}
-              className="mt-3 inline-flex rounded-full border border-surface-200 bg-surface-50 px-3 py-1.5 text-[13px] font-medium text-blue-600 transition hover:border-surface-300 hover:bg-white hover:text-blue-700"
+              className="mt-3 inline-flex items-center gap-1 text-small font-medium text-primary-700 transition hover:text-primary-800"
               prefetchScope="creator-card"
               prefetchLimit={2}
             >

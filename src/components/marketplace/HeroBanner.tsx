@@ -11,7 +11,13 @@ export type HomepageHeroConfig = HeroSurfaceConfig | null;
 /**
  * Hero section for the discover page. Uses config from DB when provided, else defaults.
  */
-export function HeroBanner({ config }: { config?: HomepageHeroConfig }) {
+export function HeroBanner({
+  config,
+  className,
+}: {
+  config?: HomepageHeroConfig;
+  className?: string;
+}) {
   const hero = config ?? null;
   const heroId = hero?.heroId ?? null;
   const experimentId = hero?.experimentId ?? null;
@@ -26,6 +32,7 @@ export function HeroBanner({ config }: { config?: HomepageHeroConfig }) {
       />
       <HeroSurface
         config={hero}
+        className={className}
         renderPrimaryCta={({ href, label, className }) => (
           <HeroTrackedLink
             heroId={heroId}
@@ -53,6 +60,12 @@ export function HeroBanner({ config }: { config?: HomepageHeroConfig }) {
   );
 }
 
-export function HeroBannerSkeleton({ config }: { config?: HomepageHeroConfig }) {
-  return <HeroSurfaceSkeleton config={config} />;
+export function HeroBannerSkeleton({
+  config,
+  className,
+}: {
+  config?: HomepageHeroConfig;
+  className?: string;
+}) {
+  return <HeroSurfaceSkeleton config={config} className={className} />;
 }

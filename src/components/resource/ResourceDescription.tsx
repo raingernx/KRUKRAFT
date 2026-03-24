@@ -24,16 +24,16 @@ export function ResourceDescription({
   }, [description, expanded]);
 
   return (
-    <section id="description" className="rounded-2xl border border-surface-200 bg-white p-5 shadow-card sm:p-6">
-      <div className="space-y-1">
+    <section id="description" className="space-y-3 border-t border-surface-200 pt-6">
+      <div className="space-y-1.5">
         <h2 className="font-display text-lg font-semibold text-zinc-900">{title}</h2>
-        <p className="text-[13px] text-zinc-500">
-          Review the scope, study value, and what this resource helps you accomplish before you buy.
+        <p className="text-small leading-6 text-zinc-500">
+          Review the scope, study value, and what this resource is designed to help you do.
         </p>
       </div>
       <p
         ref={ref}
-        className={`mt-3 text-[14px] leading-7 text-zinc-600 ${!expanded ? "line-clamp-4" : ""}`}
+        className={`text-body leading-7 text-zinc-600 ${!expanded ? "line-clamp-4" : ""}`}
       >
         {description}
       </p>
@@ -41,7 +41,7 @@ export function ResourceDescription({
         <button
           type="button"
           onClick={() => setExpanded((e) => !e)}
-          className="mt-3 text-[13px] font-medium text-zinc-600 hover:text-zinc-900"
+          className="text-small font-medium text-primary-700 transition hover:text-primary-800"
         >
           {expanded ? "Show less" : "Show more"}
         </button>

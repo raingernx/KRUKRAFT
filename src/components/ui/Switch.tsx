@@ -8,7 +8,7 @@ export const Switch = React.forwardRef<
   const rootClasses = [
     "inline-flex h-6 w-[46px] items-center rounded-full",
     "bg-surface-300",
-    "data-[state=checked]:bg-brand-500",
+    "data-[state=checked]:bg-primary-500",
     "transition-colors duration-200",
     className,
   ]
@@ -29,4 +29,3 @@ export const Switch = React.forwardRef<
 });
 
 Switch.displayName = "Switch";
-

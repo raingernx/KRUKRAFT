@@ -10,7 +10,7 @@ export function Toggle({ checked, onCheckedChange }: ToggleProps) {
       onClick={() => onCheckedChange(!checked)}
       className={[
         "relative inline-flex h-6 w-[46px] items-center rounded-full transition-colors duration-200",
-        checked ? "bg-brand-600" : "bg-surface-300",
+        checked ? "bg-primary-600" : "bg-surface-300",
       ].join(" ")}
       aria-pressed={checked}
     >
@@ -23,4 +23,3 @@ export function Toggle({ checked, onCheckedChange }: ToggleProps) {
     </button>
   );
 }
-

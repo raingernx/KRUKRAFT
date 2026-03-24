@@ -25,7 +25,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
           }
         : {
             Icon: Info,
-            wrapperClass: "bg-blue-50 text-blue-600",
+            wrapperClass: "bg-primary-50 text-primary-600",
           };
 
   const Icon = iconConfig.Icon;
@@ -36,7 +36,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.18 }}
-      className="pointer-events-auto relative flex min-w-[260px] max-w-[340px] items-center gap-3 rounded-xl border border-border-subtle/80 bg-white px-4 py-3 text-xs shadow-card-lg"
+      className="pointer-events-auto relative flex min-w-[260px] max-w-[340px] items-center gap-3 rounded-xl border border-border-subtle/80 bg-white px-4 py-3"
     >
       <div
         className={[
@@ -49,11 +49,11 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
       <div className="flex flex-1 flex-col gap-1 pr-6">
         <div className="flex items-center justify-between gap-4">
           <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-medium leading-snug text-text-primary">
+            <p className="text-small font-medium leading-snug text-text-primary">
               {message}
             </p>
             {description && (
-              <p className="mt-0.5 text-[11px] leading-snug text-text-secondary">
+              <p className="mt-0.5 text-caption leading-snug text-text-secondary">
                 {description}
               </p>
             )}
@@ -65,7 +65,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
                 onAction();
                 onDismiss(id);
               }}
-              className="shrink-0 text-[11px] font-medium text-blue-600 hover:underline"
+              className="shrink-0 font-ui text-caption font-medium text-primary-700 hover:underline"
             >
               {actionLabel}
             </button>

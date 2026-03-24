@@ -27,16 +27,16 @@ export function TableEmptyState({
       <td
         colSpan={100}
         className={cn(
-          "px-4 py-12 text-center",
+          "px-4 py-8 text-center",
           className
         )}
       >
-        <div className="mx-auto flex max-w-sm flex-col items-center gap-2">
-          <p className="text-sm font-medium text-text-primary">{message}</p>
+        <div className="mx-auto flex max-w-sm flex-col items-center gap-1.5">
+          <p className="text-small font-medium text-text-primary">{message}</p>
           {description && (
-            <p className="text-sm text-text-muted">{description}</p>
+            <p className="text-small text-text-secondary">{description}</p>
           )}
-          {action && <div className="mt-2">{action}</div>}
+          {action && <div className="mt-1.5">{action}</div>}
         </div>
       </td>
     </tr>

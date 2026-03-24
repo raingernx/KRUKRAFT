@@ -1,3 +1,8 @@
+/**
+ * DO NOT USE DIRECTLY
+ * This is a base primitive implementation.
+ * Use "@/design-system" instead.
+ */
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
@@ -9,70 +14,57 @@ const buttonVariants = cva(
   // Base styles shared by every variant
   [
     "group/button inline-flex shrink-0 items-center justify-center gap-1.5",
-    "rounded-md border border-transparent bg-clip-padding",
-    "font-ui text-sm font-medium whitespace-nowrap",
+    "rounded-xl border border-transparent bg-clip-padding",
+    "font-ui text-sm font-semibold whitespace-nowrap",
     "transition-all outline-none select-none",
-    "focus-visible:ring-2 focus-visible:ring-offset-1",
+    "focus-visible:ring-2 focus-visible:ring-primary-500/20 focus-visible:ring-offset-1",
     "disabled:pointer-events-none disabled:opacity-50",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   ].join(" "),
   {
     variants: {
       variant: {
-        // ── KruCraft brand primary (blue) ─────────────────────────────────
         primary:
-          "bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 focus-visible:ring-brand-500/50",
+          "bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800",
 
-        // ── Default (zinc/dark) — kept as alias for "primary" look in shadcn contexts ──
         default:
-          "bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 focus-visible:ring-brand-500/50",
+          "bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800",
 
-        // ── Kept for backward compat ───────────────────────────────────────
         dark:
-          "bg-zinc-900 text-white hover:bg-zinc-700 active:bg-zinc-800 focus-visible:ring-zinc-700/50",
+          "bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-950",
 
-        // ── Secondary — outlined, neutral ──────────────────────────────────
         secondary:
-          "border-surface-200 bg-white text-text-primary hover:border-surface-300 hover:bg-surface-50 focus-visible:ring-surface-400/40",
+          "border-border-subtle bg-white text-text-primary hover:border-surface-300 hover:bg-surface-50",
 
-        // ── Outline — alias for secondary ──────────────────────────────────
         outline:
-          "border-surface-200 bg-white text-text-primary hover:border-surface-300 hover:bg-surface-50 focus-visible:ring-surface-400/40",
+          "border-border-subtle bg-white text-text-primary hover:border-surface-300 hover:bg-surface-50",
 
-        // ── Ghost — subtle border + hover ─────────────────────────────────
         ghost:
-          "bg-transparent text-text-secondary border-border-subtle hover:bg-surface-100 hover:text-text-primary focus-visible:ring-surface-400/40",
+          "bg-transparent text-text-secondary hover:bg-surface-100 hover:text-text-primary",
 
-        // ── Danger — solid red ─────────────────────────────────────────────
         danger:
-          "bg-red-500 text-white hover:bg-red-600 active:bg-red-700 focus-visible:ring-red-500/50",
+          "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus-visible:ring-red-500/20",
 
-        // ── Destructive — subtle red (for inline/table contexts) ───────────
         destructive:
-          "bg-red-50 text-red-600 border-red-100 hover:bg-red-100 hover:border-red-200 focus-visible:ring-red-500/30",
+          "border-red-200 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-300 focus-visible:ring-red-500/20",
 
-        // ── Accent — orange highlight ──────────────────────────────────────
         accent:
-          "bg-orange-500 text-white hover:bg-orange-600 active:bg-orange-700 focus-visible:ring-orange-400/50",
+          "bg-warning-500 text-white hover:bg-warning-600 active:bg-warning-700 focus-visible:ring-warning-500/20",
 
-        // ── Link ───────────────────────────────────────────────────────────
         link:
-          "text-brand-600 underline-offset-4 hover:underline focus-visible:ring-brand-500/30",
+          "text-primary-700 underline-offset-4 hover:underline",
       },
       size: {
-        // Named sizes matching the spec
-        sm:  "h-10 px-2.5 text-[0.8rem] gap-1",
-        md:  "h-[42px] px-3.5 text-sm",
-        lg:  "h-11 px-5 text-base",
+        sm:  "h-9 px-3 text-sm gap-1.5",
+        md:  "h-11 px-4 text-sm",
+        lg:  "h-12 px-5 text-base",
 
-        // Aliases kept for backward compat
-        xs:      "h-6 px-2 text-xs gap-1 rounded-md",
-        default: "h-[42px] px-3.5 text-sm",
+        xs:      "h-8 px-2.5 text-caption gap-1 rounded-lg",
+        default: "h-11 px-4 text-sm",
 
-        // Icon-only
-        icon:    "size-9",
-        "icon-xs":  "size-6 rounded-md",
-        "icon-sm":  "size-7",
+        icon:    "size-10",
+        "icon-xs":  "size-8 rounded-lg",
+        "icon-sm":  "size-9",
         "icon-lg":  "size-11",
       },
     },

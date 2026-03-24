@@ -4,6 +4,8 @@ import { logActivity } from "@/lib/activity";
 import { logAdminAction } from "@/lib/auditLogger";
 import { slugify } from "@/lib/utils";
 import { CACHE_TAGS, CACHE_TTLS } from "@/lib/cache";
+import { getOwnedDetailState } from "@/services/purchase.service";
+import { getResourceReviewDetailState } from "@/services/review.service";
 import {
   createAdminResourceRecord,
   createDraftResourceRecord,
@@ -268,6 +270,52 @@ export async function getRecommendedResources(
     ...resource,
     previewUrl: resource.previewUrl ?? resource.previews?.[0]?.imageUrl ?? null,
   }));
+}
+
+export async function getDashboardOverviewRecommendations(input: {
+  ownedResourceIds: string[];
+  topCategoryIds: string[];
+  preferredLevels: Array<"BEGINNER" | "INTERMEDIATE" | "ADVANCED">;
+}) {
+  const { ownedResourceIds, topCategoryIds, preferredLevels } = input;
+
+  const [recommended, newInCategories, levelRecommendations] = await Promise.all([
+    getRecommendedResources(ownedResourceIds, 6),
+    topCategoryIds.length > 0
+      ? getNewResourcesInCategories(topCategoryIds, ownedResourceIds, 6)
+      : Promise.resolve([]),
+    preferredLevels.length > 0
+      ? getRecommendedResourcesByLevels(preferredLevels, ownedResourceIds, 4)
+      : Promise.resolve([]),
+  ]);
+
+  return {
+    recommended,
+    newInCategories,
+    levelRecommendations,
+  };
+}
+
+export async function getResourceDetailExtras(input: {
+  resourceId: string;
+  relatedResourceIds: string[];
+  userId?: string;
+  reviewTake?: number;
+}) {
+  const { resourceId, relatedResourceIds, userId, reviewTake = 5 } = input;
+
+  const [ownership, reviewState] = await Promise.all([
+    getOwnedDetailState(userId, resourceId, relatedResourceIds),
+    getResourceReviewDetailState(resourceId, userId, reviewTake),
+  ]);
+
+  return {
+    isOwned: ownership.isOwned,
+    ownedRelatedIds: ownership.ownedRelatedIds,
+    trustSummary: reviewState.trustSummary,
+    reviews: reviewState.reviews,
+    viewerReview: reviewState.viewerReview,
+  };
 }
 
 export async function getNewResourcesInCategory(

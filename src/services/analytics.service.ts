@@ -7,6 +7,8 @@
  * free of raw Prisma calls and makes the queries easy to cache or test.
  */
 
+import { unstable_cache } from "next/cache";
+import { CACHE_TTLS } from "@/lib/cache";
 import {
   findRecentCompletedPurchases,
   findRecentResources,
@@ -84,6 +86,107 @@ export interface AdminDashboardOverview {
 
 // ── Main function ─────────────────────────────────────────────────────────────
 
+const readPlatformMetrics = unstable_cache(
+  async function _getPlatformMetrics(): Promise<PlatformMetrics> {
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const days = lastNDays(30);
+
+    const [
+      overviewCounts,
+      platformStats,
+      topResourcesRaw,
+    ] = await Promise.all([
+      findPlatformOverviewCounts(),
+      findPlatformStatsSince(new Date(Date.UTC(2020, 0, 1))),
+      findTopResourcesByDownloads(10),
+    ]);
+
+    const dlMap = new Map<string, number>();
+    const revMap = new Map<string, number>();
+    const uMap = new Map<string, number>();
+
+    for (const day of days) {
+      const key = day.toISOString().slice(0, 10);
+      dlMap.set(key, 0);
+      revMap.set(key, 0);
+      uMap.set(key, 0);
+    }
+
+    for (const row of platformStats) {
+      const key = startOfDay(row.date).toISOString().slice(0, 10);
+      if (!dlMap.has(key)) continue;
+      dlMap.set(key, row.totalDownloads);
+      revMap.set(key, row.totalRevenue);
+      uMap.set(key, row.newUsers);
+    }
+
+    const toPoints = (map: Map<string, number>): DailyPoint[] =>
+      Array.from(map.entries()).map(([date, value]) => ({ date, value }));
+
+    const topResources: TopResource[] = topResourcesRaw.map((row) => ({
+      id: row.resource.id,
+      title: row.resource.title,
+      slug: row.resource.slug,
+      downloadCount: row.downloads,
+      salesCount: row.purchases,
+      revenue: row.revenue,
+    }));
+
+    const totalDownloads = platformStats.reduce(
+      (sum, row) => sum + row.totalDownloads,
+      0,
+    );
+    const totalPurchases = platformStats.reduce(
+      (sum, row) => sum + row.totalSales,
+      0,
+    );
+    const totalRevenue = platformStats.reduce(
+      (sum, row) => sum + row.totalRevenue,
+      0,
+    );
+    const recentStats = platformStats.filter((row) => row.date >= thirtyDaysAgo);
+    const downloadsLast30 = recentStats.reduce(
+      (sum, row) => sum + row.totalDownloads,
+      0,
+    );
+    const purchasesLast30 = recentStats.reduce(
+      (sum, row) => sum + row.totalSales,
+      0,
+    );
+    const revenueLast30 = recentStats.reduce(
+      (sum, row) => sum + row.totalRevenue,
+      0,
+    );
+    const newUsersLast30 = recentStats.reduce((sum, row) => sum + row.newUsers, 0);
+    const newResourcesLast30 = recentStats.reduce(
+      (sum, row) => sum + row.newResources,
+      0,
+    );
+
+    return {
+      totalResources: overviewCounts.totalResources,
+      totalDownloads,
+      totalPurchases,
+      totalRevenue,
+      totalUsers: overviewCounts.totalUsers,
+
+      downloadsLast30Days: downloadsLast30,
+      purchasesLast30Days: purchasesLast30,
+      reveneuLast30Days: revenueLast30,
+      newUsersLast30Days: newUsersLast30,
+      newResourcesLast30Days: newResourcesLast30,
+
+      dailyDownloads: toPoints(dlMap),
+      dailyRevenue: toPoints(revMap),
+      dailyNewUsers: toPoints(uMap),
+
+      topResources,
+    };
+  },
+  ["admin-platform-metrics"],
+  { revalidate: CACHE_TTLS.stats },
+);
+
 /**
  * Fetches all platform metrics needed to render the admin analytics page.
  *
@@ -91,106 +194,7 @@ export interface AdminDashboardOverview {
  * individual query.
  */
 export async function getPlatformMetrics(): Promise<PlatformMetrics> {
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-  const days          = lastNDays(30);
-
-  const [
-    overviewCounts,
-    platformStats,
-    topResourcesRaw,
-  ] = await Promise.all([
-    findPlatformOverviewCounts(),
-    findPlatformStatsSince(new Date(Date.UTC(2020, 0, 1))),
-    findTopResourcesByDownloads(10),
-  ]);
-
-  // ── Aggregate daily series ─────────────────────────────────────────────────
-
-  // Build date-keyed maps
-  const dlMap  = new Map<string, number>();
-  const revMap = new Map<string, number>();
-  const uMap   = new Map<string, number>();
-
-  // Initialise every bucket to 0
-  for (const day of days) {
-    const key = day.toISOString().slice(0, 10);
-    dlMap.set(key, 0);
-    revMap.set(key, 0);
-    uMap.set(key, 0);
-  }
-
-  for (const row of platformStats) {
-    const key = startOfDay(row.date).toISOString().slice(0, 10);
-    if (!dlMap.has(key)) continue;
-    dlMap.set(key, row.totalDownloads);
-    revMap.set(key, row.totalRevenue);
-    uMap.set(key, row.newUsers);
-  }
-
-  const toPoints = (map: Map<string, number>): DailyPoint[] =>
-    Array.from(map.entries()).map(([date, value]) => ({ date, value }));
-
-  // ── Top resources ──────────────────────────────────────────────────────────
-
-  const topResources: TopResource[] = topResourcesRaw.map((row) => ({
-    id: row.resource.id,
-    title: row.resource.title,
-    slug: row.resource.slug,
-    downloadCount: row.downloads,
-    salesCount: row.purchases,
-    revenue: row.revenue,
-  }));
-
-  const totalDownloads = platformStats.reduce(
-    (sum, row) => sum + row.totalDownloads,
-    0,
-  );
-  const totalPurchases = platformStats.reduce(
-    (sum, row) => sum + row.totalSales,
-    0,
-  );
-  const totalRevenue = platformStats.reduce(
-    (sum, row) => sum + row.totalRevenue,
-    0,
-  );
-  const recentStats = platformStats.filter((row) => row.date >= thirtyDaysAgo);
-  const downloadsLast30 = recentStats.reduce(
-    (sum, row) => sum + row.totalDownloads,
-    0,
-  );
-  const purchasesLast30 = recentStats.reduce(
-    (sum, row) => sum + row.totalSales,
-    0,
-  );
-  const revenueLast30 = recentStats.reduce(
-    (sum, row) => sum + row.totalRevenue,
-    0,
-  );
-  const newUsersLast30 = recentStats.reduce((sum, row) => sum + row.newUsers, 0);
-  const newResourcesLast30 = recentStats.reduce(
-    (sum, row) => sum + row.newResources,
-    0,
-  );
-
-  return {
-    totalResources: overviewCounts.totalResources,
-    totalDownloads,
-    totalPurchases,
-    totalRevenue,
-    totalUsers: overviewCounts.totalUsers,
-
-    downloadsLast30Days:    downloadsLast30,
-    purchasesLast30Days:    purchasesLast30,
-    reveneuLast30Days:      revenueLast30,
-    newUsersLast30Days:     newUsersLast30,
-    newResourcesLast30Days: newResourcesLast30,
-
-    dailyDownloads: toPoints(dlMap),
-    dailyRevenue:   toPoints(revMap),
-    dailyNewUsers:  toPoints(uMap),
-
-    topResources,
-  };
+  return readPlatformMetrics();
 }
 
 export async function getAdminDashboardOverview(): Promise<AdminDashboardOverview> {

@@ -69,17 +69,17 @@ export function FilterBar({ total }: Props) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 rounded-2xl border border-surface-200 bg-white p-3 shadow-card transition-opacity sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:p-4",
+        "flex flex-col gap-3 border-b border-surface-200/80 pb-4 transition-opacity sm:flex-row sm:flex-wrap sm:items-center sm:justify-between",
         isPending && "opacity-60"
       )}
     >
       {/* Result count */}
-      <p className="shrink-0 text-sm font-medium text-text-secondary">
+      <p className="shrink-0 text-small text-text-secondary">
         {total === 1 ? "1 resource" : `${formatNumber(total)} resources`}
       </p>
 
       {/* Filter selects + clear */}
-      <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:items-center">
+      <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:items-center">
         <FilterSelect
           value={price}
           options={PRICE_OPTIONS}
@@ -100,7 +100,7 @@ export function FilterBar({ total }: Props) {
             onClick={clearFilterControls}
             disabled={isPending}
             aria-label="Clear sort and price filters"
-            className="col-span-2 inline-flex items-center justify-center gap-1.5 rounded-xl border border-surface-200 bg-surface-50 px-3 py-2 text-xs font-medium text-text-secondary transition hover:border-surface-300 hover:bg-white disabled:cursor-wait sm:col-span-1"
+            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-transparent px-3 py-2 text-caption text-text-secondary transition hover:bg-surface-100 hover:text-text-primary disabled:cursor-wait"
           >
             <X className="h-3.5 w-3.5" />
             Clear
@@ -136,13 +136,13 @@ function FilterSelect({
         disabled={disabled}
         aria-label={ariaLabel}
         className={cn(
-          "min-h-11 w-full appearance-none cursor-pointer rounded-xl border py-2.5 pl-3.5 pr-9",
-          "text-sm font-medium outline-none transition-colors",
-          "focus:border-brand-400 focus:ring-2 focus:ring-brand-500/15",
+          "min-h-11 w-full appearance-none cursor-pointer rounded-full border py-2.5 pl-3.5 pr-9",
+          "text-small outline-none transition-colors",
+          "focus:border-primary-300 focus:ring-2 focus:ring-primary-500/12",
           "disabled:cursor-wait",
           isActive
-            ? "border-brand-300 bg-brand-50 text-brand-700"
-            : "border-surface-200 bg-white text-text-secondary hover:border-surface-300",
+            ? "border-primary-200 bg-primary-50 text-primary-700"
+            : "border-border-subtle bg-white text-text-secondary hover:border-surface-300 hover:text-text-primary",
         )}
       >
         {options.map((opt) => (

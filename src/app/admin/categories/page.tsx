@@ -9,6 +9,15 @@ import { Button, RowActionButton, RowActions } from "@/design-system";
 import { Input } from "@/design-system";
 import { Modal } from "@/components/ui/Modal";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import {
+  DataTable,
+  DataTableBody,
+  DataTableCell,
+  DataTableHeadCell,
+  DataTableHeader,
+  DataTableRow,
+  TableEmptyState,
+} from "@/components/admin/table";
 
 type Category = {
   id: string;
@@ -188,82 +197,71 @@ export default function AdminCategoriesPage() {
         </Modal.Root>
 
       {/* Table */}
-      <div className="min-w-0 w-full overflow-hidden rounded-2xl border border-border-subtle bg-white shadow-card">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-left text-sm">
-            <thead className="border-b border-border-subtle bg-surface-50/80">
-              <tr>
-                <th className="px-2 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+      <DataTable minWidth="min-w-[720px]">
+        <DataTableHeader>
+          <tr>
+            <DataTableHeadCell className="px-2">
                   Name
-                </th>
-                <th className="px-3 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3">
                   Slug
-                </th>
-                <th className="px-3 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3">
                   Resources
-                </th>
-                <th className="px-3 py-3 text-xs font-medium uppercase tracking-tightest text-text-secondary">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3">
                   Created
-                </th>
-                <th className="px-3 py-3 text-right text-xs font-medium uppercase tracking-tightest text-text-secondary">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3" align="right">
                   Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border-subtle/60">
-              {categories.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="px-5 py-6 text-center text-sm text-text-muted"
-                  >
-                    No categories yet.
-                  </td>
-                </tr>
-              ) : (
-                categories.map((category) => (
-                  <tr key={category.id} className="bg-white transition-colors hover:bg-surface-50">
-                    <td className="px-2 py-3 text-sm font-medium text-text-primary">
-                      {category.name}
-                    </td>
-                    <td className="px-3 py-3 text-sm text-text-secondary">
-                      <span className="inline-flex items-center rounded-full bg-surface-100 px-2.5 py-0.5 text-[11px] font-semibold text-text-secondary">
-                        {category.slug}
-                      </span>
-                    </td>
-                    <td className="px-3 py-3 text-sm text-text-secondary">
-                      <span className="text-xs text-text-muted">
-                        {category.resources} resource
-                        {category.resources === 1 ? "" : "s"}
-                      </span>
-                    </td>
-                    <td className="px-3 py-3 text-sm text-text-secondary">
-                      {formatDate(category.createdAt)}
-                    </td>
-                    <td className="px-3 py-3 text-right">
-                      <RowActions>
-                        <RowActionButton
-                          type="button"
-                          onClick={() => openEditModal(category)}
-                        >
-                          Edit
-                        </RowActionButton>
-                        <RowActionButton
-                          type="button"
-                          tone="danger"
-                          onClick={() => handleDelete(category)}
-                        >
-                          Delete
-                        </RowActionButton>
-                      </RowActions>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            </DataTableHeadCell>
+          </tr>
+        </DataTableHeader>
+        <DataTableBody>
+          {categories.length === 0 ? (
+            <TableEmptyState message="No categories yet" />
+          ) : (
+            categories.map((category) => (
+              <DataTableRow key={category.id}>
+                <DataTableCell className="px-2 font-medium text-text-primary">
+                  {category.name}
+                </DataTableCell>
+                <DataTableCell className="px-3 text-text-secondary">
+                  <span className="inline-flex items-center rounded-full bg-surface-100 px-2.5 py-0.5 font-ui text-caption text-text-secondary">
+                    {category.slug}
+                  </span>
+                </DataTableCell>
+                <DataTableCell className="px-3 text-text-secondary">
+                  <span className="text-small text-text-muted">
+                    {category.resources} resource
+                    {category.resources === 1 ? "" : "s"}
+                  </span>
+                </DataTableCell>
+                <DataTableCell className="px-3 text-text-secondary">
+                  {formatDate(category.createdAt)}
+                </DataTableCell>
+                <DataTableCell className="px-3" align="right">
+                  <RowActions>
+                    <RowActionButton
+                      type="button"
+                      onClick={() => openEditModal(category)}
+                    >
+                      Edit
+                    </RowActionButton>
+                    <RowActionButton
+                      type="button"
+                      tone="danger"
+                      onClick={() => handleDelete(category)}
+                    >
+                      Delete
+                    </RowActionButton>
+                  </RowActions>
+                </DataTableCell>
+              </DataTableRow>
+            ))
+          )}
+        </DataTableBody>
+      </DataTable>
     </div>
   );
 }

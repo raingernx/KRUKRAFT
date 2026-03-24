@@ -121,6 +121,24 @@ export async function getUserResourceReview(userId: string, resourceId: string) 
   return findReviewByUserAndResource(userId, resourceId);
 }
 
+export async function getResourceReviewDetailState(
+  resourceId: string,
+  userId?: string,
+  take: number = 5,
+) {
+  const [trustSummary, reviews, viewerReview] = await Promise.all([
+    getResourceTrustSummary(resourceId),
+    getResourceReviews(resourceId, take),
+    userId ? getUserResourceReview(userId, resourceId) : null,
+  ]);
+
+  return {
+    trustSummary,
+    reviews,
+    viewerReview,
+  };
+}
+
 export async function updateReview(
   userId: string,
   resourceId: string,

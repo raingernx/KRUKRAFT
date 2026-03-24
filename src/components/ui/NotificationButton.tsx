@@ -22,7 +22,7 @@ export function NotificationButton({
       <button
         type="button"
         onClick={onClick}
-        className="relative flex h-10 w-10 items-center justify-center rounded-full border border-surface-200 bg-white text-text-secondary shadow-card hover:bg-surface-50"
+        className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border-subtle bg-white text-text-secondary shadow-none transition-colors hover:bg-surface-50"
         aria-label={ariaLabel}
       >
         <Bell className="h-5 w-5 text-text-secondary" />
@@ -36,4 +36,3 @@ export function NotificationButton({
     </div>
   );
 }
-

@@ -21,7 +21,7 @@ export function SidebarContainer({
   return (
     <aside
       className={cn(
-        "sticky top-0 flex h-screen shrink-0 flex-col border-r border-neutral-200 bg-white shadow-[1px_0_0_0_rgba(0,0,0,0.03)]",
+        "sticky top-0 flex h-screen shrink-0 flex-col border-r border-neutral-200 bg-white",
         collapsed ? "w-16" : "w-[272px]",
         className,
       )}
@@ -79,7 +79,7 @@ export function SidebarSectionLabel({
   return (
     <p
       className={cn(
-        "mb-2.5 mt-6 px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-400",
+        "mb-2 mt-6 px-2 font-ui text-caption tracking-[0.08em] text-neutral-500",
         className,
       )}
       {...props}
@@ -121,7 +121,7 @@ export function SidebarBadge({
   return (
     <span
       className={cn(
-        "ml-auto text-[13px] font-semibold text-red-500",
+        "ml-auto text-small font-semibold text-red-500",
         className,
       )}
       {...props}

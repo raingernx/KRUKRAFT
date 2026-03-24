@@ -114,7 +114,7 @@ export function FilterSidebar({
   return (
     <aside
       className={cn(
-        "w-[280px] flex-shrink-0 space-y-4",
+        "w-[260px] flex-shrink-0 space-y-5",
         // Subtle opacity while any navigation is in-flight
         isPending && "pointer-events-none opacity-70",
         className
@@ -123,15 +123,15 @@ export function FilterSidebar({
     >
       {/* Header + clear */}
       {showHeader && (
-        <div className="flex items-center justify-between rounded-2xl border border-surface-200 bg-white px-4 py-3 shadow-card">
-          <p className="text-[12px] font-semibold uppercase tracking-widest text-zinc-400">
+        <div className="flex items-center justify-between border-b border-surface-200/80 pb-2">
+          <p className="font-ui text-caption tracking-[0.12em] text-text-muted">
             Filters
           </p>
           {showClearAll && (
             <button
               type="button"
               onClick={clearAll}
-              className="flex items-center gap-1 text-[11px] font-medium text-zinc-400 transition hover:text-zinc-700"
+              className="flex items-center gap-1 text-caption text-text-secondary transition hover:text-text-primary"
             >
               <X className="h-3 w-3" />
               Clear all
@@ -154,10 +154,10 @@ export function FilterSidebar({
                     onClick={() => updateParam("sort", opt.value)}
                     aria-pressed={active}
                     className={cn(
-                      "w-full rounded-lg px-3 py-2 text-left text-[13px] transition",
+                      "w-full rounded-xl px-3 py-2.5 text-left text-small transition",
                       active
-                        ? "bg-zinc-900 font-semibold text-white"
-                        : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900",
+                        ? "bg-primary-50 font-medium text-primary-700"
+                        : "text-text-secondary hover:bg-surface-50 hover:text-text-primary",
                       optimistic && "cursor-wait"
                     )}
                   >
@@ -180,10 +180,10 @@ export function FilterSidebar({
                 onClick={() => updateParam("category", "all")}
                 aria-pressed={isAllCategories || isOptimistic("category", "all")}
                 className={cn(
-                  "w-full rounded-lg px-3 py-2 text-left text-[13px] transition",
+                  "w-full rounded-xl px-3 py-2.5 text-left text-small transition",
                   isAllCategories || isOptimistic("category", "all")
-                    ? "bg-black font-semibold text-white"
-                    : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900",
+                    ? "bg-primary-50 font-medium text-primary-700"
+                    : "text-text-secondary hover:bg-surface-50 hover:text-text-primary",
                   isOptimistic("category", "all") && "cursor-wait"
                 )}
               >
@@ -200,10 +200,10 @@ export function FilterSidebar({
                     onClick={() => updateParam("category", cat.slug)}
                     aria-pressed={active}
                     className={cn(
-                      "w-full rounded-lg px-3 py-2 text-left text-[13px] transition",
+                      "w-full rounded-xl px-3 py-2.5 text-left text-small transition",
                       active
-                        ? "bg-zinc-900 font-semibold text-white"
-                        : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900",
+                        ? "bg-primary-50 font-medium text-primary-700"
+                        : "text-text-secondary hover:bg-surface-50 hover:text-text-primary",
                       optimistic && "cursor-wait"
                     )}
                   >
@@ -230,10 +230,10 @@ export function FilterSidebar({
                     onClick={() => updateParam("price", opt.value)}
                     aria-pressed={active}
                     className={cn(
-                      "w-full rounded-lg px-3 py-2 text-left text-[13px] transition",
+                      "w-full rounded-xl px-3 py-2.5 text-left text-small transition",
                       active
-                        ? "bg-zinc-900 font-semibold text-white"
-                        : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900",
+                        ? "bg-primary-50 font-medium text-primary-700"
+                        : "text-text-secondary hover:bg-surface-50 hover:text-text-primary",
                       optimistic && "cursor-wait"
                     )}
                   >
@@ -260,10 +260,10 @@ export function FilterSidebar({
                 onClick={() => updateParam("tag", currentlyActive ? "" : diff.value)}
                 aria-pressed={active}
                 className={cn(
-                  "rounded-full px-3 py-1.5 text-[12px] font-medium transition",
+                  "rounded-full px-3 py-1.5 text-caption transition",
                   active
-                    ? "bg-zinc-900 text-white"
-                    : "border border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50",
+                    ? "border border-primary-200 bg-primary-50 text-primary-700"
+                    : "border border-border-subtle bg-white text-text-secondary hover:border-surface-300 hover:bg-surface-50",
                   optimistic && "cursor-wait"
                 )}
               >
@@ -288,10 +288,10 @@ export function FilterSidebar({
                 onClick={() => updateParam("tag", currentlyActive ? "" : type.value)}
                 aria-pressed={active}
                 className={cn(
-                  "rounded-full px-3 py-1.5 text-[12px] font-medium transition",
+                  "rounded-full px-3 py-1.5 text-caption transition",
                   active
-                    ? "bg-zinc-900 text-white"
-                    : "border border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50",
+                    ? "border border-primary-200 bg-primary-50 text-primary-700"
+                    : "border border-border-subtle bg-white text-text-secondary hover:border-surface-300 hover:bg-surface-50",
                   optimistic && "cursor-wait"
                 )}
               >
@@ -317,14 +317,14 @@ function FilterGroup({
   const [open, setOpen] = useState(true);
 
   return (
-    <div className="rounded-2xl border border-surface-200 bg-white p-4 shadow-card">
+    <div className="border-b border-surface-200/80 pb-4">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="mb-3 flex w-full items-center justify-between text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+        className="mb-3 flex w-full items-center justify-between text-caption text-text-secondary"
       >
         <span>{title}</span>
-        <span className="text-[10px]">{open ? "−" : "+"}</span>
+        <span className="text-caption text-text-muted">{open ? "−" : "+"}</span>
       </button>
       {open && children}
     </div>

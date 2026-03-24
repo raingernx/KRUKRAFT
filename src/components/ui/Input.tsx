@@ -1,3 +1,8 @@
+/**
+ * DO NOT USE DIRECTLY
+ * This is a base primitive implementation.
+ * Use "@/design-system" instead.
+ */
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
@@ -9,15 +14,15 @@ export interface InputProps extends Omit<React.ComponentProps<"input">, "prefix"
 }
 
 /**
- * KruCraft Input — h-10, rounded-lg, brand-500 focus ring.
- * Wrap in a `<label>` or use `htmlFor` on an adjacent `<label>` for accessibility.
+ * KruCraft Input — shared field styling with consistent height, radius,
+ * semantic borders, and primary focus states.
  */
 function Input({ className, type, leftAdornment, rightAdornment, ...props }: InputProps) {
   if (leftAdornment || rightAdornment) {
     return (
-      <div className="relative flex items-center">
+      <div className="relative">
         {leftAdornment && (
-          <span className="pointer-events-none absolute left-3 flex items-center text-text-muted">
+          <span className="pointer-events-none absolute inset-y-0 left-0 flex w-11 items-center justify-center text-text-muted">
             {leftAdornment}
           </span>
         )}
@@ -25,20 +30,16 @@ function Input({ className, type, leftAdornment, rightAdornment, ...props }: Inp
           type={type}
           data-slot="input"
           className={cn(
-            "h-10 w-full min-w-0 rounded-lg border border-surface-200 bg-white",
-            "font-ui px-3 py-2 text-sm text-text-primary placeholder:text-text-muted",
-            "transition-colors outline-none",
-            "focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20",
-            "disabled:cursor-not-allowed disabled:bg-surface-50 disabled:opacity-60",
+            "input-base min-w-0",
             "aria-invalid:border-red-400 aria-invalid:ring-2 aria-invalid:ring-red-400/20",
-            leftAdornment  && "pl-9",
-            rightAdornment && "pr-9",
+            leftAdornment  && "pl-11",
+            rightAdornment && "pr-11",
             className
           )}
           {...props}
         />
         {rightAdornment && (
-          <span className="pointer-events-none absolute right-3 flex items-center text-text-muted">
+          <span className="pointer-events-none absolute inset-y-0 right-0 flex w-11 items-center justify-center text-text-muted">
             {rightAdornment}
           </span>
         )}
@@ -51,11 +52,7 @@ function Input({ className, type, leftAdornment, rightAdornment, ...props }: Inp
       type={type}
       data-slot="input"
       className={cn(
-        "h-10 w-full min-w-0 rounded-lg border border-surface-200 bg-white",
-        "font-ui px-3 py-2 text-sm text-text-primary placeholder:text-text-muted",
-        "transition-colors outline-none",
-        "focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20",
-        "disabled:cursor-not-allowed disabled:bg-surface-50 disabled:opacity-60",
+        "input-base min-w-0",
         "aria-invalid:border-red-400 aria-invalid:ring-2 aria-invalid:ring-red-400/20",
         className
       )}

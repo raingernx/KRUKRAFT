@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Search, SlidersHorizontal } from "lucide-react";
 import { ResourceCard, type ResourceCardResource } from "@/components/resources/ResourceCard";
 import { LIBRARY_GRID_CLASSES } from "./LibraryGrid";
 
@@ -38,6 +39,15 @@ function toCardResource(item: LibraryItemClient): ResourceCardResource {
   };
 }
 
+interface PreparedLibraryItem {
+  key: string;
+  item: LibraryItemClient;
+  cardResource: ResourceCardResource;
+  titleLower: string;
+  authorLower: string;
+  categorySlugLower: string;
+}
+
 interface LibraryGridClientProps {
   items: LibraryItemClient[];
 }
@@ -45,100 +55,160 @@ interface LibraryGridClientProps {
 export function LibraryGridClient({ items }: LibraryGridClientProps) {
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState<FilterKey>("all");
+  const preparedItems = useMemo<PreparedLibraryItem[]>(
+    () =>
+      items.map((item) => ({
+        key: `${item.id}${item.slug}`,
+        item,
+        cardResource: toCardResource(item),
+        titleLower: item.title.toLowerCase(),
+        authorLower: (item.authorName ?? "").toLowerCase(),
+        categorySlugLower: item.categorySlug?.toLowerCase() ?? "",
+      })),
+    [items],
+  );
 
   const filteredItems = useMemo(() => {
     const q = search.trim().toLowerCase();
 
-    return items.filter((item) => {
+    return preparedItems.filter((entry) => {
       const matchesSearch =
         q.length === 0 ||
-        item.title.toLowerCase().includes(q) ||
-        (item.authorName ?? "").toLowerCase().includes(q);
+        entry.titleLower.includes(q) ||
+        entry.authorLower.includes(q);
 
       if (!matchesSearch) return false;
 
       if (activeFilter === "all") return true;
 
       if (activeFilter === "pdf") {
-        return item.type === "PDF";
+        return entry.item.type === "PDF";
       }
 
-      const slug = item.categorySlug?.toLowerCase() ?? "";
-
       if (activeFilter === "worksheets") {
-        return slug.includes("worksheet");
+        return entry.categorySlugLower.includes("worksheet");
       }
 
       if (activeFilter === "templates") {
-        return slug.includes("template");
+        return entry.categorySlugLower.includes("template");
       }
 
       return true;
     });
-  }, [items, search, activeFilter]);
+  }, [preparedItems, search, activeFilter]);
 
   const makeFilterButtonClass = (key: FilterKey) =>
     [
-      "text-sm font-medium transition-colors",
-      "rounded-full px-3 py-1",
+      "rounded-full px-3 py-1.5 text-small font-medium transition-colors whitespace-nowrap",
       activeFilter === key
-        ? "bg-brand-600 text-white"
-        : "bg-white text-text-secondary border border-border-subtle hover:bg-surface-50",
+        ? "bg-primary-50 text-primary-700 ring-1 ring-primary-200"
+        : "bg-white text-zinc-600 ring-1 ring-surface-200 hover:bg-surface-50",
     ].join(" ");
 
   return (
-    <div>
-      <div className="mb-6 max-w-md">
-        <input
-          type="search"
-          placeholder="Search your library by title or creator"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-text-primary placeholder:text-text-secondary/60 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-        />
+    <div className="space-y-5">
+      <div className="rounded-xl border border-surface-200 bg-white p-4 sm:p-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="space-y-1">
+            <p className="text-caption font-semibold text-zinc-500">Library tools</p>
+            <p className="text-small text-zinc-500">
+              Search by title or creator, then narrow your library by format.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 text-caption text-zinc-400">
+            <span className="font-medium text-zinc-700">{filteredItems.length}</span>
+            <span>{filteredItems.length === 1 ? "result" : "results"}</span>
+            {search.trim().length > 0 || activeFilter !== "all" ? (
+              <>
+                <span aria-hidden>·</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch("");
+                    setActiveFilter("all");
+                  }}
+                  className="font-medium text-primary-700 transition hover:text-primary-800"
+                >
+                  Clear filters
+                </button>
+              </>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="mt-4 flex flex-col gap-3 xl:flex-row xl:items-center">
+          <label className="relative block min-w-0 flex-1">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+            <input
+              type="search"
+              placeholder="Search your library by title or creator"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-xl border border-surface-200 bg-surface-50 py-2.5 pl-10 pr-4 text-small text-zinc-900 placeholder:text-zinc-400 focus:border-primary-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/10"
+            />
+          </label>
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="inline-flex items-center gap-2 px-1 text-caption font-medium text-zinc-500">
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              Filter
+            </span>
+            <button
+              type="button"
+              className={makeFilterButtonClass("all")}
+              onClick={() => setActiveFilter("all")}
+            >
+              All
+            </button>
+            <button
+              type="button"
+              className={makeFilterButtonClass("pdf")}
+              onClick={() => setActiveFilter("pdf")}
+            >
+              PDF
+            </button>
+            <button
+              type="button"
+              className={makeFilterButtonClass("worksheets")}
+              onClick={() => setActiveFilter("worksheets")}
+            >
+              Worksheets
+            </button>
+            <button
+              type="button"
+              className={makeFilterButtonClass("templates")}
+              onClick={() => setActiveFilter("templates")}
+            >
+              Templates
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="mb-6 flex gap-3">
-        <button
-          type="button"
-          className={makeFilterButtonClass("all")}
-          onClick={() => setActiveFilter("all")}
-        >
-          All
-        </button>
-        <button
-          type="button"
-          className={makeFilterButtonClass("pdf")}
-          onClick={() => setActiveFilter("pdf")}
-        >
-          PDF
-        </button>
-        <button
-          type="button"
-          className={makeFilterButtonClass("worksheets")}
-          onClick={() => setActiveFilter("worksheets")}
-        >
-          Worksheets
-        </button>
-        <button
-          type="button"
-          className={makeFilterButtonClass("templates")}
-          onClick={() => setActiveFilter("templates")}
-        >
-          Templates
-        </button>
-      </div>
-
-      <div className={LIBRARY_GRID_CLASSES}>
-        {filteredItems.map((item) => (
-          <ResourceCard
-            key={item.id + item.slug}
-            resource={toCardResource(item)}
-            variant="library"
-          />
-        ))}
-      </div>
+      {filteredItems.length > 0 ? (
+        <div className={LIBRARY_GRID_CLASSES}>
+          {filteredItems.map(({ key, cardResource }) => (
+            <ResourceCard
+              key={key}
+              resource={cardResource}
+              variant="library"
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-surface-200 bg-white py-14 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-50">
+            <Search className="h-5 w-5 text-zinc-300" />
+          </div>
+          <p className="mt-3 text-small font-medium text-zinc-700">
+            No matching resources
+          </p>
+          <p className="mt-1 max-w-sm text-caption leading-6 text-zinc-400">
+            Try another title, creator name, or filter to find what you need faster.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
-

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
+import { cookies } from "next/headers";
 import { authOptions } from "@/lib/auth";
 import { isMissingTableError } from "@/lib/prismaErrors";
 import { logActivity } from "@/lib/activity";
@@ -20,13 +21,8 @@ import { ResourceReviews } from "@/components/resource/ResourceReviews";
 import { ResourceReviewForm } from "@/components/resource/ResourceReviewForm";
 import { PendingPurchasePoller } from "@/components/checkout/PendingPurchasePoller";
 import { AutoScrollOnSuccess } from "@/components/resource/AutoScrollOnSuccess";
-import { getOwnedIdsFromSet, hasPurchased } from "@/services/purchase.service";
 import { getPublicResourcePageData } from "@/services/resource.service";
-import {
-  getResourceReviews,
-  getResourceTrustSummary,
-  getUserResourceReview,
-} from "@/services/review.service";
+import { getResourceDetailExtras } from "@/services/resources/resource.service";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -34,6 +30,41 @@ type Props = {
   params: Promise<{ slug: string }>;
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
+
+function hasSessionTokenCookie(
+  cookieStore: Awaited<ReturnType<typeof cookies>>,
+) {
+  return (
+    cookieStore.has("next-auth.session-token") ||
+    cookieStore.has("__Secure-next-auth.session-token") ||
+    cookieStore.has("authjs.session-token") ||
+    cookieStore.has("__Secure-authjs.session-token")
+  );
+}
+
+async function getOptionalSession() {
+  let cookieStore: Awaited<ReturnType<typeof cookies>> | null = null;
+
+  try {
+    cookieStore = await cookies();
+  } catch {
+    cookieStore = null;
+  }
+
+  if (!cookieStore || !hasSessionTokenCookie(cookieStore)) {
+    return null;
+  }
+
+  try {
+    return await getServerSession(authOptions);
+  } catch (error) {
+    if (!isMissingTableError(error)) {
+      throw error;
+    }
+
+    return null;
+  }
+}
 
 function formatLevel(level?: "BEGINNER" | "INTERMEDIATE" | "ADVANCED" | null) {
   if (!level) return null;
@@ -178,15 +209,6 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
   const { slug } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
 
-  let session = null;
-  try {
-    session = await getServerSession(authOptions);
-  } catch (error) {
-    if (!isMissingTableError(error)) throw error;
-    // Auth tables missing (local dev schema drift) — treat as unauthenticated.
-  }
-  const userId = session?.user?.id;
-
   let resourcePageData;
   try {
     resourcePageData = await getPublicResourcePageData(slug);
@@ -201,18 +223,21 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
     notFound();
   }
 
-  const [isOwned, ownedRelatedIds, trustSummary, reviews, viewerReview] = await Promise.all([
-    userId ? hasPurchased(userId, resource.id) : false,
-    userId
-      ? getOwnedIdsFromSet(
-          userId,
-          relatedResources.map((related) => related.id),
-        )
-      : [],
-    getResourceTrustSummary(resource.id),
-    getResourceReviews(resource.id, 5),
-    userId ? getUserResourceReview(userId, resource.id) : null,
-  ]);
+  const session = await getOptionalSession();
+  const userId = session?.user?.id;
+
+  const {
+    isOwned,
+    ownedRelatedIds,
+    trustSummary,
+    reviews,
+    viewerReview,
+  } = await getResourceDetailExtras({
+    resourceId: resource.id,
+    relatedResourceIds: relatedResources.map((related) => related.id),
+    userId,
+    reviewTake: 5,
+  });
   const hasFile = Boolean(resource.fileUrl ?? resource.fileKey);
   const paymentStatus =
     typeof resolvedSearchParams.payment === "string"
@@ -297,8 +322,8 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
       <Navbar />
 
       <main className="flex-1 bg-zinc-50">
-        <Container className="py-10 sm:py-12 lg:py-14">
-          <div className="space-y-6 lg:space-y-8">
+        <Container className="py-8 sm:py-10 lg:py-12">
+          <div className="space-y-6 lg:space-y-9">
 
             {/* ── Full-width header ───────────────────────────────────────── */}
             <ResourceHeader
@@ -366,7 +391,7 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
                        col-2 rows 1-2 = sticky PurchaseCard
               Mobile:  Gallery (order-1) → PurchaseCard (order-2) → content (order-3)
             */}
-            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] items-start">
+            <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-10">
 
               {/* GALLERY — order-1 mobile, col-1 row-1 desktop */}
               <div className="order-1 lg:col-start-1 lg:row-start-1">
@@ -380,71 +405,73 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
               </div>
 
               {/* CONTENT — order-3 mobile, col-1 row-2 desktop */}
-              <div className="order-3 space-y-8 lg:col-start-1 lg:row-start-2">
+              <div className="order-3 space-y-7 lg:col-start-1 lg:row-start-2">
 
-                {/* 1. What's included */}
-                {((purchaseCardResource.fileSize != null && purchaseCardResource.fileSize > 0) || purchaseCardResource.type || hasFile) && (
-                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-2xl border border-surface-200 bg-white px-5 py-3 text-[13px] text-zinc-500">
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
-                      What&apos;s included
-                    </span>
-                    {purchaseCardResource.type && (
-                      <span className="font-medium text-zinc-700">
-                        {purchaseCardResource.type === "PDF" ? "PDF document" : purchaseCardResource.type}
-                      </span>
-                    )}
-                    {purchaseCardResource.fileSize != null && purchaseCardResource.fileSize > 0 && (
-                      <span>{formatFileSize(purchaseCardResource.fileSize)}</span>
-                    )}
-                    {hasFile && (
-                      <span className="text-emerald-600">✓ Ready to download</span>
-                    )}
-                  </div>
-                )}
-
-                {/* 3. Value sections */}
-                <section className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-                  <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-5">
-                    <div className="space-y-1">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-                        What you&apos;ll achieve
-                      </p>
-                      <h2 className="font-display text-xl font-semibold text-zinc-900">
-                        Move faster with a clearer study path
-                      </h2>
-                    </div>
-                    <ul className="mt-4 space-y-3">
-                      {outcomePoints.map((point) => (
-                        <li key={point} className="flex gap-3 text-[14px] leading-7 text-zinc-600">
-                          <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-500" />
-                          <span>{point}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-5">
-                    <div className="space-y-1">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700">
-                        Best for
-                      </p>
-                      <h2 className="font-display text-xl font-semibold text-zinc-900">
-                        Learners who want a stronger starting point
-                      </h2>
-                    </div>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {identityTargets.map((target) => (
-                        <span
-                          key={target}
-                          className="inline-flex rounded-full border border-surface-200 bg-surface-50 px-3 py-1.5 text-[13px] font-medium text-zinc-700"
-                        >
-                          {target}
+                <section className="space-y-4 border-t border-surface-200 pt-5">
+                  {((purchaseCardResource.fileSize != null && purchaseCardResource.fileSize > 0) ||
+                    purchaseCardResource.type ||
+                    hasFile) && (
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-small text-zinc-500">
+                      <span className="font-medium text-zinc-700">Included</span>
+                      {purchaseCardResource.type && (
+                        <span>
+                          {purchaseCardResource.type === "PDF"
+                            ? "PDF document"
+                            : purchaseCardResource.type}
                         </span>
-                      ))}
+                      )}
+                      {purchaseCardResource.fileSize != null &&
+                        purchaseCardResource.fileSize > 0 && (
+                          <span>{formatFileSize(purchaseCardResource.fileSize)}</span>
+                        )}
+                      {hasFile && <span className="text-emerald-600">Ready to download</span>}
                     </div>
-                    <p className="mt-4 text-[13px] leading-6 text-zinc-500">
-                      A good fit if you want less guesswork, a cleaner study workflow, and something you can revisit when it matters.
-                    </p>
+                  )}
+
+                  <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+                    <div className="space-y-4">
+                      <div className="space-y-1.5">
+                        <p className="text-caption font-semibold text-primary-700">
+                          What you&apos;ll achieve
+                        </p>
+                        <h2 className="font-display text-xl font-semibold text-zinc-900">
+                          Move faster with a clearer study path
+                        </h2>
+                      </div>
+                      <ul className="space-y-3">
+                        {outcomePoints.map((point) => (
+                          <li key={point} className="flex gap-3 text-body leading-7 text-zinc-600">
+                            <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary-500" />
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="space-y-4 border-t border-surface-200 pt-5 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+                      <div className="space-y-1.5">
+                        <p className="text-caption font-semibold text-primary-700">
+                          Best for
+                        </p>
+                        <h2 className="font-display text-xl font-semibold text-zinc-900">
+                          Learners who want a stronger starting point
+                        </h2>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {identityTargets.map((target) => (
+                          <span
+                            key={target}
+                            className="inline-flex rounded-full border border-surface-200 bg-surface-50 px-3 py-1.5 text-small font-medium text-zinc-700"
+                          >
+                            {target}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-small leading-6 text-zinc-500">
+                        A good fit if you want less guesswork, a cleaner study workflow, and
+                        something you can revisit when it matters.
+                      </p>
+                    </div>
                   </div>
                 </section>
 
@@ -504,7 +531,7 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
             <div className="border-t border-surface-200 pt-6">
               <Link
                 href="/resources"
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-zinc-500 transition hover:text-zinc-800"
+                className="inline-flex items-center gap-1.5 text-small font-medium text-zinc-500 transition hover:text-zinc-800"
               >
                 <BookOpen className="h-3.5 w-3.5" />
                 Discover more resources

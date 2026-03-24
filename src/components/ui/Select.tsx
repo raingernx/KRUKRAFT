@@ -1,3 +1,8 @@
+/**
+ * DO NOT USE DIRECTLY
+ * This is a base primitive implementation.
+ * Use "@/design-system" instead.
+ */
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
@@ -10,4 +15,3 @@ export function Select({ className, children, ...props }: SelectProps) {
     </select>
   );
 }
-

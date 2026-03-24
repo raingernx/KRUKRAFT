@@ -49,8 +49,7 @@ export function ResourcesNavigationFeedback() {
       className="pointer-events-none fixed inset-x-0 top-0 z-[70] h-1"
     >
       <div className="relative h-full overflow-hidden bg-brand-100/60">
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-500 via-brand-600 to-brand-500 shadow-[0_0_14px_rgba(37,99,235,0.45)]" />
-        <div className="absolute inset-y-0 w-1/3 animate-[pulse_0.9s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/55 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-500 via-brand-600 to-brand-500" />
       </div>
     </div>
   );

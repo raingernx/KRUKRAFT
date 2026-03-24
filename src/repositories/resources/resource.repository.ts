@@ -64,6 +64,20 @@ const ADMIN_RESOURCE_LIST_INCLUDE = {
   _count: { select: { purchases: true } },
 } as const;
 
+const ADMIN_RESOURCE_PAGE_SELECT = {
+  id: true,
+  title: true,
+  slug: true,
+  previewUrl: true,
+  isFree: true,
+  price: true,
+  status: true,
+  createdAt: true,
+  downloadCount: true,
+  author: { select: { name: true, email: true } },
+  category: { select: { id: true, name: true } },
+} as const;
+
 const OWNED_RESOURCE_CREATE_INCLUDE = {
   author: { select: { id: true, name: true } },
   category: true,
@@ -218,6 +232,20 @@ export async function findAdminResources(authorId?: string) {
     },
     include: ADMIN_RESOURCE_LIST_INCLUDE,
     orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function findAdminResourcesPage(params: {
+  where: Prisma.ResourceWhereInput;
+  skip: number;
+  take: number;
+}) {
+  return prisma.resource.findMany({
+    where: params.where,
+    skip: params.skip,
+    take: params.take,
+    orderBy: { createdAt: "desc" },
+    select: ADMIN_RESOURCE_PAGE_SELECT,
   });
 }
 

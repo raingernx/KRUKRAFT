@@ -1,5 +1,14 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import {
+  CONTAINER_BASE_CLASS_NAME,
+  CONTAINER_CLASS_NAME,
+  CONTAINER_NARROW_MAX_WIDTH_CLASS_NAME,
+  CONTAINER_PADDING_CLASS_NAME,
+  PAGE_CONTENT_MAX_WIDTH_CLASS_NAME,
+  PAGE_CONTENT_NARROW_MAX_WIDTH_CLASS_NAME,
+  PAGE_CONTENT_WIDE_MAX_WIDTH_CLASS_NAME,
+} from "@/components/layout/container";
 
 interface LayoutPrimitiveProps {
   children: ReactNode;
@@ -14,8 +23,8 @@ export function Container({ children, className, narrow = false }: ContainerProp
   return (
     <div
       className={cn(
-        "mx-auto w-full max-w-7xl",
-        narrow ? "px-4 sm:px-6" : "px-6 sm:px-8",
+        CONTAINER_CLASS_NAME,
+        narrow && CONTAINER_NARROW_MAX_WIDTH_CLASS_NAME,
         className,
       )}
     >
@@ -30,19 +39,19 @@ function PageWidth({
   maxWidthClassName,
 }: LayoutPrimitiveProps & { maxWidthClassName: string }) {
   return (
-    <div className={cn("mx-auto w-full min-w-0", maxWidthClassName, className)}>
+    <div className={cn(CONTAINER_BASE_CLASS_NAME, maxWidthClassName, className)}>
       {children}
     </div>
   );
 }
 
 export function PageContainer({ children, className }: LayoutPrimitiveProps) {
-  return <div className={cn("w-full px-4 sm:px-6 lg:px-8", className)}>{children}</div>;
+  return <div className={cn("w-full", CONTAINER_PADDING_CLASS_NAME, className)}>{children}</div>;
 }
 
 export function PageContent({ children, className }: LayoutPrimitiveProps) {
   return (
-    <PageWidth maxWidthClassName="max-w-[1100px]" className={className}>
+    <PageWidth maxWidthClassName={PAGE_CONTENT_MAX_WIDTH_CLASS_NAME} className={className}>
       {children}
     </PageWidth>
   );
@@ -50,7 +59,7 @@ export function PageContent({ children, className }: LayoutPrimitiveProps) {
 
 export function PageContentWide({ children, className }: LayoutPrimitiveProps) {
   return (
-    <PageWidth maxWidthClassName="max-w-[1400px]" className={className}>
+    <PageWidth maxWidthClassName={PAGE_CONTENT_WIDE_MAX_WIDTH_CLASS_NAME} className={className}>
       {children}
     </PageWidth>
   );
@@ -58,7 +67,7 @@ export function PageContentWide({ children, className }: LayoutPrimitiveProps) {
 
 export function PageContentNarrow({ children, className }: LayoutPrimitiveProps) {
   return (
-    <PageWidth maxWidthClassName="max-w-[800px]" className={className}>
+    <PageWidth maxWidthClassName={PAGE_CONTENT_NARROW_MAX_WIDTH_CLASS_NAME} className={className}>
       {children}
     </PageWidth>
   );

@@ -6,10 +6,21 @@ interface ContainerProps {
   className?: string;
 }
 
+export const CONTAINER_BASE_CLASS_NAME = "mx-auto w-full min-w-0";
+export const CONTAINER_MAX_WIDTH_CLASS_NAME =
+  `${CONTAINER_BASE_CLASS_NAME} max-w-[var(--container-max-width)]`;
+export const CONTAINER_NARROW_MAX_WIDTH_CLASS_NAME = "max-w-[var(--container-narrow-max-width)]";
+export const CONTAINER_PADDING_CLASS_NAME = "px-4 sm:px-6 lg:px-8";
+export const CONTAINER_CLASS_NAME =
+  `${CONTAINER_MAX_WIDTH_CLASS_NAME} ${CONTAINER_PADDING_CLASS_NAME}`;
+export const PAGE_CONTENT_MAX_WIDTH_CLASS_NAME = "max-w-[var(--page-content-max-width)]";
+export const PAGE_CONTENT_WIDE_MAX_WIDTH_CLASS_NAME = "max-w-[var(--page-content-wide-max-width)]";
+export const PAGE_CONTENT_NARROW_MAX_WIDTH_CLASS_NAME = "max-w-[var(--page-content-narrow-max-width)]";
+
 /**
  * Global SaaS layout container.
  *
- * Horizontally centers content, enforces a max-width of 1600px,
+ * Horizontally centers content, enforces the shared app shell width,
  * and applies consistent responsive horizontal padding across all app areas.
  *
  * Usage:
@@ -25,13 +36,13 @@ interface ContainerProps {
  *   </section>
  *
  * IMPORTANT: Always pair with max-w-2xl / max-w-3xl on text blocks so
- * headings and paragraphs never stretch to the full 1600px container width.
+ * headings and paragraphs never stretch to the full app shell width.
  */
 export function Container({ children, className }: ContainerProps) {
   return (
     <div
       className={cn(
-        "mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8",
+        CONTAINER_CLASS_NAME,
         className,
       )}
     >

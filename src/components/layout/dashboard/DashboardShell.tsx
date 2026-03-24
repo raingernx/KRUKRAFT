@@ -76,7 +76,12 @@ export function DashboardShell({
         {renderTopbar({
           onMenuToggle: () => setSidebarOpen((open) => !open),
         })}
-        <main className={cn("flex-1 min-w-0 overflow-y-auto py-6 sm:py-8", mainClassName)}>
+        <main
+          className={cn(
+            "flex-1 min-w-0 overflow-y-auto py-4 sm:py-5 lg:py-6",
+            mainClassName
+          )}
+        >
           <Container>{children}</Container>
         </main>
         {afterMain}

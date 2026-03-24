@@ -281,7 +281,7 @@ function getHeroCtaClassName(
 
   return cn(
     baseVariant,
-    "rounded-lg px-5 text-sm shadow-sm",
+    "rounded-lg px-5 text-sm",
     toneClassName,
   );
 }
