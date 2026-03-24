@@ -91,91 +91,39 @@ export async function ResourcesPageContent({
   currentPage,
   userId,
 }: ResourcesPageContentProps) {
+  if (isDiscoverMode) {
+    return <ResourcesDiscoverContent userId={userId} />;
+  }
+
   let categories: { id: string; name: string; slug: string }[] = [];
-  let discoverCategoriesWithCount: {
-    id: string;
-    name: string;
-    slug: string;
-    _count: { resources: number };
-  }[] = [];
   let resources: ResourceCardData[] = [];
   let total = 0;
   let totalPages = 1;
   let safePage = 1;
-  let discoverData: DiscoverData | null = null;
-  let learningProfile: Awaited<ReturnType<typeof getUserLearningProfile>> | null = null;
 
-  if (isDiscoverMode) {
-    try {
-      const [categoriesWithCount, data] = await Promise.all([
-        getDiscoverCategories(),
-        getDiscoverData(),
-      ]);
-      categories = categoriesWithCount.map((item) => ({
-        id: item.id,
-        name: item.name,
-        slug: item.slug,
-      }));
-      discoverData = data;
-      discoverCategoriesWithCount = categoriesWithCount;
-    } catch (error) {
-      if (!isMissingTableError(error)) {
-        throw error;
-      }
-    }
-  } else {
-    try {
-      const data = await getMarketplaceResources({
-        search,
-        category,
-        price,
-        featured: featured === "true",
-        tag,
-        sort: effectiveSort,
-        page: currentPage,
-        pageSize: ITEMS_PER_PAGE,
-      });
-      resources = data.resources as ResourceCardData[];
-      total = data.total;
-      categories = data.categories;
-      totalPages = data.totalPages;
-      safePage = Math.min(currentPage, data.totalPages);
-    } catch (error) {
-      if (!isMissingTableError(error)) {
-        throw error;
-      }
+  try {
+    const data = await getMarketplaceResources({
+      search,
+      category,
+      price,
+      featured: featured === "true",
+      tag,
+      sort: effectiveSort,
+      page: currentPage,
+      pageSize: ITEMS_PER_PAGE,
+    });
+    resources = data.resources as ResourceCardData[];
+    total = data.total;
+    categories = data.categories;
+    totalPages = data.totalPages;
+    safePage = Math.min(currentPage, data.totalPages);
+  } catch (error) {
+    if (!isMissingTableError(error)) {
+      throw error;
     }
   }
 
-  let ownedIds = new Set<string>();
-  const [ownedIdsResult, learningProfileResult] = await Promise.allSettled([
-    userId ? getOwnedResourceIds(userId) : Promise.resolve(new Set<string>()),
-    isDiscoverMode && userId ? getUserLearningProfile(userId) : Promise.resolve(null),
-  ]);
-
-  if (ownedIdsResult.status === "fulfilled") {
-    ownedIds = ownedIdsResult.value;
-  } else if (!isMissingTableError(ownedIdsResult.reason)) {
-    throw ownedIdsResult.reason;
-  }
-
-  if (learningProfileResult.status === "fulfilled") {
-    learningProfile = learningProfileResult.value;
-  } else if (!isMissingTableError(learningProfileResult.reason)) {
-    throw learningProfileResult.reason;
-  }
-
-  const recentCategoryId = learningProfile?.recentCategoryId ?? null;
-  const personalizedLevelIds = learningProfile?.preferredLevels ?? [];
-  const topCategoryIds = learningProfile?.topCategories.map((item) => item.id) ?? [];
-  const globalFiltered = isDiscoverMode
-    ? (discoverData?.recommended as ResourceCardData[] ?? []).filter((resource) => !ownedIds.has(resource.id))
-    : [];
-  const recommendationVariant = userId ? assignRecommendationVariant(userId) : null;
-  const discoverResourceCount = discoverCategoriesWithCount.reduce(
-    (sum, item) => sum + item._count.resources,
-    0,
-  );
+  const ownedIds = await loadOwnedIdsSafe(userId);
   const activeCategoryName =
     category === "all"
       ? "All categories"
@@ -251,14 +199,10 @@ export async function ResourcesPageContent({
             </div>
             <div className="flex flex-wrap gap-2">
               <span className="inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-3 py-1 text-[12px] font-medium text-text-secondary">
-                {isDiscoverMode
-                  ? `${formatNumber(discoverCategoriesWithCount.length)} categories`
-                  : `${formatNumber(total)} results`}
+                {`${formatNumber(total)} results`}
               </span>
               <span className="inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-3 py-1 text-[12px] font-medium text-text-secondary">
-                {isDiscoverMode
-                  ? `${formatNumber(discoverResourceCount)} resources`
-                  : `Sorted by: ${sortLabel}`}
+                {`Sorted by: ${sortLabel}`}
               </span>
             </div>
           </div>
@@ -286,237 +230,7 @@ export async function ResourcesPageContent({
           </div>
         </div>
       </section>
-
-      <div className={isDiscoverMode ? "space-y-16 lg:space-y-20" : undefined}>
-        {isDiscoverMode && discoverData ? (
-          <>
-            {discoverCategoriesWithCount.length > 0 ? (
-              <section className="space-y-6">
-                <div className="space-y-1.5">
-                  <h2 className="text-xl font-semibold tracking-tight text-text-primary">
-                    Browse by category
-                  </h2>
-                  <p className="max-w-2xl text-sm leading-6 text-text-secondary">
-                    Jump straight into curated collections with the clearest entry point for each subject area.
-                  </p>
-                </div>
-                <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-                  {discoverCategoriesWithCount.map((cat) => {
-                    const Icon = getCategoryIcon(cat.slug);
-                    const color = getCategoryColor(cat.slug);
-
-                    return (
-                      <Link
-                        key={cat.id}
-                        href={`/resources?category=${encodeURIComponent(cat.slug)}`}
-                        className="group block rounded-[24px] border border-surface-200 bg-white p-5 shadow-card transition duration-200 hover:-translate-y-1 hover:border-surface-300 hover:shadow-card-lg"
-                      >
-                        <div className="flex items-center gap-4">
-                          <span
-                            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${color.bg} ${color.text}`}
-                          >
-                            <Icon className="h-5 w-5" />
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <span className="block text-sm font-semibold text-zinc-900 transition-colors group-hover:text-brand-700">
-                              {cat.name}
-                            </span>
-                            <span className="mt-1 block text-[13px] text-zinc-500">
-                              {formatNumber(cat._count.resources)} resources
-                            </span>
-                          </div>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </section>
-            ) : null}
-
-            {discoverData.trending.length > 0 ? (
-              <section className="space-y-5">
-                <SectionHeader
-                  title="Trending now"
-                  description="Ranked by recent sales momentum, recent revenue, rating quality, and review volume to surface the strongest current picks."
-                  viewAllHref="/resources?sort=trending&category=all"
-                />
-                <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-                  {(discoverData.trending as ResourceCardData[]).map((resource, index) => (
-                    <ResourceCard
-                      key={resource.id}
-                      resource={{
-                        ...resource,
-                        highlightBadge: index < 2 ? "Trending this week" : null,
-                        socialProofLabel: index < 2 ? "Trending fast this week" : null,
-                      }}
-                      variant="marketplace"
-                      owned={ownedIds.has(resource.id)}
-                    />
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
-            {discoverData.topCreator?.creator.creatorSlug ? (
-              <section className="rounded-[28px] border border-blue-100 bg-gradient-to-r from-blue-50 to-sky-50 p-5 shadow-card">
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                  <div className="max-w-2xl">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-600">
-                      Top creator this week
-                    </p>
-                    <h2 className="mt-2 text-xl font-semibold tracking-tight text-zinc-900">
-                      {discoverData.topCreator.creator.creatorDisplayName ??
-                        discoverData.topCreator.creator.name ??
-                        "Top creator"}
-                    </h2>
-                    <p className="mt-1 text-sm leading-6 text-zinc-600">
-                      {discoverData.topCreator.last7dRevenue > 0
-                        ? `${formatPrice(discoverData.topCreator.last7dRevenue / 100)} generated this week with ${formatNumber(discoverData.topCreator.last30dDownloads)} recent downloads across ${formatNumber(discoverData.topCreator.resources)} resources.`
-                        : `${formatNumber(discoverData.topCreator.last30dDownloads)} recent downloads across ${formatNumber(discoverData.topCreator.resources)} resources are giving this creator extra visibility right now.`}
-                    </p>
-                    {discoverData.topCreator.creator.creatorBio ? (
-                      <p className="mt-2 line-clamp-2 text-sm text-zinc-500">
-                        {discoverData.topCreator.creator.creatorBio}
-                      </p>
-                    ) : null}
-                  </div>
-                  <IntentPrefetchLink
-                    href={`/creators/${discoverData.topCreator.creator.creatorSlug}`}
-                    className="inline-flex items-center gap-2 self-start rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-zinc-800 lg:self-auto"
-                    prefetchMode="viewport"
-                    prefetchScope="top-creator-cta"
-                    prefetchLimit={1}
-                  >
-                    Explore creator
-                    <ArrowRight className="h-4 w-4" />
-                  </IntentPrefetchLink>
-                </div>
-              </section>
-            ) : null}
-
-            {userId && learningProfile?.hasHistory ? (
-              <Suspense fallback={<PersonalisationFallback />}>
-                <DiscoverPersonalisedContent
-                  userId={userId}
-                  topCategoryIds={topCategoryIds}
-                  personalizedLevelIds={personalizedLevelIds}
-                  recentCategoryId={recentCategoryId}
-                  recentStudyTitle={learningProfile.recentStudyTitle ?? null}
-                  recentCategoryName={learningProfile.recentCategoryName ?? null}
-                  ownedIds={ownedIds}
-                  globalFiltered={globalFiltered}
-                  recommendationVariant={recommendationVariant}
-                />
-              </Suspense>
-            ) : globalFiltered.slice(0, 5).length > 0 ? (
-              <section className="space-y-5">
-                <SectionHeader
-                  title="Popular right now"
-                  description="Top resources other learners are exploring this week."
-                  viewAllHref="/resources?sort=trending&category=all"
-                />
-                <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-                  {globalFiltered.slice(0, 5).map((resource) => (
-                    <ResourceCard
-                      key={resource.id}
-                      resource={resource}
-                      variant="marketplace"
-                      owned={ownedIds.has(resource.id)}
-                    />
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
-            {discoverData.newReleases.length > 0 ? (
-              <section className="space-y-5">
-                <SectionHeader
-                  title="New releases"
-                  description="Fresh additions from creators and educators, surfaced with the newest material first."
-                  viewAllHref="/resources?sort=newest&category=all"
-                />
-                <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-                  {(discoverData.newReleases as ResourceCardData[]).map((resource) => (
-                    <ResourceCard
-                      key={resource.id}
-                      resource={resource}
-                      variant="marketplace"
-                      owned={ownedIds.has(resource.id)}
-                    />
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
-            {discoverData.featured.length > 0 ? (
-              <section className="space-y-5">
-                <SectionHeader
-                  title="Featured picks"
-                  viewAllHref="/resources?sort=featured&category=all"
-                />
-                <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-                  {(discoverData.featured as ResourceCardData[]).map((resource) => (
-                    <ResourceCard
-                      key={resource.id}
-                      resource={resource}
-                      variant="marketplace"
-                      owned={ownedIds.has(resource.id)}
-                    />
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
-            {discoverData.freeResources.length > 0 ? (
-              <section className="space-y-4">
-                <SectionHeader
-                  title="Free resources"
-                  viewAllHref="/resources?price=free&category=all"
-                />
-                <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-                  {(discoverData.freeResources as ResourceCardData[]).map((resource) => (
-                    <ResourceCard
-                      key={resource.id}
-                      resource={resource}
-                      variant="marketplace"
-                      owned={ownedIds.has(resource.id)}
-                    />
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
-            {discoverData.mostDownloaded.length > 0 ? (
-              <section className="space-y-4">
-                <SectionHeader
-                  title="Most downloaded"
-                  viewAllHref="/resources?sort=downloads&category=all"
-                />
-                <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-                  {(discoverData.mostDownloaded as ResourceCardData[]).map((resource, index) => (
-                    <ResourceCard
-                      key={resource.id}
-                      resource={{
-                        ...resource,
-                        highlightBadge: index < 2 ? "Popular right now" : null,
-                        socialProofLabel: index < 2 ? "High demand right now" : null,
-                      }}
-                      variant="marketplace"
-                      owned={ownedIds.has(resource.id)}
-                    />
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
-            <CreatorCTA />
-            <BlogSection />
-            <EmailSignup />
-          </>
-        ) : null}
-
-        {!isDiscoverMode ? (
-          <section className="rounded-[32px] border border-surface-200 bg-white/85 p-4 shadow-card sm:p-5 lg:p-6">
+      <section className="rounded-[32px] border border-surface-200 bg-white/85 p-4 shadow-card sm:p-5 lg:p-6">
             <div className="space-y-6">
               <div className="flex flex-col gap-2 border-b border-surface-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
                 <div className="space-y-1">
@@ -611,11 +325,425 @@ export async function ResourcesPageContent({
                 </div>
               </div>
             </div>
-          </section>
-        ) : null}
-      </div>
+      </section>
     </>
   );
+}
+
+type DiscoverCategoriesWithCount = Awaited<ReturnType<typeof getDiscoverCategories>>;
+
+async function ResourcesDiscoverContent({ userId }: { userId?: string }) {
+  const discoverCategoriesPromise = loadDiscoverCategoriesSafe();
+  const discoverDataPromise = loadDiscoverDataSafe();
+  const ownedIdsPromise = loadOwnedIdsSafe(userId);
+  const learningProfilePromise = loadLearningProfileSafe(userId);
+
+  const discoverCategoriesWithCount = await discoverCategoriesPromise;
+  const categories = discoverCategoriesWithCount.map((item) => ({
+    id: item.id,
+    name: item.name,
+    slug: item.slug,
+  }));
+  const discoverResourceCount = discoverCategoriesWithCount.reduce(
+    (sum, item) => sum + item._count.resources,
+    0,
+  );
+
+  return (
+    <>
+      <DiscoverIntroSection
+        categories={categories as ChipCategory[]}
+        categoryCount={discoverCategoriesWithCount.length}
+        resourceCount={discoverResourceCount}
+      />
+
+      <Suspense fallback={<DiscoverSectionsFallback />}>
+        <ResourcesDiscoverDeferredSections
+          discoverCategoriesPromise={discoverCategoriesPromise}
+          discoverDataPromise={discoverDataPromise}
+          ownedIdsPromise={ownedIdsPromise}
+          learningProfilePromise={learningProfilePromise}
+          userId={userId}
+        />
+      </Suspense>
+    </>
+  );
+}
+
+function DiscoverIntroSection({
+  categories,
+  categoryCount,
+  resourceCount,
+}: {
+  categories: ChipCategory[];
+  categoryCount: number;
+  resourceCount: number;
+}) {
+  return (
+    <section className="rounded-[32px] border border-surface-200 bg-white/90 p-4 shadow-card sm:p-5 lg:p-6">
+      <div className="space-y-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl space-y-2">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+              Discover
+            </p>
+            <h1 className="max-w-3xl font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl">
+              A calmer way to discover standout study resources
+            </h1>
+            <p className="max-w-2xl text-sm leading-6 text-text-secondary">
+              Browse curated collections, trending picks, and new releases from educators and creators in one focused library.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <span className="inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-3 py-1 text-[12px] font-medium text-text-secondary">
+              {`${formatNumber(categoryCount)} categories`}
+            </span>
+            <span className="inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-3 py-1 text-[12px] font-medium text-text-secondary">
+              {`${formatNumber(resourceCount)} resources`}
+            </span>
+          </div>
+        </div>
+
+        <div className="h-px bg-gradient-to-r from-surface-200 via-surface-100 to-transparent" aria-hidden />
+
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+          <div className="flex min-w-0 items-center gap-3 overflow-hidden sm:gap-4">
+            <Suspense fallback={<DiscoverFallback />}>
+              <DiscoverButton />
+            </Suspense>
+            <div className="h-6 w-px shrink-0 bg-zinc-200" aria-hidden />
+            <ScrollableCategoryNav>
+              <Suspense fallback={<ChipsFallback />}>
+                <CategoryChips categories={categories} />
+              </Suspense>
+            </ScrollableCategoryNav>
+          </div>
+
+          <div className="w-full shrink-0 lg:max-w-lg">
+            <Suspense fallback={<SearchFallback />}>
+              <HeroSearch />
+            </Suspense>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+async function ResourcesDiscoverDeferredSections({
+  discoverCategoriesPromise,
+  discoverDataPromise,
+  ownedIdsPromise,
+  learningProfilePromise,
+  userId,
+}: {
+  discoverCategoriesPromise: Promise<DiscoverCategoriesWithCount>;
+  discoverDataPromise: Promise<DiscoverData | null>;
+  ownedIdsPromise: Promise<Set<string>>;
+  learningProfilePromise: Promise<Awaited<ReturnType<typeof getUserLearningProfile>> | null>;
+  userId?: string;
+}) {
+  const [discoverCategoriesWithCount, discoverData, ownedIds, learningProfile] = await Promise.all([
+    discoverCategoriesPromise,
+    discoverDataPromise,
+    ownedIdsPromise,
+    learningProfilePromise,
+  ]);
+
+  if (!discoverData) {
+    return null;
+  }
+
+  const recentCategoryId = learningProfile?.recentCategoryId ?? null;
+  const personalizedLevelIds = learningProfile?.preferredLevels ?? [];
+  const topCategoryIds = learningProfile?.topCategories.map((item) => item.id) ?? [];
+  const globalFiltered = (discoverData.recommended as ResourceCardData[]).filter(
+    (resource) => !ownedIds.has(resource.id),
+  );
+  const recommendationVariant = userId ? assignRecommendationVariant(userId) : null;
+
+  return (
+    <div className="space-y-16 lg:space-y-20">
+      {discoverCategoriesWithCount.length > 0 ? (
+        <section className="space-y-6">
+          <div className="space-y-1.5">
+            <h2 className="text-xl font-semibold tracking-tight text-text-primary">
+              Browse by category
+            </h2>
+            <p className="max-w-2xl text-sm leading-6 text-text-secondary">
+              Jump straight into curated collections with the clearest entry point for each subject area.
+            </p>
+          </div>
+          <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+            {discoverCategoriesWithCount.map((cat) => {
+              const Icon = getCategoryIcon(cat.slug);
+              const color = getCategoryColor(cat.slug);
+
+              return (
+                <Link
+                  key={cat.id}
+                  href={`/resources?category=${encodeURIComponent(cat.slug)}`}
+                  className="group block rounded-[24px] border border-surface-200 bg-white p-5 shadow-card transition duration-200 hover:-translate-y-1 hover:border-surface-300 hover:shadow-card-lg"
+                >
+                  <div className="flex items-center gap-4">
+                    <span
+                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${color.bg} ${color.text}`}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <span className="block text-sm font-semibold text-zinc-900 transition-colors group-hover:text-brand-700">
+                        {cat.name}
+                      </span>
+                      <span className="mt-1 block text-[13px] text-zinc-500">
+                        {formatNumber(cat._count.resources)} resources
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+
+      {discoverData.trending.length > 0 ? (
+        <section className="space-y-5">
+          <SectionHeader
+            title="Trending now"
+            description="Ranked by recent sales momentum, recent revenue, rating quality, and review volume to surface the strongest current picks."
+            viewAllHref="/resources?sort=trending&category=all"
+          />
+          <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+            {(discoverData.trending as ResourceCardData[]).map((resource, index) => (
+              <ResourceCard
+                key={resource.id}
+                resource={{
+                  ...resource,
+                  highlightBadge: index < 2 ? "Trending this week" : null,
+                  socialProofLabel: index < 2 ? "Trending fast this week" : null,
+                }}
+                variant="marketplace"
+                owned={ownedIds.has(resource.id)}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {discoverData.topCreator?.creator.creatorSlug ? (
+        <section className="rounded-[28px] border border-blue-100 bg-gradient-to-r from-blue-50 to-sky-50 p-5 shadow-card">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-600">
+                Top creator this week
+              </p>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight text-zinc-900">
+                {discoverData.topCreator.creator.creatorDisplayName ??
+                  discoverData.topCreator.creator.name ??
+                  "Top creator"}
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-zinc-600">
+                {discoverData.topCreator.last7dRevenue > 0
+                  ? `${formatPrice(discoverData.topCreator.last7dRevenue / 100)} generated this week with ${formatNumber(discoverData.topCreator.last30dDownloads)} recent downloads across ${formatNumber(discoverData.topCreator.resources)} resources.`
+                  : `${formatNumber(discoverData.topCreator.last30dDownloads)} recent downloads across ${formatNumber(discoverData.topCreator.resources)} resources are giving this creator extra visibility right now.`}
+              </p>
+              {discoverData.topCreator.creator.creatorBio ? (
+                <p className="mt-2 line-clamp-2 text-sm text-zinc-500">
+                  {discoverData.topCreator.creator.creatorBio}
+                </p>
+              ) : null}
+            </div>
+            <IntentPrefetchLink
+              href={`/creators/${discoverData.topCreator.creator.creatorSlug}`}
+              className="inline-flex items-center gap-2 self-start rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-zinc-800 lg:self-auto"
+              prefetchMode="viewport"
+              prefetchScope="top-creator-cta"
+              prefetchLimit={1}
+            >
+              Explore creator
+              <ArrowRight className="h-4 w-4" />
+            </IntentPrefetchLink>
+          </div>
+        </section>
+      ) : null}
+
+      {userId && learningProfile?.hasHistory ? (
+        <Suspense fallback={<PersonalisationFallback />}>
+          <DiscoverPersonalisedContent
+            userId={userId}
+            topCategoryIds={topCategoryIds}
+            personalizedLevelIds={personalizedLevelIds}
+            recentCategoryId={recentCategoryId}
+            recentStudyTitle={learningProfile.recentStudyTitle ?? null}
+            recentCategoryName={learningProfile.recentCategoryName ?? null}
+            ownedIds={ownedIds}
+            globalFiltered={globalFiltered}
+            recommendationVariant={recommendationVariant}
+          />
+        </Suspense>
+      ) : globalFiltered.slice(0, 5).length > 0 ? (
+        <section className="space-y-5">
+          <SectionHeader
+            title="Popular right now"
+            description="Top resources other learners are exploring this week."
+            viewAllHref="/resources?sort=trending&category=all"
+          />
+          <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+            {globalFiltered.slice(0, 5).map((resource) => (
+              <ResourceCard
+                key={resource.id}
+                resource={resource}
+                variant="marketplace"
+                owned={ownedIds.has(resource.id)}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {discoverData.newReleases.length > 0 ? (
+        <section className="space-y-5">
+          <SectionHeader
+            title="New releases"
+            description="Fresh additions from creators and educators, surfaced with the newest material first."
+            viewAllHref="/resources?sort=newest&category=all"
+          />
+          <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+            {(discoverData.newReleases as ResourceCardData[]).map((resource) => (
+              <ResourceCard
+                key={resource.id}
+                resource={resource}
+                variant="marketplace"
+                owned={ownedIds.has(resource.id)}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {discoverData.featured.length > 0 ? (
+        <section className="space-y-5">
+          <SectionHeader
+            title="Featured picks"
+            viewAllHref="/resources?sort=featured&category=all"
+          />
+          <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+            {(discoverData.featured as ResourceCardData[]).map((resource) => (
+              <ResourceCard
+                key={resource.id}
+                resource={resource}
+                variant="marketplace"
+                owned={ownedIds.has(resource.id)}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {discoverData.freeResources.length > 0 ? (
+        <section className="space-y-4">
+          <SectionHeader
+            title="Free resources"
+            viewAllHref="/resources?price=free&category=all"
+          />
+          <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+            {(discoverData.freeResources as ResourceCardData[]).map((resource) => (
+              <ResourceCard
+                key={resource.id}
+                resource={resource}
+                variant="marketplace"
+                owned={ownedIds.has(resource.id)}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {discoverData.mostDownloaded.length > 0 ? (
+        <section className="space-y-4">
+          <SectionHeader
+            title="Most downloaded"
+            viewAllHref="/resources?sort=downloads&category=all"
+          />
+          <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+            {(discoverData.mostDownloaded as ResourceCardData[]).map((resource, index) => (
+              <ResourceCard
+                key={resource.id}
+                resource={{
+                  ...resource,
+                  highlightBadge: index < 2 ? "Popular right now" : null,
+                  socialProofLabel: index < 2 ? "High demand right now" : null,
+                }}
+                variant="marketplace"
+                owned={ownedIds.has(resource.id)}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <CreatorCTA />
+      <BlogSection />
+      <EmailSignup />
+    </div>
+  );
+}
+
+async function loadDiscoverCategoriesSafe(): Promise<DiscoverCategoriesWithCount> {
+  try {
+    return await getDiscoverCategories();
+  } catch (error) {
+    if (!isMissingTableError(error)) {
+      throw error;
+    }
+
+    return [];
+  }
+}
+
+async function loadDiscoverDataSafe(): Promise<DiscoverData | null> {
+  try {
+    return await getDiscoverData();
+  } catch (error) {
+    if (!isMissingTableError(error)) {
+      throw error;
+    }
+
+    return null;
+  }
+}
+
+async function loadOwnedIdsSafe(userId?: string) {
+  if (!userId) {
+    return new Set<string>();
+  }
+
+  try {
+    return await getOwnedResourceIds(userId);
+  } catch (error) {
+    if (!isMissingTableError(error)) {
+      throw error;
+    }
+
+    return new Set<string>();
+  }
+}
+
+async function loadLearningProfileSafe(userId?: string) {
+  if (!userId) {
+    return null;
+  }
+
+  try {
+    return await getUserLearningProfile(userId);
+  } catch (error) {
+    if (!isMissingTableError(error)) {
+      throw error;
+    }
+
+    return null;
+  }
 }
 
 function buildResultsContext(
@@ -751,6 +879,55 @@ function SidebarFallback() {
         />
       ))}
     </div>
+  );
+}
+
+function DiscoverSectionsFallback() {
+  return (
+    <div className="space-y-16 lg:space-y-20">
+      <section className="space-y-6">
+        <div className="space-y-1.5">
+          <div className="h-6 w-40 animate-pulse rounded bg-surface-100" />
+          <div className="h-4 w-80 animate-pulse rounded bg-surface-100" />
+        </div>
+        <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-[72px] animate-pulse rounded-[24px] border border-surface-200 bg-white shadow-card"
+            />
+          ))}
+        </div>
+      </section>
+
+      <DeferredSectionFallback titleWidth="w-32" cardCount={4} />
+      <DeferredSectionFallback titleWidth="w-40" cardCount={4} />
+    </div>
+  );
+}
+
+function DeferredSectionFallback({
+  titleWidth,
+  cardCount,
+}: {
+  titleWidth: string;
+  cardCount: number;
+}) {
+  return (
+    <section className="space-y-5">
+      <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-1.5">
+          <div className={`h-6 animate-pulse rounded bg-surface-100 ${titleWidth}`} />
+          <div className="h-4 w-64 animate-pulse rounded bg-surface-100" />
+        </div>
+        <div className="h-6 w-16 animate-pulse rounded bg-surface-100" />
+      </div>
+      <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+        {Array.from({ length: cardCount }).map((_, index) => (
+          <ResourceCardSkeleton key={index} />
+        ))}
+      </div>
+    </section>
   );
 }
 
