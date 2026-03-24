@@ -15,8 +15,7 @@
  * vector search backend without touching the API or UI layers.
  */
 
-import { prisma } from "@/lib/prisma";
-import { LISTED_RESOURCE_WHERE } from "@/lib/query/resourceFilters";
+import { findSearchResources } from "@/repositories/resources/resource.repository";
 import { withPreview } from "@/services/discover.service";
 
 export interface SearchFilters {
@@ -57,45 +56,10 @@ export async function searchResources(filters: SearchFilters): Promise<SearchRes
   const trimmed = query.trim();
   if (!trimmed) return [];
 
-  const categoryWhere =
-    category && category !== "all"
-      ? { category: { slug: category } }
-      : {};
-
-  const raw = await prisma.resource.findMany({
-    where: {
-      ...LISTED_RESOURCE_WHERE,
-      ...categoryWhere,
-      OR: [
-        { title:       { contains: trimmed, mode: "insensitive" as const } },
-        { description: { contains: trimmed, mode: "insensitive" as const } },
-        { category:    { name: { contains: trimmed, mode: "insensitive" as const } } },
-        { tags: { some: { tag: { name: { contains: trimmed, mode: "insensitive" as const } } } } },
-      ],
-    },
-    select: {
-      id:            true,
-      title:         true,
-      slug:          true,
-      price:         true,
-      isFree:        true,
-      downloadCount: true,
-      category: { select: { id: true, name: true, slug: true } },
-      author:   { select: { name: true } },
-      previews: {
-        take:    1,
-        orderBy: { order: "asc" as const },
-        select:  { imageUrl: true },
-      },
-      _count: { select: { purchases: true, reviews: true } },
-    },
-    orderBy: [
-      { resourceStat: { trendingScore: "desc" } },
-      { resourceStat: { purchases: "desc" } },
-      { resourceStat: { downloads: "desc" } },
-      { createdAt: "desc" },
-    ] as any,
-    take:    limit,
+  const raw = await findSearchResources({
+    query: trimmed,
+    limit,
+    category,
   });
 
   return raw.map(withPreview) as SearchResult[];

@@ -11,13 +11,18 @@
  * RESOURCE_CARD_SELECT projection for maximum query efficiency.
  */
 
+import type { Prisma } from "@prisma/client";
 import { unstable_cache } from "next/cache";
-import { CACHE_TAGS, CACHE_TTLS } from "@/lib/cache";
-import { prisma } from "@/lib/prisma";
-import { LISTED_RESOURCE_WHERE, PUBLIC_RESOURCE_WHERE } from "@/lib/query/resourceFilters";
-import { RESOURCE_CARD_SELECT } from "@/lib/query/resourceSelect";
+import { CACHE_TAGS, CACHE_TTLS, getResourceCacheTag } from "@/lib/cache";
+import { logPerformanceEvent } from "@/lib/performance/observability";
 import {
+  countMarketplaceResources,
   findActivationRankedResources,
+  findCategoriesOrderedByName,
+  findCategoryBySlug,
+  findMarketplaceResourceCards,
+  findPublicResourceDetailBySlug,
+  findRelatedListedResources,
   type FindActivationRankedResourcesRow,
 } from "@/repositories/resources/resource.repository";
 import { withPreview } from "@/services/discover.service";
@@ -39,100 +44,6 @@ export const RESOURCE_CARD_INCLUDE = {
   tags:     { include: { tag: { select: { name: true, slug: true } } } },
   previews: { orderBy: { order: "asc" as const }, select: { imageUrl: true } },
   _count:   { select: { purchases: true, reviews: true } },
-} as const;
-
-const RESOURCE_DETAIL_SELECT = {
-  id: true,
-  title: true,
-  slug: true,
-  description: true,
-  type: true,
-  status: true,
-  featured: true,
-  level: true,
-  isFree: true,
-  price: true,
-  downloadCount: true,
-  categoryId: true,
-  fileSize: true,
-  fileName: true,
-  fileUrl: true,
-  fileKey: true,
-  mimeType: true,
-  updatedAt: true,
-  previewUrl: true,
-  author: {
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      creatorSlug: true,
-    },
-  },
-  category: {
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-    },
-  },
-  previews: {
-    orderBy: { order: "asc" as const },
-    select: {
-      id: true,
-      imageUrl: true,
-      order: true,
-    },
-  },
-  tags: {
-    select: {
-      tag: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-        },
-      },
-    },
-  },
-  resourceStat: {
-    select: {
-      downloads: true,
-      purchases: true,
-      last30dDownloads: true,
-      last30dPurchases: true,
-      trendingScore: true,
-    },
-  },
-} as const;
-
-const RELATED_RESOURCE_SELECT = {
-  id: true,
-  title: true,
-  slug: true,
-  price: true,
-  isFree: true,
-  featured: true,
-  downloadCount: true,
-  createdAt: true,
-  previewUrl: true,
-  author: {
-    select: {
-      name: true,
-    },
-  },
-  category: {
-    select: {
-      name: true,
-      slug: true,
-    },
-  },
-  previews: {
-    orderBy: { order: "asc" as const },
-    select: {
-      imageUrl: true,
-    },
-  },
 } as const;
 
 // ── Activation ranking transform ──────────────────────────────────────────────
@@ -246,16 +157,11 @@ async function loadMarketplaceResources(filters: MarketplaceFilters) {
 
   const categoryId =
     trimmedCategory && trimmedCategory !== "all"
-      ? (
-          await prisma.category.findUnique({
-            where: { slug: trimmedCategory },
-            select: { id: true },
-          })
-        )?.id
+      ? (await findCategoryBySlug(trimmedCategory))?.id
       : undefined;
 
   if (trimmedCategory && trimmedCategory !== "all" && !categoryId) {
-    const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
+    const categories = await findCategoriesOrderedByName();
 
     return {
       resources: [],
@@ -280,7 +186,7 @@ async function loadMarketplaceResources(filters: MarketplaceFilters) {
         page,
         pageSize,
       }),
-      prisma.category.findMany({ orderBy: { name: "asc" } }),
+      findCategoriesOrderedByName(),
     ]);
 
     const resources = await attachResourceTrustSignals(
@@ -308,7 +214,8 @@ async function loadMarketplaceResources(filters: MarketplaceFilters) {
     : {};
 
   const where = {
-    ...PUBLIC_RESOURCE_WHERE,
+    status: "PUBLISHED" as const,
+    deletedAt: null,
     ...searchWhere,
     ...categoryWhere,
     ...priceWhere,
@@ -317,17 +224,17 @@ async function loadMarketplaceResources(filters: MarketplaceFilters) {
   };
 
   const skip = (page - 1) * pageSize;
+  const orderBy = buildOrderBy(sort) as Prisma.ResourceFindManyArgs["orderBy"];
 
   const [rawItems, total, categories] = await Promise.all([
-    prisma.resource.findMany({
+    findMarketplaceResourceCards({
       where,
-      select: RESOURCE_CARD_SELECT,
-      orderBy: buildOrderBy(sort) as any,
+      orderBy,
       skip,
       take: pageSize,
     }),
-    prisma.resource.count({ where }),
-    prisma.category.findMany({ orderBy: { name: "asc" } }),
+    countMarketplaceResources(where),
+    findCategoriesOrderedByName(),
   ]);
 
   const resources = await attachResourceTrustSignals(rawItems.map(withPreview));
@@ -342,6 +249,12 @@ async function loadMarketplaceResources(filters: MarketplaceFilters) {
 
 export const getMarketplaceResources = unstable_cache(
   async function _getMarketplaceResources(filters: MarketplaceFilters) {
+    logPerformanceEvent("cache_execute:getMarketplaceResources", {
+      category: filters.category ?? "all",
+      page: filters.page ?? 1,
+      pageSize: filters.pageSize ?? 12,
+      sort: filters.sort ?? "default",
+    });
     return loadMarketplaceResources(filters);
   },
   ["marketplace-resources"],
@@ -355,50 +268,44 @@ export const getMarketplaceResources = unstable_cache(
 
 /** Returns a fully-hydrated Resource row by slug, or null if not found. */
 export async function getResourceBySlug(slug: string) {
-  return prisma.resource.findUnique({
-    where: { slug },
-    select: RESOURCE_DETAIL_SELECT,
-  });
+  return findPublicResourceDetailBySlug(slug);
 }
 
 /** Returns related resources in the same category (excludes the current resource). */
 export async function getRelatedResources(categoryId: string, excludeId: string, take = 4) {
-  const raw = await prisma.resource.findMany({
-    where: {
-      ...LISTED_RESOURCE_WHERE,
-      categoryId,
-      id: { not: excludeId },
-    },
-    take,
-    select: RELATED_RESOURCE_SELECT,
-  });
+  const raw = await findRelatedListedResources(categoryId, excludeId, take);
 
   return attachResourceTrustSignals(raw.map(withPreview));
 }
 
-export const getPublicResourcePageData = unstable_cache(
-  async function _getPublicResourcePageData(slug: string) {
-    const resource = await getResourceBySlug(slug);
+export async function getPublicResourcePageData(slug: string) {
+  return unstable_cache(
+    async function _getPublicResourcePageData() {
+      logPerformanceEvent("cache_execute:getPublicResourcePageData", {
+        slug,
+      });
+      const resource = await getResourceBySlug(slug);
 
-    if (!resource || resource.status !== "PUBLISHED") {
+      if (!resource || resource.status !== "PUBLISHED") {
+        return {
+          resource: null,
+          relatedResources: [],
+        };
+      }
+
+      const relatedResources = resource.categoryId
+        ? await getRelatedResources(resource.categoryId, resource.id, 4)
+        : [];
+
       return {
-        resource: null,
-        relatedResources: [],
+        resource,
+        relatedResources,
       };
-    }
-
-    const relatedResources = resource.categoryId
-      ? await getRelatedResources(resource.categoryId, resource.id, 4)
-      : [];
-
-    return {
-      resource,
-      relatedResources,
-    };
-  },
-  ["public-resource-page"],
-  {
-    revalidate: CACHE_TTLS.publicPage,
-    tags: [CACHE_TAGS.discover],
-  },
-);
+    },
+    ["public-resource-page", slug],
+    {
+      revalidate: CACHE_TTLS.publicPage,
+      tags: [CACHE_TAGS.discover, getResourceCacheTag(slug)],
+    },
+  )();
+}

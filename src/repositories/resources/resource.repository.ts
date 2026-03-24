@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { LISTED_RESOURCE_WHERE } from "@/lib/query/resourceFilters";
+import { LISTED_RESOURCE_WHERE, PUBLIC_RESOURCE_WHERE } from "@/lib/query/resourceFilters";
+import { FIRST_PREVIEW_IMAGE_SELECT, RESOURCE_CARD_SELECT } from "@/lib/query/resourceSelect";
 
 export interface FindPublicResourcesParams {
   page: number;
@@ -57,21 +58,6 @@ export interface UpdateAdminResourceRecordInput {
   previewUrls?: string[];
 }
 
-const RESOURCE_LIST_INCLUDE = {
-  id: true,
-  title: true,
-  slug: true,
-  price: true,
-  isFree: true,
-  featured: true,
-  createdAt: true,
-  downloadCount: true,
-  previewUrl: true,
-  author: { select: { id: true, name: true, image: true } },
-  category: { select: { id: true, name: true, slug: true } },
-  previews: { orderBy: { order: "asc" as const }, select: { imageUrl: true } },
-} as const;
-
 const ADMIN_RESOURCE_LIST_INCLUDE = {
   author: { select: { id: true, name: true } },
   category: { select: { id: true, name: true } },
@@ -101,6 +87,84 @@ const CREATOR_DASHBOARD_RESOURCE_SELECT = {
   },
 } as const;
 
+const RESOURCE_DETAIL_SELECT = {
+  id: true,
+  title: true,
+  slug: true,
+  description: true,
+  type: true,
+  status: true,
+  featured: true,
+  level: true,
+  isFree: true,
+  price: true,
+  downloadCount: true,
+  categoryId: true,
+  fileSize: true,
+  fileName: true,
+  fileUrl: true,
+  fileKey: true,
+  mimeType: true,
+  updatedAt: true,
+  previewUrl: true,
+  author: {
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      creatorSlug: true,
+    },
+  },
+  category: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+  },
+  previews: {
+    orderBy: { order: "asc" as const },
+    select: {
+      id: true,
+      imageUrl: true,
+      order: true,
+    },
+  },
+  tags: {
+    select: {
+      tag: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
+    },
+  },
+  resourceStat: {
+    select: {
+      downloads: true,
+      purchases: true,
+      last30dDownloads: true,
+      last30dPurchases: true,
+      trendingScore: true,
+    },
+  },
+} as const;
+
+const SEARCH_RESOURCE_SELECT = {
+  id: true,
+  title: true,
+  slug: true,
+  price: true,
+  isFree: true,
+  downloadCount: true,
+  category: { select: { id: true, name: true, slug: true } },
+  author: { select: { name: true } },
+  ...FIRST_PREVIEW_IMAGE_SELECT,
+  _count: { select: { purchases: true, reviews: true } },
+} as const;
+
 export async function findPublicResources(params: FindPublicResourcesParams) {
   const { page, pageSize, categorySlug, tagSlug, search, isFree } = params;
 
@@ -128,7 +192,7 @@ export async function findPublicResources(params: FindPublicResourcesParams) {
   const [items, total] = await Promise.all([
     prisma.resource.findMany({
       where,
-      select: RESOURCE_LIST_INCLUDE,
+      select: RESOURCE_CARD_SELECT,
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * pageSize,
       take: pageSize,
@@ -177,7 +241,7 @@ export async function findRecommendedResourcesExcludingIds(
       ...LISTED_RESOURCE_WHERE,
       ...(resourceIds.length > 0 ? { id: { notIn: resourceIds } } : {}),
     },
-    select: RESOURCE_LIST_INCLUDE,
+    select: RESOURCE_CARD_SELECT,
     orderBy: [
       { resourceStat: { trendingScore: "desc" } },
       { resourceStat: { purchases: "desc" } },
@@ -199,7 +263,7 @@ export async function findNewResourcesInCategoryExcludingIds(
       categoryId,
       ...(resourceIds.length > 0 ? { id: { notIn: resourceIds } } : {}),
     },
-    select: RESOURCE_LIST_INCLUDE,
+    select: RESOURCE_CARD_SELECT,
     orderBy: [
       { createdAt: "desc" },
       { resourceStat: { trendingScore: "desc" } },
@@ -224,7 +288,7 @@ export async function findNewResourcesInCategoriesExcludingIds(
       categoryId: { in: categoryIds },
       ...(resourceIds.length > 0 ? { id: { notIn: resourceIds } } : {}),
     },
-    select: RESOURCE_LIST_INCLUDE,
+    select: RESOURCE_CARD_SELECT,
     orderBy: [
       { createdAt: "desc" },
       { resourceStat: { trendingScore: "desc" } },
@@ -247,7 +311,7 @@ export async function findTopTrendingInCategoriesExcludingIds(
       categoryId: { in: categoryIds },
       ...(resourceIds.length > 0 ? { id: { notIn: resourceIds } } : {}),
     },
-    select: RESOURCE_LIST_INCLUDE,
+    select: RESOURCE_CARD_SELECT,
     orderBy: [
       { resourceStat: { trendingScore: "desc" } },
       { resourceStat: { purchases: "desc" } },
@@ -272,7 +336,7 @@ export async function findRecommendedResourcesByLevelsExcludingIds(
       level: { in: levels },
       ...(resourceIds.length > 0 ? { id: { notIn: resourceIds } } : {}),
     },
-    select: RESOURCE_LIST_INCLUDE,
+    select: RESOURCE_CARD_SELECT,
     orderBy: [
       { resourceStat: { trendingScore: "desc" } },
       { resourceStat: { purchases: "desc" } },
@@ -286,6 +350,230 @@ export async function findRecommendedResourcesByLevelsExcludingIds(
 export async function findResourceById(id: string) {
   return prisma.resource.findUnique({
     where: { id },
+  });
+}
+
+export async function findResourceRouteDetailById(resourceId: string) {
+  return prisma.resource.findUnique({
+    where: { id: resourceId },
+    include: {
+      author: { select: { id: true, name: true, image: true } },
+      category: true,
+      tags: { include: { tag: true } },
+      reviews: {
+        include: { user: { select: { id: true, name: true, image: true } } },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      },
+      _count: { select: { purchases: true, reviews: true } },
+    },
+  });
+}
+
+export async function incrementResourceViewCount(resourceId: string) {
+  return prisma.resource.update({
+    where: { id: resourceId },
+    data: { viewCount: { increment: 1 } },
+  });
+}
+
+export async function findResourceDuplicateSourceById(resourceId: string) {
+  return prisma.resource.findUnique({
+    where: { id: resourceId },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      description: true,
+      type: true,
+      isFree: true,
+      price: true,
+      fileUrl: true,
+      categoryId: true,
+      featured: true,
+      previews: {
+        orderBy: { order: "asc" as const },
+        select: { imageUrl: true },
+      },
+      tags: {
+        select: { tagId: true },
+      },
+    },
+  });
+}
+
+export async function findResourceUploadTargetById(resourceId: string) {
+  return prisma.resource.findUnique({
+    where: { id: resourceId },
+    select: { id: true, slug: true, fileKey: true },
+  });
+}
+
+export interface ReplaceResourceFileAndCreateVersionInput {
+  resourceId: string;
+  fileKey: string;
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+  createdById: string | null;
+}
+
+export async function replaceResourceFileAndCreateVersion(
+  input: ReplaceResourceFileAndCreateVersionInput,
+) {
+  return prisma.$transaction(async (tx) => {
+    const updatedResource = await tx.resource.update({
+      where: { id: input.resourceId },
+      data: {
+        fileKey: input.fileKey,
+        fileName: input.fileName,
+        fileSize: input.fileSize,
+        mimeType: input.mimeType,
+      },
+      select: { id: true, fileKey: true, fileName: true, fileSize: true },
+    });
+
+    const lastVersion = await tx.resourceVersion.findFirst({
+      where: { resourceId: input.resourceId },
+      orderBy: { version: "desc" },
+    });
+
+    const nextVersion = (lastVersion?.version ?? 0) + 1;
+
+    await tx.resourceVersion.create({
+      data: {
+        resourceId: input.resourceId,
+        version: nextVersion,
+        fileKey: updatedResource.fileKey,
+        fileName: updatedResource.fileName,
+        fileSize: updatedResource.fileSize,
+        mimeType: input.mimeType,
+        // fileUrl is only used for external storage; local uploads rely on fileKey
+        changelog:
+          nextVersion === 1
+            ? "Initial upload"
+            : `File updated (v${nextVersion.toString()})`,
+        createdById: input.createdById,
+      },
+    });
+
+    return updatedResource;
+  });
+}
+
+export interface UpdateResourceRouteRecordInput {
+  title?: string;
+  description?: string;
+  status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+  isFree?: boolean;
+  price?: number;
+  featured?: boolean;
+  categoryId?: string | null;
+  fileUrl?: string;
+  previewUrl?: string | null;
+  previewUrls?: string[];
+}
+
+export async function updateResourceRouteRecord(
+  resourceId: string,
+  input: UpdateResourceRouteRecordInput,
+) {
+  return prisma.$transaction(async (tx) => {
+    const updatedResource = await tx.resource.update({
+      where: { id: resourceId },
+      data: {
+        ...(input.title !== undefined && { title: input.title }),
+        ...(input.description !== undefined && { description: input.description }),
+        ...(input.status !== undefined && { status: input.status }),
+        ...(input.isFree !== undefined && { isFree: input.isFree }),
+        ...(input.price !== undefined && { price: input.price }),
+        ...(input.featured !== undefined && { featured: input.featured }),
+        ...(input.categoryId !== undefined && { categoryId: input.categoryId }),
+        ...(input.fileUrl !== undefined && { fileUrl: input.fileUrl }),
+        ...(input.previewUrl !== undefined && { previewUrl: input.previewUrl }),
+      },
+    });
+
+    if (input.previewUrls !== undefined) {
+      await tx.resourcePreview.deleteMany({
+        where: { resourceId },
+      });
+
+      if (input.previewUrls.length > 0) {
+        await tx.resourcePreview.createMany({
+          data: input.previewUrls.map((imageUrl, order) => ({
+            resourceId,
+            imageUrl,
+            order,
+          })),
+        });
+      }
+    }
+
+    return updatedResource;
+  });
+}
+
+export interface RollbackResourceVersionInput {
+  resourceId: string;
+  versionId: string;
+  createdById: string | null;
+}
+
+export async function rollbackResourceVersionRecord(
+  input: RollbackResourceVersionInput,
+) {
+  return prisma.$transaction(async (tx) => {
+    const targetVersion = await tx.resourceVersion.findFirst({
+      where: {
+        id: input.versionId,
+        resourceId: input.resourceId,
+      },
+    });
+
+    if (!targetVersion) {
+      return null;
+    }
+
+    const lastVersion = await tx.resourceVersion.findFirst({
+      where: { resourceId: input.resourceId },
+      orderBy: { version: "desc" },
+    });
+
+    const nextVersion = (lastVersion?.version ?? 0) + 1;
+
+    const newVersion = await tx.resourceVersion.create({
+      data: {
+        resourceId: input.resourceId,
+        version: nextVersion,
+        fileKey: targetVersion.fileKey,
+        fileName: targetVersion.fileName,
+        fileSize: targetVersion.fileSize,
+        mimeType: targetVersion.mimeType,
+        fileUrl: targetVersion.fileUrl,
+        changelog: `Rollback to v${targetVersion.version}`,
+        createdById: input.createdById,
+      },
+    });
+
+    const updatedResource = await tx.resource.update({
+      where: { id: input.resourceId },
+      data: {
+        fileKey: targetVersion.fileKey,
+        fileName: targetVersion.fileName,
+        fileSize: targetVersion.fileSize,
+        mimeType: targetVersion.mimeType,
+        fileUrl: targetVersion.fileUrl,
+      },
+    });
+
+    return { newVersion, updatedResource };
+  });
+}
+
+export async function deleteResourceRouteRecord(resourceId: string) {
+  return prisma.resource.delete({
+    where: { id: resourceId },
   });
 }
 
@@ -368,6 +656,126 @@ export async function findCategoryBySlug(slug: string) {
   });
 }
 
+export async function findCategoriesOrderedByName() {
+  return prisma.category.findMany({
+    orderBy: { name: "asc" },
+  });
+}
+
+export async function findMarketplaceResourceCards(params: {
+  where: Prisma.ResourceWhereInput;
+  orderBy: Prisma.ResourceFindManyArgs["orderBy"];
+  skip: number;
+  take: number;
+}) {
+  return prisma.resource.findMany({
+    where: params.where,
+    select: RESOURCE_CARD_SELECT,
+    orderBy: params.orderBy,
+    skip: params.skip,
+    take: params.take,
+  });
+}
+
+export async function countMarketplaceResources(where: Prisma.ResourceWhereInput) {
+  return prisma.resource.count({ where });
+}
+
+export async function findPublicResourceDetailBySlug(slug: string) {
+  return prisma.resource.findUnique({
+    where: { slug },
+    select: RESOURCE_DETAIL_SELECT,
+  });
+}
+
+export async function findRelatedListedResources(
+  categoryId: string,
+  excludeId: string,
+  take: number,
+) {
+  return prisma.resource.findMany({
+    where: {
+      ...LISTED_RESOURCE_WHERE,
+      categoryId,
+      id: { not: excludeId },
+    },
+    take,
+    select: RESOURCE_CARD_SELECT,
+  });
+}
+
+export async function findDiscoverFallbackResourceIds(
+  limit: number,
+  orderBy: Prisma.ResourceFindManyArgs["orderBy"],
+  where?: Prisma.ResourceFindManyArgs["where"],
+) {
+  const rows = await prisma.resource.findMany({
+    where: {
+      ...LISTED_RESOURCE_WHERE,
+      ...(where ?? {}),
+    },
+    select: { id: true },
+    orderBy,
+    take: limit,
+  });
+
+  return rows.map((row) => row.id);
+}
+
+export async function findDiscoverResourcesByIds(resourceIds: string[]) {
+  if (resourceIds.length === 0) {
+    return [];
+  }
+
+  return prisma.resource.findMany({
+    where: {
+      ...LISTED_RESOURCE_WHERE,
+      id: { in: resourceIds },
+    },
+    select: RESOURCE_CARD_SELECT,
+  });
+}
+
+export async function findDiscoverCategoriesWithCounts() {
+  return prisma.category.findMany({
+    where: { resources: { some: LISTED_RESOURCE_WHERE } },
+    include: { _count: { select: { resources: true } } },
+    orderBy: { name: "asc" },
+  });
+}
+
+export async function findSearchResources(params: {
+  query: string;
+  limit: number;
+  category?: string;
+}) {
+  const categoryWhere =
+    params.category && params.category !== "all"
+      ? { category: { slug: params.category } }
+      : {};
+
+  return prisma.resource.findMany({
+    where: {
+      ...LISTED_RESOURCE_WHERE,
+      ...categoryWhere,
+      OR: [
+        { title: { contains: params.query, mode: "insensitive" as const } },
+        { description: { contains: params.query, mode: "insensitive" as const } },
+        { category: { name: { contains: params.query, mode: "insensitive" as const } } },
+        { tags: { some: { tag: { name: { contains: params.query, mode: "insensitive" as const } } } } },
+      ],
+    },
+    select: SEARCH_RESOURCE_SELECT,
+    orderBy: [
+      { resourceStat: { trendingScore: "desc" } },
+      { resourceStat: { purchases: "desc" } },
+      { resourceStat: { downloads: "desc" } },
+      { createdAt: "desc" },
+    ],
+    take: params.limit,
+  });
+}
+
 export async function findTagBySlug(slug: string) {
   return prisma.tag.findUnique({
     where: { slug },
@@ -406,6 +814,60 @@ export async function createAdminResourceRecord(input: CreateAdminResourceRecord
           order,
         })),
       },
+    },
+  });
+}
+
+export interface CreateDuplicatedAdminResourceInput {
+  title: string;
+  slug: string;
+  description: string;
+  type: "PDF" | "DOCUMENT";
+  isFree: boolean;
+  price: number;
+  fileUrl: string | null;
+  categoryId: string | null;
+  featured: boolean;
+  previewUrl: string | null;
+  authorId: string;
+  tagIds: string[];
+  previewUrls: string[];
+}
+
+export async function createDuplicatedAdminResource(
+  input: CreateDuplicatedAdminResourceInput,
+) {
+  return prisma.resource.create({
+    data: {
+      title: input.title,
+      slug: input.slug,
+      description: input.description,
+      type: input.type,
+      status: "DRAFT",
+      isFree: input.isFree,
+      price: input.price,
+      fileUrl: input.fileUrl,
+      categoryId: input.categoryId,
+      featured: input.featured,
+      previewUrl: input.previewUrl,
+      authorId: input.authorId,
+      tags:
+        input.tagIds.length > 0
+          ? {
+              create: input.tagIds.map((tagId) => ({
+                tag: { connect: { id: tagId } },
+              })),
+            }
+          : undefined,
+      previews:
+        input.previewUrls.length > 0
+          ? {
+              create: input.previewUrls.map((imageUrl, order) => ({
+                imageUrl,
+                order,
+              })),
+            }
+          : undefined,
     },
   });
 }
@@ -593,6 +1055,21 @@ export async function softDeleteAdminResource(resourceId: string) {
     where: { id: resourceId },
     data: { deletedAt: new Date() },
   });
+}
+
+export async function restoreAdminResource(resourceId: string) {
+  return prisma.resource.update({
+    where: { id: resourceId },
+    data: { deletedAt: null },
+  });
+}
+
+export async function permanentlyDeleteAdminResource(resourceId: string) {
+  return prisma.$transaction([
+    prisma.review.deleteMany({ where: { resourceId } }),
+    prisma.purchase.deleteMany({ where: { resourceId } }),
+    prisma.resource.delete({ where: { id: resourceId } }),
+  ]);
 }
 
 export async function softDeleteAdminResources(resourceIds: string[]) {

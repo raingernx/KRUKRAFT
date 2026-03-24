@@ -10,14 +10,16 @@
  */
 
 import { unstable_cache } from "next/cache";
-import type { Prisma } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
 import { calculateTrendingScore } from "@/analytics/aggregation.service";
 import { CACHE_KEYS, CACHE_TTLS, rememberJson } from "@/lib/cache";
-import { LISTED_RESOURCE_WHERE } from "@/lib/query/resourceFilters";
-import { RESOURCE_CARD_SELECT } from "@/lib/query/resourceSelect";
+import { logPerformanceEvent } from "@/lib/performance/observability";
 import { attachResourceTrustSignals } from "@/services/review.service";
 import { resolveHomepageHero } from "@/services/heroes/hero.resolver";
+import {
+  findDiscoverCategoriesWithCounts,
+  findDiscoverFallbackResourceIds,
+  findDiscoverResourcesByIds,
+} from "@/repositories/resources/resource.repository";
 import {
   findFeaturedResourceIds,
   findFreeResourceIds,
@@ -30,24 +32,6 @@ import {
 
 const DAY_MS = 86_400_000;
 const TRENDING_WINDOW_DAYS = 30;
-
-async function findFallbackResourceIds(
-  limit: number,
-  orderBy: Prisma.ResourceFindManyArgs["orderBy"],
-  where?: Prisma.ResourceFindManyArgs["where"],
-) {
-  const rows = await prisma.resource.findMany({
-    where: {
-      ...LISTED_RESOURCE_WHERE,
-      ...(where ?? {}),
-    },
-    select: { id: true },
-    orderBy,
-    take: limit,
-  });
-
-  return rows.map((row) => row.id);
-}
 
 // ── Preview normaliser ────────────────────────────────────────────────────────
 
@@ -125,6 +109,7 @@ export async function getTrendingResources(limit = 8) {
  */
 export const getDiscoverData = unstable_cache(
   async function _getDiscoverData() {
+    logPerformanceEvent("cache_execute:getDiscoverData");
     const [
       trendingResources,
       popularIdsFromStats,
@@ -154,18 +139,18 @@ export const getDiscoverData = unstable_cache(
     const [popularIds, newestIds, featuredIds, freeIds] = await Promise.all([
       popularIdsFromStats.length > 0
         ? popularIdsFromStats
-        : findFallbackResourceIds(8, [{ downloadCount: "desc" }, { createdAt: "desc" }]),
+        : findDiscoverFallbackResourceIds(8, [{ downloadCount: "desc" }, { createdAt: "desc" }]),
       newestIdsFromStats.length > 0
         ? newestIdsFromStats
-        : findFallbackResourceIds(8, { createdAt: "desc" }),
+        : findDiscoverFallbackResourceIds(8, { createdAt: "desc" }),
       featuredIdsFromStats.length > 0
         ? featuredIdsFromStats
-        : findFallbackResourceIds(8, [{ downloadCount: "desc" }, { createdAt: "desc" }], {
+        : findDiscoverFallbackResourceIds(8, [{ downloadCount: "desc" }, { createdAt: "desc" }], {
             featured: true,
           }),
       freeIdsFromStats.length > 0
         ? freeIdsFromStats
-        : findFallbackResourceIds(8, [{ downloadCount: "desc" }, { createdAt: "desc" }], {
+        : findDiscoverFallbackResourceIds(8, [{ downloadCount: "desc" }, { createdAt: "desc" }], {
             isFree: true,
           }),
     ]);
@@ -212,16 +197,7 @@ export const getDiscoverData = unstable_cache(
 );
 
 async function loadDiscoverResourcesByIds(resourceIds: string[]) {
-  const rows =
-    resourceIds.length === 0
-      ? []
-      : await prisma.resource.findMany({
-          where: {
-            ...LISTED_RESOURCE_WHERE,
-            id: { in: resourceIds },
-          },
-          select: RESOURCE_CARD_SELECT,
-        });
+  const rows = await findDiscoverResourcesByIds(resourceIds);
 
   const resources = await attachResourceTrustSignals(rows);
 
@@ -244,11 +220,7 @@ export type DiscoverData = Awaited<ReturnType<typeof getDiscoverData>>;
  */
 export const getDiscoverCategories = unstable_cache(
   async function _getDiscoverCategories() {
-    return prisma.category.findMany({
-      where:   { resources: { some: LISTED_RESOURCE_WHERE } },
-      include: { _count: { select: { resources: true } } },
-      orderBy: { name: "asc" },
-    });
+    return findDiscoverCategoriesWithCounts();
   },
   ["discover-categories"],
   { revalidate: 120, tags: ["discover"] }

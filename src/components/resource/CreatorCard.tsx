@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { Avatar } from "@/components/ui/Avatar";
 import { getPlatform } from "@/services/platform.service";
 
@@ -34,12 +34,14 @@ export async function CreatorCard({ creator }: CreatorCardProps) {
             {creator.bio ?? `Creator on ${platform.platformShortName}`}
           </p>
           {creator.creatorSlug && (
-            <Link
+            <IntentPrefetchLink
               href={`/creators/${creator.creatorSlug}`}
               className="mt-3 inline-flex rounded-full border border-surface-200 bg-surface-50 px-3 py-1.5 text-[13px] font-medium text-blue-600 transition hover:border-surface-300 hover:bg-white hover:text-blue-700"
+              prefetchScope="creator-card"
+              prefetchLimit={2}
             >
               View profile
-            </Link>
+            </IntentPrefetchLink>
           )}
         </div>
       </div>

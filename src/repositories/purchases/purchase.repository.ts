@@ -46,26 +46,28 @@ export interface UpsertCompletedFreePurchaseInput {
   authorRevenue: number;
 }
 
-const PURCHASE_WITH_RESOURCE_INCLUDE = {
+const PURCHASE_LIST_RESOURCE_SELECT = {
   resource: {
     select: {
       id: true,
       title: true,
       slug: true,
-      description: true,
       level: true,
       previewUrl: true,
       isFree: true,
       price: true,
-      mimeType: true,
-      fileKey: true,
-      fileUrl: true,
-      downloadCount: true,
-      author: { select: { id: true, name: true } },
+      author: { select: { name: true } },
       category: { select: { id: true, name: true, slug: true } },
-      previews: { orderBy: { order: "asc" as const }, select: { imageUrl: true } },
     },
   },
+} as const;
+
+const PURCHASE_LIST_ITEM_SELECT = {
+  id: true,
+  amount: true,
+  status: true,
+  createdAt: true,
+  ...PURCHASE_LIST_RESOURCE_SELECT,
 } as const;
 
 const PURCHASE_PREFERENCE_SIGNAL_SELECT = {
@@ -217,7 +219,7 @@ export async function findCompletedSalesCountsByResourceIds(resourceIds: string[
 export async function findCompletedPurchasesByUser(userId: string) {
   return prisma.purchase.findMany({
     where: { userId, status: "COMPLETED" },
-    include: PURCHASE_WITH_RESOURCE_INCLUDE,
+    select: PURCHASE_LIST_ITEM_SELECT,
     orderBy: { createdAt: "desc" },
   });
 }
@@ -237,7 +239,7 @@ export async function findRecentPurchasePreferenceSignalsByUser(
 export async function findPurchaseHistoryByUser(userId: string) {
   return prisma.purchase.findMany({
     where: { userId },
-    include: PURCHASE_WITH_RESOURCE_INCLUDE,
+    select: PURCHASE_LIST_ITEM_SELECT,
     orderBy: { createdAt: "desc" },
   });
 }

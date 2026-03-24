@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { after } from "next/server";
 import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
 import { authOptions } from "@/lib/auth";
 import { CACHE_TAGS } from "@/lib/cache";
+import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import {
   createAdminResourcesInBulk,
   mutateAdminResourcesInBulk,
@@ -57,6 +59,14 @@ export async function POST(req: Request) {
     if (result.data.success > 0) {
       revalidateTag(CACHE_TAGS.discover, "max");
       revalidateTag(CACHE_TAGS.creatorPublic, "max");
+      after(() => {
+        void warmTargetedPublicCaches({
+          trigger: "admin_resource_bulk_create",
+          includeListings: true,
+        }).catch((error) => {
+          console.error("[ADMIN_RESOURCES_BULK_POST_WARM]", error);
+        });
+      });
     }
 
     return NextResponse.json(result);
@@ -75,6 +85,14 @@ export async function PATCH(req: Request) {
     if (result.data.updated > 0 || result.data.deleted > 0) {
       revalidateTag(CACHE_TAGS.discover, "max");
       revalidateTag(CACHE_TAGS.creatorPublic, "max");
+      after(() => {
+        void warmTargetedPublicCaches({
+          trigger: "admin_resource_bulk_patch",
+          includeListings: true,
+        }).catch((error) => {
+          console.error("[ADMIN_RESOURCES_BULK_PATCH_WARM]", error);
+        });
+      });
     }
 
     return NextResponse.json(result);

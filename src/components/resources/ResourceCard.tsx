@@ -6,6 +6,7 @@ import Image from "next/image";
 import { FileText, Download, Eye, ExternalLink, Star, ArrowRight } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/design-system";
+import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { PriceBadge } from "@/components/ui/PriceBadge";
 import { formatPrice } from "@/lib/format";
 import { formatNumber } from "@/lib/format";
@@ -378,12 +379,16 @@ function CardBody({
               </Button>
             )}
             <Button asChild variant="outline" size="sm" className="h-9 flex-1 gap-1.5">
-              <Link href={`/resources/${resource.slug}`}>
+              <IntentPrefetchLink
+                href={`/resources/${resource.slug}`}
+                prefetchScope="resource-card-library"
+                prefetchLimit={4}
+              >
                 <span className="inline-flex items-center gap-1.5">
                   <ExternalLink className="h-3.5 w-3.5" />
                   <span>Open</span>
                 </span>
-              </Link>
+              </IntentPrefetchLink>
             </Button>
             </div>
             {downloadClicked && (
@@ -452,12 +457,14 @@ export function ResourceCard({
   // marketplace, hero, compact: link to the resource page when slug exists
   if (resource.slug) {
     return (
-      <Link
+      <IntentPrefetchLink
         href={`/resources/${resource.slug}`}
         className="group block h-full w-full cursor-pointer rounded-2xl"
+        prefetchScope="resource-card-grid"
+        prefetchLimit={8}
       >
         <CardBody {...bodyProps} />
-      </Link>
+      </IntentPrefetchLink>
     );
   }
 

@@ -28,6 +28,14 @@ export const CACHE_TAGS = {
   platform: "platform",
 } as const;
 
+export function getResourceCacheTag(slug: string) {
+  return `resource:${slug}`;
+}
+
+export function getCreatorPublicCacheTag(identifier: string) {
+  return `creator:${identifier}`;
+}
+
 export const CACHE_KEYS = {
   activeHero: "active-hero",
   trendingResources: "trending_resources",

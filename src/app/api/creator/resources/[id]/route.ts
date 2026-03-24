@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
+import { after } from "next/server";
 import { revalidateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { Prisma } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
-import { CACHE_TAGS } from "@/lib/cache";
+import {
+  CACHE_TAGS,
+  getCreatorPublicCacheTag,
+  getResourceCacheTag,
+} from "@/lib/cache";
+import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import { CreatorServiceError, updateCreatorResource } from "@/services/creator.service";
 
 type Params = {
@@ -54,6 +60,21 @@ export async function PATCH(req: Request, { params }: Params) {
     const resource = await updateCreatorResource(session.user.id, id, await req.json());
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(CACHE_TAGS.creatorPublic, "max");
+    revalidateTag(getCreatorPublicCacheTag(session.user.id), "max");
+    revalidateTag(getResourceCacheTag(resource.slug), "max");
+    after(() => {
+      void warmTargetedPublicCaches({
+        trigger: "creator_resource_update",
+        includeListings: true,
+        resourceTargets:
+          resource.status === "PUBLISHED"
+            ? [{ id: resource.id, slug: resource.slug }]
+            : [],
+        creatorIdentifiers: [session.user.id],
+      }).catch((error) => {
+        console.error("[CREATOR_RESOURCE_PATCH_WARM]", error);
+      });
+    });
 
     return NextResponse.json({ data: resource });
   } catch (error) {

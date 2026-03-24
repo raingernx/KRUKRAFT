@@ -1,7 +1,7 @@
 "use client";
 
 import type { MouseEvent, ReactNode } from "react";
-import Link from "next/link";
+import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 
 interface HeroTrackedLinkProps {
   heroId?: string | null;
@@ -38,8 +38,15 @@ export function HeroTrackedLink({
   }
 
   return (
-    <Link href={href} className={className} onClick={handleClick}>
+    <IntentPrefetchLink
+      href={href}
+      className={className}
+      onClick={handleClick}
+      prefetchMode="viewport"
+      prefetchScope="hero-cta"
+      prefetchLimit={2}
+    >
       {children}
-    </Link>
+    </IntentPrefetchLink>
   );
 }

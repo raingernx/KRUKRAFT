@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { after } from "next/server";
 import { revalidateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { Prisma } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
-import { CACHE_TAGS } from "@/lib/cache";
+import { CACHE_TAGS, getCreatorPublicCacheTag } from "@/lib/cache";
+import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import {
   CreatorServiceError,
   getCreatorProfile,
@@ -67,6 +69,21 @@ export async function PATCH(req: Request) {
 
     const updated = await updateCreatorProfile(session.user.id, await req.json());
     revalidateTag(CACHE_TAGS.creatorPublic, "max");
+    revalidateTag(getCreatorPublicCacheTag(session.user.id), "max");
+    if (updated.creatorSlug) {
+      revalidateTag(getCreatorPublicCacheTag(updated.creatorSlug), "max");
+    }
+    after(() => {
+      void warmTargetedPublicCaches({
+        trigger: "creator_profile_update",
+        creatorIdentifiers: [
+          session.user.id,
+          ...(updated.creatorSlug ? [updated.creatorSlug] : []),
+        ],
+      }).catch((error) => {
+        console.error("[CREATOR_PROFILE_PATCH_WARM]", error);
+      });
+    });
     return NextResponse.json({ data: updated });
   } catch (error) {
     return handleCreatorError(error, "[CREATOR_PROFILE_PATCH]");

@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { after } from "next/server";
 import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
 import { authOptions } from "@/lib/auth";
 import { CACHE_TAGS } from "@/lib/cache";
+import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import {
   createAdminResource,
   listAdminResources,
@@ -32,6 +34,18 @@ export async function POST(req: Request) {
     const result = await createAdminResource(await req.json(), session.user.id);
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(CACHE_TAGS.creatorPublic, "max");
+    if (result.data.status === "PUBLISHED") {
+      after(() => {
+        void warmTargetedPublicCaches({
+          trigger: "admin_resource_create",
+          includeListings: true,
+          resourceTargets: [{ id: result.data.id, slug: result.data.slug }],
+          creatorIdentifiers: [result.data.authorId],
+        }).catch((error) => {
+          console.error("[ADMIN_RESOURCES_POST_WARM]", error);
+        });
+      });
+    }
 
     return NextResponse.json(result, { status: 201 });
   } catch (err) {

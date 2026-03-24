@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
+import { after } from "next/server";
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
+import {
+  rollbackResourceVersion,
+  ResourceVersionRollbackServiceError,
+} from "@/services/resources/resource-version-rollback.service";
 
 type Params = { params: Promise<{ id: string; versionId: string }> };
 
@@ -35,70 +40,27 @@ export async function POST(_req: Request, { params }: Params) {
 
     const { id: resourceId, versionId } = await params;
 
-    const result = await prisma.$transaction(async (tx) => {
-      const targetVersion = await tx.resourceVersion.findFirst({
-        where: {
-          id: versionId,
-          resourceId,
-        },
+    const rolledBack = await rollbackResourceVersion({
+      resourceId,
+      versionId,
+      adminUserId: admin.session.user.id,
+    });
+    after(() => {
+      void warmTargetedPublicCaches({
+        trigger: "admin_resource_version_rollback",
+        includeTrustSummaries: false,
+        resourceIds: [resourceId],
+      }).catch((error) => {
+        console.error("[ADMIN_RESOURCE_VERSION_ROLLBACK_WARM]", error);
       });
-
-      if (!targetVersion) {
-        throw new Error("TARGET_VERSION_NOT_FOUND");
-      }
-
-      const lastVersion = await tx.resourceVersion.findFirst({
-        where: { resourceId },
-        orderBy: { version: "desc" },
-      });
-
-      const nextVersion = (lastVersion?.version ?? 0) + 1;
-
-      const newVersion = await tx.resourceVersion.create({
-        data: {
-          resourceId,
-          version: nextVersion,
-          fileKey: targetVersion.fileKey,
-          fileName: targetVersion.fileName,
-          fileSize: targetVersion.fileSize,
-          mimeType: targetVersion.mimeType,
-          fileUrl: targetVersion.fileUrl,
-          changelog: `Rollback to v${targetVersion.version}`,
-          createdById: admin.session.user.id ?? null,
-        },
-      });
-
-      const updatedResource = await tx.resource.update({
-        where: { id: resourceId },
-        data: {
-          fileKey: targetVersion.fileKey,
-          fileName: targetVersion.fileName,
-          fileSize: targetVersion.fileSize,
-          mimeType: targetVersion.mimeType,
-          fileUrl: targetVersion.fileUrl,
-        },
-      });
-
-      return { newVersion, updatedResource };
     });
 
     return NextResponse.json({
-      data: {
-        id: result.newVersion.id,
-        version: result.newVersion.version,
-        fileName: result.newVersion.fileName,
-        fileSize: result.newVersion.fileSize,
-        mimeType: result.newVersion.mimeType,
-        changelog: result.newVersion.changelog,
-        createdAt: result.newVersion.createdAt,
-      },
+      data: rolledBack,
     });
-  } catch (err: any) {
-    if (err instanceof Error && err.message === "TARGET_VERSION_NOT_FOUND") {
-      return NextResponse.json(
-        { error: "Version not found." },
-        { status: 404 },
-      );
+  } catch (err) {
+    if (err instanceof ResourceVersionRollbackServiceError) {
+      return NextResponse.json(err.payload, { status: err.status });
     }
 
     console.error("[ADMIN_RESOURCE_VERSION_ROLLBACK_POST]", err);

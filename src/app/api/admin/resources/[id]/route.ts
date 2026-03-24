@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { after } from "next/server";
 import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
 import { authOptions } from "@/lib/auth";
-import { CACHE_TAGS } from "@/lib/cache";
+import { CACHE_TAGS, getResourceCacheTag } from "@/lib/cache";
+import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import {
   ResourceServiceError,
   trashAdminResource,
@@ -59,6 +61,20 @@ export async function PATCH(req: Request, { params }: Params) {
     const result = await updateAdminResource(id, await req.json(), session.user.id);
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(CACHE_TAGS.creatorPublic, "max");
+    revalidateTag(getResourceCacheTag(result.data.slug), "max");
+    after(() => {
+      void warmTargetedPublicCaches({
+        trigger: "admin_resource_update",
+        includeListings: true,
+        resourceTargets:
+          result.data.status === "PUBLISHED"
+            ? [{ id: result.data.id, slug: result.data.slug }]
+            : [],
+        creatorIdentifiers: [result.data.authorId],
+      }).catch((error) => {
+        console.error("[ADMIN_RESOURCES_PATCH_WARM]", error);
+      });
+    });
 
     return NextResponse.json(result);
   } catch (err) {
@@ -79,6 +95,14 @@ export async function DELETE(_req: Request, { params }: Params) {
     const result = await trashAdminResource(id, session.user.id);
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(CACHE_TAGS.creatorPublic, "max");
+    after(() => {
+      void warmTargetedPublicCaches({
+        trigger: "admin_resource_trash",
+        includeListings: true,
+      }).catch((error) => {
+        console.error("[ADMIN_RESOURCES_DELETE_WARM]", error);
+      });
+    });
 
     return NextResponse.json(result);
   } catch (err) {

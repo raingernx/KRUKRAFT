@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { after } from "next/server";
 import { revalidateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { Prisma } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
-import { CACHE_TAGS } from "@/lib/cache";
+import { CACHE_TAGS, getCreatorPublicCacheTag } from "@/lib/cache";
+import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import { CreatorServiceError, createCreatorResource } from "@/services/creator.service";
 
 function handleCreatorError(error: unknown, label: string) {
@@ -49,6 +51,19 @@ export async function POST(req: Request) {
     const resource = await createCreatorResource(session.user.id, await req.json());
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(CACHE_TAGS.creatorPublic, "max");
+    revalidateTag(getCreatorPublicCacheTag(session.user.id), "max");
+    if (resource.status === "PUBLISHED") {
+      after(() => {
+        void warmTargetedPublicCaches({
+          trigger: "creator_resource_create",
+          includeListings: true,
+          resourceTargets: [{ id: resource.id, slug: resource.slug }],
+          creatorIdentifiers: [session.user.id],
+        }).catch((error) => {
+          console.error("[CREATOR_RESOURCES_POST_WARM]", error);
+        });
+      });
+    }
     return NextResponse.json({ data: resource }, { status: 201 });
   } catch (error) {
     return handleCreatorError(error, "[CREATOR_RESOURCES_POST]");

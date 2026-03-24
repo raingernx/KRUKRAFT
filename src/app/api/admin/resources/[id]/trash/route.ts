@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
+import { after } from "next/server";
 import { getServerSession } from "next-auth";
-import { revalidateTag } from "next/cache";
 
 import { authOptions } from "@/lib/auth";
-import { CACHE_TAGS } from "@/lib/cache";
-import { prisma } from "@/lib/prisma";
-import { logActivity } from "@/lib/activity";
+import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
+import {
+  permanentlyDeleteTrashedResource,
+  ResourceTrashServiceError,
+  restoreTrashedResource,
+} from "@/services/resources/resource-trash.service";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -37,33 +40,29 @@ export async function PATCH(_req: Request, { params }: Params) {
       return admin.error;
     }
 
-    const existing = await prisma.resource.findUnique({
-      where: { id },
+    const restored = await restoreTrashedResource({
+      resourceId: id,
+      adminUserId: admin.session.user.id,
     });
-
-    if (!existing) {
-      return NextResponse.json({ error: "Resource not found." }, { status: 404 });
+    if (restored.status === "PUBLISHED") {
+      after(() => {
+        void warmTargetedPublicCaches({
+          trigger: "admin_resource_restore",
+          includeListings: true,
+          resourceTargets: [{ id: restored.id, slug: restored.slug }],
+          creatorIdentifiers: [restored.authorId],
+        }).catch((error) => {
+          console.error("[ADMIN_RESOURCE_TRASH_PATCH_WARM]", error);
+        });
+      });
     }
-
-    const restored = await prisma.resource.update({
-      where: { id },
-      data: { deletedAt: null },
-    });
-
-    await logActivity({
-      userId: admin.session.user.id,
-      action: "resource_restored",
-      entityType: "resource",
-      entityId: id,
-      meta: { title: restored.title },
-    });
-
-    // A restored PUBLISHED resource becomes visible in discover again.
-    revalidateTag(CACHE_TAGS.discover, "max");
-    revalidateTag(CACHE_TAGS.creatorPublic, "max");
 
     return NextResponse.json({ data: restored });
   } catch (err) {
+    if (err instanceof ResourceTrashServiceError) {
+      return NextResponse.json(err.payload, { status: err.status });
+    }
+
     console.error("[ADMIN_RESOURCE_TRASH_PATCH]", err);
     return NextResponse.json(
       { error: "Internal server error." },
@@ -81,50 +80,27 @@ export async function DELETE(_req: Request, { params }: Params) {
       return admin.error;
     }
 
-    const existing = await prisma.resource.findUnique({
-      where: { id },
-      include: {
-        _count: { select: { purchases: true, reviews: true } },
-      },
+    const deleted = await permanentlyDeleteTrashedResource({
+      resourceId: id,
+      adminUserId: admin.session.user.id,
     });
-
-    if (!existing) {
-      return NextResponse.json({ error: "Resource not found." }, { status: 404 });
-    }
-
-    // Optionally enforce that only trashed resources can be permanently deleted
-    if (!existing.deletedAt) {
-      return NextResponse.json(
-        { error: "Resource is not in trash." },
-        { status: 400 },
-      );
-    }
-
-    await prisma.$transaction([
-      prisma.review.deleteMany({ where: { resourceId: id } }),
-      prisma.purchase.deleteMany({ where: { resourceId: id } }),
-      prisma.resource.delete({ where: { id } }),
-    ]);
-
-    await logActivity({
-      userId: admin.session.user.id,
-      action: "resource_deleted_permanently",
-      entityType: "resource",
-      entityId: id,
-      meta: { title: existing.title },
+    after(() => {
+      void warmTargetedPublicCaches({
+        trigger: "admin_resource_delete_permanent",
+        includeListings: true,
+      }).catch((error) => {
+        console.error("[ADMIN_RESOURCE_TRASH_DELETE_WARM]", error);
+      });
     });
-
-    // Safety revalidation: ensures no stale reference remains in the cache.
-    revalidateTag(CACHE_TAGS.discover, "max");
-    revalidateTag(CACHE_TAGS.creatorPublic, "max");
 
     return NextResponse.json({
-      data: {
-        id,
-        message: `"${existing.title}" was permanently deleted.`,
-      },
+      data: deleted,
     });
   } catch (err) {
+    if (err instanceof ResourceTrashServiceError) {
+      return NextResponse.json(err.payload, { status: err.status });
+    }
+
     console.error("[ADMIN_RESOURCE_TRASH_DELETE]", err);
     return NextResponse.json(
       { error: "Internal server error." },

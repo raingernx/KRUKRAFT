@@ -20,6 +20,7 @@ import { Container } from "@/components/layout/container";
 import { ResourceGrid } from "@/components/resources/ResourceGrid";
 import { ResourceCard, type ResourceCardData } from "@/components/resources/ResourceCard";
 import { ResourceCardSkeleton } from "@/components/resources/ResourceCardSkeleton";
+import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { HeroSearch } from "@/components/marketplace/HeroSearch";
 import { HeroBanner } from "@/components/marketplace/HeroBanner";
 import { DiscoverButton, CategoryChips, type ChipCategory } from "@/components/marketplace/CategoryChips";
@@ -492,13 +493,16 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                         </p>
                       ) : null}
                     </div>
-                    <Link
+                    <IntentPrefetchLink
                       href={`/creators/${discoverData.topCreator.creator.creatorSlug}`}
                       className="inline-flex items-center gap-2 self-start rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-zinc-800 lg:self-auto"
+                      prefetchMode="viewport"
+                      prefetchScope="top-creator-cta"
+                      prefetchLimit={1}
                     >
                       Explore creator
                       <ArrowRight className="h-4 w-4" />
-                    </Link>
+                    </IntentPrefetchLink>
                   </div>
                 </section>
               )}

@@ -15,9 +15,20 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "analytics:reconcile-download-counts": "tsx scripts/reconcile-download-counts.ts",
+    "performance:warm": "tsx scripts/warm-public-cache.ts",
     "db:studio": "prisma studio",
     "ngrok": "ngrok http 3000",
-    "dev:full": "concurrently \"npm run dev\""
+    "dev:full": "concurrently \"npm run dev\"",
+    "clean": "rm -rf .next",
+    "reinstall": "rm -rf node_modules package-lock.json && npm install",
+    "branch:retry": "git checkout main && git pull origin main && git checkout -B chore/vercel-retry",
+    "push:retry": "git add . && git commit -m \"chore: vercel retry\" && git push -u origin chore/vercel-retry",
+    "sync:retry": "git checkout main && git pull origin main && git checkout chore/vercel-retry && git merge main",
+    "deploy": "git checkout main && git pull origin main && git merge chore/vercel-retry && git push origin main",
+    "ship": "npm run push:retry && npm run deploy",
+    "env:pull": "vercel env pull .env.local",
+    "vercel:preview": "vercel",
+    "vercel:prod": "vercel --prod"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

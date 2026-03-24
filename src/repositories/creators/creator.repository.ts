@@ -1,5 +1,6 @@
 import { Prisma, type CreatorStatus, type CreatorApplicationStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { RESOURCE_CARD_SELECT } from "@/lib/query/resourceSelect";
 
 export interface CreatorResourceFilters {
   status?: "all" | "DRAFT" | "PUBLISHED" | "ARCHIVED";
@@ -114,6 +115,54 @@ function shouldRetryCreatorStatusActivation(error: unknown) {
   return false;
 }
 
+const PUBLISHED_CREATOR_RESOURCE_WHERE = {
+  status: "PUBLISHED" as const,
+  deletedAt: null,
+};
+
+const CREATOR_PUBLIC_PROFILE_RESOURCE_SELECT = {
+  ...RESOURCE_CARD_SELECT,
+  description: true,
+} as const;
+
+const CREATOR_PUBLIC_PROFILE_BASE_SELECT = {
+  id: true,
+  name: true,
+  image: true,
+  creatorDisplayName: true,
+  creatorSlug: true,
+  creatorBio: true,
+  creatorBanner: true,
+  creatorStatus: true,
+  creatorSocialLinks: true,
+  resources: {
+    where: PUBLISHED_CREATOR_RESOURCE_WHERE,
+    select: CREATOR_PUBLIC_PROFILE_RESOURCE_SELECT,
+    orderBy: { createdAt: "desc" as const },
+    take: 12,
+  },
+} as const;
+
+const CREATOR_PUBLIC_PROFILE_BY_SLUG_SELECT = {
+  ...CREATOR_PUBLIC_PROFILE_BASE_SELECT,
+  _count: {
+    select: {
+      resources: {
+        where: PUBLISHED_CREATOR_RESOURCE_WHERE,
+      },
+    },
+  },
+} as const;
+
+const CREATOR_PUBLIC_PROFILE_BY_ID_SELECT = {
+  ...CREATOR_PUBLIC_PROFILE_BASE_SELECT,
+  _count: {
+    select: {
+      resources: true,
+    },
+  },
+} as const;
+
 export async function findCreatorAccessContext(userId: string) {
   return prisma.user.findUnique({
     where: { id: userId },
@@ -165,70 +214,7 @@ export async function findCreatorProfileBySlug(slug: string) {
       creatorEnabled: true,
       creatorStatus: "ACTIVE",
     },
-    select: {
-      id: true,
-      name: true,
-      creatorEnabled: true,
-      image: true,
-      creatorDisplayName: true,
-      creatorSlug: true,
-      creatorBio: true,
-      creatorBanner: true,
-      creatorStatus: true,
-      creatorSocialLinks: true,
-      resources: {
-        where: {
-          status: "PUBLISHED",
-          deletedAt: null,
-        },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          description: true,
-          isFree: true,
-          price: true,
-          downloadCount: true,
-          previewUrl: true,
-          previews: {
-            take: 1,
-            orderBy: { order: "asc" as const },
-            select: { imageUrl: true },
-          },
-          category: {
-            select: {
-              id: true,
-              name: true,
-              slug: true,
-            },
-          },
-          author: {
-            select: {
-              name: true,
-              image: true,
-            },
-          },
-          _count: {
-            select: {
-              purchases: true,
-              reviews: true,
-            },
-          },
-        },
-        orderBy: [{ createdAt: "desc" }],
-        take: 12,
-      },
-      _count: {
-        select: {
-          resources: {
-            where: {
-              status: "PUBLISHED",
-              deletedAt: null,
-            },
-          },
-        },
-      },
-    },
+    select: CREATOR_PUBLIC_PROFILE_BY_SLUG_SELECT,
   });
 }
 
@@ -239,65 +225,7 @@ export async function findCreatorPublicProfileById(userId: string) {
       creatorEnabled: true,
       creatorStatus: "ACTIVE",
     },
-    select: {
-      id: true,
-      name: true,
-      creatorEnabled: true,
-      image: true,
-      creatorDisplayName: true,
-      creatorSlug: true,
-      creatorBio: true,
-      creatorBanner: true,
-      creatorStatus: true,
-      creatorSocialLinks: true,
-      resources: {
-        where: {
-          status: "PUBLISHED",
-          deletedAt: null,
-        },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          description: true,
-          isFree: true,
-          price: true,
-          downloadCount: true,
-          previewUrl: true,
-          previews: {
-            take: 1,
-            orderBy: { order: "asc" as const },
-            select: { imageUrl: true },
-          },
-          category: {
-            select: {
-              id: true,
-              name: true,
-              slug: true,
-            },
-          },
-          author: {
-            select: {
-              name: true,
-              image: true,
-            },
-          },
-          _count: {
-            select: {
-              purchases: true,
-              reviews: true,
-            },
-          },
-        },
-        orderBy: [{ createdAt: "desc" }],
-        take: 12,
-      },
-      _count: {
-        select: {
-          resources: true,
-        },
-      },
-    },
+    select: CREATOR_PUBLIC_PROFILE_BY_ID_SELECT,
   });
 }
 
