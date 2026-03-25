@@ -5,6 +5,8 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { getCreatorAccessState } from "@/services/creator.service";
 import { traceServerStep } from "@/lib/performance/observability";
 
+export const dynamic = "force-dynamic";
+
 interface DashboardGroupLayoutProps {
   children: ReactNode;
 }

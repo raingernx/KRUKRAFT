@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { getCreatorAccessState } from "@/services/creator.service";
 
+export const dynamic = "force-dynamic";
+
 interface DashboardGroupLayoutProps {
   children: ReactNode;
 }
