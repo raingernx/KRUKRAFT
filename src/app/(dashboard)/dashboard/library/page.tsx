@@ -28,7 +28,15 @@ export default async function DashboardLibraryPage({
 }: {
   searchParams?: Promise<Record<string, string | undefined>>;
 }) {
-  return withRequestPerformanceTrace("route:/dashboard/library", {}, async () => {
+  const params = searchParams ? await searchParams : {};
+  const isReturningFromCheckout = params.payment === "success";
+
+  return withRequestPerformanceTrace(
+    "route:/dashboard/library",
+    {
+      paymentFlow: isReturningFromCheckout ? "success_return" : "direct",
+    },
+    async () => {
   const { userId } = await traceServerStep(
     "dashboard_library.requireSession",
     () => requireSession("/dashboard/library"),
@@ -38,9 +46,6 @@ export default async function DashboardLibraryPage({
     "dashboard_library.getUserLibraryItems",
     () => getUserLibraryItems(userId),
   );
-
-  const params = searchParams ? await searchParams : {};
-  const isReturningFromCheckout = params.payment === "success";
 
   // Derive recovery state from existing data — no extra query.
   // resources is sorted createdAt DESC, so resources[0] is always the newest
@@ -153,5 +158,6 @@ export default async function DashboardLibraryPage({
         </div>
     </div>
   );
-  });
+    },
+  );
 }

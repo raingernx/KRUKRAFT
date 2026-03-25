@@ -93,27 +93,32 @@ function StatCard({
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default async function AdminAnalyticsPage() {
-  return withRequestPerformanceTrace("route:/admin/analytics", {}, async () => {
-  const session = await traceServerStep(
-    "admin_analytics.getServerSession",
-    () => getServerSession(authOptions),
-  );
+  return withRequestPerformanceTrace(
+    "route:/admin/analytics",
+    {
+      routeKind: "overview",
+    },
+    async () => {
+      const session = await traceServerStep(
+        "admin_analytics.getServerSession",
+        () => getServerSession(authOptions),
+      );
 
-  if (!session?.user) {
-    redirect("/auth/login?next=/admin/analytics");
-  }
+      if (!session?.user) {
+        redirect("/auth/login?next=/admin/analytics");
+      }
 
-  if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
-  }
+      if (session.user.role !== "ADMIN") {
+        redirect("/dashboard");
+      }
 
-  const metrics = await traceServerStep(
-    "admin_analytics.getPlatformMetrics",
-    () => getPlatformMetrics(),
-  );
+      const metrics = await traceServerStep(
+        "admin_analytics.getPlatformMetrics",
+        () => getPlatformMetrics(),
+      );
 
-  return (
-    <div className="space-y-5">
+      return (
+        <div className="space-y-5">
       <AdminPageHeader
         title="Analytics"
         description="High-level metrics and trends for your marketplace."
@@ -429,7 +434,8 @@ export default async function AdminAnalyticsPage() {
           </Link>
         </div>
       </section>
-    </div>
+        </div>
+      );
+    },
   );
-  });
 }

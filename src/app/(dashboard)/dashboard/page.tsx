@@ -125,7 +125,12 @@ function DashboardShelfCard({
 }
 
 export default async function DashboardPage() {
-  return withRequestPerformanceTrace("route:/dashboard", {}, async () => {
+  return withRequestPerformanceTrace(
+    "route:/dashboard",
+    {
+      routeKind: "overview",
+    },
+    async () => {
   const { userId, session } = await traceServerStep(
     "dashboard.requireSession",
     () => requireSession("/dashboard"),
@@ -562,5 +567,6 @@ export default async function DashboardPage() {
       )}
     </div>
   );
-  });
+    },
+  );
 }

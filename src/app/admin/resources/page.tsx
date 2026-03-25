@@ -52,22 +52,7 @@ function buildQueryString(base: {
 export default async function AdminResourcesPage({
   searchParams,
 }: AdminResourcesPageProps) {
-  return withRequestPerformanceTrace("route:/admin/resources", {}, async () => {
-  const session = await traceServerStep(
-    "admin_resources.getServerSession",
-    () => getServerSession(authOptions),
-  );
-
-  if (!session?.user) {
-    redirect("/auth/login?next=/admin/resources");
-  }
-
-  if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
-  }
-
   const resolvedSearchParams = searchParams ? await searchParams : {};
-
   const q = (resolvedSearchParams.q ?? "").trim();
   const statusFilter = (resolvedSearchParams.status ?? "").toUpperCase();
   const categoryIdFilter = (resolvedSearchParams.categoryId ?? "").trim();
@@ -75,152 +60,172 @@ export default async function AdminResourcesPage({
   const freeOnly = resolvedSearchParams.free === "1";
   const currentPage = Math.max(1, Number(resolvedSearchParams.page ?? "1") || 1);
 
-  const {
-    rows,
-    totalCount,
-    totalPages,
-    categories,
-    hasFilters,
-  } = await traceServerStep(
-    "admin_resources.getAdminResourcesPageData",
-    () =>
-      getAdminResourcesPageData({
-        q,
-        statusFilter,
-        categoryIdFilter,
-        freeOnly,
-        minRevenueCents,
-        currentPage,
-        pageSize: PAGE_SIZE,
-      }),
+  return withRequestPerformanceTrace(
+    "route:/admin/resources",
     {
       currentPage,
       freeOnly,
-      hasSearch: Boolean(q),
+      hasCategoryFilter: Boolean(categoryIdFilter),
+      hasQuery: Boolean(q),
       minRevenueCents,
       statusFilter: statusFilter || "all",
     },
-  );
+    async () => {
+      const session = await traceServerStep(
+        "admin_resources.getServerSession",
+        () => getServerSession(authOptions),
+      );
 
-  return (
-    <div className="min-w-0 space-y-7">
-      <AdminPageHeader
-        title="Resources"
-        description="View and manage all resources in the marketplace."
-        actions={
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              asChild
-              size="sm"
-              variant="outline"
-              className="inline-flex items-center gap-2"
-            >
-              <Link href="/admin/resources/trash">
-                <BookOpen className="h-4 w-4 text-text-secondary" />
-                <span>View Trash</span>
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="sm"
-              variant="outline"
-              className="inline-flex items-center gap-2"
-            >
-              <Link href="/admin/resources/bulk">
-                <Upload className="h-4 w-4 text-text-secondary" />
-                <span>Bulk Upload</span>
-              </Link>
-            </Button>
-            <Button asChild size="sm" className="inline-flex items-center gap-2">
-              <Link href="/admin/resources/new">
-                <Plus className="h-4 w-4" />
-                <span>Create Resource</span>
-              </Link>
-            </Button>
-          </div>
-        }
-      />
+      if (!session?.user) {
+        redirect("/auth/login?next=/admin/resources");
+      }
 
-      {/* Toolbar */}
-      <AdminResourcesFilters
-        q={q}
-        statusFilter={statusFilter}
-        categoryIdFilter={categoryIdFilter}
-        categories={categories}
-      />
+      if (session.user.role !== "ADMIN") {
+        redirect("/dashboard");
+      }
 
-      {/* Table / Empty state */}
-      {rows.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border-subtle bg-surface-50/50 px-6 py-12 text-center">
-          <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary-50">
-            <BookOpen className="h-6 w-6 text-primary-700" />
-          </span>
-          <p className="mt-4 font-semibold text-text-primary">
-            No resources found
-          </p>
-          <p className="mt-1.5 max-w-md text-small text-text-secondary">
-            {hasFilters
-              ? "Try adjusting your search or filters."
-              : "Create your first resource to populate the library."}
-          </p>
-        </div>
-      ) : (
-        <>
-          <ResourceTable resources={rows} categories={categories} />
+      const {
+        rows,
+        totalCount,
+        totalPages,
+        categories,
+        hasFilters,
+      } = await traceServerStep(
+        "admin_resources.getAdminResourcesPageData",
+        () =>
+          getAdminResourcesPageData({
+            q,
+            statusFilter,
+            categoryIdFilter,
+            freeOnly,
+            minRevenueCents,
+            currentPage,
+            pageSize: PAGE_SIZE,
+          }),
+        {
+          currentPage,
+          freeOnly,
+          hasSearch: Boolean(q),
+          minRevenueCents,
+          statusFilter: statusFilter || "all",
+        },
+      );
 
-          {/* Pagination */}
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border-subtle bg-surface-50/70 px-4 py-2.5 text-small text-text-secondary">
-            <span className="min-w-0">
-              Page {currentPage} of {totalPages}
-            </span>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                disabled={currentPage <= 1}
-              >
-                <Link
-                  href={
-                    currentPage <= 1
-                      ? "#"
-                      : `/admin/resources${buildQueryString({
-                          q,
-                          status: statusFilter,
-                          categoryId: categoryIdFilter,
-                          page: currentPage - 1,
-                        })}`
-                  }
+      return (
+        <div className="min-w-0 space-y-7">
+          <AdminPageHeader
+            title="Resources"
+            description="View and manage all resources in the marketplace."
+            actions={
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  asChild
+                  size="sm"
+                  variant="outline"
+                  className="inline-flex items-center gap-2"
                 >
-                  Previous
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                disabled={currentPage >= totalPages}
-              >
-                <Link
-                  href={
-                    currentPage >= totalPages
-                      ? "#"
-                      : `/admin/resources${buildQueryString({
-                          q,
-                          status: statusFilter,
-                          categoryId: categoryIdFilter,
-                          page: currentPage + 1,
-                        })}`
-                  }
+                  <Link href="/admin/resources/trash">
+                    <BookOpen className="h-4 w-4 text-text-secondary" />
+                    <span>View Trash</span>
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  size="sm"
+                  variant="outline"
+                  className="inline-flex items-center gap-2"
                 >
-                  Next
-                </Link>
-              </Button>
+                  <Link href="/admin/resources/bulk">
+                    <Upload className="h-4 w-4 text-text-secondary" />
+                    <span>Bulk Upload</span>
+                  </Link>
+                </Button>
+                <Button asChild size="sm" className="inline-flex items-center gap-2">
+                  <Link href="/admin/resources/new">
+                    <Plus className="h-4 w-4" />
+                    <span>Create Resource</span>
+                  </Link>
+                </Button>
+              </div>
+            }
+          />
+
+          <AdminResourcesFilters
+            q={q}
+            statusFilter={statusFilter}
+            categoryIdFilter={categoryIdFilter}
+            categories={categories}
+          />
+
+          {rows.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border-subtle bg-surface-50/50 px-6 py-12 text-center">
+              <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary-50">
+                <BookOpen className="h-6 w-6 text-primary-700" />
+              </span>
+              <p className="mt-4 font-semibold text-text-primary">No resources found</p>
+              <p className="mt-1.5 max-w-md text-small text-text-secondary">
+                {hasFilters
+                  ? "Try adjusting your search or filters."
+                  : "Create your first resource to populate the library."}
+              </p>
             </div>
-          </div>
-        </>
-      )}
-    </div>
+          ) : (
+            <>
+              <ResourceTable resources={rows} categories={categories} />
+
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border-subtle bg-surface-50/70 px-4 py-2.5 text-small text-text-secondary">
+                <span className="min-w-0">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage <= 1}
+                  >
+                    <Link
+                      href={
+                        currentPage <= 1
+                          ? "#"
+                          : `/admin/resources${buildQueryString({
+                              q,
+                              status: statusFilter,
+                              categoryId: categoryIdFilter,
+                              page: currentPage - 1,
+                            })}`
+                      }
+                    >
+                      Previous
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage >= totalPages}
+                  >
+                    <Link
+                      href={
+                        currentPage >= totalPages
+                          ? "#"
+                          : `/admin/resources${buildQueryString({
+                              q,
+                              status: statusFilter,
+                              categoryId: categoryIdFilter,
+                              page: currentPage + 1,
+                            })}`
+                      }
+                    >
+                      Next
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      );
+    },
   );
-  });
 }

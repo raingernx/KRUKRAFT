@@ -19,6 +19,7 @@ import {
 } from "./ResourcesPageContent";
 import {
   traceServerStep,
+  updateRequestPerformanceDetails,
   withRequestPerformanceTrace,
 } from "@/lib/performance/observability";
 
@@ -115,6 +116,9 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
         () => getOptionalSessionUserId(cookieStore),
         { isDiscoverMode },
       );
+      updateRequestPerformanceDetails({
+        hasSession: Boolean(userId),
+      });
 
       let effectiveSort = sort;
       if (cookieStore) {

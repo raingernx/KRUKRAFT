@@ -45,46 +45,52 @@ const STATUS_BADGE: Record<string, { label: string; tone: StatusBadgeTone }> = {
 export default async function AdminOrdersPage({
   searchParams,
 }: AdminOrdersPageProps) {
-  return withRequestPerformanceTrace("route:/admin/orders", {}, async () => {
-  const session = await traceServerStep(
-    "admin_orders.getServerSession",
-    () => getServerSession(authOptions),
-  );
-
-  if (!session?.user) {
-    redirect("/auth/login?next=/admin/orders");
-  }
-
-  if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
-  }
-
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const statusFilter = resolvedSearchParams.status?.toUpperCase() || "";
   const from = resolvedSearchParams.from ? new Date(resolvedSearchParams.from) : null;
   const to = resolvedSearchParams.to ? new Date(resolvedSearchParams.to) : null;
 
-  const {
-    orders,
-    totalRevenue,
-    ordersToday,
-    averageOrderValue,
-  } = await traceServerStep(
-    "admin_orders.getAdminOrdersPageData",
-    () =>
-      getAdminOrdersPageData({
-        statusFilter,
-        from,
-        to,
-      }),
+  return withRequestPerformanceTrace(
+    "route:/admin/orders",
     {
       hasDateFilter: Boolean(from || to),
       statusFilter: statusFilter || "all",
     },
-  );
+    async () => {
+      const session = await traceServerStep(
+        "admin_orders.getServerSession",
+        () => getServerSession(authOptions),
+      );
 
-  return (
-    <div className="min-w-0 space-y-8">
+      if (!session?.user) {
+        redirect("/auth/login?next=/admin/orders");
+      }
+
+      if (session.user.role !== "ADMIN") {
+        redirect("/dashboard");
+      }
+
+      const {
+        orders,
+        totalRevenue,
+        ordersToday,
+        averageOrderValue,
+      } = await traceServerStep(
+        "admin_orders.getAdminOrdersPageData",
+        () =>
+          getAdminOrdersPageData({
+            statusFilter,
+            from,
+            to,
+          }),
+        {
+          hasDateFilter: Boolean(from || to),
+          statusFilter: statusFilter || "all",
+        },
+      );
+
+      return (
+        <div className="min-w-0 space-y-8">
       {/* Header */}
       <AdminPageHeader
         title="Orders"
@@ -256,7 +262,8 @@ export default async function AdminOrdersPage({
           )}
         </DataTableBody>
       </DataTable>
-    </div>
+        </div>
+      );
+    },
   );
-  });
 }

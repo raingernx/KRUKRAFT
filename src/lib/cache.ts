@@ -1,4 +1,8 @@
 import { Redis } from "@upstash/redis";
+import {
+  recordCacheCall,
+  recordCacheMiss,
+} from "@/lib/performance/observability";
 
 const redis =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
@@ -93,10 +97,22 @@ export async function rememberJson<T>(
   key: string,
   ttlSeconds: number,
   loader: () => Promise<T>,
+  options?: {
+    metricName?: string;
+    details?: Record<string, unknown>;
+  },
 ): Promise<T> {
+  if (options?.metricName) {
+    recordCacheCall(options.metricName, options.details);
+  }
+
   const cached = await getCachedJson<T>(key);
   if (cached !== null) {
     return cached;
+  }
+
+  if (options?.metricName) {
+    recordCacheMiss(options.metricName, options.details);
   }
 
   const value = await loader();

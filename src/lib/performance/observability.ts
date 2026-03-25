@@ -26,6 +26,7 @@ type SlowQueryRecord = {
 };
 
 type RequestTraceState = {
+  requestId: string;
   route: string;
   startedAt: number;
   details: PerformanceDetails;
@@ -38,6 +39,7 @@ type RequestTraceState = {
 };
 
 const requestTraceStorage = new AsyncLocalStorage<RequestTraceState>();
+let requestCounter = 0;
 
 function normalizeError(error: unknown) {
   if (error instanceof Error) {
@@ -45,6 +47,11 @@ function normalizeError(error: unknown) {
   }
 
   return String(error);
+}
+
+function nextRequestId() {
+  requestCounter = (requestCounter + 1) % 0xfffff;
+  return `req_${Date.now().toString(36)}_${requestCounter.toString(36)}`;
 }
 
 export function logPerformanceEvent(
@@ -124,7 +131,12 @@ export function recordCacheCall(name: string, details: PerformanceDetails = {}) 
     }
   }
 
-  logPerformanceEvent("cache_call", { name, ...details });
+  logPerformanceEvent("cache_call", {
+    name,
+    requestId: state?.requestId,
+    route: state?.route,
+    ...details,
+  });
 }
 
 export function recordCacheMiss(name: string, details: PerformanceDetails = {}) {
@@ -142,7 +154,25 @@ export function recordCacheMiss(name: string, details: PerformanceDetails = {}) 
     }
   }
 
-  logPerformanceEvent("cache_miss", { name, ...details });
+  logPerformanceEvent("cache_miss", {
+    name,
+    requestId: state?.requestId,
+    route: state?.route,
+    ...details,
+  });
+}
+
+export function updateRequestPerformanceDetails(details: PerformanceDetails) {
+  if (!PERFORMANCE_MONITORING_ENABLED) {
+    return;
+  }
+
+  const state = requestTraceStorage.getStore();
+  if (!state) {
+    return;
+  }
+
+  Object.assign(state.details, details);
 }
 
 export function recordPrismaQuery(details: {
@@ -176,6 +206,7 @@ export function recordPrismaQuery(details: {
     logPerformanceEvent("prisma_query_slow", {
       signature,
       durationMs: details.durationMs,
+      requestId: state?.requestId,
       route: state?.route,
     });
   }
@@ -204,6 +235,7 @@ export async function traceServerStep<T>(
     logPerformanceEvent("service_step", {
       name,
       elapsedMs,
+      requestId: state?.requestId,
       route: state?.route,
       ...details,
     });
@@ -214,6 +246,7 @@ export async function traceServerStep<T>(
     logPerformanceEvent("service_step_fail", {
       name,
       elapsedMs,
+      requestId: requestTraceStorage.getStore()?.requestId,
       route: requestTraceStorage.getStore()?.route,
       error: normalizeError(error),
       ...details,
@@ -232,9 +265,10 @@ export async function withRequestPerformanceTrace<T>(
   }
 
   const state: RequestTraceState = {
+    requestId: nextRequestId(),
     route,
     startedAt: Date.now(),
-    details,
+    details: { ...details },
     queryCount: 0,
     totalQueryMs: 0,
     queryAggregates: new Map(),
@@ -244,15 +278,20 @@ export async function withRequestPerformanceTrace<T>(
   };
 
   return requestTraceStorage.run(state, async () => {
-    logPerformanceEvent("request_start", { route, ...details });
+    logPerformanceEvent("request_start", {
+      requestId: state.requestId,
+      route,
+      ...state.details,
+    });
 
     try {
       const result = await work();
       const elapsedMs = Date.now() - state.startedAt;
 
       logPerformanceEvent("request_summary", {
+        requestId: state.requestId,
         route,
-        ...details,
+        ...state.details,
         elapsedMs,
         queryCount: state.queryCount,
         totalQueryMs: state.totalQueryMs,
@@ -269,8 +308,9 @@ export async function withRequestPerformanceTrace<T>(
       const elapsedMs = Date.now() - state.startedAt;
 
       logPerformanceEvent("request_fail", {
+        requestId: state.requestId,
         route,
-        ...details,
+        ...state.details,
         elapsedMs,
         queryCount: state.queryCount,
         totalQueryMs: state.totalQueryMs,

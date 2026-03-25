@@ -109,6 +109,10 @@ async function getTrendingResourceIds(limit = 8) {
         { limit },
       );
     },
+    {
+      metricName: "discover.trendingResourceIds",
+      details: { limit },
+    },
   );
 }
 
@@ -153,20 +157,35 @@ const readDiscoverData = unstable_cache(
         () =>
           Promise.all([
             getTrendingResourceIds(8),
-            rememberJson(CACHE_KEYS.popularResources, CACHE_TTLS.homepageList, () =>
-              findTopDownloadedResourceIds(8),
+            rememberJson(
+              CACHE_KEYS.popularResources,
+              CACHE_TTLS.homepageList,
+              () => findTopDownloadedResourceIds(8),
+              { metricName: "discover.popularResources" },
             ),
-            rememberJson(CACHE_KEYS.newestResources, CACHE_TTLS.homepageList, () =>
-              findNewestResourceIds(8),
+            rememberJson(
+              CACHE_KEYS.newestResources,
+              CACHE_TTLS.homepageList,
+              () => findNewestResourceIds(8),
+              { metricName: "discover.newestResources" },
             ),
-            rememberJson(CACHE_KEYS.featuredResources, CACHE_TTLS.homepageList, () =>
-              findFeaturedResourceIds(8),
+            rememberJson(
+              CACHE_KEYS.featuredResources,
+              CACHE_TTLS.homepageList,
+              () => findFeaturedResourceIds(8),
+              { metricName: "discover.featuredResources" },
             ),
-            rememberJson(CACHE_KEYS.freeResources, CACHE_TTLS.homepageList, () =>
-              findFreeResourceIds(8),
+            rememberJson(
+              CACHE_KEYS.freeResources,
+              CACHE_TTLS.homepageList,
+              () => findFreeResourceIds(8),
+              { metricName: "discover.freeResources" },
             ),
-            rememberJson(CACHE_KEYS.topCreator, CACHE_TTLS.homepageList, () =>
-              findTopCreatorThisWeek(),
+            rememberJson(
+              CACHE_KEYS.topCreator,
+              CACHE_TTLS.homepageList,
+              () => findTopCreatorThisWeek(),
+              { metricName: "discover.topCreator" },
             ),
           ]),
         { sectionLimit: 8 },

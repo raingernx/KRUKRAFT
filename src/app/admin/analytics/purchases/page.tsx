@@ -253,58 +253,65 @@ export default async function PurchaseAnalyticsPage({
 }: {
   searchParams?: Promise<Record<string, string | undefined>>;
 }) {
-  return withRequestPerformanceTrace(
-    "route:/admin/analytics/purchases",
-    {},
-    async () => {
-  const session = await traceServerStep(
-    "admin_analytics_purchases.getServerSession",
-    () => getServerSession(authOptions),
-  );
-  if (!session?.user) redirect("/auth/login?next=/admin/analytics/purchases");
-  if (session.user.role !== "ADMIN") redirect("/dashboard");
-
   const params = searchParams ? await searchParams : {};
   const start = params.start || null;
   const end = params.end || null;
 
-  const report = await traceServerStep(
-    "admin_analytics_purchases.getPurchaseAnalytics",
-    () => getPurchaseAnalytics({ start, end }),
+  return withRequestPerformanceTrace(
+    "route:/admin/analytics/purchases",
     {
       filterMode: start || end ? "explicit" : "default",
       start: start ?? "",
       end: end ?? "",
     },
-  );
+    async () => {
+      const session = await traceServerStep(
+        "admin_analytics_purchases.getServerSession",
+        () => getServerSession(authOptions),
+      );
 
-  const rangeLabel = report.isDefaultRange
-    ? `Last 30 days · ${report.filterStart} → ${report.filterEnd}`
-    : start || end
-      ? `${report.filterStart} → ${report.filterEnd}`
-      : "All time";
+      if (!session?.user) {
+        redirect("/auth/login?next=/admin/analytics/purchases");
+      }
 
-  // Provider breakdown: compute % of total completed purchases per row
-  const totalProviderPurchases = report.providerBreakdown.reduce(
-    (sum, r) => sum + r.purchaseCount,
-    0,
-  );
+      if (session.user.role !== "ADMIN") {
+        redirect("/dashboard");
+      }
 
-  // Daily series as {date, value} arrays for SparkBar
-  const dailyPaidData = report.dailySeries.map((d) => ({
-    date: d.date,
-    value: d.paidCount,
-  }));
-  const dailyFreeData = report.dailySeries.map((d) => ({
-    date: d.date,
-    value: d.freeCount,
-  }));
+      const report = await traceServerStep(
+        "admin_analytics_purchases.getPurchaseAnalytics",
+        () => getPurchaseAnalytics({ start, end }),
+        {
+          filterMode: start || end ? "explicit" : "default",
+          start: start ?? "",
+          end: end ?? "",
+        },
+      );
 
-  // Entry count for funnel bar widths
-  const funnelTopCount = report.funnelSteps[0]?.count ?? 0;
+      const rangeLabel = report.isDefaultRange
+        ? `Last 30 days · ${report.filterStart} → ${report.filterEnd}`
+        : start || end
+          ? `${report.filterStart} → ${report.filterEnd}`
+          : "All time";
 
-  return (
-    <div className="space-y-10">
+      const totalProviderPurchases = report.providerBreakdown.reduce(
+        (sum, r) => sum + r.purchaseCount,
+        0,
+      );
+
+      const dailyPaidData = report.dailySeries.map((d) => ({
+        date: d.date,
+        value: d.paidCount,
+      }));
+      const dailyFreeData = report.dailySeries.map((d) => ({
+        date: d.date,
+        value: d.freeCount,
+      }));
+
+      const funnelTopCount = report.funnelSteps[0]?.count ?? 0;
+
+      return (
+        <div className="space-y-10">
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <AdminPageHeader
@@ -686,8 +693,8 @@ export default async function PurchaseAnalyticsPage({
       <div className="border-t border-border-subtle pt-4 text-caption text-text-muted">
         Generated at {report.generatedAt}
       </div>
-    </div>
-  );
+        </div>
+      );
     },
   );
 }
