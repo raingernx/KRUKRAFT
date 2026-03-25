@@ -32,7 +32,6 @@ import {
   findCategoryBySlug,
   findMarketplaceResourceCards,
   findPublicResourceDetailDeferredContentBySlug,
-  findPublicResourceGalleryBySlug,
   findPublicResourceMetadataBySlug,
   findPublicResourceDetailBySlug,
   findRelatedListedResources,
@@ -404,28 +403,6 @@ export async function getResourceMetadataBySlug(slug: string) {
       );
     },
     ["public-resource-metadata", slug],
-    {
-      revalidate: RESOURCE_DETAIL_REVALIDATE_SECONDS,
-      tags: [getResourceCacheTag(slug)],
-    },
-  )();
-}
-
-export async function getResourceGalleryBySlug(slug: string) {
-  recordCacheCall("getResourceGalleryBySlug", { slug });
-  const singleFlightKey = `resource-gallery:${slug}`;
-
-  return unstable_cache(
-    async function _getResourceGalleryBySlug() {
-      recordCacheMiss("getResourceGalleryBySlug", { slug });
-      logPerformanceEvent("cache_execute:getResourceGalleryBySlug", {
-        slug,
-      });
-      return runSingleFlight(singleFlightKey, () =>
-        findPublicResourceGalleryBySlug(slug),
-      );
-    },
-    ["public-resource-gallery", slug],
     {
       revalidate: RESOURCE_DETAIL_REVALIDATE_SECONDS,
       tags: [getResourceCacheTag(slug)],

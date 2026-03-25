@@ -159,17 +159,6 @@ const RESOURCE_METADATA_SELECT = {
   description: true,
 } as const;
 
-const RESOURCE_DETAIL_GALLERY_SELECT = {
-  previews: {
-    orderBy: { order: "asc" as const },
-    select: {
-      id: true,
-      imageUrl: true,
-      order: true,
-    },
-  },
-} as const;
-
 const RESOURCE_DETAIL_DEFERRED_CONTENT_SELECT = {
   description: true,
   author: {
@@ -775,13 +764,6 @@ export async function findPublicResourceMetadataBySlug(slug: string) {
   return prisma.resource.findUnique({
     where: { slug },
     select: RESOURCE_METADATA_SELECT,
-  });
-}
-
-export async function findPublicResourceGalleryBySlug(slug: string) {
-  return prisma.resource.findUnique({
-    where: { slug },
-    select: RESOURCE_DETAIL_GALLERY_SELECT,
   });
 }
 

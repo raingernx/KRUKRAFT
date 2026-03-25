@@ -25,7 +25,6 @@ import { AutoScrollOnSuccess } from "@/components/resource/AutoScrollOnSuccess";
 import {
   getResourceBySlug,
   getResourceDetailDeferredContent,
-  getResourceGalleryBySlug,
   getResourceMetadataBySlug,
 } from "@/services/resource.service";
 import {
@@ -402,22 +401,11 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
               {/* GALLERY — order-1 mobile, col-1 row-1 desktop */}
               <div className="order-1 lg:col-start-1 lg:row-start-1">
                 <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-[80px_minmax(0,1fr)]">
-                  <Suspense
-                    fallback={
-                      <ResourceGallery
-                        previews={resource.previews}
-                        resourceTitle={resource.title}
-                        fallbackImageUrl={fallbackPreviewUrl}
-                      />
-                    }
-                  >
-                    <ResourceDetailGallerySection
-                      slug={resource.slug}
-                      initialPreviews={resource.previews}
-                      resourceTitle={resource.title}
-                      fallbackImageUrl={fallbackPreviewUrl}
-                    />
-                  </Suspense>
+                  <ResourceGallery
+                    previews={resource.previews}
+                    resourceTitle={resource.title}
+                    fallbackImageUrl={fallbackPreviewUrl}
+                  />
                 </div>
               </div>
 
@@ -637,32 +625,6 @@ async function ResourceDetailBodySection({
       <ResourceDescription title="About" description={content.description} />
       <ResourceFiles files={includedFiles} />
     </>
-  );
-}
-
-async function ResourceDetailGallerySection({
-  slug,
-  initialPreviews,
-  resourceTitle,
-  fallbackImageUrl,
-}: {
-  slug: string;
-  initialPreviews: Array<{ id: string; imageUrl: string; order: number }>;
-  resourceTitle: string;
-  fallbackImageUrl?: string | null;
-}) {
-  const gallery = await traceServerStep(
-    "resource_detail.getResourceGalleryBySlug",
-    () => getResourceGalleryBySlug(slug),
-    { slug },
-  );
-
-  return (
-    <ResourceGallery
-      previews={gallery?.previews ?? initialPreviews}
-      resourceTitle={resourceTitle}
-      fallbackImageUrl={fallbackImageUrl}
-    />
   );
 }
 
