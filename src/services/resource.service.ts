@@ -434,9 +434,36 @@ export async function getResourceDetailDeferredContent(slug: string) {
 
 /** Returns related resources in the same category (excludes the current resource). */
 export async function getRelatedResources(categoryId: string, excludeId: string, take = 4) {
-  const raw = await findRelatedListedResources(categoryId, excludeId, take);
+  recordCacheCall("getRelatedResources", {
+    categoryId,
+    excludeId,
+    take,
+  });
+  const singleFlightKey = `resource-related:${categoryId}:${excludeId}:${take}`;
 
-  return attachResourceTrustSignals(raw.map(withPreview));
+  return unstable_cache(
+    async function _getRelatedResources() {
+      recordCacheMiss("getRelatedResources", {
+        categoryId,
+        excludeId,
+        take,
+      });
+      logPerformanceEvent("cache_execute:getRelatedResources", {
+        categoryId,
+        excludeId,
+        take,
+      });
+      return runSingleFlight(singleFlightKey, async () => {
+        const raw = await findRelatedListedResources(categoryId, excludeId, take);
+        return attachResourceTrustSignals(raw.map(withPreview));
+      });
+    },
+    ["resource-related", categoryId, excludeId, String(take)],
+    {
+      revalidate: CACHE_TTLS.homepageList,
+      tags: [CACHE_TAGS.discover],
+    },
+  )();
 }
 
 function isResourceDetailPoolPressureError(error: unknown) {
