@@ -5,7 +5,12 @@ import { logAdminAction } from "@/lib/auditLogger";
 import { slugify } from "@/lib/utils";
 import { CACHE_TAGS, CACHE_TTLS } from "@/lib/cache";
 import { getOwnedDetailState } from "@/services/purchase.service";
-import { getResourceReviewDetailState } from "@/services/review.service";
+import {
+  getResourceReviews,
+  getResourceTrustSummary,
+  getResourceTrustSummaryWithPrefetchedSales,
+  getUserResourceReview,
+} from "@/services/review.service";
 import {
   createAdminResourceRecord,
   createDraftResourceRecord,
@@ -301,20 +306,41 @@ export async function getResourceDetailExtras(input: {
   relatedResourceIds: string[];
   userId?: string;
   reviewTake?: number;
+  resourceSalesCount?: number | null;
 }) {
-  const { resourceId, relatedResourceIds, userId, reviewTake = 5 } = input;
+  const {
+    resourceId,
+    relatedResourceIds,
+    userId,
+    reviewTake = 5,
+    resourceSalesCount,
+  } = input;
 
-  const [ownership, reviewState] = await Promise.all([
-    getOwnedDetailState(userId, resourceId, relatedResourceIds),
-    getResourceReviewDetailState(resourceId, userId, reviewTake),
+  const ownershipPromise = getOwnedDetailState(userId, resourceId, relatedResourceIds);
+  const trustSummaryPromise =
+    typeof resourceSalesCount === "number"
+      ? getResourceTrustSummaryWithPrefetchedSales(resourceId, resourceSalesCount)
+      : getResourceTrustSummary(resourceId);
+  const reviewsPromise = getResourceReviews(resourceId, reviewTake);
+
+  const ownership = await ownershipPromise;
+  const viewerReviewPromise =
+    userId && ownership.isOwned
+      ? getUserResourceReview(userId, resourceId)
+      : Promise.resolve(null);
+
+  const [trustSummary, reviews, viewerReview] = await Promise.all([
+    trustSummaryPromise,
+    reviewsPromise,
+    viewerReviewPromise,
   ]);
 
   return {
     isOwned: ownership.isOwned,
     ownedRelatedIds: ownership.ownedRelatedIds,
-    trustSummary: reviewState.trustSummary,
-    reviews: reviewState.reviews,
-    viewerReview: reviewState.viewerReview,
+    trustSummary,
+    reviews,
+    viewerReview,
   };
 }
 

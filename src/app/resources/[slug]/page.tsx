@@ -267,6 +267,7 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
           getResourceDetailExtras({
             resourceId: resource.id,
             relatedResourceIds: relatedResources.map((related) => related.id),
+            resourceSalesCount: resource.resourceStat?.purchases ?? null,
             userId,
             reviewTake: 5,
           }),

@@ -121,6 +121,14 @@ export async function getUserResourceReview(userId: string, resourceId: string) 
   return findReviewByUserAndResource(userId, resourceId);
 }
 
+const getCachedResourceRatingSummary = unstable_cache(
+  async function _getCachedResourceRatingSummary(resourceId: string) {
+    return getResourceRatingSummary(resourceId);
+  },
+  ["resource-rating-summary"],
+  { revalidate: CACHE_TTLS.publicPage, tags: [CACHE_TAGS.discover] },
+);
+
 export async function getResourceReviewDetailState(
   resourceId: string,
   userId?: string,
@@ -136,6 +144,19 @@ export async function getResourceReviewDetailState(
     trustSummary,
     reviews,
     viewerReview,
+  };
+}
+
+export async function getResourceTrustSummaryWithPrefetchedSales(
+  resourceId: string,
+  totalSales: number,
+) {
+  const ratingSummary = await getCachedResourceRatingSummary(resourceId);
+
+  return {
+    averageRating: normalizeAverageRating(ratingSummary._avg.rating),
+    totalReviews: ratingSummary._count._all,
+    totalSales,
   };
 }
 

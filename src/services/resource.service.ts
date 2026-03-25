@@ -363,7 +363,22 @@ export async function getMarketplaceResources(filters: MarketplaceFilters) {
 
 /** Returns a fully-hydrated Resource row by slug, or null if not found. */
 export async function getResourceBySlug(slug: string) {
-  return findPublicResourceDetailBySlug(slug);
+  recordCacheCall("getResourceBySlug", { slug });
+
+  return unstable_cache(
+    async function _getResourceBySlug() {
+      recordCacheMiss("getResourceBySlug", { slug });
+      logPerformanceEvent("cache_execute:getResourceBySlug", {
+        slug,
+      });
+      return findPublicResourceDetailBySlug(slug);
+    },
+    ["public-resource-detail", slug],
+    {
+      revalidate: CACHE_TTLS.publicPage,
+      tags: [getResourceCacheTag(slug)],
+    },
+  )();
 }
 
 /** Returns related resources in the same category (excludes the current resource). */
