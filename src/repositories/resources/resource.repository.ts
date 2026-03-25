@@ -135,6 +135,7 @@ const RESOURCE_DETAIL_SELECT = {
     },
   },
   previews: {
+    take: 5,
     orderBy: { order: "asc" as const },
     select: {
       id: true,
@@ -156,6 +157,17 @@ const RESOURCE_DETAIL_SELECT = {
 const RESOURCE_METADATA_SELECT = {
   title: true,
   description: true,
+} as const;
+
+const RESOURCE_DETAIL_GALLERY_SELECT = {
+  previews: {
+    orderBy: { order: "asc" as const },
+    select: {
+      id: true,
+      imageUrl: true,
+      order: true,
+    },
+  },
 } as const;
 
 const RESOURCE_DETAIL_DEFERRED_CONTENT_SELECT = {
@@ -725,16 +737,51 @@ export async function countMarketplaceResources(where: Prisma.ResourceWhereInput
 }
 
 export async function findPublicResourceDetailBySlug(slug: string) {
-  return prisma.resource.findUnique({
-    where: { slug },
-    select: RESOURCE_DETAIL_SELECT,
-  });
+  const [resource, reviewAggregate] = await Promise.all([
+    prisma.resource.findUnique({
+      where: { slug },
+      select: RESOURCE_DETAIL_SELECT,
+    }),
+    prisma.review.aggregate({
+      where: {
+        isVisible: true,
+        resource: {
+          slug,
+          deletedAt: null,
+          status: "PUBLISHED",
+        },
+      },
+      _avg: {
+        rating: true,
+      },
+      _count: {
+        id: true,
+      },
+    }),
+  ]);
+
+  if (!resource) {
+    return null;
+  }
+
+  return {
+    ...resource,
+    averageRating: reviewAggregate._avg.rating ?? null,
+    visibleReviewCount: reviewAggregate._count.id ?? 0,
+  };
 }
 
 export async function findPublicResourceMetadataBySlug(slug: string) {
   return prisma.resource.findUnique({
     where: { slug },
     select: RESOURCE_METADATA_SELECT,
+  });
+}
+
+export async function findPublicResourceGalleryBySlug(slug: string) {
+  return prisma.resource.findUnique({
+    where: { slug },
+    select: RESOURCE_DETAIL_GALLERY_SELECT,
   });
 }
 

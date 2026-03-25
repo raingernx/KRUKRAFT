@@ -322,14 +322,21 @@ export async function getResourceDetailExtras(input: {
 export async function getResourceDetailTrustSummary(input: {
   resourceId: string;
   resourceSalesCount?: number | null;
+  resourceAverageRating?: number | null;
+  resourceTotalReviews?: number | null;
 }) {
   const {
     resourceId,
     resourceSalesCount,
+    resourceAverageRating,
+    resourceTotalReviews,
   } = input;
 
   return typeof resourceSalesCount === "number"
-    ? getResourceTrustSummaryWithPrefetchedSales(resourceId, resourceSalesCount)
+    ? getResourceTrustSummaryWithPrefetchedSales(resourceId, resourceSalesCount, {
+        averageRating: resourceAverageRating ?? null,
+        totalReviews: resourceTotalReviews ?? 0,
+      })
     : getResourceTrustSummary(resourceId);
 }
 

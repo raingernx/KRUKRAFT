@@ -1101,38 +1101,39 @@ async function DiscoverPersonalisedContent({
   globalFiltered: ResourceCardData[];
   recommendationVariant: RecommendationVariant | null;
 }) {
-  const [becauseYouStudied, recommendedForLevel, recommendedForYou] = await Promise.all([
-    recentCategoryId
+  const becauseYouStudiedPromise = recentCategoryId
       ? getCachedNewResourcesInCategories([recentCategoryId], 8).then((resources) =>
           resources.filter((resource) => !ownedIds.has(resource.id)).slice(0, 5),
         )
-      : Promise.resolve([] as ResourceCardData[]),
-    personalizedLevelIds.length > 0
+      : Promise.resolve([] as ResourceCardData[]);
+  const recommendedForLevelPromise = personalizedLevelIds.length > 0
       ? getCachedRecommendedResourcesByLevels(personalizedLevelIds, 6).then((resources) =>
           resources.filter((resource) => !ownedIds.has(resource.id)).slice(0, 4),
         )
-      : Promise.resolve([] as ResourceCardData[]),
-    recommendationVariant === "phase1"
+      : Promise.resolve([] as ResourceCardData[]);
+  const recommendedForYouPromise: Promise<ResourceCardData[]> =
+    (recommendationVariant === "phase1"
       ? getPhase1Recommendations(topCategoryIds, ownedIds, globalFiltered, 5)
-      : getBehaviorBasedRecommendations(userId, ownedIds, topCategoryIds, globalFiltered, 5),
+      : getBehaviorBasedRecommendations(
+          userId,
+          ownedIds,
+          topCategoryIds,
+          globalFiltered,
+          5,
+        )) as Promise<ResourceCardData[]>;
+  const [becauseYouStudied, recommendedForLevel] = await Promise.all([
+    becauseYouStudiedPromise,
+    recommendedForLevelPromise,
   ]);
 
-  if (recommendationVariant && (recommendedForYou as ResourceCardData[]).length > 0) {
-    void recordAnalyticsEvents(
-      (recommendedForYou as ResourceCardData[]).map((resource, position) => ({
-        eventType: "RESOURCE_VIEW" as const,
-        userId,
-        resourceId: resource.id,
-        metadata: {
-          source: "recommendation_impression",
-          experiment: RECOMMENDATION_EXPERIMENT_ID,
-          variant: recommendationVariant,
-          section: "recommended_for_you",
-          position,
-        },
-      })),
-    ).catch(() => undefined);
-  }
+  const recommendedForYouSectionPromise = trackRequestWork(
+    RecommendedForYouSection({
+      ownedIds,
+      recommendationVariant,
+      recommendedForYouPromise,
+      userId,
+    }),
+  );
 
   return (
     <>
@@ -1182,32 +1183,71 @@ async function DiscoverPersonalisedContent({
         </section>
       ) : null}
 
-      {(recommendedForYou as ResourceCardData[]).length > 0 ? (
-        <section className="space-y-5">
-          <SectionHeader
-            title="Recommended for you"
-            description="A focused set of picks to help you keep momentum without sorting through the whole library."
-            viewAllHref="/resources?sort=trending&category=all"
-          />
-          <RecommendationSection
-            variant={recommendationVariant}
-            section="recommended_for_you"
-          >
-            <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-              {(recommendedForYou as ResourceCardData[]).map((resource) => (
-                <div key={resource.id} data-resource-id={resource.id}>
-                  <ResourceCard
-                    resource={resource}
-                    variant="marketplace"
-                    owned={ownedIds.has(resource.id)}
-                  />
-                </div>
-              ))}
-            </div>
-          </RecommendationSection>
-        </section>
-      ) : null}
+      <Suspense fallback={null}>
+        <AwaitResolvedNode promise={recommendedForYouSectionPromise} />
+      </Suspense>
     </>
+  );
+}
+
+async function RecommendedForYouSection({
+  ownedIds,
+  recommendationVariant,
+  recommendedForYouPromise,
+  userId,
+}: {
+  ownedIds: Set<string>;
+  recommendationVariant: RecommendationVariant | null;
+  recommendedForYouPromise: Promise<ResourceCardData[]>;
+  userId: string;
+}) {
+  const recommendedForYou = await recommendedForYouPromise;
+
+  if (recommendationVariant && recommendedForYou.length > 0) {
+    void recordAnalyticsEvents(
+      recommendedForYou.map((resource, position) => ({
+        eventType: "RESOURCE_VIEW" as const,
+        userId,
+        resourceId: resource.id,
+        metadata: {
+          source: "recommendation_impression",
+          experiment: RECOMMENDATION_EXPERIMENT_ID,
+          variant: recommendationVariant,
+          section: "recommended_for_you",
+          position,
+        },
+      })),
+    ).catch(() => undefined);
+  }
+
+  if (recommendedForYou.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="space-y-5">
+      <SectionHeader
+        title="Recommended for you"
+        description="A focused set of picks to help you keep momentum without sorting through the whole library."
+        viewAllHref="/resources?sort=trending&category=all"
+      />
+      <RecommendationSection
+        variant={recommendationVariant}
+        section="recommended_for_you"
+      >
+        <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+          {recommendedForYou.map((resource) => (
+            <div key={resource.id} data-resource-id={resource.id}>
+              <ResourceCard
+                resource={resource}
+                variant="marketplace"
+                owned={ownedIds.has(resource.id)}
+              />
+            </div>
+          ))}
+        </div>
+      </RecommendationSection>
+    </section>
   );
 }
 

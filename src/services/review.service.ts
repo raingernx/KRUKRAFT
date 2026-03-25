@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import {
   createReviewRecord,
@@ -41,6 +42,30 @@ function normalizeAverageRating(value: number | null | undefined) {
   }
 
   return Math.round(value * 10) / 10;
+}
+
+function isTransientTrustEnrichmentError(error: unknown) {
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === "P2024"
+  ) {
+    return true;
+  }
+
+  if (
+    error instanceof Prisma.PrismaClientInitializationError ||
+    error instanceof Prisma.PrismaClientUnknownRequestError
+  ) {
+    return true;
+  }
+
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes("Timed out fetching a new connection from the connection pool") ||
+    message.includes("Can't reach database server") ||
+    message.includes("Error in PostgreSQL connection") ||
+    message.includes("kind: Closed")
+  );
 }
 
 async function requireAdminReviewer(adminUserId: string) {
@@ -180,7 +205,19 @@ export async function getResourceReviewDetailState(
 export async function getResourceTrustSummaryWithPrefetchedSales(
   resourceId: string,
   totalSales: number,
+  prefetchedReviewSummary?: {
+    averageRating: number | null;
+    totalReviews: number;
+  },
 ) {
+  if (prefetchedReviewSummary) {
+    return {
+      averageRating: normalizeAverageRating(prefetchedReviewSummary.averageRating),
+      totalReviews: prefetchedReviewSummary.totalReviews,
+      totalSales,
+    };
+  }
+
   const ratingSummary = await getCachedResourceRatingSummary(resourceId);
 
   return {
@@ -305,10 +342,26 @@ export async function attachResourceTrustSignals<T extends { id: string }>(resou
 
   const resourceIds = Array.from(new Set(resources.map((resource) => resource.id)));
 
-  const [ratingSummaries, salesCounts] = await Promise.all([
-    getResourceRatingSummaries(resourceIds),
-    findCompletedSalesCountsByResourceIds(resourceIds),
-  ]);
+  let ratingSummaries;
+  let salesCounts;
+
+  try {
+    [ratingSummaries, salesCounts] = await Promise.all([
+      getResourceRatingSummaries(resourceIds),
+      findCompletedSalesCountsByResourceIds(resourceIds),
+    ]);
+  } catch (error) {
+    if (!isTransientTrustEnrichmentError(error)) {
+      throw error;
+    }
+
+    return resources.map((resource) => ({
+      ...resource,
+      rating: null,
+      reviewCount: 0,
+      salesCount: 0,
+    }));
+  }
 
   const ratingsByResourceId = new Map(
     ratingSummaries.map((row) => [
