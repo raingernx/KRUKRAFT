@@ -1,0 +1,62 @@
+name: Post-Deploy Warm Cache
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: post-deploy-warm-cache-production
+  cancel-in-progress: true
+
+jobs:
+  warm-public-cache:
+    name: Warm Public Cache
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PRODUCTION_BASE_URL: https://krucrafts.com
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Wait For Production To Go Live
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          url="${PRODUCTION_BASE_URL%/}/resources"
+          max_attempts=30
+          sleep_seconds=10
+
+          echo "[post-deploy-warm] Waiting for ${url} to return success"
+
+          for attempt in $(seq 1 "$max_attempts"); do
+            status="$(curl -A 'KruCraft-Warmup/1.0' -s -o /dev/null -w '%{http_code}' "$url" || true)"
+
+            if [ "$status" -ge 200 ] && [ "$status" -lt 400 ]; then
+              echo "[post-deploy-warm] Production is live (status ${status})"
+              exit 0
+            fi
+
+            echo "[post-deploy-warm] Attempt ${attempt}/${max_attempts} not ready yet (status: ${status:-ERR})"
+            sleep "$sleep_seconds"
+          done
+
+          echo "[post-deploy-warm] Timed out waiting for production deployment to go live"
+          exit 1
+
+      - name: Warm Public Routes
+        env:
+          BASE_URL: ${{ env.PRODUCTION_BASE_URL }}
+        run: npm run warm:cache
