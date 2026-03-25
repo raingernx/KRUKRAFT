@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { authOptions } from "@/lib/auth";
 import { isMissingTableError } from "@/lib/prismaErrors";
 import { logActivity } from "@/lib/activity";
@@ -248,6 +248,8 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
         () => getOptionalSession(),
         { slug },
       );
+      const requestHeaders = await headers();
+      const userAgent = requestHeaders.get("user-agent");
       const userId = session?.user?.id;
       updateRequestPerformanceDetails({
         hasSession: Boolean(userId),
@@ -294,6 +296,7 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
     action: "RESOURCE_VIEW",
     entity: "Resource",
     entityId: resource.id,
+    userAgent,
     metadata: {
       slug: resource.slug,
       title: resource.title,

@@ -38,6 +38,11 @@ export interface LogActivityOptions {
 // from activityLogger and switched to activity.ts still compiles.
 export type { LogActivityOptions as ActivityLogOptions };
 
+const SYNTHETIC_ACTIVITY_USER_AGENTS = [
+  /^KruCraft-Warmup\/1\.0/i,
+  /^k6\//i,
+] as const;
+
 function toActivityMetadata(
   value: Record<string, unknown> | null | undefined,
 ): Prisma.InputJsonObject | undefined {
@@ -46,6 +51,62 @@ function toActivityMetadata(
   }
 
   return value as Prisma.InputJsonObject;
+}
+
+export function isSyntheticActivityUserAgent(userAgent?: string | null) {
+  if (!userAgent) {
+    return false;
+  }
+
+  return SYNTHETIC_ACTIVITY_USER_AGENTS.some((pattern) => pattern.test(userAgent));
+}
+
+function isActivityLogDatabaseError(error: unknown) {
+  if (
+    error instanceof Prisma.PrismaClientInitializationError ||
+    error instanceof Prisma.PrismaClientUnknownRequestError
+  ) {
+    return true;
+  }
+
+  const message = error instanceof Error ? error.message : String(error);
+
+  return (
+    message.includes("Can't reach database server") ||
+    message.includes("Error in PostgreSQL connection") ||
+    message.includes("kind: Closed")
+  );
+}
+
+function getActivityErrorSummary(error: unknown) {
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    return {
+      name: error.name,
+      code: error.code,
+      message: error.message,
+    };
+  }
+
+  if (
+    error instanceof Prisma.PrismaClientInitializationError ||
+    error instanceof Prisma.PrismaClientUnknownRequestError
+  ) {
+    return {
+      name: error.name,
+      message: error.message,
+    };
+  }
+
+  if (error instanceof Error) {
+    return {
+      name: error.name,
+      message: error.message,
+    };
+  }
+
+  return {
+    message: String(error),
+  };
 }
 
 export async function logActivity({
@@ -62,6 +123,10 @@ export async function logActivity({
   // Normalise: prefer the canonical name, fall back to the legacy alias
   const resolvedEntity = entity ?? entityType ?? undefined;
   const resolvedMetadata = toActivityMetadata(metadata ?? meta ?? undefined);
+
+  if (isSyntheticActivityUserAgent(userAgent)) {
+    return;
+  }
 
   try {
     await prisma.activityLog.create({
@@ -102,7 +167,20 @@ export async function logActivity({
       }
       return;
     }
-    // Unexpected DB error — still worth surfacing.
-    console.error("[ACTIVITY_LOG_ERROR]", err);
+
+    const errorSummary = {
+      action,
+      entity: resolvedEntity ?? null,
+      entityId: entityId ?? null,
+      userIdPresent: Boolean(userId),
+      ...getActivityErrorSummary(err),
+    };
+
+    if (isActivityLogDatabaseError(err)) {
+      console.warn("[ACTIVITY_LOG_WARN]", errorSummary);
+      return;
+    }
+
+    console.error("[ACTIVITY_LOG_ERROR]", errorSummary);
   }
 }

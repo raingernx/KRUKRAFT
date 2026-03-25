@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 
 // force-dynamic removed: neither getPlatform() nor getTypographySettingsOrDefault()
 // access request-specific data (cookies/headers/session). Both are wrapped in
@@ -69,6 +70,7 @@ export default async function RootLayout({
             </Providers>
           </ThemeProvider>
         </PlatformConfigProvider>
+        <Analytics />
       </body>
     </html>
   );

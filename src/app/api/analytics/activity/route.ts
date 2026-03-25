@@ -49,6 +49,7 @@ export async function POST(req: Request) {
     userId,
     action,
     metadata: metadata ?? null,
+    userAgent: req.headers.get("user-agent"),
   });
 
   return respond();
