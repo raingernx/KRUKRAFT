@@ -255,9 +255,9 @@ async function loadMarketplaceResources(filters: NormalizedMarketplaceFilters) {
       findCategoriesOrderedByName(),
     ]);
 
-    const resources = await attachResourceTrustSignals(
-      rows.map((row) => withPreview(toActivationRankedCardShape(row))),
-    );
+    // Recommended listing cards can render without trust metadata, so avoid
+    // blocking the strict first render on batched review/sales enrichment.
+    const resources = rows.map((row) => withPreview(toActivationRankedCardShape(row)));
 
     return {
       resources,
