@@ -8,6 +8,13 @@ import {
 
 const GLOBAL_SINGLETON_KEY = "global";
 
+const DEFAULT_PLATFORM_TYPOGRAPHY_RECORD: PlatformTypographySettingsRecord = {
+  id: GLOBAL_SINGLETON_KEY,
+  createdAt: new Date(0),
+  updatedAt: new Date(0),
+  ...normalizePlatformTypographySettingsInput(DEFAULT_PLATFORM_TYPOGRAPHY_SETTINGS),
+};
+
 function toRecord(
   record: Awaited<ReturnType<typeof prisma.platformTypographySettings.findFirstOrThrow>>,
 ): PlatformTypographySettingsRecord {
@@ -68,16 +75,11 @@ function toData(input: PlatformTypographySettingsInput) {
 }
 
 export async function getPlatformTypographySettings(): Promise<PlatformTypographySettingsRecord> {
-  const settings = await prisma.platformTypographySettings.upsert({
+  const settings = await prisma.platformTypographySettings.findUnique({
     where: { singletonKey: GLOBAL_SINGLETON_KEY },
-    update: {},
-    create: {
-      singletonKey: GLOBAL_SINGLETON_KEY,
-      ...toData(DEFAULT_PLATFORM_TYPOGRAPHY_SETTINGS),
-    },
   });
 
-  return toRecord(settings);
+  return settings ? toRecord(settings) : DEFAULT_PLATFORM_TYPOGRAPHY_RECORD;
 }
 
 export async function updatePlatformTypographySettings(

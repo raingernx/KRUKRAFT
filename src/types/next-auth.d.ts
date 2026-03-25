@@ -27,6 +27,6 @@ declare module "next-auth/jwt" {
     id?: string;
     role?: AppUserRole;
     subscriptionStatus?: string;
+    roleRefreshedAt?: number;
   }
 }
-

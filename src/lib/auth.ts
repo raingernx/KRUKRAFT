@@ -122,22 +122,45 @@ export const authOptions: NextAuthOptions = {
     // Persist role + id in the JWT, keeping them in sync with the DB via
     // the in-memory role cache (max one DB call per user per 60 seconds).
     async jwt({ token, user }) {
+      const now = Date.now();
+
       // On first sign-in `user` is populated — write to cache immediately.
       if (user) {
         token.id = user.id;
-        token.role = user.role as AppUserRole;
-        setCachedRole(user.id!, user.role as AppUserRole, null);
+        token.role =
+          (user.role as AppUserRole | undefined) ??
+          (token.role as AppUserRole | undefined) ??
+          "STUDENT";
+        token.subscriptionStatus =
+          user.subscriptionStatus ?? token.subscriptionStatus ?? undefined;
+        token.roleRefreshedAt = now;
+        setCachedRole(user.id!, token.role, token.subscriptionStatus ?? null);
       }
 
       // On every subsequent token refresh check the cache first.
       if (token.id) {
         const userId = token.id as string;
+        const hasFreshTokenRole =
+          typeof token.role === "string" &&
+          typeof token.roleRefreshedAt === "number" &&
+          now - token.roleRefreshedAt < JWT_ROLE_CACHE_TTL_MS;
+
+        if (hasFreshTokenRole) {
+          setCachedRole(
+            userId,
+            token.role as AppUserRole,
+            token.subscriptionStatus ?? null,
+          );
+          return token;
+        }
+
         const cached = getCachedRole(userId);
 
         if (cached) {
           // Cache hit — no DB round trip needed.
           token.role = cached.role;
           token.subscriptionStatus = cached.subscriptionStatus ?? undefined;
+          token.roleRefreshedAt = now;
         } else {
           // Cache miss — query the DB and refresh the cache.
           try {
@@ -148,6 +171,7 @@ export const authOptions: NextAuthOptions = {
             if (dbUser) {
               token.role = dbUser.role;
               token.subscriptionStatus = dbUser.subscriptionStatus ?? undefined;
+              token.roleRefreshedAt = now;
               setCachedRole(userId, dbUser.role, dbUser.subscriptionStatus);
             }
           } catch (error) {

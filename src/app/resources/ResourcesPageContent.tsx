@@ -345,7 +345,43 @@ async function ResourcesDiscoverContent({ userId }: { userId?: string }) {
   const discoverDataPromise = trackRequestWork(loadDiscoverDataSafe());
   const ownedIdsPromise = trackRequestWork(loadOwnedIdsSafe(userId));
   const learningProfilePromise = trackRequestWork(loadLearningProfileSafe(userId));
+  const introPromise = trackRequestWork(
+    DiscoverIntroDeferred({ discoverCategoriesPromise }),
+  );
+  const browsePromise = trackRequestWork(
+    DiscoverCategoryBrowseSection({ discoverCategoriesPromise }),
+  );
+  const sectionsPromise = trackRequestWork(
+    ResourcesDiscoverDeferredSections({
+      discoverDataPromise,
+      ownedIdsPromise,
+      learningProfilePromise,
+      userId,
+    }),
+  );
 
+  return (
+    <>
+      <Suspense fallback={<ResourcesIntroSectionSkeleton isDiscoverMode />}>
+        <AwaitResolvedNode promise={introPromise} />
+      </Suspense>
+
+      <Suspense fallback={<CategoryBrowseSectionFallback />}>
+        <AwaitResolvedNode promise={browsePromise} />
+      </Suspense>
+
+      <Suspense fallback={<DiscoverSectionsFallback />}>
+        <AwaitResolvedNode promise={sectionsPromise} />
+      </Suspense>
+    </>
+  );
+}
+
+async function DiscoverIntroDeferred({
+  discoverCategoriesPromise,
+}: {
+  discoverCategoriesPromise: Promise<DiscoverCategoriesWithCount>;
+}) {
   const discoverCategoriesWithCount = await discoverCategoriesPromise;
   const categories = discoverCategoriesWithCount.map((item) => ({
     id: item.id,
@@ -358,23 +394,11 @@ async function ResourcesDiscoverContent({ userId }: { userId?: string }) {
   );
 
   return (
-    <>
-      <DiscoverIntroSection
-        categories={categories as ChipCategory[]}
-        categoryCount={discoverCategoriesWithCount.length}
-        resourceCount={discoverResourceCount}
-      />
-
-      <Suspense fallback={<DiscoverSectionsFallback />}>
-        <ResourcesDiscoverDeferredSections
-          discoverCategoriesPromise={discoverCategoriesPromise}
-          discoverDataPromise={discoverDataPromise}
-          ownedIdsPromise={ownedIdsPromise}
-          learningProfilePromise={learningProfilePromise}
-          userId={userId}
-        />
-      </Suspense>
-    </>
+    <DiscoverIntroSection
+      categories={categories as ChipCategory[]}
+      categoryCount={discoverCategoriesWithCount.length}
+      resourceCount={discoverResourceCount}
+    />
   );
 }
 
@@ -427,20 +451,17 @@ function DiscoverIntroSection({
 }
 
 async function ResourcesDiscoverDeferredSections({
-  discoverCategoriesPromise,
   discoverDataPromise,
   ownedIdsPromise,
   learningProfilePromise,
   userId,
 }: {
-  discoverCategoriesPromise: Promise<DiscoverCategoriesWithCount>;
   discoverDataPromise: Promise<DiscoverData | null>;
   ownedIdsPromise: Promise<Set<string>>;
   learningProfilePromise: Promise<Awaited<ReturnType<typeof getUserLearningProfile>> | null>;
   userId?: string;
 }) {
-  const [discoverCategoriesWithCount, discoverData, ownedIds, learningProfile] = await Promise.all([
-    discoverCategoriesPromise,
+  const [discoverData, ownedIds, learningProfile] = await Promise.all([
     discoverDataPromise,
     ownedIdsPromise,
     learningProfilePromise,
@@ -476,50 +497,6 @@ async function ResourcesDiscoverDeferredSections({
 
   return (
     <div className="space-y-16 lg:space-y-20">
-      {discoverCategoriesWithCount.length > 0 ? (
-        <section className="space-y-6">
-          <div className="space-y-1.5">
-            <h2 className="text-xl font-semibold tracking-tight text-text-primary">
-              Browse by category
-            </h2>
-            <p className="max-w-2xl text-sm leading-6 text-text-secondary">
-              Jump straight into curated collections with the clearest entry point for each subject area.
-            </p>
-          </div>
-          <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-            {discoverCategoriesWithCount.map((cat) => {
-              const Icon = getCategoryIcon(cat.slug);
-              const color = getCategoryColor(cat.slug);
-              const href = `/resources?category=${encodeURIComponent(cat.slug)}`;
-
-              return (
-                <CategoryBrowseCardLink
-                  key={cat.id}
-                  href={href}
-                  className="group block rounded-[22px] border border-surface-200 bg-white p-5 transition-colors duration-150 hover:border-surface-300"
-                >
-                  <div className="flex items-center gap-4">
-                    <span
-                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${color.bg} ${color.text}`}
-                    >
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <span className="block text-sm font-semibold text-zinc-900 transition-colors group-hover:text-brand-700">
-                        {cat.name}
-                      </span>
-                      <span className="mt-1 block text-[13px] text-zinc-500">
-                        {formatNumber(cat._count.resources)} resources
-                      </span>
-                    </div>
-                  </div>
-                </CategoryBrowseCardLink>
-              );
-            })}
-          </div>
-        </section>
-      ) : null}
-
       {discoverData.trending.length > 0 ? (
         <section className="space-y-5">
           <SectionHeader
@@ -690,6 +667,62 @@ async function ResourcesDiscoverDeferredSections({
       <BlogSection />
       <EmailSignup />
     </div>
+  );
+}
+
+async function DiscoverCategoryBrowseSection({
+  discoverCategoriesPromise,
+}: {
+  discoverCategoriesPromise: Promise<DiscoverCategoriesWithCount>;
+}) {
+  const discoverCategoriesWithCount = await discoverCategoriesPromise;
+
+  if (discoverCategoriesWithCount.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="space-y-6">
+      <div className="space-y-1.5">
+        <h2 className="text-xl font-semibold tracking-tight text-text-primary">
+          Browse by category
+        </h2>
+        <p className="max-w-2xl text-sm leading-6 text-text-secondary">
+          Jump straight into curated collections with the clearest entry point for each subject area.
+        </p>
+      </div>
+      <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+        {discoverCategoriesWithCount.map((cat) => {
+          const Icon = getCategoryIcon(cat.slug);
+          const color = getCategoryColor(cat.slug);
+          const href = `/resources?category=${encodeURIComponent(cat.slug)}`;
+
+          return (
+            <CategoryBrowseCardLink
+              key={cat.id}
+              href={href}
+              className="group block rounded-[22px] border border-surface-200 bg-white p-5 transition-colors duration-150 hover:border-surface-300"
+            >
+              <div className="flex items-center gap-4">
+                <span
+                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${color.bg} ${color.text}`}
+                >
+                  <Icon className="h-5 w-5" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold text-zinc-900 transition-colors group-hover:text-brand-700">
+                    {cat.name}
+                  </span>
+                  <span className="mt-1 block text-[13px] text-zinc-500">
+                    {formatNumber(cat._count.resources)} resources
+                  </span>
+                </div>
+              </div>
+            </CategoryBrowseCardLink>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -898,24 +931,28 @@ function SidebarFallback() {
 function DiscoverSectionsFallback() {
   return (
     <div className="space-y-16 lg:space-y-20">
-      <section className="space-y-6">
-        <div className="space-y-1.5">
-          <div className="h-6 w-40 animate-pulse rounded bg-surface-100" />
-          <div className="h-4 w-80 animate-pulse rounded bg-surface-100" />
-        </div>
-        <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-[72px] animate-pulse rounded-[24px] border border-surface-200 bg-white"
-            />
-          ))}
-        </div>
-      </section>
-
       <DeferredSectionFallback titleWidth="w-32" cardCount={4} />
       <DeferredSectionFallback titleWidth="w-40" cardCount={4} />
     </div>
+  );
+}
+
+function CategoryBrowseSectionFallback() {
+  return (
+    <section className="space-y-6">
+      <div className="space-y-1.5">
+        <div className="h-6 w-40 animate-pulse rounded bg-surface-100" />
+        <div className="h-4 w-80 animate-pulse rounded bg-surface-100" />
+      </div>
+      <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div
+            key={index}
+            className="h-[72px] animate-pulse rounded-[24px] border border-surface-200 bg-white"
+          />
+        ))}
+      </div>
+    </section>
   );
 }
 
