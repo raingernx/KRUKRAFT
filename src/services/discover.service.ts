@@ -11,11 +11,17 @@
 
 import { unstable_cache } from "next/cache";
 import { calculateTrendingScore } from "@/analytics/aggregation.service";
-import { CACHE_KEYS, CACHE_TTLS, rememberJson } from "@/lib/cache";
+import {
+  CACHE_KEYS,
+  CACHE_TTLS,
+  rememberJson,
+  runSingleFlight,
+} from "@/lib/cache";
 import {
   logPerformanceEvent,
   recordCacheCall,
   recordCacheMiss,
+  traceServerStep,
 } from "@/lib/performance/observability";
 import { attachResourceTrustSignals } from "@/services/review.service";
 import { resolveHomepageHero } from "@/services/heroes/hero.resolver";
@@ -36,6 +42,7 @@ import {
 
 const DAY_MS = 86_400_000;
 const TRENDING_WINDOW_DAYS = 30;
+const DISCOVER_DATA_SINGLE_FLIGHT_KEY = "discover-data:refresh";
 
 // ── Preview normaliser ────────────────────────────────────────────────────────
 
@@ -62,31 +69,45 @@ async function getTrendingResourceIds(limit = 8) {
     `${CACHE_KEYS.trendingResources}:${limit}`,
     CACHE_TTLS.homepageList,
     async () => {
-      const since = new Date(Date.now() - DAY_MS * TRENDING_WINDOW_DAYS);
-      const candidates = await findTrendingResourceSignals(since, Math.max(limit * 4, 24));
+      return traceServerStep(
+        "discover.getTrendingResourceIds",
+        async () => {
+          const since = new Date(Date.now() - DAY_MS * TRENDING_WINDOW_DAYS);
+          const candidates = await traceServerStep(
+            "discover.findTrendingResourceSignals",
+            () => findTrendingResourceSignals(since, Math.max(limit * 4, 24)),
+            { candidateLimit: Math.max(limit * 4, 24) },
+          );
 
-      if (candidates.length === 0) {
-        return findTopTrendingResourceIds(limit);
-      }
+          if (candidates.length === 0) {
+            return traceServerStep(
+              "discover.findTopTrendingResourceIdsFallback",
+              () => findTopTrendingResourceIds(limit),
+              { limit },
+            );
+          }
 
-      return candidates
-        .map((candidate) => ({
-          resourceId: candidate.resourceId,
-          trendScore: calculateTrendingScore({
-            recentDownloads: candidate.recentDownloads,
-            recentSales: candidate.recentSales,
-            recentRevenue: candidate.recentRevenue,
-            averageRating: candidate.averageRating,
-            reviewCount: candidate.reviewCount,
-            ageInDays: Math.max(
-              0,
-              (Date.now() - candidate.publishedAt.getTime()) / DAY_MS,
-            ),
-          }),
-        }))
-        .sort((left, right) => right.trendScore - left.trendScore)
-        .slice(0, limit)
-        .map((row) => row.resourceId);
+          return candidates
+            .map((candidate) => ({
+              resourceId: candidate.resourceId,
+              trendScore: calculateTrendingScore({
+                recentDownloads: candidate.recentDownloads,
+                recentSales: candidate.recentSales,
+                recentRevenue: candidate.recentRevenue,
+                averageRating: candidate.averageRating,
+                reviewCount: candidate.reviewCount,
+                ageInDays: Math.max(
+                  0,
+                  (Date.now() - candidate.publishedAt.getTime()) / DAY_MS,
+                ),
+              }),
+            }))
+            .sort((left, right) => right.trendScore - left.trendScore)
+            .slice(0, limit)
+            .map((row) => row.resourceId);
+        },
+        { limit },
+      );
     },
   );
 }
@@ -119,88 +140,110 @@ const readDiscoverData = unstable_cache(
   async function _getDiscoverData() {
     recordCacheMiss("getDiscoverData");
     logPerformanceEvent("cache_execute:getDiscoverData");
-    const [
-      trendingIds,
-      popularIdsFromStats,
-      newestIdsFromStats,
-      featuredIdsFromStats,
-      freeIdsFromStats,
-      topCreator,
-    ] = await Promise.all([
-      getTrendingResourceIds(8),
-      rememberJson(CACHE_KEYS.popularResources, CACHE_TTLS.homepageList, () =>
-        findTopDownloadedResourceIds(8),
-      ),
-      rememberJson(CACHE_KEYS.newestResources, CACHE_TTLS.homepageList, () =>
-        findNewestResourceIds(8),
-      ),
-      rememberJson(CACHE_KEYS.featuredResources, CACHE_TTLS.homepageList, () =>
-        findFeaturedResourceIds(8),
-      ),
-      rememberJson(CACHE_KEYS.freeResources, CACHE_TTLS.homepageList, () =>
-        findFreeResourceIds(8),
-      ),
-      rememberJson(CACHE_KEYS.topCreator, CACHE_TTLS.homepageList, () =>
-        findTopCreatorThisWeek(),
-      ),
-    ]);
+    return runSingleFlight(DISCOVER_DATA_SINGLE_FLIGHT_KEY, async () => {
+      const [
+        trendingIds,
+        popularIdsFromStats,
+        newestIdsFromStats,
+        featuredIdsFromStats,
+        freeIdsFromStats,
+        topCreator,
+      ] = await traceServerStep(
+        "discover.loadSectionSources",
+        () =>
+          Promise.all([
+            getTrendingResourceIds(8),
+            rememberJson(CACHE_KEYS.popularResources, CACHE_TTLS.homepageList, () =>
+              findTopDownloadedResourceIds(8),
+            ),
+            rememberJson(CACHE_KEYS.newestResources, CACHE_TTLS.homepageList, () =>
+              findNewestResourceIds(8),
+            ),
+            rememberJson(CACHE_KEYS.featuredResources, CACHE_TTLS.homepageList, () =>
+              findFeaturedResourceIds(8),
+            ),
+            rememberJson(CACHE_KEYS.freeResources, CACHE_TTLS.homepageList, () =>
+              findFreeResourceIds(8),
+            ),
+            rememberJson(CACHE_KEYS.topCreator, CACHE_TTLS.homepageList, () =>
+              findTopCreatorThisWeek(),
+            ),
+          ]),
+        { sectionLimit: 8 },
+      );
 
-    const [popularIds, newestIds, featuredIds, freeIds] = await Promise.all([
-      popularIdsFromStats.length > 0
-        ? popularIdsFromStats
-        : findDiscoverFallbackResourceIds(8, [{ downloadCount: "desc" }, { createdAt: "desc" }]),
-      newestIdsFromStats.length > 0
-        ? newestIdsFromStats
-        : findDiscoverFallbackResourceIds(8, { createdAt: "desc" }),
-      featuredIdsFromStats.length > 0
-        ? featuredIdsFromStats
-        : findDiscoverFallbackResourceIds(8, [{ downloadCount: "desc" }, { createdAt: "desc" }], {
-            featured: true,
-          }),
-      freeIdsFromStats.length > 0
-        ? freeIdsFromStats
-        : findDiscoverFallbackResourceIds(8, [{ downloadCount: "desc" }, { createdAt: "desc" }], {
-            isFree: true,
-          }),
-    ]);
+      const [popularIds, newestIds, featuredIds, freeIds] = await traceServerStep(
+        "discover.resolveFallbackSectionIds",
+        () =>
+          Promise.all([
+            popularIdsFromStats.length > 0
+              ? Promise.resolve(popularIdsFromStats)
+              : findDiscoverFallbackResourceIds(8, [
+                  { downloadCount: "desc" },
+                  { createdAt: "desc" },
+                ]),
+            newestIdsFromStats.length > 0
+              ? Promise.resolve(newestIdsFromStats)
+              : findDiscoverFallbackResourceIds(8, { createdAt: "desc" }),
+            featuredIdsFromStats.length > 0
+              ? Promise.resolve(featuredIdsFromStats)
+              : findDiscoverFallbackResourceIds(
+                  8,
+                  [{ downloadCount: "desc" }, { createdAt: "desc" }],
+                  { featured: true },
+                ),
+            freeIdsFromStats.length > 0
+              ? Promise.resolve(freeIdsFromStats)
+              : findDiscoverFallbackResourceIds(
+                  8,
+                  [{ downloadCount: "desc" }, { createdAt: "desc" }],
+                  { isFree: true },
+                ),
+          ]),
+      );
 
-    const resourceIds = Array.from(
-      new Set([
-        ...trendingIds,
-        ...popularIds,
-        ...newestIds,
-        ...featuredIds,
-        ...freeIds,
-      ]),
-    );
+      const resourceIds = Array.from(
+        new Set([
+          ...trendingIds,
+          ...popularIds,
+          ...newestIds,
+          ...featuredIds,
+          ...freeIds,
+        ]),
+      );
 
-    const pool = await loadDiscoverResourcesByIds(resourceIds);
+      const pool = await traceServerStep(
+        "discover.loadSectionResourcePool",
+        () => loadDiscoverResourcesByIds(resourceIds),
+        { resourceCount: resourceIds.length },
+      );
 
-    const mapSection = (ids: string[]) =>
-      ids
-        .map((id) => pool.get(id))
-        .filter((resource): resource is NonNullable<typeof resource> =>
-          Boolean(resource),
-        )
-        .map(withPreview);
+      const mapSection = (ids: string[]) =>
+        ids
+          .map((id) => pool.get(id))
+          .filter((resource): resource is NonNullable<typeof resource> =>
+            Boolean(resource),
+          )
+          .map(withPreview);
 
-    const trendingResources = mapSection(trendingIds);
-    const trending = trendingResources.slice(0, 5);
-    const newReleases = mapSection(newestIds).slice(0, 5);
-    const featured = mapSection(featuredIds).slice(0, 5);
-    const freeResources = mapSection(freeIds).slice(0, 5);
-    const mostDownloaded = mapSection(popularIds).slice(0, 5);
-    const recommended = trendingResources.slice(0, 8);
+      const trendingResources = mapSection(trendingIds);
+      const trending = trendingResources.slice(0, 5);
+      const newReleases = mapSection(newestIds).slice(0, 5);
+      const featured = mapSection(featuredIds).slice(0, 5);
+      const freeResources = mapSection(freeIds).slice(0, 5);
+      const mostDownloaded = mapSection(popularIds).slice(0, 5);
+      const recommended = trendingResources.slice(0, 8);
 
-    return {
-      trending,
-      newReleases,
-      featured,
-      freeResources,
-      mostDownloaded,
-      recommended,
-      topCreator,
-    };
+      return {
+        trending,
+        newReleases,
+        featured,
+        freeResources,
+        mostDownloaded,
+        recommended,
+        topCreator,
+      };
+    });
   },
   ["discover-data"],
   { revalidate: CACHE_TTLS.homepageList, tags: ["discover"] }
@@ -212,9 +255,17 @@ export async function getDiscoverData() {
 }
 
 async function loadDiscoverResourcesByIds(resourceIds: string[]) {
-  const rows = await findDiscoverResourcesByIds(resourceIds);
+  const rows = await traceServerStep(
+    "discover.findDiscoverResourcesByIds",
+    () => findDiscoverResourcesByIds(resourceIds),
+    { resourceCount: resourceIds.length },
+  );
 
-  const resources = await attachResourceTrustSignals(rows);
+  const resources = await traceServerStep(
+    "discover.attachResourceTrustSignals",
+    () => attachResourceTrustSignals(rows),
+    { resourceCount: rows.length },
+  );
 
   return new Map(resources.map((row) => [row.id, row]));
 }
