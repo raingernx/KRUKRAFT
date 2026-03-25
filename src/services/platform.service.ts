@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import {
@@ -21,6 +22,30 @@ const readPlatformSettings = unstable_cache(
     tags: [CACHE_TAGS.platform],
   },
 );
+
+function isPlatformSettingsTransientDbError(error: unknown) {
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === "P2024"
+  ) {
+    return true;
+  }
+
+  if (
+    error instanceof Prisma.PrismaClientInitializationError ||
+    error instanceof Prisma.PrismaClientUnknownRequestError
+  ) {
+    return true;
+  }
+
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes("Timed out fetching a new connection from the connection pool") ||
+    message.includes("Can't reach database server") ||
+    message.includes("Error in PostgreSQL connection") ||
+    message.includes("kind: Closed")
+  );
+}
 
 function looksLikeFaviconAsset(value: string | null | undefined) {
   if (!value) return false;
@@ -119,8 +144,10 @@ export async function getPlatformConfig() {
     const settings = await readPlatformSettings();
     return resolvePlatformConfig(settings);
   } catch (error) {
-    if (!isMissingTableError(error)) throw error;
-    // PlatformSettings table missing (local dev schema drift) — use defaults.
+    if (!isMissingTableError(error) && !isPlatformSettingsTransientDbError(error)) {
+      throw error;
+    }
+    // Missing table or transient DB pool/connectivity failure — use defaults.
     return resolvePlatformConfig(null);
   }
 }

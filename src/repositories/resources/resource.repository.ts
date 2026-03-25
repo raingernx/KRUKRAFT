@@ -105,7 +105,6 @@ const RESOURCE_DETAIL_SELECT = {
   id: true,
   title: true,
   slug: true,
-  description: true,
   type: true,
   status: true,
   featured: true,
@@ -154,7 +153,13 @@ const RESOURCE_DETAIL_SELECT = {
   },
 } as const;
 
+const RESOURCE_METADATA_SELECT = {
+  title: true,
+  description: true,
+} as const;
+
 const RESOURCE_DETAIL_DEFERRED_CONTENT_SELECT = {
+  description: true,
   author: {
     select: {
       id: true,
@@ -723,6 +728,13 @@ export async function findPublicResourceDetailBySlug(slug: string) {
   return prisma.resource.findUnique({
     where: { slug },
     select: RESOURCE_DETAIL_SELECT,
+  });
+}
+
+export async function findPublicResourceMetadataBySlug(slug: string) {
+  return prisma.resource.findUnique({
+    where: { slug },
+    select: RESOURCE_METADATA_SELECT,
   });
 }
 

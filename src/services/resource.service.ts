@@ -32,6 +32,7 @@ import {
   findCategoryBySlug,
   findMarketplaceResourceCards,
   findPublicResourceDetailDeferredContentBySlug,
+  findPublicResourceMetadataBySlug,
   findPublicResourceDetailBySlug,
   findRelatedListedResources,
   type FindActivationRankedResourcesRow,
@@ -380,6 +381,28 @@ export async function getResourceBySlug(slug: string) {
       );
     },
     ["public-resource-detail", slug],
+    {
+      revalidate: RESOURCE_DETAIL_REVALIDATE_SECONDS,
+      tags: [getResourceCacheTag(slug)],
+    },
+  )();
+}
+
+export async function getResourceMetadataBySlug(slug: string) {
+  recordCacheCall("getResourceMetadataBySlug", { slug });
+  const singleFlightKey = `resource-metadata:${slug}`;
+
+  return unstable_cache(
+    async function _getResourceMetadataBySlug() {
+      recordCacheMiss("getResourceMetadataBySlug", { slug });
+      logPerformanceEvent("cache_execute:getResourceMetadataBySlug", {
+        slug,
+      });
+      return runSingleFlight(singleFlightKey, () =>
+        findPublicResourceMetadataBySlug(slug),
+      );
+    },
+    ["public-resource-metadata", slug],
     {
       revalidate: RESOURCE_DETAIL_REVALIDATE_SECONDS,
       tags: [getResourceCacheTag(slug)],

@@ -25,6 +25,7 @@ import { AutoScrollOnSuccess } from "@/components/resource/AutoScrollOnSuccess";
 import {
   getResourceBySlug,
   getResourceDetailDeferredContent,
+  getResourceMetadataBySlug,
 } from "@/services/resource.service";
 import {
   getResourceDetailExtras,
@@ -182,7 +183,7 @@ function buildIncludedFiles(resource: {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const resource = await getResourceBySlug(slug);
+  const resource = await getResourceMetadataBySlug(slug);
 
   return {
     title: resource ? resource.title : "Resource",
@@ -477,11 +478,13 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
                   </div>
                 </section>
 
-                {/* 4. About */}
-                <ResourceDescription title="About" description={resource.description} />
-
-                {/* 5. Included files */}
-                <ResourceFiles files={includedFiles} />
+                {/* 4. About + 5. Included files */}
+                <Suspense fallback={null}>
+                  <ResourceDetailBodySection
+                    includedFiles={includedFiles}
+                    slug={resource.slug}
+                  />
+                </Suspense>
 
                 {/* 6. Reviews */}
                 <Suspense fallback={null}>
@@ -594,6 +597,31 @@ async function ResourceDetailReviewSection({
           existingReview={viewerReview}
         />
       ) : null}
+    </>
+  );
+}
+
+async function ResourceDetailBodySection({
+  slug,
+  includedFiles,
+}: {
+  slug: string;
+  includedFiles: Array<{ name: string; size?: number | null }>;
+}) {
+  const content = await traceServerStep(
+    "resource_detail.getResourceDetailDeferredContent",
+    () => getResourceDetailDeferredContent(slug),
+    { slug },
+  );
+
+  if (!content) {
+    return null;
+  }
+
+  return (
+    <>
+      <ResourceDescription title="About" description={content.description} />
+      <ResourceFiles files={includedFiles} />
     </>
   );
 }

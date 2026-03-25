@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -11,6 +12,30 @@ const ClickSchema = z.object({
   variant:    z.string().min(1),
   section:    z.string().min(1),
 });
+
+function isRecommendationClickTransientDbError(error: unknown) {
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === "P2024"
+  ) {
+    return true;
+  }
+
+  if (
+    error instanceof Prisma.PrismaClientInitializationError ||
+    error instanceof Prisma.PrismaClientUnknownRequestError
+  ) {
+    return true;
+  }
+
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes("Timed out fetching a new connection from the connection pool") ||
+    message.includes("Can't reach database server") ||
+    message.includes("Error in PostgreSQL connection") ||
+    message.includes("kind: Closed")
+  );
+}
 
 export async function POST(req: Request) {
   let body: unknown;
@@ -53,7 +78,17 @@ export async function POST(req: Request) {
       variant:    parsed.data.variant,
       section:    parsed.data.section,
     },
-  }).catch((err) => console.error("[recommendation_click]", err));
+  }).catch((error) => {
+    if (isRecommendationClickTransientDbError(error)) {
+      console.warn("[RECOMMENDATION_CLICK_BEST_EFFORT]", {
+        message: error instanceof Error ? error.message : String(error),
+        name: error instanceof Error ? error.name : undefined,
+      });
+      return;
+    }
+
+    console.error("[recommendation_click]", error);
+  });
 
   return NextResponse.json({ ok: true });
 }
