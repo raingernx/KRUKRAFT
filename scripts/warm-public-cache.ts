@@ -55,3 +55,5 @@ main().catch((error) => {
   console.error("[warm-public-cache] Unexpected error", error);
   process.exit(1);
 });
+
+export {};
