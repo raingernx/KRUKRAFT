@@ -422,28 +422,20 @@ export async function findTrendingResourceSignals(
     LEFT JOIN (
       SELECT
         de."resourceId",
-        COUNT(*) FILTER (
-          WHERE de."createdAt" >= ${since}
-        )::int AS "recentDownloads"
+        COUNT(*)::int AS "recentDownloads"
       FROM "DownloadEvent" de
+      WHERE de."createdAt" >= ${since}
       GROUP BY de."resourceId"
     ) d
       ON d."resourceId" = r.id
     LEFT JOIN (
       SELECT
         p."resourceId",
-        COUNT(*) FILTER (
-          WHERE p.status = 'COMPLETED'
-            AND p."createdAt" >= ${since}
-        )::int AS "recentSales",
-        COALESCE(
-          SUM(COALESCE(p."authorRevenue", p.amount)) FILTER (
-            WHERE p.status = 'COMPLETED'
-              AND p."createdAt" >= ${since}
-          ),
-          0
-        )::int AS "recentRevenue"
+        COUNT(*)::int AS "recentSales",
+        COALESCE(SUM(COALESCE(p."authorRevenue", p.amount)), 0)::int AS "recentRevenue"
       FROM "Purchase" p
+      WHERE p.status = 'COMPLETED'
+        AND p."createdAt" >= ${since}
       GROUP BY p."resourceId"
     ) p
       ON p."resourceId" = r.id
