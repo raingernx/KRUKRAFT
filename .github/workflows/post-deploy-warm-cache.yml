@@ -13,9 +13,10 @@ jobs:
   warm-public-cache:
     name: Warm Public Cache
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 40
     env:
       PRODUCTION_BASE_URL: https://krucrafts.com
+      HOT_DETAIL_SLUG: middle-school-science-quiz-assessment-set
 
     steps:
       - name: Checkout
@@ -60,3 +61,25 @@ jobs:
         env:
           BASE_URL: ${{ env.PRODUCTION_BASE_URL }}
         run: npm run warm:cache
+
+      - name: Setup k6
+        uses: grafana/setup-k6-action@v1
+
+      - name: Run Post-Deploy Performance Verification
+        env:
+          BASE_URL: ${{ env.PRODUCTION_BASE_URL }}
+          HOT_SLUG: ${{ env.HOT_DETAIL_SLUG }}
+          PERF_SUITE: smoke
+          PERF_RESULTS_DIR: artifacts/k6
+          PERF_SUMMARY_PATH: artifacts/perf-summary.json
+        run: npm run perf:post-deploy
+
+      - name: Upload Performance Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: post-deploy-perf-summary
+          path: |
+            artifacts/perf-summary.json
+            artifacts/k6/
+          if-no-files-found: warn
