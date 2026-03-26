@@ -301,12 +301,19 @@ async function loadMarketplaceResources(filters: NormalizedMarketplaceFilters) {
     // The outer unstable_cache layer handles same-instance warm hits; this
     // Redis layer prevents cold Vercel instances from each re-running the
     // expensive multi-CTE activation-ranking SQL.
+    //
+    // runSingleFlight wraps the loader so that if rememberJson is called
+    // concurrently from the same Vercel instance (e.g. multiple requests
+    // that all miss unstable_cache simultaneously), only one SQL execution
+    // fires per instance.  NOTE: this is same-instance deduplication only.
+    // Cross-instance thundering herd (separate Vercel function processes)
+    // cannot be solved here without distributed locking.
     const { rows, total } = search
       ? await loadRankedRows()
       : await rememberJson(
           recommendedCacheKey,
           CACHE_TTLS.homepageList,
-          loadRankedRows,
+          () => runSingleFlight(recommendedCacheKey, loadRankedRows),
           {
             metricName: "marketplace.recommendedResources",
             details: { page, pageSize, categoryId: categoryId ?? "all" },

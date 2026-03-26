@@ -9,7 +9,13 @@ const hotSlug =
   process.env.HOT_SLUG?.trim() ||
   "middle-school-science-quiz-assessment-set";
 
-const timeoutMs = 5000;
+// 15 s gives the recommended listing's multi-CTE SQL enough time to complete
+// on a cold Vercel instance (~7 s observed) and write its result to Redis
+// before k6 performance tests run.  The previous 5 s limit caused the warm
+// request to abort early, leaving Redis empty and triggering a cross-instance
+// thundering herd during the k6 ramp.  This timeout only applies to the CI
+// warm step — it has no effect on the hot request path.
+const timeoutMs = 15000;
 const userAgent = "KruCraft-Warmup/1.0";
 
 if (!baseUrl) {
