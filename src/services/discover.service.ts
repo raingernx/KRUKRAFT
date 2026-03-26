@@ -351,7 +351,13 @@ const readDiscoverData = unstable_cache(
                   load: () => getTopCreatorForDiscover(),
                 },
               ],
-              1,
+              // Phase 1 confirmed pgbouncer=true&connection_limit=2 in env.
+              // Each section loader checks Redis first via rememberJson() so most
+              // calls never open a DB connection. On a cold Redis miss, at most 3
+              // queries contend for 2 pooler connections — the third queues briefly.
+              // Raised from 1 (fully sequential) to 3 to reduce cold-path latency
+              // without saturating the connection pool.
+              3,
               async (entry) => ({
                 key: entry.key,
                 value: await entry.load(),
@@ -434,7 +440,11 @@ async function loadDiscoverResourcesByIds(resourceIds: string[]) {
 
   const resources = await traceServerStep(
     "discover.attachResourceTrustSignals",
-    () => attachResourceTrustSignals(rows, { queryConcurrency: 1 }),
+    // queryConcurrency: 2 runs the two batch queries (rating summaries + sales
+    // counts) in parallel. Each is a single batched query regardless of how many
+    // resources are in the batch — so this is exactly 2 concurrent queries total.
+    // Raised from 1 (sequential) now that pool config is confirmed safe.
+    () => attachResourceTrustSignals(rows, { queryConcurrency: 2 }),
     { resourceCount: rows.length },
   );
 

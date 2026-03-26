@@ -29,7 +29,6 @@ import {
   countMarketplaceResources,
   findActivationRankedResources,
   findCategoriesOrderedByName,
-  findCategoryBySlug,
   findMarketplaceResourceCards,
   findPublicResourceDetailDeferredContentBySlug,
   findPublicResourceMetadataBySlug,
@@ -243,14 +242,18 @@ async function loadMarketplaceResources(filters: NormalizedMarketplaceFilters) {
       }
     : {};
 
-  const categoryId =
-    category
-      ? (await findCategoryBySlug(category))?.id
-      : undefined;
+  // Fetch categories once upfront (cached, 120 s TTL). Reuse the result for:
+  //   (a) slug → id resolution — eliminates the previous uncached findCategoryBySlug
+  //       DB round-trip that preceded every category-filtered listing query.
+  //   (b) the categories sidebar list returned in every response path.
+  // Staleness: a newly created category will not appear for up to 120 s —
+  // consistent with the existing cache behaviour for the sidebar list.
+  const categories = await getCachedMarketplaceCategories();
+  const categoryId = category
+    ? categories.find((c) => c.slug === category)?.id
+    : undefined;
 
   if (category && !categoryId) {
-    const categories = await getCachedMarketplaceCategories();
-
     return {
       resources: [],
       total: 0,
@@ -264,18 +267,15 @@ async function loadMarketplaceResources(filters: NormalizedMarketplaceFilters) {
     const isFreeFilter =
       price === "free" ? true : price === "paid" ? false : undefined;
 
-    const [{ rows, total }, categories] = await Promise.all([
-      findActivationRankedResources({
-        categoryId,
-        tagSlug:  tag ?? undefined,
-        search:   search ?? undefined,
-        isFree:   isFreeFilter,
-        featured: featured || undefined,
-        page,
-        pageSize,
-      }),
-      getCachedMarketplaceCategories(),
-    ]);
+    const { rows, total } = await findActivationRankedResources({
+      categoryId,
+      tagSlug:  tag ?? undefined,
+      search:   search ?? undefined,
+      isFree:   isFreeFilter,
+      featured: featured || undefined,
+      page,
+      pageSize,
+    });
 
     // Recommended listing cards can render without trust metadata, so avoid
     // blocking the strict first render on batched review/sales enrichment.
@@ -314,7 +314,7 @@ async function loadMarketplaceResources(filters: NormalizedMarketplaceFilters) {
   const skip = (page - 1) * pageSize;
   const orderBy = buildOrderBy(sort) as Prisma.ResourceFindManyArgs["orderBy"];
 
-  const [rawItems, total, categories] = await Promise.all([
+  const [rawItems, total] = await Promise.all([
     findMarketplaceResourceCards({
       where,
       orderBy,
@@ -322,7 +322,6 @@ async function loadMarketplaceResources(filters: NormalizedMarketplaceFilters) {
       take: pageSize,
     }),
     countMarketplaceResources(where),
-    getCachedMarketplaceCategories(),
   ]);
 
   const resources = await attachResourceTrustSignals(rawItems.map(withPreview));

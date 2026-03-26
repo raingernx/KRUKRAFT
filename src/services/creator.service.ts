@@ -609,7 +609,17 @@ export const getCreatorAccessState = cache(async function getCreatorAccessState(
     return CREATOR_ACCESS_STATE_EMPTY;
   }
 
-  const context = await findCreatorAccessContext(userId);
+  // Cache the raw DB context for 30 seconds per user.
+  // React's cache() above deduplicates within a single request; this
+  // unstable_cache layer avoids a DB round-trip on every dashboard navigation.
+  // TTL is short (30 s) so admin-driven status changes (approve/reject creator
+  // application) take effect quickly.  Cache key is userId-scoped — no
+  // cross-user data leakage is possible.
+  const context = await unstable_cache(
+    () => findCreatorAccessContext(userId),
+    ["creator-access-context", userId],
+    { revalidate: 30 },
+  )();
 
   if (!context) {
     return CREATOR_ACCESS_STATE_EMPTY;
