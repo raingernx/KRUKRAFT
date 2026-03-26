@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { CACHE_KEYS, CACHE_TAGS, CACHE_TTLS } from "@/lib/cache";
@@ -22,6 +23,30 @@ const readPlatformTypographySettings = unstable_cache(
   },
 );
 
+function isTypographySettingsTransientDbError(error: unknown) {
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === "P2024"
+  ) {
+    return true;
+  }
+
+  if (
+    error instanceof Prisma.PrismaClientInitializationError ||
+    error instanceof Prisma.PrismaClientUnknownRequestError
+  ) {
+    return true;
+  }
+
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes("Timed out fetching a new connection from the connection pool") ||
+    message.includes("Can't reach database server") ||
+    message.includes("Error in PostgreSQL connection") ||
+    message.includes("kind: Closed")
+  );
+}
+
 async function getTypographySettingsConfig() {
   return readPlatformTypographySettings();
 }
@@ -32,9 +57,11 @@ export async function getTypographySettingsOrDefault() {
   try {
     return await getTypographySettings();
   } catch (error) {
-    if (!isMissingTableError(error)) throw error;
-    // PlatformTypographySettings table missing (local dev schema drift) — use defaults.
-    console.warn("[TYPOGRAPHY_SETTINGS] Table missing (schema drift) — using defaults.");
+    if (!isMissingTableError(error) && !isTypographySettingsTransientDbError(error)) {
+      throw error;
+    }
+    // PlatformTypographySettings table missing or transient DB/connectivity failure — use defaults.
+    console.warn("[TYPOGRAPHY_SETTINGS] Falling back to defaults.");
     return normalizePlatformTypographySettingsInput(
       DEFAULT_PLATFORM_TYPOGRAPHY_SETTINGS,
     );

@@ -1,5 +1,6 @@
 const nextConfig = {
   transpilePackages: ["geist"],
+  turbopack: {},
   experimental: {
     optimizePackageImports: ["lucide-react", "date-fns"],
   },

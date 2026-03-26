@@ -15,7 +15,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { PlatformConfigProvider } from "@/components/providers/PlatformConfigProvider";
 import { PublicFooterGate } from "@/components/layout/PublicFooterGate";
 import { Footer } from "@/components/layout/Footer";
-import { fontVariables } from "@/lib/fonts";
+import { fontVariableFallbacks, fontVariables } from "@/lib/fonts";
 import { resolveTypographyTheme } from "@/lib/typography/resolve-typography-theme";
 import { typographyThemeToCssVars } from "@/lib/typography/typography-theme-to-css-vars";
 import { getPlatform } from "@/services/platform.service";
@@ -48,7 +48,10 @@ export default async function RootLayout({
     buildTypographyThemeSettings(typographySettings),
   );
   const cssVars = typographyThemeToCssVars(theme);
-  const style = cssVarsToStyle(cssVars);
+  const style = cssVarsToStyle({
+    ...fontVariableFallbacks,
+    ...cssVars,
+  });
 
   return (
     <html

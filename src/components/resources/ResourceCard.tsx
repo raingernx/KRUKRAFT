@@ -249,13 +249,11 @@ function CardBody({
           </div>
         )}
 
-        {variant === "library" ? (
-          <ResourceBadge
-            featured={resource.featured}
-            isNew={isNew}
-            isOwned={isOwned}
-          />
-        ) : null}
+        <ResourceBadge
+          featured={resource.featured}
+          isNew={isNew}
+          isOwned={isOwned}
+        />
 
         {soldLabel ? (
           <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
