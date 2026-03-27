@@ -91,11 +91,7 @@ async function resolveDiscoverFallbackIds(
     return existingIds;
   }
 
-  try {
-    return await findDiscoverFallbackResourceIds(limit, orderBy, where);
-  } catch (error) {
-    throw error;
-  }
+  return findDiscoverFallbackResourceIds(limit, orderBy, where);
 }
 
 async function getDiscoverSectionIds(options: {

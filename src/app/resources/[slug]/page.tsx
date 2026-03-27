@@ -207,22 +207,37 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
       slug,
     },
     async () => {
-      let resource;
-      try {
-        resource = await traceServerStep(
+      // Start headers() and both independent fetches in parallel.
+      // getOptionalSession does not depend on resource data.
+      const requestHeadersPromise = headers();
+      const [resourceSettled, sessionSettled] = await Promise.allSettled([
+        traceServerStep(
           "resource_detail.getResourceBySlug",
           () => getResourceBySlug(slug),
           { slug },
-        );
-      } catch (error) {
+        ),
+        traceServerStep(
+          "resource_detail.optional_session",
+          () => getOptionalSession(),
+          { slug },
+        ),
+      ]);
+
+      if (resourceSettled.status === "rejected") {
+        const error = resourceSettled.reason;
         if (!isMissingTableError(error)) throw error;
         // Resource table missing (local dev schema drift) — render 404.
         notFound();
       }
 
+      const resource = resourceSettled.value;
+
       if (!resource || resource.status !== "PUBLISHED") {
         notFound();
       }
+
+      const session = sessionSettled.status === "fulfilled" ? sessionSettled.value : null;
+      const userId = session?.user?.id;
 
       const trustSummaryPromise = traceServerStep(
         "resource_detail.getResourceDetailTrustSummary",
@@ -237,14 +252,6 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
           slug,
         },
       );
-      const requestHeadersPromise = headers();
-
-      const session = await traceServerStep(
-        "resource_detail.optional_session",
-        () => getOptionalSession(),
-        { slug },
-      );
-      const userId = session?.user?.id;
       updateRequestPerformanceDetails({
         hasSession: Boolean(userId),
       });

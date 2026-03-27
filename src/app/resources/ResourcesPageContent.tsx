@@ -366,15 +366,15 @@ async function ResourcesDiscoverContent({ userId }: { userId?: string }) {
 
   return (
     <>
-      <Suspense fallback={null}>
+      <Suspense fallback={<DiscoverIntroFallback />}>
         <AwaitResolvedNode promise={introPromise} />
       </Suspense>
 
-      <Suspense fallback={null}>
+      <Suspense fallback={<CategoryBrowseSectionFallback />}>
         <AwaitResolvedNode promise={browsePromise} />
       </Suspense>
 
-      <Suspense fallback={null}>
+      <Suspense fallback={<DiscoverSectionsFallback />}>
         <AwaitResolvedNode promise={sectionsPromise} />
       </Suspense>
     </>
@@ -937,6 +937,34 @@ function DiscoverFallback() {
       <span className="h-2 w-2 animate-pulse rounded-full bg-primary-500" aria-hidden />
       <span>Loading</span>
     </div>
+  );
+}
+
+/**
+ * Height-matched skeleton for DiscoverIntroSection.
+ * Uses the same outer section class and composites the existing chip/search
+ * fallbacks so the layout dimensions match the real component exactly.
+ */
+function DiscoverIntroFallback() {
+  return (
+    <section className="space-y-4 border-b border-surface-200/80 pb-7 sm:space-y-5 sm:pb-8">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+        <div className="h-4 w-24 animate-pulse rounded bg-surface-100" />
+        <div className="h-4 w-28 animate-pulse rounded bg-surface-100" />
+      </div>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+        <div className="flex min-w-0 items-center gap-3 overflow-hidden sm:gap-4">
+          <DiscoverFallback />
+          <div className="hidden h-6 w-px shrink-0 bg-surface-200 sm:block" aria-hidden />
+          <ScrollableCategoryNav>
+            <ChipsFallback />
+          </ScrollableCategoryNav>
+        </div>
+        <div className="w-full shrink-0 lg:max-w-md">
+          <SearchFallback />
+        </div>
+      </div>
+    </section>
   );
 }
 

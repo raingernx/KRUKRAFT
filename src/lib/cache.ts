@@ -59,6 +59,10 @@ export const CACHE_KEYS = {
   resourceDetail: (slug: string) => `resource_detail:${slug}`,
   platformSettings: "platform_settings",
   platformTypographySettings: "platform_typography_settings",
+  marketplaceCategories: "marketplace_categories",
+  resourceMetadata: (slug: string) => `resource_metadata:${slug}`,
+  relatedResources: (categoryId: string, excludeId: string, take: number) =>
+    `related_resources:${categoryId}:${excludeId}:${take}`,
   resourceStats: (resourceId: string) => `resource_stats:${resourceId}`,
   resourceTrustSummary: (resourceId: string) => `resource_trust_summary:${resourceId}`,
   resourceTrust: (resourceId: string) => `resource_trust:${resourceId}`,

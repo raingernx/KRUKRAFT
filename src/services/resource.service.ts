@@ -169,7 +169,12 @@ async function getCachedMarketplaceCategories() {
   return unstable_cache(
     async function _getMarketplaceCategories() {
       recordCacheMiss("getMarketplaceCategories");
-      return findCategoriesOrderedByName();
+      return rememberJson(
+        CACHE_KEYS.marketplaceCategories,
+        CACHE_TTLS.publicPage,
+        () => findCategoriesOrderedByName(),
+        { metricName: "marketplace.categories" },
+      );
     },
     ["marketplace-categories"],
     {
@@ -599,8 +604,11 @@ export async function getResourceMetadataBySlug(slug: string) {
         slug,
       });
       try {
-        return await runSingleFlight(singleFlightKey, () =>
-          findPublicResourceMetadataBySlug(slug),
+        return await rememberJson(
+          CACHE_KEYS.resourceMetadata(slug),
+          RESOURCE_DETAIL_REVALIDATE_SECONDS,
+          () => runSingleFlight(singleFlightKey, () => findPublicResourceMetadataBySlug(slug)),
+          { metricName: "resource.metadata", details: { slug } },
         );
       } catch (error) {
         if (!isResourceMetadataTransientDbError(error)) {
@@ -696,15 +704,18 @@ export async function getRelatedResources(
         excludeId,
         take,
       });
-      return runSingleFlight(singleFlightKey, async () => {
-        const baseResources = (await findRelatedListedResources(
-          categoryId,
-          excludeId,
-          take,
-        )).map(withPreview);
-
-        return baseResources;
-      });
+      return rememberJson(
+        CACHE_KEYS.relatedResources(categoryId, excludeId, take),
+        CACHE_TTLS.homepageList,
+        () =>
+          runSingleFlight(singleFlightKey, async () => {
+            const baseResources = (
+              await findRelatedListedResources(categoryId, excludeId, take)
+            ).map(withPreview);
+            return baseResources;
+          }),
+        { metricName: "resource.related", details: { categoryId, excludeId, take } },
+      );
     },
     ["resource-related", categoryId, excludeId, String(take)],
     {

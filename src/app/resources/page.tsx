@@ -14,6 +14,7 @@ import {
 import {
   ResourcesDiscoverHero,
   ResourcesPageContent,
+  ResourcesContentFallback,
 } from "./ResourcesPageContent";
 import { HeroBannerSkeleton } from "@/components/marketplace/HeroBanner";
 import {
@@ -195,7 +196,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                   : "space-y-12 py-12 sm:space-y-14 sm:py-14 lg:space-y-16 lg:py-16"
               }
             >
-              <Suspense fallback={null}>
+              <Suspense fallback={<ResourcesContentFallback isDiscoverMode={isDiscoverMode} />}>
                 <AwaitResolvedNode promise={contentPromise} />
               </Suspense>
             </Container>
