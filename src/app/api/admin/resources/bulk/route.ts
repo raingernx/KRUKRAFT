@@ -94,6 +94,10 @@ export async function PATCH(req: Request) {
           (value): value is string => typeof value === "string",
         ))
       : [];
+    const action =
+      typeof (body as { action?: unknown })?.action === "string"
+        ? (body as { action: string }).action
+        : null;
     const cacheTargets = await getAdminResourcePublicCacheTargets(targetIds);
     const result = await mutateAdminResourcesInBulk(body);
 
@@ -116,6 +120,10 @@ export async function PATCH(req: Request) {
         void warmTargetedPublicCaches({
           trigger: "admin_resource_bulk_patch",
           includeListings: true,
+          resourceTargets:
+            action === "publish" || action === "moveToCategory"
+              ? cacheTargets.map((target) => ({ id: target.id, slug: target.slug }))
+              : [],
         }).catch((error) => {
           console.error("[ADMIN_RESOURCES_BULK_PATCH_WARM]", error);
         });

@@ -12,6 +12,7 @@ import {
   MARKETPLACE_DEFAULT_PAGE,
   MARKETPLACE_DEFAULT_PAGE_SIZE,
   getPublicResourcePageData,
+  getResourceMetadataBySlug,
   type MarketplaceFilters,
 } from "@/services/resource.service";
 import { getResourceTrustSummary } from "@/services/review.service";
@@ -192,7 +193,12 @@ async function warmResourceDetails(
   targets: ResourceWarmTarget[],
   includeTrustSummaries: boolean,
 ) {
-  await Promise.all(targets.map((target) => getPublicResourcePageData(target.slug)));
+  await Promise.all(
+    targets.flatMap((target) => [
+      getPublicResourcePageData(target.slug),
+      getResourceMetadataBySlug(target.slug),
+    ]),
+  );
 
   const trustSummaryTargets = includeTrustSummaries
     ? targets
@@ -330,6 +336,11 @@ export async function warmTargetedPublicCaches(
         pushUniqueString(creatorIdentifiers, creatorSeen, identifier);
       });
 
+      const warmResourceTargets = resourceTargets.slice(
+        0,
+        PUBLIC_WARM_LIMITS.resourceDetails,
+      );
+
       let warmedMarketplaceVariants: string[] = [];
 
       const [, , , trustSummaryTargets] = await Promise.all([
@@ -348,8 +359,8 @@ export async function warmTargetedPublicCaches(
               );
             })
           : Promise.resolve(),
-        resourceTargets.length > 0
-          ? warmResourceDetails(resourceTargets, includeTrustSummaries)
+        warmResourceTargets.length > 0
+          ? warmResourceDetails(warmResourceTargets, includeTrustSummaries)
           : Promise.resolve([] as Array<ResourceWarmTarget & { id: string }>),
         creatorIdentifiers.length > 0
           ? warmCreatorProfiles(creatorIdentifiers)
@@ -361,13 +372,13 @@ export async function warmTargetedPublicCaches(
           discover: includeListings ? 1 : 0,
           hero: 0,
           marketplaceVariants: warmedMarketplaceVariants.length,
-          resourceDetails: resourceTargets.length,
+          resourceDetails: warmResourceTargets.length,
           trustSummaries: trustSummaryTargets.length,
           creatorProfiles: creatorIdentifiers.length,
         },
         {
           marketplaceVariants: warmedMarketplaceVariants,
-          resourceSlugs: resourceTargets.map((target) => target.slug),
+          resourceSlugs: warmResourceTargets.map((target) => target.slug),
           creatorIdentifiers,
         },
       );
