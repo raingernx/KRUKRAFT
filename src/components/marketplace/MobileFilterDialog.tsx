@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import {
@@ -11,17 +10,14 @@ import {
 
 interface MobileFilterDialogProps {
   categories: FilterCategory[];
+  activeCount: number;
 }
 
-export function MobileFilterDialog({ categories }: MobileFilterDialogProps) {
+export function MobileFilterDialog({
+  categories,
+  activeCount,
+}: MobileFilterDialogProps) {
   const [open, setOpen] = useState(false);
-  const searchParams = useSearchParams();
-
-  const activeCount = [
-    searchParams.get("category") &&
-    searchParams.get("category") !== "all",
-    Boolean(searchParams.get("tag")),
-  ].filter(Boolean).length;
 
   return (
     <div className="lg:hidden">

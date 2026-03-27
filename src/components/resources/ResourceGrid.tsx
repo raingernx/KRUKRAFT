@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 import { BookOpen, Search } from "lucide-react";
 import { Button } from "@/design-system";
@@ -30,9 +30,39 @@ interface ResourceGridProps {
    */
   hasActiveFilters?: boolean;
   progressiveLoad?: boolean;
+  routeContext?: {
+    queryKey: string;
+    clearFiltersHref: string;
+    exploreAllHref: string;
+    cardPrefetchScope: string;
+  };
 }
 
-export function ResourceGrid({
+function ResourceGridWithClientRouteContext(props: ResourceGridProps) {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const category = searchParams.get("category");
+  const clearFiltersParams = new URLSearchParams();
+  if (category) clearFiltersParams.set("category", category);
+  const clearFiltersHref = clearFiltersParams.size > 0
+    ? `${pathname}?${clearFiltersParams.toString()}`
+    : pathname;
+  const queryKey = `${pathname}?${searchParams.toString()}`;
+
+  return (
+    <ResourceGridBody
+      {...props}
+      routeContext={{
+        queryKey,
+        clearFiltersHref,
+        exploreAllHref: "/resources",
+        cardPrefetchScope: `resource-card-grid:${queryKey}`,
+      }}
+    />
+  );
+}
+
+function ResourceGridBody({
   resources,
   ownedIds = [],
   total,
@@ -41,12 +71,14 @@ export function ResourceGrid({
   loading = false,
   hasActiveFilters = false,
   progressiveLoad = false,
+  routeContext,
 }: ResourceGridProps) {
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const gridContainerRef = useRef<HTMLDivElement>(null);
-  const queryKey = `${pathname}?${searchParams.toString()}`;
-  const cardPrefetchScope = `resource-card-grid:${queryKey}`;
+  const {
+    queryKey,
+    clearFiltersHref,
+    exploreAllHref,
+    cardPrefetchScope,
+  } = routeContext!;
   const [loadState, setLoadState] = useState(() => ({
     queryKey,
     appendedResources: [] as ResourceCardData[],
@@ -70,15 +102,6 @@ export function ResourceGrid({
 
   // ── Empty state ─────────────────────────────────────────────────────────────
   if (resources.length === 0) {
-    // Build a URL that keeps only the category param, stripping everything else
-    // (search / price / sort / tag / featured / page) so the grid is reset.
-    const clearFiltersParams = new URLSearchParams();
-    const category = searchParams.get("category");
-    if (category) clearFiltersParams.set("category", category);
-    const clearFiltersHref = clearFiltersParams.size > 0
-      ? `${pathname}?${clearFiltersParams.toString()}`
-      : pathname;
-
     if (hasActiveFilters) {
       return (
         <div className="rounded-2xl border border-border-subtle bg-white px-6 py-14 text-center sm:px-8 sm:py-16">
@@ -114,7 +137,7 @@ export function ResourceGrid({
           This collection is still growing. Explore the full library or check back soon for new releases.
         </p>
         <IntentPrefetchLink
-          href="/resources"
+          href={exploreAllHref}
           resourcesNavigationMode="discover"
           className="mt-5 inline-flex items-center rounded-full border border-border-subtle bg-white px-4 py-2 text-sm font-medium text-text-primary transition hover:border-surface-300 hover:bg-surface-50"
         >
@@ -149,7 +172,7 @@ export function ResourceGrid({
     try {
       const requestQueryKey = queryKey;
       const requestPage = nextPage;
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(queryKey.split("?")[1] ?? "");
       params.set("page", String(requestPage));
       params.set("pageSize", String(LISTING_BATCH_SIZE));
 
@@ -199,7 +222,7 @@ export function ResourceGrid({
   }
 
   return (
-    <div ref={gridContainerRef} className="space-y-8">
+    <div className="space-y-8">
       {/* ── Grid: consistent height, no vertical stretch; 16:10 thumb prevents layout shift ── */}
       <div className={RESOURCE_GRID_CLASSES}>
         {displayedResources.map((resource, index) => (
@@ -236,4 +259,12 @@ export function ResourceGrid({
       ) : null}
     </div>
   );
+}
+
+export function ResourceGrid(props: ResourceGridProps) {
+  if (props.routeContext) {
+    return <ResourceGridBody {...props} />;
+  }
+
+  return <ResourceGridWithClientRouteContext {...props} />;
 }

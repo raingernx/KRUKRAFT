@@ -156,6 +156,27 @@ export async function ResourcesPageContent({
       : categories.find((item) => item.slug === category)?.name ?? "Browse resources";
   const sortLabel = SORT_OPTIONS.find((option) => option.value === sort)?.label ?? "Newest";
   const hasActiveFilters = !!(search?.trim() || price !== "" || sort !== "newest" || tag || featured === "true");
+  const mobileFilterActiveCount = [
+    Boolean(category && category !== "all"),
+    Boolean(tag),
+  ].filter(Boolean).length;
+  const resourceGridParams = new URLSearchParams();
+  if (search?.trim()) resourceGridParams.set("search", search.trim());
+  if (category) resourceGridParams.set("category", category);
+  if (price) resourceGridParams.set("price", price);
+  if (featured === "true") resourceGridParams.set("featured", "true");
+  if (tag) resourceGridParams.set("tag", tag);
+  if (effectiveSort !== "newest") resourceGridParams.set("sort", effectiveSort);
+  if (safePage > 1) resourceGridParams.set("page", String(safePage));
+  const resourceGridQuery = resourceGridParams.toString();
+  const resourceGridQueryKey = resourceGridQuery
+    ? `/resources?${resourceGridQuery}`
+    : "/resources";
+  const clearFiltersParams = new URLSearchParams();
+  if (category) clearFiltersParams.set("category", category);
+  const clearFiltersHref = clearFiltersParams.size > 0
+    ? `/resources?${clearFiltersParams.toString()}`
+    : "/resources";
   const resultsContext = buildResultsContext(total, activeCategoryName, category, search, price, formatNumber);
   const spotlightCandidate = resources[0] ?? null;
   const spotlightResource =
@@ -260,10 +281,13 @@ export async function ResourcesPageContent({
             </Suspense>
           </div>
 
-          <div className="min-w-0 flex-1 space-y-6">
-            <div className="lg:hidden">
-              <MobileFilterDialog categories={categories as FilterCategory[]} />
-            </div>
+            <div className="min-w-0 flex-1 space-y-6">
+              <div className="lg:hidden">
+                <MobileFilterDialog
+                  categories={categories as FilterCategory[]}
+                  activeCount={mobileFilterActiveCount}
+                />
+              </div>
 
             <Suspense fallback={<FilterBarFallback />}>
               <FilterBar total={total} />
@@ -328,6 +352,12 @@ export async function ResourcesPageContent({
               totalPages={totalPages}
               hasActiveFilters={hasActiveFilters}
               progressiveLoad
+              routeContext={{
+                queryKey: resourceGridQueryKey,
+                clearFiltersHref,
+                exploreAllHref: "/resources",
+                cardPrefetchScope: `resource-card-grid:${resourceGridQueryKey}`,
+              }}
             />
           </div>
         </div>
