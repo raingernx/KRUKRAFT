@@ -28,6 +28,10 @@ if (!baseUrl) {
 type WarmRoute = {
   label: string;
   path: string;
+  /** Extra request headers forwarded verbatim. Used to simulate experiment
+   *  cookie state so the warm request exercises the same effectiveSort branch
+   *  that CI smoke tests use. */
+  headers?: Record<string, string>;
 };
 
 const routes: WarmRoute[] = [
@@ -38,6 +42,10 @@ const routes: WarmRoute[] = [
   {
     label: "listing-recommended",
     path: "/resources?category=all&sort=recommended",
+    // ranking_variant=B → effectiveSort="recommended" in page.tsx.
+    // Without this cookie the route silently falls back to effectiveSort="newest",
+    // warming the wrong cache key and leaving the "recommended" Redis entry cold.
+    headers: { Cookie: "ranking_variant=B" },
   },
   {
     label: "listing-newest",
@@ -66,6 +74,7 @@ async function warmRoute(route: WarmRoute): Promise<WarmResult> {
     const response = await fetch(url, {
       headers: {
         "user-agent": userAgent,
+        ...route.headers,
       },
       signal: AbortSignal.timeout(timeoutMs),
     });
