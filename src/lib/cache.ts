@@ -60,6 +60,8 @@ export const CACHE_KEYS = {
   platformSettings: "platform_settings",
   platformTypographySettings: "platform_typography_settings",
   resourceStats: (resourceId: string) => `resource_stats:${resourceId}`,
+  resourceTrustSummary: (resourceId: string) => `resource_trust_summary:${resourceId}`,
+  resourceTrust: (resourceId: string) => `resource_trust:${resourceId}`,
   creatorStats: (creatorId: string) => `creator_stats:${creatorId}`,
   behaviorProfile: (userId: string) => `behavior_profile:${userId}`,
 } as const;
@@ -87,6 +89,23 @@ export async function setCachedJson<T>(
     await redis.set(key, value, { ex: ttlSeconds });
   } catch (error) {
     console.error("[cache] set failed", { key, error });
+  }
+}
+
+/**
+ * Fetches multiple keys from Redis in a single round-trip.
+ * Returns an array aligned to the input keys; missing entries are `null`.
+ * Falls back to all-null on error or when Redis is unavailable.
+ */
+export async function multiGetCachedJson<T>(keys: string[]): Promise<Array<T | null>> {
+  if (!redis || keys.length === 0) return keys.map(() => null);
+
+  try {
+    const result = await redis.mget(...keys);
+    return result as Array<T | null>;
+  } catch (error) {
+    console.error("[cache] mget failed", { keyCount: keys.length, error });
+    return keys.map(() => null);
   }
 }
 

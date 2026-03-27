@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
 import { unstable_cache } from "next/cache";
-import { runWithConcurrencyLimit } from "@/lib/async";
 import {
   createReviewRecord,
   findAdminReviews,
@@ -19,9 +18,13 @@ import {
 import { findAdminActor, findResourceById } from "@/repositories/resources/resource.repository";
 import { hasPurchased } from "@/services/purchase.service";
 import {
+  CACHE_KEYS,
   CACHE_TTLS,
   getResourceDetailDataTag,
+  multiGetCachedJson,
+  rememberJson,
   runSingleFlight,
+  setCachedJson,
 } from "@/lib/cache";
 
 export class ReviewServiceError extends Error {
@@ -313,20 +316,24 @@ export async function unhideReview(adminUserId: string, reviewId: string) {
 export async function getResourceTrustSummary(resourceId: string) {
   return unstable_cache(
     async function _getResourceTrustSummary() {
-      const [ratingSummary, totalSales] = await runSingleFlight(
-        `resource-trust-summary:${resourceId}`,
+      // Redis layer: cross-instance cache so cold lambda instances never hit
+      // the DB for a trust summary that is already warm on other instances.
+      return rememberJson(
+        CACHE_KEYS.resourceTrustSummary(resourceId),
+        CACHE_TTLS.stats,
         () =>
-          Promise.all([
-            getCachedResourceRatingSummary(resourceId),
-            getCachedCompletedSalesCount(resourceId),
-          ]),
+          runSingleFlight(`resource-trust-summary:${resourceId}`, () =>
+            Promise.all([
+              getCachedResourceRatingSummary(resourceId),
+              getCachedCompletedSalesCount(resourceId),
+            ]).then(([ratingSummary, totalSales]) => ({
+              averageRating: normalizeAverageRating(ratingSummary._avg.rating),
+              totalReviews: ratingSummary._count._all,
+              totalSales,
+            })),
+          ),
+        { metricName: "review.resourceTrustSummary", details: { resourceId } },
       );
-
-      return {
-        averageRating: normalizeAverageRating(ratingSummary._avg.rating),
-        totalReviews: ratingSummary._count._all,
-        totalSales,
-      };
     },
     ["resource-trust-summary", resourceId],
     {
@@ -336,6 +343,27 @@ export async function getResourceTrustSummary(resourceId: string) {
   )();
 }
 
+type CachedResourceTrust = {
+  rating: number | null;
+  reviewCount: number;
+  salesCount: number;
+};
+
+/**
+ * Enriches a batch of resources with trust signals (rating, reviewCount, salesCount).
+ *
+ * Cache strategy:
+ *   1. Batch-fetch all resource trust signals from Redis in one MGET round-trip.
+ *   2. Run the two DB aggregation queries only for cache-miss IDs.
+ *   3. Write misses back to Redis in parallel before returning.
+ *
+ * On a warm cache (all hits): zero DB queries — pure Redis MGET.
+ * On a cold cache (all misses): 2 parallel groupBy queries, same as before.
+ * Partial hits reduce DB load proportionally.
+ *
+ * The `queryConcurrency` option is preserved for API compatibility but is no
+ * longer used for the Redis-warm path; the DB miss path always runs in parallel.
+ */
 export async function attachResourceTrustSignals<T extends { id: string }>(
   resources: T[],
   options?: { queryConcurrency?: number },
@@ -344,73 +372,85 @@ export async function attachResourceTrustSignals<T extends { id: string }>(
     return [] as Array<T & { rating: number | null; reviewCount: number; salesCount: number }>;
   }
 
-  const resourceIds = Array.from(new Set(resources.map((resource) => resource.id)));
-  const queryConcurrency = Math.max(1, options?.queryConcurrency ?? 2);
-  type TrustQueryResult =
-    | Awaited<ReturnType<typeof getResourceRatingSummaries>>
-    | Awaited<ReturnType<typeof findCompletedSalesCountsByResourceIds>>;
+  const resourceIds = Array.from(new Set(resources.map((r) => r.id)));
+  const trustCacheKeys = resourceIds.map((id) => CACHE_KEYS.resourceTrust(id));
 
-  let ratingSummaries;
-  let salesCounts;
+  // ── Step 1: Batch Redis read ───────────────────────────────────────────────
+  const cachedSignals = await multiGetCachedJson<CachedResourceTrust>(trustCacheKeys);
 
-  try {
-    if (queryConcurrency >= 2) {
-      [ratingSummaries, salesCounts] = await Promise.all([
-        getResourceRatingSummaries(resourceIds),
-        findCompletedSalesCountsByResourceIds(resourceIds),
-      ]);
+  const trustMap = new Map<string, CachedResourceTrust>();
+  const missIds: string[] = [];
+
+  resourceIds.forEach((id, i) => {
+    const signal = cachedSignals[i];
+    if (signal !== null) {
+      trustMap.set(id, signal);
     } else {
-      const [ratingSummaryResult, salesCountResult] = await runWithConcurrencyLimit(
-        [
-          () => getResourceRatingSummaries(resourceIds),
-          () => findCompletedSalesCountsByResourceIds(resourceIds),
-        ] as const,
-        queryConcurrency,
-        async (load) => load() as Promise<TrustQueryResult>,
-      );
-
-      ratingSummaries = ratingSummaryResult as Awaited<
-        ReturnType<typeof getResourceRatingSummaries>
-      >;
-      salesCounts = salesCountResult as Awaited<
-        ReturnType<typeof findCompletedSalesCountsByResourceIds>
-      >;
+      missIds.push(id);
     }
-  } catch (error) {
-    if (!isTransientTrustEnrichmentError(error)) {
-      throw error;
+  });
+
+  // ── Step 2: DB queries for cache-miss IDs only ────────────────────────────
+  if (missIds.length > 0) {
+    let ratingSummaries: Awaited<ReturnType<typeof getResourceRatingSummaries>> = [];
+    let salesCounts: Awaited<ReturnType<typeof findCompletedSalesCountsByResourceIds>> = [];
+
+    try {
+      [ratingSummaries, salesCounts] = await Promise.all([
+        getResourceRatingSummaries(missIds),
+        findCompletedSalesCountsByResourceIds(missIds),
+      ]);
+    } catch (error) {
+      if (!isTransientTrustEnrichmentError(error)) throw error;
+      // On pool pressure: serve cached hits; fall back to zeros for misses.
+      return resources.map((resource) => {
+        const trust = trustMap.get(resource.id);
+        return {
+          ...resource,
+          rating: trust?.rating ?? null,
+          reviewCount: trust?.reviewCount ?? 0,
+          salesCount: trust?.salesCount ?? 0,
+        };
+      });
     }
 
-    return resources.map((resource) => ({
-      ...resource,
-      rating: null,
-      reviewCount: 0,
-      salesCount: 0,
-    }));
+    const ratingMap = new Map(
+      ratingSummaries.map((row) => [
+        row.resourceId,
+        {
+          rating: normalizeAverageRating(row._avg.rating),
+          reviewCount: row._count._all,
+        },
+      ]),
+    );
+    const salesMap = new Map(
+      salesCounts.map((row) => [row.resourceId, row._count._all]),
+    );
+
+    // Populate the trust map for misses and write back to Redis in parallel.
+    const writePromises: Promise<void>[] = [];
+    for (const id of missIds) {
+      const ratingInfo = ratingMap.get(id);
+      const signal: CachedResourceTrust = {
+        rating: ratingInfo?.rating ?? null,
+        reviewCount: ratingInfo?.reviewCount ?? 0,
+        salesCount: salesMap.get(id) ?? 0,
+      };
+      trustMap.set(id, signal);
+      writePromises.push(setCachedJson(CACHE_KEYS.resourceTrust(id), signal, CACHE_TTLS.stats));
+    }
+
+    await Promise.all(writePromises);
   }
 
-  const ratingsByResourceId = new Map(
-    ratingSummaries.map((row) => [
-      row.resourceId,
-      {
-        rating: normalizeAverageRating(row._avg.rating),
-        reviewCount: row._count._all,
-      },
-    ]),
-  );
-
-  const salesByResourceId = new Map(
-    salesCounts.map((row) => [row.resourceId, row._count._all]),
-  );
-
+  // ── Step 3: Map trust signals back onto the original resources ────────────
   return resources.map((resource) => {
-    const ratingSummary = ratingsByResourceId.get(resource.id);
-
+    const trust = trustMap.get(resource.id);
     return {
       ...resource,
-      rating: ratingSummary?.rating ?? null,
-      reviewCount: ratingSummary?.reviewCount ?? 0,
-      salesCount: salesByResourceId.get(resource.id) ?? 0,
+      rating: trust?.rating ?? null,
+      reviewCount: trust?.reviewCount ?? 0,
+      salesCount: trust?.salesCount ?? 0,
     };
   });
 }
