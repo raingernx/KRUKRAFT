@@ -12,7 +12,7 @@ import Link from "next/link";
 import { formatFileSize } from "@/lib/format";
 import { ResourceHeader } from "@/components/resource/ResourceHeader";
 import { ResourceGallery } from "@/components/resource/ResourceGallery";
-import { PurchaseCard } from "@/components/resource/PurchaseCard";
+import { PurchaseCard, PurchaseCardSkeleton } from "@/components/resource/PurchaseCard";
 import { ResourceDescription } from "@/components/resource/ResourceDescription";
 import { ResourceFiles } from "@/components/resource/ResourceFiles";
 import { TagList } from "@/components/resource/TagList";
@@ -20,7 +20,6 @@ import { CreatorCard } from "@/components/resource/CreatorCard";
 import { RelatedResources } from "@/components/resource/RelatedResources";
 import { ResourceReviews } from "@/components/resource/ResourceReviews";
 import { ResourceReviewForm } from "@/components/resource/ResourceReviewForm";
-import { PendingPurchasePoller } from "@/components/checkout/PendingPurchasePoller";
 import { AutoScrollOnSuccess } from "@/components/resource/AutoScrollOnSuccess";
 import {
   getResourceBySlug,
@@ -514,7 +513,7 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
 
               {/* PURCHASE CARD — order-2 mobile, col-2 rows 1–2 desktop */}
               <aside id="purchase-card" className="order-2 self-start lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-24">
-                <Suspense fallback={<div className="h-[440px] rounded-[28px] border border-surface-200 bg-white/85 shadow-sm" />}>
+                <Suspense fallback={<PurchaseCardSkeleton />}>
                   <ResourceDetailPurchaseCard
                     resource={resource}
                     session={session}
@@ -777,7 +776,7 @@ async function ResourceDetailSuccessShell({
   );
 }
 
-async function ResourceDetailPurchaseCard({
+function ResourceDetailPurchaseCard({
   resource,
   session,
   ownershipPromise,
@@ -796,13 +795,6 @@ async function ResourceDetailPurchaseCard({
   levelLabel: string | null;
   outcomeHint: string;
 }) {
-  const [{ isOwned }, trustSummary] = await Promise.all([
-    ownershipPromise,
-    trustSummaryPromise,
-  ]);
-  const userId = session?.user?.id;
-  const isPendingPurchase = isReturningFromCheckout && !isOwned && !!userId;
-
   const purchaseCardResource = {
     id: resource.id,
     title: resource.title,
@@ -816,26 +808,20 @@ async function ResourceDetailPurchaseCard({
     mimeType: resource.mimeType ?? null,
     fileSize: resource.fileSize ?? undefined,
     updatedAt: resource.updatedAt ?? undefined,
-    averageRating: trustSummary.averageRating,
-    reviewCount: trustSummary.totalReviews,
-    salesCount: trustSummary.totalSales,
     recentDownloads: resource.resourceStat?.last30dDownloads ?? 0,
     recentSales: resource.resourceStat?.last30dPurchases ?? 0,
     levelLabel,
     outcomeHint,
   };
 
-  if (isPendingPurchase) {
-    return <PendingPurchasePoller resourceTitle={resource.title} />;
-  }
-
   return (
     <PurchaseCard
       resource={purchaseCardResource}
-      isOwned={isOwned}
-      hasFile={hasFile}
       session={session}
-      isReturningFromCheckout={isReturningFromCheckout && isOwned}
+      hasFile={hasFile}
+      isReturningFromCheckout={isReturningFromCheckout}
+      ownershipPromise={ownershipPromise}
+      trustSummaryPromise={trustSummaryPromise}
     />
   );
 }

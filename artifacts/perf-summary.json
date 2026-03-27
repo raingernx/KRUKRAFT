@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-03-27T04:33:56.814Z",
+  "commitSha": null,
+  "workflowRunId": null,
+  "workflowName": null,
+  "suite": "smoke",
+  "baseUrl": "https://krucrafts.com",
+  "hotSlug": "middle-school-science-quiz-assessment-set",
+  "warmCacheCompleted": true,
+  "results": [
+    {
+      "name": "resources_home_smoke",
+      "script": "k6/routes/resources-home-smoke.js",
+      "thresholdMs": 1200,
+      "avgMs": 694.9239000000001,
+      "p95Ms": 919.7364999999999,
+      "failRate": 0,
+      "thresholdPassed": true,
+      "exitCode": 0,
+      "summaryPath": "/Users/shanerinen/Projects/studyplatform/artifacts/k6/resources_home_smoke.json"
+    },
+    {
+      "name": "listing_recommended_smoke",
+      "script": "k6/routes/listing-recommended-smoke.js",
+      "thresholdMs": 2000,
+      "avgMs": 610.5609285714288,
+      "p95Ms": 793.67715,
+      "failRate": 0,
+      "thresholdPassed": true,
+      "exitCode": 0,
+      "summaryPath": "/Users/shanerinen/Projects/studyplatform/artifacts/k6/listing_recommended_smoke.json"
+    },
+    {
+      "name": "listing_newest_smoke",
+      "script": "k6/routes/listing-newest-smoke.js",
+      "thresholdMs": 1000,
+      "avgMs": 620.0739285714286,
+      "p95Ms": 761.3973,
+      "failRate": 0,
+      "thresholdPassed": true,
+      "exitCode": 0,
+      "summaryPath": "/Users/shanerinen/Projects/studyplatform/artifacts/k6/listing_newest_smoke.json"
+    },
+    {
+      "name": "resource_detail_smoke",
+      "script": "k6/routes/resource-detail-smoke.js",
+      "thresholdMs": 1000,
+      "avgMs": 559.5975681818182,
+      "p95Ms": 714.7342,
+      "failRate": 0,
+      "thresholdPassed": true,
+      "exitCode": 0,
+      "summaryPath": "/Users/shanerinen/Projects/studyplatform/artifacts/k6/resource_detail_smoke.json"
+    }
+  ]
+}
