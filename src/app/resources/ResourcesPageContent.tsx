@@ -568,7 +568,7 @@ async function ResourcesDiscoverDeferredSections({
       ) : null}
 
       {recommendedForYouFinalPromise ? (
-        <Suspense fallback={<RecommendedForYouFallbackSection resources={globalFiltered.slice(0, 5)} ownedIds={ownedIds} />}>
+        <Suspense fallback={<RecommendedForYouFallbackSection />}>
           <AwaitResolvedNode promise={recommendedForYouFinalPromise} />
         </Suspense>
       ) : globalFiltered.slice(0, 5).length > 0 ? (
@@ -1329,14 +1329,7 @@ function PersonalisationFallback() {
   );
 }
 
-function RecommendedForYouFallbackSection({
-  resources,
-  ownedIds,
-}: {
-  resources: ResourceCardData[];
-  ownedIds: Set<string>;
-}) {
-  if (resources.length === 0) return null;
+function RecommendedForYouFallbackSection() {
   return (
     <section className="space-y-5">
       <SectionHeader
@@ -1345,15 +1338,8 @@ function RecommendedForYouFallbackSection({
         viewAllHref="/resources?sort=trending&category=all"
       />
       <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-        {resources.map((resource, index) => (
-          <ResourceCard
-            key={resource.id}
-            resource={resource}
-            variant="marketplace"
-            owned={ownedIds.has(resource.id)}
-            priority={index < 2}
-            linkPrefetchMode="intent"
-          />
+        {Array.from({ length: 5 }).map((_, index) => (
+          <ResourceCardSkeleton key={index} />
         ))}
       </div>
     </section>
