@@ -1,16 +1,6 @@
 import { Suspense, type ReactNode } from "react";
 import { Prisma } from "@prisma/client";
-import {
-  ArrowRight,
-  BookOpen,
-  Calculator,
-  ClipboardList,
-  FlaskConical,
-  GraduationCap,
-  Languages,
-  LayoutGrid,
-  Palette,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { isMissingTableError } from "@/lib/prismaErrors";
 import { ResourceGrid } from "@/components/resources/ResourceGrid";
 import { ResourceCard, type ResourceCardData } from "@/components/resources/ResourceCard";
@@ -22,11 +12,13 @@ import { DiscoverButton, CategoryChips, type ChipCategory } from "@/components/m
 import { ScrollableCategoryNav } from "@/components/marketplace/ScrollableCategoryNav";
 import { FilterBar } from "@/components/marketplace/FilterBar";
 import { FilterSidebar, type FilterCategory } from "@/components/marketplace/FilterSidebar";
-import { MobileFilterDialog } from "@/components/marketplace/MobileFilterDialog";
+import {
+  CategoryBrowseDialog,
+  MobileFilterDialog,
+} from "@/components/marketplace/MobileFilterDialog";
 import { CreatorCTA } from "@/components/discover/CreatorCTA";
 import { BlogSection } from "@/components/discover/BlogSection";
 import { EmailSignup } from "@/components/discover/EmailSignup";
-import { CategoryBrowseCardLink } from "@/components/marketplace/CategoryBrowseCardLink";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { formatNumber, formatPrice } from "@/lib/format";
 import {
@@ -58,6 +50,18 @@ import {
 
 const ITEMS_PER_PAGE = 12;
 const BLOG_SECTION_ENABLED = false;
+const CONTROLS_BAR_CLASS_NAME =
+  "rounded-[28px] border border-surface-200/90 bg-white/90 p-3 sm:p-4 lg:p-5";
+const CONTROLS_BAR_META_CLASS_NAME =
+  "flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-text-secondary";
+const CONTROLS_BAR_MAIN_CLASS_NAME =
+  "mt-3 flex flex-col gap-4 lg:mt-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6";
+const CONTROLS_BAR_GROUP_CLASS_NAME =
+  "order-2 flex min-w-0 items-center gap-3 overflow-hidden lg:order-1";
+const CONTROLS_BAR_SEARCH_CLASS_NAME =
+  "order-1 flex w-full shrink-0 flex-col gap-3 sm:flex-row lg:order-2 lg:max-w-xl lg:items-center";
+const CONTROLS_BAR_CHIP_SHELL_CLASS_NAME =
+  "flex min-w-0 items-center gap-2 rounded-[20px] border border-surface-200 bg-surface-50/80 p-1";
 
 type ResourcesPageContentProps = {
   isDiscoverMode: boolean;
@@ -178,6 +182,11 @@ export async function ResourcesPageContent({
     ? `/resources?${clearFiltersParams.toString()}`
     : "/resources";
   const resultsContext = buildResultsContext(total, activeCategoryName, category, search, price, formatNumber);
+  const browseCategories = categories.map((item) => ({
+    id: item.id,
+    name: item.name,
+    slug: item.slug,
+  }));
   const spotlightCandidate = resources[0] ?? null;
   const spotlightResource =
     !isDiscoverMode &&
@@ -227,7 +236,7 @@ export async function ResourcesPageContent({
   return (
     <>
       <section className="space-y-5 border-b border-surface-200/80 pb-7 sm:space-y-6 sm:pb-8">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex flex-col gap-4">
           <div className="max-w-3xl space-y-3">
             <p className="font-ui text-caption tracking-[0.12em] text-text-muted">
               Browse
@@ -241,7 +250,10 @@ export async function ResourcesPageContent({
               </p>
             ) : null}
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-text-secondary">
+        </div>
+
+        <div className={CONTROLS_BAR_CLASS_NAME}>
+          <div className={CONTROLS_BAR_META_CLASS_NAME}>
             <span className="font-medium text-text-primary">
               {formatNumber(total)} results
             </span>
@@ -250,25 +262,29 @@ export async function ResourcesPageContent({
             </span>
             <span>{`Sorted by ${sortLabel}`}</span>
           </div>
-        </div>
 
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
-          <div className="flex min-w-0 items-center gap-3 overflow-hidden sm:gap-4">
-            <Suspense fallback={<DiscoverFallback />}>
-              <DiscoverButton />
-            </Suspense>
-            <div className="hidden h-6 w-px shrink-0 bg-surface-200 sm:block" aria-hidden />
-            <ScrollableCategoryNav>
-              <Suspense fallback={<ChipsFallback />}>
-                <CategoryChips categories={categories as ChipCategory[]} />
-              </Suspense>
-            </ScrollableCategoryNav>
-          </div>
+          <div className={CONTROLS_BAR_MAIN_CLASS_NAME}>
+            <div className={CONTROLS_BAR_SEARCH_CLASS_NAME}>
+              <div className="flex-1 lg:min-w-[360px]">
+                <Suspense fallback={<SearchFallback />}>
+                  <HeroSearch variant="listing" />
+                </Suspense>
+              </div>
+              <CategoryBrowseDialog categories={browseCategories} />
+            </div>
 
-          <div className="w-full shrink-0 lg:max-w-md">
-            <Suspense fallback={<SearchFallback />}>
-              <HeroSearch variant="listing" />
-            </Suspense>
+            <div className={CONTROLS_BAR_GROUP_CLASS_NAME}>
+              <div className={CONTROLS_BAR_CHIP_SHELL_CLASS_NAME}>
+                <Suspense fallback={<DiscoverFallback />}>
+                  <DiscoverButton />
+                </Suspense>
+                <ScrollableCategoryNav>
+                  <Suspense fallback={<ChipsFallback />}>
+                    <CategoryChips categories={categories as ChipCategory[]} />
+                  </Suspense>
+                </ScrollableCategoryNav>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -384,9 +400,6 @@ async function ResourcesDiscoverContent({ userId }: { userId?: string }) {
   const introPromise = trackRequestWork(
     DiscoverIntroDeferred({ discoverCategoriesPromise }),
   );
-  const browsePromise = trackRequestWork(
-    DiscoverCategoryBrowseSection({ discoverCategoriesPromise }),
-  );
   const sectionsPromise = trackRequestWork(
     ResourcesDiscoverDeferredSections({
       discoverDataPromise,
@@ -400,10 +413,6 @@ async function ResourcesDiscoverContent({ userId }: { userId?: string }) {
     <>
       <Suspense fallback={<DiscoverIntroFallback />}>
         <AwaitResolvedNode promise={introPromise} />
-      </Suspense>
-
-      <Suspense fallback={<CategoryBrowseSectionFallback />}>
-        <AwaitResolvedNode promise={browsePromise} />
       </Suspense>
 
       <Suspense fallback={<DiscoverSectionsFallback />}>
@@ -424,6 +433,12 @@ async function DiscoverIntroDeferred({
     name: item.name,
     slug: item.slug,
   }));
+  const browseCategories = discoverCategoriesWithCount.map((item) => ({
+    id: item.id,
+    name: item.name,
+    slug: item.slug,
+    resourceCount: item._count.resources,
+  }));
   const discoverResourceCount = discoverCategoriesWithCount.reduce(
     (sum, item) => sum + item._count.resources,
     0,
@@ -432,6 +447,7 @@ async function DiscoverIntroDeferred({
   return (
     <DiscoverIntroSection
       categories={categories as ChipCategory[]}
+      browseCategories={browseCategories}
       categoryCount={discoverCategoriesWithCount.length}
       resourceCount={discoverResourceCount}
     />
@@ -440,46 +456,59 @@ async function DiscoverIntroDeferred({
 
 function DiscoverIntroSection({
   categories,
+  browseCategories,
   categoryCount,
   resourceCount,
 }: {
   categories: ChipCategory[];
+  browseCategories: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    resourceCount: number;
+  }>;
   categoryCount: number;
   resourceCount: number;
 }) {
   return (
-      <section className="space-y-4 border-b border-surface-200/80 pb-7 sm:space-y-5 sm:pb-8">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-small text-text-secondary">
-        <p>
-          <span className="font-semibold text-text-primary">{formatNumber(categoryCount)}</span>{" "}
-          categories
-        </p>
-        <span className="text-text-muted" aria-hidden>
-          •
-        </span>
-        <p>
-          <span className="font-semibold text-text-primary">{formatNumber(resourceCount)}</span>{" "}
-          resources
-        </p>
-      </div>
-
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
-        <div className="flex min-w-0 items-center gap-3 overflow-hidden sm:gap-4">
-          <Suspense fallback={<DiscoverFallback />}>
-            <DiscoverButton />
-          </Suspense>
-          <div className="hidden h-6 w-px shrink-0 bg-surface-200 sm:block" aria-hidden />
-          <ScrollableCategoryNav>
-            <Suspense fallback={<ChipsFallback />}>
-              <CategoryChips categories={categories} />
-            </Suspense>
-          </ScrollableCategoryNav>
+    <section className="border-b border-surface-200/80 pb-7 sm:pb-8">
+      <div className={CONTROLS_BAR_CLASS_NAME}>
+        <div className={CONTROLS_BAR_META_CLASS_NAME}>
+          <p>
+            <span className="font-semibold text-text-primary">{formatNumber(categoryCount)}</span>{" "}
+            categories
+          </p>
+          <span className="text-text-muted" aria-hidden>
+            •
+          </span>
+          <p>
+            <span className="font-semibold text-text-primary">{formatNumber(resourceCount)}</span>{" "}
+            resources
+          </p>
         </div>
 
-        <div className="w-full shrink-0 lg:max-w-md">
-          <Suspense fallback={<SearchFallback />}>
-            <HeroSearch variant="listing" />
-          </Suspense>
+        <div className={CONTROLS_BAR_MAIN_CLASS_NAME}>
+          <div className={CONTROLS_BAR_SEARCH_CLASS_NAME}>
+            <div className="flex-1 lg:min-w-[360px]">
+              <Suspense fallback={<SearchFallback />}>
+                <HeroSearch variant="listing" />
+              </Suspense>
+            </div>
+            <CategoryBrowseDialog categories={browseCategories} />
+          </div>
+
+          <div className={CONTROLS_BAR_GROUP_CLASS_NAME}>
+            <div className={CONTROLS_BAR_CHIP_SHELL_CLASS_NAME}>
+              <Suspense fallback={<DiscoverFallback />}>
+                <DiscoverButton />
+              </Suspense>
+              <ScrollableCategoryNav>
+                <Suspense fallback={<ChipsFallback />}>
+                  <CategoryChips categories={categories} />
+                </Suspense>
+              </ScrollableCategoryNav>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -722,62 +751,6 @@ async function ResourcesDiscoverDeferredSections({
 // ResourcesDiscoverPersonalisedSection removed — replaced by
 // ResourcesDiscoverRFYFinalSection + ResourcesDiscoverPersonalisedExtras below.
 
-async function DiscoverCategoryBrowseSection({
-  discoverCategoriesPromise,
-}: {
-  discoverCategoriesPromise: Promise<DiscoverCategoriesWithCount>;
-}) {
-  const discoverCategoriesWithCount = await discoverCategoriesPromise;
-
-  if (discoverCategoriesWithCount.length === 0) {
-    return null;
-  }
-
-  return (
-    <section className="space-y-6">
-      <div className="space-y-1.5">
-        <h2 className="text-xl font-semibold tracking-tight text-text-primary">
-          Browse by category
-        </h2>
-        <p className="max-w-2xl text-sm leading-6 text-text-secondary">
-          Jump straight into curated collections with the clearest entry point for each subject area.
-        </p>
-      </div>
-      <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-        {discoverCategoriesWithCount.map((cat) => {
-          const Icon = getCategoryIcon(cat.slug);
-          const color = getCategoryColor(cat.slug);
-          const href = `/resources?category=${encodeURIComponent(cat.slug)}`;
-
-          return (
-            <CategoryBrowseCardLink
-              key={cat.id}
-              href={href}
-              className="group block rounded-[22px] border border-surface-200 bg-white p-5 transition-colors duration-150 hover:border-surface-300"
-            >
-              <div className="flex items-center gap-4">
-                <span
-                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${color.bg} ${color.text}`}
-                >
-                  <Icon className="h-5 w-5" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <span className="block text-sm font-semibold text-zinc-900 transition-colors group-hover:text-brand-700">
-                    {cat.name}
-                  </span>
-                  <span className="mt-1 block text-[13px] text-zinc-500">
-                    {formatNumber(cat._count.resources)} resources
-                  </span>
-                </div>
-              </div>
-            </CategoryBrowseCardLink>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
 async function loadDiscoverCategoriesSafe(): Promise<DiscoverCategoriesWithCount> {
   try {
     return await traceServerStep("resources.getDiscoverCategories", () =>
@@ -904,32 +877,6 @@ function buildResultsContext(
   return `${n} ${scope}`;
 }
 
-function getCategoryIcon(slug: string): typeof Calculator {
-  const s = slug.toLowerCase();
-  if (s.includes("math")) return Calculator;
-  if (s.includes("science")) return FlaskConical;
-  if (s.includes("humanities")) return BookOpen;
-  if (s.includes("language")) return Languages;
-  if (s.includes("art")) return Palette;
-  if (s.includes("early-learning")) return GraduationCap;
-  if (s.includes("study-skills")) return ClipboardList;
-  if (s.includes("test-prep")) return GraduationCap;
-  return LayoutGrid;
-}
-
-function getCategoryColor(slug: string): { bg: string; text: string } {
-  const s = slug.toLowerCase();
-  if (s.includes("math")) return { bg: "bg-blue-100", text: "text-blue-600" };
-  if (s.includes("science")) return { bg: "bg-green-100", text: "text-green-600" };
-  if (s.includes("language")) return { bg: "bg-orange-100", text: "text-orange-600" };
-  if (s.includes("humanities")) return { bg: "bg-purple-100", text: "text-purple-600" };
-  if (s.includes("art")) return { bg: "bg-pink-100", text: "text-pink-600" };
-  if (s.includes("early-learning")) return { bg: "bg-yellow-100", text: "text-yellow-600" };
-  if (s.includes("study-skills")) return { bg: "bg-indigo-100", text: "text-indigo-600" };
-  if (s.includes("test-prep")) return { bg: "bg-red-100", text: "text-red-600" };
-  return { bg: "bg-zinc-100", text: "text-zinc-600" };
-}
-
 function SectionHeader({
   title,
   description,
@@ -980,21 +927,27 @@ function DiscoverFallback() {
  */
 function DiscoverIntroFallback() {
   return (
-    <section className="space-y-4 border-b border-surface-200/80 pb-7 sm:space-y-5 sm:pb-8">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-        <LoadingSkeleton className="h-4 w-24" />
-        <LoadingSkeleton className="h-4 w-28" />
-      </div>
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
-        <div className="flex min-w-0 items-center gap-3 overflow-hidden sm:gap-4">
-          <DiscoverFallback />
-          <div className="hidden h-6 w-px shrink-0 bg-surface-200 sm:block" aria-hidden />
-          <ScrollableCategoryNav>
-            <ChipsFallback />
-          </ScrollableCategoryNav>
+    <section className="border-b border-surface-200/80 pb-7 sm:pb-8">
+      <div className={CONTROLS_BAR_CLASS_NAME}>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <LoadingSkeleton className="h-4 w-24" />
+          <LoadingSkeleton className="h-4 w-28" />
         </div>
-        <div className="w-full shrink-0 lg:max-w-md">
-          <SearchFallback />
+        <div className={CONTROLS_BAR_MAIN_CLASS_NAME}>
+          <div className={CONTROLS_BAR_SEARCH_CLASS_NAME}>
+            <div className="flex-1 lg:min-w-[360px]">
+              <SearchFallback />
+            </div>
+            <BrowseCategoriesButtonFallback />
+          </div>
+          <div className={CONTROLS_BAR_GROUP_CLASS_NAME}>
+            <div className={CONTROLS_BAR_CHIP_SHELL_CLASS_NAME}>
+              <DiscoverFallback />
+              <ScrollableCategoryNav>
+                <ChipsFallback />
+              </ScrollableCategoryNav>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1006,6 +959,14 @@ function SearchFallback() {
     <div className="flex h-11 w-full items-center gap-3 rounded-full border border-border-subtle bg-white px-4 text-sm text-text-muted shadow-sm">
       <LoadingSkeleton className="h-2.5 w-2.5 rounded-full bg-primary-500" />
       <span>Loading search…</span>
+    </div>
+  );
+}
+
+function BrowseCategoriesButtonFallback() {
+  return (
+    <div className="inline-flex h-11 shrink-0 items-center rounded-full border border-surface-200 bg-white px-4 text-sm font-medium text-text-muted shadow-sm">
+      Browse categories
     </div>
   );
 }
@@ -1074,25 +1035,6 @@ function DiscoverSectionsFallback() {
       <DeferredSectionFallback titleWidth="w-32" cardCount={4} />
       <DeferredSectionFallback titleWidth="w-40" cardCount={4} />
     </div>
-  );
-}
-
-function CategoryBrowseSectionFallback() {
-  return (
-    <section className="space-y-6">
-      <div className="space-y-1.5">
-        <LoadingSkeleton className="h-6 w-40" />
-        <LoadingSkeleton className="h-4 w-80" />
-      </div>
-      <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-        {Array.from({ length: 6 }).map((_, index) => (
-          <LoadingSkeleton
-            key={index}
-            className="h-[72px] rounded-[24px] border border-surface-200 bg-white"
-          />
-        ))}
-      </div>
-    </section>
   );
 }
 

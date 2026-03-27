@@ -103,6 +103,8 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
   const pageParam = getSearchParamValue(rawPage)?.trim();
   const currentPage = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
   const isDiscoverMode = !category;
+  const discoverHeroClassName =
+    "min-h-[440px] rounded-[26px] border-white/70 bg-surface-100 sm:min-h-[500px] lg:min-h-[540px]";
 
   return withRequestPerformanceTrace(
     "route:/resources",
@@ -139,8 +141,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
         ? trackRequestWork(
             ResourcesDiscoverHero({
               userId,
-              className:
-                "min-h-[440px] rounded-[26px] border-white/70 bg-surface-100 sm:min-h-[500px] lg:min-h-[540px]",
+              className: discoverHeroClassName,
             }),
           )
         : null;
@@ -181,7 +182,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                     </p>
                   </div>
                   {heroPromise ? (
-                    <Suspense fallback={<HeroBannerSkeleton className="min-h-[440px] sm:min-h-[500px] lg:min-h-[540px]" />}>
+                    <Suspense fallback={<HeroBannerSkeleton className={discoverHeroClassName} />}>
                       <AwaitResolvedNode promise={heroPromise} />
                     </Suspense>
                   ) : null}

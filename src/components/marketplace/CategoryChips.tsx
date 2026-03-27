@@ -70,10 +70,10 @@ export function DiscoverButton() {
       aria-label="Discover resources"
       aria-busy={isPending}
       className={cn(
-        "inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-small transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70 sm:px-4",
+        "inline-flex h-9 shrink-0 items-center gap-2 rounded-full border px-3.5 text-small font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70 sm:px-4",
         isDiscover
-          ? "border-primary-200 bg-primary-50 text-primary-700"
-          : "border-border-subtle bg-white/90 text-text-secondary hover:border-surface-300 hover:bg-white hover:text-text-primary",
+          ? "border-primary-200 bg-primary-50 text-primary-700 shadow-sm"
+          : "border-transparent bg-transparent text-text-secondary hover:bg-white hover:text-text-primary",
         isPending && "cursor-wait opacity-70"
       )}
     >
@@ -120,7 +120,7 @@ export function CategoryChips({ categories }: CategoryChipsProps) {
     <div
       role="navigation"
       aria-label="Filter by category"
-      className="flex shrink-0 items-center gap-1.5 pr-3"
+      className="flex shrink-0 items-center gap-1.5 pr-1"
     >
       <Chip
         label="All"
@@ -174,11 +174,11 @@ function Chip({
       aria-pressed={active}
       aria-busy={pending}
       className={cn(
-        "inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-3 py-1.5 text-caption transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70 sm:text-small",
+        "inline-flex h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-3.5 text-small font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70",
         // Active or optimistically-pending target → blue
         active || pending
-          ? "border-primary-200 bg-primary-50 text-primary-700"
-          : "border-transparent bg-transparent text-text-secondary hover:border-surface-200 hover:bg-white hover:text-text-primary",
+          ? "border-primary-200 bg-primary-50 text-primary-700 shadow-sm"
+          : "border-transparent bg-transparent text-text-secondary hover:bg-white hover:text-text-primary",
         // The chip being navigated to: cursor-wait + slight fade
         pending && "cursor-wait opacity-75",
         // Non-target chips dim while any navigation is pending

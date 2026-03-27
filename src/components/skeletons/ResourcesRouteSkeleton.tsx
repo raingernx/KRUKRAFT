@@ -2,49 +2,47 @@
 
 import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/components/layout/container";
+import { HeroBannerSkeleton } from "@/components/marketplace/HeroBanner";
 import { ResourceCardSkeleton } from "@/components/resources/ResourceCardSkeleton";
+import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { ResourcesIntroSectionSkeleton } from "@/components/skeletons/ResourcesIntroSectionSkeleton";
 
 /**
- * Neutral route-level skeleton for /resources — used by loading.tsx for all
- * client-side navigations to this route, regardless of mode.
+ * Route-level skeleton for /resources.
  *
- * The problem: loading.tsx receives no search params, so it cannot know
- * whether the page will render in discover mode (no category/search) or
- * browse mode (?category=X / ?search=X). Rendering either mode's full
- * skeleton causes a layout shift when the other mode loads.
- *
- * The solution: render only the section that is structurally identical in
- * both modes — the category nav + search card — then show a flat card grid
- * below. Both modes ultimately render resource cards; the transition from a
- * flat grid to either discover sections or a sidebar grid is minimal.
- *
- * What is deliberately excluded:
- * - Hero banner + announcement bar (discover-only)
- * - Sidebar filter panel (browse-only)
- * - FilterBar toolbar (browse-only)
- * - Named section headers / "Browse by category" grid (discover-only)
- *
- * This is the authoritative route-level shell. More specific discover/listing
- * skeleton variants were retired to avoid mode switching before the page's own
- * streamed fallbacks take over.
+ * It mirrors the discover shell geometry because that is the primary public
+ * entry to /resources and includes the hero/banner footprint that the live
+ * page renders above the fold.
  */
 export function ResourcesRouteSkeleton() {
+  const discoverHeroClassName =
+    "min-h-[440px] rounded-[26px] border-white/70 bg-surface-100 sm:min-h-[500px] lg:min-h-[540px]";
+
   return (
     <div className="flex min-h-screen flex-col bg-surface-50">
       <Navbar />
 
       <main className="flex-1">
-        <Container className="space-y-12 py-12 sm:space-y-14 sm:py-14 lg:space-y-16 lg:py-16">
-          <ResourcesIntroSectionSkeleton isDiscoverMode={false} />
+        <section className="relative overflow-hidden border-b border-surface-200/80 bg-[radial-gradient(circle_at_top_left,rgba(224,231,255,0.78),transparent_32%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
+          <Container className="space-y-4 py-4 sm:space-y-5 sm:py-6 lg:space-y-6 lg:py-7">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-text-secondary">
+              <LoadingSkeleton className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <LoadingSkeleton className="h-4 w-48" />
+              <span className="hidden text-text-muted sm:inline">•</span>
+              <LoadingSkeleton className="hidden h-4 w-72 sm:block" />
+            </div>
+            <HeroBannerSkeleton className={discoverHeroClassName} />
+          </Container>
+        </section>
 
-          {/* ── Neutral card grid — valid placeholder for both modes ──── */}
+        <Container className="space-y-10 pb-12 pt-5 sm:space-y-12 sm:pb-14 sm:pt-6 lg:space-y-14 lg:pb-16 lg:pt-8">
+          <ResourcesIntroSectionSkeleton isDiscoverMode={true} />
+
           <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
             {Array.from({ length: 8 }).map((_, i) => (
               <ResourceCardSkeleton key={i} />
             ))}
           </div>
-
         </Container>
       </main>
     </div>
