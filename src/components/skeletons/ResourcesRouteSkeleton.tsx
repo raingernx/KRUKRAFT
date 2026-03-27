@@ -23,7 +23,7 @@ export function ResourcesRouteSkeleton() {
       <Navbar />
 
       <main className="flex-1">
-        <section className="relative overflow-hidden border-b border-surface-200/80 bg-[radial-gradient(circle_at_top_left,rgba(224,231,255,0.78),transparent_32%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
+        <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(224,231,255,0.78),transparent_32%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
           <Container className="space-y-4 py-4 sm:space-y-5 sm:py-6 lg:space-y-6 lg:py-7">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-text-secondary">
               <LoadingSkeleton className="h-1.5 w-1.5 rounded-full bg-emerald-500" />

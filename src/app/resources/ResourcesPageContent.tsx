@@ -235,7 +235,7 @@ export async function ResourcesPageContent({
 
   return (
     <>
-      <section className="space-y-5 border-b border-surface-200/80 pb-7 sm:space-y-6 sm:pb-8">
+      <section className="space-y-5 pb-7 sm:space-y-6 sm:pb-8">
         <div className="flex flex-col gap-4">
           <div className="max-w-3xl space-y-3">
             <p className="font-ui text-caption tracking-[0.12em] text-text-muted">
@@ -471,7 +471,7 @@ function DiscoverIntroSection({
   resourceCount: number;
 }) {
   return (
-    <section className="border-b border-surface-200/80 pb-7 sm:pb-8">
+    <section className="pb-7 sm:pb-8">
       <div className={CONTROLS_BAR_CLASS_NAME}>
         <div className={CONTROLS_BAR_META_CLASS_NAME}>
           <p>
