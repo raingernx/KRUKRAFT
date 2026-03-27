@@ -100,7 +100,7 @@ export function FilterBar({ total }: Props) {
             onClick={clearFilterControls}
             disabled={isPending}
             aria-label="Clear sort and price filters"
-            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-transparent px-3 py-2 text-caption text-text-secondary transition hover:bg-surface-100 hover:text-text-primary disabled:cursor-wait"
+            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-transparent px-3 py-2 text-caption text-text-secondary transition hover:bg-surface-100 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <X className="h-3.5 w-3.5" />
             Clear
@@ -139,7 +139,8 @@ function FilterSelect({
           "min-h-11 w-full appearance-none cursor-pointer rounded-full border py-2.5 pl-3.5 pr-9",
           "text-small outline-none transition-colors",
           "focus:border-primary-300 focus:ring-2 focus:ring-primary-500/12",
-          "disabled:cursor-wait",
+          "focus-visible:border-primary-300 focus-visible:ring-2 focus-visible:ring-primary-500/12",
+          "disabled:cursor-not-allowed disabled:opacity-60",
           isActive
             ? "border-primary-200 bg-primary-50 text-primary-700"
             : "border-border-subtle bg-white text-text-secondary hover:border-surface-300 hover:text-text-primary",

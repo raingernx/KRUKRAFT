@@ -10,9 +10,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   beginResourcesNavigation,
+  canonicalizeResourcesHref,
   inferResourcesNavigationMode,
   type ResourcesNavigationMode,
+  useResourcesNavigationState,
 } from "@/components/marketplace/resourcesNavigationState";
+import { cn } from "@/lib/utils";
 
 const VIEWPORT_ROOT_MARGIN = "220px";
 const DEFAULT_INTENT_PREFETCH_LIMIT = 8;
@@ -67,6 +70,7 @@ export function IntentPrefetchLink({
 }: IntentPrefetchLinkProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const navigationState = useResourcesNavigationState();
   const linkRef = useRef<HTMLAnchorElement | null>(null);
   const prefetchedRef = useRef(false);
   const effectivePrefetchLimit =
@@ -75,6 +79,11 @@ export function IntentPrefetchLink({
       ? DEFAULT_VIEWPORT_PREFETCH_LIMIT
       : DEFAULT_INTENT_PREFETCH_LIMIT);
   const scopeKey = `${pathname ?? "unknown"}:${prefetchScope}`;
+  const canonicalHref = canonicalizeResourcesHref(href);
+  const isPendingTarget =
+    Boolean(resourcesNavigationMode) &&
+    Boolean(navigationState.mode && navigationState.href) &&
+    navigationState.href === canonicalHref;
 
   function handleResourcesNavigation(event: Parameters<NonNullable<ComponentProps<typeof Link>["onClick"]>>[0]) {
     if (
@@ -177,6 +186,12 @@ export function IntentPrefetchLink({
       ref={linkRef}
       href={href}
       prefetch={false}
+      aria-busy={props["aria-busy"] ?? (isPendingTarget || undefined)}
+      data-pending={isPendingTarget ? "true" : undefined}
+      className={cn(
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30 focus-visible:ring-offset-2",
+        props.className,
+      )}
       onMouseEnter={(event) => {
         onMouseEnter?.(event);
         if (prefetchMode !== "none") {

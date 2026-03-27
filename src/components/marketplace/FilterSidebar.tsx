@@ -131,7 +131,7 @@ export function FilterSidebar({
             <button
               type="button"
               onClick={clearAll}
-              className="flex items-center gap-1 text-caption text-text-secondary transition hover:text-text-primary"
+              className="flex items-center gap-1 text-caption text-text-secondary transition hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
             >
               <X className="h-3 w-3" />
               Clear all
@@ -154,7 +154,7 @@ export function FilterSidebar({
                     onClick={() => updateParam("sort", opt.value)}
                     aria-pressed={active}
                     className={cn(
-                      "w-full rounded-xl px-3 py-2.5 text-left text-small transition",
+                      "w-full rounded-xl px-3 py-2.5 text-left text-small transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
                       active
                         ? "bg-primary-50 font-medium text-primary-700"
                         : "text-text-secondary hover:bg-surface-50 hover:text-text-primary",
@@ -180,7 +180,7 @@ export function FilterSidebar({
                 onClick={() => updateParam("category", "all")}
                 aria-pressed={isAllCategories || isOptimistic("category", "all")}
                 className={cn(
-                  "w-full rounded-xl px-3 py-2.5 text-left text-small transition",
+                  "w-full rounded-xl px-3 py-2.5 text-left text-small transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
                   isAllCategories || isOptimistic("category", "all")
                     ? "bg-primary-50 font-medium text-primary-700"
                     : "text-text-secondary hover:bg-surface-50 hover:text-text-primary",
@@ -200,7 +200,7 @@ export function FilterSidebar({
                     onClick={() => updateParam("category", cat.slug)}
                     aria-pressed={active}
                     className={cn(
-                      "w-full rounded-xl px-3 py-2.5 text-left text-small transition",
+                      "w-full rounded-xl px-3 py-2.5 text-left text-small transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
                       active
                         ? "bg-primary-50 font-medium text-primary-700"
                         : "text-text-secondary hover:bg-surface-50 hover:text-text-primary",
@@ -230,7 +230,7 @@ export function FilterSidebar({
                     onClick={() => updateParam("price", opt.value)}
                     aria-pressed={active}
                     className={cn(
-                      "w-full rounded-xl px-3 py-2.5 text-left text-small transition",
+                      "w-full rounded-xl px-3 py-2.5 text-left text-small transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
                       active
                         ? "bg-primary-50 font-medium text-primary-700"
                         : "text-text-secondary hover:bg-surface-50 hover:text-text-primary",
@@ -260,7 +260,7 @@ export function FilterSidebar({
                 onClick={() => updateParam("tag", currentlyActive ? "" : diff.value)}
                 aria-pressed={active}
                 className={cn(
-                  "rounded-full px-3 py-1.5 text-caption transition",
+                  "rounded-full px-3 py-1.5 text-caption transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
                   active
                     ? "border border-primary-200 bg-primary-50 text-primary-700"
                     : "border border-border-subtle bg-white text-text-secondary hover:border-surface-300 hover:bg-surface-50",
@@ -288,7 +288,7 @@ export function FilterSidebar({
                 onClick={() => updateParam("tag", currentlyActive ? "" : type.value)}
                 aria-pressed={active}
                 className={cn(
-                  "rounded-full px-3 py-1.5 text-caption transition",
+                  "rounded-full px-3 py-1.5 text-caption transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
                   active
                     ? "border border-primary-200 bg-primary-50 text-primary-700"
                     : "border border-border-subtle bg-white text-text-secondary hover:border-surface-300 hover:bg-surface-50",
@@ -321,7 +321,7 @@ function FilterGroup({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="mb-3 flex w-full items-center justify-between text-caption text-text-secondary"
+        className="mb-3 flex w-full items-center justify-between text-caption text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
       >
         <span>{title}</span>
         <span className="text-caption text-text-muted">{open ? "−" : "+"}</span>

@@ -86,7 +86,7 @@ export function ResourceGallery({
             type="button"
             onClick={() => setZoomed(false)}
             aria-label="Close preview"
-            className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/25"
+            className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             <X className="h-5 w-5" />
           </button>
@@ -130,7 +130,7 @@ export function ResourceGallery({
               }}
               disabled={!canGoUp}
               aria-label="Previous image"
-              className="mb-3 hidden shrink-0 text-zinc-500 transition-colors hover:text-zinc-900 disabled:pointer-events-none disabled:opacity-40 lg:block"
+              className="mb-3 hidden shrink-0 text-zinc-500 transition-colors hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 lg:block"
             >
               <ChevronUp className="h-5 w-5" />
             </button>
@@ -145,7 +145,7 @@ export function ResourceGallery({
                     onClick={() => setActive(globalIndex)}
                     aria-label={`View preview ${globalIndex + 1}`}
                     className={[
-                      "relative aspect-square w-16 shrink-0 overflow-hidden rounded-lg border transition lg:w-20",
+                      "relative aspect-square w-16 shrink-0 overflow-hidden rounded-lg border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 lg:w-20",
                       globalIndex === activeIndex
                         ? "border-primary-500 ring-1 ring-primary-500/20"
                         : "border-surface-200 opacity-70 hover:border-zinc-300 hover:opacity-100",
@@ -174,7 +174,7 @@ export function ResourceGallery({
               }}
               disabled={!canGoDown}
               aria-label="Next image"
-              className="mt-3 hidden shrink-0 text-zinc-500 transition-colors hover:text-zinc-900 disabled:pointer-events-none disabled:opacity-40 lg:block"
+              className="mt-3 hidden shrink-0 text-zinc-500 transition-colors hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 lg:block"
             >
               <ChevronDown className="h-5 w-5" />
             </button>
@@ -190,7 +190,7 @@ export function ResourceGallery({
         type="button"
         onClick={() => setZoomed(true)}
         aria-label="Enlarge preview"
-        className="group relative order-1 w-full cursor-zoom-in overflow-hidden rounded-xl border border-surface-200 bg-surface-50 aspect-[4/3] min-h-[420px] lg:order-2"
+        className="group relative order-1 w-full cursor-zoom-in overflow-hidden rounded-xl border border-surface-200 bg-surface-50 aspect-[4/3] min-h-[420px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 lg:order-2"
       >
         <Image
           src={current.imageUrl}

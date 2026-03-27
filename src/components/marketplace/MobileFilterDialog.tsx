@@ -27,7 +27,7 @@ export function MobileFilterDialog({ categories }: MobileFilterDialogProps) {
     <div className="lg:hidden">
       <Modal.Root open={open} onOpenChange={setOpen}>
         <Modal.Trigger
-          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-surface-200 bg-white px-4 py-2.5 text-sm font-medium text-text-primary shadow-sm transition hover:border-surface-300 hover:bg-surface-50"
+          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-surface-200 bg-white px-4 py-2.5 text-sm font-medium text-text-primary shadow-sm transition hover:border-surface-300 hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
         >
           <SlidersHorizontal className="h-4 w-4 text-text-muted" />
           Filters

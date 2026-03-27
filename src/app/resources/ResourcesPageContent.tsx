@@ -936,7 +936,7 @@ function SectionHeader({
 
 function DiscoverFallback() {
   return (
-    <div className="inline-flex h-9 items-center gap-2 rounded-full border border-surface-200 bg-white px-3 text-sm font-medium text-text-secondary shadow-sm">
+    <div className="inline-flex h-10 items-center gap-2 rounded-full border border-surface-200 bg-white px-3.5 text-sm font-medium text-text-secondary shadow-sm">
       <LoadingSkeleton className="h-2 w-2 rounded-full bg-primary-500" />
       <span>Loading</span>
     </div>
@@ -991,7 +991,7 @@ function ChipsFallback() {
       ].map((label, index) => (
         <div
           key={label}
-          className={`inline-flex h-8 shrink-0 items-center rounded-full border border-surface-200 bg-surface-50 px-3 text-sm text-text-muted ${
+          className={`inline-flex h-9 shrink-0 items-center rounded-full border border-surface-200 bg-surface-50 px-3 text-sm text-text-muted ${
             index === 0 ? "gap-2 pr-4" : ""
           }`}
         >
@@ -1013,8 +1013,8 @@ function FilterBarFallback() {
         <span>Preparing filters</span>
       </div>
       <div className="flex gap-2">
-        <LoadingSkeleton className="h-10 w-28 rounded-full border border-surface-200 bg-surface-50" />
-        <LoadingSkeleton className="h-10 w-32 rounded-full border border-surface-200 bg-surface-50" />
+        <LoadingSkeleton className="h-11 w-28 rounded-full border border-surface-200 bg-surface-50" />
+        <LoadingSkeleton className="h-11 w-32 rounded-full border border-surface-200 bg-surface-50" />
       </div>
     </div>
   );
