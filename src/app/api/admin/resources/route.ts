@@ -3,7 +3,7 @@ import { after } from "next/server";
 import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
 import { authOptions } from "@/lib/auth";
-import { CACHE_TAGS } from "@/lib/cache";
+import { CACHE_TAGS, deleteDiscoverRedisKeys } from "@/lib/cache";
 import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import {
   createAdminResource,
@@ -34,6 +34,7 @@ export async function POST(req: Request) {
     const result = await createAdminResource(await req.json(), session.user.id);
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(CACHE_TAGS.creatorPublic, "max");
+    await deleteDiscoverRedisKeys();
     if (result.data.status === "PUBLISHED") {
       after(() => {
         void warmTargetedPublicCaches({

@@ -123,6 +123,84 @@ export async function deleteCachedKey(key: string) {
   }
 }
 
+/**
+ * Deletes all fixed-key Redis entries for the discover/marketplace public
+ * cache layer.  Call alongside revalidateTag(CACHE_TAGS.discover) so that
+ * both the per-instance (unstable_cache) and cross-instance (Redis) layers
+ * are cleared together.
+ *
+ * Dynamic paginated listing keys (marketplace:sort:…, related_resources:…)
+ * are not enumerable without a Redis SCAN; they expire at their TTL instead.
+ */
+export async function deleteDiscoverRedisKeys(): Promise<void> {
+  await Promise.all([
+    deleteCachedKey(CACHE_KEYS.discoverData),
+    deleteCachedKey(CACHE_KEYS.discoverCategories),
+    deleteCachedKey(CACHE_KEYS.marketplaceCategories),
+    deleteCachedKey(`${CACHE_KEYS.trendingResources}:8`),
+    deleteCachedKey(`${CACHE_KEYS.popularResources}:8`),
+    deleteCachedKey(`${CACHE_KEYS.newestResources}:8`),
+    deleteCachedKey(`${CACHE_KEYS.featuredResources}:8`),
+    deleteCachedKey(`${CACHE_KEYS.freeResources}:8`),
+    deleteCachedKey(CACHE_KEYS.topCreator),
+  ]);
+}
+
+/**
+ * Deletes the Redis entries for a single resource's public detail and
+ * metadata cache.  Call alongside revalidateTag(getResourceCacheTag(slug)).
+ */
+export async function deleteResourceRedisKeys(slug: string): Promise<void> {
+  await Promise.all([
+    deleteCachedKey(CACHE_KEYS.resourceDetail(slug)),
+    deleteCachedKey(CACHE_KEYS.resourceMetadata(slug)),
+  ]);
+}
+
+/**
+ * Deletes the Redis entries for a resource's trust signal cache (rating
+ * average, review count, sales count).  Call alongside
+ * revalidateTag(getResourceDetailDataTag(resourceId)).
+ */
+export async function deleteResourceTrustRedisKeys(resourceId: string): Promise<void> {
+  await Promise.all([
+    deleteCachedKey(CACHE_KEYS.resourceTrust(resourceId)),
+    deleteCachedKey(CACHE_KEYS.resourceTrustSummary(resourceId)),
+  ]);
+}
+
+/**
+ * Deletes the Redis entries for the affected resource's own related-resources
+ * panel on the public detail page. This is the only precise key we can evict
+ * without scanning Redis for every resource in the same category.
+ */
+export async function deleteRelatedResourcesRedisKeys(
+  resourceId: string,
+  categoryIds: Array<string | null | undefined>,
+  takes: number[] = [4],
+): Promise<void> {
+  const uniqueCategoryIds = Array.from(
+    new Set(
+      categoryIds.filter(
+        (categoryId): categoryId is string =>
+          typeof categoryId === "string" && categoryId.length > 0,
+      ),
+    ),
+  );
+
+  if (uniqueCategoryIds.length === 0 || takes.length === 0) {
+    return;
+  }
+
+  await Promise.all(
+    uniqueCategoryIds.flatMap((categoryId) =>
+      takes.map((take) =>
+        deleteCachedKey(CACHE_KEYS.relatedResources(categoryId, resourceId, take)),
+      ),
+    ),
+  );
+}
+
 export async function rememberJson<T>(
   key: string,
   ttlSeconds: number,

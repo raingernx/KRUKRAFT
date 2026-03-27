@@ -1,6 +1,12 @@
 import { revalidateTag } from "next/cache";
 import { logActivity } from "@/lib/activity";
-import { CACHE_TAGS, getResourceCacheTag } from "@/lib/cache";
+import {
+  CACHE_TAGS,
+  deleteDiscoverRedisKeys,
+  deleteRelatedResourcesRedisKeys,
+  deleteResourceRedisKeys,
+  getResourceCacheTag,
+} from "@/lib/cache";
 import {
   findResourceById,
   permanentlyDeleteAdminResource,
@@ -44,6 +50,11 @@ export async function restoreTrashedResource(input: ResourceTrashInput) {
   revalidateTag(CACHE_TAGS.discover, "max");
   revalidateTag(CACHE_TAGS.creatorPublic, "max");
   revalidateTag(getResourceCacheTag(existing.slug), "max");
+  await Promise.all([
+    deleteDiscoverRedisKeys(),
+    deleteRelatedResourcesRedisKeys(existing.id, [existing.categoryId]),
+    deleteResourceRedisKeys(existing.slug),
+  ]);
 
   return restored;
 }
@@ -77,6 +88,11 @@ export async function permanentlyDeleteTrashedResource(
   revalidateTag(CACHE_TAGS.discover, "max");
   revalidateTag(CACHE_TAGS.creatorPublic, "max");
   revalidateTag(getResourceCacheTag(existing.slug), "max");
+  await Promise.all([
+    deleteDiscoverRedisKeys(),
+    deleteRelatedResourcesRedisKeys(existing.id, [existing.categoryId]),
+    deleteResourceRedisKeys(existing.slug),
+  ]);
 
   return {
     id: input.resourceId,

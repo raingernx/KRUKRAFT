@@ -3,10 +3,17 @@ import { after } from "next/server";
 import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
 import { authOptions } from "@/lib/auth";
-import { CACHE_TAGS } from "@/lib/cache";
+import {
+  CACHE_TAGS,
+  deleteDiscoverRedisKeys,
+  deleteRelatedResourcesRedisKeys,
+  deleteResourceRedisKeys,
+  getResourceCacheTag,
+} from "@/lib/cache";
 import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import {
   createAdminResourcesInBulk,
+  getAdminResourcePublicCacheTargets,
   mutateAdminResourcesInBulk,
   ResourceServiceError,
 } from "@/services/resources/resource.service";
@@ -59,6 +66,7 @@ export async function POST(req: Request) {
     if (result.data.success > 0) {
       revalidateTag(CACHE_TAGS.discover, "max");
       revalidateTag(CACHE_TAGS.creatorPublic, "max");
+      await deleteDiscoverRedisKeys();
       after(() => {
         void warmTargetedPublicCaches({
           trigger: "admin_resource_bulk_create",
@@ -80,11 +88,30 @@ export async function PATCH(req: Request) {
     const { error } = await requireAdmin();
     if (error) return error;
 
-    const result = await mutateAdminResourcesInBulk(await req.json());
+    const body = await req.json();
+    const targetIds = Array.isArray((body as { ids?: unknown })?.ids)
+      ? ((body as { ids: unknown[] }).ids.filter(
+          (value): value is string => typeof value === "string",
+        ))
+      : [];
+    const cacheTargets = await getAdminResourcePublicCacheTargets(targetIds);
+    const result = await mutateAdminResourcesInBulk(body);
 
     if (result.data.updated > 0 || result.data.deleted > 0) {
       revalidateTag(CACHE_TAGS.discover, "max");
       revalidateTag(CACHE_TAGS.creatorPublic, "max");
+      cacheTargets.forEach((target) => {
+        revalidateTag(getResourceCacheTag(target.slug), "max");
+      });
+      await Promise.all([
+        deleteDiscoverRedisKeys(),
+        ...cacheTargets.map((target) =>
+          Promise.all([
+            deleteRelatedResourcesRedisKeys(target.id, [target.categoryId]),
+            deleteResourceRedisKeys(target.slug),
+          ]),
+        ),
+      ]);
       after(() => {
         void warmTargetedPublicCaches({
           trigger: "admin_resource_bulk_patch",

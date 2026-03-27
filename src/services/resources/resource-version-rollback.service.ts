@@ -1,5 +1,5 @@
 import { revalidateTag } from "next/cache";
-import { getResourceCacheTag } from "@/lib/cache";
+import { deleteResourceRedisKeys, getResourceCacheTag } from "@/lib/cache";
 import {
   findResourceById,
   rollbackResourceVersionRecord,
@@ -40,6 +40,7 @@ export async function rollbackResourceVersion(
   const resource = await findResourceById(input.resourceId);
   if (resource) {
     revalidateTag(getResourceCacheTag(resource.slug), "max");
+    await deleteResourceRedisKeys(resource.slug);
   }
 
   return {

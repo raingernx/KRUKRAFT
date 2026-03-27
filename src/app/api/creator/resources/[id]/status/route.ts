@@ -4,10 +4,18 @@ import { revalidateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { Prisma } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
-import { CACHE_TAGS, getCreatorPublicCacheTag } from "@/lib/cache";
+import {
+  CACHE_TAGS,
+  deleteDiscoverRedisKeys,
+  deleteRelatedResourcesRedisKeys,
+  deleteResourceRedisKeys,
+  getCreatorPublicCacheTag,
+  getResourceCacheTag,
+} from "@/lib/cache";
 import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import {
   CreatorServiceError,
+  getCreatorResourcePublicCacheTarget,
   updateCreatorResourceStatus,
 } from "@/services/creator.service";
 
@@ -57,10 +65,23 @@ export async function PATCH(req: Request, { params }: Params) {
 
     const { id } = await params;
     const input = await req.json();
+    const cacheTarget = await getCreatorResourcePublicCacheTarget(session.user.id, id);
     const result = await updateCreatorResourceStatus(session.user.id, id, input);
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(CACHE_TAGS.creatorPublic, "max");
     revalidateTag(getCreatorPublicCacheTag(session.user.id), "max");
+    if (cacheTarget) {
+      revalidateTag(getResourceCacheTag(cacheTarget.slug), "max");
+    }
+    await Promise.all([
+      deleteDiscoverRedisKeys(),
+      ...(cacheTarget
+        ? [
+            deleteRelatedResourcesRedisKeys(cacheTarget.id, [cacheTarget.categoryId]),
+            deleteResourceRedisKeys(cacheTarget.slug),
+          ]
+        : []),
+    ]);
     after(() => {
       void warmTargetedPublicCaches({
         trigger: "creator_resource_status_update",

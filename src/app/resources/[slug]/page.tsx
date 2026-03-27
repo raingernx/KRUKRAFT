@@ -327,7 +327,7 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
               displays the Download button in owned state.
             */}
             {isReturningFromCheckout && (
-              <Suspense fallback={null}>
+              <Suspense fallback={<ResourceDetailSuccessSkeleton hasFile={hasFile} />}>
                 <ResourceDetailSuccessShell
                   ownershipPromise={ownershipPromise}
                   hasFile={hasFile}
@@ -780,6 +780,27 @@ async function ResourceDetailSuccessShell({
       </div>
       <AutoScrollOnSuccess enabled />
     </>
+  );
+}
+
+function ResourceDetailSuccessSkeleton({
+  hasFile,
+}: {
+  hasFile: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4 rounded-2xl border border-emerald-100/70 bg-emerald-50/70 px-5 py-4">
+      <div className="flex items-start gap-3">
+        <div className="mt-0.5 h-5 w-5 animate-pulse rounded-full bg-emerald-200" />
+        <div className="space-y-2">
+          <div className="h-4 w-56 animate-pulse rounded bg-emerald-200/80" />
+          <div className="h-3.5 w-32 animate-pulse rounded bg-emerald-200/70" />
+        </div>
+      </div>
+      {hasFile ? (
+        <div className="h-9 w-36 animate-pulse rounded-xl bg-emerald-200/80" />
+      ) : null}
+    </div>
   );
 }
 

@@ -3,7 +3,7 @@ import { revalidateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
-import { CACHE_TAGS, getResourceDetailDataTag } from "@/lib/cache";
+import { CACHE_TAGS, deleteResourceTrustRedisKeys, getResourceDetailDataTag } from "@/lib/cache";
 import {
   hideReview,
   ReviewServiceError,
@@ -50,6 +50,7 @@ export async function PATCH(req: Request, { params }: Params) {
 
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(getResourceDetailDataTag(review.resourceId), "max");
+    await deleteResourceTrustRedisKeys(review.resourceId);
 
     return NextResponse.json({ data: review });
   } catch (error) {

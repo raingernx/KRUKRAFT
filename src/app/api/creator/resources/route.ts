@@ -4,7 +4,7 @@ import { revalidateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { Prisma } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
-import { CACHE_TAGS, getCreatorPublicCacheTag } from "@/lib/cache";
+import { CACHE_TAGS, deleteDiscoverRedisKeys, getCreatorPublicCacheTag } from "@/lib/cache";
 import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import { CreatorServiceError, createCreatorResource } from "@/services/creator.service";
 
@@ -52,6 +52,7 @@ export async function POST(req: Request) {
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(CACHE_TAGS.creatorPublic, "max");
     revalidateTag(getCreatorPublicCacheTag(session.user.id), "max");
+    await deleteDiscoverRedisKeys();
     if (resource.status === "PUBLISHED") {
       after(() => {
         void warmTargetedPublicCaches({

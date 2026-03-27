@@ -6,11 +6,18 @@ import { Prisma } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
 import {
   CACHE_TAGS,
+  deleteDiscoverRedisKeys,
+  deleteRelatedResourcesRedisKeys,
+  deleteResourceRedisKeys,
   getCreatorPublicCacheTag,
   getResourceCacheTag,
 } from "@/lib/cache";
 import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
-import { CreatorServiceError, updateCreatorResource } from "@/services/creator.service";
+import {
+  CreatorServiceError,
+  getCreatorResourcePublicCacheTarget,
+  updateCreatorResource,
+} from "@/services/creator.service";
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -57,11 +64,33 @@ export async function PATCH(req: Request, { params }: Params) {
     }
 
     const { id } = await params;
+    const previousCacheTarget = await getCreatorResourcePublicCacheTarget(
+      session.user.id,
+      id,
+    );
     const resource = await updateCreatorResource(session.user.id, id, await req.json());
+    const currentCacheTarget = await getCreatorResourcePublicCacheTarget(
+      session.user.id,
+      id,
+    );
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(CACHE_TAGS.creatorPublic, "max");
     revalidateTag(getCreatorPublicCacheTag(session.user.id), "max");
     revalidateTag(getResourceCacheTag(resource.slug), "max");
+    if (previousCacheTarget && previousCacheTarget.slug !== resource.slug) {
+      revalidateTag(getResourceCacheTag(previousCacheTarget.slug), "max");
+    }
+    await Promise.all([
+      deleteDiscoverRedisKeys(),
+      deleteRelatedResourcesRedisKeys(id, [
+        previousCacheTarget?.categoryId,
+        currentCacheTarget?.categoryId,
+      ]),
+      ...(previousCacheTarget && previousCacheTarget.slug !== resource.slug
+        ? [deleteResourceRedisKeys(previousCacheTarget.slug)]
+        : []),
+      deleteResourceRedisKeys(resource.slug),
+    ]);
     after(() => {
       void warmTargetedPublicCaches({
         trigger: "creator_resource_update",

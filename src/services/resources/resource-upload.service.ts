@@ -1,6 +1,6 @@
 import { logActivity } from "@/lib/activity";
 import { revalidateTag } from "next/cache";
-import { getResourceCacheTag } from "@/lib/cache";
+import { deleteResourceRedisKeys, getResourceCacheTag } from "@/lib/cache";
 import { storage } from "@/lib/storage";
 import {
   findResourceUploadTargetById,
@@ -125,6 +125,7 @@ export async function uploadAdminResourceFile(
   });
 
   revalidateTag(getResourceCacheTag(resource.slug), "max");
+  await deleteResourceRedisKeys(resource.slug);
 
   return {
     fileKey: updated.fileKey,

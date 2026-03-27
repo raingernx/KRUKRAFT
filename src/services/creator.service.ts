@@ -1276,6 +1276,24 @@ export async function getCreatorResourceForEdit(userId: string, resourceId: stri
   };
 }
 
+export async function getCreatorResourcePublicCacheTarget(
+  userId: string,
+  resourceId: string,
+) {
+  await requireCreatorAccess(userId);
+
+  const resource = await findCreatorResourceById(userId, resourceId);
+  if (!resource) {
+    return null;
+  }
+
+  return {
+    id: resource.id,
+    slug: resource.slug,
+    categoryId: resource.categoryId,
+  };
+}
+
 export async function createCreatorResource(userId: string, input: unknown) {
   const access = await requireCreatorAccess(userId);
 

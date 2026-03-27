@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { deleteResourceRedisKeys, getResourceCacheTag } from "@/lib/cache";
 import { prisma } from "@/lib/prisma";
 
 // DELETE /api/admin/resources/:id/file
@@ -26,7 +28,7 @@ export async function DELETE(
     }
 
     // Clear private upload fields for the resource (but leave external fileUrl untouched)
-    await prisma.resource.update({
+    const updated = await prisma.resource.update({
       where: { id },
       data: {
         fileKey: null,
@@ -34,7 +36,11 @@ export async function DELETE(
         fileSize: null,
         mimeType: null,
       },
+      select: { slug: true },
     });
+
+    revalidateTag(getResourceCacheTag(updated.slug), "max");
+    await deleteResourceRedisKeys(updated.slug);
 
     return NextResponse.json({ success: true });
   } catch (error) {

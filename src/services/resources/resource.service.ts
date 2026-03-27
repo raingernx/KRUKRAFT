@@ -255,6 +255,39 @@ export async function listAdminResources() {
   return findAdminResources();
 }
 
+export async function getAdminResourcePublicCacheTarget(resourceId: string) {
+  const resource = await findResourceById(resourceId);
+  if (!resource) {
+    return null;
+  }
+
+  return {
+    id: resource.id,
+    slug: resource.slug,
+    categoryId: resource.categoryId,
+  };
+}
+
+export async function getAdminResourcePublicCacheTargets(resourceIds: string[]) {
+  const uniqueIds = Array.from(
+    new Set(resourceIds.map((value) => value.trim()).filter(Boolean)),
+  );
+
+  if (uniqueIds.length === 0) {
+    return [];
+  }
+
+  const resources = await Promise.all(uniqueIds.map((resourceId) => findResourceById(resourceId)));
+
+  return resources
+    .filter((resource): resource is NonNullable<typeof resource> => Boolean(resource))
+    .map((resource) => ({
+      id: resource.id,
+      slug: resource.slug,
+      categoryId: resource.categoryId,
+    }));
+}
+
 export async function getCreatorResources(userId: string) {
   const resources = await findCreatorOwnedResources(userId);
 
