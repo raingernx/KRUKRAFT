@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 import { buttonVariants } from "@/design-system";
+import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { cn } from "@/lib/utils";
 import {
   normalizeHeroStyle,
@@ -523,14 +524,14 @@ export function HeroSurfaceSkeleton({
             alignment.outer,
           )}
         >
-          <div className="h-7 w-52 animate-pulse rounded-full border border-surface-200/80 bg-white/75" />
+          <LoadingSkeleton className="h-7 w-52 rounded-full border border-surface-200/80 bg-white/75" />
           <div className="space-y-3">
-            <div className="h-12 w-full max-w-[720px] animate-pulse rounded-2xl bg-white/80 sm:h-16" />
-            <div className="h-12 w-4/5 max-w-[620px] animate-pulse rounded-2xl bg-white/70 sm:h-16" />
+            <LoadingSkeleton className="h-12 w-full max-w-[720px] rounded-2xl bg-white/80 sm:h-16" />
+            <LoadingSkeleton className="h-12 w-4/5 max-w-[620px] rounded-2xl bg-white/70 sm:h-16" />
           </div>
           <div className="space-y-2">
-            <div className="h-5 w-full max-w-[680px] animate-pulse rounded bg-white/70" />
-            <div className="h-5 w-3/4 max-w-[540px] animate-pulse rounded bg-white/60" />
+            <LoadingSkeleton className="h-5 w-full max-w-[680px] bg-white/70" />
+            <LoadingSkeleton className="h-5 w-3/4 max-w-[540px] bg-white/60" />
           </div>
           <div
             className={cn(
@@ -538,8 +539,8 @@ export function HeroSurfaceSkeleton({
               alignment.actions,
             )}
           >
-            <div className="h-12 w-40 animate-pulse rounded-lg bg-white/90" />
-            <div className="h-12 w-36 animate-pulse rounded-lg border border-white/60 bg-white/35" />
+            <LoadingSkeleton className="h-12 w-40 rounded-lg bg-white/90" />
+            <LoadingSkeleton className="h-12 w-36 rounded-lg border border-white/60 bg-white/35" />
           </div>
         </div>
       </div>

@@ -27,6 +27,7 @@ import { CreatorCTA } from "@/components/discover/CreatorCTA";
 import { BlogSection } from "@/components/discover/BlogSection";
 import { EmailSignup } from "@/components/discover/EmailSignup";
 import { CategoryBrowseCardLink } from "@/components/marketplace/CategoryBrowseCardLink";
+import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { formatNumber, formatPrice } from "@/lib/format";
 import {
   getDiscoverData,
@@ -934,7 +935,7 @@ function SectionHeader({
 function DiscoverFallback() {
   return (
     <div className="inline-flex h-9 items-center gap-2 rounded-full border border-surface-200 bg-white px-3 text-sm font-medium text-text-secondary shadow-sm">
-      <span className="h-2 w-2 animate-pulse rounded-full bg-primary-500" aria-hidden />
+      <LoadingSkeleton className="h-2 w-2 rounded-full bg-primary-500" />
       <span>Loading</span>
     </div>
   );
@@ -949,8 +950,8 @@ function DiscoverIntroFallback() {
   return (
     <section className="space-y-4 border-b border-surface-200/80 pb-7 sm:space-y-5 sm:pb-8">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-        <div className="h-4 w-24 animate-pulse rounded bg-surface-100" />
-        <div className="h-4 w-28 animate-pulse rounded bg-surface-100" />
+        <LoadingSkeleton className="h-4 w-24" />
+        <LoadingSkeleton className="h-4 w-28" />
       </div>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
         <div className="flex min-w-0 items-center gap-3 overflow-hidden sm:gap-4">
@@ -971,7 +972,7 @@ function DiscoverIntroFallback() {
 function SearchFallback() {
   return (
     <div className="flex h-11 w-full items-center gap-3 rounded-full border border-border-subtle bg-white px-4 text-sm text-text-muted shadow-sm">
-      <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-primary-500" aria-hidden />
+      <LoadingSkeleton className="h-2.5 w-2.5 rounded-full bg-primary-500" />
       <span>Loading search…</span>
     </div>
   );
@@ -993,7 +994,7 @@ function ChipsFallback() {
           }`}
         >
           {index === 0 ? (
-            <span className="h-2 w-2 animate-pulse rounded-full bg-primary-500" aria-hidden />
+            <LoadingSkeleton className="h-2 w-2 rounded-full bg-primary-500" />
           ) : null}
           <span>{label}</span>
         </div>
@@ -1006,12 +1007,12 @@ function FilterBarFallback() {
   return (
     <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="inline-flex items-center gap-2 text-sm text-text-secondary">
-        <span className="h-2 w-2 animate-pulse rounded-full bg-primary-500" aria-hidden />
+        <LoadingSkeleton className="h-2 w-2 rounded-full bg-primary-500" />
         <span>Preparing filters</span>
       </div>
       <div className="flex gap-2">
-        <div className="h-10 w-28 rounded-full border border-surface-200 bg-surface-50" />
-        <div className="h-10 w-32 rounded-full border border-surface-200 bg-surface-50" />
+        <LoadingSkeleton className="h-10 w-28 rounded-full border border-surface-200 bg-surface-50" />
+        <LoadingSkeleton className="h-10 w-32 rounded-full border border-surface-200 bg-surface-50" />
       </div>
     </div>
   );
@@ -1021,11 +1022,11 @@ function SidebarFallback() {
   return (
     <div className="w-[252px] flex-shrink-0 space-y-5">
       <div className="inline-flex items-center gap-2 text-sm text-text-secondary">
-        <span className="h-2 w-2 animate-pulse rounded-full bg-primary-500" aria-hidden />
+        <LoadingSkeleton className="h-2 w-2 rounded-full bg-primary-500" />
         <span>Loading filters</span>
       </div>
       {[80, 120, 80].map((height, index) => (
-        <div
+        <LoadingSkeleton
           key={index}
           className="rounded-2xl border border-surface-200 bg-surface-50/70"
           style={{ height }}
@@ -1048,14 +1049,14 @@ function CategoryBrowseSectionFallback() {
   return (
     <section className="space-y-6">
       <div className="space-y-1.5">
-        <div className="h-6 w-40 animate-pulse rounded bg-surface-100" />
-        <div className="h-4 w-80 animate-pulse rounded bg-surface-100" />
+        <LoadingSkeleton className="h-6 w-40" />
+        <LoadingSkeleton className="h-4 w-80" />
       </div>
       <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
         {Array.from({ length: 6 }).map((_, index) => (
-          <div
+          <LoadingSkeleton
             key={index}
-            className="h-[72px] animate-pulse rounded-[24px] border border-surface-200 bg-white"
+            className="h-[72px] rounded-[24px] border border-surface-200 bg-white"
           />
         ))}
       </div>
@@ -1074,10 +1075,10 @@ function DeferredSectionFallback({
     <section className="space-y-5">
       <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1.5">
-          <div className={`h-6 animate-pulse rounded bg-surface-100 ${titleWidth}`} />
-          <div className="h-4 w-64 animate-pulse rounded bg-surface-100" />
+          <LoadingSkeleton className={`h-6 ${titleWidth}`} />
+          <LoadingSkeleton className="h-4 w-64" />
         </div>
-        <div className="h-6 w-16 animate-pulse rounded bg-surface-100" />
+        <LoadingSkeleton className="h-6 w-16" />
       </div>
       <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
         {Array.from({ length: cardCount }).map((_, index) => (
@@ -1102,9 +1103,9 @@ export function ResourcesContentFallback({ isDiscoverMode }: { isDiscoverMode: b
       ) : (
         <section className="space-y-6">
           <div className="space-y-4 border-b border-surface-200/80 pb-8">
-            <div className="h-3 w-16 animate-pulse rounded bg-surface-100" />
-            <div className="h-8 w-56 animate-pulse rounded-lg bg-surface-100" />
-            <div className="h-4 w-72 animate-pulse rounded bg-surface-100" />
+            <LoadingSkeleton className="h-3 w-16" />
+            <LoadingSkeleton className="h-8 w-56 rounded-lg" />
+            <LoadingSkeleton className="h-4 w-72" />
           </div>
 
           <div className="flex flex-col gap-6 lg:flex-row lg:gap-10">

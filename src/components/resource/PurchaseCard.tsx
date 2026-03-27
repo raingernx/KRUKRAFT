@@ -12,6 +12,7 @@ import {
 import { PriceLabel } from "@/components/ui/PriceLabel";
 import { BuyButton } from "@/components/resources/BuyButton";
 import { PendingPurchasePoller } from "@/components/checkout/PendingPurchasePoller";
+import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { formatFileSize, formatNumber } from "@/lib/format";
 import { getPlatform } from "@/services/platform.service";
 import { isPreviewSupported } from "@/lib/preview/previewPolicy";
@@ -119,9 +120,9 @@ export function PurchaseCardSkeleton() {
     <div className="flex h-full min-h-0 flex-col justify-between rounded-xl border border-surface-200 bg-white p-5 sm:p-6">
       <div className="space-y-5">
         {/* author/category */}
-        <div className="h-3.5 w-2/3 animate-pulse rounded bg-surface-100" />
+        <LoadingSkeleton className="h-3.5 w-2/3" />
         {/* price */}
-        <div className="h-9 w-20 animate-pulse rounded bg-surface-100" />
+        <LoadingSkeleton className="h-9 w-20" />
         {/* middle skeleton */}
         <PurchaseCardMiddleSkeleton />
       </div>
@@ -129,8 +130,8 @@ export function PurchaseCardSkeleton() {
         <div className="space-y-2.5">
           {[0, 1, 2, 3].map((i) => (
             <div key={i} className="flex justify-between gap-3">
-              <div className="h-3.5 w-16 animate-pulse rounded bg-surface-100" />
-              <div className="h-3.5 w-20 animate-pulse rounded bg-surface-100" />
+              <LoadingSkeleton className="h-3.5 w-16" />
+              <LoadingSkeleton className="h-3.5 w-20" />
             </div>
           ))}
         </div>
@@ -145,32 +146,32 @@ function PurchaseCardMiddleSkeleton() {
     <div className="space-y-5">
       {/* kicker pill + proof text */}
       <div className="space-y-2.5">
-        <div className="h-6 w-32 animate-pulse rounded-full bg-surface-100" />
+        <LoadingSkeleton className="h-6 w-32 rounded-full" />
         <div className="space-y-1.5">
-          <div className="h-4 w-full animate-pulse rounded bg-surface-100" />
-          <div className="h-4 w-4/5 animate-pulse rounded bg-surface-100" />
+          <LoadingSkeleton className="h-4 w-full" />
+          <LoadingSkeleton className="h-4 w-4/5" />
         </div>
-        <div className="h-3.5 w-1/2 animate-pulse rounded bg-surface-100" />
+        <LoadingSkeleton className="h-3.5 w-1/2" />
       </div>
       {/* trust grid */}
       <div className="grid grid-cols-3 gap-4 border-y border-surface-200 py-4">
         {[0, 1, 2].map((i) => (
           <div key={i} className="space-y-1.5">
-            <div className="h-3 w-14 animate-pulse rounded bg-surface-100" />
-            <div className="h-5 w-10 animate-pulse rounded bg-surface-100" />
-            <div className="h-3 w-12 animate-pulse rounded bg-surface-100" />
+            <LoadingSkeleton className="h-3 w-14" />
+            <LoadingSkeleton className="h-5 w-10" />
+            <LoadingSkeleton className="h-3 w-12" />
           </div>
         ))}
       </div>
       {/* benefit items */}
       <div className="flex gap-3">
         {[88, 72, 108].map((w) => (
-          <div key={w} className="h-3.5 animate-pulse rounded bg-surface-100" style={{ width: w }} />
+          <LoadingSkeleton key={w} className="h-3.5" style={{ width: w }} />
         ))}
       </div>
       {/* CTA button */}
       <div className="space-y-3 border-t border-surface-200 pt-4">
-        <div className="h-12 w-full animate-pulse rounded-xl bg-surface-100" />
+        <LoadingSkeleton className="h-12 w-full rounded-xl" />
       </div>
     </div>
   );
@@ -179,10 +180,10 @@ function PurchaseCardMiddleSkeleton() {
 function PurchaseCardMembershipSkeleton() {
   return (
     <div className="space-y-2">
-      <div className="h-4 w-40 animate-pulse rounded bg-surface-100" />
-      <div className="h-3.5 w-full animate-pulse rounded bg-surface-100" />
-      <div className="h-3.5 w-3/4 animate-pulse rounded bg-surface-100" />
-      <div className="h-4 w-24 animate-pulse rounded bg-surface-100" />
+      <LoadingSkeleton className="h-4 w-40" />
+      <LoadingSkeleton className="h-3.5 w-full" />
+      <LoadingSkeleton className="h-3.5 w-3/4" />
+      <LoadingSkeleton className="h-4 w-24" />
     </div>
   );
 }

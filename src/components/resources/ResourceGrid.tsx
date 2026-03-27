@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams, usePathname } from "next/navigation";
 import { BookOpen, Search } from "lucide-react";
 import { Button } from "@/design-system";
+import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { ResourceCard, ResourceCardSkeleton, type ResourceCardData } from "./ResourceCard";
 
 // Auto-fill: cards are at least 280 px wide and grow equally to fill available space.
@@ -59,7 +60,7 @@ export function ResourceGrid({
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="h-4 w-32 rounded skeleton" />
+        <LoadingSkeleton className="h-4 w-32" />
         <div className={RESOURCE_GRID_CLASSES}>
           {Array.from({ length: 8 }).map((_, i) => (
             <ResourceCardSkeleton key={i} />

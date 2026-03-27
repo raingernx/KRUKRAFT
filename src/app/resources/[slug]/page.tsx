@@ -21,6 +21,7 @@ import { RelatedResources } from "@/components/resource/RelatedResources";
 import { ResourceReviews } from "@/components/resource/ResourceReviews";
 import { ResourceReviewForm } from "@/components/resource/ResourceReviewForm";
 import { AutoScrollOnSuccess } from "@/components/resource/AutoScrollOnSuccess";
+import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import {
   getResourceBySlug,
   getResourceDetailDeferredContent,
@@ -436,16 +437,7 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
                 </section>
 
                 {/* 4. About + 5. Included files */}
-                <Suspense fallback={
-                  <div className="space-y-3 py-2">
-                    <div className="h-5 w-24 animate-pulse rounded-lg bg-surface-100" />
-                    <div className="space-y-2">
-                      <div className="h-4 w-full animate-pulse rounded bg-surface-100" />
-                      <div className="h-4 w-5/6 animate-pulse rounded bg-surface-100" />
-                      <div className="h-4 w-4/6 animate-pulse rounded bg-surface-100" />
-                    </div>
-                  </div>
-                }>
+                <Suspense fallback={<ResourceDetailBodyFallback />}>
                   <ResourceDetailBodySection
                     includedFiles={includedFiles}
                     slug={resource.slug}
@@ -453,32 +445,7 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
                 </Suspense>
 
                 {/* 6. Reviews */}
-                <Suspense fallback={
-                  <div className="space-y-3 border-t border-surface-200 pt-6">
-                    <div className="space-y-1">
-                      <div className="h-5 w-24 animate-pulse rounded-lg bg-surface-100" />
-                      <div className="h-4 w-56 animate-pulse rounded bg-surface-100" />
-                    </div>
-                    <div className="space-y-3">
-                      {[0, 1].map((i) => (
-                        <div key={i} className="rounded-xl border border-zinc-200 bg-white px-4 py-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex gap-0.5">
-                              {[0, 1, 2, 3, 4].map((s) => (
-                                <div key={s} className="h-4 w-4 animate-pulse rounded bg-surface-100" />
-                              ))}
-                            </div>
-                            <div className="h-3 w-16 animate-pulse rounded bg-surface-100" />
-                          </div>
-                          <div className="mt-2 space-y-1.5">
-                            <div className="h-3 w-full animate-pulse rounded bg-surface-100" />
-                            <div className="h-3 w-4/5 animate-pulse rounded bg-surface-100" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                }>
+                <Suspense fallback={<ResourceDetailReviewsFallback />}>
                   <ResourceDetailReviewSection
                     ownershipPromise={ownershipPromise}
                     resourceId={resource.id}
@@ -488,31 +455,7 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
                 </Suspense>
 
                 {/* 8. Tags + 9. Creator */}
-                <Suspense fallback={
-                  <>
-                    {/* Tags skeleton */}
-                    <div className="space-y-4 border-t border-surface-200 pt-6">
-                      <div className="h-5 w-16 animate-pulse rounded-lg bg-surface-100" />
-                      <div className="flex flex-wrap gap-2">
-                        {[72, 96, 64, 88, 80].map((w) => (
-                          <div key={w} className="h-8 animate-pulse rounded-full bg-surface-100" style={{ width: w }} />
-                        ))}
-                      </div>
-                    </div>
-                    {/* Creator skeleton */}
-                    <div className="space-y-4 border-t border-surface-200 pt-6">
-                      <div className="h-5 w-20 animate-pulse rounded-lg bg-surface-100" />
-                      <div className="flex items-center gap-4">
-                        <div className="h-14 w-14 shrink-0 animate-pulse rounded-full bg-surface-100" />
-                        <div className="flex-1 space-y-2">
-                          <div className="h-4 w-32 animate-pulse rounded bg-surface-100" />
-                          <div className="h-3 w-full animate-pulse rounded bg-surface-100" />
-                          <div className="h-3 w-4/5 animate-pulse rounded bg-surface-100" />
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                }>
+                <Suspense fallback={<ResourceDetailFooterFallback />}>
                   <ResourceDetailFooterSection slug={resource.slug} />
                 </Suspense>
 
@@ -536,26 +479,7 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
             </div>
 
             {/* ── Related resources — outside the two-column grid ─────────── */}
-            <Suspense fallback={
-              <div className="space-y-4 border-t border-surface-200 pt-7">
-                <div className="space-y-1.5">
-                  <div className="h-5 w-28 animate-pulse rounded-lg bg-surface-100" />
-                  <div className="h-4 w-72 animate-pulse rounded bg-surface-100" />
-                </div>
-                <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
-                  {[0, 1, 2, 3].map((i) => (
-                    <div key={i} className="overflow-hidden rounded-xl border border-border-subtle bg-white">
-                      <div className="aspect-[4/3] w-full animate-pulse bg-surface-100" />
-                      <div className="space-y-2 p-3">
-                        <div className="h-4 w-full animate-pulse rounded bg-surface-100" />
-                        <div className="h-3 w-3/4 animate-pulse rounded bg-surface-100" />
-                        <div className="h-5 w-16 animate-pulse rounded bg-surface-100" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            }>
+            <Suspense fallback={<ResourceDetailRelatedFallback />}>
               <ResourceDetailRelatedSection
                 currentDownloads={resource.resourceStat?.downloads ?? resource.downloadCount ?? 0}
                 currentIsFree={resource.isFree || resource.price === 0}
@@ -585,6 +509,97 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
     </div>
   );
     },
+  );
+}
+
+function ResourceDetailBodyFallback() {
+  return (
+    <div className="space-y-3 py-2">
+      <LoadingSkeleton className="h-5 w-24 rounded-lg" />
+      <div className="space-y-2">
+        <LoadingSkeleton className="h-4 w-full" />
+        <LoadingSkeleton className="h-4 w-5/6" />
+        <LoadingSkeleton className="h-4 w-4/6" />
+      </div>
+    </div>
+  );
+}
+
+function ResourceDetailReviewsFallback() {
+  return (
+    <div className="space-y-3 border-t border-surface-200 pt-6">
+      <div className="space-y-1">
+        <LoadingSkeleton className="h-5 w-24 rounded-lg" />
+        <LoadingSkeleton className="h-4 w-56" />
+      </div>
+      <div className="space-y-3">
+        {[0, 1].map((i) => (
+          <div key={i} className="rounded-xl border border-zinc-200 bg-white px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex gap-0.5">
+                {[0, 1, 2, 3, 4].map((s) => (
+                  <LoadingSkeleton key={s} className="h-4 w-4" />
+                ))}
+              </div>
+              <LoadingSkeleton className="h-3 w-16" />
+            </div>
+            <div className="mt-2 space-y-1.5">
+              <LoadingSkeleton className="h-3 w-full" />
+              <LoadingSkeleton className="h-3 w-4/5" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ResourceDetailFooterFallback() {
+  return (
+    <>
+      <div className="space-y-4 border-t border-surface-200 pt-6">
+        <LoadingSkeleton className="h-5 w-16 rounded-lg" />
+        <div className="flex flex-wrap gap-2">
+          {[72, 96, 64, 88, 80].map((w) => (
+            <LoadingSkeleton key={w} className="h-8 rounded-full" style={{ width: w }} />
+          ))}
+        </div>
+      </div>
+      <div className="space-y-4 border-t border-surface-200 pt-6">
+        <LoadingSkeleton className="h-5 w-20 rounded-lg" />
+        <div className="flex items-center gap-4">
+          <LoadingSkeleton className="h-14 w-14 shrink-0 rounded-full" />
+          <div className="flex-1 space-y-2">
+            <LoadingSkeleton className="h-4 w-32" />
+            <LoadingSkeleton className="h-3 w-full" />
+            <LoadingSkeleton className="h-3 w-4/5" />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function ResourceDetailRelatedFallback() {
+  return (
+    <div className="space-y-4 border-t border-surface-200 pt-7">
+      <div className="space-y-1.5">
+        <LoadingSkeleton className="h-5 w-28 rounded-lg" />
+        <LoadingSkeleton className="h-4 w-72" />
+      </div>
+      <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="overflow-hidden rounded-xl border border-border-subtle bg-white">
+            <LoadingSkeleton className="aspect-[4/3] w-full rounded-none" />
+            <div className="space-y-2 p-3">
+              <LoadingSkeleton className="h-4 w-full" />
+              <LoadingSkeleton className="h-3 w-3/4" />
+              <LoadingSkeleton className="h-5 w-16" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -791,14 +806,14 @@ function ResourceDetailSuccessSkeleton({
   return (
     <div className="flex items-center justify-between gap-4 rounded-2xl border border-emerald-100/70 bg-emerald-50/70 px-5 py-4">
       <div className="flex items-start gap-3">
-        <div className="mt-0.5 h-5 w-5 animate-pulse rounded-full bg-emerald-200" />
+        <LoadingSkeleton className="mt-0.5 h-5 w-5 rounded-full bg-emerald-200" />
         <div className="space-y-2">
-          <div className="h-4 w-56 animate-pulse rounded bg-emerald-200/80" />
-          <div className="h-3.5 w-32 animate-pulse rounded bg-emerald-200/70" />
+          <LoadingSkeleton className="h-4 w-56 bg-emerald-200/80" />
+          <LoadingSkeleton className="h-3.5 w-32 bg-emerald-200/70" />
         </div>
       </div>
       {hasFile ? (
-        <div className="h-9 w-36 animate-pulse rounded-xl bg-emerald-200/80" />
+        <LoadingSkeleton className="h-9 w-36 rounded-xl bg-emerald-200/80" />
       ) : null}
     </div>
   );
