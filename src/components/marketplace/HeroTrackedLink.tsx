@@ -42,9 +42,9 @@ export function HeroTrackedLink({
       href={href}
       className={className}
       onClick={handleClick}
-      prefetchMode="viewport"
+      prefetchMode="intent"
       prefetchScope="hero-cta"
-      prefetchLimit={2}
+      prefetchLimit={1}
       resourcesNavigationMode="auto"
     >
       {children}

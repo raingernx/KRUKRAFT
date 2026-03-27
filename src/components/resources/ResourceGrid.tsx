@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 import { BookOpen, Search } from "lucide-react";
 import { Button } from "@/design-system";
@@ -46,15 +46,13 @@ export function ResourceGrid({
   const pathname = usePathname();
   const gridContainerRef = useRef<HTMLDivElement>(null);
   const queryKey = `${pathname}?${searchParams.toString()}`;
-  const [visibleResources, setVisibleResources] = useState(resources);
-  const [nextPage, setNextPage] = useState(page + 1);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  useEffect(() => {
-    setVisibleResources(resources);
-    setNextPage(page + 1);
-    setIsLoadingMore(false);
-  }, [resources, page, total, queryKey]);
+  const cardPrefetchScope = `resource-card-grid:${queryKey}`;
+  const [loadState, setLoadState] = useState(() => ({
+    queryKey,
+    appendedResources: [] as ResourceCardData[],
+    nextPage: page + 1,
+    isLoadingMore: false,
+  }));
 
   // ── Loading skeleton ────────────────────────────────────────────────────────
   if (loading) {
@@ -125,7 +123,13 @@ export function ResourceGrid({
       </div>
     );
   }
-  const displayedResources = progressiveLoad ? visibleResources : resources;
+  const isSameQuery = loadState.queryKey === queryKey;
+  const appendedResources = isSameQuery ? loadState.appendedResources : [];
+  const nextPage = isSameQuery ? loadState.nextPage : page + 1;
+  const isLoadingMore = isSameQuery ? loadState.isLoadingMore : false;
+  const displayedResources = progressiveLoad
+    ? [...resources, ...appendedResources]
+    : resources;
   const loadedCount = displayedResources.length;
   const hasMore = progressiveLoad && loadedCount < total && nextPage <= totalPages;
 
@@ -134,11 +138,19 @@ export function ResourceGrid({
       return;
     }
 
-    setIsLoadingMore(true);
+    setLoadState((current) => ({
+      queryKey,
+      appendedResources:
+        current.queryKey === queryKey ? current.appendedResources : [],
+      nextPage,
+      isLoadingMore: true,
+    }));
 
     try {
+      const requestQueryKey = queryKey;
+      const requestPage = nextPage;
       const params = new URLSearchParams(searchParams.toString());
-      params.set("page", String(nextPage));
+      params.set("page", String(requestPage));
       params.set("pageSize", String(LISTING_BATCH_SIZE));
 
       const response = await fetch(`/api/resources?${params.toString()}`, {
@@ -152,16 +164,37 @@ export function ResourceGrid({
       const json = await response.json();
       const nextResources = (json.data?.resources ?? json.data?.items ?? []) as ResourceCardData[];
 
-      setVisibleResources((current) => {
-        const seen = new Set(current.map((resource) => resource.id));
-        return [
-          ...current,
-          ...nextResources.filter((resource) => !seen.has(resource.id)),
-        ];
+      setLoadState((current) => {
+        if (current.queryKey !== requestQueryKey) {
+          return current;
+        }
+
+        const seen = new Set([
+          ...resources.map((resource) => resource.id),
+          ...current.appendedResources.map((resource) => resource.id),
+        ]);
+
+        return {
+          queryKey: requestQueryKey,
+          appendedResources: [
+            ...current.appendedResources,
+            ...nextResources.filter((resource) => !seen.has(resource.id)),
+          ],
+          nextPage: current.nextPage + 1,
+          isLoadingMore: false,
+        };
       });
-      setNextPage((current) => current + 1);
     } finally {
-      setIsLoadingMore(false);
+      setLoadState((current) => {
+        if (current.queryKey !== queryKey) {
+          return current;
+        }
+
+        return {
+          ...current,
+          isLoadingMore: false,
+        };
+      });
     }
   }
 
@@ -176,6 +209,7 @@ export function ResourceGrid({
             variant="marketplace"
             owned={ownedIds.includes(resource.id)}
             priority={index < 2}
+            linkPrefetchScope={cardPrefetchScope}
           />
         ))}
       </div>

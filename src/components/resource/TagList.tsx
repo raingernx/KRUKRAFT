@@ -22,7 +22,7 @@ export function TagList({ tags }: TagListProps) {
             href={`/resources?tag=${encodeURIComponent(tag.slug)}`}
             prefetchMode="intent"
             prefetchScope="resource-detail-tags"
-            prefetchLimit={4}
+            prefetchLimit={2}
             resourcesNavigationMode="listing"
             className="inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-3 py-1.5 text-small font-medium text-zinc-700 transition hover:border-surface-300 hover:bg-white hover:text-zinc-900"
           >

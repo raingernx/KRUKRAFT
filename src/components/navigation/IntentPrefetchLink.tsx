@@ -38,6 +38,10 @@ type IntentPrefetchLinkProps = Omit<ComponentProps<typeof Link>, "prefetch"> & {
   resourcesNavigationMode?: ResourcesNavigationMode | "auto";
 };
 
+type IntentPrefetchLinkBaseProps = IntentPrefetchLinkProps & {
+  isPendingTarget?: boolean;
+};
+
 function getScopeState(scopeKey: string) {
   let state = prefetchedHrefScopes.get(scopeKey);
 
@@ -57,7 +61,7 @@ function logPrefetchEvent(event: string, details: Record<string, unknown>) {
   console.info(`[PREFETCH] ${event}`, details);
 }
 
-export function IntentPrefetchLink({
+function IntentPrefetchLinkBase({
   prefetchMode = "intent",
   href,
   onMouseEnter,
@@ -66,11 +70,11 @@ export function IntentPrefetchLink({
   prefetchScope = "default",
   prefetchLimit,
   resourcesNavigationMode,
+  isPendingTarget = false,
   ...props
-}: IntentPrefetchLinkProps) {
+}: IntentPrefetchLinkBaseProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const navigationState = useResourcesNavigationState();
   const linkRef = useRef<HTMLAnchorElement | null>(null);
   const prefetchedRef = useRef(false);
   const effectivePrefetchLimit =
@@ -79,11 +83,6 @@ export function IntentPrefetchLink({
       ? DEFAULT_VIEWPORT_PREFETCH_LIMIT
       : DEFAULT_INTENT_PREFETCH_LIMIT);
   const scopeKey = `${pathname ?? "unknown"}:${prefetchScope}`;
-  const canonicalHref = canonicalizeResourcesHref(href);
-  const isPendingTarget =
-    Boolean(resourcesNavigationMode) &&
-    Boolean(navigationState.mode && navigationState.href) &&
-    navigationState.href === canonicalHref;
 
   function handleResourcesNavigation(event: Parameters<NonNullable<ComponentProps<typeof Link>["onClick"]>>[0]) {
     if (
@@ -189,7 +188,7 @@ export function IntentPrefetchLink({
       aria-busy={props["aria-busy"] ?? (isPendingTarget || undefined)}
       data-pending={isPendingTarget ? "true" : undefined}
       className={cn(
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30 focus-visible:ring-offset-2",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30 focus-visible:ring-offset-2 data-[pending=true]:cursor-wait data-[pending=true]:opacity-70 [&[aria-busy=true]:not([data-pending])]:cursor-wait [&[aria-busy=true]:not([data-pending])]:opacity-70",
         props.className,
       )}
       onMouseEnter={(event) => {
@@ -216,4 +215,27 @@ export function IntentPrefetchLink({
       }}
     />
   );
+}
+
+function NavigationAwareIntentPrefetchLink(props: IntentPrefetchLinkProps) {
+  const navigationState = useResourcesNavigationState();
+  const canonicalHref = canonicalizeResourcesHref(props.href);
+  const isPendingTarget =
+    Boolean(navigationState.mode && navigationState.href) &&
+    navigationState.href === canonicalHref;
+
+  return (
+    <IntentPrefetchLinkBase
+      {...props}
+      isPendingTarget={isPendingTarget}
+    />
+  );
+}
+
+export function IntentPrefetchLink(props: IntentPrefetchLinkProps) {
+  if (props.resourcesNavigationMode) {
+    return <NavigationAwareIntentPrefetchLink {...props} />;
+  }
+
+  return <IntentPrefetchLinkBase {...props} />;
 }

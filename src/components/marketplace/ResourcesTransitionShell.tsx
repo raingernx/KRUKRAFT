@@ -67,8 +67,8 @@ export function ResourcesTransitionShell({
         aria-busy={isPending}
         className={
           isPending
-            ? "pointer-events-none transform-gpu opacity-[0.94] saturate-[0.92] transition-[opacity,transform,filter] duration-150 ease-out motion-reduce:transform-none motion-reduce:transition-none sm:translate-y-[1px] sm:scale-[0.997]"
-            : "transform-gpu transition-[opacity,transform,filter] duration-150 ease-out motion-reduce:transform-none motion-reduce:transition-none"
+            ? "pointer-events-none opacity-[0.94] transition-opacity duration-150 ease-out motion-reduce:transition-none"
+            : "transition-opacity duration-150 ease-out motion-reduce:transition-none"
         }
       >
         {isPending ? frozenChildren : children}
@@ -77,7 +77,7 @@ export function ResourcesTransitionShell({
       {isPending ? (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(255,255,255,0.18),rgba(255,255,255,0.28))] backdrop-blur-[1.5px]"
+          className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.22))]"
         />
       ) : null}
     </div>

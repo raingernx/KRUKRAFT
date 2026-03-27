@@ -56,12 +56,14 @@ export function BuyButton({
   useEffect(() => {
     return () => {
       if (justClaimedTimerRef.current) clearTimeout(justClaimedTimerRef.current);
+      if (downloadResetTimerRef.current) clearTimeout(downloadResetTimerRef.current);
     };
   }, []);
 
   const [loadingStripe, setLoadingStripe] = useState(false);
   const [loadingXendit, setLoadingXendit] = useState(false);
   const [loadingLibrary, setLoadingLibrary] = useState(false);
+  const [isPreparingDownload, setIsPreparingDownload] = useState(false);
   const [libraryError, setLibraryError] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [authRedirectProvider, setAuthRedirectProvider] = useState<"free" | "stripe" | "xendit" | null>(
@@ -74,6 +76,7 @@ export function BuyButton({
   // finally block from clearing the loading spinner while the browser is
   // still mid-navigation to the checkout page.
   const redirectingRef = useRef(false);
+  const downloadResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { data: session } = useSession();
   const router = useRouter();
@@ -83,20 +86,34 @@ export function BuyButton({
     router.push(`/auth/login?next=${encodeURIComponent(resourceHref)}`);
   }
 
+  function handleDownloadStart() {
+    setIsPreparingDownload(true);
+    if (downloadResetTimerRef.current) clearTimeout(downloadResetTimerRef.current);
+    downloadResetTimerRef.current = setTimeout(() => {
+      setIsPreparingDownload(false);
+    }, 3000);
+  }
+
   // ── Owned state (either from server or after optimistic free claim) ───────
   if (localOwned) {
     return (
       <div className="space-y-3">
         {hasFile ? (
-          <a href={`/api/download/${resourceId}`}>
+          <a
+            href={`/api/download/${resourceId}`}
+            aria-busy={isPreparingDownload}
+            onClick={handleDownloadStart}
+          >
             <Button
               variant="primary"
               size="lg"
               fullWidth
+              loading={isPreparingDownload}
+              disabled={isPreparingDownload}
               className={cn("gap-2", buyButtonToneClassName.dark)}
             >
               <Download className="h-4 w-4" />
-              Download now
+              {isPreparingDownload ? "Preparing download…" : "Download now"}
             </Button>
           </a>
         ) : (

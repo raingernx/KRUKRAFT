@@ -497,6 +497,9 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
             <div className="border-t border-surface-200 pt-6">
               <IntentPrefetchLink
                 href="/resources"
+                prefetchMode="intent"
+                prefetchScope="resource-detail-back-link"
+                prefetchLimit={1}
                 resourcesNavigationMode="discover"
                 className="inline-flex items-center gap-1.5 text-small font-medium text-zinc-500 transition hover:text-zinc-800"
               >

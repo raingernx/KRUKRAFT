@@ -92,6 +92,7 @@ interface ResourceCardProps {
    * when images in this row need bandwidth priority.
    */
   linkPrefetchMode?: "intent" | "viewport" | "none";
+  linkPrefetchScope?: string;
 }
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
@@ -395,6 +396,7 @@ function ResourceCardInner({
   previewMode = false,
   priority = false,
   linkPrefetchMode = "viewport",
+  linkPrefetchScope = "resource-card-grid",
 }: ResourceCardProps) {
   const { authorName } = normalizeResource(resource);
   const effectiveVariant = variant === "preview" ? "compact" : variant ?? "marketplace";
@@ -450,7 +452,7 @@ function ResourceCardInner({
         aria-busy={isNavigating}
         onClick={handleNavigationStart}
         prefetchMode={linkPrefetchMode}
-        prefetchScope="resource-card-grid"
+        prefetchScope={linkPrefetchScope}
         prefetchLimit={6}
       >
         <CardBody {...bodyProps} />

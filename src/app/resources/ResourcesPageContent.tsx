@@ -283,7 +283,7 @@ export async function ResourcesPageContent({
                   </div>
                   <IntentPrefetchLink
                     href={`/resources/${spotlightResource.slug}`}
-                    prefetchMode="viewport"
+                    prefetchMode="intent"
                     prefetchScope="spotlight-resource"
                     prefetchLimit={1}
                     resourcesNavigationMode="detail"
@@ -919,9 +919,9 @@ function SectionHeader({
       </div>
       <IntentPrefetchLink
         href={viewAllHref}
-        prefetchMode="viewport"
+        prefetchMode="intent"
         prefetchScope="resources-section-view-all"
-        prefetchLimit={3}
+        prefetchLimit={2}
         resourcesNavigationMode="listing"
         className="group inline-flex items-center gap-1 self-start rounded-full px-2.5 py-1 text-small font-medium text-primary-700 transition-colors hover:bg-primary-50 hover:text-primary-800 sm:self-auto"
       >
