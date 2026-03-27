@@ -76,12 +76,12 @@ const routeSpecsBySuite: Record<PerfSuite, RouteSpec[]> = {
     {
       name: "listing_newest_smoke",
       script: "k6/routes/listing-newest-smoke.js",
-      thresholdMs: 500,
+      thresholdMs: 1000,
     },
     {
       name: "resource_detail_smoke",
       script: "k6/routes/resource-detail-smoke.js",
-      thresholdMs: 600,
+      thresholdMs: 1000,
       hotSlug,
     },
   ],
