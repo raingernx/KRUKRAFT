@@ -56,6 +56,7 @@ export const CACHE_KEYS = {
   topCreator: "top_creator",
   discoverData: "discover_data",
   discoverCategories: "discover_categories",
+  resourceDetail: (slug: string) => `resource_detail:${slug}`,
   platformSettings: "platform_settings",
   platformTypographySettings: "platform_typography_settings",
   resourceStats: (resourceId: string) => `resource_stats:${resourceId}`,

@@ -15,6 +15,7 @@ import {
   ResourcesDiscoverHero,
   ResourcesPageContent,
 } from "./ResourcesPageContent";
+import { HeroBannerSkeleton } from "@/components/marketplace/HeroBanner";
 import {
   trackRequestWork,
   traceServerStep,
@@ -179,7 +180,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                     </p>
                   </div>
                   {heroPromise ? (
-                    <Suspense fallback={<div className="min-h-[440px] sm:min-h-[500px] lg:min-h-[540px]" />}>
+                    <Suspense fallback={<HeroBannerSkeleton className="min-h-[440px] sm:min-h-[500px] lg:min-h-[540px]" />}>
                       <AwaitResolvedNode promise={heroPromise} />
                     </Suspense>
                   ) : null}

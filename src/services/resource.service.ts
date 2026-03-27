@@ -11,9 +11,11 @@
  * RESOURCE_CARD_SELECT projection for maximum query efficiency.
  */
 
+import { cache } from "react";
 import { Prisma } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import {
+  CACHE_KEYS,
   CACHE_TAGS,
   CACHE_TTLS,
   getResourceCacheTag,
@@ -357,6 +359,107 @@ async function loadMarketplaceResources(filters: NormalizedMarketplaceFilters) {
   const skip = (page - 1) * pageSize;
   const orderBy = buildOrderBy(sort) as Prisma.ResourceFindManyArgs["orderBy"];
 
+  // ── Newest sort: Redis cross-instance cache ─────────────────────────────────
+  // unstable_cache alone does not survive Vercel horizontal scale-out: each
+  // new lambda instance incurs a full cold-path hit (2 × parallel Prisma
+  // queries + attachResourceTrustSignals) before its local Data Cache warms.
+  // rememberJson stores the raw query results in shared Redis so cold instances
+  // return in <300 ms instead of 3–7 s.  Same rationale as the recommended path.
+  //
+  // attachResourceTrustSignals runs after Redis retrieval because its two
+  // aggregation queries are fast (~100–300 ms) and avoiding Date-object
+  // serialisation keeps the Redis payload simple and safe.
+  if (sort === "newest" && !search) {
+    const newestCacheKey = [
+      "marketplace:newest",
+      categoryId ?? "all",
+      tag ?? "none",
+      price === "free" ? "free" : price === "paid" ? "paid" : "any",
+      featured ? "1" : "0",
+      page,
+      pageSize,
+    ].join(":");
+
+    const loadNewestRows = () =>
+      traceServerStep(
+        "marketplace.findNewestResources",
+        async () => {
+          const [items, count] = await Promise.all([
+            findMarketplaceResourceCards({ where, orderBy, skip, take: pageSize }),
+            countMarketplaceResources(where),
+          ]);
+          return { items, count };
+        },
+        { page, pageSize, categoryId: categoryId ?? "all" },
+      );
+
+    const { items: newestItems, count: newestTotal } = await rememberJson(
+      newestCacheKey,
+      CACHE_TTLS.publicPage,
+      () => runSingleFlight(newestCacheKey, loadNewestRows),
+      {
+        metricName: "marketplace.newestResources",
+        details: { page, pageSize, categoryId: categoryId ?? "all" },
+      },
+    );
+
+    const resources = await attachResourceTrustSignals(newestItems.map(withPreview));
+    return {
+      resources,
+      total: newestTotal,
+      totalPages: Math.max(1, Math.ceil(newestTotal / pageSize)),
+      categories,
+    };
+  }
+
+  // ── All other sorts: Redis cross-instance cache ──────────────────────────────
+  // trending, downloads/popular, price_asc, price_desc, oldest, featured, etc.
+  // Same pattern as the newest path above.  Guarded by !search so free-text
+  // results (which are always unique to the query string) are never cached.
+  if (!search) {
+    const sortCacheKey = [
+      "marketplace",
+      sort,
+      categoryId ?? "all",
+      tag ?? "none",
+      price === "free" ? "free" : price === "paid" ? "paid" : "any",
+      featured ? "1" : "0",
+      page,
+      pageSize,
+    ].join(":");
+
+    const loadSortRows = () =>
+      traceServerStep(
+        "marketplace.findSortedResources",
+        async () => {
+          const [items, count] = await Promise.all([
+            findMarketplaceResourceCards({ where, orderBy, skip, take: pageSize }),
+            countMarketplaceResources(where),
+          ]);
+          return { items, count };
+        },
+        { sort, page, pageSize, categoryId: categoryId ?? "all" },
+      );
+
+    const { items: sortedItems, count: sortedTotal } = await rememberJson(
+      sortCacheKey,
+      CACHE_TTLS.publicPage,
+      () => runSingleFlight(sortCacheKey, loadSortRows),
+      {
+        metricName: "marketplace.sortedResources",
+        details: { sort, page, pageSize, categoryId: categoryId ?? "all" },
+      },
+    );
+
+    const resources = await attachResourceTrustSignals(sortedItems.map(withPreview));
+    return {
+      resources,
+      total: sortedTotal,
+      totalPages: Math.max(1, Math.ceil(sortedTotal / pageSize)),
+      categories,
+    };
+  }
+
   const [rawItems, total] = await Promise.all([
     findMarketplaceResourceCards({
       where,
@@ -461,8 +564,20 @@ export async function getResourceBySlug(slug: string) {
       logPerformanceEvent("cache_execute:getResourceBySlug", {
         slug,
       });
-      return runSingleFlight(singleFlightKey, () =>
-        findPublicResourceDetailBySlug(slug),
+      // rememberJson adds a Redis cross-instance layer on top of unstable_cache.
+      // Cold Vercel lambda instances return the cached resource in <10 ms instead
+      // of running the full DB fetch.  Only public, non-user-specific data is
+      // stored here — slug, title, price, author, category, previews, stats.
+      return rememberJson(
+        CACHE_KEYS.resourceDetail(slug),
+        RESOURCE_DETAIL_REVALIDATE_SECONDS,
+        () => runSingleFlight(singleFlightKey, () =>
+          findPublicResourceDetailBySlug(slug),
+        ),
+        {
+          metricName: "resource.getResourceBySlug",
+          details: { slug },
+        },
       );
     },
     ["public-resource-detail", slug],
@@ -527,12 +642,13 @@ function isResourceMetadataTransientDbError(error: unknown) {
   );
 }
 
-export async function getResourceDetailDeferredContent(slug: string) {
+// Private implementation — unstable_cache + runSingleFlight as before.
+async function _getResourceDetailDeferredContent(slug: string) {
   recordCacheCall("getResourceDetailDeferredContent", { slug });
   const singleFlightKey = `resource-detail-deferred:${slug}`;
 
   return unstable_cache(
-    async function _getResourceDetailDeferredContent() {
+    async function __getResourceDetailDeferredContent() {
       recordCacheMiss("getResourceDetailDeferredContent", { slug });
       logPerformanceEvent("cache_execute:getResourceDetailDeferredContent", {
         slug,
@@ -548,6 +664,12 @@ export async function getResourceDetailDeferredContent(slug: string) {
     },
   )();
 }
+
+// React.cache() adds per-request memoization on top of unstable_cache.
+// ResourceDetailBodySection and ResourceDetailFooterSection both call this
+// with the same slug in the same RSC render tree. The second call returns
+// the already-resolving Promise without touching unstable_cache or the DB.
+export const getResourceDetailDeferredContent = cache(_getResourceDetailDeferredContent);
 
 /** Returns related resources in the same category (excludes the current resource). */
 export async function getRelatedResources(
