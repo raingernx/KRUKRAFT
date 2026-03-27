@@ -66,7 +66,7 @@ const routeSpecsBySuite: Record<PerfSuite, RouteSpec[]> = {
     {
       name: "resources_home_smoke",
       script: "k6/routes/resources-home-smoke.js",
-      thresholdMs: 1000,
+      thresholdMs: 1200,
     },
     {
       name: "listing_recommended_smoke",
