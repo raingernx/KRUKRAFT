@@ -32,6 +32,12 @@ type WarmRoute = {
    *  cookie state so the warm request exercises the same effectiveSort branch
    *  that CI smoke tests use. */
   headers?: Record<string, string>;
+  /**
+   * When true the CI step exits non-zero if this specific route fails, even
+   * if other routes succeed.  Use for routes whose cache must be warm before
+   * the smoke suite starts.
+   */
+  required?: boolean;
 };
 
 const routes: WarmRoute[] = [
@@ -46,6 +52,9 @@ const routes: WarmRoute[] = [
     // Without this cookie the route silently falls back to effectiveSort="newest",
     // warming the wrong cache key and leaving the "recommended" Redis entry cold.
     headers: { Cookie: "ranking_variant=B" },
+    // This route must succeed: its Redis key must be warm before k6 smoke
+    // starts, otherwise the 7s cold SQL hits p95 and the threshold fails.
+    required: true,
   },
   {
     label: "listing-newest",
@@ -63,12 +72,19 @@ type WarmResult = {
   ok: boolean;
   status: number | null;
   elapsedMs: number;
+  bodyBytes: number | null;
   error?: string;
 };
 
 async function warmRoute(route: WarmRoute): Promise<WarmResult> {
   const url = new URL(route.path, baseUrl);
   const startedAt = Date.now();
+
+  if (route.headers?.Cookie) {
+    console.log(
+      `[warm-cache] ${route.label}: sending Cookie: ${route.headers.Cookie}`,
+    );
+  }
 
   try {
     const response = await fetch(url, {
@@ -79,12 +95,38 @@ async function warmRoute(route: WarmRoute): Promise<WarmResult> {
       signal: AbortSignal.timeout(timeoutMs),
     });
 
+    // Drain the response body before returning.
+    //
+    // For Next.js App Router routes that use RSC streaming, the HTTP response
+    // headers (status 200) arrive early — well before the expensive server-side
+    // work (e.g. the activation-ranking multi-CTE SQL) has run.  The SQL, and
+    // the Redis write that follows it, happen during the streaming body phase.
+    //
+    // Without this read, `await fetch()` resolves as soon as headers arrive
+    // (~100 ms) and the warm script exits while the 7-s SQL is still running.
+    // The Node.js process may exit before the server finishes the Redis write,
+    // leaving the cache cold and causing the smoke-test p95 to hit the raw SQL.
+    //
+    // Consuming the body guarantees that:
+    //   1. The RSC stream has fully flushed.
+    //   2. All server-side service calls (including the Redis rememberJson write)
+    //      have completed before we mark this route as warm.
+    let bodyBytes: number | null = null;
+    try {
+      const body = await response.text();
+      bodyBytes = body.length;
+    } catch {
+      // Body read failure is non-fatal — the status check already captured
+      // whether the route responded correctly.
+    }
+
     return {
       label: route.label,
       url: url.toString(),
       ok: response.ok,
       status: response.status,
       elapsedMs: Date.now() - startedAt,
+      bodyBytes,
     };
   } catch (error) {
     return {
@@ -93,6 +135,7 @@ async function warmRoute(route: WarmRoute): Promise<WarmResult> {
       ok: false,
       status: null,
       elapsedMs: Date.now() - startedAt,
+      bodyBytes: null,
       error: error instanceof Error ? error.message : String(error),
     };
   }
@@ -112,7 +155,7 @@ async function main() {
 
     if (result.ok) {
       console.log(
-        `[warm-cache] OK ${result.status} ${result.label} ${result.elapsedMs}ms`,
+        `[warm-cache] OK ${result.status} ${result.label} ${result.elapsedMs}ms bodyBytes=${result.bodyBytes ?? "n/a"}`,
       );
     } else {
       console.warn(
@@ -127,6 +170,19 @@ async function main() {
   console.log(
     `[warm-cache] Completed: ${successCount} succeeded, ${failureCount} failed`,
   );
+
+  // Exit non-zero if any required route failed.  These are routes whose Redis
+  // key MUST be warm before the smoke suite starts — a partial-failure exit(0)
+  // would let CI proceed with a cold cache, producing a false p95 regression.
+  const failedRequired = results.filter(
+    (result) => !result.ok && routes.find((route) => route.label === result.label)?.required,
+  );
+  if (failedRequired.length > 0) {
+    console.error(
+      `[warm-cache] Required routes failed — aborting to prevent cold smoke run: ${failedRequired.map((result) => result.label).join(", ")}`,
+    );
+    process.exit(1);
+  }
 
   if (successCount === 0) {
     process.exit(1);
