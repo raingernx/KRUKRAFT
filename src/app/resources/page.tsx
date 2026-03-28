@@ -122,20 +122,24 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
         cookieStore = null;
       }
 
-      const userId = await traceServerStep(
-        "resources.optional_session_user",
-        () => getOptionalSessionUserId(cookieStore),
-        { isDiscoverMode },
-      );
-      updateRequestPerformanceDetails({
-        hasSession: Boolean(userId),
-      });
+      const hasSessionCookie = cookieStore ? hasSessionTokenCookie(cookieStore) : false;
 
       let effectiveSort = sort;
       if (cookieStore) {
         const rawVariant = cookieStore.get(RANKING_EXPERIMENT_COOKIE)?.value;
         effectiveSort = variantToSort(isValidRankingVariant(rawVariant) ? rawVariant : null);
       }
+
+      const userId = hasSessionCookie
+        ? await traceServerStep(
+            "resources.optional_session_user",
+            () => getOptionalSessionUserId(cookieStore),
+            { isDiscoverMode },
+          )
+        : undefined;
+      updateRequestPerformanceDetails({
+        hasSession: Boolean(userId),
+      });
 
       const heroPromise = isDiscoverMode
         ? trackRequestWork(

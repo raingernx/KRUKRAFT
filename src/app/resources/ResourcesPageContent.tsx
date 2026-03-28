@@ -539,7 +539,9 @@ async function ResourcesDiscoverContent({ userId }: { userId?: string }) {
   const ownedIdsPromise = userId
     ? trackRequestWork(loadOwnedIdsSafe(userId))
     : null;
-  const learningProfilePromise = trackRequestWork(loadLearningProfileSafe(userId));
+  const learningProfilePromise = userId
+    ? trackRequestWork(loadLearningProfileSafe(userId))
+    : null;
   const introPromise = trackRequestWork(
     DiscoverIntroDeferred({ discoverCategoriesPromise }),
   );
@@ -656,7 +658,7 @@ async function ResourcesDiscoverDeferredSections({
 }: {
   discoverDataPromise: Promise<DiscoverData | null>;
   ownedIdsPromise: Promise<Set<string>> | null;
-  learningProfilePromise: Promise<Awaited<ReturnType<typeof getUserLearningProfile>> | null>;
+  learningProfilePromise: Promise<Awaited<ReturnType<typeof getUserLearningProfile>> | null> | null;
   userId?: string;
 }) {
   const discoverData = await discoverDataPromise;
@@ -675,7 +677,7 @@ async function ResourcesDiscoverDeferredSections({
   //   B) Extras (becauseYouStudied, recommendedForLevel) — separate Suspense,
   //      placed after main sections so it extends below the fold rather than
   //      expanding the middle of the page
-  const recommendedForYouFinalPromise = userId
+  const recommendedForYouFinalPromise = userId && learningProfilePromise
     ? trackRequestWork(
         ResourcesDiscoverRFYFinalSection({
           learningProfilePromise,
@@ -687,7 +689,7 @@ async function ResourcesDiscoverDeferredSections({
         }),
       )
     : null;
-  const personalisedExtrasPromise = userId
+  const personalisedExtrasPromise = userId && learningProfilePromise
     ? trackRequestWork(
         ResourcesDiscoverPersonalisedExtras({
           learningProfilePromise,
