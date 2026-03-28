@@ -48,18 +48,26 @@ jobs:
         run: |
           set -euo pipefail
 
-          base_url="${DEPLOYMENT_ENVIRONMENT_URL:-}"
+          base_url="${PRODUCTION_BASE_URL:-}"
+          source_name="PRODUCTION_BASE_URL"
+
           if [ -z "$base_url" ]; then
-            base_url="${DEPLOYMENT_TARGET_URL:-}"
+            base_url="${DEPLOYMENT_ENVIRONMENT_URL:-}"
+            source_name="deployment_status.environment_url"
           fi
           if [ -z "$base_url" ]; then
-            base_url="${PRODUCTION_BASE_URL}"
+            base_url="${DEPLOYMENT_TARGET_URL:-}"
+            source_name="deployment_status.target_url"
+          fi
+          if [ -z "$base_url" ]; then
+            echo "[post-deploy-warm] Failed to resolve BASE_URL. Set PRODUCTION_BASE_URL or provide a deployment URL."
+            exit 1
           fi
 
           base_url="${base_url%/}"
           echo "base_url=$base_url" >> "$GITHUB_OUTPUT"
           echo "BASE_URL=$base_url" >> "$GITHUB_ENV"
-          echo "[post-deploy-warm] Resolved BASE_URL=$base_url"
+          echo "[post-deploy-warm] Resolved BASE_URL from ${source_name}: $base_url"
 
       - name: Wait For Production To Go Live
         shell: bash
@@ -73,7 +81,7 @@ jobs:
           echo "[post-deploy-warm] Waiting for ${url} to return success"
 
           for attempt in $(seq 1 "$max_attempts"); do
-            status="$(curl -A 'KruCraft-Warmup/1.0' -s -o /dev/null -w '%{http_code}' "$url" || true)"
+            status="$(curl -A 'KruCraft-Warmup/1.0' -L -s -o /dev/null -w '%{http_code}' "$url" || true)"
 
             if [ "$status" -ge 200 ] && [ "$status" -lt 400 ]; then
               echo "[post-deploy-warm] Production is live (status ${status})"
