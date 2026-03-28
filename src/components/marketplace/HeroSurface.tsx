@@ -509,12 +509,6 @@ export function HeroSurfaceSkeleton({
         className,
       )}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-surface-100 via-surface-50 to-surface-100" />
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-20 top-10 h-56 w-56 rounded-full bg-white/35 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-64 w-64 translate-x-16 translate-y-10 rounded-full bg-brand-500/10 blur-3xl" />
-      </div>
-
       <div className="absolute inset-0 flex flex-col justify-center px-6 py-14 sm:px-8 sm:py-16 lg:px-10 lg:py-18">
         <div
           className={cn(
