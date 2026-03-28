@@ -1,19 +1,27 @@
 name: Post-Deploy Warm Cache
 
 on:
-  push:
-    branches:
-      - main
+  deployment_status:
 
 concurrency:
-  group: post-deploy-warm-cache-production
+  group: post-deploy-perf-${{ github.event.deployment.id || github.ref }}-${{ github.event.deployment.environment || github.event.deployment_status.environment || 'unknown' }}
   cancel-in-progress: true
 
 jobs:
-  warm-public-cache:
+  warm_cache:
     name: Warm Public Cache
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      (
+        github.event.deployment.environment == 'Production' ||
+        github.event.deployment.environment == 'production' ||
+        github.event.deployment_status.environment == 'Production' ||
+        github.event.deployment_status.environment == 'production'
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    outputs:
+      base_url: ${{ steps.resolve-base-url.outputs.base_url }}
     env:
       PRODUCTION_BASE_URL: https://krucrafts.com
       HOT_DETAIL_SLUG: middle-school-science-quiz-assessment-set
@@ -31,12 +39,34 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Resolve BASE_URL
+        id: resolve-base-url
+        shell: bash
+        env:
+          DEPLOYMENT_ENVIRONMENT_URL: ${{ github.event.deployment_status.environment_url }}
+          DEPLOYMENT_TARGET_URL: ${{ github.event.deployment_status.target_url }}
+        run: |
+          set -euo pipefail
+
+          base_url="${DEPLOYMENT_ENVIRONMENT_URL:-}"
+          if [ -z "$base_url" ]; then
+            base_url="${DEPLOYMENT_TARGET_URL:-}"
+          fi
+          if [ -z "$base_url" ]; then
+            base_url="${PRODUCTION_BASE_URL}"
+          fi
+
+          base_url="${base_url%/}"
+          echo "base_url=$base_url" >> "$GITHUB_OUTPUT"
+          echo "BASE_URL=$base_url" >> "$GITHUB_ENV"
+          echo "[post-deploy-warm] Resolved BASE_URL=$base_url"
+
       - name: Wait For Production To Go Live
         shell: bash
         run: |
           set -euo pipefail
 
-          url="${PRODUCTION_BASE_URL%/}/resources"
+          url="${BASE_URL%/}/resources"
           max_attempts=30
           sleep_seconds=10
 
@@ -58,28 +88,85 @@ jobs:
           exit 1
 
       - name: Warm Public Routes
-        env:
-          BASE_URL: ${{ env.PRODUCTION_BASE_URL }}
-        run: npm run warm:cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          echo "[post-deploy-warm] BASE_URL=${BASE_URL}"
+          BASE_URL="${BASE_URL}" npm run warm:cache 2>&1 | tee artifacts/warm-cache.log
+
+      - name: Upload Warm Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: post-deploy-warm-artifacts
+          path: |
+            artifacts/warm-cache.log
+          if-no-files-found: warn
+
+  perf_smoke:
+    name: Run Post-Deploy Performance Verification
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      (
+        github.event.deployment.environment == 'Production' ||
+        github.event.deployment.environment == 'production' ||
+        github.event.deployment_status.environment == 'Production' ||
+        github.event.deployment_status.environment == 'production'
+      )
+    needs: warm_cache
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      BASE_URL: ${{ needs.warm_cache.outputs.base_url }}
+      HOT_SLUG: middle-school-science-quiz-assessment-set
+      PERF_SUITE: smoke
+      PERF_RESULTS_DIR: artifacts/k6
+      PERF_SUMMARY_PATH: artifacts/perf-summary.json
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
 
       - name: Setup k6
         uses: grafana/setup-k6-action@v1
 
       - name: Run Post-Deploy Performance Verification
-        env:
-          BASE_URL: ${{ env.PRODUCTION_BASE_URL }}
-          HOT_SLUG: ${{ env.HOT_DETAIL_SLUG }}
-          PERF_SUITE: smoke
-          PERF_RESULTS_DIR: artifacts/k6
-          PERF_SUMMARY_PATH: artifacts/perf-summary.json
-        run: npm run perf:post-deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/k6
+          echo "[post-deploy-perf] BASE_URL=${BASE_URL}"
+          npm run perf:post-deploy 2>&1 | tee artifacts/perf-smoke.log
 
-      - name: Upload Performance Artifact
+      - name: Upload Performance Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: post-deploy-perf-summary
           path: |
+            artifacts/perf-smoke.log
             artifacts/perf-summary.json
             artifacts/k6/
           if-no-files-found: warn
+
+      - name: Write Workflow Summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Post-deploy warm + perf"
+            echo ""
+            echo "- BASE_URL: ${BASE_URL}"
+            echo "- Warm artifacts: post-deploy-warm-artifacts"
+            echo "- Perf artifacts: post-deploy-perf-summary"
+          } >> "$GITHUB_STEP_SUMMARY"
