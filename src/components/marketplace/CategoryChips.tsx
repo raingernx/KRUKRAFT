@@ -128,7 +128,6 @@ export function CategoryChips({ categories }: CategoryChipsProps) {
         pending={pendingSlug === "all" && isPending}
         anyPending={isPending}
         onClick={() => navigate("all")}
-        onPointerIntent={() => prefetchCategoryChipHref(router, chipUrl("all"))}
       />
       {categories.map((cat) => (
         <Chip
@@ -138,7 +137,6 @@ export function CategoryChips({ categories }: CategoryChipsProps) {
           pending={pendingSlug === cat.slug && isPending}
           anyPending={isPending}
           onClick={() => navigate(cat.slug)}
-          onPointerIntent={() => prefetchCategoryChipHref(router, chipUrl(cat.slug))}
         />
       ))}
     </div>
@@ -153,7 +151,6 @@ function Chip({
   pending,
   anyPending,
   onClick,
-  onPointerIntent,
 }: {
   label: string;
   active: boolean;
@@ -162,14 +159,11 @@ function Chip({
   /** Any chip navigation is in-flight. */
   anyPending: boolean;
   onClick: () => void;
-  onPointerIntent: () => void;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      onMouseEnter={onPointerIntent}
-      onFocus={onPointerIntent}
       disabled={anyPending}
       aria-pressed={active}
       aria-busy={pending}
