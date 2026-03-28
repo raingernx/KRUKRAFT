@@ -12,10 +12,7 @@ import { DiscoverButton, CategoryChips, type ChipCategory } from "@/components/m
 import { ScrollableCategoryNav } from "@/components/marketplace/ScrollableCategoryNav";
 import { FilterBar } from "@/components/marketplace/FilterBar";
 import { FilterSidebar, type FilterCategory } from "@/components/marketplace/FilterSidebar";
-import {
-  CategoryBrowseDialog,
-  MobileFilterDialog,
-} from "@/components/marketplace/MobileFilterDialog";
+import { MobileFilterDialog } from "@/components/marketplace/MobileFilterDialog";
 import { CreatorCTA } from "@/components/discover/CreatorCTA";
 import { BlogSection } from "@/components/discover/BlogSection";
 import { EmailSignup } from "@/components/discover/EmailSignup";
@@ -182,11 +179,6 @@ export async function ResourcesPageContent({
     ? `/resources?${clearFiltersParams.toString()}`
     : "/resources";
   const resultsContext = buildResultsContext(total, activeCategoryName, category, search, price, formatNumber);
-  const browseCategories = categories.map((item) => ({
-    id: item.id,
-    name: item.name,
-    slug: item.slug,
-  }));
   const spotlightCandidate = resources[0] ?? null;
   const spotlightResource =
     !isDiscoverMode &&
@@ -270,7 +262,11 @@ export async function ResourcesPageContent({
                   <HeroSearch variant="listing" />
                 </Suspense>
               </div>
-              <CategoryBrowseDialog categories={browseCategories} />
+              <MobileFilterDialog
+                categories={categories as FilterCategory[]}
+                activeCount={mobileFilterActiveCount}
+                className="shrink-0"
+              />
             </div>
 
             <div className={CONTROLS_BAR_GROUP_CLASS_NAME}>
@@ -298,13 +294,6 @@ export async function ResourcesPageContent({
           </div>
 
             <div className="min-w-0 flex-1 space-y-6">
-              <div className="lg:hidden">
-                <MobileFilterDialog
-                  categories={categories as FilterCategory[]}
-                  activeCount={mobileFilterActiveCount}
-                />
-              </div>
-
             <Suspense fallback={<FilterBarFallback />}>
               <FilterBar total={total} />
             </Suspense>
@@ -340,6 +329,7 @@ export async function ResourcesPageContent({
                   }}
                   variant="hero"
                   owned={ownedIds.has(spotlightResource.id)}
+                  linkPrefetchMode="intent"
                 />
               </div>
             ) : null}
@@ -368,6 +358,7 @@ export async function ResourcesPageContent({
               totalPages={totalPages}
               hasActiveFilters={hasActiveFilters}
               progressiveLoad
+              cardPrefetchMode="intent"
               routeContext={{
                 queryKey: resourceGridQueryKey,
                 clearFiltersHref,
@@ -433,12 +424,6 @@ async function DiscoverIntroDeferred({
     name: item.name,
     slug: item.slug,
   }));
-  const browseCategories = discoverCategoriesWithCount.map((item) => ({
-    id: item.id,
-    name: item.name,
-    slug: item.slug,
-    resourceCount: item._count.resources,
-  }));
   const discoverResourceCount = discoverCategoriesWithCount.reduce(
     (sum, item) => sum + item._count.resources,
     0,
@@ -447,7 +432,6 @@ async function DiscoverIntroDeferred({
   return (
     <DiscoverIntroSection
       categories={categories as ChipCategory[]}
-      browseCategories={browseCategories}
       categoryCount={discoverCategoriesWithCount.length}
       resourceCount={discoverResourceCount}
     />
@@ -456,17 +440,10 @@ async function DiscoverIntroDeferred({
 
 function DiscoverIntroSection({
   categories,
-  browseCategories,
   categoryCount,
   resourceCount,
 }: {
   categories: ChipCategory[];
-  browseCategories: Array<{
-    id: string;
-    name: string;
-    slug: string;
-    resourceCount: number;
-  }>;
   categoryCount: number;
   resourceCount: number;
 }) {
@@ -494,7 +471,11 @@ function DiscoverIntroSection({
                 <HeroSearch variant="listing" />
               </Suspense>
             </div>
-            <CategoryBrowseDialog categories={browseCategories} />
+            <MobileFilterDialog
+              categories={categories as FilterCategory[]}
+              activeCount={0}
+              className="shrink-0"
+            />
           </div>
 
           <div className={CONTROLS_BAR_GROUP_CLASS_NAME}>
@@ -585,6 +566,7 @@ async function ResourcesDiscoverDeferredSections({
                 }}
                 variant="marketplace"
                 owned={ownedIds.has(resource.id)}
+                linkPrefetchMode="intent"
               />
             ))}
           </div>
@@ -646,6 +628,7 @@ async function ResourcesDiscoverDeferredSections({
                 resource={resource}
                 variant="marketplace"
                 owned={ownedIds.has(resource.id)}
+                linkPrefetchMode="intent"
               />
             ))}
           </div>
@@ -666,6 +649,7 @@ async function ResourcesDiscoverDeferredSections({
                 resource={resource}
                 variant="marketplace"
                 owned={ownedIds.has(resource.id)}
+                linkPrefetchMode="intent"
               />
             ))}
           </div>
@@ -685,6 +669,7 @@ async function ResourcesDiscoverDeferredSections({
                 resource={resource}
                 variant="marketplace"
                 owned={ownedIds.has(resource.id)}
+                linkPrefetchMode="intent"
               />
             ))}
           </div>
@@ -704,6 +689,7 @@ async function ResourcesDiscoverDeferredSections({
                 resource={resource}
                 variant="marketplace"
                 owned={ownedIds.has(resource.id)}
+                linkPrefetchMode="intent"
               />
             ))}
           </div>
@@ -727,6 +713,7 @@ async function ResourcesDiscoverDeferredSections({
                 }}
                 variant="marketplace"
                 owned={ownedIds.has(resource.id)}
+                linkPrefetchMode="intent"
               />
             ))}
           </div>
@@ -938,7 +925,7 @@ function DiscoverIntroFallback() {
             <div className="flex-1 lg:min-w-[360px]">
               <SearchFallback />
             </div>
-            <BrowseCategoriesButtonFallback />
+            <FiltersButtonFallback />
           </div>
           <div className={CONTROLS_BAR_GROUP_CLASS_NAME}>
             <div className={CONTROLS_BAR_CHIP_SHELL_CLASS_NAME}>
@@ -963,10 +950,10 @@ function SearchFallback() {
   );
 }
 
-function BrowseCategoriesButtonFallback() {
+function FiltersButtonFallback() {
   return (
-    <div className="inline-flex h-11 shrink-0 items-center rounded-full border border-surface-200 bg-white px-4 text-sm font-medium text-text-muted shadow-sm">
-      Browse categories
+    <div className="inline-flex h-11 w-full shrink-0 items-center justify-center rounded-2xl border border-surface-200 bg-surface-50 px-4 text-sm font-medium text-text-muted sm:w-auto">
+      Filters
     </div>
   );
 }
@@ -1076,10 +1063,32 @@ export function ResourcesContentFallback({ isDiscoverMode }: { isDiscoverMode: b
         </div>
       ) : (
         <section className="space-y-6">
-          <div className="space-y-4 border-b border-surface-200/80 pb-8">
+          <div className="space-y-5 pb-7 sm:pb-8">
             <LoadingSkeleton className="h-3 w-16" />
             <LoadingSkeleton className="h-8 w-56 rounded-lg" />
             <LoadingSkeleton className="h-4 w-72" />
+            <div className={CONTROLS_BAR_CLASS_NAME}>
+              <div className={CONTROLS_BAR_META_CLASS_NAME}>
+                <LoadingSkeleton className="h-4 w-20" />
+                <LoadingSkeleton className="h-4 w-24" />
+              </div>
+              <div className={CONTROLS_BAR_MAIN_CLASS_NAME}>
+                <div className={CONTROLS_BAR_SEARCH_CLASS_NAME}>
+                  <div className="flex-1 lg:min-w-[360px]">
+                    <SearchFallback />
+                  </div>
+                  <FiltersButtonFallback />
+                </div>
+                <div className={CONTROLS_BAR_GROUP_CLASS_NAME}>
+                  <div className={CONTROLS_BAR_CHIP_SHELL_CLASS_NAME}>
+                    <DiscoverFallback />
+                    <ScrollableCategoryNav>
+                      <ChipsFallback />
+                    </ScrollableCategoryNav>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col gap-6 lg:flex-row lg:gap-10">
@@ -1281,6 +1290,7 @@ async function ResourcesDiscoverPersonalisedExtras({
                 }}
                 variant="marketplace"
                 owned={ownedIds.has(resource.id)}
+                linkPrefetchMode="intent"
               />
             ))}
           </div>
@@ -1304,6 +1314,7 @@ async function ResourcesDiscoverPersonalisedExtras({
                 }}
                 variant="marketplace"
                 owned={ownedIds.has(resource.id)}
+                linkPrefetchMode="intent"
               />
             ))}
           </div>

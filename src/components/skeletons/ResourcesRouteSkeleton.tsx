@@ -1,5 +1,3 @@
-"use client";
-
 import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/components/layout/container";
 import { HeroBannerSkeleton } from "@/components/marketplace/HeroBanner";

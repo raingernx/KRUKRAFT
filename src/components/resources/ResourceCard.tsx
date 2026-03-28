@@ -33,7 +33,7 @@ export interface ResourceCardData {
   author: { name?: string | null; image?: string | null };
   category?: { name: string; slug: string } | null;
   tags?: { tag: { id?: string; name: string; slug: string } }[];
-  _count?: { purchases: number; reviews: number };
+  _count?: { purchases: number; reviews?: number };
   rating?: number | null;
   reviewCount?: number;
   salesCount?: number;

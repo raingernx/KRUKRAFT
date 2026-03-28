@@ -1,5 +1,3 @@
-"use client";
-
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 
 interface ResourcesIntroSectionSkeletonProps {

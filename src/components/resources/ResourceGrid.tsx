@@ -30,6 +30,7 @@ interface ResourceGridProps {
    */
   hasActiveFilters?: boolean;
   progressiveLoad?: boolean;
+  cardPrefetchMode?: "intent" | "viewport" | "none";
   routeContext?: {
     queryKey: string;
     clearFiltersHref: string;
@@ -71,6 +72,7 @@ function ResourceGridBody({
   loading = false,
   hasActiveFilters = false,
   progressiveLoad = false,
+  cardPrefetchMode = "viewport",
   routeContext,
 }: ResourceGridProps) {
   const {
@@ -233,6 +235,7 @@ function ResourceGridBody({
             variant="marketplace"
             owned={ownedIdSet.has(resource.id)}
             priority={index < 2}
+            linkPrefetchMode={cardPrefetchMode}
             linkPrefetchScope={cardPrefetchScope}
           />
         ))}

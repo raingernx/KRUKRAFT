@@ -47,6 +47,11 @@ export const RESOURCE_CARD_BASE_SELECT = {
   featured: true,
   downloadCount: true,
   createdAt: true,
+  _count: {
+    select: {
+      purchases: true,
+    },
+  },
   ...RESOURCE_CARD_AUTHOR_SELECT,
   ...RESOURCE_CARD_CATEGORY_SELECT,
   ...FIRST_PREVIEW_IMAGE_SELECT,

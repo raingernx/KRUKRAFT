@@ -41,7 +41,6 @@ import {
   type FindActivationRankedResourcesRow,
 } from "@/repositories/resources/resource.repository";
 import { withPreview } from "@/services/discover.service";
-import { attachResourceTrustSignals } from "@/services/review.service";
 
 // ── Re-export withPreview for callers that used the old import path ────────────
 export { withPreview };
@@ -65,8 +64,8 @@ export const RESOURCE_CARD_INCLUDE = {
 
 /**
  * Transforms a flat raw-SQL activation-ranked row into the nested shape that
- * `withPreview` and `attachResourceTrustSignals` expect — identical to what
- * Prisma returns when using `RESOURCE_CARD_SELECT`.
+ * the marketplace card UI expects — identical to what Prisma returns when
+ * using `RESOURCE_CARD_SELECT`.
  */
 function toActivationRankedCardShape(row: FindActivationRankedResourcesRow) {
   return {
@@ -366,14 +365,10 @@ async function loadMarketplaceResources(filters: NormalizedMarketplaceFilters) {
 
   // ── Newest sort: Redis cross-instance cache ─────────────────────────────────
   // unstable_cache alone does not survive Vercel horizontal scale-out: each
-  // new lambda instance incurs a full cold-path hit (2 × parallel Prisma
-  // queries + attachResourceTrustSignals) before its local Data Cache warms.
-  // rememberJson stores the raw query results in shared Redis so cold instances
-  // return in <300 ms instead of 3–7 s.  Same rationale as the recommended path.
-  //
-  // attachResourceTrustSignals runs after Redis retrieval because its two
-  // aggregation queries are fast (~100–300 ms) and avoiding Date-object
-  // serialisation keeps the Redis payload simple and safe.
+  // new lambda instance incurs a full cold-path hit (findMany + count) before
+  // its local Data Cache warms. rememberJson stores the raw query results in
+  // shared Redis so cold instances return in <300 ms instead of 3–7 s. Same
+  // rationale as the recommended path.
   if (sort === "newest" && !search) {
     const newestCacheKey = [
       "marketplace:newest",
@@ -408,7 +403,7 @@ async function loadMarketplaceResources(filters: NormalizedMarketplaceFilters) {
       },
     );
 
-    const resources = await attachResourceTrustSignals(newestItems.map(withPreview));
+    const resources = newestItems.map(withPreview);
     return {
       resources,
       total: newestTotal,
@@ -456,7 +451,7 @@ async function loadMarketplaceResources(filters: NormalizedMarketplaceFilters) {
       },
     );
 
-    const resources = await attachResourceTrustSignals(sortedItems.map(withPreview));
+    const resources = sortedItems.map(withPreview);
     return {
       resources,
       total: sortedTotal,
@@ -475,7 +470,7 @@ async function loadMarketplaceResources(filters: NormalizedMarketplaceFilters) {
     countMarketplaceResources(where),
   ]);
 
-  const resources = await attachResourceTrustSignals(rawItems.map(withPreview));
+  const resources = rawItems.map(withPreview);
 
   return {
     resources,

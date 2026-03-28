@@ -25,7 +25,6 @@ import {
   recordCacheMiss,
   traceServerStep,
 } from "@/lib/performance/observability";
-import { attachResourceTrustSignals } from "@/services/review.service";
 import { resolveHomepageHero } from "@/services/heroes/hero.resolver";
 import {
   findDiscoverCategoriesWithCounts,
@@ -440,17 +439,10 @@ async function loadDiscoverResourcesByIds(resourceIds: string[]) {
     { resourceCount: resourceIds.length },
   );
 
-  const resources = await traceServerStep(
-    "discover.attachResourceTrustSignals",
-    // queryConcurrency: 2 runs the two batch queries (rating summaries + sales
-    // counts) in parallel. Each is a single batched query regardless of how many
-    // resources are in the batch — so this is exactly 2 concurrent queries total.
-    // Raised from 1 (sequential) now that pool config is confirmed safe.
-    () => attachResourceTrustSignals(rows, { queryConcurrency: 2 }),
-    { resourceCount: rows.length },
-  );
-
-  return new Map(resources.map((row) => [row.id, row]));
+  return new Map(rows.map((row) => {
+    const resource = withPreview(row);
+    return [resource.id, resource];
+  }));
 }
 
 // ── Convenience type ──────────────────────────────────────────────────────────
