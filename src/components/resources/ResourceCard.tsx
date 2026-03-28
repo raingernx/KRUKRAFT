@@ -1,15 +1,12 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { memo, useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
-import { FileText, Download, Eye, ExternalLink } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { Button } from "@/design-system";
+import { FileText } from "lucide-react";
 import { beginResourcesNavigation } from "@/components/marketplace/resourcesNavigationState";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { formatPrice } from "@/lib/format";
-import { isPreviewSupported } from "@/lib/preview/previewPolicy";
 import { cn } from "@/lib/utils";
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
@@ -95,6 +92,10 @@ interface ResourceCardProps {
   linkPrefetchScope?: string;
 }
 
+const ResourceCardLibraryFooter = dynamic(() =>
+  import("./ResourceCardLibraryFooter").then((mod) => mod.ResourceCardLibraryFooter),
+);
+
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
 
 function normalizeResource(r: ResourceCardResource) {
@@ -134,11 +135,6 @@ function isRecentlyPurchased(downloadedAt?: Date): boolean {
   return (Date.now() - new Date(downloadedAt).getTime()) / 86_400_000 < 7;
 }
 
-function getDownloadedLabel(downloadedAt?: Date) {
-  if (!downloadedAt) return null;
-  return `Downloaded ${formatDistanceToNow(downloadedAt, { addSuffix: true })}`;
-}
-
 /* ── Badge ───────────────────────────────────────────────────────────────── */
 
 function ResourceBadge({
@@ -163,70 +159,6 @@ function ResourceBadge({
     return <span className={`${base} border-info-100 bg-info-50/95 text-info-700`}>New</span>;
   }
   return null;
-}
-
-function LibraryCardActions({
-  resource,
-}: {
-  resource: ResourceCardResource;
-}) {
-  const [downloadClicked, setDownloadClicked] = useState(false);
-
-  return (
-    <div className="mt-auto pt-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Button asChild size="sm" className="h-9 flex-1 gap-1.5">
-          <a
-            href={`/api/download/${resource.id}`}
-            onClick={() => setDownloadClicked(true)}
-          >
-            <span className="inline-flex items-center gap-1.5">
-              <Download className="h-3.5 w-3.5" />
-              <span>Download</span>
-            </span>
-          </a>
-        </Button>
-        {isPreviewSupported(resource.mimeType) && (
-          <Button asChild variant="outline" size="sm" className="h-9 flex-1 gap-1.5">
-            <a
-              href={`/api/preview/${resource.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="inline-flex items-center gap-1.5">
-                <Eye className="h-3.5 w-3.5" />
-                <span>Preview</span>
-              </span>
-            </a>
-          </Button>
-        )}
-        <Button asChild variant="outline" size="sm" className="h-9 flex-1 gap-1.5">
-          <IntentPrefetchLink
-            href={`/resources/${resource.slug}`}
-            prefetchScope="resource-card-library"
-            prefetchLimit={4}
-          >
-            <span className="inline-flex items-center gap-1.5">
-              <ExternalLink className="h-3.5 w-3.5" />
-              <span>Open</span>
-            </span>
-          </IntentPrefetchLink>
-        </Button>
-      </div>
-      {downloadClicked && (
-        <p className="mt-2.5 flex items-center gap-1.5 text-caption text-emerald-700">
-          <span className="font-medium">Downloaded ✓</span>
-          <span className="text-zinc-300" aria-hidden>•</span>
-          <Link
-            href={resource.category?.slug ? `/categories/${resource.category.slug}` : "/resources"}
-            className="text-zinc-500 underline underline-offset-2 hover:text-zinc-700"
-          >
-            Want more like this?
-          </Link>
-        </p>
-      )}
-    </div>
-  );
 }
 
 /* ── Card Body ───────────────────────────────────────────────────────────── */
@@ -255,8 +187,6 @@ function CardBody({
   const isNew =
     isNewResource(resource.createdAt) ||
     (variant === "library" && isRecentlyPurchased(resource.downloadedAt));
-  const downloadedLabel =
-    variant === "library" ? getDownloadedLabel(resource.downloadedAt) : null;
   const thumbnail =
     resource.thumbnailUrl ??
     resource.previewImages?.[0] ??
@@ -356,12 +286,6 @@ function CardBody({
         </div>
 
         <div className="mt-auto space-y-2 border-t border-surface-100 pt-3">
-          {variant === "library" && resource.downloadedAt && downloadedLabel && (
-            <p className="text-caption text-text-muted">
-              {downloadedLabel}
-            </p>
-          )}
-
           {showPrice ? (
             <div className="flex items-end justify-between gap-3">
               <p
@@ -378,7 +302,7 @@ function CardBody({
 
         {/* Library CTAs — pinned to bottom via mt-auto; pt-4 gives consistent gap above buttons */}
         {variant === "library" && resource.id && resource.slug && (
-          <LibraryCardActions resource={resource} />
+          <ResourceCardLibraryFooter resource={resource} />
         )}
       </div>
     </article>
