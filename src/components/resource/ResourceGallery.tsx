@@ -61,13 +61,19 @@ export function ResourceGallery({
 
   const activeIndex = Math.min(active, resolvedPreviews.length - 1);
   const current = resolvedPreviews[activeIndex];
-  const hasThumbnails = resolvedPreviews.length > 1;
+  const hasRail = resolvedPreviews.length > 0;
+  const hasThumbnailNavigation = resolvedPreviews.length > 1;
   const maxStart = Math.max(0, resolvedPreviews.length - VISIBLE_THUMBNAILS);
-  const visible = hasThumbnails
-    ? resolvedPreviews.slice(startIndex, startIndex + VISIBLE_THUMBNAILS)
+  const clampedStartIndex = Math.min(startIndex, maxStart);
+  const visible = hasRail
+    ? resolvedPreviews.slice(
+        clampedStartIndex,
+        clampedStartIndex + VISIBLE_THUMBNAILS,
+      )
     : [];
-  const canGoUp = hasThumbnails && activeIndex > 0;
-  const canGoDown = hasThumbnails && activeIndex < resolvedPreviews.length - 1;
+  const canGoUp = hasThumbnailNavigation && activeIndex > 0;
+  const canGoDown =
+    hasThumbnailNavigation && activeIndex < resolvedPreviews.length - 1;
   const total = resolvedPreviews.length;
 
   return (
@@ -119,7 +125,7 @@ export function ResourceGallery({
       {/* Mobile/tablet: horizontal strip (flex-row, full-width, scrollable)  */}
       {/* Desktop lg+:  vertical rail on the left (flex-col, 80px wide)       */}
       <div className="order-2 flex w-full shrink-0 flex-row items-center lg:order-1 lg:h-full lg:min-h-0 lg:w-20 lg:flex-col lg:justify-between">
-        {hasThumbnails ? (
+        {hasRail ? (
           <div className="flex w-full flex-row items-center gap-3 overflow-x-auto pb-1 lg:w-auto lg:flex-col lg:gap-6 lg:overflow-x-visible lg:pb-0">
             <button
               type="button"
@@ -135,9 +141,14 @@ export function ResourceGallery({
               <ChevronUp className="h-5 w-5" />
             </button>
 
-            <div className="flex flex-row gap-3 lg:flex-col lg:items-center lg:justify-center">
+            <div
+              className={[
+                "gap-3 lg:flex lg:flex-col lg:items-center lg:justify-center",
+                hasThumbnailNavigation ? "flex flex-row" : "hidden lg:flex",
+              ].join(" ")}
+            >
               {visible.map((p, idx) => {
-                const globalIndex = startIndex + idx;
+                const globalIndex = clampedStartIndex + idx;
                 return (
                   <button
                     key={p.id}
