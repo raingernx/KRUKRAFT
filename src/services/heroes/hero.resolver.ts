@@ -54,6 +54,14 @@ export interface ResolvedHomepageHeroConfig extends HeroStyleFields {
 }
 
 type HeroCandidate = Awaited<ReturnType<typeof getCachedEligibleHomepageHeroes>>[number];
+type HeroRequestContextData = {
+  seed: string;
+  localeHints: {
+    userAgent: string;
+    language: string;
+  };
+  experimentVariants: Record<string, string>;
+};
 
 const HERO_AB_COOKIE_NAME = "hero_ab_seed";
 const HERO_EXPERIMENT_COOKIE_PREFIX = "hero_exp_";
@@ -197,22 +205,61 @@ function hashString(input: string) {
   return hash >>> 0;
 }
 
-async function getSelectionSeed(context: HomepageHeroSelectionContext) {
-  if (context.userId) {
-    return `user:${context.userId}`;
-  }
+const getHeroRequestContext = cache(
+  async (userId?: string | null): Promise<HeroRequestContextData> => {
+    if (userId) {
+      return {
+        seed: `user:${userId}`,
+        localeHints: {
+          userAgent: "",
+          language: "",
+        },
+        experimentVariants: {},
+      };
+    }
 
-  const cookieStore = await cookies();
-  const cookieSeed = cookieStore.get(HERO_AB_COOKIE_NAME)?.value?.trim();
-  if (cookieSeed) {
-    return `cookie:${cookieSeed}`;
-  }
+    const cookieStore = await cookies();
+    const experimentVariants = Object.fromEntries(
+      cookieStore
+        .getAll()
+        .flatMap(({ name, value }) => {
+          const trimmedValue = value.trim();
+          if (
+            !name.startsWith(HERO_EXPERIMENT_COOKIE_PREFIX) ||
+            trimmedValue.length === 0
+          ) {
+            return [];
+          }
 
-  const headerStore = await headers();
-  const userAgent = headerStore.get("user-agent") ?? "";
-  const language = headerStore.get("accept-language") ?? "";
-  return `anon:${userAgent}:${language}`;
-}
+          return [[name.slice(HERO_EXPERIMENT_COOKIE_PREFIX.length), trimmedValue]];
+        }),
+    );
+    const cookieSeed = cookieStore.get(HERO_AB_COOKIE_NAME)?.value?.trim();
+
+    if (cookieSeed) {
+      return {
+        seed: `cookie:${cookieSeed}`,
+        localeHints: {
+          userAgent: "",
+          language: "",
+        },
+        experimentVariants,
+      };
+    }
+
+    const headerStore = await headers();
+    const localeHints = {
+      userAgent: headerStore.get("user-agent") ?? "",
+      language: headerStore.get("accept-language") ?? "",
+    };
+
+    return {
+      seed: `anon:${localeHints.userAgent}:${localeHints.language}`,
+      localeHints,
+      experimentVariants,
+    };
+  },
+);
 
 function chooseAbGroup(candidates: HeroCandidate[], seed: string) {
   const groups = Array.from(
@@ -260,25 +307,25 @@ function normalizeVariant(candidate: HeroCandidate) {
   return normalizeOptionalString(candidate.variant);
 }
 
-async function getExperimentVariant(
+function getExperimentVariant(
   experimentId: string,
   variants: string[],
   seed: string,
+  cookieVariant: string | null,
 ) {
-  const cookieStore = await cookies();
-  const cookieValue = cookieStore
-    .get(`${HERO_EXPERIMENT_COOKIE_PREFIX}${experimentId}`)
-    ?.value?.trim();
-
-  if (cookieValue && variants.includes(cookieValue)) {
-    return cookieValue;
+  if (cookieVariant && variants.includes(cookieVariant)) {
+    return cookieVariant;
   }
 
   const index = hashString(`experiment:${experimentId}:${seed}`) % variants.length;
   return variants[index];
 }
 
-async function applyExperimentAssignments(candidates: HeroCandidate[], seed: string) {
+function applyExperimentAssignments(
+  candidates: HeroCandidate[],
+  seed: string,
+  experimentVariants: Record<string, string>,
+) {
   const groups = new Map<string, HeroCandidate[]>();
   const passthrough: HeroCandidate[] = [];
 
@@ -311,7 +358,12 @@ async function applyExperimentAssignments(candidates: HeroCandidate[], seed: str
       continue;
     }
 
-    const selectedVariant = await getExperimentVariant(experimentId, variants, seed);
+    const selectedVariant = getExperimentVariant(
+      experimentId,
+      variants,
+      seed,
+      experimentVariants[experimentId] ?? null,
+    );
     resolved.push(
       ...group.filter((candidate) => normalizeVariant(candidate) === selectedVariant),
     );
@@ -331,14 +383,18 @@ const resolveHomepageHeroCached = cache(
           (candidate) => candidate.priority === topPriority,
         );
 
-        const seed = await getSelectionSeed({ userId });
-        const experimentCandidates = await applyExperimentAssignments(priorityBucket, seed);
-        const selectedGroup = chooseAbGroup(experimentCandidates, seed);
+        const requestContext = await getHeroRequestContext(userId);
+        const experimentCandidates = applyExperimentAssignments(
+          priorityBucket,
+          requestContext.seed,
+          requestContext.experimentVariants,
+        );
+        const selectedGroup = chooseAbGroup(experimentCandidates, requestContext.seed);
         const abCandidates = experimentCandidates.filter(
           (candidate) =>
             (normalizeOptionalString(candidate.abGroup) ?? "__default__") === selectedGroup,
         );
-        const selectedHero = chooseWeightedHero(abCandidates, seed);
+        const selectedHero = chooseWeightedHero(abCandidates, requestContext.seed);
 
         return toResolvedConfig(selectedHero, "cms");
       }
