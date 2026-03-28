@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { ArrowRight } from "lucide-react";
 import { isMissingTableError } from "@/lib/prismaErrors";
 import { ResourceGrid } from "@/components/resources/ResourceGrid";
+import { ResourceGridOwnedIdsHydrator } from "@/components/resources/ResourceGrid";
 import { ResourceCard, type ResourceCardData } from "@/components/resources/ResourceCard";
 import { ResourceCardSkeleton } from "@/components/resources/ResourceCardSkeleton";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
@@ -122,6 +123,28 @@ async function ResolvedOwnedCardBadge({
   }
 
   return <DefaultCardBadge createdAt={createdAt} featured={featured} />;
+}
+
+async function ResolvedOwnedIdsHydrator({
+  ownedIdsPromise,
+}: {
+  ownedIdsPromise: Promise<Set<string>>;
+}) {
+  const ownedIds = await ownedIdsPromise;
+
+  return <ResourceGridOwnedIdsHydrator ownedIds={[...ownedIds]} />;
+}
+
+function DeferredOwnedIdsHydrator({
+  ownedIdsPromise,
+}: {
+  ownedIdsPromise: Promise<Set<string>>;
+}) {
+  return (
+    <Suspense fallback={null}>
+      <ResolvedOwnedIdsHydrator ownedIdsPromise={ownedIdsPromise} />
+    </Suspense>
+  );
 }
 
 function DeferredOwnedCardBadge({
@@ -481,6 +504,11 @@ export async function ResourcesPageContent({
               progressiveLoad
               cardPrefetchMode="intent"
               badgeNodes={resourceGridBadgeNodes}
+              deferredOwnedIdsHydrator={
+                ownedIdsPromise ? (
+                  <DeferredOwnedIdsHydrator ownedIdsPromise={ownedIdsPromise} />
+                ) : undefined
+              }
               routeContext={{
                 queryKey: resourceGridQueryKey,
                 clearFiltersHref,

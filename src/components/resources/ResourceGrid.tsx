@@ -1,6 +1,13 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 import { BookOpen, Search } from "lucide-react";
 import { Button } from "@/design-system";
@@ -14,6 +21,7 @@ export const RESOURCE_GRID_CLASSES =
   "grid items-stretch gap-5 lg:gap-6 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]";
 
 const LISTING_BATCH_SIZE = 12;
+const DeferredOwnedIdsContext = createContext<((ownedIds: string[]) => void) | null>(null);
 
 interface ResourceGridProps {
   resources: ResourceCardData[];
@@ -32,12 +40,23 @@ interface ResourceGridProps {
   progressiveLoad?: boolean;
   cardPrefetchMode?: "intent" | "viewport" | "none";
   badgeNodes?: Array<ReactNode | null>;
+  deferredOwnedIdsHydrator?: ReactNode;
   routeContext?: {
     queryKey: string;
     clearFiltersHref: string;
     exploreAllHref: string;
     cardPrefetchScope: string;
   };
+}
+
+export function ResourceGridOwnedIdsHydrator({ ownedIds }: { ownedIds: string[] }) {
+  const setDeferredOwnedIds = useContext(DeferredOwnedIdsContext);
+
+  useEffect(() => {
+    setDeferredOwnedIds?.(ownedIds);
+  }, [ownedIds, setDeferredOwnedIds]);
+
+  return null;
 }
 
 function ResourceGridWithClientRouteContext(props: ResourceGridProps) {
@@ -75,6 +94,7 @@ function ResourceGridBody({
   progressiveLoad = false,
   cardPrefetchMode = "viewport",
   badgeNodes,
+  deferredOwnedIdsHydrator,
   routeContext,
 }: ResourceGridProps) {
   const {
@@ -89,6 +109,7 @@ function ResourceGridBody({
     nextPage: page + 1,
     isLoadingMore: false,
   }));
+  const [deferredOwnedIds, setDeferredOwnedIds] = useState<string[] | null>(null);
 
   // ── Loading skeleton ────────────────────────────────────────────────────────
   if (loading) {
@@ -154,7 +175,8 @@ function ResourceGridBody({
   const appendedResources = isSameQuery ? loadState.appendedResources : [];
   const nextPage = isSameQuery ? loadState.nextPage : page + 1;
   const isLoadingMore = isSameQuery ? loadState.isLoadingMore : false;
-  const ownedIdSet = useMemo(() => new Set(ownedIds), [ownedIds]);
+  const effectiveOwnedIds = deferredOwnedIds ?? ownedIds;
+  const ownedIdSet = useMemo(() => new Set(effectiveOwnedIds), [effectiveOwnedIds]);
   const displayedResources = progressiveLoad
     ? [...resources, ...appendedResources]
     : resources;
@@ -227,44 +249,47 @@ function ResourceGridBody({
   }
 
   return (
-    <div className="space-y-8">
+    <DeferredOwnedIdsContext.Provider value={setDeferredOwnedIds}>
+      {deferredOwnedIdsHydrator}
+      <div className="space-y-8">
       {/* ── Grid: consistent height, no vertical stretch; 16:10 thumb prevents layout shift ── */}
-      <div className={RESOURCE_GRID_CLASSES}>
-        {displayedResources.map((resource, index) => (
-          <ResourceCard
-            key={resource.id}
-            resource={resource}
-            variant="marketplace"
-            owned={ownedIdSet.has(resource.id)}
-            priority={index < 2}
-            linkPrefetchMode={cardPrefetchMode}
-            linkPrefetchScope={cardPrefetchScope}
-            badge={badgeNodes?.[index]}
-          />
-        ))}
-      </div>
-
-      {progressiveLoad ? (
-        <div className="flex flex-col items-center gap-3 border-t border-surface-200/80 pt-5">
-          <p className="text-small text-text-secondary">
-            Showing {loadedCount} of {total} resource{total === 1 ? "" : "s"}
-          </p>
-
-          {hasMore ? (
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              onClick={() => void handleLoadMore()}
-              disabled={isLoadingMore}
-              loading={isLoadingMore}
-            >
-              {isLoadingMore ? "Loading more…" : "Load more"}
-            </Button>
-          ) : null}
+        <div className={RESOURCE_GRID_CLASSES}>
+          {displayedResources.map((resource, index) => (
+            <ResourceCard
+              key={resource.id}
+              resource={resource}
+              variant="marketplace"
+              owned={ownedIdSet.has(resource.id)}
+              priority={index < 2}
+              linkPrefetchMode={cardPrefetchMode}
+              linkPrefetchScope={cardPrefetchScope}
+              badge={badgeNodes?.[index]}
+            />
+          ))}
         </div>
-      ) : null}
-    </div>
+
+        {progressiveLoad ? (
+          <div className="flex flex-col items-center gap-3 border-t border-surface-200/80 pt-5">
+            <p className="text-small text-text-secondary">
+              Showing {loadedCount} of {total} resource{total === 1 ? "" : "s"}
+            </p>
+
+            {hasMore ? (
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                onClick={() => void handleLoadMore()}
+                disabled={isLoadingMore}
+                loading={isLoadingMore}
+              >
+                {isLoadingMore ? "Loading more…" : "Load more"}
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+    </DeferredOwnedIdsContext.Provider>
   );
 }
 
