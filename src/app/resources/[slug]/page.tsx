@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { authOptions } from "@/lib/auth";
 import { isMissingTableError } from "@/lib/prismaErrors";
@@ -209,9 +209,6 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
       slug,
     },
     async () => {
-      // Start headers() and both independent fetches in parallel.
-      // getOptionalSession does not depend on resource data.
-      const requestHeadersPromise = headers();
       const [resourceSettled, sessionSettled] = await Promise.allSettled([
         traceServerStep(
           "resource_detail.getResourceBySlug",
@@ -273,8 +270,6 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
           )
         : Promise.resolve({ isOwned: false });
 
-      const requestHeaders = await requestHeadersPromise;
-      const userAgent = requestHeaders.get("user-agent");
       const hasFile = Boolean(resource.fileUrl ?? resource.fileKey);
       const isReturningFromCheckout = paymentStatus === "success";
 
@@ -290,7 +285,6 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
     action: "RESOURCE_VIEW",
     entity: "Resource",
     entityId: resource.id,
-    userAgent,
     metadata: {
       slug: resource.slug,
       title: resource.title,
