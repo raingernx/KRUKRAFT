@@ -10,10 +10,10 @@ import { ScrollableCategoryNav } from "@/components/marketplace/ScrollableCatego
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { getDiscoverCategories } from "@/services/discover.service";
 
-const CONTROLS_BAR_CLASS_NAME = "border-b border-surface-200/80 bg-white";
-const CONTROLS_BAR_MAIN_CLASS_NAME = "flex min-w-0 items-center gap-2 overflow-hidden";
+const CONTROLS_BAR_CLASS_NAME = "border-b border-surface-200 bg-white";
+const CONTROLS_BAR_MAIN_CLASS_NAME = "flex min-w-0 items-center gap-1.5 overflow-hidden";
 const CONTROLS_BAR_GROUP_CLASS_NAME =
-  "flex min-w-0 items-center gap-2 overflow-hidden";
+  "flex min-w-0 items-center gap-1.5 overflow-hidden";
 
 type ResourcesCatalogControlsProps = {
   activeCount: number;
@@ -41,7 +41,7 @@ export async function ResourcesCatalogControls({
   }));
   return (
     <div className={CONTROLS_BAR_CLASS_NAME}>
-      <Container className="py-2 sm:py-2.5">
+      <Container className="py-1.5 sm:py-2">
         <div className={CONTROLS_BAR_MAIN_CLASS_NAME}>
           <div className={CONTROLS_BAR_GROUP_CLASS_NAME}>
             <Suspense fallback={<DiscoverFallback />}>
@@ -66,7 +66,7 @@ export function ResourcesCatalogControlsSkeleton({
 }) {
   return (
     <div className={CONTROLS_BAR_CLASS_NAME}>
-      <Container className="py-2 sm:py-2.5">
+      <Container className="py-1.5 sm:py-2">
         <div className={CONTROLS_BAR_MAIN_CLASS_NAME}>
           <div className={CONTROLS_BAR_GROUP_CLASS_NAME}>
             <DiscoverFallback />
@@ -86,7 +86,7 @@ export function ResourcesCatalogSearchSkeleton() {
 
 function DiscoverFallback() {
   return (
-    <div className="inline-flex h-9 sm:h-8 items-center gap-2 rounded-full border border-surface-200 bg-white px-3 text-sm font-medium text-text-secondary shadow-sm sm:px-3.5">
+    <div className="inline-flex h-10 items-center gap-2 rounded-full border border-surface-200 bg-surface-50 px-3.5 text-sm font-medium text-text-secondary shadow-sm">
       <LoadingSkeleton className="h-2 w-2 rounded-full bg-primary-500" />
       <span>Loading</span>
     </div>
@@ -105,10 +105,10 @@ function SearchFallback() {
 function ChipsFallback() {
   return (
     <div className="flex gap-2 overflow-hidden">
-      {["Loading", "Categories", "Popular", "Recent"].map((label, index) => (
+      {["Loading", "Categories", "Popular", "Recent", "More"].map((label, index) => (
         <div
           key={label}
-          className={`inline-flex h-9 sm:h-8 shrink-0 items-center rounded-full border border-surface-200 bg-surface-50 px-3 text-sm text-text-muted ${
+          className={`inline-flex h-10 shrink-0 items-center rounded-full border border-surface-200 bg-surface-50 px-3.5 text-sm text-text-muted ${
             index === 0 ? "gap-2 pr-4" : ""
           }`}
         >

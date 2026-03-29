@@ -1,7 +1,8 @@
 "use client";
 
-import { startTransition, useState, useTransition } from "react";
+import { startTransition, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { beginResourcesNavigation } from "@/components/marketplace/resourcesNavigationState";
 
@@ -70,10 +71,10 @@ export function DiscoverButton() {
       aria-label="Discover resources"
       aria-busy={isPending}
       className={cn(
-        "inline-flex h-9 shrink-0 items-center gap-2 rounded-full border px-3 text-small font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70 sm:h-8 sm:px-3.5",
+        "inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-3.5 text-small font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70",
         isDiscover
-          ? "border-primary-200 bg-primary-50 text-primary-700 shadow-sm"
-          : "border-transparent bg-transparent text-text-secondary hover:bg-white hover:text-text-primary",
+          ? "border-primary-300 bg-primary-100 text-primary-800 shadow-sm"
+          : "border-surface-200 bg-surface-50 text-text-secondary hover:border-surface-300 hover:bg-surface-100 hover:text-text-primary",
         isPending && "cursor-wait opacity-70"
       )}
     >
@@ -97,9 +98,15 @@ export function CategoryChips({ categories }: CategoryChipsProps) {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [pendingSlug, setPendingSlug] = useState<string | null>(null);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
 
   const category = searchParams.get("category");
   const isAll = category === "all";
+  const primaryCategories = useMemo(() => categories.slice(0, 7), [categories]);
+  const overflowCategories = useMemo(() => categories.slice(7), [categories]);
+  const activeOverflowCategory =
+    overflowCategories.find((cat) => category === cat.slug) ?? null;
 
   function chipUrl(slug: string): string {
     const params = new URLSearchParams(searchParams.toString());
@@ -110,11 +117,33 @@ export function CategoryChips({ categories }: CategoryChipsProps) {
 
   function navigate(slug: string) {
     setPendingSlug(slug);
+    setMoreOpen(false);
     beginResourcesNavigation("listing", chipUrl(slug));
     startTransition(() => {
       router.push(chipUrl(slug), { scroll: false });
     });
   }
+
+  useEffect(() => {
+    function handlePointerDown(event: MouseEvent) {
+      if (!moreRef.current?.contains(event.target as Node)) {
+        setMoreOpen(false);
+      }
+    }
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setMoreOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
 
   return (
     <div
@@ -129,6 +158,7 @@ export function CategoryChips({ categories }: CategoryChipsProps) {
         anyPending={isPending}
         onClick={() => navigate("all")}
       />
+
       {categories.map((cat) => (
         <Chip
           key={cat.id}
@@ -137,8 +167,72 @@ export function CategoryChips({ categories }: CategoryChipsProps) {
           pending={pendingSlug === cat.slug && isPending}
           anyPending={isPending}
           onClick={() => navigate(cat.slug)}
+          className="lg:hidden"
         />
       ))}
+
+      {primaryCategories.map((cat) => (
+        <Chip
+          key={`desktop-${cat.id}`}
+          label={cat.name}
+          active={category === cat.slug}
+          pending={pendingSlug === cat.slug && isPending}
+          anyPending={isPending}
+          onClick={() => navigate(cat.slug)}
+          className="hidden lg:inline-flex"
+        />
+      ))}
+
+      {overflowCategories.length > 0 ? (
+        <div ref={moreRef} className="relative hidden lg:block">
+          <button
+            type="button"
+            onClick={() => setMoreOpen((open) => !open)}
+            disabled={isPending}
+            aria-haspopup="menu"
+            aria-expanded={moreOpen}
+            aria-label="More categories"
+            className={cn(
+              chipClassName(Boolean(activeOverflowCategory), false, isPending, "inline-flex"),
+              moreOpen && "border-surface-300 bg-surface-100 text-text-primary",
+            )}
+          >
+            <span>{activeOverflowCategory?.name ?? "More"}</span>
+            <ChevronDown
+              className={cn("h-4 w-4 text-current transition-transform", moreOpen && "rotate-180")}
+              aria-hidden
+            />
+          </button>
+
+          {moreOpen ? (
+            <div
+              role="menu"
+              aria-label="More categories"
+              className="absolute right-0 top-[calc(100%+0.5rem)] z-30 min-w-[220px] overflow-hidden rounded-2xl border border-surface-200 bg-white p-1.5 shadow-card-lg"
+            >
+              <div className="flex max-h-72 flex-col overflow-y-auto">
+                {overflowCategories.map((cat) => (
+                  <button
+                    key={`more-${cat.id}`}
+                    type="button"
+                    role="menuitem"
+                    onClick={() => navigate(cat.slug)}
+                    disabled={isPending}
+                    className={cn(
+                      "flex h-10 items-center rounded-xl px-3 text-left text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70",
+                      category === cat.slug || (pendingSlug === cat.slug && isPending)
+                        ? "bg-primary-100 text-primary-800"
+                        : "text-text-secondary hover:bg-surface-50 hover:text-text-primary",
+                    )}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -151,6 +245,7 @@ function Chip({
   pending,
   anyPending,
   onClick,
+  className,
 }: {
   label: string;
   active: boolean;
@@ -159,6 +254,7 @@ function Chip({
   /** Any chip navigation is in-flight. */
   anyPending: boolean;
   onClick: () => void;
+  className?: string;
 }) {
   return (
     <button
@@ -167,19 +263,26 @@ function Chip({
       disabled={anyPending}
       aria-pressed={active}
       aria-busy={pending}
-      className={cn(
-        "inline-flex h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-3 text-small font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70 sm:h-8 sm:px-3.5",
-        // Active or optimistically-pending target → blue
-        active || pending
-          ? "border-primary-200 bg-primary-50 text-primary-700 shadow-sm"
-          : "border-transparent bg-transparent text-text-secondary hover:bg-white hover:text-text-primary",
-        // The chip being navigated to: cursor-wait + slight fade
-        pending && "cursor-wait opacity-75",
-        // Non-target chips dim while any navigation is pending
-        anyPending && !pending && !active && "opacity-40"
-      )}
+      className={chipClassName(active, pending, anyPending, className)}
     >
       {label}
     </button>
+  );
+}
+
+function chipClassName(
+  active: boolean,
+  pending: boolean,
+  anyPending: boolean,
+  className?: string,
+) {
+  return cn(
+    "inline-flex h-10 shrink-0 items-center whitespace-nowrap rounded-full border px-3.5 text-small font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70",
+    active || pending
+      ? "border-primary-300 bg-primary-100 text-primary-800 shadow-sm"
+      : "border-surface-200 bg-surface-50 text-text-secondary hover:border-surface-300 hover:bg-surface-100 hover:text-text-primary",
+    pending && "cursor-wait opacity-75",
+    anyPending && !pending && !active && "opacity-40",
+    className,
   );
 }

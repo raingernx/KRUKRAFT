@@ -12,6 +12,7 @@ import {
   BookOpen,
   ShoppingBag,
   Settings,
+  Sparkles,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { AccountTrigger } from "@/components/layout/account/AccountTrigger";
@@ -70,35 +71,47 @@ export function Navbar({
       <Container
         className={
           headerSearch
-            ? "grid gap-2.5 py-2.5 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center lg:gap-5 lg:py-0"
+            ? "grid gap-2 py-2 lg:grid-cols-[auto_minmax(0,680px)_auto] lg:items-center lg:justify-between lg:gap-4 lg:py-0"
             : "flex h-16 items-center justify-between gap-4 lg:gap-8"
         }
       >
-        <div className="flex h-10 items-center lg:h-14">
+        <div className="flex h-10 items-center lg:h-12 lg:origin-left lg:scale-[0.9]">
           <NavbarBrand />
         </div>
 
-        {headerSearch ? <div className="order-3 min-w-0 lg:order-2">{headerSearch}</div> : null}
+        {headerSearch ? (
+          <div className="order-3 min-w-0 lg:order-2 lg:mx-auto lg:w-full lg:max-w-[680px]">
+            {headerSearch}
+          </div>
+        ) : null}
 
         <div className={headerSearch ? "order-2 ml-auto lg:order-3 lg:ml-0" : "ml-auto"}>
-          <div className="hidden shrink-0 items-center gap-6 lg:flex">
-            <nav className="hidden items-center gap-2 lg:flex" aria-label="Main navigation">
+          <div className="hidden shrink-0 items-center gap-3 lg:flex">
+            <nav className="hidden items-center gap-1.5 lg:flex" aria-label="Main navigation">
               {NAV_LINKS.map(({ href, label }) => (
                 <NavbarItem
                   key={href}
                   href={href}
                   onClick={() => handleHomeNavigation(href)}
                   variant="default"
+                  className="h-9 rounded-full px-3.5 text-[13px] font-semibold"
                 >
                   {label}
                 </NavbarItem>
               ))}
             </nav>
 
-            <NavbarItem href="/membership" variant="primary" className="shadow-sm">
-              สมัครสมาชิก
+            <NavbarItem
+              href="/membership"
+              variant="default"
+              className="h-9 rounded-full border border-amber-200 bg-[linear-gradient(135deg,#fff8dc,#fff4bf)] px-3.5 text-[13px] font-semibold text-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] hover:border-amber-300 hover:bg-[linear-gradient(135deg,#fff9e7,#fff1b0)] hover:text-amber-950"
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5" aria-hidden />
+                <span>KC Plus</span>
+              </span>
             </NavbarItem>
-            <div className="mx-1 h-6 w-px bg-surface-200/50" aria-hidden />
+            <div className="mx-0.5 h-5 w-px bg-surface-200/70" aria-hidden />
 
             {isLoading ? (
               <div className="h-10 w-20 animate-pulse rounded-lg bg-surface-100" />
@@ -236,8 +249,17 @@ export function Navbar({
           </nav>
 
           <div className="mt-4">
-            <NavbarItem href="/membership" onClick={closeAll} variant="primary" mobile>
-              สมัครสมาชิก
+            <NavbarItem
+              href="/membership"
+              onClick={closeAll}
+              variant="default"
+              mobile
+              className="border border-amber-200 bg-[linear-gradient(135deg,#fff8dc,#fff4bf)] text-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] hover:border-amber-300 hover:bg-[linear-gradient(135deg,#fff9e7,#fff1b0)] hover:text-amber-950"
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5" aria-hidden />
+                <span>KC Plus</span>
+              </span>
             </NavbarItem>
           </div>
 
