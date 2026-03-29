@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { Search } from "lucide-react";
 import { SearchInput } from "@/design-system";
 import { cn } from "@/lib/utils";
 import { beginResourcesNavigation } from "@/components/marketplace/resourcesNavigationState";
@@ -85,9 +86,16 @@ export function HeroSearch({
         placeholder={placeholder}
         onClear={handleClear}
         disabled={isPending}
+        startAdornment={
+          variant === "listing" ? (
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex w-[44px] items-center justify-center text-[#94a3b8]">
+              <Search className="h-[14px] w-[14px] stroke-[1.75]" aria-hidden />
+            </span>
+          ) : undefined
+        }
         className={cn(
           variant === "listing" &&
-            "h-10 rounded-xl border-surface-200 bg-white py-2.5 pl-10 pr-10 text-base shadow-sm sm:h-10 sm:rounded-2xl sm:pl-11 sm:pr-11",
+            "h-[40px] rounded-[999px] border-[#e2e8f0] bg-white py-[8px] pl-[45px] pr-[45px] text-[16px] font-normal leading-normal tracking-[0px] text-text-primary shadow-none placeholder:text-[#94a3b8] focus:border-primary-500 focus:ring-2 focus:ring-primary-500/15 focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500/15",
           className,
         )}
       />
