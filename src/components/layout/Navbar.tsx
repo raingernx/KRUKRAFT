@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
@@ -104,7 +104,23 @@ function marketplaceCategoryClassName(active: boolean) {
   );
 }
 
-export function Navbar({
+function NavbarFallback({
+  hasMarketplaceShell,
+}: {
+  hasMarketplaceShell: boolean;
+}) {
+  return (
+    <header className="sticky top-0 z-40 w-full border-b border-surface-200 bg-white">
+      <Container className={hasMarketplaceShell ? "py-3 sm:py-4" : "h-16"}>
+        <div className="flex h-10 items-center">
+          <NavbarBrand />
+        </div>
+      </Container>
+    </header>
+  );
+}
+
+function NavbarInner({
   secondaryRow,
   headerSearch,
 }: {
@@ -623,5 +639,16 @@ export function Navbar({
 
       {secondaryRow}
     </header>
+  );
+}
+
+export function Navbar(props: {
+  secondaryRow?: ReactNode;
+  headerSearch?: ReactNode;
+}) {
+  return (
+    <Suspense fallback={<NavbarFallback hasMarketplaceShell={Boolean(props.headerSearch)} />}>
+      <NavbarInner {...props} />
+    </Suspense>
   );
 }
