@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { Avatar } from "@/components/ui/Avatar";
+import { Avatar } from "@/design-system";
 import { cn } from "@/lib/utils";
 
 interface AccountTriggerProps {

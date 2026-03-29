@@ -2,9 +2,9 @@
 
 import type { ReactNode } from "react";
 
+import { ToastProvider } from "@/design-system";
 import { NotificationsProvider } from "@/features/notifications/useNotifications";
 import { UploadManagerProvider } from "@/features/uploads/useUploadManager";
-import { ToastProvider } from "@/components/ui/toast-provider";
 
 interface AdminUXProviderProps {
   children: ReactNode;
@@ -26,4 +26,3 @@ export function AdminUXProvider({ children }: AdminUXProviderProps) {
     </NotificationsProvider>
   );
 }
-

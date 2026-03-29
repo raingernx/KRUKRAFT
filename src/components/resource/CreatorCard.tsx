@@ -1,5 +1,5 @@
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
-import { Avatar } from "@/components/ui/Avatar";
+import { Avatar } from "@/design-system";
 import { getPlatform } from "@/services/platform.service";
 
 export interface CreatorCardCreator {

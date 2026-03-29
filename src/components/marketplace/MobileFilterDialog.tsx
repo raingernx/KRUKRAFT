@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { SlidersHorizontal } from "lucide-react";
-import { Modal } from "@/components/ui/Modal";
+import { Modal } from "@/design-system";
 import { cn } from "@/lib/utils";
 import {
   FilterSidebar,

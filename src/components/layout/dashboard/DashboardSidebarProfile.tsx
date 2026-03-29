@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar } from "@/components/ui/Avatar";
+import { Avatar } from "@/design-system";
 
 interface DashboardSidebarProfileProps {
   name?: string | null;
