@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/components/layout/container";
 
@@ -9,7 +10,9 @@ export const metadata = {
 export default function CookiesPage() {
   return (
     <>
-      <Navbar />
+      <Suspense fallback={<div aria-hidden="true" className="h-16 border-b border-surface-200 bg-white" />}>
+        <Navbar />
+      </Suspense>
       <Container className="py-16">
         <div className="mx-auto max-w-2xl">
           <h1 className="font-display text-h2 font-semibold tracking-tight text-text-primary">
