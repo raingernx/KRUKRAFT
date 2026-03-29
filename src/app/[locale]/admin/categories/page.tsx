@@ -3,10 +3,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Plus } from "lucide-react";
 
-import { Card } from "@/design-system";
-import { Button } from "@/design-system";
-import { Input } from "@/design-system";
-import { Modal } from "@/components/ui/Modal";
+import { Button, Card, Input, Modal } from "@/design-system";
 
 type Category = {
   id: string;

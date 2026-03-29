@@ -3,9 +3,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Plus } from "lucide-react";
 
-import { Button, RowActionButton, RowActions } from "@/design-system";
-import { Input } from "@/design-system";
-import { Modal } from "@/components/ui/Modal";
+import { Button, Input, Modal, RowActionButton, RowActions } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import {
   DataTable,

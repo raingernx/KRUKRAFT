@@ -12,6 +12,7 @@ import {
   RowActionButton,
   RowActionMenuTrigger,
   Select,
+  useToast,
 } from "@/design-system";
 import {
   Dropdown,
@@ -24,7 +25,6 @@ import { StatusBadge } from "@/components/admin/StatusBadge";
 import { formatPrice, formatDate } from "@/lib/format";
 import { useNotifications } from "@/features/notifications/useNotifications";
 import { useUndo } from "@/features/undo/useUndo";
-import { useToast } from "@/hooks/use-toast";
 
 export interface AdminResourceRow {
   id: string;

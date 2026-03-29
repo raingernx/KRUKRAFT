@@ -2,8 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { Button, Card, Input, Select } from "@/design-system";
-import { Badge } from "@/components/ui/Badge";
+import { Badge, Button, Card, Input, Select } from "@/design-system";
 
 type ActivityAction =
   | "created_resource"

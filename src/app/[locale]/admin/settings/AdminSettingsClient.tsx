@@ -9,10 +9,10 @@ import {
   Select,
   Switch,
   Textarea,
+  useToast,
 } from "@/design-system";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { BrandAssetField } from "@/components/admin/settings/BrandAssetField";
-import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { PLATFORM_DEFAULTS } from "@/lib/platform/platform-defaults";
 import type { PlatformConfig } from "@/lib/platform/platform.types";

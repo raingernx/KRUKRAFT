@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/components/layout/container";
+import { Badge } from "@/design-system";
 import { ResourceGrid, RESOURCE_GRID_CLASSES } from "@/components/resources/ResourceGrid";
 import { ResourceCardSkeleton } from "@/components/resources/ResourceCard";
-import { Badge } from "@/components/ui/Badge";
 import { getBaseUrl } from "@/lib/api";
 import Link from "next/link";
 import { ArrowLeft, BookOpen } from "lucide-react";

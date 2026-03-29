@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { Pencil, Power, Trash2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { routes } from "@/lib/routes";
-import { RowActions, RowActionButton } from "@/design-system";
+import { RowActions, RowActionButton, useToast } from "@/design-system";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface HeroListActionsProps {

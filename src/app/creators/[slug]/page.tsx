@@ -3,9 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BadgeCheck, FileText, Globe, Instagram, Layers3, Linkedin, Sparkles, Youtube } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
-import { PageContainer, PageContentWide } from "@/design-system";
+import { Avatar, PageContainer, PageContentWide } from "@/design-system";
 import { ResourceCard } from "@/components/resources/ResourceCard";
-import { Avatar } from "@/components/ui/Avatar";
 import { getCreatorPublicProfile } from "@/services/creator.service";
 
 type CreatorProfilePageProps = {

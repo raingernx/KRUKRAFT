@@ -5,8 +5,7 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, ExternalLink, Link2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Input, Select, Textarea } from "@/design-system";
-import { Avatar } from "@/components/ui/Avatar";
+import { Avatar, Button, Input, Select, Textarea } from "@/design-system";
 import { routes } from "@/lib/routes";
 
 interface CreatorProfileFormProps {

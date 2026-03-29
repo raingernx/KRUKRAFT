@@ -2,7 +2,6 @@
 
 import { useMemo, useRef, useState } from "react";
 import { Upload, X } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
@@ -16,6 +15,7 @@ import {
   Select,
   Switch,
   Textarea,
+  useToast,
 } from "@/design-system";
 import { HeroSurface } from "@/components/marketplace/HeroSurface";
 import {

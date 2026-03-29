@@ -5,8 +5,7 @@ import { format } from "date-fns";
 import { ArrowLeft, Download, RotateCcw } from "lucide-react";
 import Link from "next/link";
 
-import { Button, RowActions, RowActionButton } from "@/design-system";
-import { Badge } from "@/components/ui/Badge";
+import { Badge, Button, RowActions, RowActionButton } from "@/design-system";
 import { cn } from "@/lib/utils";
 
 type VersionUser = {
