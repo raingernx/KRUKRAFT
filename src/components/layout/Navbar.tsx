@@ -66,11 +66,15 @@ export function Navbar({
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-surface-200 bg-white">
+    <header
+      className={`sticky top-0 z-40 w-full bg-white ${
+        secondaryRow ? "" : "border-b border-surface-200"
+      }`}
+    >
       <Container
         className={
           headerSearch
-            ? "grid gap-3 py-3 lg:grid-cols-[auto_minmax(0,720px)_auto] lg:items-center lg:justify-between lg:gap-6 lg:py-2.5"
+            ? "grid gap-2.5 py-2.5 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center lg:gap-5 lg:py-2"
             : "flex h-16 items-center justify-between gap-4 lg:gap-8"
         }
       >
@@ -79,13 +83,13 @@ export function Navbar({
         </div>
 
         {headerSearch ? (
-          <div className="order-3 min-w-0 lg:order-2 lg:mx-auto lg:w-full lg:max-w-[720px]">
+          <div className="order-3 min-w-0 lg:order-2 lg:mx-auto lg:w-full lg:max-w-[780px]">
             {headerSearch}
           </div>
         ) : null}
 
         <div className={headerSearch ? "order-2 ml-auto lg:order-3 lg:ml-0" : "ml-auto"}>
-          <div className="hidden shrink-0 items-center gap-4 lg:flex">
+          <div className="hidden shrink-0 items-center gap-3.5 lg:flex">
             <nav className="hidden items-center gap-2 lg:flex" aria-label="เมนูหลัก">
               {NAV_LINKS.map(({ href, label }) => (
                 <NavbarItem
@@ -110,7 +114,10 @@ export function Navbar({
             <div className="mx-1 h-5 w-px bg-surface-200/70" aria-hidden />
 
             {isLoading ? (
-              <div className="h-10 w-20 animate-pulse rounded-lg bg-surface-100" />
+              <div className="flex items-center gap-2.5">
+                <div className="h-10 w-24 animate-pulse rounded-full bg-surface-100" />
+                <div className="h-10 w-10 animate-pulse rounded-full bg-surface-100" />
+              </div>
             ) : session?.user ? (
               <div className="relative">
                 <button

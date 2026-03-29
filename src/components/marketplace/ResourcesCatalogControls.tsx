@@ -10,10 +10,10 @@ import { ScrollableCategoryNav } from "@/components/marketplace/ScrollableCatego
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { getDiscoverCategories } from "@/services/discover.service";
 
-const CONTROLS_BAR_CLASS_NAME = "border-b border-surface-200 bg-white";
-const CONTROLS_BAR_MAIN_CLASS_NAME = "flex min-w-0 items-center gap-2 overflow-hidden";
+const CONTROLS_BAR_CLASS_NAME = "border-y border-surface-200 bg-white";
+const CONTROLS_BAR_MAIN_CLASS_NAME = "flex min-w-0 items-center gap-2.5 overflow-hidden";
 const CONTROLS_BAR_GROUP_CLASS_NAME =
-  "flex min-w-0 items-center gap-2 overflow-hidden";
+  "flex min-w-0 items-center gap-2.5 overflow-hidden";
 
 type ResourcesCatalogControlsProps = {
   activeCount: number;
@@ -41,7 +41,7 @@ export async function ResourcesCatalogControls({
   }));
   return (
     <div className={CONTROLS_BAR_CLASS_NAME}>
-      <Container className="py-2.5 sm:py-3">
+      <Container className="py-2 sm:py-2.5">
         <div className={CONTROLS_BAR_MAIN_CLASS_NAME}>
           <div className={CONTROLS_BAR_GROUP_CLASS_NAME}>
             <Suspense fallback={<DiscoverFallback />}>
@@ -66,7 +66,7 @@ export function ResourcesCatalogControlsSkeleton({
 }) {
   return (
     <div className={CONTROLS_BAR_CLASS_NAME}>
-      <Container className="py-2.5 sm:py-3">
+      <Container className="py-2 sm:py-2.5">
         <div className={CONTROLS_BAR_MAIN_CLASS_NAME}>
           <div className={CONTROLS_BAR_GROUP_CLASS_NAME}>
             <DiscoverFallback />
@@ -86,8 +86,7 @@ export function ResourcesCatalogSearchSkeleton() {
 
 function DiscoverFallback() {
   return (
-    <div className="inline-flex h-10 items-center gap-2 rounded-full border border-surface-200 bg-surface-50 px-4 text-base font-medium text-text-secondary shadow-sm">
-      <LoadingSkeleton className="h-2 w-2 rounded-full bg-primary-500" />
+    <div className="inline-flex h-10 items-center rounded-full border border-surface-200 bg-surface-50 px-4 text-base font-medium text-text-secondary shadow-sm">
       <span>กำลังโหลด</span>
     </div>
   );
@@ -105,7 +104,7 @@ function SearchFallback() {
 function ChipsFallback() {
   return (
     <div className="flex gap-2.5 overflow-hidden">
-      {["กำลังโหลด", "หมวดหมู่", "ยอดนิยม", "ล่าสุด", "เพิ่มเติม"].map((label, index) => (
+      {["ทั้งหมด", "คณิตศาสตร์", "วิทยาศาสตร์", "ภาษา", "มนุษยศาสตร์", "ปฐมวัย"].map((label, index) => (
         <div
           key={label}
           className={`inline-flex h-10 shrink-0 items-center rounded-full border border-surface-200 bg-surface-50 px-4 text-base text-text-muted ${
@@ -113,7 +112,7 @@ function ChipsFallback() {
           }`}
         >
           {index === 0 ? (
-            <LoadingSkeleton className="h-2 w-2 rounded-full bg-primary-500" />
+            <LoadingSkeleton className="h-4 w-16" />
           ) : null}
           <span>{label}</span>
         </div>
