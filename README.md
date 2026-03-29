@@ -40,7 +40,8 @@ studyplatform/
 │   │   ├── auth/              ← LoginForm, RegisterForm
 │   │   ├── layout/            ← Navbar, Sidebar, Footer
 │   │   ├── resources/         ← ResourceCard, ResourceGrid, ResourceDetail
-│   │   └── ui/                ← Button, Badge, Input, Modal (design system atoms)
+│   │   └── ui/                ← Legacy compatibility shims for covered DS primitives
+│   ├── design-system/         ← Canonical import surface for primitives, components, layout, and tokens
 │   │
 │   ├── hooks/                 ← useSession, useResources, usePurchases (SWR/React Query)
 │   ├── lib/
@@ -56,6 +57,14 @@ studyplatform/
 ├── tailwind.config.ts
 └── tsconfig.json
 ```
+
+---
+
+## Design System
+
+Import covered primitives and composed UI from `@/design-system`.
+
+Files under `src/components/ui` and `src/hooks/use-toast.ts` are retained only as backwards-compatible shims for the current migration scope. They should not be used for new app-facing imports.
 
 ---
 
