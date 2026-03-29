@@ -1,0 +1,274 @@
+{
+  "dark": {
+    "colors": {
+      "accent": {
+        "value": "#1E293B",
+        "type": "color"
+      },
+      "accentForeground": {
+        "value": "#FAFAFA",
+        "type": "color"
+      },
+      "background": {
+        "value": "{bg.dark}",
+        "type": "color"
+      },
+      "border": {
+        "value": "#1E293B",
+        "type": "color"
+      },
+      "card": {
+        "value": "#0F172A",
+        "type": "color"
+      },
+      "cardForeground": {
+        "value": "#FAFAFA",
+        "type": "color"
+      },
+      "chart": {
+        "1": {
+          "value": "{colors.chart.1}",
+          "type": "color"
+        },
+        "2": {
+          "value": "{colors.chart.2}",
+          "type": "color"
+        },
+        "3": {
+          "value": "{colors.chart.3}",
+          "type": "color"
+        },
+        "4": {
+          "value": "{colors.chart.4}",
+          "type": "color"
+        },
+        "5": {
+          "value": "{colors.chart.5}",
+          "type": "color"
+        }
+      },
+      "destructive": {
+        "value": "#7F1D1D",
+        "type": "color"
+      },
+      "destructiveForeground": {
+        "value": "#FAFAFA",
+        "type": "color"
+      },
+      "foreground": {
+        "value": "{text.onDark}",
+        "type": "color"
+      },
+      "input": {
+        "value": "#1E293B",
+        "type": "color"
+      },
+      "muted": {
+        "value": "#1E293B",
+        "type": "color"
+      },
+      "mutedForeground": {
+        "value": "#94A3B8",
+        "type": "color"
+      },
+      "popover": {
+        "value": "#0F172A",
+        "type": "color"
+      },
+      "popoverForeground": {
+        "value": "#FAFAFA",
+        "type": "color"
+      },
+      "primary": {
+        "value": "#6C68DF",
+        "type": "color"
+      },
+      "primaryForeground": {
+        "value": "#0F172A",
+        "type": "color"
+      },
+      "ring": {
+        "value": "#6C68DF",
+        "type": "color"
+      },
+      "secondary": {
+        "value": "#1E293B",
+        "type": "color"
+      },
+      "secondaryForeground": {
+        "value": "#FAFAFA",
+        "type": "color"
+      },
+      "sidebar": {
+        "accent": {
+          "value": "#1E293B",
+          "type": "color"
+        },
+        "accentForeground": {
+          "value": "#FAFAFA",
+          "type": "color"
+        },
+        "border": {
+          "value": "#1E293B",
+          "type": "color"
+        },
+        "default": {
+          "value": "#0F172A",
+          "type": "color"
+        },
+        "foreground": {
+          "value": "#FAFAFA",
+          "type": "color"
+        },
+        "primary": {
+          "value": "#6C68DF",
+          "type": "color"
+        },
+        "primaryForeground": {
+          "value": "#0F172A",
+          "type": "color"
+        },
+        "ring": {
+          "value": "#6C68DF",
+          "type": "color"
+        }
+      }
+    }
+  },
+  "light": {
+    "colors": {
+      "accent": {
+        "value": "{bg.soft}",
+        "type": "color"
+      },
+      "accentForeground": {
+        "value": "{text.primary}",
+        "type": "color"
+      },
+      "background": {
+        "value": "{bg.default}",
+        "type": "color"
+      },
+      "border": {
+        "value": "{border.default}",
+        "type": "color"
+      },
+      "card": {
+        "value": "{bg.default}",
+        "type": "color"
+      },
+      "cardForeground": {
+        "value": "{text.primary}",
+        "type": "color"
+      },
+      "chart": {
+        "1": {
+          "value": "{colors.chart.1}",
+          "type": "color"
+        },
+        "2": {
+          "value": "{colors.chart.2}",
+          "type": "color"
+        },
+        "3": {
+          "value": "{colors.chart.3}",
+          "type": "color"
+        },
+        "4": {
+          "value": "{colors.chart.4}",
+          "type": "color"
+        },
+        "5": {
+          "value": "{colors.chart.5}",
+          "type": "color"
+        }
+      },
+      "destructive": {
+        "value": "#EF4444",
+        "type": "color"
+      },
+      "destructiveForeground": {
+        "value": "#FAFAFA",
+        "type": "color"
+      },
+      "foreground": {
+        "value": "{text.primary}",
+        "type": "color"
+      },
+      "input": {
+        "value": "{border.default}",
+        "type": "color"
+      },
+      "muted": {
+        "value": "{bg.soft}",
+        "type": "color"
+      },
+      "mutedForeground": {
+        "value": "{text.secondary}",
+        "type": "color"
+      },
+      "popover": {
+        "value": "{bg.default}",
+        "type": "color"
+      },
+      "popoverForeground": {
+        "value": "{text.primary}",
+        "type": "color"
+      },
+      "primary": {
+        "value": "{primary.default}",
+        "type": "color"
+      },
+      "primaryForeground": {
+        "value": "{primary.foreground}",
+        "type": "color"
+      },
+      "ring": {
+        "value": "{primary.default}",
+        "type": "color"
+      },
+      "secondary": {
+        "value": "{bg.soft}",
+        "type": "color"
+      },
+      "secondaryForeground": {
+        "value": "{text.primary}",
+        "type": "color"
+      },
+      "sidebar": {
+        "accent": {
+          "value": "{bg.soft}",
+          "type": "color"
+        },
+        "accentForeground": {
+          "value": "{text.primary}",
+          "type": "color"
+        },
+        "border": {
+          "value": "{border.default}",
+          "type": "color"
+        },
+        "default": {
+          "value": "{bg.soft}",
+          "type": "color"
+        },
+        "foreground": {
+          "value": "{text.primary}",
+          "type": "color"
+        },
+        "primary": {
+          "value": "{primary.default}",
+          "type": "color"
+        },
+        "primaryForeground": {
+          "value": "{primary.foreground}",
+          "type": "color"
+        },
+        "ring": {
+          "value": "{primary.default}",
+          "type": "color"
+        }
+      }
+    }
+  }
+}
