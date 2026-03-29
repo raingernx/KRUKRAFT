@@ -66,15 +66,15 @@ export function Navbar({
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-surface-200 bg-white/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-40 w-full border-b border-surface-200 bg-white">
       <Container
         className={
           headerSearch
-            ? "grid gap-3 py-3 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center lg:gap-6 lg:py-0"
+            ? "grid gap-2.5 py-2.5 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center lg:gap-5 lg:py-0"
             : "flex h-16 items-center justify-between gap-4 lg:gap-8"
         }
       >
-        <div className="flex h-10 items-center lg:h-16">
+        <div className="flex h-10 items-center lg:h-14">
           <NavbarBrand />
         </div>
 
