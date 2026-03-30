@@ -892,33 +892,85 @@ function SectionHeader({
 
 function FilterBarFallback() {
   return (
-    <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="inline-flex items-center gap-2 text-sm text-text-secondary">
-        <LoadingSkeleton className="h-2 w-2 rounded-full bg-primary-500" />
-        <span>Preparing filters</span>
+    <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+      <LoadingSkeleton className="h-5 w-24 rounded-md" />
+      <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:items-center">
+        <LoadingSkeleton className="h-11 w-full rounded-full border border-surface-200 bg-white sm:w-28" />
+        <LoadingSkeleton className="h-11 w-full rounded-full border border-surface-200 bg-primary-50/70 sm:w-36" />
+        <LoadingSkeleton className="h-11 w-16 rounded-full sm:w-20" />
       </div>
-      <div className="flex gap-2">
-        <LoadingSkeleton className="h-11 w-28 rounded-full border border-surface-200 bg-surface-50" />
-        <LoadingSkeleton className="h-11 w-32 rounded-full border border-surface-200 bg-surface-50" />
+    </div>
+  );
+}
+
+function SidebarFallbackGroup({
+  titleWidth,
+  rowWidths,
+  pillWidths,
+}: {
+  titleWidth: string;
+  rowWidths?: string[];
+  pillWidths?: string[];
+}) {
+  return (
+    <div className="border-b border-surface-200/80 pb-4">
+      <div className="mb-3 flex items-center justify-between">
+        <LoadingSkeleton className={`h-4 rounded ${titleWidth}`} />
+        <LoadingSkeleton className="h-4 w-4 rounded" />
       </div>
+
+      {rowWidths ? (
+        <div className="space-y-0.5">
+          {rowWidths.map((width, index) => (
+            <LoadingSkeleton
+              key={`${titleWidth}-row-${index}`}
+              className={`h-10 rounded-xl ${width}`}
+            />
+          ))}
+        </div>
+      ) : null}
+
+      {pillWidths ? (
+        <div className="flex flex-wrap gap-2">
+          {pillWidths.map((width, index) => (
+            <LoadingSkeleton
+              key={`${titleWidth}-pill-${index}`}
+              className={`h-8 rounded-full border border-surface-200 bg-white ${width}`}
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }
 
 function SidebarFallback() {
   return (
-    <div className="w-[252px] flex-shrink-0 space-y-5">
-      <div className="inline-flex items-center gap-2 text-sm text-text-secondary">
-        <LoadingSkeleton className="h-2 w-2 rounded-full bg-primary-500" />
-        <span>Loading filters</span>
+    <div className="w-[260px] flex-shrink-0 space-y-5">
+      <div className="flex items-center justify-between border-b border-surface-200/80 pb-2">
+        <LoadingSkeleton className="h-4 w-12 rounded" />
+        <LoadingSkeleton className="h-4 w-14 rounded" />
       </div>
-      {[80, 120, 80].map((height, index) => (
-        <LoadingSkeleton
-          key={index}
-          className="rounded-2xl border border-surface-200 bg-surface-50/70"
-          style={{ height }}
-        />
-      ))}
+      <SidebarFallbackGroup
+        titleWidth="w-12"
+        rowWidths={["w-full", "w-5/6", "w-3/4", "w-[92%]", "w-[88%]", "w-[80%]"]}
+      />
+      <SidebarFallbackGroup
+        titleWidth="w-16"
+        rowWidths={["w-full", "w-[90%]", "w-[84%]", "w-[72%]", "w-[76%]", "w-[68%]"]}
+      />
+      <SidebarFallbackGroup
+        titleWidth="w-12"
+        rowWidths={["w-full", "w-4/5", "w-[70%]"]}
+      />
+      <SidebarFallbackGroup
+        titleWidth="w-20"
+        pillWidths={["w-24", "w-28", "w-24"]}
+      />
+      <SidebarFallbackGroup
+        titleWidth="w-24"
+        pillWidths={["w-20", "w-28", "w-24"]}
+      />
     </div>
   );
 }

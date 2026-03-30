@@ -46,6 +46,10 @@ const routes: WarmRoute[] = [
     path: "/resources",
   },
   {
+    label: "listing-default",
+    path: "/resources?category=all",
+  },
+  {
     label: "listing-recommended",
     path: "/resources?category=all&sort=recommended",
     // ranking_variant=B → effectiveSort="recommended" in page.tsx.

@@ -103,6 +103,15 @@ jobs:
           echo "[post-deploy-warm] BASE_URL=${BASE_URL}"
           BASE_URL="${BASE_URL}" npm run warm:cache 2>&1 | tee artifacts/warm-cache.log
 
+      - name: Warm Internal Public Cache Layers
+        if: ${{ secrets.PERFORMANCE_WARM_SECRET != '' }}
+        shell: bash
+        env:
+          PERFORMANCE_WARM_SECRET: ${{ secrets.PERFORMANCE_WARM_SECRET }}
+        run: |
+          set -euo pipefail
+          WARM_BASE_URL="${BASE_URL}" npm run performance:warm 2>&1 | tee artifacts/warm-internal.log
+
       - name: Upload Warm Artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -110,6 +119,7 @@ jobs:
           name: post-deploy-warm-artifacts
           path: |
             artifacts/warm-cache.log
+            artifacts/warm-internal.log
           if-no-files-found: warn
 
   perf_smoke:

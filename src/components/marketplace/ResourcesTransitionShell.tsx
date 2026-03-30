@@ -27,9 +27,7 @@ export function ResourcesTransitionShell({
   const shouldFreezePreviousRoute =
     isPending && navigationState.mode !== "detail";
   const shouldShowPendingDetailShell =
-    isPending &&
-    navigationState.mode === "detail" &&
-    currentHref !== navigationState.href;
+    isPending && navigationState.mode === "detail";
   const reachedTarget =
     isPending && currentHref === navigationState.href;
   const [frozenChildren, setFrozenChildren] = useState(children);

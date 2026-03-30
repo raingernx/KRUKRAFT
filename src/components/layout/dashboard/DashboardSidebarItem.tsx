@@ -29,7 +29,7 @@ export function DashboardSidebarItem({
       className={cn(
         "group flex min-h-11 items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13px] font-medium leading-5 transition-colors",
         active
-          ? "bg-slate-900 font-semibold text-white shadow-sm hover:bg-slate-900 hover:text-white"
+          ? "bg-primary-50 font-semibold text-primary-800 shadow-none hover:bg-primary-50 hover:text-primary-800"
           : "text-muted-foreground hover:bg-neutral-50 hover:text-foreground",
       )}
       aria-current={active ? "page" : undefined}
@@ -41,7 +41,7 @@ export function DashboardSidebarItem({
               <Icon
                 className={cn(
                   "h-[18px] w-[18px] shrink-0 opacity-80 transition-colors",
-                  active ? "text-white" : "text-neutral-400 group-hover:text-neutral-600"
+                  active ? "text-primary-700 opacity-100" : "text-neutral-400 group-hover:text-neutral-600"
                 )}
               />
             </span>
@@ -53,7 +53,7 @@ export function DashboardSidebarItem({
             className={cn(
               "rounded-full px-2 py-0.5 text-[11px] font-semibold",
               active
-                ? "bg-white/12 text-white"
+                ? "bg-primary-100 text-primary-700"
                 : "bg-neutral-100 text-neutral-500"
             )}
           >
