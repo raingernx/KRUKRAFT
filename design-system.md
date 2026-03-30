@@ -4,6 +4,22 @@ This document captures the current KruCraft design system as implemented in the 
 
 ---
 
+## Skeleton Fidelity Rule
+
+Every shipped loading state is part of the component contract, not a temporary placeholder.
+
+- When a component UI changes, its skeleton/loading fallback must be updated in the same PR.
+- Match the loaded UI at the structure level:
+  - same section order
+  - same divider ownership
+  - same major spacing and padding rhythm
+  - same CTA footprint and metadata block placement
+- Skeletons may simplify content, but they must not use stale layout structure from an older UI version.
+- If a component has multiple meaningful variants, the skeleton should reserve space for the variant with the largest visible footprint or provide variant-specific skeletons.
+- A PR that changes card/layout hierarchy without updating the paired skeleton is incomplete.
+
+---
+
 ## Foundations
 
 ### Colors
@@ -656,4 +672,3 @@ Each Figma component should reference the corresponding code file in its descrip
 - ResourceCard: `src/components/resources/ResourceCard.tsx`
 - Navbar: `src/components/layout/Navbar.tsx`
 - Toast: `src/components/ui/toast-provider.tsx` + `src/hooks/use-toast.ts`
-

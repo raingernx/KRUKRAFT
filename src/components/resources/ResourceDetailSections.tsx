@@ -15,6 +15,7 @@ import {
   getResourceDetailPageResource,
   getResourceDetailPageReviewSection,
 } from "@/services/resources/resource-detail-page.service";
+import { runNonCriticalResourceDetailTask } from "@/services/resources/resource-detail-resilience";
 
 export function ResourceDetailBodyFallback() {
   return (
@@ -119,12 +120,25 @@ export async function ResourceDetailReviewSection({
   ownershipPromise: Promise<{ isOwned: boolean }>;
 }) {
   const { isOwned } = await ownershipPromise;
-  const { reviews, viewerReview } = await getResourceDetailPageReviewSection({
-    resourceId,
-    userId,
-    isOwned,
-    reviewTake: 5,
-  });
+  const { reviews, viewerReview } = await runNonCriticalResourceDetailTask(
+    () =>
+      getResourceDetailPageReviewSection({
+        resourceId,
+        userId,
+        isOwned,
+        reviewTake: 5,
+      }),
+    {
+      context: {
+        resourceId,
+        section: "reviews",
+      },
+      fallback: {
+        reviews: [],
+        viewerReview: null,
+      },
+    },
+  );
 
   return (
     <>
@@ -181,12 +195,25 @@ export async function ResourceDetailRelatedSection({
   currentDownloads: number;
 }) {
   const { relatedResources, ownedRelatedIds } =
-    await getResourceDetailPageRelatedSection({
-      resourceId,
-      categoryId,
-      userId,
-      take: 4,
-    });
+    await runNonCriticalResourceDetailTask(
+      () =>
+        getResourceDetailPageRelatedSection({
+          resourceId,
+          categoryId,
+          userId,
+          take: 4,
+        }),
+      {
+        context: {
+          resourceId,
+          section: "related-resources",
+        },
+        fallback: {
+          ownedRelatedIds: [],
+          relatedResources: [],
+        },
+      },
+    );
 
   const relatedResourcesWithBadges = relatedResources.map((resource) => {
     const relatedIsFree = resource.isFree || (resource.price ?? 0) === 0;

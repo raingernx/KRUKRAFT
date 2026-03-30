@@ -35,6 +35,10 @@ import {
   getResourceDetailPageReviewSection,
   getResourceDetailPageTrustSummary,
 } from "@/services/resources/resource-detail-page.service";
+import {
+  logResourceDetailFailure,
+  runNonCriticalResourceDetailTask,
+} from "@/services/resources/resource-detail-resilience";
 import { traceServerStep, updateRequestPerformanceDetails, withRequestPerformanceTrace } from "@/lib/performance/observability";
 import { routes } from "@/lib/routes";
 
@@ -222,6 +226,15 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
 
       if (resourceSettled.status === "rejected") {
         const error = resourceSettled.reason;
+        logResourceDetailFailure(
+          {
+            critical: true,
+            section: "resource",
+            slug,
+          },
+          error,
+          0,
+        );
         if (!isMissingTableError(error)) throw error;
         // Resource table missing (local dev schema drift) — render 404.
         notFound();
@@ -233,20 +246,50 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
         notFound();
       }
 
+      if (sessionSettled.status === "rejected") {
+        logResourceDetailFailure(
+          {
+            critical: false,
+            section: "optional-session",
+            slug,
+          },
+          sessionSettled.reason,
+          0,
+          {
+            fallbackApplied: true,
+          },
+        );
+      }
+
       const session = sessionSettled.status === "fulfilled" ? sessionSettled.value : null;
       const userId = session?.user?.id;
 
-      const trustSummaryPromise = traceServerStep(
-        "resource_detail.getResourceDetailTrustSummary",
+      const trustSummaryPromise = runNonCriticalResourceDetailTask(
         () =>
-          getResourceDetailPageTrustSummary({
-            resourceId: resource.id,
-            resourceAverageRating: resource.averageRating ?? null,
-            resourceSalesCount: resource.resourceStat?.purchases ?? null,
-            resourceTotalReviews: resource.visibleReviewCount ?? 0,
-          }),
+          traceServerStep(
+            "resource_detail.getResourceDetailTrustSummary",
+            () =>
+              getResourceDetailPageTrustSummary({
+                resourceId: resource.id,
+                resourceAverageRating: resource.averageRating ?? null,
+                resourceSalesCount: resource.resourceStat?.purchases ?? null,
+                resourceTotalReviews: resource.visibleReviewCount ?? 0,
+              }),
+            {
+              slug,
+            },
+          ),
         {
-          slug,
+          fallback: {
+            averageRating: resource.averageRating ?? null,
+            totalReviews: resource.visibleReviewCount ?? 0,
+            totalSales: resource.resourceStat?.purchases ?? 0,
+          },
+          context: {
+            resourceId: resource.id,
+            section: "trust-summary",
+            slug,
+          },
         },
       );
       updateRequestPerformanceDetails({
@@ -254,23 +297,45 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
       });
 
       const ownershipPromise = userId
-        ? traceServerStep(
-            "resource_detail.getResourceDetailOwnership",
+        ? runNonCriticalResourceDetailTask(
             () =>
-              getResourceDetailPageExtras({
-                resourceId: resource.id,
-                userId,
-              }),
+              traceServerStep(
+                "resource_detail.getResourceDetailOwnership",
+                () =>
+                  getResourceDetailPageExtras({
+                    resourceId: resource.id,
+                    userId,
+                  }),
+                {
+                  personalized: true,
+                  slug,
+                },
+              ),
             {
-              personalized: true,
-              slug,
+              fallback: { isOwned: false },
+              context: {
+                resourceId: resource.id,
+                section: "ownership",
+                slug,
+              },
             },
           )
         : Promise.resolve({ isOwned: false });
-      const deferredContentPromise = traceServerStep(
-        "resource_detail.getResourceDetailDeferredContent",
-        () => getResourceDetailPageDeferredContent(slug),
-        { slug },
+      const deferredContentPromise = runNonCriticalResourceDetailTask(
+        () =>
+          traceServerStep(
+            "resource_detail.getResourceDetailDeferredContent",
+            () => getResourceDetailPageDeferredContent(slug),
+            { slug },
+          ),
+        {
+          fallback: null,
+          context: {
+            resourceId: resource.id,
+            section: "deferred-content",
+            slug,
+          },
+        },
       );
 
       const hasFile = Boolean(resource.fileUrl ?? resource.fileKey);

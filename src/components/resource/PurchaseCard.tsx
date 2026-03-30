@@ -16,6 +16,7 @@ import { PendingPurchasePoller } from "@/components/checkout/PendingPurchasePoll
 import { formatFileSize, formatNumber } from "@/lib/format";
 import { routes } from "@/lib/routes";
 import { getPlatform } from "@/services/platform.service";
+import { runNonCriticalResourceDetailTask } from "@/services/resources/resource-detail-resilience";
 import { isPreviewSupported } from "@/lib/preview/previewPolicy";
 import {
   PurchaseCardMembershipSkeleton,
@@ -405,7 +406,30 @@ async function PurchaseCardMembershipSection({
 }: {
   session: { user?: { id?: string; subscriptionStatus?: string } } | null;
 }) {
-  const platform = await getPlatform();
+  const platform = await runNonCriticalResourceDetailTask(() => getPlatform(), {
+    context: {
+      section: "purchase-card-membership",
+    },
+    fallback: {
+      defaultCurrency: "THB",
+      defaultLanguage: "en",
+      defaultMetaDescription: "",
+      defaultMetaTitle: "",
+      emailSenderName: "KruCraft",
+      faviconUrl: "",
+      logoEmailUrl: "",
+      logoFullUrl: "",
+      logoIconUrl: "",
+      logoOgUrl: "",
+      logoUrl: "",
+      ogSiteName: "KruCraft",
+      platformDescription: "",
+      platformName: "KruCraft Marketplace",
+      platformShortName: "KC",
+      siteUrl: "",
+      supportEmail: "",
+    },
+  });
   const isMember =
     session?.user?.subscriptionStatus === "ACTIVE" ||
     session?.user?.subscriptionStatus === "TRIALING";
