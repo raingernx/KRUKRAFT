@@ -14,6 +14,7 @@ import { PriceLabel } from "@/components/ui/PriceLabel";
 import { BuyButton } from "@/components/resources/BuyButton";
 import { PendingPurchasePoller } from "@/components/checkout/PendingPurchasePoller";
 import { formatFileSize, formatNumber } from "@/lib/format";
+import { routes } from "@/lib/routes";
 import { getPlatform } from "@/services/platform.service";
 import { isPreviewSupported } from "@/lib/preview/previewPolicy";
 import {
@@ -251,7 +252,7 @@ async function PurchaseCardMiddle({
       </div>
 
       {trustItems.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 border-y border-surface-200 py-5 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 border-t border-surface-200 py-5 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
           {trustItems.map((item) => (
             <div key={item.label} className="space-y-1.5">
               <div className="flex items-center gap-2 text-caption font-medium text-zinc-500">
@@ -300,7 +301,7 @@ async function PurchaseCardMiddle({
         </div>
       )}
 
-      <div className="space-y-3 border-t border-surface-200 pt-5">
+      <div className="space-y-3 border-t border-surface-200 py-5">
         {isOwned && (
           <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
             <CheckCircle className="h-4 w-4 shrink-0 text-emerald-500" />
@@ -352,7 +353,7 @@ async function PurchaseCardMiddle({
           (session?.user ? (
             <BuyButton
               resourceId={resource.id}
-              resourceHref={`/resources/${resource.slug}`}
+              resourceHref={routes.resource(resource.slug)}
               price={0}
               isFree={true}
               owned={false}
@@ -360,7 +361,7 @@ async function PurchaseCardMiddle({
             />
           ) : (
             <Link
-              href={`/auth/login?next=/resources/${resource.slug}`}
+              href={routes.loginWithNext(routes.resource(resource.slug))}
               className={PRIMARY_LINK_CLASS}
             >
               Sign in to Download
@@ -371,7 +372,7 @@ async function PurchaseCardMiddle({
           (session?.user ? (
             <BuyButton
               resourceId={resource.id}
-              resourceHref={`/resources/${resource.slug}`}
+              resourceHref={routes.resource(resource.slug)}
               price={resource.price / 100}
               isFree={false}
               owned={false}
@@ -380,7 +381,7 @@ async function PurchaseCardMiddle({
           ) : (
             <div className="space-y-3">
               <Link
-                href={`/auth/login?next=/resources/${resource.slug}`}
+                href={routes.loginWithNext(routes.resource(resource.slug))}
                 className={PRIMARY_LINK_CLASS}
               >
                 Sign in to Buy
@@ -425,7 +426,7 @@ async function PurchaseCardMembershipSection({
             downloads.
           </p>
           <Link
-            href="/membership"
+            href={routes.membership}
             className="inline-flex min-h-11 w-full items-center justify-between gap-3 rounded-xl border border-surface-200 bg-primary-50 px-4 py-2.5 text-small font-semibold text-primary-800 transition hover:border-primary-200 hover:bg-primary-100 active:bg-primary-100/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
           >
             <span className="inline-flex items-center gap-2">

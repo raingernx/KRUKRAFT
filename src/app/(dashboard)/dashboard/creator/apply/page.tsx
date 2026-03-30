@@ -46,7 +46,7 @@ const BENEFITS = [
 ];
 
 export default async function CreatorApplyPage() {
-  const { userId } = await requireSession("/dashboard/creator/apply");
+  const { userId } = await requireSession(routes.creatorApply);
 
   const access = await getCreatorAccessState(userId);
 

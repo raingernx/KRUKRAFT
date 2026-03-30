@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { Navbar } from "@/components/layout/Navbar";
 import { PageContainer, PageContentWide } from "@/design-system";
 import Link from "next/link";
+import { getAdminTagsPageData } from "@/services/admin-operations.service";
+import { routes } from "@/lib/routes";
 import { TagsClient, type TagRow } from "./TagsClient";
 
 export const metadata = {
@@ -15,19 +16,7 @@ export const metadata = {
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 async function getTags(): Promise<TagRow[]> {
-  return prisma.tag.findMany({
-    orderBy: [
-      // Most-used tags first so commonly managed tags appear at the top.
-      { resources: { _count: "desc" } },
-      { name: "asc" },
-    ],
-    select: {
-      id:     true,
-      name:   true,
-      slug:   true,
-      _count: { select: { resources: true } },
-    },
-  });
+  return getAdminTagsPageData();
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -37,13 +26,13 @@ export default async function AdminTagsPage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/tags");
+    redirect(routes.loginWithNext(routes.adminTags));
   }
 
   const role = session.user.role;
 
   if (role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   // ── 2. Data ──────────────────────────────────────────────────────────────────
@@ -71,7 +60,7 @@ export default async function AdminTagsPage() {
             </div>
 
             <Link
-              href="/admin"
+              href={routes.admin}
               className="rounded-xl border border-zinc-200 bg-white px-4 py-2
                          text-[13px] font-medium text-zinc-600 shadow-sm transition
                          hover:bg-zinc-50 hover:text-zinc-900"

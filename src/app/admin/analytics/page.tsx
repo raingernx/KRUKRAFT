@@ -23,6 +23,7 @@ import {
   traceServerStep,
   withRequestPerformanceTrace,
 } from "@/lib/performance/observability";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Analytics – Admin",
@@ -105,11 +106,11 @@ export default async function AdminAnalyticsPage() {
       );
 
       if (!session?.user) {
-        redirect("/auth/login?next=/admin/analytics");
+        redirect(routes.loginWithNext(routes.adminAnalytics));
       }
 
       if (session.user.role !== "ADMIN") {
-        redirect("/dashboard");
+        redirect(routes.dashboard);
       }
 
       const metrics = await traceServerStep(
@@ -304,7 +305,7 @@ export default async function AdminAnalyticsPage() {
                     {i + 1}
                   </span>
                   <Link
-                    href={`/resources/${r.slug}`}
+                    href={routes.resource(r.slug)}
                     className="min-w-0 flex-1 truncate text-small font-medium text-text-primary hover:text-primary-700 hover:underline"
                   >
                     {r.title}
@@ -334,7 +335,7 @@ export default async function AdminAnalyticsPage() {
         </div>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 2xl:grid-cols-4">
           <Link
-            href="/admin/analytics/recommendations"
+            href={routes.adminRecommendationReport}
             className="group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
           >
             <Card className="rounded-xl p-4 transition-colors group-hover:bg-surface-50">
@@ -354,7 +355,7 @@ export default async function AdminAnalyticsPage() {
           </Link>
 
           <Link
-            href="/admin/analytics/creator-activation"
+            href={routes.adminCreatorActivation}
             className="group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
           >
             <Card className="rounded-xl p-4 transition-colors group-hover:bg-surface-50">
@@ -374,7 +375,7 @@ export default async function AdminAnalyticsPage() {
           </Link>
 
           <Link
-            href="/admin/analytics/purchases"
+            href={routes.adminPurchasesAnalytics}
             className="group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
           >
             <Card className="rounded-xl p-4 transition-colors group-hover:bg-surface-50">
@@ -394,7 +395,7 @@ export default async function AdminAnalyticsPage() {
           </Link>
 
           <Link
-            href="/admin/analytics/ranking"
+            href={routes.adminRankingDebug}
             className="group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
           >
             <Card className="rounded-xl p-4 transition-colors group-hover:bg-surface-50">
@@ -414,7 +415,7 @@ export default async function AdminAnalyticsPage() {
           </Link>
 
           <Link
-            href="/admin/analytics/ranking-experiment"
+            href={routes.adminRankingExperiment}
             className="group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
           >
             <Card className="rounded-xl p-4 transition-colors group-hover:bg-surface-50">

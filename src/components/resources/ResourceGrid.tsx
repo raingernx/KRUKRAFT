@@ -13,6 +13,7 @@ import { BookOpen, Search } from "lucide-react";
 import { Button } from "@/design-system";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { routes } from "@/lib/routes";
 import { ResourceCard, ResourceCardSkeleton, type ResourceCardData } from "./ResourceCard";
 
 // Auto-fill: cards are at least 280 px wide and grow equally to fill available space.
@@ -76,7 +77,7 @@ function ResourceGridWithClientRouteContext(props: ResourceGridProps) {
       routeContext={{
         queryKey,
         clearFiltersHref,
-        exploreAllHref: "/resources",
+        exploreAllHref: routes.marketplace,
         cardPrefetchScope: `resource-card-grid:${queryKey}`,
       }}
     />

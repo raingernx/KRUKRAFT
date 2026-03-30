@@ -1,8 +1,7 @@
 import { requireSession } from "@/lib/auth/require-session";
-import { prisma } from "@/lib/prisma";
-import { getUserPreferences } from "@/lib/preferences";
 import { PageContentNarrow } from "@/design-system";
 import { SettingsTabs } from "@/components/settings/SettingsTabs";
+import { getDashboardSettingsPageData } from "@/services/admin-operations.service";
 
 export const metadata = {
   title: "Settings",
@@ -13,13 +12,7 @@ export const dynamic = "force-dynamic";
 export default async function SettingsPage() {
   const { userId } = await requireSession("/settings");
 
-  const [user, preferences] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: userId },
-      select: { name: true, email: true, image: true, createdAt: true },
-    }),
-    getUserPreferences(userId),
-  ]);
+  const { user, preferences } = await getDashboardSettingsPageData(userId);
 
   return (
     <PageContentNarrow className="space-y-8">

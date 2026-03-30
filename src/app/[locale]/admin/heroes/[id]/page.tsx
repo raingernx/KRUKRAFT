@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { HeroForm, type HeroFormValues } from "@/components/admin/heroes/HeroForm";
 import { normalizeHeroStyle } from "@/lib/heroes/hero-style";
 import { getHeroById } from "@/services/heroes/hero.service";
+import { routes } from "@/lib/routes";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -83,11 +84,11 @@ export default async function EditHeroPage({ params }: Props) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect(`/auth/login?next=/admin/heroes/${id}`);
+    redirect(routes.loginWithNext(routes.adminHero(id)));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   const hero = await getHeroById(id);

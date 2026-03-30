@@ -60,9 +60,9 @@ export function CreatorPublishSuccessModal({
 
   if (!open) return null;
 
-  const liveHref = resourceSlug ? `/resources/${resourceSlug}` : null;
+  const liveHref = resourceSlug ? routes.resource(resourceSlug) : null;
   const liveUrl = resourceSlug
-    ? `${typeof window !== "undefined" ? window.location.origin : ""}/resources/${resourceSlug}`
+    ? `${typeof window !== "undefined" ? window.location.origin : ""}${routes.resource(resourceSlug)}`
     : null;
 
   function handleViewLive() {

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { after } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import { checkRateLimit, getClientIp, LIMITS } from "@/lib/rate-limit";
 import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import {
@@ -52,15 +51,8 @@ export async function POST(req: Request) {
     }
 
     // ── 1. Require ADMIN session ──────────────────────────────────────────
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    if (session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Forbidden." }, { status: 403 });
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     // ── 2. Parse multipart form data ─────────────────────────────────────
     const formData = await req.formData();
@@ -70,7 +62,7 @@ export async function POST(req: Request) {
     const uploaded = await uploadAdminResourceFile({
       resourceId,
       file,
-      adminUserId: session.user.id!,
+      adminUserId: auth.session.user.id,
     });
     after(() => {
       void warmTargetedPublicCaches({

@@ -1,4 +1,5 @@
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
+import { routes } from "@/lib/routes";
 
 interface TagItem {
   name: string;
@@ -19,7 +20,7 @@ export function TagList({ tags }: TagListProps) {
         {tags.map((tag) => (
           <IntentPrefetchLink
             key={tag.slug}
-            href={`/resources?tag=${encodeURIComponent(tag.slug)}`}
+            href={routes.marketplaceTag(tag.slug)}
             prefetchMode="intent"
             prefetchScope="resource-detail-tags"
             prefetchLimit={2}

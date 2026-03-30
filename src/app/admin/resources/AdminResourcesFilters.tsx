@@ -9,6 +9,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { AdminResourcesClearButton } from "./AdminResourcesClearButton";
 import { FilterChips } from "@/components/admin/FilterChips";
 import { TableToolbar } from "@/components/admin/table";
+import { routes } from "@/lib/routes";
 import {
   SavedFiltersDropdown,
   type SavedFilterPresetId,
@@ -75,7 +76,7 @@ export function AdminResourcesFilters({
   const hrefForFilters = useMemo(
     () =>
       (next: FilterState, page: number = 1) =>
-        `/admin/resources${buildQueryString({
+        `${routes.adminResources}${buildQueryString({
           q: next.search.trim() || undefined,
           status: next.status || undefined,
           categoryId: next.categoryId || undefined,
@@ -103,7 +104,7 @@ export function AdminResourcesFilters({
   function handleClear() {
     const cleared: FilterState = { search: "", status: "", categoryId: "" };
     setFilters(cleared);
-    router.replace("/admin/resources");
+    router.replace(routes.adminResources);
   }
 
   function handleSearchKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -230,9 +231,7 @@ export function AdminResourcesFilters({
                 if (extras.free) params.set("free", extras.free);
                 const qs = params.toString();
 
-                const href = qs
-                  ? `/admin/resources?${qs}`
-                  : "/admin/resources";
+                const href = routes.adminResourcesQuery(qs);
                 router.replace(href);
               }}
             />

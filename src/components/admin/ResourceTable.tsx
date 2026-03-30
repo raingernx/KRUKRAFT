@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/Dropdown";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { formatPrice, formatDate } from "@/lib/format";
+import { routes } from "@/lib/routes";
 import { useNotifications } from "@/features/notifications/useNotifications";
 import { useUndo } from "@/features/undo/useUndo";
 
@@ -626,7 +627,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                         )}
                         <RowActionButton asChild>
                           <Link
-                            href={`/admin/resources/${resource.id}`}
+                            href={routes.adminResource(resource.id)}
                             className="flex items-center gap-1"
                           >
                             <span className="inline-flex items-center gap-1">
@@ -646,8 +647,8 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                               <Link
                                 href={
                                   isDraft
-                                    ? `/resources/${resource.slug}?preview=true`
-                                    : `/resources/${resource.slug}`
+                                    ? routes.resourcePreview(resource.slug)
+                                    : routes.resource(resource.slug)
                                 }
                                 target="_blank"
                                 rel="noreferrer"
@@ -677,7 +678,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                                   return;
                                 }
                                 notify("success", "Resource duplicated");
-                                router.push(`/admin/resources/${newId}`);
+                                router.push(routes.adminResource(newId));
                               }}
                             >
                               Duplicate

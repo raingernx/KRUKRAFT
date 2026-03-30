@@ -706,6 +706,83 @@ export async function findCategoriesOrderedByName() {
   });
 }
 
+export function findAdminResourceFormTags() {
+  return prisma.tag.findMany({
+    orderBy: { name: "asc" },
+    select: { id: true, name: true, slug: true },
+  });
+}
+
+export function findAdminTagsWithUsage() {
+  return prisma.tag.findMany({
+    orderBy: [
+      { resources: { _count: "desc" } },
+      { name: "asc" },
+    ],
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      _count: { select: { resources: true } },
+    },
+  });
+}
+
+export function findTrashedAdminResources(params: { take: number }) {
+  return prisma.resource.findMany({
+    where: { deletedAt: { not: null } },
+    orderBy: { deletedAt: "desc" },
+    take: params.take,
+    include: {
+      author: { select: { name: true, email: true } },
+    },
+  });
+}
+
+export function findAdminResourceTitleById(resourceId: string) {
+  return prisma.resource.findUnique({
+    where: { id: resourceId },
+    select: { title: true },
+  });
+}
+
+export function findAdminResourceEditById(resourceId: string) {
+  return prisma.resource.findUnique({
+    where: { id: resourceId },
+    include: {
+      author: { select: { id: true, name: true, email: true } },
+      category: { select: { id: true, name: true } },
+      _count: { select: { purchases: true, reviews: true } },
+      tags: { select: { tagId: true } },
+      previews: { select: { imageUrl: true }, orderBy: { order: "asc" } },
+    },
+  });
+}
+
+export function findAdminResourceVersionPageResource(resourceId: string) {
+  return prisma.resource.findUnique({
+    where: { id: resourceId },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      status: true,
+    },
+  });
+}
+
+export function findResourceVersionsByResourceId(resourceId: string) {
+  return prisma.resourceVersion.findMany({
+    where: { resourceId },
+    orderBy: { version: "desc" },
+    include: {
+      createdBy: {
+        select: { id: true, name: true, email: true },
+      },
+    },
+  });
+}
+
 export async function findMarketplaceResourceCards(params: {
   where: Prisma.ResourceWhereInput;
   orderBy: Prisma.ResourceFindManyArgs["orderBy"];
@@ -866,6 +943,93 @@ export async function findTagBySlug(slug: string) {
   return prisma.tag.findUnique({
     where: { slug },
     select: { id: true },
+  });
+}
+
+export function findTagById(tagId: string) {
+  return prisma.tag.findUnique({
+    where: { id: tagId },
+    select: { id: true, name: true, slug: true },
+  });
+}
+
+export function findTagByNameOrSlug(name: string, slug: string, excludeId?: string) {
+  return prisma.tag.findFirst({
+    where: excludeId
+      ? {
+          AND: [
+            { id: { not: excludeId } },
+            {
+              OR: [
+                { name: { equals: name, mode: "insensitive" } },
+                { slug },
+              ],
+            },
+          ],
+        }
+      : {
+          OR: [
+            { name: { equals: name, mode: "insensitive" } },
+            { slug },
+          ],
+        },
+  });
+}
+
+export function createTagRecord(input: { name: string; slug: string }) {
+  return prisma.tag.create({
+    data: {
+      name: input.name,
+      slug: input.slug,
+    },
+  });
+}
+
+export function updateTagRecord(input: { id: string; name: string; slug: string }) {
+  return prisma.tag.update({
+    where: { id: input.id },
+    data: { name: input.name, slug: input.slug },
+  });
+}
+
+export function deleteResourceTagJoins(tagId: string) {
+  return prisma.resourceTag.deleteMany({
+    where: { tagId },
+  });
+}
+
+export function deleteTagRecord(tagId: string) {
+  return prisma.tag.delete({
+    where: { id: tagId },
+  });
+}
+
+export function findResourceSlugById(resourceId: string) {
+  return prisma.resource.findUnique({
+    where: { id: resourceId },
+    select: { slug: true },
+  });
+}
+
+export function clearAdminResourceFileById(resourceId: string) {
+  return prisma.resource.update({
+    where: { id: resourceId },
+    data: {
+      fileKey: null,
+      fileName: null,
+      fileSize: null,
+      mimeType: null,
+    },
+    select: { slug: true },
+  });
+}
+
+export function findAdminResourceVersionDownload(resourceId: string, versionId: string) {
+  return prisma.resourceVersion.findFirst({
+    where: {
+      id: versionId,
+      resourceId,
+    },
   });
 }
 

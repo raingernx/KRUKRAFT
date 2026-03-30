@@ -4,7 +4,7 @@ import { HeroBannerSkeleton } from "@/components/marketplace/HeroBanner";
 import {
   ResourcesCatalogControlsSkeleton,
   ResourcesCatalogSearchSkeleton,
-} from "@/components/marketplace/ResourcesCatalogControls";
+} from "@/components/marketplace/ResourcesCatalogControlsSkeleton";
 import { ResourceCardSkeleton } from "@/components/resources/ResourceCardSkeleton";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 

@@ -7,6 +7,7 @@ import { SlidersHorizontal, Info } from "lucide-react";
 import { Button, Input } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { TableToolbar } from "@/components/admin/table";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Ranking Experiment – Admin",
@@ -107,8 +108,8 @@ export default async function RankingExperimentPage({
   searchParams?: Promise<Record<string, string | undefined>>;
 }) {
   const session = await getServerSession(authOptions);
-  if (!session?.user) redirect("/auth/login?next=/admin/analytics/ranking-experiment");
-  if (session.user.role !== "ADMIN") redirect("/dashboard");
+  if (!session?.user) redirect(routes.loginWithNext(routes.adminRankingExperiment));
+  if (session.user.role !== "ADMIN") redirect(routes.dashboard);
 
   const params = searchParams ? await searchParams : {};
   const startParam = params.start ?? "";
@@ -210,7 +211,7 @@ export default async function RankingExperimentPage({
             </Button>
             {hasFilters && (
               <a
-                href="/admin/analytics/ranking-experiment"
+                href={routes.adminRankingExperiment}
                 className="rounded-lg border border-border-subtle px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-50"
               >
                 Reset

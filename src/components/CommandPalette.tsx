@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { routes } from "@/lib/routes";
 
 interface Command {
   id: string;
@@ -11,11 +12,11 @@ interface Command {
 }
 
 const BASE_COMMANDS: Command[] = [
-  { id: "search-resources", label: "Search resources",  href: "/resources" },
-  { id: "search-users",     label: "Search users",      href: "/admin/users" },
-  { id: "go-orders",        label: "Go to orders",      href: "/admin/orders" },
-  { id: "open-analytics",   label: "Open analytics",    href: "/admin/analytics" },
-  { id: "open-settings",    label: "Open settings",     href: "/admin/settings" },
+  { id: "search-resources", label: "Search resources",  href: routes.marketplace },
+  { id: "search-users",     label: "Search users",      href: routes.adminUsers },
+  { id: "go-orders",        label: "Go to orders",      href: routes.adminOrders },
+  { id: "open-analytics",   label: "Open analytics",    href: routes.adminAnalytics },
+  { id: "open-settings",    label: "Open settings",     href: routes.adminSettings },
 ];
 
 export function CommandPalette() {

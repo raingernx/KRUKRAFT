@@ -540,7 +540,7 @@ export async function upsertCompletedFreePurchase(
     },
     update: {
       amount: 0,
-      currency: "usd",
+      currency: "thb",
       status: "COMPLETED",
       paymentProvider: "FREE",
       authorId: input.authorId,
@@ -550,7 +550,7 @@ export async function upsertCompletedFreePurchase(
       userId: input.userId,
       resourceId: input.resourceId,
       amount: 0,
-      currency: "usd",
+      currency: "thb",
       status: "COMPLETED",
       paymentProvider: "FREE",
       authorId: input.authorId,

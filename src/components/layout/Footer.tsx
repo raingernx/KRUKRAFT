@@ -1,23 +1,24 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 import { Container } from "@/components/layout/container";
+import { routes } from "@/lib/routes";
 
 const CREATORS_LINKS = [
-  { href: "/resources", label: "Sell resources" },
-  { href: "/membership", label: "Membership" },
+  { href: routes.marketplace, label: "Sell resources" },
+  { href: routes.membership, label: "Membership" },
 ];
 
 const RESOURCES_LINKS = [
-  { href: "/resources", label: "Browse all" },
-  { href: "/resources?price=free", label: "Free resources" },
-  { href: "/categories/mathematics", label: "Mathematics" },
-  { href: "/categories/science", label: "Science" },
+  { href: routes.marketplace, label: "Browse all" },
+  { href: routes.marketplacePrice("free"), label: "Free resources" },
+  { href: routes.category("mathematics"), label: "Mathematics" },
+  { href: routes.category("science"), label: "Science" },
 ];
 
 const LEGAL_LINKS = [
-  { href: "/privacy", label: "Privacy Policy" },
-  { href: "/terms", label: "Terms" },
-  { href: "/cookies", label: "Cookie Policy" },
+  { href: routes.privacy, label: "Privacy Policy" },
+  { href: routes.terms, label: "Terms" },
+  { href: routes.cookies, label: "Cookie Policy" },
 ];
 
 interface FooterProps {
@@ -102,19 +103,19 @@ export function Footer({ platformName }: FooterProps) {
           </p>
           <div className="flex items-center gap-4">
             <Link
-              href="/privacy"
+              href={routes.privacy}
               className="text-[12px] text-zinc-400 transition-colors hover:text-zinc-600"
             >
               Privacy Policy
             </Link>
             <Link
-              href="/terms"
+              href={routes.terms}
               className="text-[12px] text-zinc-400 transition-colors hover:text-zinc-600"
             >
               Terms
             </Link>
             <Link
-              href="/cookies"
+              href={routes.cookies}
               className="text-[12px] text-zinc-400 transition-colors hover:text-zinc-600"
             >
               Cookie Policy

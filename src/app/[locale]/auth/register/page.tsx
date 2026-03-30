@@ -8,6 +8,7 @@ import { Button } from "@/design-system";
 import { Logo } from "@/components/brand/Logo";
 import { usePlatformConfig } from "@/components/providers/PlatformConfigProvider";
 import { Check, AlertCircle } from "lucide-react";
+import { routes } from "@/lib/routes";
 
 const PERKS = [
   "Access free resources instantly",
@@ -15,7 +16,7 @@ const PERKS = [
   "Cancel subscription any time",
 ];
 
-const GOOGLE_SIGN_IN_CALLBACK_URL = "/dashboard/library";
+const GOOGLE_SIGN_IN_CALLBACK_URL = routes.library;
 
 function GoogleIcon() {
   return (
@@ -54,7 +55,7 @@ export default function RegisterPage() {
         return;
       }
       // Auto sign-in after successful registration
-      await signIn("credentials", { email, password, callbackUrl: "/dashboard" });
+      await signIn("credentials", { email, password, callbackUrl: routes.dashboard });
     } finally {
       setLoading(false);
     }
@@ -205,11 +206,11 @@ export default function RegisterPage() {
 
             <p className="mt-4 text-center text-[11px] text-zinc-400">
               By creating an account you agree to our{" "}
-              <Link href="/terms" className="underline underline-offset-2 hover:text-zinc-600 transition-colors">
+              <Link href={routes.terms} className="underline underline-offset-2 hover:text-zinc-600 transition-colors">
                 Terms
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" className="underline underline-offset-2 hover:text-zinc-600 transition-colors">
+              <Link href={routes.privacy} className="underline underline-offset-2 hover:text-zinc-600 transition-colors">
                 Privacy Policy
               </Link>.
             </p>
@@ -217,7 +218,7 @@ export default function RegisterPage() {
 
           <p className="mt-5 text-center text-[13px] text-zinc-500">
             Already have an account?{" "}
-            <Link href="/auth/login"
+            <Link href={routes.login}
               className="font-semibold text-blue-600 hover:text-blue-800 transition-colors">
               Sign in
             </Link>

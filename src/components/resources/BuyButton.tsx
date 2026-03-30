@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/design-system";
 import { AlertCircle, CreditCard, QrCode, Download, Lock, CheckCircle } from "lucide-react";
 import { formatPrice } from "@/lib/format";
+import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 interface BuyButtonProps {
@@ -83,7 +84,7 @@ export function BuyButton({
 
   function redirectToLogin(provider: "free" | "stripe" | "xendit") {
     setAuthRedirectProvider(provider);
-    router.push(`/auth/login?next=${encodeURIComponent(resourceHref)}`);
+    router.push(routes.loginWithNext(resourceHref));
   }
 
   function handleDownloadStart() {

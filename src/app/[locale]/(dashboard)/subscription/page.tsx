@@ -1,6 +1,5 @@
 import { authOptions } from "@/lib/auth";
 import { requireSession } from "@/lib/auth/require-session";
-import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import {
   Sparkles,
@@ -15,7 +14,9 @@ import {
 } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import { PageContentNarrow } from "@/design-system";
+import { getDashboardSubscriptionPageData } from "@/services/admin-operations.service";
 import { getPlatform } from "@/services/platform.service";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Membership",
@@ -47,21 +48,10 @@ const PRO_BENEFITS = [
 ];
 
 export default async function SubscriptionPage() {
-  const { userId } = await requireSession("/subscription");
+  const { userId } = await requireSession(routes.subscription);
 
   const platform = await getPlatform();
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      subscriptionStatus: true,
-      subscriptionPlan: true,
-      currentPeriodEnd: true,
-      purchases: {
-        where: { status: "COMPLETED" },
-        select: { id: true },
-      },
-    },
-  });
+  const user = await getDashboardSubscriptionPageData(userId);
 
   const isActive = user?.subscriptionStatus === "ACTIVE";
   const isTrialing = user?.subscriptionStatus === "TRIALING";
@@ -129,7 +119,7 @@ export default async function SubscriptionPage() {
                   {resourcesOwned}
                 </p>
                 <Link
-                  href="/dashboard/library"
+                  href={routes.library}
                   className="mt-2 flex items-center gap-1 text-[12px] font-medium text-blue-600 hover:text-blue-700"
                 >
                   View library <ArrowRight className="h-3 w-3" />
@@ -253,7 +243,7 @@ export default async function SubscriptionPage() {
                 </ul>
 
                 <Link
-                  href="/membership"
+                  href={routes.membership}
                   className="mt-6 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-[13px] font-semibold text-white shadow-sm transition hover:bg-violet-700"
                 >
                   <Sparkles className="h-4 w-4" />

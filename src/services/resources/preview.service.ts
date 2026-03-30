@@ -17,9 +17,10 @@
  *   a future phase that includes the matching schema migration.
  *
  * Access rules:
- *   - Free resources: authenticated user required (no purchase needed).
+ *   - Free resources: authenticated user + added-to-library ownership required.
  *   - Paid resources: authenticated user + completed purchase required.
- *   This mirrors the download service access model exactly.
+ *   This now mirrors the download service access model exactly: preview and
+ *   download share the same ownership rule.
  */
 
 import { existsSync, createReadStream } from "fs";
@@ -30,10 +31,8 @@ import { authOptions } from "@/lib/auth";
 import { checkRateLimit, getClientIp, LIMITS } from "@/lib/rate-limit";
 import { storage } from "@/lib/storage";
 import { isPreviewSupported } from "@/lib/preview/previewPolicy";
-import {
-  findCompletedPurchaseByUserAndResource,
-} from "@/repositories/purchases/purchase.repository";
 import { findDownloadableResourceById } from "@/repositories/resources/resource.repository";
+import { getCompletedPurchaseAccess } from "@/services/purchase.service";
 
 export async function handleResourcePreview(
   req: Request,
@@ -85,18 +84,17 @@ export async function handleResourcePreview(
     }
 
     // ── 4. Ownership / access check ─────────────────────────────────────────
-    if (!resource.isFree) {
-      const purchase = await findCompletedPurchaseByUserAndResource(
-        userId,
-        resourceId,
-      );
+    const access = await getCompletedPurchaseAccess({
+      userId,
+      resourceId,
+      isFree: resource.isFree,
+    });
 
-      if (!purchase) {
-        return NextResponse.json(
-          { error: "Forbidden. You have not purchased this resource." },
-          { status: 403 },
-        );
-      }
+    if (!access.allowed) {
+      return NextResponse.json(
+        { error: access.errorMessage },
+        { status: 403 },
+      );
     }
 
     if (!resource.fileKey && !resource.fileUrl) {

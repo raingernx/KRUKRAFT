@@ -1,5 +1,6 @@
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { Avatar } from "@/design-system";
+import { routes } from "@/lib/routes";
 import { getPlatform } from "@/services/platform.service";
 
 export interface CreatorCardCreator {
@@ -35,7 +36,7 @@ export async function CreatorCard({ creator }: CreatorCardProps) {
           </p>
           {creator.creatorSlug && (
             <IntentPrefetchLink
-              href={`/creators/${creator.creatorSlug}`}
+              href={routes.creatorPublicProfile(creator.creatorSlug)}
               className="mt-3 inline-flex items-center gap-1 text-small font-medium text-primary-700 transition hover:text-primary-800"
               prefetchScope="creator-card"
               prefetchLimit={2}

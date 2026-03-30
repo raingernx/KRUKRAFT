@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import { z } from "zod";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import {
   getFallbackHero,
   HeroServiceError,
@@ -24,25 +23,8 @@ const UpdateHeroSchema = z.object({
 
 export type HomepageHeroPayload = z.infer<typeof UpdateHeroSchema>;
 
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return {
-      ok: false as const,
-      res: NextResponse.json({ error: "Unauthorized." }, { status: 401 }),
-    };
-  }
-  if (session.user.role !== "ADMIN") {
-    return {
-      ok: false as const,
-      res: NextResponse.json({ error: "Forbidden." }, { status: 403 }),
-    };
-  }
-  return { ok: true as const };
-}
-
 export async function GET() {
-  const auth = await requireAdmin();
+  const auth = await requireAdminApi();
   if (!auth.ok) return auth.res;
 
   try {
@@ -55,7 +37,7 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
-  const auth = await requireAdmin();
+  const auth = await requireAdminApi();
   if (!auth.ok) return auth.res;
 
   let body: unknown;

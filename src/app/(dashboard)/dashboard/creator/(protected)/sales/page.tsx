@@ -12,7 +12,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function CreatorSalesPage() {
-  const { userId } = await requireSession("/dashboard/creator/sales");
+  const { userId } = await requireSession(routes.creatorSales);
 
   const salesData = await getCreatorSales(userId);
 

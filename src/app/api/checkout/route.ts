@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { checkRateLimit, getClientIp, LIMITS } from "@/lib/rate-limit";
 import { PaymentServiceError } from "@/services/payments/payment.service";
-import { createLegacyStripeCheckout } from "@/services/payments/stripe-payment.service";
+import { createCheckoutSession } from "@/services/payments/checkout.service";
 
 function handleServiceError(err: unknown) {
   if (err instanceof PaymentServiceError) {
@@ -44,7 +44,13 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json().catch(() => ({}));
-    const result = await createLegacyStripeCheckout(body, session.user.id);
+    const result = await createCheckoutSession(
+      {
+        ...(typeof body === "object" && body !== null ? body : {}),
+        provider: "stripe",
+      },
+      session.user.id,
+    );
 
     return NextResponse.json(result);
   } catch (err) {

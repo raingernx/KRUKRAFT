@@ -7,6 +7,7 @@ import { ResourceGallery } from "@/components/resource/ResourceGallery";
 import { ResourceDescription } from "@/components/resource/ResourceDescription";
 import { ResourceFiles } from "@/components/resource/ResourceFiles";
 import { formatPrice } from "@/lib/format";
+import { routes } from "@/lib/routes";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -135,7 +136,7 @@ export function CreatorBuyerPreviewModal({
             <div className="space-y-6 lg:space-y-8">
               {/* Title, creator placeholder, no stats (unpublished) */}
               <ResourceHeader
-                breadcrumb={[{ label: "Resources", href: "/resources" }]}
+                breadcrumb={[{ label: "Resources", href: routes.marketplace }]}
                 title={displayTitle}
                 creatorName="You"
                 creatorHref={null}

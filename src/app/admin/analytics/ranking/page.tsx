@@ -7,6 +7,7 @@ import { SlidersHorizontal, ExternalLink } from "lucide-react";
 import { Button, Input, Select } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { TableToolbar } from "@/components/admin/table";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Ranking Debug – Admin",
@@ -75,8 +76,8 @@ export default async function RankingDebugPage({
   searchParams?: Promise<Record<string, string | undefined>>;
 }) {
   const session = await getServerSession(authOptions);
-  if (!session?.user) redirect("/auth/login?next=/admin/analytics/ranking");
-  if (session.user.role !== "ADMIN") redirect("/dashboard");
+  if (!session?.user) redirect(routes.loginWithNext(routes.adminRankingDebug));
+  if (session.user.role !== "ADMIN") redirect(routes.dashboard);
 
   const params = searchParams ? await searchParams : {};
   const category = params.category || "";
@@ -195,7 +196,7 @@ export default async function RankingDebugPage({
             </Button>
             {activeFilterCount > 0 && (
               <a
-                href="/admin/analytics/ranking"
+                href={routes.adminRankingDebug}
                 className="rounded-lg border border-border-subtle px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-50"
               >
                 Clear
@@ -283,7 +284,7 @@ export default async function RankingDebugPage({
                       <div className="flex items-start gap-2">
                         <div className="min-w-0 flex-1">
                           <Link
-                            href={`/resources/${row.slug}`}
+                            href={routes.resource(row.slug)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1 font-medium text-zinc-800 hover:text-indigo-600 hover:underline"

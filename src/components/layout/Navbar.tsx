@@ -20,55 +20,56 @@ import { NavbarBrand } from "@/components/layout/NavbarBrand";
 import { NavbarItem } from "@/components/layout/navbar/NavbarItem";
 import { Container } from "@/components/layout/container";
 import { beginResourcesNavigation } from "@/components/marketplace/resourcesNavigationState";
+import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS: { href: string; label: string }[] = [
-  { href: "/resources", label: "มาร์เก็ตเพลส" },
-  { href: "/dashboard/library", label: "คลังของฉัน" },
+  { href: routes.marketplace, label: "มาร์เก็ตเพลส" },
+  { href: routes.library, label: "คลังของฉัน" },
 ];
 
 const MARKETPLACE_CATEGORY_ITEMS = [
-  { href: "/resources", label: "ค้นหา", category: null, mode: "discover" as const },
-  { href: "/resources?category=all", label: "ทั้งหมด", category: "all", mode: "listing" as const },
+  { href: routes.marketplace, label: "ค้นหา", category: null, mode: "discover" as const },
+  { href: routes.marketplaceCategory("all"), label: "ทั้งหมด", category: "all", mode: "listing" as const },
   {
-    href: "/resources?category=art-creativity",
+    href: routes.marketplaceCategory("art-creativity"),
     label: "ศิลปะและความคิดสร้างสรรค์",
     category: "art-creativity",
     mode: "listing" as const,
   },
   {
-    href: "/resources?category=early-learning",
+    href: routes.marketplaceCategory("early-learning"),
     label: "ปฐมวัย",
     category: "early-learning",
     mode: "listing" as const,
   },
   {
-    href: "/resources?category=humanities",
+    href: routes.marketplaceCategory("humanities"),
     label: "มนุษยศาสตร์",
     category: "humanities",
     mode: "listing" as const,
   },
-  { href: "/resources?category=language", label: "ภาษา", category: "language", mode: "listing" as const },
+  { href: routes.marketplaceCategory("language"), label: "ภาษา", category: "language", mode: "listing" as const },
   {
-    href: "/resources?category=mathematics",
+    href: routes.marketplaceCategory("mathematics"),
     label: "คณิตศาสตร์",
     category: "mathematics",
     mode: "listing" as const,
   },
   {
-    href: "/resources?category=science",
+    href: routes.marketplaceCategory("science"),
     label: "วิทยาศาสตร์",
     category: "science",
     mode: "listing" as const,
   },
   {
-    href: "/resources?category=study-skills",
+    href: routes.marketplaceCategory("study-skills"),
     label: "ทักษะการเรียน",
     category: "study-skills",
     mode: "listing" as const,
   },
   {
-    href: "/resources?category=test-prep",
+    href: routes.marketplaceCategory("test-prep"),
     label: "Test Prep",
     category: "test-prep",
     mode: "listing" as const,
@@ -157,7 +158,7 @@ function NavbarInner({
   }
 
   function handleHomeNavigation(href: string) {
-    if (href === "/resources") {
+    if (href === routes.marketplace) {
       beginResourcesNavigation("discover", href);
     }
   }
@@ -176,7 +177,7 @@ function NavbarInner({
     closeAll();
 
     try {
-      await signOut({ callbackUrl: "/" });
+      await signOut({ callbackUrl: routes.home });
     } catch {
       setIsSigningOut(false);
     }
@@ -211,7 +212,7 @@ function NavbarInner({
 
           <div className="p-1.5">
             <Link
-              href="/dashboard"
+              href={routes.dashboard}
               onClick={() => setUserMenuOpen(false)}
               className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-text-secondary transition-colors hover:bg-surface-50 hover:text-text-primary"
             >
@@ -221,7 +222,7 @@ function NavbarInner({
               </span>
             </Link>
             <Link
-              href="/dashboard/library"
+              href={routes.library}
               onClick={() => setUserMenuOpen(false)}
               className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-text-secondary transition-colors hover:bg-surface-50 hover:text-text-primary"
             >
@@ -231,7 +232,7 @@ function NavbarInner({
               </span>
             </Link>
             <Link
-              href="/dashboard/purchases"
+              href={routes.purchases}
               onClick={() => setUserMenuOpen(false)}
               className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-text-secondary transition-colors hover:bg-surface-50 hover:text-text-primary"
             >
@@ -244,7 +245,7 @@ function NavbarInner({
             <div className="my-1.5 border-t border-surface-100" />
 
             <Link
-              href="/settings"
+              href={routes.settings}
               onClick={() => setUserMenuOpen(false)}
               className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-text-secondary transition-colors hover:bg-surface-50 hover:text-text-primary"
             >
@@ -283,10 +284,10 @@ function NavbarInner({
               </div>
 
               <div className="ml-auto hidden items-center gap-2.5 lg:flex">
-                <Link href="/dashboard/library" className={MARKETPLACE_ACTION_LINK_CLASS_NAME}>
+                <Link href={routes.library} className={MARKETPLACE_ACTION_LINK_CLASS_NAME}>
                   คลังของฉัน
                 </Link>
-                <Link href="/membership" className={MARKETPLACE_PREMIUM_ACTION_CLASS_NAME}>
+                <Link href={routes.membership} className={MARKETPLACE_PREMIUM_ACTION_CLASS_NAME}>
                   KC Premium
                 </Link>
 
@@ -317,10 +318,10 @@ function NavbarInner({
                   </div>
                 ) : (
                   <>
-                    <Link href="/auth/login" className={MARKETPLACE_ACTION_LINK_CLASS_NAME}>
+                    <Link href={routes.login} className={MARKETPLACE_ACTION_LINK_CLASS_NAME}>
                       เข้าสู่ระบบ
                     </Link>
-                    <Link href="/auth/register" className={MARKETPLACE_PRIMARY_ACTION_CLASS_NAME}>
+                    <Link href={routes.register} className={MARKETPLACE_PRIMARY_ACTION_CLASS_NAME}>
                       เริ่มต้นใช้งาน
                     </Link>
                   </>
@@ -328,10 +329,10 @@ function NavbarInner({
               </div>
 
               <div className={cn("ml-auto flex min-w-0 max-w-[68vw] items-center gap-1.5 lg:hidden", HORIZONTAL_SCROLL_CLASS_NAME)}>
-                <Link href="/dashboard/library" className="inline-flex h-10 shrink-0 items-center rounded-full px-3 text-base font-medium text-text-secondary transition-colors hover:bg-surface-100 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2">
+                <Link href={routes.library} className="inline-flex h-10 shrink-0 items-center rounded-full px-3 text-base font-medium text-text-secondary transition-colors hover:bg-surface-100 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2">
                   คลังของฉัน
                 </Link>
-                <Link href="/membership" className="inline-flex h-10 shrink-0 items-center rounded-full border border-amber-200 bg-[linear-gradient(135deg,#fff8dc,#fff4bf)] px-3 text-base font-semibold text-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition-colors hover:border-amber-300 hover:bg-[linear-gradient(135deg,#fff9e7,#fff1b0)] hover:text-amber-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/40 focus-visible:ring-offset-2">
+                <Link href={routes.membership} className="inline-flex h-10 shrink-0 items-center rounded-full border border-amber-200 bg-[linear-gradient(135deg,#fff8dc,#fff4bf)] px-3 text-base font-semibold text-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition-colors hover:border-amber-300 hover:bg-[linear-gradient(135deg,#fff9e7,#fff1b0)] hover:text-amber-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/40 focus-visible:ring-offset-2">
                   KC Premium
                 </Link>
 
@@ -362,10 +363,10 @@ function NavbarInner({
                   </div>
                 ) : (
                   <>
-                    <Link href="/auth/login" className="inline-flex h-10 shrink-0 items-center rounded-full px-3 text-base font-medium text-text-secondary transition-colors hover:bg-surface-100 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2">
+                    <Link href={routes.login} className="inline-flex h-10 shrink-0 items-center rounded-full px-3 text-base font-medium text-text-secondary transition-colors hover:bg-surface-100 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2">
                       เข้าสู่ระบบ
                     </Link>
-                    <Link href="/auth/register" className="inline-flex h-10 shrink-0 items-center rounded-full bg-brand-600 px-3 text-base font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2">
+                    <Link href={routes.register} className="inline-flex h-10 shrink-0 items-center rounded-full bg-brand-600 px-3 text-base font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2">
                       เริ่มต้นใช้งาน
                     </Link>
                   </>
@@ -385,7 +386,7 @@ function NavbarInner({
                     href={item.href}
                     onClick={() => handleMarketplaceNavigation(item.mode, item.href)}
                     className={marketplaceCategoryClassName(
-                      pathname === "/resources" &&
+                      pathname === routes.marketplace &&
                         isMarketplaceCategoryActive(currentCategory, item.category),
                     )}
                   >
@@ -402,7 +403,7 @@ function NavbarInner({
                   href={item.href}
                   onClick={() => handleMarketplaceNavigation(item.mode, item.href)}
                   className={marketplaceCategoryClassName(
-                    pathname === "/resources" &&
+                    pathname === routes.marketplace &&
                       isMarketplaceCategoryActive(currentCategory, item.category),
                   )}
                 >
@@ -413,7 +414,7 @@ function NavbarInner({
               <details ref={mobileMoreRef} className="relative ml-auto shrink-0">
                 <summary
                   className={cn(
-                    marketplaceCategoryClassName(pathname === "/resources" && isMoreMenuActive),
+                    marketplaceCategoryClassName(pathname === routes.marketplace && isMoreMenuActive),
                     "list-none cursor-pointer select-none [&::-webkit-details-marker]:hidden",
                   )}
                 >
@@ -429,7 +430,7 @@ function NavbarInner({
                           onClick={() => handleMarketplaceNavigation(item.mode, item.href)}
                           className={cn(
                             "flex rounded-xl px-3 py-2.5 text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
-                            pathname === "/resources" &&
+                            pathname === routes.marketplace &&
                               isMarketplaceCategoryActive(currentCategory, item.category)
                               ? "bg-surface-100 text-text-primary"
                               : "text-text-secondary hover:bg-surface-50 hover:text-text-primary",
@@ -489,7 +490,7 @@ function NavbarInner({
             </nav>
 
             <NavbarItem
-              href="/membership"
+              href={routes.membership}
               variant="default"
               className="h-10 rounded-full border border-amber-200 bg-[linear-gradient(135deg,#fff8dc,#fff4bf)] px-4 text-base font-semibold text-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] hover:border-amber-300 hover:bg-[linear-gradient(135deg,#fff9e7,#fff1b0)] hover:text-amber-950"
             >
@@ -525,8 +526,8 @@ function NavbarInner({
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <NavbarItem href="/auth/login">เข้าสู่ระบบ</NavbarItem>
-                <NavbarItem href="/auth/register" variant="secondary">
+                <NavbarItem href={routes.login}>เข้าสู่ระบบ</NavbarItem>
+                <NavbarItem href={routes.register} variant="secondary">
                   เริ่มต้นใช้งาน
                 </NavbarItem>
               </div>
@@ -566,7 +567,7 @@ function NavbarInner({
 
           <div className="mt-4">
             <NavbarItem
-              href="/membership"
+              href={routes.membership}
               onClick={closeAll}
               variant="default"
               mobile
@@ -595,7 +596,7 @@ function NavbarInner({
                 </div>
 
                 <Link
-                  href="/dashboard"
+                  href={routes.dashboard}
                   onClick={closeAll}
                   className="flex items-center gap-2.5 rounded-lg border border-surface-200 px-4 py-2.5 text-sm font-medium text-text-secondary hover:bg-surface-50"
                 >
@@ -618,14 +619,14 @@ function NavbarInner({
             ) : (
               <>
                 <Link
-                  href="/auth/login"
+                  href={routes.login}
                   onClick={closeAll}
                   className="rounded-lg border border-surface-200 px-4 py-2.5 text-center font-thai text-sm font-medium text-text-secondary hover:bg-surface-50"
                 >
                   เข้าสู่ระบบ
                 </Link>
                 <Link
-                  href="/auth/register"
+                  href={routes.register}
                   onClick={closeAll}
                   className="rounded-lg bg-brand-600 px-4 py-2.5 text-center font-thai text-sm font-semibold text-white transition-colors hover:bg-brand-700"
                 >

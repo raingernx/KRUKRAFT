@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getCreatorActivationFunnel } from "@/services/analytics/creator-activation.service";
 import { ArrowRight, Users, MousePointerClick, FilePlus, Rocket } from "lucide-react";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Creator Activation Funnel – Admin",
@@ -46,8 +47,8 @@ function PresetButtons({ start, end }: { start: string | null; end: string | nul
         const pEnd = p.end();
         const href =
           pStart || pEnd
-            ? `/admin/analytics/creator-activation?start=${pStart}&end=${pEnd}`
-            : "/admin/analytics/creator-activation";
+            ? routes.adminCreatorActivationQuery(`start=${pStart}&end=${pEnd}`)
+            : routes.adminCreatorActivation;
         const isActive =
           p.label === "All time"
             ? !start && !end
@@ -133,8 +134,8 @@ export default async function CreatorActivationPage({
   searchParams?: Promise<Record<string, string | undefined>>;
 }) {
   const session = await getServerSession(authOptions);
-  if (!session?.user) redirect("/auth/login?next=/admin/analytics/creator-activation");
-  if (session.user.role !== "ADMIN") redirect("/dashboard");
+  if (!session?.user) redirect(routes.loginWithNext(routes.adminCreatorActivation));
+  if (session.user.role !== "ADMIN") redirect(routes.dashboard);
 
   const params = searchParams ? await searchParams : {};
   const start = params.start || null;

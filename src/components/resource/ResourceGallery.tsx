@@ -120,7 +120,7 @@ export function ResourceGallery({
       {/* ── Thumbnail rail ────────────────────────────────────────────────── */}
       {/* Mobile/tablet: horizontal strip (flex-row, full-width, scrollable)  */}
       {/* Desktop lg+:  vertical rail on the left (flex-col, 80px wide)       */}
-      <div className="order-2 flex w-full shrink-0 flex-row items-center lg:order-1 lg:h-full lg:min-h-0 lg:w-20 lg:flex-col lg:justify-between">
+      <div className="order-2 flex w-full shrink-0 flex-row items-center lg:order-1 lg:h-full lg:min-h-0 lg:w-20 lg:flex-col lg:justify-start">
         <div className="flex w-full flex-row items-center gap-2 overflow-x-auto pb-1 lg:h-full lg:min-h-0 lg:w-auto lg:flex-col lg:gap-3 lg:overflow-hidden lg:overflow-x-visible lg:pb-0">
           <button
             type="button"
@@ -137,7 +137,7 @@ export function ResourceGallery({
             <ChevronUp className="h-5 w-5" />
           </button>
 
-          <div className="flex flex-row gap-2 lg:min-h-0 lg:flex-1 lg:flex-col lg:items-center lg:justify-center lg:gap-3 lg:overflow-y-auto">
+          <div className="flex flex-row gap-2 lg:min-h-0 lg:flex-col lg:items-center lg:justify-start lg:gap-3 lg:overflow-y-auto">
             {visible.map((p, idx) => {
               const globalIndex = clampedStartIndex + idx;
               const isActive = globalIndex === activeIndex;
@@ -206,7 +206,7 @@ export function ResourceGallery({
           alt={`${resourceTitle} – preview ${activeIndex + 1} of ${total}`}
           fill
           sizes="(max-width: 768px) 100vw, 640px"
-          className="h-full w-full object-contain"
+          className="h-full w-full object-contain object-top"
           priority
         />
 

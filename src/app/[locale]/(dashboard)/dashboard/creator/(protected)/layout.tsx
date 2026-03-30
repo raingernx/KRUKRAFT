@@ -5,7 +5,7 @@ import { canAccessCreatorWorkspace, getCreatorAccessState } from "@/services/cre
 import { routes } from "@/lib/routes";
 
 export default async function CreatorProtectedLayout({ children }: { children: ReactNode }) {
-  const { userId } = await requireSession("/dashboard/creator");
+  const { userId } = await requireSession(routes.creatorDashboard);
   const access = await getCreatorAccessState(userId);
   if (!canAccessCreatorWorkspace(access)) {
     redirect(routes.creatorApply);

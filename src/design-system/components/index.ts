@@ -1,6 +1,15 @@
 export {
   FormSection,
 } from "./FormSection";
+export type {
+  FormSectionProps,
+} from "./FormSection";
+export {
+  EmptyState,
+} from "./EmptyState";
+export type {
+  EmptyStateProps,
+} from "./EmptyState";
 export {
   PickerActions,
   PickerActionButton,

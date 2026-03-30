@@ -164,7 +164,7 @@ async function handleStripePayment(session: Stripe.Checkout.Session) {
     userId,
     resourceId,
     amount: session.amount_total ?? 0,
-    currency: session.currency ?? "usd",
+    currency: session.currency ?? "thb",
     paymentProvider: "STRIPE",
     ...buildPurchaseSnapshot(resource, session.amount_total ?? resource.price),
     stripeSessionId: sessionId,

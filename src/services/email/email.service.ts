@@ -13,6 +13,7 @@
  */
 
 import { getResendClient } from "@/lib/resend";
+import { routes } from "@/lib/routes";
 import { findCheckoutUserById } from "@/repositories/users/user.repository";
 import { findResourceEmailContext } from "@/repositories/resources/resource.repository";
 
@@ -202,7 +203,7 @@ export async function sendPurchaseConfirmationEmail(
     }
 
     const downloadUrl = `${appUrl}/api/download/${input.resourceId}`;
-    const resourceUrl = `${appUrl}/resources/${resource.slug}?payment=success`;
+    const resourceUrl = `${appUrl}${routes.resourcePaymentSuccess(resource.slug)}`;
     const from = process.env.EMAIL_FROM ?? "KruCraft <noreply@krucraft.com>";
 
     const { error } = await resend.emails.send({

@@ -4,10 +4,11 @@ import { getServerSession } from "next-auth";
 import { BookOpen, Plus, Upload } from "lucide-react";
 
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { Button } from "@/design-system";
 import { ResourceTable, type AdminResourceRow } from "@/components/admin/ResourceTable";
 import { AdminResourcesFilters } from "./AdminResourcesFilters";
+import { routes } from "@/lib/routes";
+import { getAdminResourcesPageData } from "@/services/admin-operations.service";
 
 export const metadata = {
   title: "Resources – Admin",
@@ -50,11 +51,11 @@ export default async function AdminResourcesPage({
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/resources");
+    redirect(routes.loginWithNext(routes.adminResources));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   const resolvedSearchParams = searchParams ? await searchParams : {};
@@ -66,105 +67,20 @@ export default async function AdminResourcesPage({
   const freeOnly = resolvedSearchParams.free === "1";
   const currentPage = Math.max(1, Number(resolvedSearchParams.page ?? "1") || 1);
 
-  const where: any = { deletedAt: null };
-
-  if (q) {
-    where.OR = [
-      { title: { contains: q, mode: "insensitive" } },
-      { author: { name: { contains: q, mode: "insensitive" } } },
-      { author: { email: { contains: q, mode: "insensitive" } } },
-    ];
-  }
-
-  if (["DRAFT", "PUBLISHED", "ARCHIVED"].includes(statusFilter)) {
-    where.status = statusFilter;
-  }
-
-  if (categoryIdFilter) {
-    where.categoryId = categoryIdFilter;
-  }
-
-  const skip = (currentPage - 1) * PAGE_SIZE;
-
-  const [resources, totalCount, categories] = await Promise.all([
-    prisma.resource.findMany({
-      where,
-      skip,
-      take: PAGE_SIZE,
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        previewUrl: true,
-        isFree: true,
-        price: true,
-        status: true,
-        createdAt: true,
-        downloadCount: true,
-        author: { select: { name: true, email: true } },
-        category: { select: { id: true, name: true } },
-        _count: { select: { purchases: true } },
-      },
-    }),
-    prisma.resource.count({ where }),
-    prisma.category.findMany({
-      orderBy: { name: "asc" },
-      select: { id: true, name: true },
-    }),
-  ]);
-
-  const revenueRows =
-    resources.length === 0
-      ? []
-      : await prisma.purchase.groupBy({
-          by: ["resourceId"],
-          where: {
-            resourceId: {
-              in: resources.map((resource) => resource.id),
-            },
-          },
-          _sum: {
-            amount: true,
-          },
-        });
-
-  const revenueByResourceId = new Map(
-    revenueRows.map((row) => [row.resourceId, row._sum.amount ?? 0]),
-  );
-
-  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-  let rows: AdminResourceRow[] = resources.map((r) => {
-    const purchases = r._count?.purchases ?? 0;
-    const revenue = revenueByResourceId.get(r.id) ?? 0;
-
-    return {
-      id: r.id,
-      title: r.title,
-      slug: r.slug,
-      previewUrl: r.previewUrl ?? null,
-      isFree: r.isFree,
-      price: r.price,
-      status: r.status,
-      createdAt: r.createdAt,
-      author: r.author,
-      category: r.category,
-      downloads: r.downloadCount,
-      purchases,
-      revenue,
-    };
+  const {
+    rows,
+    categories,
+    totalPages,
+    hasFilters,
+  } = await getAdminResourcesPageData({
+    q,
+    statusFilter,
+    categoryIdFilter,
+    freeOnly,
+    minRevenueCents,
+    currentPage,
+    pageSize: PAGE_SIZE,
   });
-
-  // Apply optional client-side filters derived from presets, without changing API shape.
-  if (freeOnly) {
-    rows = rows.filter((r) => r.isFree || r.price === 0);
-  }
-
-  if (minRevenueCents > 0) {
-    rows = rows.filter((r) => r.revenue >= minRevenueCents);
-  }
-
-  const hasFilters = !!q || !!statusFilter || !!categoryIdFilter;
 
   return (
     <div className="min-w-0 space-y-8">
@@ -185,7 +101,7 @@ export default async function AdminResourcesPage({
             variant="outline"
             className="inline-flex items-center gap-2"
           >
-            <Link href="/admin/resources/trash">
+            <Link href={routes.adminTrash}>
               <BookOpen className="h-4 w-4 text-text-secondary" />
               <span>View Trash</span>
             </Link>
@@ -196,13 +112,13 @@ export default async function AdminResourcesPage({
             variant="outline"
             className="inline-flex items-center gap-2"
           >
-            <Link href="/admin/resources/bulk">
+            <Link href={routes.adminBulkUpload}>
               <Upload className="h-4 w-4 text-text-secondary" />
               <span>Bulk Upload</span>
             </Link>
           </Button>
           <Button asChild size="sm" className="inline-flex items-center gap-2">
-            <Link href="/admin/resources/new">
+            <Link href={routes.adminNewResource}>
               <Plus className="h-4 w-4" />
               <span>Create Resource</span>
             </Link>
@@ -253,7 +169,7 @@ export default async function AdminResourcesPage({
                   href={
                     currentPage <= 1
                       ? "#"
-                      : `/admin/resources${buildQueryString({
+                      : `${routes.adminResources}${buildQueryString({
                           q,
                           status: statusFilter,
                           categoryId: categoryIdFilter,
@@ -274,7 +190,7 @@ export default async function AdminResourcesPage({
                   href={
                     currentPage >= totalPages
                       ? "#"
-                      : `/admin/resources${buildQueryString({
+                      : `${routes.adminResources}${buildQueryString({
                           q,
                           status: statusFilter,
                           categoryId: categoryIdFilter,

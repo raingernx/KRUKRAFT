@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 import { buttonVariants } from "@/design-system";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import {
   normalizeHeroStyle,
@@ -41,9 +42,9 @@ const DEFAULT_HERO: HeroSurfaceConfig = {
   subtitle:
     "Worksheets, flashcards, and study guides from educators and creators.",
   primaryCtaText: "Browse resources",
-  primaryCtaLink: "/resources",
+  primaryCtaLink: routes.marketplace,
   secondaryCtaText: "Start selling",
-  secondaryCtaLink: "/membership",
+  secondaryCtaLink: routes.membership,
   badgeText: "Trusted by 12,000+ educators",
   imageUrl: null,
   mediaUrl: null,

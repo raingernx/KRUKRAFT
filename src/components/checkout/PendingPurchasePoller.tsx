@@ -25,6 +25,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Library } from "lucide-react";
 import Link from "next/link";
+import { routes } from "@/lib/routes";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -131,7 +132,7 @@ export function PendingPurchasePoller({
           {/* Actions */}
           <div className="space-y-2">
             <Link
-              href="/dashboard/library"
+              href={routes.library}
               className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-zinc-700"
             >
               <Library className="h-4 w-4" />
@@ -140,7 +141,7 @@ export function PendingPurchasePoller({
             <p className="text-center text-[12px] text-zinc-400">
               Still not there?{" "}
               <Link
-                href="/support"
+                href={routes.support}
                 className="underline underline-offset-2 hover:text-zinc-600"
               >
                 Contact support

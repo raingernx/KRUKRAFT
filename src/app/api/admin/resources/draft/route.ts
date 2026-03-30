@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import {
   createAdminResourceDraft,
   ResourceServiceError,
@@ -30,13 +29,10 @@ function handleServiceError(err: unknown, label: string) {
  */
 export async function POST(_req: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    const resource = await createAdminResourceDraft(session.user.id);
+    const resource = await createAdminResourceDraft(auth.session.user.id);
 
     return NextResponse.json({ id: resource.id }, { status: 201 });
   } catch (err) {

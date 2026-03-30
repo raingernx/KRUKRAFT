@@ -1,21 +1,10 @@
-import { Suspense, type ReactNode } from "react";
-import { ResourcesNavigationFeedback } from "@/components/marketplace/ResourcesNavigationFeedback";
-import { ResourcesTransitionFallback } from "@/components/marketplace/ResourcesTransitionFallback";
-import { ResourcesTransitionShell } from "@/components/marketplace/ResourcesTransitionShell";
+import type { ReactNode } from "react";
+import { ResourcesLayoutShell } from "@/components/marketplace/ResourcesLayoutShell";
 
 export default function ResourcesLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  return (
-    <>
-      <Suspense fallback={null}>
-        <ResourcesNavigationFeedback />
-      </Suspense>
-      <Suspense fallback={<ResourcesTransitionFallback>{children}</ResourcesTransitionFallback>}>
-        <ResourcesTransitionShell>{children}</ResourcesTransitionShell>
-      </Suspense>
-    </>
-  );
+  return <ResourcesLayoutShell>{children}</ResourcesLayoutShell>;
 }

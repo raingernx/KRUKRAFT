@@ -1,9 +1,13 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import {
+  getAdminResourceEditPageData,
+  getAdminResourceEditTitle,
+} from "@/services/admin-operations.service";
 import { EditResourceForm } from "./EditResourceForm";
 import type { ResourceCardData } from "@/components/resources/ResourceCard";
+import { routes } from "@/lib/routes";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -13,34 +17,10 @@ type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
-  const resource = await prisma.resource.findUnique({
-    where: { id },
-    select: { title: true },
-  });
+  const resource = await getAdminResourceEditTitle(id);
   return {
     title: resource ? `Edit "${resource.title}" – Admin` : "Edit Resource – Admin",
   };
-}
-
-// ── Data ──────────────────────────────────────────────────────────────────────
-
-async function getEditData(id: string) {
-  const [resource, categories, tags] = await Promise.all([
-    prisma.resource.findUnique({
-      where: { id },
-      include: {
-        author: { select: { id: true, name: true, email: true } },
-        category: { select: { id: true, name: true } },
-        _count: { select: { purchases: true, reviews: true } },
-        tags: { select: { tagId: true } },
-        previews: { select: { imageUrl: true }, orderBy: { order: "asc" } },
-      },
-      // scalar fields (fileKey, fileName, fileSize, fileUrl …) are always selected
-    }),
-    prisma.category.findMany({ orderBy: { name: "asc" } }),
-    prisma.tag.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, slug: true } }),
-  ]);
-  return { resource, categories, tags };
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -51,17 +31,17 @@ export default async function EditResourcePage({ params }: Props) {
 
   // ── 1. Require login ───────────────────────────────────────────────────────
   if (!session?.user) {
-    redirect(`/auth/login?next=/admin/resources/${id}`);
+    redirect(routes.loginWithNext(routes.adminResource(id)));
   }
 
   // ── 2. Require ADMIN role ──────────────────────────────────────────────────
   const role = session.user.role;
 
   if (role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
-  const { resource, categories, tags } = await getEditData(id);
+  const { resource, categories, tags } = await getAdminResourceEditPageData(id);
 
   // ── 3. 404 if resource doesn't exist ──────────────────────────────────────
   if (!resource) {
@@ -173,4 +153,3 @@ export default async function EditResourcePage({ params }: Props) {
     </div>
   );
 }
-

@@ -4,8 +4,9 @@ import { Download, FileText, BookOpen } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { requireSession } from "@/lib/auth/require-session";
 import { formatDate, formatFileSize } from "@/lib/format";
+import { routes } from "@/lib/routes";
 import { getUserDownloadHistory } from "@/services/purchase.service";
-import { EmptyState } from "@/components/shared/EmptyState";
+import { EmptyState } from "@/design-system";
 
 export const metadata = {
   title: "Downloads",
@@ -19,7 +20,7 @@ function safeFormatFileSize(bytes: number | null): string {
 }
 
 export default async function DownloadsPage() {
-  const { userId } = await requireSession("/dashboard/downloads");
+  const { userId } = await requireSession(routes.downloads);
 
   const downloads = await getUserDownloadHistory(userId);
 
@@ -57,7 +58,7 @@ export default async function DownloadsPage() {
             description="Downloaded files will appear here after you open them from your library."
             action={
               <Link
-                href="/resources"
+                href={routes.marketplace}
                 className="inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-[13px] font-semibold text-white hover:bg-zinc-700"
               >
                 <BookOpen className="h-4 w-4" />
@@ -109,7 +110,7 @@ export default async function DownloadsPage() {
                       </div>
                       <div className="min-w-0">
                         <Link
-                          href={`/resources/${dl.resource.slug}`}
+                          href={routes.resource(dl.resource.slug)}
                           className="block truncate text-[13px] font-medium text-zinc-900 hover:text-blue-600"
                         >
                           {dl.resource.title}

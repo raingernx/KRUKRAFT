@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import { z } from "zod";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import {
   HERO_BADGE_BG_COLOR_VALUES,
   HERO_BADGE_TEXT_COLOR_VALUES,
@@ -104,23 +103,6 @@ function buildFieldErrors(error: z.ZodError) {
   return { flattened, fields };
 }
 
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return {
-      ok: false as const,
-      res: NextResponse.json({ error: "Unauthorized." }, { status: 401 }),
-    };
-  }
-  if (session.user.role !== "ADMIN") {
-    return {
-      ok: false as const,
-      res: NextResponse.json({ error: "Forbidden." }, { status: 403 }),
-    };
-  }
-  return { ok: true as const };
-}
-
 function handleError(error: unknown, label: string) {
   if (error instanceof HeroServiceError) {
     return NextResponse.json(error.payload, { status: error.status });
@@ -144,7 +126,7 @@ async function parseJson(req: Request) {
 }
 
 export async function GET() {
-  const auth = await requireAdmin();
+  const auth = await requireAdminApi();
   if (!auth.ok) {
     return auth.res;
   }
@@ -158,7 +140,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const auth = await requireAdmin();
+  const auth = await requireAdminApi();
   if (!auth.ok) {
     return auth.res;
   }
@@ -197,7 +179,7 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
-  const auth = await requireAdmin();
+  const auth = await requireAdminApi();
   if (!auth.ok) {
     return auth.res;
   }

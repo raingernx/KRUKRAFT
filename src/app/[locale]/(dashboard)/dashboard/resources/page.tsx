@@ -11,7 +11,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function DashboardResourcesCompatibilityPage() {
-  const { userId } = await requireSession("/dashboard/resources");
+  const { userId } = await requireSession(routes.dashboardResources);
 
   const access = await getCreatorAccessState(userId);
   redirect(canAccessCreatorWorkspace(access) ? routes.creatorResources : routes.creatorApply);

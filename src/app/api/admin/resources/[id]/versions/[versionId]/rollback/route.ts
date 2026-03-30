@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { after } from "next/server";
-import { getServerSession } from "next-auth";
 
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import {
   rollbackResourceVersion,
@@ -11,39 +10,18 @@ import {
 
 type Params = { params: Promise<{ id: string; versionId: string }> };
 
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    return { error: NextResponse.json({ error: "Unauthorized." }, { status: 401 }) };
-  }
-
-  if (session.user.role !== "ADMIN") {
-    return {
-      error: NextResponse.json(
-        { error: "Forbidden. Admin access required." },
-        { status: 403 },
-      ),
-    };
-  }
-
-  return { session };
-}
-
 // POST /api/admin/resources/:id/versions/:versionId/rollback
 export async function POST(_req: Request, { params }: Params) {
   try {
-    const admin = await requireAdmin();
-    if ("error" in admin) {
-      return admin.error;
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     const { id: resourceId, versionId } = await params;
 
     const rolledBack = await rollbackResourceVersion({
       resourceId,
       versionId,
-      adminUserId: admin.session.user.id,
+      adminUserId: auth.session.user.id,
     });
     after(() => {
       void warmTargetedPublicCaches({

@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { getAllCreatorApplications } from "@/services/creator.service";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { CreatorApplicationActions } from "@/components/admin/CreatorApplicationActions";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Creator Applications – Admin",
@@ -22,10 +23,10 @@ export default async function AdminCreatorsPage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/creators");
+    redirect(routes.loginWithNext(routes.adminCreators));
   }
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   const applications = await getAllCreatorApplications();

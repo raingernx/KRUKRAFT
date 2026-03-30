@@ -6,6 +6,7 @@ import { PageContainer, PageContent } from "@/design-system";
 import { BulkUploadClient } from "./BulkUploadClient";
 import Link from "next/link";
 import { Layers } from "lucide-react";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Bulk Upload – Admin",
@@ -17,14 +18,14 @@ export default async function BulkUploadPage() {
 
   // ── 1. Require login ─────────────────────────────────────────────────────
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/resources/bulk");
+    redirect(routes.loginWithNext(routes.adminBulkUpload));
   }
 
   // ── 2. Require ADMIN role ────────────────────────────────────────────────
   const role = session.user.role;
 
   if (role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   // ── Render ───────────────────────────────────────────────────────────────
@@ -52,7 +53,7 @@ export default async function BulkUploadPage() {
             {/* Nav links */}
             <div className="flex items-center gap-2">
               <Link
-                href="/admin/resources"
+                href={routes.adminResources}
                 className="rounded-xl border border-zinc-200 bg-white px-4 py-2
                            text-[13px] font-medium text-zinc-600 shadow-sm transition
                            hover:bg-zinc-50 hover:text-zinc-900"
@@ -60,7 +61,7 @@ export default async function BulkUploadPage() {
                 ← Resources
               </Link>
               <Link
-                href="/admin"
+                href={routes.admin}
                 className="rounded-xl border border-zinc-200 bg-white px-4 py-2
                            text-[13px] font-medium text-zinc-600 shadow-sm transition
                            hover:bg-zinc-50 hover:text-zinc-900"

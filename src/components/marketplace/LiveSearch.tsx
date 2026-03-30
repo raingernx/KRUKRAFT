@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { Search, FileText } from "lucide-react";
 import Image from "next/image";
 import { SearchInput } from "@/design-system";
+import { routes } from "@/lib/routes";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -136,7 +137,7 @@ export function LiveSearch({
         navigate(results[active].slug);
       } else if (query.trim()) {
         // Fall back to marketplace filter search
-        router.push(`/resources?search=${encodeURIComponent(query.trim())}`);
+        router.push(routes.marketplaceSearch(query.trim()));
         setOpen(false);
       }
     } else if (e.key === "Escape") {
@@ -147,7 +148,7 @@ export function LiveSearch({
   function navigate(slug: string) {
     setOpen(false);
     setQuery("");
-    router.push(`/resources/${slug}`);
+    router.push(routes.resource(slug));
   }
 
   function handleClear() {
@@ -236,7 +237,7 @@ export function LiveSearch({
           {/* "See all results" footer */}
           <button
             onClick={() => {
-              router.push(`/resources?search=${encodeURIComponent(query.trim())}`);
+              router.push(routes.marketplaceSearch(query.trim()));
               setOpen(false);
             }}
             className="flex w-full items-center justify-center gap-1.5 border-t border-border-subtle px-4 py-2.5 text-[12px] font-medium text-blue-600 transition hover:bg-blue-50"

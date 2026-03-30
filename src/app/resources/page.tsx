@@ -18,11 +18,11 @@ import {
   ResourcesContentFallback,
 } from "./ResourcesPageContent";
 import { HeroBannerSkeleton } from "@/components/marketplace/HeroBanner";
+import { ResourcesCatalogControls } from "@/components/marketplace/ResourcesCatalogControls";
 import {
-  ResourcesCatalogControls,
   ResourcesCatalogSearchSkeleton,
   ResourcesCatalogControlsSkeleton,
-} from "@/components/marketplace/ResourcesCatalogControls";
+} from "@/components/marketplace/ResourcesCatalogControlsSkeleton";
 import {
   trackRequestWork,
   traceServerStep,

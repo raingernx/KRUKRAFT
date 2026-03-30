@@ -1,25 +1,13 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-
-import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
+import { getAdminAuditApiData } from "@/services/admin-operations.service";
 
 const MAX_PAGE_SIZE = 50;
 
 export async function GET(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    if (session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { error: "Forbidden. Admin access required." },
-        { status: 403 },
-      );
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     const url = new URL(req.url);
     const search = url.searchParams;
@@ -34,51 +22,17 @@ export async function GET(req: Request) {
     const from = search.get("from");
     const to = search.get("to");
 
-    const where: any = {};
-
-    if (actionFilter) {
-      where.action = actionFilter;
-    }
-
-    if (adminIdFilter) {
-      where.adminId = adminIdFilter;
-    }
-
-    if (from) {
-      where.createdAt = { ...(where.createdAt ?? {}), gte: new Date(from) };
-    }
-
-    if (to) {
-      const end = new Date(to);
-      end.setHours(23, 59, 59, 999);
-      where.createdAt = { ...(where.createdAt ?? {}), lte: end };
-    }
-
-    const skip = (page - 1) * pageSize;
-
-    const [items, total] = await Promise.all([
-      prisma.auditLog.findMany({
-        where,
-        orderBy: { createdAt: "desc" },
-        skip,
-        take: pageSize,
-        include: {
-          admin: { select: { id: true, name: true, email: true } },
-        },
-      }),
-      prisma.auditLog.count({ where }),
-    ]);
-
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    const data = await getAdminAuditApiData({
+      page,
+      pageSize,
+      actionFilter,
+      adminIdFilter,
+      from,
+      to,
+    });
 
     return NextResponse.json({
-      data: {
-        items,
-        total,
-        page,
-        pageSize,
-        totalPages,
-      },
+      data,
     });
   } catch (err) {
     console.error("[ADMIN_AUDIT_GET]", err);
@@ -88,4 +42,3 @@ export async function GET(req: Request) {
     );
   }
 }
-

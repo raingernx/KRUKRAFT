@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 
-import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
+import { getAdminResourceVersionDownloadData } from "@/services/admin-operations.service";
 import { createReadStream, existsSync } from "fs";
 import { stat } from "fs/promises";
 import path from "path";
@@ -11,40 +10,14 @@ type Params = { params: Promise<{ id: string; versionId: string }> };
 
 const UPLOAD_DIR = path.join(process.cwd(), "private-uploads");
 
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    return { error: NextResponse.json({ error: "Unauthorized." }, { status: 401 }) };
-  }
-
-  if (session.user.role !== "ADMIN") {
-    return {
-      error: NextResponse.json(
-        { error: "Forbidden. Admin access required." },
-        { status: 403 },
-      ),
-    };
-  }
-
-  return { session };
-}
-
 // GET /api/admin/resources/:id/versions/:versionId/download
 export async function GET(_req: Request, { params }: Params) {
   try {
     const { id, versionId } = await params;
-    const admin = await requireAdmin();
-    if ("error" in admin) {
-      return admin.error;
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
-    const version = await prisma.resourceVersion.findFirst({
-      where: {
-        id: versionId,
-        resourceId: id,
-      },
-    });
+    const version = await getAdminResourceVersionDownloadData(id, versionId);
 
     if (!version) {
       return NextResponse.json(

@@ -7,6 +7,7 @@ import { FileText } from "lucide-react";
 import { beginResourcesNavigation } from "@/components/marketplace/resourcesNavigationState";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { formatPrice } from "@/lib/format";
+import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
@@ -359,7 +360,7 @@ function ResourceCardInner({
     }
 
     if (resource.slug) {
-      beginResourcesNavigation("detail", `/resources/${resource.slug}`);
+      beginResourcesNavigation("detail", routes.resource(resource.slug));
     }
     setIsNavigating(true);
   }
@@ -388,7 +389,7 @@ function ResourceCardInner({
   if (resource.slug) {
     return (
       <IntentPrefetchLink
-        href={`/resources/${resource.slug}`}
+        href={routes.resource(resource.slug)}
         className={cn(
           "group block h-full w-full cursor-pointer rounded-xl",
           isNavigating && "cursor-progress",

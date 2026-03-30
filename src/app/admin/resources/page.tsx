@@ -7,13 +7,14 @@ import { authOptions } from "@/lib/auth";
 import { Button } from "@/design-system";
 import { ResourceTable, type AdminResourceRow } from "@/components/admin/ResourceTable";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-import { EmptyState } from "@/components/shared/EmptyState";
+import { EmptyState } from "@/design-system";
 import { AdminResourcesFilters } from "./AdminResourcesFilters";
 import { getAdminResourcesPageData } from "@/services/admin-operations.service";
 import {
   traceServerStep,
   withRequestPerformanceTrace,
 } from "@/lib/performance/observability";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Resources – Admin",
@@ -78,11 +79,11 @@ export default async function AdminResourcesPage({
       );
 
       if (!session?.user) {
-        redirect("/auth/login?next=/admin/resources");
+        redirect(routes.loginWithNext(routes.adminResources));
       }
 
       if (session.user.role !== "ADMIN") {
-        redirect("/dashboard");
+        redirect(routes.dashboard);
       }
 
       const {
@@ -125,7 +126,7 @@ export default async function AdminResourcesPage({
                   variant="outline"
                   className="inline-flex items-center gap-2"
                 >
-                  <Link href="/admin/resources/trash">
+                  <Link href={routes.adminTrash}>
                     <BookOpen className="h-4 w-4 text-text-secondary" />
                     <span>View Trash</span>
                   </Link>
@@ -136,13 +137,13 @@ export default async function AdminResourcesPage({
                   variant="outline"
                   className="inline-flex items-center gap-2"
                 >
-                  <Link href="/admin/resources/bulk">
+                  <Link href={routes.adminBulkUpload}>
                     <Upload className="h-4 w-4 text-text-secondary" />
                     <span>Bulk Upload</span>
                   </Link>
                 </Button>
                 <Button asChild size="sm" className="inline-flex items-center gap-2">
-                  <Link href="/admin/resources/new">
+                  <Link href={routes.adminNewResource}>
                     <Plus className="h-4 w-4" />
                     <span>Create Resource</span>
                   </Link>
@@ -192,7 +193,7 @@ export default async function AdminResourcesPage({
                       href={
                         currentPage <= 1
                           ? "#"
-                          : `/admin/resources${buildQueryString({
+                          : `${routes.adminResources}${buildQueryString({
                               q,
                               status: statusFilter,
                               categoryId: categoryIdFilter,
@@ -213,7 +214,7 @@ export default async function AdminResourcesPage({
                       href={
                         currentPage >= totalPages
                           ? "#"
-                          : `/admin/resources${buildQueryString({
+                          : `${routes.adminResources}${buildQueryString({
                               q,
                               status: statusFilter,
                               categoryId: categoryIdFilter,

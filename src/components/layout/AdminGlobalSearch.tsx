@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 
 import { Input } from "@/design-system";
+import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 type SearchType = "resource" | "user" | "order";
@@ -108,13 +109,13 @@ export function AdminGlobalSearch() {
   function handleSelect(item: SearchItem) {
     switch (item.type) {
       case "resource":
-        router.push(`/admin/resources/${encodeURIComponent(item.id)}`);
+        router.push(routes.adminResource(encodeURIComponent(item.id)));
         break;
       case "user":
-        router.push(`/admin/users?q=${encodeURIComponent(item.label)}`);
+        router.push(routes.adminUsersSearch(item.label));
         break;
       case "order":
-        router.push(`/admin/orders?orderId=${encodeURIComponent(item.id)}`);
+        router.push(routes.adminOrdersOrder(item.id));
         break;
       default:
         break;

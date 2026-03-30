@@ -7,6 +7,7 @@ import { signIn } from "next-auth/react";
 import { Button } from "@/design-system";
 import { Logo } from "@/components/brand/Logo";
 import { AlertCircle } from "lucide-react";
+import { routes } from "@/lib/routes";
 
 // Google icon — inline so we don't need an extra dep
 function GoogleIcon() {
@@ -21,14 +22,14 @@ function GoogleIcon() {
 }
 
 function sanitizeNext(next: string | null): string {
-  if (!next) return "/dashboard";
-  if (!next.startsWith("/")) return "/dashboard";
-  if (next.startsWith("//")) return "/dashboard";
+  if (!next) return routes.dashboard;
+  if (!next.startsWith("/")) return routes.dashboard;
+  if (next.startsWith("//")) return routes.dashboard;
   return next;
 }
 
 function getGoogleCallbackUrl(next: string) {
-  return next === "/dashboard" ? "/dashboard/library" : next;
+  return next === routes.dashboard ? routes.library : next;
 }
 
 function LoginForm() {
@@ -160,7 +161,7 @@ function LoginForm() {
 
         <p className="mt-5 text-center text-[13px] text-zinc-500">
           Don&apos;t have an account?{" "}
-          <Link href="/auth/register" className="font-semibold text-blue-600 hover:text-blue-800 transition-colors">
+          <Link href={routes.register} className="font-semibold text-blue-600 hover:text-blue-800 transition-colors">
             Create one free
           </Link>
         </p>

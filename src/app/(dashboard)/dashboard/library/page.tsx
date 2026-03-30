@@ -4,6 +4,7 @@ import { LastPurchaseRecovery } from "@/components/library/LastPurchaseRecovery"
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { formatDate } from "@/lib/format";
+import { routes } from "@/lib/routes";
 import { getUserLibraryItems } from "@/services/purchase.service";
 import {
   traceServerStep,
@@ -39,7 +40,7 @@ export default async function DashboardLibraryPage({
     async () => {
   const { userId } = await traceServerStep(
     "dashboard_library.requireSession",
-    () => requireSession("/dashboard/library"),
+    () => requireSession(routes.library),
   );
 
   const resources = await traceServerStep(
@@ -98,7 +99,7 @@ export default async function DashboardLibraryPage({
                   {lastOpened.authorName ?? "Unknown"}
                 </p>
                 <Link
-                  href={`/resources/${lastOpened.slug}`}
+                  href={routes.resource(lastOpened.slug)}
                   className="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-surface-200 bg-surface-50 px-4 py-2.5 text-small font-medium text-zinc-700 transition hover:bg-white"
                 >
                   <BookOpen className="h-4 w-4" />
@@ -147,7 +148,7 @@ export default async function DashboardLibraryPage({
                 building your collection.
               </p>
               <Link
-                href="/resources"
+                href={routes.marketplace}
                 className="mt-5 inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-small font-semibold text-white hover:bg-zinc-700"
               >
                 <BookOpen className="h-4 w-4" />

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Download, ExternalLink, Loader2 } from "lucide-react";
+import { routes } from "@/lib/routes";
 
 /**
  * Minimal shape of the most recent completed library purchase.
@@ -60,7 +61,7 @@ export function LastPurchaseRecovery({
             doesn&apos;t show up shortly.
           </p>
           <a
-            href="/dashboard/library?payment=success"
+            href={routes.libraryPaymentSuccess()}
             className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-amber-100 px-3 py-1.5 text-[12px] font-semibold text-amber-800 transition hover:bg-amber-200"
           >
             Refresh
@@ -113,7 +114,7 @@ export function LastPurchaseRecovery({
 
           {/* Secondary: navigate to the resource page */}
           <Link
-            href={`/resources/${item.slug}`}
+            href={routes.resource(item.slug)}
             className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-[13px] font-medium text-zinc-700 transition hover:bg-zinc-50"
           >
             <ExternalLink className="h-4 w-4" />

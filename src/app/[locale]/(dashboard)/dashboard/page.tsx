@@ -23,6 +23,7 @@ import {
   getRecommendedResources,
   getRecommendedResourcesByLevels,
 } from "@/services/resources/resource.service";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Overview",
@@ -90,7 +91,7 @@ function formatLevelLabel(level?: "BEGINNER" | "INTERMEDIATE" | "ADVANCED") {
 }
 
 export default async function DashboardPage() {
-  const { userId, session } = await requireSession("/dashboard");
+  const { userId, session } = await requireSession(routes.dashboard);
 
   const [purchases, totalDownloads] = await Promise.all([
     getUserPurchases(userId),
@@ -253,7 +254,7 @@ export default async function DashboardPage() {
                 </h2>
               </div>
               <Link
-                href="/dashboard/library"
+                href={routes.library}
                 className="flex items-center gap-1 text-[12px] font-medium text-blue-600 hover:text-blue-700"
               >
                 View all
@@ -273,7 +274,7 @@ export default async function DashboardPage() {
                   Browse the marketplace to find your first resource
                 </p>
                 <Link
-                  href="/resources"
+                  href={routes.marketplace}
                   className="mt-4 rounded-xl bg-neutral-900 px-4 py-2 text-[12px] font-semibold text-white hover:bg-neutral-800"
                 >
                   Browse marketplace
@@ -284,7 +285,7 @@ export default async function DashboardPage() {
                 {recentPurchases.map((purchase) => (
                   <li key={purchase.id}>
                     <Link
-                      href={`/resources/${purchase.resource.slug}`}
+                      href={routes.resource(purchase.resource.slug)}
                       className="flex items-center gap-4 px-6 py-4 transition hover:bg-neutral-50/60"
                     >
                       <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-violet-50">
@@ -359,7 +360,7 @@ export default async function DashboardPage() {
                   </div>
                 </div>
                 <Link
-                  href={`/resources/${lastOpened.resource.slug}`}
+                  href={routes.resource(lastOpened.resource.slug)}
                   className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-2.5 text-[13px] font-semibold text-neutral-700 transition hover:bg-neutral-100"
                 >
                   <BookOpen className="h-4 w-4" />
@@ -399,7 +400,7 @@ export default async function DashboardPage() {
                   </p>
                 )}
                 <Link
-                  href={`/resources/${nextBestAction.slug}`}
+                  href={routes.resource(nextBestAction.slug)}
                   className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-neutral-900 px-4 py-2.5 text-[13px] font-semibold text-white transition hover:bg-neutral-800"
                 >
                   Explore this next
@@ -416,19 +417,19 @@ export default async function DashboardPage() {
               <div className="mt-3 space-y-1">
                 {[
                   {
-                    href: "/dashboard/library",
+                    href: routes.library,
                     label: "My Library",
                     icon: BookOpen,
                     count: purchases.length,
                   },
                   {
-                    href: "/dashboard/downloads",
+                    href: routes.downloads,
                     label: "Downloads",
                     icon: Download,
                     count: totalDownloads,
                   },
                   {
-                    href: "/resources",
+                    href: routes.marketplace,
                     label: "Marketplace",
                     icon: TrendingUp,
                     count: null,
@@ -475,7 +476,7 @@ export default async function DashboardPage() {
                 </p>
               </div>
               <Link
-                href="/resources"
+                href={routes.marketplace}
                 className="text-[12px] font-medium text-blue-600 hover:text-blue-700"
               >
                 See all →
@@ -485,7 +486,7 @@ export default async function DashboardPage() {
               {recommended.map((resource) => (
                 <Link
                   key={resource.id}
-                  href={`/resources/${resource.slug}`}
+                  href={routes.resource(resource.slug)}
                   className="group flex w-[200px] flex-shrink-0 flex-col rounded-2xl border border-neutral-100 bg-white p-4 shadow-card transition hover:border-neutral-200 hover:shadow-card-md"
                 >
                   <div className="relative flex h-28 w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-zinc-50 to-zinc-100">
@@ -539,7 +540,7 @@ export default async function DashboardPage() {
                 </p>
               </div>
               <Link
-                href="/resources"
+                href={routes.marketplace}
                 className="text-[12px] font-medium text-blue-600 hover:text-blue-700"
               >
                 Browse more →
@@ -549,7 +550,7 @@ export default async function DashboardPage() {
               {newInCategories.map((resource) => (
                 <Link
                   key={resource.id}
-                  href={`/resources/${resource.slug}`}
+                  href={routes.resource(resource.slug)}
                   className="group rounded-2xl border border-neutral-100 bg-white p-4 shadow-card transition hover:border-neutral-200 hover:shadow-card-md"
                 >
                   <div className="relative flex h-28 w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-zinc-50 to-zinc-100">
@@ -605,7 +606,7 @@ export default async function DashboardPage() {
                 </p>
               </div>
               <Link
-                href="/resources"
+                href={routes.marketplace}
                 className="text-[12px] font-medium text-blue-600 hover:text-blue-700"
               >
                 See more →
@@ -615,7 +616,7 @@ export default async function DashboardPage() {
               {levelRecommendations.map((resource) => (
                 <Link
                   key={resource.id}
-                  href={`/resources/${resource.slug}`}
+                  href={routes.resource(resource.slug)}
                   className="group flex w-[220px] flex-shrink-0 flex-col rounded-2xl border border-neutral-100 bg-white p-4 shadow-card transition hover:border-neutral-200 hover:shadow-card-md"
                 >
                   <div className="relative flex h-28 w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-zinc-50 to-zinc-100">

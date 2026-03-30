@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { Card } from "@/design-system";
 import { Input } from "@/design-system";
 import { Button } from "@/design-system";
 import { formatPrice, formatNumber, formatDate } from "@/lib/format";
+import { routes } from "@/lib/routes";
+import { getAdminOrdersPageData } from "@/services/admin-operations.service";
 
 export const metadata = {
   title: "Orders – Admin",
@@ -44,11 +45,11 @@ export default async function AdminOrdersPage({
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/orders");
+    redirect(routes.loginWithNext(routes.adminOrders));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   const resolvedSearchParams = searchParams ? await searchParams : {};
@@ -56,58 +57,16 @@ export default async function AdminOrdersPage({
   const from = resolvedSearchParams.from ? new Date(resolvedSearchParams.from) : null;
   const to = resolvedSearchParams.to ? new Date(resolvedSearchParams.to) : null;
 
-  const where: any = {};
-
-  if (statusFilter && ["COMPLETED", "REFUNDED", "FAILED"].includes(statusFilter)) {
-    where.status = statusFilter;
-  }
-
-  if (from || to) {
-    where.createdAt = {};
-    if (from && !isNaN(from.getTime())) {
-      where.createdAt.gte = from;
-    }
-    if (to && !isNaN(to.getTime())) {
-      where.createdAt.lte = to;
-    }
-  }
-
-  const [orders, revenueAgg, ordersTodayAgg] = await Promise.all([
-    prisma.purchase.findMany({
-      take: 50,
-      orderBy: { createdAt: "desc" },
-      where,
-      include: {
-        user: { select: { name: true, email: true } },
-        resource: { select: { title: true } },
-      },
-    }),
-    prisma.purchase.aggregate({
-      _sum: { amount: true },
-      where: { status: "COMPLETED" },
-    }),
-    (() => {
-      const startOfToday = new Date();
-      startOfToday.setHours(0, 0, 0, 0);
-      return prisma.purchase.aggregate({
-        _count: true,
-        where: {
-          status: "COMPLETED",
-          createdAt: { gte: startOfToday },
-        },
-      });
-    })(),
-  ]);
-
-  const totalRevenue = revenueAgg._sum.amount ?? 0;
-  const ordersToday = ordersTodayAgg._count ?? 0;
-
-  const completedOrders = orders.filter((o) => o.status === "COMPLETED");
-  const averageOrderValue =
-    completedOrders.length > 0
-      ? completedOrders.reduce((sum, o) => sum + o.amount, 0) /
-        completedOrders.length
-      : 0;
+  const {
+    orders,
+    totalRevenue,
+    ordersToday,
+    averageOrderValue,
+  } = await getAdminOrdersPageData({
+    statusFilter,
+    from,
+    to,
+  });
 
   return (
     <div className="min-w-0 space-y-6">

@@ -21,6 +21,7 @@ import {
   traceServerStep,
   withRequestPerformanceTrace,
 } from "@/lib/performance/observability";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Users – Admin",
@@ -47,11 +48,11 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
       );
 
       if (!session?.user) {
-        redirect("/auth/login?next=/admin/users");
+        redirect(routes.loginWithNext(routes.adminUsers));
       }
 
       if (session.user.role !== "ADMIN") {
-        redirect("/dashboard");
+        redirect(routes.dashboard);
       }
 
       const users = await traceServerStep(

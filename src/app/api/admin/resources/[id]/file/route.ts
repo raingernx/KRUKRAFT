@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import { deleteResourceRedisKeys, getResourceCacheTag } from "@/lib/cache";
-import { prisma } from "@/lib/prisma";
+import { clearAdminResourceFile } from "@/services/admin-operations.service";
 
 // DELETE /api/admin/resources/:id/file
 export async function DELETE(
@@ -13,31 +12,11 @@ export async function DELETE(
   const { id } = await params;
 
   try {
-    // Require authenticated admin
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    if (session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { error: "Forbidden. Admin access required." },
-        { status: 403 },
-      );
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     // Clear private upload fields for the resource (but leave external fileUrl untouched)
-    const updated = await prisma.resource.update({
-      where: { id },
-      data: {
-        fileKey: null,
-        fileName: null,
-        fileSize: null,
-        mimeType: null,
-      },
-      select: { slug: true },
-    });
+    const updated = await clearAdminResourceFile(id);
 
     revalidateTag(getResourceCacheTag(updated.slug), "max");
     await deleteResourceRedisKeys(updated.slug);

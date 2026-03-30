@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { HeroForm, type HeroFormValues } from "@/components/admin/heroes/HeroForm";
 import { HERO_STYLE_DEFAULTS } from "@/lib/heroes/hero-style";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Create Hero – Admin",
@@ -58,11 +59,11 @@ export default async function NewHeroPage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/heroes/new");
+    redirect(routes.loginWithNext(routes.adminNewHero));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   return (

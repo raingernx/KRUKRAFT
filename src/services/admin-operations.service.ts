@@ -1,7 +1,41 @@
 import { Prisma, PurchaseStatus, ResourceStatus } from "@prisma/client";
-import { findCategoriesOrderedByName, findAdminResourcesPage, countMarketplaceResources } from "@/repositories/resources/resource.repository";
-import { findAdminUsers } from "@/repositories/users/user.repository";
+import {
+  clearAdminResourceFileById,
+  countMarketplaceResources,
+  createTagRecord,
+  deleteResourceTagJoins,
+  deleteTagRecord,
+  findAdminResourceEditById,
+  findAdminResourceFormTags,
+  findAdminResourceTitleById,
+  findAdminResourceVersionPageResource,
+  findAdminResourceVersionDownload,
+  findAdminResourcesPage,
+  findAdminTagsWithUsage,
+  findCategoriesOrderedByName,
+  findTagById,
+  findResourceVersionsByResourceId,
+  findTagByNameOrSlug,
+  findResourceSlugById,
+  findTrashedAdminResources,
+  updateTagRecord,
+} from "@/repositories/resources/resource.repository";
+import {
+  countAdminAuditLogs,
+  findAdminAuditLogs,
+  findDistinctAdminAuditActions,
+  findRecentAdminActivityLogs,
+} from "@/repositories/audit/audit.repository";
+import {
+  findAdminUserLookup,
+  findAdminsWithAuditLogs,
+  findAdminUsers,
+  findUserSettingsProfile,
+} from "@/repositories/users/user.repository";
 import { findAdminOrders, findAdminResourcePurchaseSummaries, getAdminOrdersTodayCount, getAdminTotalRevenue } from "@/repositories/purchases/purchase.repository";
+import { getUserPurchaseHistory } from "@/services/purchase.service";
+import { getUserMembershipOverview } from "@/services/subscriptions/subscription.service";
+import { toSlug } from "@/lib/slug";
 
 type AdminResourceRow = {
   id: string;
@@ -125,6 +159,16 @@ export async function getAdminUsersPageData(input: {
   });
 }
 
+export async function getAdminUserLookupData(input: {
+  query: string;
+  take?: number;
+}) {
+  return findAdminUserLookup({
+    query: input.query,
+    take: input.take ?? 20,
+  });
+}
+
 export async function getAdminOrdersPageData(input: {
   statusFilter: string;
   from: Date | null;
@@ -173,4 +217,308 @@ export async function getAdminOrdersPageData(input: {
     ordersToday,
     averageOrderValue,
   };
+}
+
+export async function getAdminResourceCreatePageData() {
+  const [categories, tags] = await Promise.all([
+    findCategoriesOrderedByName(),
+    findAdminResourceFormTags(),
+  ]);
+
+  return { categories, tags };
+}
+
+export async function getAdminResourceEditTitle(resourceId: string) {
+  return findAdminResourceTitleById(resourceId);
+}
+
+export async function getAdminResourceEditPageData(resourceId: string) {
+  const [resource, categories, tags] = await Promise.all([
+    findAdminResourceEditById(resourceId),
+    findCategoriesOrderedByName(),
+    findAdminResourceFormTags(),
+  ]);
+
+  return { resource, categories, tags };
+}
+
+export async function getAdminResourceVersionsPageData(resourceId: string) {
+  const [resource, versions] = await Promise.all([
+    findAdminResourceVersionPageResource(resourceId),
+    findResourceVersionsByResourceId(resourceId),
+  ]);
+
+  return { resource, versions };
+}
+
+export async function getAdminResourcesTrashPageData(input: { take: number }) {
+  const trashedResources = await findTrashedAdminResources({ take: input.take });
+
+  return trashedResources.map((resource) => ({
+    id: resource.id,
+    title: resource.title,
+    slug: resource.slug,
+    deletedAt: resource.deletedAt!,
+    author: resource.author,
+  }));
+}
+
+export async function getAdminTagsPageData() {
+  return findAdminTagsWithUsage();
+}
+
+export async function getAdminAuditPageData(input: {
+  page: number;
+  actionFilter: string;
+  adminIdFilter: string;
+  from: string;
+  to: string;
+  pageSize: number;
+}) {
+  const where: Prisma.AuditLogWhereInput = {};
+  const createdAtFilter: Prisma.DateTimeFilter = {};
+
+  if (input.actionFilter) {
+    where.action = input.actionFilter;
+  }
+
+  if (input.adminIdFilter) {
+    where.adminId = input.adminIdFilter;
+  }
+
+  if (input.from) {
+    createdAtFilter.gte = new Date(input.from);
+  }
+
+  if (input.to) {
+    const end = new Date(input.to);
+    end.setHours(23, 59, 59, 999);
+    createdAtFilter.lte = end;
+  }
+
+  if (Object.keys(createdAtFilter).length > 0) {
+    where.createdAt = createdAtFilter;
+  }
+
+  const skip = (input.page - 1) * input.pageSize;
+
+  const [logs, total, actions, admins] = await Promise.all([
+    findAdminAuditLogs({
+      where,
+      skip,
+      take: input.pageSize,
+    }),
+    countAdminAuditLogs(where),
+    findDistinctAdminAuditActions(),
+    findAdminsWithAuditLogs(),
+  ]);
+
+  return {
+    items: logs.map((log) => ({
+      id: log.id,
+      admin: {
+        id: log.admin.id,
+        name: log.admin.name ?? "Unknown",
+        email: log.admin.email ?? "",
+      },
+      action: log.action,
+      entityType: log.entityType,
+      entityId: log.entityId ?? "",
+      createdAt: log.createdAt.toISOString(),
+    })),
+    actionOptions: actions.map((row) => row.action),
+    adminOptions: admins,
+    totalPages: Math.max(1, Math.ceil(total / input.pageSize)),
+  };
+}
+
+export async function getAdminAuditApiData(input: {
+  page: number;
+  pageSize: number;
+  actionFilter?: string;
+  adminIdFilter?: string;
+  from?: string | null;
+  to?: string | null;
+}) {
+  const where: Prisma.AuditLogWhereInput = {};
+  const createdAtFilter: Prisma.DateTimeFilter = {};
+
+  if (input.actionFilter) {
+    where.action = input.actionFilter;
+  }
+
+  if (input.adminIdFilter) {
+    where.adminId = input.adminIdFilter;
+  }
+
+  if (input.from) {
+    createdAtFilter.gte = new Date(input.from);
+  }
+
+  if (input.to) {
+    const end = new Date(input.to);
+    end.setHours(23, 59, 59, 999);
+    createdAtFilter.lte = end;
+  }
+
+  if (Object.keys(createdAtFilter).length > 0) {
+    where.createdAt = createdAtFilter;
+  }
+
+  const skip = (input.page - 1) * input.pageSize;
+  const [items, total] = await Promise.all([
+    findAdminAuditLogs({
+      where,
+      skip,
+      take: input.pageSize,
+    }),
+    countAdminAuditLogs(where),
+  ]);
+
+  return {
+    items,
+    total,
+    page: input.page,
+    pageSize: input.pageSize,
+    totalPages: Math.max(1, Math.ceil(total / input.pageSize)),
+  };
+}
+
+export async function getAdminActivityFeedData(limit = 50) {
+  return findRecentAdminActivityLogs(limit);
+}
+
+export async function createAdminTag(name: string) {
+  const trimmed = name.trim();
+  if (!trimmed) {
+    return { error: "Tag name is required.", status: 400 as const };
+  }
+
+  const slug = toSlug(trimmed);
+  if (!slug) {
+    return {
+      error: "Tag name must contain at least one letter or number.",
+      status: 400 as const,
+    };
+  }
+
+  const existing = await findTagByNameOrSlug(trimmed, slug);
+  if (existing) {
+    return {
+      error: `A tag named "${existing.name}" already exists.`,
+      status: 409 as const,
+    };
+  }
+
+  const tag = await createTagRecord({ name: trimmed, slug });
+  return { tag };
+}
+
+export async function updateAdminTag(input: { id: string; name: string }) {
+  const existingTag = await findTagById(input.id);
+  if (!existingTag) {
+    return { error: "Tag not found.", status: 404 as const };
+  }
+
+  const trimmed = input.name.trim();
+  if (!trimmed) {
+    return { error: "Tag name is required.", status: 400 as const };
+  }
+
+  const slug = toSlug(trimmed);
+  if (!slug) {
+    return {
+      error: "Tag name must contain at least one letter or number.",
+      status: 400 as const,
+    };
+  }
+
+  const existing = await findTagByNameOrSlug(trimmed, slug, input.id);
+  if (existing) {
+    return {
+      error: `A tag named "${existing.name}" already exists.`,
+      status: 409 as const,
+    };
+  }
+
+  const tag = await updateTagRecord({
+    id: input.id,
+    name: trimmed,
+    slug,
+  });
+
+  return { tag };
+}
+
+export async function deleteAdminTag(tagId: string) {
+  const tag = await findTagById(tagId);
+  if (!tag) {
+    return { error: "Tag not found.", status: 404 as const };
+  }
+
+  await deleteResourceTagJoins(tagId);
+  await deleteTagRecord(tagId);
+  return { tag };
+}
+
+export async function getDashboardSettingsPageData(userId: string) {
+  const [user, preferences] = await Promise.all([
+    findUserSettingsProfile(userId),
+    import("@/lib/preferences").then(({ getUserPreferences }) =>
+      getUserPreferences(userId),
+    ),
+  ]);
+
+  return { user, preferences };
+}
+
+export async function getDashboardSubscriptionPageData(userId: string) {
+  return getUserMembershipOverview(userId);
+}
+
+export async function getDashboardPurchaseHistoryPageData(userId: string) {
+  return getUserPurchaseHistory(userId);
+}
+
+export async function getPublicResourceSlugRedirectTarget(resourceId: string) {
+  return findResourceSlugById(resourceId);
+}
+
+export async function getAdminResourceVersionsApiData(resourceId: string) {
+  const [resource, versions] = await Promise.all([
+    findAdminResourceVersionPageResource(resourceId),
+    findResourceVersionsByResourceId(resourceId),
+  ]);
+
+  if (!resource) {
+    return null;
+  }
+
+  return versions.map((version) => ({
+    id: version.id,
+    version: version.version,
+    fileName: version.fileName,
+    fileSize: version.fileSize,
+    mimeType: version.mimeType,
+    changelog: version.changelog,
+    createdAt: version.createdAt,
+    createdBy: version.createdBy
+      ? {
+          id: version.createdBy.id,
+          name: version.createdBy.name,
+          email: version.createdBy.email,
+        }
+      : null,
+  }));
+}
+
+export async function clearAdminResourceFile(resourceId: string) {
+  return clearAdminResourceFileById(resourceId);
+}
+
+export async function getAdminResourceVersionDownloadData(
+  resourceId: string,
+  versionId: string,
+) {
+  return findAdminResourceVersionDownload(resourceId, versionId);
 }

@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/components/layout/container";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Privacy Policy",
@@ -59,7 +60,7 @@ export default function PrivacyPage() {
                 We use cookies and similar technologies to keep you signed in and to understand
                 how you use our platform. See our{" "}
                 <a
-                  href="/cookies"
+                  href={routes.cookies}
                   className="text-blue-600 underline hover:text-blue-700"
                 >
                   Cookie Policy

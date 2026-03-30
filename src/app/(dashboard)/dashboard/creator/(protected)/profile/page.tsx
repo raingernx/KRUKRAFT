@@ -14,7 +14,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function CreatorProfilePage() {
-  const { userId } = await requireSession("/dashboard/creator/profile");
+  const { userId } = await requireSession(routes.creatorProfile);
 
   const profile = await getCreatorProfile(userId);
   if (!profile) {

@@ -12,7 +12,7 @@ import {
   recordDownloadAnalytics,
 } from "@/repositories/purchases/purchase.repository";
 import { findDownloadableResourceById } from "@/repositories/resources/resource.repository";
-import { getCompletedPurchase } from "@/services/purchase.service";
+import { getCompletedPurchaseAccess } from "@/services/purchase.service";
 
 const ALLOWED_DOWNLOAD_HOSTS = [
   "cdn.studyplatform.com",
@@ -63,32 +63,20 @@ export async function handleResourceDownload(
       );
     }
 
-    // Verify a COMPLETED purchase exists for all resources — free and paid.
-    //
-    // Free resources: users must add the resource to their library first
-    // (POST /api/library/add), which creates a COMPLETED purchase with
-    // paymentProvider = "FREE".  This ensures:
-    //   - the resource appears in the user's library
-    //   - download analytics are attributed to a purchase
-    //   - UI and API agree on what "owned" means
-    //
-    // Paid resources: a COMPLETED purchase is created by the Stripe/Xendit
-    // webhook after payment is confirmed.
-    //
-    // In both cases the rule is identical: status = COMPLETED.
-    const purchase = await getCompletedPurchase(userId, resourceId);
+    const access = await getCompletedPurchaseAccess({
+      userId,
+      resourceId,
+      isFree: resource.isFree,
+    });
 
-    if (!purchase) {
-      const message = resource.isFree
-        ? "Please add this resource to your library before downloading."
-        : "Forbidden. You have not purchased this resource.";
-      return NextResponse.json({ error: message }, { status: 403 });
+    if (!access.allowed) {
+      return NextResponse.json({ error: access.errorMessage }, { status: 403 });
     }
 
     // FIRST_PAID_DOWNLOAD fires only for paid resources.
     // For free resources completedPurchaseId stays null — the "first claim"
     // analytics event is recorded by the library/add route, not here.
-    const completedPurchaseId = resource.isFree ? null : purchase.id;
+    const completedPurchaseId = resource.isFree ? null : access.purchase.id;
 
     if (!resource.fileKey && !resource.fileUrl) {
       return NextResponse.json(

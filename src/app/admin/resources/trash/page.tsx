@@ -4,9 +4,10 @@ import { getServerSession } from "next-auth";
 import { ArrowLeft } from "lucide-react";
 
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { Button } from "@/design-system";
 import { AdminResourcesTrashTable } from "@/components/admin/AdminResourcesTrashTable";
+import { getAdminResourcesTrashPageData } from "@/services/admin-operations.service";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Trash – Admin",
@@ -19,29 +20,14 @@ export default async function AdminResourcesTrashPage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/resources/trash");
+    redirect(routes.loginWithNext(routes.adminTrash));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
-  const trashedResources = await prisma.resource.findMany({
-    where: { deletedAt: { not: null } },
-    orderBy: { deletedAt: "desc" },
-    take: PAGE_SIZE,
-    include: {
-      author: { select: { name: true, email: true } },
-    },
-  });
-
-  const rows = trashedResources.map((r) => ({
-    id: r.id,
-    title: r.title,
-    slug: r.slug,
-    deletedAt: r.deletedAt!,
-    author: r.author,
-  }));
+  const rows = await getAdminResourcesTrashPageData({ take: PAGE_SIZE });
 
   return (
     <>
@@ -62,7 +48,7 @@ export default async function AdminResourcesTrashPage() {
           variant="outline"
           className="inline-flex items-center gap-2"
         >
-          <Link href="/admin/resources">
+          <Link href={routes.adminResources}>
             <ArrowLeft className="h-4 w-4 text-text-secondary" />
             <span>Back to Resources</span>
           </Link>

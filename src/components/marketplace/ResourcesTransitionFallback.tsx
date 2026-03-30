@@ -1,19 +1,19 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { ResourcesRouteSkeleton } from "@/components/skeletons/ResourcesRouteSkeleton";
 import { ResourceDetailLoadingShell } from "@/components/resources/ResourceDetailLoadingShell";
 import { useResourcesNavigationState } from "@/components/marketplace/resourcesNavigationState";
+import { routes } from "@/lib/routes";
 
-export function ResourcesTransitionFallback({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export function ResourcesTransitionFallback() {
+  const pathname = usePathname();
   const navigationState = useResourcesNavigationState();
+  const isDetailPath = pathname.startsWith(`${routes.marketplace}/`);
 
-  if (navigationState.mode === "detail") {
+  if (navigationState.mode === "detail" || isDetailPath) {
     return <ResourceDetailLoadingShell />;
   }
 
-  return <>{children}</>;
+  return <ResourcesRouteSkeleton />;
 }

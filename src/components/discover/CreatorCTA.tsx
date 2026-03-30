@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { Button } from "@/design-system";
+import { routes } from "@/lib/routes";
 import { getPlatform } from "@/services/platform.service";
 
 export async function CreatorCTA() {
@@ -38,10 +39,10 @@ export async function CreatorCTA() {
           </ul>
           <div className="flex flex-wrap gap-3">
             <Button asChild size="lg" className="bg-brand-600 text-white hover:bg-brand-700">
-              <Link href="/membership">Start selling</Link>
+              <Link href={routes.membership}>Start selling</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link href="/membership">Learn more</Link>
+              <Link href={routes.membership}>Learn more</Link>
             </Button>
           </div>
           <div className="flex flex-wrap gap-2 pt-1">

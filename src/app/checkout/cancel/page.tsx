@@ -2,6 +2,7 @@ import Link from "next/link";
 import { XCircle, BookOpen, ArrowLeft, RotateCcw } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/components/layout/container";
+import { routes } from "@/lib/routes";
 
 /**
  * /checkout/cancel
@@ -57,7 +58,7 @@ export default async function CheckoutCancelPage({ searchParams }: Props) {
                 {slug ? (
                   <>
                     <Link
-                      href={`/resources/${slug}`}
+                      href={routes.resource(slug)}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-zinc-700"
                     >
                       <RotateCcw className="h-4 w-4" />
@@ -67,7 +68,7 @@ export default async function CheckoutCancelPage({ searchParams }: Props) {
                       Takes you back to the same resource — pick up where you left off
                     </p>
                     <Link
-                      href="/resources"
+                      href={routes.marketplace}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-surface-200 bg-white px-5 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-surface-50"
                     >
                       <BookOpen className="h-4 w-4" />
@@ -77,7 +78,7 @@ export default async function CheckoutCancelPage({ searchParams }: Props) {
                 ) : (
                   <>
                     <Link
-                      href="/resources"
+                      href={routes.marketplace}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-zinc-700"
                     >
                       <ArrowLeft className="h-4 w-4" />

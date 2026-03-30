@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { stripe } from "@/lib/stripe";
-import { getUserSubscription } from "@/services/subscriptions/subscription.service";
+import {
+  cancelUserSubscriptionAtPeriodEnd,
+  getUserSubscription,
+} from "@/services/subscriptions/subscription.service";
 
 // GET /api/subscriptions  –  returns the current user's subscription status
 export async function GET() {
@@ -30,21 +31,12 @@ export async function DELETE() {
       return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { stripeSubscriptionId: true },
-    });
-
-    if (!user?.stripeSubscriptionId) {
-      return NextResponse.json({ error: "No active subscription found." }, { status: 404 });
+    const result = await cancelUserSubscriptionAtPeriodEnd(session.user.id);
+    if (result.error) {
+      return NextResponse.json({ error: result.error }, { status: result.status });
     }
 
-    // Cancel at period end (not immediately)
-    await stripe.subscriptions.update(user.stripeSubscriptionId, {
-      cancel_at_period_end: true,
-    });
-
-    return NextResponse.json({ data: { cancelAtPeriodEnd: true } });
+    return NextResponse.json(result);
   } catch (err) {
     console.error("[SUBSCRIPTIONS_DELETE]", err);
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });

@@ -6,6 +6,7 @@ import { Check, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { routes } from "@/lib/routes";
 
 export interface PricingTier {
   id: string;
@@ -40,7 +41,10 @@ export function PricingCard({ tier, billing }: PricingCardProps) {
 
   async function handleSubscribe() {
     if (!tier.stripePlan) return;
-    if (!session?.user) { router.push("/login?next=/membership"); return; }
+    if (!session?.user) {
+      router.push(`${routes.login}?next=${encodeURIComponent(routes.membership)}`);
+      return;
+    }
     setLoading(true);
     try {
       const plan = billing === "annual" ? tier.stripePlan.annual : tier.stripePlan.monthly;

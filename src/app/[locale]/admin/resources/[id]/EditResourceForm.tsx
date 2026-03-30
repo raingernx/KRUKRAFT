@@ -15,6 +15,7 @@ import { ResourceCard } from "@/components/resources/ResourceCard";
 import { StatsCard } from "@/components/admin/StatsCard";
 import { DetailsCard } from "@/components/admin/DetailsCard";
 import type { ResourceCardData } from "@/components/resources/ResourceCard";
+import { routes } from "@/lib/routes";
 
 interface EditResourceFormProps {
   id?: string;
@@ -83,7 +84,7 @@ export function EditResourceForm({
       throw new Error(data.error ?? "Delete failed.");
     }
 
-    router.push("/admin/resources");
+    router.push(routes.adminResources);
     router.refresh();
   }
 

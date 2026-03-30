@@ -6,6 +6,7 @@ import { ArrowLeft, Download, RotateCcw } from "lucide-react";
 import Link from "next/link";
 
 import { Badge, Button, RowActions, RowActionButton } from "@/design-system";
+import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 type VersionUser = {
@@ -111,7 +112,7 @@ export function ResourceVersionsClient({
           size="sm"
           className="text-xs text-text-secondary hover:text-text-primary"
         >
-          <Link href={`/admin/resources/${resourceId}`} className="inline-flex items-center gap-1.5">
+          <Link href={routes.adminResource(resourceId)} className="inline-flex items-center gap-1.5">
             <span className="inline-flex items-center gap-1.5">
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Back to resource</span>

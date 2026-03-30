@@ -25,6 +25,24 @@ export const routes = {
   home: "/",
   marketplace: "/resources",
   membership: "/membership",
+  support: "/support",
+  privacy: "/privacy",
+  terms: "/terms",
+  cookies: "/cookies",
+
+  marketplaceCategory: (category?: string | null) =>
+    category ? `/resources?category=${encodeURIComponent(category)}` : "/resources",
+  marketplaceSearch: (query: string) =>
+    `/resources?search=${encodeURIComponent(query)}`,
+  marketplaceQuery: (params: URLSearchParams | string) => {
+    const query = typeof params === "string" ? params : params.toString();
+    return query ? `/resources?${query}` : "/resources";
+  },
+  marketplaceTag: (tag: string) =>
+    `/resources?tag=${encodeURIComponent(tag)}`,
+  marketplacePrice: (price: string) =>
+    `/resources?price=${encodeURIComponent(price)}`,
+  marketplacePaymentSuccess: () => "/resources?payment=success",
 
   /**
    * Category browse page.
@@ -37,10 +55,13 @@ export const routes = {
    * @example routes.resource("my-guide") → "/resources/my-guide"
    */
   resource: (slug: string) => `/resources/${slug}`,
+  resourcePreview: (slug: string) => `/resources/${slug}?preview=true`,
 
   // ── Auth ──────────────────────────────────────────────────────────────────
   login: "/auth/login",
   register: "/auth/register",
+  loginWithNext: (next: string) =>
+    `/auth/login?next=${encodeURIComponent(next)}`,
 
   // ── User dashboard ────────────────────────────────────────────────────────
   dashboard: "/dashboard",
@@ -54,8 +75,10 @@ export const routes = {
   library: "/dashboard/library",
   downloads: "/dashboard/downloads",
   purchases: "/dashboard/purchases",
+  dashboardResources: "/dashboard/resources",
   settings: "/settings",
   subscription: "/subscription",
+  libraryPaymentSuccess: () => "/dashboard/library?payment=success",
 
   // ── Admin panel ───────────────────────────────────────────────────────────
   admin: "/admin",
@@ -72,6 +95,8 @@ export const routes = {
   adminRecommendationReport: "/admin/analytics/recommendations",
   adminCreatorActivation: "/admin/analytics/creator-activation",
   adminRankingDebug: "/admin/analytics/ranking",
+  adminRankingExperiment: "/admin/analytics/ranking-experiment",
+  adminPurchasesAnalytics: "/admin/analytics/purchases",
   adminActivity: "/admin/activity",
   adminAudit: "/admin/audit",
   adminHeroes: "/admin/heroes",
@@ -84,9 +109,43 @@ export const routes = {
    * @example routes.adminResource("clxyz123") → "/admin/resources/clxyz123"
    */
   adminResource: (id: string) => `/admin/resources/${id}`,
+  adminUsersSearch: (query: string) =>
+    `/admin/users?q=${encodeURIComponent(query)}`,
+  adminOrdersOrder: (orderId: string) =>
+    `/admin/orders?orderId=${encodeURIComponent(orderId)}`,
   adminHero: (id: string) => `/admin/heroes/${id}`,
+  adminRecommendationReportQuery: (params: URLSearchParams | string) => {
+    const query = typeof params === "string" ? params : params.toString();
+    return query ? `/admin/analytics/recommendations?${query}` : "/admin/analytics/recommendations";
+  },
+  adminCreatorActivationQuery: (params: URLSearchParams | string) => {
+    const query = typeof params === "string" ? params : params.toString();
+    return query ? `/admin/analytics/creator-activation?${query}` : "/admin/analytics/creator-activation";
+  },
+  adminPurchasesAnalyticsQuery: (params: URLSearchParams | string) => {
+    const query = typeof params === "string" ? params : params.toString();
+    return query ? `/admin/analytics/purchases?${query}` : "/admin/analytics/purchases";
+  },
+  adminRankingDebugQuery: (params: URLSearchParams | string) => {
+    const query = typeof params === "string" ? params : params.toString();
+    return query ? `/admin/analytics/ranking?${query}` : "/admin/analytics/ranking";
+  },
+  adminRankingExperimentQuery: (params: URLSearchParams | string) => {
+    const query = typeof params === "string" ? params : params.toString();
+    return query ? `/admin/analytics/ranking-experiment?${query}` : "/admin/analytics/ranking-experiment";
+  },
+  adminResourcesQuery: (params: URLSearchParams | string) => {
+    const query = typeof params === "string" ? params : params.toString();
+    return query ? `/admin/resources?${query}` : "/admin/resources";
+  },
+  adminAuditQuery: (params: URLSearchParams | string) => {
+    const query = typeof params === "string" ? params : params.toString();
+    return query ? `/admin/audit?${query}` : "/admin/audit";
+  },
   creatorResource: (id: string) => `/dashboard/creator/resources/${id}`,
   creatorPublicProfile: (slug: string) => `/creators/${slug}`,
+  resourcePaymentSuccess: (slug: string) =>
+    `/resources/${slug}?payment=success`,
 
   /**
    * Admin version history page for a resource.

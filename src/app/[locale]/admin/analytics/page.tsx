@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { getPlatformMetrics } from "@/services/analytics.service";
 import { Card } from "@/design-system";
 import { formatPrice, formatNumber } from "@/lib/format";
+import { routes } from "@/lib/routes";
 import {
   Download,
   TrendingUp,
@@ -88,11 +89,11 @@ export default async function AdminAnalyticsPage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/analytics");
+    redirect(routes.loginWithNext(routes.adminAnalytics));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   const metrics = await getPlatformMetrics();
@@ -272,7 +273,7 @@ export default async function AdminAnalyticsPage() {
                     {i + 1}
                   </span>
                   <Link
-                    href={`/resources/${r.slug}`}
+                    href={routes.resource(r.slug)}
                     className="min-w-0 flex-1 truncate text-[12px] font-medium text-text-primary hover:text-blue-600 hover:underline"
                   >
                     {r.title}
@@ -297,7 +298,7 @@ export default async function AdminAnalyticsPage() {
         </p>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Link
-            href="/admin/analytics/recommendations"
+            href={routes.adminRecommendationReport}
             className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-xl"
           >
             <Card className="p-5 transition-shadow group-hover:shadow-md">

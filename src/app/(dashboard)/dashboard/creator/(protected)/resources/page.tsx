@@ -32,7 +32,7 @@ function firstValue(value: string | string[] | undefined) {
 export default async function CreatorResourcesPage({
   searchParams,
 }: CreatorResourcesPageProps) {
-  const { userId } = await requireSession("/dashboard/creator/resources");
+  const { userId } = await requireSession(routes.creatorResources);
 
   const access = await getCreatorAccessState(userId);
 

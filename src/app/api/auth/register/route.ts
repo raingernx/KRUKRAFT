@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
-import { logActivity } from "@/lib/activity";
+import { registerCredentialUser } from "@/services/user-account.service";
 
 const RegisterSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -26,34 +24,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, email, password } = parsed.data;
-
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
-      return NextResponse.json(
-        { error: "An account with that email already exists." },
-        { status: 409 }
-      );
+    const result = await registerCredentialUser(parsed.data);
+    if (result.error) {
+      return NextResponse.json({ error: result.error }, { status: result.status });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    const user = await prisma.user.create({
-      data: { name, email, hashedPassword },
-      select: { id: true, name: true, email: true, createdAt: true },
-    });
-
-    // Fire-and-forget signup activity
-    logActivity({
-      userId: user.id,
-      action: "USER_SIGNUP",
-      entity: "User",
-      entityId: user.id,
-      metadata: { email },
-    }).catch(() => {});
-
-    return NextResponse.json({ data: user }, { status: 201 });
+    return NextResponse.json({ data: result.data }, { status: 201 });
   } catch (err) {
     console.error("[REGISTER]", err);
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });

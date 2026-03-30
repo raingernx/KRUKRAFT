@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { Button, Card, Input, Select } from "@/design-system";
 import { formatDate } from "@/lib/format";
+import { routes } from "@/lib/routes";
 
 interface AuditTrailItem {
   id: string;
@@ -96,7 +97,7 @@ export function AuditTrailClient({
     }
 
     const qs = params.toString();
-    router.push(`/admin/audit${qs ? `?${qs}` : ""}`);
+    router.push(routes.adminAuditQuery(qs));
   }
 
   function handlePageChange(nextPage: number) {

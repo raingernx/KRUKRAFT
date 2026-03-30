@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { Button } from "@/design-system";
 import { ResourceCard, type ResourceCardResource } from "@/components/resources/ResourceCard";
+import { routes } from "@/lib/routes";
 
 /* ── Static fallback (shown only when no real data is passed) ──────────── */
 
@@ -67,7 +68,7 @@ export function Hero({ heroResources }: HeroProps) {
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     const q = query.trim();
-    if (q) router.push(`/resources?q=${encodeURIComponent(q)}`);
+    if (q) router.push(routes.marketplaceSearch(q));
   }
 
   const cards = heroResources?.length ? heroResources.slice(0, 3) : FALLBACK_RESOURCES;
@@ -117,7 +118,7 @@ export function Hero({ heroResources }: HeroProps) {
             {HERO_CATEGORIES.map((cat) => (
               <Link
                 key={cat.slug}
-                href={`/resources?category=${cat.slug}`}
+                href={routes.marketplaceCategory(cat.slug)}
                 className="rounded-full border border-surface-200 bg-white px-3 py-1 text-micro font-medium text-text-secondary transition hover:border-surface-300 hover:bg-surface-100"
               >
                 {cat.label}
@@ -127,12 +128,12 @@ export function Hero({ heroResources }: HeroProps) {
 
           {/* CTA buttons */}
           <div className="flex flex-wrap gap-3">
-            <Link href="/resources">
+            <Link href={routes.marketplace}>
               <Button size="lg" className="bg-brand-600 text-white hover:bg-brand-700">
                 Browse resources
               </Button>
             </Link>
-            <Link href="/membership">
+            <Link href={routes.membership}>
               <Button variant="outline" size="lg" className="border border-surface-200 hover:bg-surface-100">
                 Sell your resources
               </Button>

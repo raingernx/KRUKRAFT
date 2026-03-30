@@ -22,6 +22,7 @@ import {
   traceServerStep,
   withRequestPerformanceTrace,
 } from "@/lib/performance/observability";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Orders – Admin",
@@ -63,11 +64,11 @@ export default async function AdminOrdersPage({
       );
 
       if (!session?.user) {
-        redirect("/auth/login?next=/admin/orders");
+        redirect(routes.loginWithNext(routes.adminOrders));
       }
 
       if (session.user.role !== "ADMIN") {
-        redirect("/dashboard");
+        redirect(routes.dashboard);
       }
 
       const {

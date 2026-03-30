@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
+import { routes } from "@/lib/routes";
 import { ActivityLogClient } from "./ActivityLogClient";
 
 export const metadata = {
@@ -13,11 +14,11 @@ export default async function AdminActivityPage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/activity");
+    redirect(routes.loginWithNext(routes.adminActivity));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   return <ActivityLogClient />;

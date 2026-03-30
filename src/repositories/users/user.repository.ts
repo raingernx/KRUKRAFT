@@ -67,3 +67,80 @@ export async function findAdminUsers(params: {
     },
   });
 }
+
+export async function findAdminUserLookup(params: {
+  query?: string;
+  take: number;
+}) {
+  const query = params.query?.trim();
+
+  return prisma.user.findMany({
+    take: params.take,
+    orderBy: { name: "asc" },
+    where: query
+      ? {
+          OR: [
+            { name: { contains: query, mode: "insensitive" } },
+            { email: { contains: query, mode: "insensitive" } },
+          ],
+        }
+      : undefined,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+    },
+  });
+}
+
+export function findAdminsWithAuditLogs() {
+  return prisma.user.findMany({
+    where: { auditLogs: { some: {} } },
+    select: { id: true, name: true, email: true },
+    orderBy: { name: "asc" },
+  });
+}
+
+export function findUserSettingsProfile(userId: string) {
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: { name: true, email: true, image: true, createdAt: true },
+  });
+}
+
+export function updateUserProfileById(input: {
+  userId: string;
+  name?: string | null;
+  email?: string | null;
+}) {
+  return prisma.user.update({
+    where: { id: input.userId },
+    data: {
+      ...(input.name !== undefined ? { name: input.name } : {}),
+      ...(input.email !== undefined ? { email: input.email } : {}),
+    },
+    select: { name: true, email: true, image: true },
+  });
+}
+
+export function findUserByEmail(email: string) {
+  return prisma.user.findUnique({
+    where: { email },
+    select: { id: true },
+  });
+}
+
+export function createRegisteredUser(input: {
+  name: string;
+  email: string;
+  hashedPassword: string;
+}) {
+  return prisma.user.create({
+    data: {
+      name: input.name,
+      email: input.email,
+      hashedPassword: input.hashedPassword,
+    },
+    select: { id: true, name: true, email: true, createdAt: true },
+  });
+}

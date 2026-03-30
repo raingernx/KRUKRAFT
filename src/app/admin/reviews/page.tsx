@@ -7,6 +7,7 @@ import { getAdminReviews, ReviewServiceError } from "@/services/review.service";
 import { ReviewVisibilityAction } from "@/components/admin/ReviewVisibilityAction";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { routes } from "@/lib/routes";
 import {
   DataTable,
   DataTableBody,
@@ -26,11 +27,11 @@ export default async function AdminReviewsPage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/reviews");
+    redirect(routes.loginWithNext(routes.adminReviews));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   let reviews;
@@ -40,11 +41,11 @@ export default async function AdminReviewsPage() {
   } catch (error) {
     if (error instanceof ReviewServiceError) {
       if (error.status === 401) {
-        redirect("/auth/login?next=/admin/reviews");
+        redirect(routes.loginWithNext(routes.adminReviews));
       }
 
       if (error.status === 403) {
-        redirect("/dashboard");
+        redirect(routes.dashboard);
       }
     }
 
@@ -93,7 +94,7 @@ export default async function AdminReviewsPage() {
                 <DataTableCell className="px-2 font-medium text-text-primary">
                   <div className="flex flex-col gap-1">
                     <Link
-                      href={`/resources/${review.resource.slug}`}
+                      href={routes.resource(review.resource.slug)}
                       className="transition hover:text-primary-700"
                     >
                       {review.resource.title}

@@ -23,6 +23,7 @@ import {
   traceServerStep,
   withRequestPerformanceTrace,
 } from "@/lib/performance/observability";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Overview",
@@ -86,7 +87,7 @@ function DashboardShelfCard({
 }) {
   return (
     <Link
-      href={`/resources/${resource.slug}`}
+      href={routes.resource(resource.slug)}
       className={`group flex ${widthClassName} h-[248px] flex-shrink-0 flex-col rounded-xl border border-surface-200 bg-white p-3.5 transition hover:border-surface-300 hover:bg-surface-50/40`}
     >
       <div className="relative flex h-[120px] w-full items-center justify-center overflow-hidden rounded-lg border border-surface-200 bg-surface-100">
@@ -133,7 +134,7 @@ export default async function DashboardPage() {
     async () => {
   const { userId, session } = await traceServerStep(
     "dashboard.requireSession",
-    () => requireSession("/dashboard"),
+    () => requireSession(routes.dashboard),
   );
 
   const [purchases, totalDownloads, learningProfile] = await Promise.all([
@@ -201,19 +202,19 @@ export default async function DashboardPage() {
 
   const quickLinks = [
     {
-      href: "/dashboard/library",
+      href: routes.library,
       label: "My Library",
       icon: BookOpen,
       count: purchases.length,
     },
     {
-      href: "/dashboard/downloads",
+      href: routes.downloads,
       label: "Downloads",
       icon: Download,
       count: totalDownloads,
     },
     {
-      href: "/resources",
+      href: routes.marketplace,
       label: "Marketplace",
       icon: TrendingUp,
       count: null,
@@ -262,7 +263,7 @@ export default async function DashboardPage() {
             </div>
             {!isSubscribed ? (
               <Link
-                href="/subscription"
+                href={routes.subscription}
                 className="mt-3 inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-primary-50 px-4 py-2.5 text-small font-medium text-primary-700 transition hover:bg-primary-100"
               >
                 View plans
@@ -285,7 +286,7 @@ export default async function DashboardPage() {
               </p>
             </div>
             <Link
-              href="/dashboard/library"
+              href={routes.library}
               className="inline-flex items-center gap-1.5 text-small font-medium text-primary-700 transition hover:text-primary-800"
             >
               View all
@@ -306,7 +307,7 @@ export default async function DashboardPage() {
                 workspace.
               </p>
               <Link
-                href="/resources"
+                href={routes.marketplace}
                 className="mt-4 rounded-xl bg-neutral-900 px-4 py-2.5 text-small font-semibold text-white hover:bg-neutral-800"
               >
                 Browse marketplace
@@ -317,7 +318,7 @@ export default async function DashboardPage() {
               {recentPurchases.map((purchase) => (
                 <li key={purchase.id}>
                   <Link
-                    href={`/resources/${purchase.resource.slug}`}
+                    href={routes.resource(purchase.resource.slug)}
                     className="flex items-center gap-4 px-5 py-4 transition hover:bg-surface-50/70 sm:px-6"
                   >
                     <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-surface-200 bg-surface-50">
@@ -391,7 +392,7 @@ export default async function DashboardPage() {
                   </div>
                 </div>
                 <Link
-                  href={`/resources/${lastOpened.resource.slug}`}
+                  href={routes.resource(lastOpened.resource.slug)}
                   className="inline-flex items-center gap-2 rounded-xl border border-surface-200 bg-surface-50 px-4 py-2.5 text-small font-medium text-neutral-700 transition hover:bg-white"
                 >
                   <BookOpen className="h-4 w-4" />
@@ -426,7 +427,7 @@ export default async function DashboardPage() {
                   </p>
                 )}
                 <Link
-                  href={`/resources/${nextBestAction.slug}`}
+                  href={routes.resource(nextBestAction.slug)}
                   className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-small font-semibold text-white transition hover:bg-primary-700"
                 >
                   Explore this next
@@ -482,7 +483,7 @@ export default async function DashboardPage() {
               </p>
             </div>
             <Link
-              href="/resources"
+              href={routes.marketplace}
               className="text-small font-medium text-primary-700 transition hover:text-primary-800"
             >
               See all
@@ -516,7 +517,7 @@ export default async function DashboardPage() {
               </p>
             </div>
             <Link
-              href="/resources"
+              href={routes.marketplace}
               className="text-small font-medium text-primary-700 transition hover:text-primary-800"
             >
               Browse more
@@ -548,7 +549,7 @@ export default async function DashboardPage() {
               </p>
             </div>
             <Link
-              href="/resources"
+              href={routes.marketplace}
               className="text-small font-medium text-primary-700 transition hover:text-primary-800"
             >
               See more

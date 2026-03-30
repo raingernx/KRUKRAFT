@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import { z } from "zod";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import { HeroServiceError, updateHero } from "@/services/heroes/hero.service";
 
 const ToggleHeroSchema = z.object({
@@ -11,23 +10,6 @@ const ToggleHeroSchema = z.object({
 type Params = {
   params: Promise<{ id: string }>;
 };
-
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return {
-      ok: false as const,
-      res: NextResponse.json({ error: "Unauthorized." }, { status: 401 }),
-    };
-  }
-  if (session.user.role !== "ADMIN") {
-    return {
-      ok: false as const,
-      res: NextResponse.json({ error: "Forbidden." }, { status: 403 }),
-    };
-  }
-  return { ok: true as const };
-}
 
 function handleError(error: unknown) {
   if (error instanceof HeroServiceError) {
@@ -42,7 +24,7 @@ function handleError(error: unknown) {
 }
 
 export async function PATCH(req: Request, { params }: Params) {
-  const auth = await requireAdmin();
+  const auth = await requireAdminApi();
   if (!auth.ok) {
     return auth.res;
   }

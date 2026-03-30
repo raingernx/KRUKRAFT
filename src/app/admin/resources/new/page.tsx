@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { getAdminResourceCreatePageData } from "@/services/admin-operations.service";
 import { CreateResourceForm } from "./CreateResourceForm";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Create Resource – Admin",
@@ -13,22 +14,14 @@ export default async function AdminNewResourcePage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/resources/new");
+    redirect(routes.loginWithNext(routes.adminNewResource));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
-  const [categories, tags] = await Promise.all([
-    prisma.category.findMany({
-      orderBy: { name: "asc" },
-    }),
-    prisma.tag.findMany({
-      orderBy: { name: "asc" },
-      select: { id: true, name: true, slug: true },
-    }),
-  ]);
+  const { categories, tags } = await getAdminResourceCreatePageData();
 
   return (
     <div className="w-full space-y-6">
@@ -55,4 +48,3 @@ export default async function AdminNewResourcePage() {
     </div>
   );
 }
-

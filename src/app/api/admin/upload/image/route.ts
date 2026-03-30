@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import { storage } from "@/lib/storage";
 
 export const runtime = "nodejs";
@@ -25,13 +24,8 @@ const R2_VARS = ["R2_ENDPOINT", "R2_BUCKET", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCE
  */
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-    if (session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Forbidden." }, { status: 403 });
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     if (!R2_VARS.every((v) => !!process.env[v])) {
       console.error("[UPLOAD_IMAGE] R2 storage is not configured.");

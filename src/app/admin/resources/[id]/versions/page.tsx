@@ -2,9 +2,10 @@ import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/design-system";
+import { getAdminResourceVersionsPageData } from "@/services/admin-operations.service";
 import { ResourceVersionsClient } from "./ResourceVersionsClient";
+import { routes } from "@/lib/routes";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -17,36 +18,18 @@ export default async function ResourceVersionsPage({ params }: Props) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect(`/auth/login?next=/admin/resources/${id}/versions`);
+    redirect(routes.loginWithNext(routes.adminResourceVersions(id)));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
-  const resource = await prisma.resource.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      status: true,
-    },
-  });
+  const { resource, versions } = await getAdminResourceVersionsPageData(id);
 
   if (!resource) {
     notFound();
   }
-
-  const versions = await prisma.resourceVersion.findMany({
-    where: { resourceId: id },
-    orderBy: { version: "desc" },
-    include: {
-      createdBy: {
-        select: { id: true, name: true, email: true },
-      },
-    },
-  });
 
   return (
     <div className="space-y-6">

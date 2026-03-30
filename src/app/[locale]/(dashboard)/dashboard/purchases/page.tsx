@@ -11,8 +11,9 @@ import {
 } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { requireSession } from "@/lib/auth/require-session";
-import { prisma } from "@/lib/prisma";
 import { formatDate, formatPrice } from "@/lib/format";
+import { routes } from "@/lib/routes";
+import { getDashboardPurchaseHistoryPageData } from "@/services/admin-operations.service";
 import { getPlatform } from "@/services/platform.service";
 
 export const metadata = {
@@ -20,27 +21,6 @@ export const metadata = {
 };
 
 export const dynamic = "force-dynamic";
-
-async function getPurchases(userId: string) {
-  return prisma.purchase.findMany({
-    where: { userId },
-    include: {
-      resource: {
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          previewUrl: true,
-          price: true,
-          isFree: true,
-          author: { select: { name: true } },
-          category: { select: { name: true } },
-        },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-}
 
 const STATUS_CONFIG = {
   COMPLETED: {
@@ -66,10 +46,10 @@ const STATUS_CONFIG = {
 };
 
 export default async function PurchasesPage() {
-  const { userId } = await requireSession("/dashboard/purchases");
+  const { userId } = await requireSession(routes.purchases);
 
   const platform = await getPlatform();
-  const purchases = await getPurchases(userId);
+  const purchases = await getDashboardPurchaseHistoryPageData(userId);
 
   const totalSpent = purchases
     .filter((p) => p.status === "COMPLETED")
@@ -109,7 +89,7 @@ export default async function PurchasesPage() {
               Browse the marketplace to find and purchase resources.
             </p>
             <Link
-              href="/resources"
+              href={routes.marketplace}
               className="mt-5 inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-[13px] font-semibold text-white hover:bg-zinc-700"
             >
               <BookOpen className="h-4 w-4" />
@@ -163,7 +143,7 @@ export default async function PurchasesPage() {
                           )}
                         </div>
                         <Link
-                          href={`/resources/${purchase.resource.slug}`}
+                          href={routes.resource(purchase.resource.slug)}
                           className="group flex min-w-0 items-center gap-1 truncate text-[13px] font-medium text-zinc-900 hover:text-blue-600"
                         >
                           <span className="truncate">

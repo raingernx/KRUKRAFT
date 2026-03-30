@@ -3,6 +3,7 @@
 import type { FilterCategory } from "@/components/resources/ResourceFilters";
 import { Card } from "@/design-system";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 /** Optional category filter sidebar. Categories link to marketplace with ?category=slug */
@@ -19,7 +20,7 @@ export function CategorySidebar({ categories, className }: CategorySidebarProps)
 
   function setCategory(slug: string | null) {
     if (!slug) {
-      router.push("/resources");
+      router.push(routes.marketplace);
       return;
     }
 

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import {
   CreatorServiceError,
   approveCreatorApplication,
@@ -12,13 +11,8 @@ export async function PATCH(
   { params }: { params: Promise<{ userId: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-    if (session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Forbidden." }, { status: 403 });
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     const { action, reason } = await req.json().catch(() => ({}));
     const { userId } = await params;

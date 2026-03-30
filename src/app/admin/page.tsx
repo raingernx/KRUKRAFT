@@ -6,6 +6,7 @@ import { Card } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { formatNumber, formatDate, formatPrice } from "@/lib/format";
 import { getAdminDashboardOverview } from "@/services/analytics.service";
+import { routes } from "@/lib/routes";
 import {
   DataTable,
   DataTableBody,
@@ -26,14 +27,14 @@ export default async function AdminDashboardPage() {
 
   // ── 1. Require login ───────────────────────────────────────────────────────
   if (!session?.user) {
-    redirect("/auth/login?next=/admin");
+    redirect(routes.loginWithNext(routes.admin));
   }
 
   // ── 2. Require ADMIN role ──────────────────────────────────────────────────
   const role = session.user.role;
 
   if (role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   const {

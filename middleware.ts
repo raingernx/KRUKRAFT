@@ -7,6 +7,7 @@ import {
   isValidRankingVariant,
   type RankingVariant,
 } from "@/lib/ranking-experiment";
+import { locales } from "@/i18n/config";
 
 // ── Ranking experiment ────────────────────────────────────────────────────────
 
@@ -67,11 +68,17 @@ const authMiddleware = withAuth(
 export default function middleware(req: NextRequestWithAuth) {
   const { pathname } = req.nextUrl;
 
-  // ── Backwards-compat: redirect old /th/... paths to the flat equivalents ──
-  // Users with bookmarks like /th/dashboard will transparently land on /dashboard.
-  if (pathname.startsWith("/th/") || pathname === "/th") {
+  const localePrefix = locales.find(
+    (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
+  );
+
+  // ── Backwards-compat: redirect legacy locale-prefixed paths to flat routes ──
+  if (localePrefix) {
     const url = req.nextUrl.clone();
-    url.pathname = pathname === "/th" ? "/" : pathname.slice(3); // strip leading /th
+    url.pathname =
+      pathname === `/${localePrefix}`
+        ? "/"
+        : pathname.slice(localePrefix.length + 1);
     const response = NextResponse.redirect(url, { status: 301 });
     assignRankingVariantIfAbsent(req, response);
     return response;

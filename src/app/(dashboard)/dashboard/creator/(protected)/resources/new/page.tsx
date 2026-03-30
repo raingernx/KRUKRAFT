@@ -15,7 +15,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function CreatorNewResourcePage() {
-  const { userId } = await requireSession("/dashboard/creator/resources/new");
+  const { userId } = await requireSession(routes.creatorNewResource);
 
   const [access, setupState] = await Promise.all([
     getCreatorAccessState(userId),

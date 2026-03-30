@@ -1,60 +1,18 @@
 import { authOptions } from "@/lib/auth";
 import { requireSession } from "@/lib/auth/require-session";
-import { prisma } from "@/lib/prisma";
 import { LibraryGridClient } from "@/components/library/LibraryGridClient";
 import { LastPurchaseRecovery } from "@/components/library/LastPurchaseRecovery";
 import Link from "next/link";
 import { BookOpen, Download } from "lucide-react";
 import { formatDate } from "@/lib/format";
+import { routes } from "@/lib/routes";
+import { getUserLibraryItems } from "@/services/purchase.service";
 
 export const metadata = {
   title: "My Library",
 };
 
 export const dynamic = "force-dynamic";
-
-interface LibraryItem {
-  purchaseId: string;
-  purchasedAt: Date;
-  id: string;
-  slug: string;
-  title: string;
-  authorName?: string | null;
-  previewUrl?: string | null;
-  mimeType?: string | null;
-  type: "PDF" | "DOCUMENT";
-  categorySlug?: string | null;
-}
-
-async function getLibrary(userId: string): Promise<LibraryItem[]> {
-  const purchases = await prisma.purchase.findMany({
-    where: { userId, status: "COMPLETED" },
-    include: {
-      resource: {
-        include: {
-          author: { select: { name: true } },
-          category: { select: { slug: true } },
-        },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-
-  return purchases
-    .filter((p) => Boolean(p.resource))
-    .map((p) => ({
-      purchaseId: p.id,
-      purchasedAt: p.createdAt,
-      id: p.resource!.id,
-      slug: p.resource!.slug,
-      title: p.resource!.title,
-      authorName: p.resource!.author?.name,
-      previewUrl: p.resource!.previewUrl,
-      mimeType: p.resource!.mimeType,
-      type: p.resource!.type,
-      categorySlug: p.resource!.category?.slug ?? null,
-    }));
-}
 
 /** @see src/app/(dashboard)/dashboard/library/page.tsx for implementation notes. */
 const RECENT_PURCHASE_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
@@ -64,9 +22,9 @@ export default async function DashboardLibraryPage({
 }: {
   searchParams?: Promise<Record<string, string | undefined>>;
 }) {
-  const { userId } = await requireSession("/dashboard/library");
+  const { userId } = await requireSession(routes.library);
 
-  const resources = await getLibrary(userId);
+  const resources = await getUserLibraryItems(userId);
 
   const params = searchParams ? await searchParams : {};
   const isReturningFromCheckout = params.payment === "success";
@@ -149,7 +107,7 @@ export default async function DashboardLibraryPage({
                     </p>
                   </div>
                   <Link
-                    href={`/resources/${lastOpened.slug}`}
+                    href={routes.resource(lastOpened.slug)}
                     className="flex flex-shrink-0 items-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-[12px] font-medium text-zinc-700 hover:bg-zinc-100"
                   >
                     <BookOpen className="h-3.5 w-3.5" />
@@ -189,7 +147,7 @@ export default async function DashboardLibraryPage({
               Browse the marketplace to find study guides, templates, and more.
             </p>
             <Link
-              href="/resources"
+              href={routes.marketplace}
               className="mt-5 inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-[13px] font-semibold text-white hover:bg-zinc-700"
             >
               <BookOpen className="h-4 w-4" />

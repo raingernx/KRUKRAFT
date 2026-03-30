@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { getAdminAuditPageData } from "@/services/admin-operations.service";
+import { routes } from "@/lib/routes";
 import { AuditTrailClient } from "./AuditTrailClient";
 
 const PAGE_SIZE = 25;
@@ -29,11 +30,11 @@ export default async function AdminAuditPage({
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/audit");
+    redirect(routes.loginWithNext(routes.adminAudit));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   const page = Math.max(1, Number(resolvedSearchParams?.page ?? "1") || 1);
@@ -42,71 +43,21 @@ export default async function AdminAuditPage({
   const from = (resolvedSearchParams?.from ?? "").trim();
   const to = (resolvedSearchParams?.to ?? "").trim();
 
-  const where: any = {};
-
-  if (actionFilter) {
-    where.action = actionFilter;
-  }
-
-  if (adminIdFilter) {
-    where.adminId = adminIdFilter;
-  }
-
-  if (from) {
-    where.createdAt = { ...(where.createdAt ?? {}), gte: new Date(from) };
-  }
-
-  if (to) {
-    const end = new Date(to);
-    end.setHours(23, 59, 59, 999);
-    where.createdAt = { ...(where.createdAt ?? {}), lte: end };
-  }
-
-  const skip = (page - 1) * PAGE_SIZE;
-
-  const [logs, total, actions, admins] = await Promise.all([
-    prisma.auditLog.findMany({
-      where,
-      include: {
-        admin: { select: { id: true, name: true, email: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      skip,
-      take: PAGE_SIZE,
-    }),
-    prisma.auditLog.count({ where }),
-    prisma.auditLog.findMany({
-      select: { action: true },
-      distinct: ["action"],
-      orderBy: { action: "asc" },
-    }),
-    prisma.user.findMany({
-      where: { auditLogs: { some: {} } },
-      select: { id: true, name: true, email: true },
-      orderBy: { name: "asc" },
-    }),
-  ]);
-
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-
-  const actionOptions = actions.map((a) => a.action);
+  const { items, actionOptions, adminOptions, totalPages } =
+    await getAdminAuditPageData({
+      page,
+      actionFilter,
+      adminIdFilter,
+      from,
+      to,
+      pageSize: PAGE_SIZE,
+    });
 
   return (
     <AuditTrailClient
-      items={logs.map((log) => ({
-        id: log.id,
-        admin: {
-          id: log.admin.id,
-          name: log.admin.name ?? "Unknown",
-          email: log.admin.email ?? "",
-        },
-        action: log.action,
-        entityType: log.entityType,
-        entityId: log.entityId ?? "",
-        createdAt: log.createdAt.toISOString(),
-      }))}
+      items={items}
       actionOptions={actionOptions}
-      adminOptions={admins}
+      adminOptions={adminOptions}
       pagination={{
         page,
         totalPages,

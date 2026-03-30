@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { authOptions } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
+import { routes } from "@/lib/routes";
 import { getAdminReviews } from "@/services/review.service";
 import { ReviewVisibilityAction } from "@/components/admin/ReviewVisibilityAction";
 
@@ -15,11 +16,11 @@ export default async function AdminReviewsPage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/reviews");
+    redirect(routes.loginWithNext(routes.adminReviews));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   const reviews = await getAdminReviews(session.user.id);
@@ -79,7 +80,7 @@ export default async function AdminReviewsPage() {
                     <td className="px-5 py-3 text-sm font-medium text-text-primary">
                       <div className="flex flex-col gap-1">
                         <Link
-                          href={`/resources/${review.resource.slug}`}
+                          href={routes.resource(review.resource.slug)}
                           className="transition hover:text-brand-700"
                         >
                           {review.resource.title}

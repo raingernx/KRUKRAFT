@@ -1,40 +1,16 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import {
   getActiveUsersLast7Days,
   getTopViewedResources,
   getConversionFunnel,
 } from "@/lib/analytics";
 
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    return {
-      session: null,
-      error: NextResponse.json({ error: "Unauthorized." }, { status: 401 }),
-    };
-  }
-
-  if (session.user.role !== "ADMIN") {
-    return {
-      session: null,
-      error: NextResponse.json(
-        { error: "Forbidden. Admin access required." },
-        { status: 403 },
-      ),
-    };
-  }
-
-  return { session, error: null as NextResponse | null };
-}
-
 export async function GET() {
   try {
-    const { error } = await requireAdmin();
-    if (error) return error;
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     const [activeUsers, topResources, funnel] = await Promise.all([
       getActiveUsersLast7Days(),
@@ -55,4 +31,3 @@ export async function GET() {
     );
   }
 }
-

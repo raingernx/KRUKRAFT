@@ -85,6 +85,33 @@ export async function getCompletedPurchase(
   return findCompletedPurchaseByUserAndResource(userId, resourceId);
 }
 
+export async function getCompletedPurchaseAccess(input: {
+  userId: string;
+  resourceId: string;
+  isFree: boolean;
+}) {
+  const purchase = await findCompletedPurchaseByUserAndResource(
+    input.userId,
+    input.resourceId,
+  );
+
+  if (purchase) {
+    return {
+      allowed: true as const,
+      purchase,
+      errorMessage: null,
+    };
+  }
+
+  return {
+    allowed: false as const,
+    purchase: null,
+    errorMessage: input.isFree
+      ? "Please add this resource to your library before downloading or previewing."
+      : "Forbidden. You have not purchased this resource.",
+  };
+}
+
 /**
  * Returns the existing Purchase row for a user+resource pair, or null.
  * Used by checkout routes for idempotency / duplicate-purchase guards.

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCachedServerSession } from "@/lib/auth";
+import { routes } from "@/lib/routes";
 
 /**
  * Asserts that the current request has a valid authenticated session with a
@@ -22,7 +23,7 @@ import { getCachedServerSession } from "@/lib/auth";
 export async function requireSession(nextPath: string) {
   const session = await getCachedServerSession();
   if (!session?.user?.id) {
-    redirect(`/auth/login?next=${nextPath}`);
+    redirect(routes.loginWithNext(nextPath));
   }
   // TypeScript narrows: redirect() returns `never`, so session is Session
   // (non-null) and session.user.id is a truthy string past this point.

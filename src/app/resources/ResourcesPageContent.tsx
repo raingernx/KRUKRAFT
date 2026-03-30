@@ -15,6 +15,7 @@ import { BlogSection } from "@/components/discover/BlogSection";
 import { EmailSignup } from "@/components/discover/EmailSignup";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { formatNumber, formatPrice } from "@/lib/format";
+import { routes } from "@/lib/routes";
 import {
   getDiscoverData,
   getHeroConfig,
@@ -276,14 +277,10 @@ export async function ResourcesPageContent({
   if (effectiveSort !== "newest") resourceGridParams.set("sort", effectiveSort);
   if (safePage > 1) resourceGridParams.set("page", String(safePage));
   const resourceGridQuery = resourceGridParams.toString();
-  const resourceGridQueryKey = resourceGridQuery
-    ? `/resources?${resourceGridQuery}`
-    : "/resources";
+  const resourceGridQueryKey = routes.marketplaceQuery(resourceGridQuery);
   const clearFiltersParams = new URLSearchParams();
   if (category) clearFiltersParams.set("category", category);
-  const clearFiltersHref = clearFiltersParams.size > 0
-    ? `/resources?${clearFiltersParams.toString()}`
-    : "/resources";
+  const clearFiltersHref = routes.marketplaceQuery(clearFiltersParams);
   const resultsContext = buildResultsContext(total, activeCategoryName, category, search, price, formatNumber);
   const spotlightCandidate = resources[0] ?? null;
   const spotlightResource =
@@ -395,7 +392,7 @@ export async function ResourcesPageContent({
                     </p>
                   </div>
                   <IntentPrefetchLink
-                    href={`/resources/${spotlightResource.slug}`}
+                    href={routes.resource(spotlightResource.slug)}
                     prefetchMode="intent"
                     prefetchScope="spotlight-resource"
                     prefetchLimit={1}
@@ -460,7 +457,7 @@ export async function ResourcesPageContent({
               routeContext={{
                 queryKey: resourceGridQueryKey,
                 clearFiltersHref,
-                exploreAllHref: "/resources",
+                exploreAllHref: routes.marketplace,
                 cardPrefetchScope: `resource-card-grid:${resourceGridQueryKey}`,
               }}
             />
@@ -562,7 +559,7 @@ async function ResourcesDiscoverDeferredSections({
           <SectionHeader
             title="Trending now"
             description="Ranked by recent sales momentum, recent revenue, rating quality, and review volume to surface the strongest current picks."
-            viewAllHref="/resources?sort=trending&category=all"
+            viewAllHref={routes.marketplaceQuery("sort=trending&category=all")}
           />
           <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
             {(discoverData.trending as ResourceCardData[]).map((resource, index) => (
@@ -606,7 +603,7 @@ async function ResourcesDiscoverDeferredSections({
               ) : null}
             </div>
               <IntentPrefetchLink
-              href={`/creators/${discoverData.topCreator.creator.creatorSlug}`}
+              href={routes.creatorPublicProfile(discoverData.topCreator.creator.creatorSlug)}
               className="inline-flex items-center gap-2 self-start rounded-full border border-border-subtle bg-white px-4 py-2 text-sm font-semibold text-primary-700 transition hover:border-surface-300 hover:bg-white lg:self-auto"
               prefetchMode="intent"
               prefetchScope="top-creator-cta"
@@ -628,7 +625,7 @@ async function ResourcesDiscoverDeferredSections({
           <SectionHeader
             title="Popular right now"
             description="Top resources other learners are exploring this week."
-            viewAllHref="/resources?sort=trending&category=all"
+            viewAllHref={routes.marketplaceQuery("sort=trending&category=all")}
           />
           <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
             {globalFiltered.slice(0, 5).map((resource) => (
@@ -649,7 +646,7 @@ async function ResourcesDiscoverDeferredSections({
           <SectionHeader
             title="New releases"
             description="Fresh additions from creators and educators, surfaced with the newest material first."
-            viewAllHref="/resources?sort=newest&category=all"
+            viewAllHref={routes.marketplaceQuery("sort=newest&category=all")}
           />
           <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
             {(discoverData.newReleases as ResourceCardData[]).map((resource) => (
@@ -669,7 +666,7 @@ async function ResourcesDiscoverDeferredSections({
         <section className="space-y-5">
           <SectionHeader
             title="Featured picks"
-            viewAllHref="/resources?sort=featured&category=all"
+            viewAllHref={routes.marketplaceQuery("sort=featured&category=all")}
           />
           <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
             {(discoverData.featured as ResourceCardData[]).map((resource) => (
@@ -689,7 +686,7 @@ async function ResourcesDiscoverDeferredSections({
         <section className="space-y-4">
           <SectionHeader
             title="Free resources"
-            viewAllHref="/resources?price=free&category=all"
+            viewAllHref={routes.marketplaceQuery("price=free&category=all")}
           />
           <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
             {(discoverData.freeResources as ResourceCardData[]).map((resource) => (
@@ -709,7 +706,7 @@ async function ResourcesDiscoverDeferredSections({
         <section className="space-y-4">
           <SectionHeader
             title="Most downloaded"
-            viewAllHref="/resources?sort=downloads&category=all"
+            viewAllHref={routes.marketplaceQuery("sort=downloads&category=all")}
           />
           <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
             {(discoverData.mostDownloaded as ResourceCardData[]).map((resource, index) => (
@@ -1040,7 +1037,7 @@ async function ResourcesDiscoverRFYFinalSection({
         <SectionHeader
           title="Recommended for you"
           description="A focused set of picks to help you keep momentum without sorting through the whole library."
-          viewAllHref="/resources?sort=trending&category=all"
+          viewAllHref={routes.marketplaceQuery("sort=trending&category=all")}
         />
         <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
           {fallbackCards.map((resource, index) => (
@@ -1092,7 +1089,7 @@ async function ResourcesDiscoverRFYFinalSection({
       <SectionHeader
         title="Recommended for you"
         description="A focused set of picks to help you keep momentum without sorting through the whole library."
-        viewAllHref="/resources?sort=trending&category=all"
+        viewAllHref={routes.marketplaceQuery("sort=trending&category=all")}
       />
       <RecommendationSection
         variant={recommendationVariant}
@@ -1174,7 +1171,7 @@ async function ResourcesDiscoverPersonalisedExtras({
           <SectionHeader
             title={`Because you studied ${recentStudyTitle}`}
             description={`More resources in ${recentCategoryName} you haven't tried yet.`}
-            viewAllHref="/resources?category=all&sort=newest"
+            viewAllHref={routes.marketplaceQuery("category=all&sort=newest")}
           />
           <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
             {(becauseYouStudied as ResourceCardData[]).map((resource) => (
@@ -1198,7 +1195,7 @@ async function ResourcesDiscoverPersonalisedExtras({
           <SectionHeader
             title="Recommended for your level"
             description="Deterministic picks shaped by the difficulty level your recent purchases suggest."
-            viewAllHref="/resources?sort=trending&category=all"
+            viewAllHref={routes.marketplaceQuery("sort=trending&category=all")}
           />
           <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
             {(recommendedForLevel as ResourceCardData[]).map((resource) => (
@@ -1226,7 +1223,7 @@ function RecommendedForYouFallbackSection() {
       <SectionHeader
         title="Recommended for you"
         description="A focused set of picks to help you keep momentum without sorting through the whole library."
-        viewAllHref="/resources?sort=trending&category=all"
+        viewAllHref={routes.marketplaceQuery("sort=trending&category=all")}
       />
       <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
         {Array.from({ length: 5 }).map((_, index) => (

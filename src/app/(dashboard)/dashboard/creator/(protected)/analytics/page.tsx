@@ -35,7 +35,7 @@ function rangeLink(range: string, currentRange: string) {
 export default async function CreatorAnalyticsPage({
   searchParams,
 }: CreatorAnalyticsPageProps) {
-  const { userId } = await requireSession("/dashboard/creator/analytics");
+  const { userId } = await requireSession(routes.creatorAnalytics);
 
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const rangeParam = firstValue(resolvedSearchParams.range);

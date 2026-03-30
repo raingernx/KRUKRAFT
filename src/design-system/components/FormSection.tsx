@@ -12,7 +12,7 @@ import {
 } from "@/design-system";
 import { cn } from "@/lib/utils";
 
-interface FormSectionProps {
+export interface FormSectionProps {
   title: string;
   description?: React.ReactNode;
   footer?: React.ReactNode;

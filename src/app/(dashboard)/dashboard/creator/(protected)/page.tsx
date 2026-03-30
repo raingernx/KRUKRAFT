@@ -104,7 +104,7 @@ function buildQualityFeedback(resource: {
 }
 
 export default async function CreatorDashboardPage() {
-  const { userId, session } = await requireSession("/dashboard/creator");
+  const { userId, session } = await requireSession(routes.creatorDashboard);
 
   const [access, setupState] = await Promise.all([
     getCreatorAccessState(userId),

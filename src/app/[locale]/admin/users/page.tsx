@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { Input } from "@/design-system";
 import { Button } from "@/design-system";
 import { formatNumber, formatDate } from "@/lib/format";
+import { routes } from "@/lib/routes";
+import { getAdminUsersPageData } from "@/services/admin-operations.service";
 
 export const metadata = {
   title: "Users – Admin",
@@ -19,36 +20,17 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/users");
+    redirect(routes.loginWithNext(routes.adminUsers));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const query = resolvedSearchParams.q?.trim() ?? "";
 
-  const users = await prisma.user.findMany({
-    take: 50,
-    orderBy: { createdAt: "desc" },
-    where: query
-      ? {
-          OR: [
-            { name: { contains: query, mode: "insensitive" } },
-            { email: { contains: query, mode: "insensitive" } },
-          ],
-        }
-      : undefined,
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      createdAt: true,
-      _count: { select: { resources: true } },
-    },
-  });
+  const users = await getAdminUsersPageData({ query });
 
   return (
     <div className="min-w-0 space-y-6">

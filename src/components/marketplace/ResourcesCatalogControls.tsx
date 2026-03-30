@@ -6,8 +6,11 @@ import {
   DiscoverButton,
   type ChipCategory,
 } from "@/components/marketplace/CategoryChips";
+import {
+  ChipsFallback,
+  DiscoverFallback,
+} from "@/components/marketplace/ResourcesCatalogControlsSkeleton";
 import { ScrollableCategoryNav } from "@/components/marketplace/ScrollableCategoryNav";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { getDiscoverCategories } from "@/services/discover.service";
 
 const CONTROLS_BAR_CLASS_NAME = "border-y border-surface-200 bg-white";
@@ -55,68 +58,6 @@ export async function ResourcesCatalogControls({
           </div>
         </div>
       </Container>
-    </div>
-  );
-}
-
-export function ResourcesCatalogControlsSkeleton({
-  showDiscoverMeta: _showDiscoverMeta = false,
-}: {
-  showDiscoverMeta?: boolean;
-}) {
-  return (
-    <div className={CONTROLS_BAR_CLASS_NAME}>
-      <Container className="py-2 sm:py-2.5">
-        <div className={CONTROLS_BAR_MAIN_CLASS_NAME}>
-          <div className={CONTROLS_BAR_GROUP_CLASS_NAME}>
-            <DiscoverFallback />
-            <ScrollableCategoryNav>
-              <ChipsFallback />
-            </ScrollableCategoryNav>
-          </div>
-        </div>
-      </Container>
-    </div>
-  );
-}
-
-export function ResourcesCatalogSearchSkeleton() {
-  return <SearchFallback />;
-}
-
-function DiscoverFallback() {
-  return (
-    <div className="inline-flex h-10 items-center rounded-full border border-surface-200 bg-surface-50 px-4 text-base font-medium text-text-secondary shadow-sm">
-      <span>กำลังโหลด</span>
-    </div>
-  );
-}
-
-function SearchFallback() {
-  return (
-    <div className="flex h-10 w-full items-center gap-3 rounded-xl border border-border-subtle bg-white px-4 text-base text-text-muted shadow-sm sm:rounded-2xl">
-      <LoadingSkeleton className="h-2.5 w-2.5 rounded-full bg-primary-500" />
-      <span>กำลังค้นหา...</span>
-    </div>
-  );
-}
-
-function ChipsFallback() {
-  return (
-    <div className="flex gap-2.5 overflow-hidden">
-      {["ทั้งหมด", "คณิตศาสตร์", "วิทยาศาสตร์", "ภาษา", "มนุษยศาสตร์", "ปฐมวัย"].map((label, index) => (
-        <div
-          key={label}
-          className={`inline-flex h-10 shrink-0 items-center rounded-full border border-surface-200 bg-surface-50 px-4 text-base text-text-muted ${
-            index === 0 ? "gap-2 pr-4" : ""
-          }`}
-        >
-          {index === 0 ? (
-            <LoadingSkeleton className="h-4 w-16" />
-          ) : null}
-          <span>{label}</span>
-        </div>
-      ))}
     </div>
   );
 }

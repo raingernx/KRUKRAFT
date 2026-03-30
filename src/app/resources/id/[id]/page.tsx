@@ -1,5 +1,6 @@
 import { redirect, notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { getPublicResourceSlugRedirectTarget } from "@/services/admin-operations.service";
+import { routes } from "@/lib/routes";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -8,10 +9,7 @@ interface PageProps {
 
 export default async function Page({ params, searchParams }: PageProps) {
   const { id } = await params;
-  const resource = await prisma.resource.findUnique({
-    where: { id },
-    select: { slug: true },
-  });
+  const resource = await getPublicResourceSlugRedirectTarget(id);
 
   if (!resource) {
     notFound();
@@ -24,5 +22,5 @@ export default async function Page({ params, searchParams }: PageProps) {
       : undefined;
   const query = payment ? `?payment=${encodeURIComponent(payment)}` : "";
 
-  redirect(`/resources/${resource.slug}${query}`);
+  redirect(`${routes.resource(resource.slug)}${query}`);
 }

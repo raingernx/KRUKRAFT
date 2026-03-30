@@ -7,6 +7,7 @@ import { ResourceCardSkeleton } from "@/components/resources/ResourceCard";
 import { getBaseUrl } from "@/lib/api";
 import Link from "next/link";
 import { ArrowLeft, BookOpen } from "lucide-react";
+import { routes } from "@/lib/routes";
 
 const CATEGORY_META: Record<
   string,
@@ -87,7 +88,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </div>
         <Container className="relative space-y-6 pb-12 pt-10 lg:pb-14 lg:pt-12">
           <Link
-            href="/resources"
+            href={routes.marketplace}
             className="mb-5 inline-flex items-center gap-1.5 text-sm font-medium text-white/70 hover:text-white transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />

@@ -94,11 +94,11 @@ export default async function AdminHeroesPage({ searchParams }: Props) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    redirect("/auth/login?next=/admin/heroes");
+    redirect(routes.loginWithNext(routes.adminHeroes));
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   const [heroes, hasEligibleHero, fallbackHero] = await Promise.all([

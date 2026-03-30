@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { after } from "next/server";
-import { getServerSession } from "next-auth";
 
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import {
   permanentlyDeleteTrashedResource,
@@ -12,37 +11,16 @@ import {
 
 type Params = { params: Promise<{ id: string }> };
 
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    return { error: NextResponse.json({ error: "Unauthorized." }, { status: 401 }) };
-  }
-
-  if (session.user.role !== "ADMIN") {
-    return {
-      error: NextResponse.json(
-        { error: "Forbidden. Admin access required." },
-        { status: 403 },
-      ),
-    };
-  }
-
-  return { session };
-}
-
 // PATCH /api/admin/resources/[id]/trash  → restore from trash
 export async function PATCH(_req: Request, { params }: Params) {
   try {
     const { id } = await params;
-    const admin = await requireAdmin();
-    if ("error" in admin) {
-      return admin.error;
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     const restored = await restoreTrashedResource({
       resourceId: id,
-      adminUserId: admin.session.user.id,
+      adminUserId: auth.session.user.id,
     });
     if (restored.status === "PUBLISHED") {
       after(() => {
@@ -75,14 +53,12 @@ export async function PATCH(_req: Request, { params }: Params) {
 export async function DELETE(_req: Request, { params }: Params) {
   try {
     const { id } = await params;
-    const admin = await requireAdmin();
-    if ("error" in admin) {
-      return admin.error;
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     const deleted = await permanentlyDeleteTrashedResource({
       resourceId: id,
-      adminUserId: admin.session.user.id,
+      adminUserId: auth.session.user.id,
     });
     after(() => {
       void warmTargetedPublicCaches({

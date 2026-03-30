@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
-import { getServerSession } from "next-auth";
 import { z } from "zod";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import { CACHE_TAGS, deleteResourceTrustRedisKeys, getResourceDetailDataTag } from "@/lib/cache";
 import {
   hideReview,
@@ -20,18 +19,8 @@ const ReviewVisibilitySchema = z.object({
 
 export async function PATCH(req: Request, { params }: Params) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    if (session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { error: "Forbidden. Admin access required." },
-        { status: 403 },
-      );
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     const body = await req.json();
     const parsed = ReviewVisibilitySchema.safeParse(body);
@@ -45,8 +34,8 @@ export async function PATCH(req: Request, { params }: Params) {
 
     const { id } = await params;
     const review = parsed.data.isVisible
-      ? await unhideReview(session.user.id, id)
-      : await hideReview(session.user.id, id);
+      ? await unhideReview(auth.session.user.id, id)
+      : await hideReview(auth.session.user.id, id);
 
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(getResourceDetailDataTag(review.resourceId), "max");

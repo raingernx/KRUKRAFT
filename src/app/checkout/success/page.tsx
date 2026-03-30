@@ -3,6 +3,7 @@ import { CheckCircle, BookOpen, Download, Library } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/components/layout/container";
 import { CheckoutSuccessTracker } from "@/components/checkout/CheckoutSuccessTracker";
+import { routes } from "@/lib/routes";
 
 /**
  * /checkout/success
@@ -72,14 +73,14 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
                       the Download button — no library navigation required.
                     */}
                     <Link
-                      href={`/resources/${slug}?payment=success`}
+                      href={routes.resourcePaymentSuccess(slug)}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-zinc-700"
                     >
                       <Download className="h-4 w-4" />
                       Go back &amp; download
                     </Link>
                     <Link
-                      href="/dashboard/library"
+                      href={routes.library}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-surface-200 bg-white px-5 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-surface-50"
                     >
                       <Library className="h-4 w-4" />
@@ -92,14 +93,14 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
                         ?payment=success activates the recovery block on the
                         library page so the buyer can find their purchase. */}
                     <Link
-                      href="/dashboard/library?payment=success"
+                      href={routes.libraryPaymentSuccess()}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-zinc-700"
                     >
                       <Library className="h-4 w-4" />
                       Go to My Library
                     </Link>
                     <Link
-                      href="/resources"
+                      href={routes.marketplace}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-surface-200 bg-white px-5 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-surface-50"
                     >
                       <BookOpen className="h-4 w-4" />
@@ -113,7 +114,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
               <p className="mt-5 text-center text-[12px] text-zinc-400">
                 If your library doesn&apos;t update within a minute,{" "}
                 <Link
-                  href="/support"
+                  href={routes.support}
                   className="underline underline-offset-2 hover:text-zinc-600"
                 >
                   contact support

@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { after } from "next/server";
-import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import {
   CACHE_TAGS,
   deleteDiscoverRedisKeys,
@@ -18,29 +17,6 @@ import {
   ResourceServiceError,
 } from "@/services/resources/resource.service";
 
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    return {
-      session: null,
-      error: NextResponse.json({ error: "Unauthorized." }, { status: 401 }),
-    };
-  }
-
-  if (session.user.role !== "ADMIN") {
-    return {
-      session: null,
-      error: NextResponse.json(
-        { error: "Forbidden. Admin access required." },
-        { status: 403 },
-      ),
-    };
-  }
-
-  return { session, error: undefined as NextResponse | undefined };
-}
-
 function handleServiceError(err: unknown, label: string) {
   if (err instanceof ResourceServiceError) {
     return NextResponse.json(err.payload, { status: err.status });
@@ -55,13 +31,10 @@ function handleServiceError(err: unknown, label: string) {
 
 export async function POST(req: Request) {
   try {
-    const { session, error } = await requireAdmin();
-    if (error) return error;
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
-    const result = await createAdminResourcesInBulk(await req.json(), session.user.id);
+    const result = await createAdminResourcesInBulk(await req.json(), auth.session.user.id);
 
     if (result.data.success > 0) {
       revalidateTag(CACHE_TAGS.discover, "max");
@@ -85,8 +58,8 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
-    const { error } = await requireAdmin();
-    if (error) return error;
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     const body = await req.json();
     const targetIds = Array.isArray((body as { ids?: unknown })?.ids)

@@ -20,6 +20,7 @@ import {
 import { Button, Input } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { TableToolbar } from "@/components/admin/table";
+import { routes } from "@/lib/routes";
 import {
   traceServerStep,
   withRequestPerformanceTrace,
@@ -87,8 +88,8 @@ function PresetButtons({
         const pEnd = p.end();
         const href =
           pStart || pEnd
-            ? `/admin/analytics/purchases?start=${pStart}&end=${pEnd}`
-            : "/admin/analytics/purchases";
+            ? routes.adminPurchasesAnalyticsQuery(`start=${pStart}&end=${pEnd}`)
+            : routes.adminPurchasesAnalytics;
         const isActive =
           p.label === "All"
             ? !start && !end
@@ -271,11 +272,11 @@ export default async function PurchaseAnalyticsPage({
       );
 
       if (!session?.user) {
-        redirect("/auth/login?next=/admin/analytics/purchases");
+        redirect(routes.loginWithNext(routes.adminPurchasesAnalytics));
       }
 
       if (session.user.role !== "ADMIN") {
-        redirect("/dashboard");
+        redirect(routes.dashboard);
       }
 
       const report = await traceServerStep(
@@ -667,7 +668,7 @@ export default async function PurchaseAnalyticsPage({
                     </td>
                     <td className="px-5 py-3">
                       <Link
-                        href={`/resources/${r.slug}`}
+                        href={routes.resource(r.slug)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="font-medium text-zinc-800 hover:text-primary-700 hover:underline"

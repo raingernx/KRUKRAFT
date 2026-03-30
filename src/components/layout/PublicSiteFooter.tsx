@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
+import { routes } from "@/lib/routes";
 
 type Props = { children: ReactNode };
 
@@ -14,8 +15,8 @@ export function PublicSiteFooter({ children }: Props) {
   const pathname = usePathname();
 
   if (
-    pathname?.includes("/admin") ||
-    pathname?.includes("/dashboard")
+    pathname?.startsWith(routes.admin) ||
+    pathname?.startsWith(routes.dashboard)
   ) {
     return null;
   }

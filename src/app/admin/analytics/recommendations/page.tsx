@@ -13,6 +13,7 @@ import {
 } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { TableToolbar } from "@/components/admin/table";
+import { routes } from "@/lib/routes";
 import {
   traceServerStep,
   withRequestPerformanceTrace,
@@ -70,9 +71,9 @@ function PresetButtons({ start, end }: { start: string | null; end: string | nul
       {PRESETS.map((p) => {
         const pStart = p.start();
         const pEnd   = p.end();
-        const href   = pStart || pEnd
-          ? `/admin/analytics/recommendations?start=${pStart}&end=${pEnd}`
-          : "/admin/analytics/recommendations";
+        const href = pStart || pEnd
+          ? routes.adminRecommendationReportQuery(`start=${pStart}&end=${pEnd}`)
+          : routes.adminRecommendationReport;
         const isActive =
           p.label === "All time"
             ? !start && !end
@@ -189,11 +190,11 @@ export default async function RecommendationExperimentPage({
       );
 
       if (!session?.user) {
-        redirect("/auth/login?next=/admin/analytics/recommendations");
+        redirect(routes.loginWithNext(routes.adminRecommendationReport));
       }
 
       if (session.user.role !== "ADMIN") {
-        redirect("/dashboard");
+        redirect(routes.dashboard);
       }
 
       const report = await traceServerStep(

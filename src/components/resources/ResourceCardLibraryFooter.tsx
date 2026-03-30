@@ -7,6 +7,7 @@ import { Download, Eye, ExternalLink } from "lucide-react";
 import { Button } from "@/design-system";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { isPreviewSupported } from "@/lib/preview/previewPolicy";
+import { routes } from "@/lib/routes";
 import type { ResourceCardResource } from "./ResourceCard";
 
 function getDownloadedLabel(downloadedAt?: Date) {
@@ -21,6 +22,7 @@ export function ResourceCardLibraryFooter({
 }) {
   const [downloadClicked, setDownloadClicked] = useState(false);
   const downloadedLabel = getDownloadedLabel(resource.downloadedAt);
+  const resourceHref = resource.slug ? routes.resource(resource.slug) : routes.marketplace;
 
   return (
     <>
@@ -59,7 +61,7 @@ export function ResourceCardLibraryFooter({
           ) : null}
           <Button asChild variant="outline" size="sm" className="h-9 flex-1 gap-1.5">
             <IntentPrefetchLink
-              href={`/resources/${resource.slug}`}
+              href={resourceHref}
               prefetchScope="resource-card-library"
               prefetchLimit={4}
             >
@@ -75,7 +77,11 @@ export function ResourceCardLibraryFooter({
             <span className="font-medium">Downloaded ✓</span>
             <span className="text-zinc-300" aria-hidden>•</span>
             <Link
-              href={resource.category?.slug ? `/categories/${resource.category.slug}` : "/resources"}
+              href={
+                resource.category?.slug
+                  ? routes.category(resource.category.slug)
+                  : routes.marketplace
+              }
               className="text-zinc-500 underline underline-offset-2 hover:text-zinc-700"
             >
               Want more like this?

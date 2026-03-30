@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { Users, Package, CreditCard, Download } from "lucide-react";
 import { Card } from "@/design-system";
 import { formatNumber, formatDate, formatPrice } from "@/lib/format";
+import { routes } from "@/lib/routes";
 import { getAdminDashboardOverview } from "@/services/analytics.service";
 
 export const metadata = {
@@ -16,14 +17,14 @@ export default async function AdminDashboardPage() {
 
   // ── 1. Require login ───────────────────────────────────────────────────────
   if (!session?.user) {
-    redirect("/auth/login?next=/admin");
+    redirect(routes.loginWithNext(routes.admin));
   }
 
   // ── 2. Require ADMIN role ──────────────────────────────────────────────────
   const role = session.user.role;
 
   if (role !== "ADMIN") {
-    redirect("/dashboard");
+    redirect(routes.dashboard);
   }
 
   const {

@@ -29,6 +29,7 @@ import { PreviewImageSortableList } from "@/components/admin/PreviewImageSortabl
 import { TagInput } from "@/components/admin/TagInput";
 import { UserSearchSelect } from "@/components/admin/UserSearchSelect";
 import type { ResourceCardData } from "@/components/resources/ResourceCard";
+import { routes } from "@/lib/routes";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -1159,7 +1160,7 @@ export function ResourceForm({
           <div className="flex gap-3">
             {isEdit && resource && (
               <Link
-                href={`/resources/${resource.slug}`}
+                href={routes.resource(resource.slug)}
                 className="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
               >
                 View resource

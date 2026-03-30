@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { routes } from "@/lib/routes";
 
 export type ResourcesNavigationMode = "discover" | "listing" | "detail";
 
@@ -55,16 +56,17 @@ export function canonicalizeResourcesHref(href: string) {
 
 export function inferResourcesNavigationMode(href: string): ResourcesNavigationMode | null {
   const canonicalHref = canonicalizeResourcesHref(href);
+  const marketplacePrefix = `${routes.marketplace}/`;
 
-  if (canonicalHref === "/resources") {
+  if (canonicalHref === routes.marketplace) {
     return "discover";
   }
 
-  if (canonicalHref.startsWith("/resources?")) {
+  if (canonicalHref.startsWith(`${routes.marketplace}?`)) {
     return "listing";
   }
 
-  if (canonicalHref.startsWith("/resources/")) {
+  if (canonicalHref.startsWith(marketplacePrefix)) {
     return "detail";
   }
 

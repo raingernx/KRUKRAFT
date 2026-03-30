@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { requireSession } from "@/lib/auth/require-session";
 import { CreatorResourceForm } from "@/components/creator/CreatorResourceForm";
 import { PageContent } from "@/design-system";
+import { routes } from "@/lib/routes";
 import {
   getCreatorResourceForEdit,
   getCreatorResourceFormData,
@@ -20,7 +21,7 @@ type CreatorEditResourcePageProps = {
 export default async function CreatorEditResourcePage({
   params,
 }: CreatorEditResourcePageProps) {
-  const { userId } = await requireSession("/dashboard/creator/resources");
+  const { userId } = await requireSession(routes.creatorResources);
 
   const { id } = await params;
   const [resource, formData] = await Promise.all([

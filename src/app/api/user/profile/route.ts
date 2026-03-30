@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { updateOwnUserProfile } from "@/services/user-account.service";
 
 export async function PATCH(req: Request) {
   const session = await getServerSession(authOptions);
@@ -21,28 +21,15 @@ export async function PATCH(req: Request) {
   }
 
   const { name, email } = body as { name?: unknown; email?: unknown };
-
-  const updates: { name?: string | null; email?: string | null } = {};
-
-  if (typeof name === "string") {
-    updates.name = name.trim().slice(0, 120);
-  }
-
-  if (typeof email === "string") {
-    const trimmed = email.trim();
-    updates.email = trimmed.length > 0 ? trimmed.slice(0, 190) : null;
-  }
-
-  if (!Object.keys(updates).length) {
-    return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
-  }
-
-  const updated = await prisma.user.update({
-    where: { id: session.user.id },
-    data: updates,
-    select: { name: true, email: true, image: true },
+  const result = await updateOwnUserProfile({
+    userId: session.user.id,
+    name,
+    email,
   });
 
-  return NextResponse.json({ data: updated });
-}
+  if (result.error) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
+  }
 
+  return NextResponse.json({ data: result.data });
+}

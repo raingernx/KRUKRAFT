@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { after } from "next/server";
-import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import {
   CACHE_TAGS,
   deleteDiscoverRedisKeys,
@@ -20,29 +19,6 @@ import {
 
 type Params = { params: Promise<{ id: string }> };
 
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    return {
-      session: null,
-      error: NextResponse.json({ error: "Unauthorized." }, { status: 401 }),
-    };
-  }
-
-  if (session.user.role !== "ADMIN") {
-    return {
-      session: null,
-      error: NextResponse.json(
-        { error: "Forbidden. Admin access required." },
-        { status: 403 },
-      ),
-    };
-  }
-
-  return { session, error: undefined as NextResponse | undefined };
-}
-
 function handleServiceError(err: unknown, label: string) {
   if (err instanceof ResourceServiceError) {
     return NextResponse.json(err.payload, { status: err.status });
@@ -58,15 +34,11 @@ function handleServiceError(err: unknown, label: string) {
 export async function PATCH(req: Request, { params }: Params) {
   try {
     const { id } = await params;
-    const { session, error } = await requireAdmin();
-
-    if (error) return error;
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     const previousCacheTarget = await getAdminResourcePublicCacheTarget(id);
-    const result = await updateAdminResource(id, await req.json(), session.user.id);
+    const result = await updateAdminResource(id, await req.json(), auth.session.user.id);
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(CACHE_TAGS.creatorPublic, "max");
     revalidateTag(getResourceCacheTag(result.data.slug), "max");
@@ -107,15 +79,11 @@ export async function PATCH(req: Request, { params }: Params) {
 export async function DELETE(_req: Request, { params }: Params) {
   try {
     const { id } = await params;
-    const { session, error } = await requireAdmin();
-
-    if (error) return error;
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     const cacheTarget = await getAdminResourcePublicCacheTarget(id);
-    const result = await trashAdminResource(id, session.user.id);
+    const result = await trashAdminResource(id, auth.session.user.id);
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(CACHE_TAGS.creatorPublic, "max");
     if (cacheTarget) {

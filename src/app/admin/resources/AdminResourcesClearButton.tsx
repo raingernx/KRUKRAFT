@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/design-system";
+import { routes } from "@/lib/routes";
 
 interface AdminResourcesClearButtonProps {
   hasFilters: boolean;
@@ -23,7 +24,7 @@ export function AdminResourcesClearButton({
       variant="ghost"
       size="sm"
       onClick={() => {
-        router.push("/admin/resources");
+        router.push(routes.adminResources);
         router.refresh();
         onClear?.();
       }}

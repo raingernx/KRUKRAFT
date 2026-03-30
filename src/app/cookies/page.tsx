@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/components/layout/container";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Cookie Policy",
@@ -80,7 +81,7 @@ export default function CookiesPage() {
               <p>
                 For more details about how we handle your data, see our{" "}
                 <a
-                  href="/privacy"
+                  href={routes.privacy}
                   className="text-blue-600 underline hover:text-blue-700"
                 >
                   Privacy Policy

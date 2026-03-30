@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { after } from "next/server";
-import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
-import { authOptions } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import { CACHE_TAGS, deleteDiscoverRedisKeys } from "@/lib/cache";
 import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
 import {
@@ -25,13 +24,10 @@ function handleServiceError(err: unknown, label: string) {
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    const result = await createAdminResource(await req.json(), session.user.id);
+    const result = await createAdminResource(await req.json(), auth.session.user.id);
     revalidateTag(CACHE_TAGS.discover, "max");
     revalidateTag(CACHE_TAGS.creatorPublic, "max");
     await deleteDiscoverRedisKeys();
@@ -56,15 +52,8 @@ export async function POST(req: Request) {
 
 export async function GET(_req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    if (session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Forbidden." }, { status: 403 });
-    }
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.res;
 
     const resources = await listAdminResources();
 

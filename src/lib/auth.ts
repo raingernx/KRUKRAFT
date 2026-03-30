@@ -6,6 +6,7 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 import { isMissingTableError } from "./prismaErrors";
+import { routes } from "./routes";
 
 // ── JWT role cache ────────────────────────────────────────────────────────────
 //
@@ -68,8 +69,8 @@ export const authOptions: NextAuthOptions = {
   },
 
   pages: {
-    signIn: "/auth/login",
-    error: "/auth/login",
+    signIn: routes.login,
+    error: routes.login,
   },
 
   providers: [
