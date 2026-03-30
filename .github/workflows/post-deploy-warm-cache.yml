@@ -97,6 +97,8 @@ jobs:
 
       - name: Warm Public Routes
         shell: bash
+        env:
+          PERFORMANCE_WARM_SECRET: ${{ secrets.PERFORMANCE_WARM_SECRET }}
         run: |
           set -euo pipefail
           mkdir -p artifacts

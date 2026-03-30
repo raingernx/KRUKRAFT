@@ -1027,6 +1027,15 @@ export function findResourceSlugById(resourceId: string) {
   });
 }
 
+export function findHotResourceSlugs(limit: number) {
+  return prisma.resource.findMany({
+    where: LISTED_RESOURCE_WHERE,
+    select: { slug: true },
+    orderBy: { resourceStat: { downloads: "desc" } },
+    take: limit,
+  });
+}
+
 export function clearAdminResourceFileById(resourceId: string) {
   return prisma.resource.update({
     where: { id: resourceId },

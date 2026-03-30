@@ -9,6 +9,8 @@ const hotSlug =
   process.env.HOT_SLUG?.trim() ||
   "middle-school-science-quiz-assessment-set";
 
+const warmSecret = process.env.PERFORMANCE_WARM_SECRET?.trim();
+
 // 15 s gives the recommended listing's multi-CTE SQL enough time to complete
 // on a cold Vercel instance (~7 s observed) and write its result to Redis
 // before k6 performance tests run.  The previous 5 s limit caused the warm
@@ -213,10 +215,71 @@ async function warmRoute(route: WarmRoute): Promise<WarmResult> {
   }
 }
 
+/**
+ * Fetch the top-N resource slugs from the internal hot-slugs API so the
+ * warm script can prime the cache for pages beyond the single HOT_SLUG.
+ * Returns an empty array (with a warning) if the endpoint is unreachable or
+ * the secret is missing — the main route list still runs as normal.
+ */
+async function fetchHotSlugs(limit = 20): Promise<string[]> {
+  if (!warmSecret) {
+    console.warn(
+      "[warm-cache] PERFORMANCE_WARM_SECRET not set — skipping hot-slugs fetch, only HOT_SLUG will be warmed",
+    );
+    return [];
+  }
+
+  const url = new URL("/api/internal/hot-slugs", baseUrl);
+  url.searchParams.set("limit", String(limit));
+
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "user-agent": userAgent,
+        "x-warm-secret": warmSecret,
+      },
+      signal: AbortSignal.timeout(10_000),
+    });
+
+    if (!res.ok) {
+      console.warn(`[warm-cache] hot-slugs API returned ${res.status} — falling back to HOT_SLUG only`);
+      return [];
+    }
+
+    const json = (await res.json()) as { slugs?: unknown };
+    if (!Array.isArray(json.slugs)) return [];
+
+    const slugs = (json.slugs as unknown[]).filter((s): s is string => typeof s === "string");
+    console.log(`[warm-cache] hot-slugs: fetched ${slugs.length} slugs to warm`);
+    return slugs;
+  } catch (err) {
+    console.warn(
+      `[warm-cache] hot-slugs fetch failed — falling back to HOT_SLUG only: ${err instanceof Error ? err.message : String(err)}`,
+    );
+    return [];
+  }
+}
+
 async function main() {
   console.log(
-    `[warm-cache] Starting public cache warm-up against ${baseUrl} (${routes.length} routes)`,
+    `[warm-cache] Starting public cache warm-up against ${baseUrl}`,
   );
+
+  // Fetch the top-N resource slugs and append them as warm routes.
+  // The static HOT_SLUG route (resource-detail-hot) is already in the routes
+  // array above; fetchHotSlugs returns all top slugs including it, so we
+  // deduplicate by the path string to avoid warming the same URL twice.
+  const hotSlugs = await fetchHotSlugs(20);
+  const existingPaths = new Set(routes.map((r) => r.path));
+  for (const slug of hotSlugs) {
+    const path = `/resources/${encodeURIComponent(slug)}`;
+    if (!existingPaths.has(path)) {
+      routes.push({ label: `resource-detail:${slug}`, path });
+      existingPaths.add(path);
+    }
+  }
+
+  console.log(`[warm-cache] Warming ${routes.length} routes total`);
 
   const results: WarmResult[] = [];
 
