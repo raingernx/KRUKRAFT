@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { MouseEvent } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { usePlatformConfig } from "@/components/providers/PlatformConfigProvider";
 import { beginResourcesNavigation } from "@/components/marketplace/resourcesNavigationState";
@@ -84,7 +84,6 @@ export function Logo({
   className,
 }: LogoProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const platform = usePlatformConfig();
   const platformName = platform.platformShortName;
   const textColor = dark ? "text-white" : "text-zinc-900";
@@ -188,7 +187,9 @@ export function Logo({
     beginResourcesNavigation("discover", routes.marketplace);
 
     const isAlreadyDiscoverRoute =
-      pathname === routes.marketplace && !searchParams.toString();
+      pathname === routes.marketplace &&
+      typeof window !== "undefined" &&
+      window.location.search.length === 0;
 
     if (isAlreadyDiscoverRoute) {
       event.preventDefault();
