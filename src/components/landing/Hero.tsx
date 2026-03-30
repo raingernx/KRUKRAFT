@@ -128,7 +128,7 @@ export function Hero({ heroResources }: HeroProps) {
 
           {/* CTA buttons */}
           <div className="flex flex-wrap gap-3">
-            <Link href={routes.marketplace}>
+            <Link href={routes.marketplaceCategory("all")}>
               <Button size="lg" className="bg-brand-600 text-white hover:bg-brand-700">
                 Browse resources
               </Button>

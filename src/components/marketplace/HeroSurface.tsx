@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import { buttonVariants } from "@/design-system";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
@@ -338,7 +339,7 @@ function HeroCta({
     return render({ href, label, className, kind });
   }
 
-  return <span className={className}>{label}</span>;
+  return <Link href={href} className={className}>{label}</Link>;
 }
 
 export function HeroSurface({

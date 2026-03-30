@@ -40,6 +40,7 @@ export function HeroBanner({
             variant={variant}
             href={href}
             className={className}
+            resourcesNavigationMode={null}
           >
             {label}
           </HeroTrackedLink>
@@ -51,6 +52,7 @@ export function HeroBanner({
             variant={variant}
             href={href}
             className={className}
+            resourcesNavigationMode={null}
           >
             {label}
           </HeroTrackedLink>

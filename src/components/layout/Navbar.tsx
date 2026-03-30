@@ -303,38 +303,40 @@ function NavbarInner({
                 <Link href={routes.library} className={MARKETPLACE_ACTION_LINK_CLASS_NAME}>
                   คลังของฉัน
                 </Link>
-                <Link href={routes.membership} className={MARKETPLACE_PREMIUM_ACTION_CLASS_NAME}>
-                  KC Premium
-                </Link>
 
                 {isLoading ? (
                   <div className="flex items-center gap-2.5">
                     <div className="h-10 w-24 animate-pulse rounded-full bg-surface-100" />
-                    <div className="h-10 w-32 animate-pulse rounded-full bg-surface-100" />
+                    <div className="h-10 w-10 animate-pulse rounded-full bg-surface-100" />
                   </div>
                 ) : session?.user ? (
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setUserMenuOpen((open) => !open)}
-                      className="group transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
-                      aria-label="เปิดเมนูบัญชี"
-                      aria-haspopup="menu"
-                      aria-expanded={userMenuOpen}
-                      aria-controls={userMenuId}
-                    >
-                      <AccountTrigger
-                        name={session.user.name?.split(" ")[0] ?? "Account"}
-                        image={session.user.image}
-                        email={session.user.email}
-                        isOpen={userMenuOpen}
-                      />
-                    </button>
-                    {userMenuOpen ? renderUserMenu() : null}
-                  </div>
+                  <>
+                    <Link href={routes.membership} className={MARKETPLACE_PREMIUM_ACTION_CLASS_NAME}>
+                      KC Premium
+                    </Link>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setUserMenuOpen((open) => !open)}
+                        className="group transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
+                        aria-label="เปิดเมนูบัญชี"
+                        aria-haspopup="menu"
+                        aria-expanded={userMenuOpen}
+                        aria-controls={userMenuId}
+                      >
+                        <AccountTrigger
+                          name={session.user.name?.split(" ")[0] ?? "Account"}
+                          image={session.user.image}
+                          email={session.user.email}
+                          isOpen={userMenuOpen}
+                        />
+                      </button>
+                      {userMenuOpen ? renderUserMenu() : null}
+                    </div>
+                  </>
                 ) : (
                   <>
-                    <Link href={routes.login} className={MARKETPLACE_ACTION_LINK_CLASS_NAME}>
+                    <Link href={routes.login} className={cn(MARKETPLACE_CATEGORY_ITEM_CLASS_NAME, "border-surface-300 bg-surface-100 text-text-primary shadow-sm")}>
                       เข้าสู่ระบบ
                     </Link>
                     <Link href={routes.register} className={MARKETPLACE_PRIMARY_ACTION_CLASS_NAME}>
@@ -348,38 +350,37 @@ function NavbarInner({
                 <Link href={routes.library} className="inline-flex h-10 shrink-0 items-center rounded-full px-3 text-[14px] leading-[22px] font-medium text-text-secondary transition-colors hover:bg-surface-100 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2">
                   คลังของฉัน
                 </Link>
-                <Link href={routes.membership} className="inline-flex h-10 shrink-0 items-center rounded-full border border-amber-200 bg-[linear-gradient(135deg,#fff8dc,#fff4bf)] px-3 text-[14px] leading-[22px] font-semibold text-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition-colors hover:border-amber-300 hover:bg-[linear-gradient(135deg,#fff9e7,#fff1b0)] hover:text-amber-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/40 focus-visible:ring-offset-2">
-                  KC Premium
-                </Link>
 
                 {isLoading ? (
-                  <>
-                    <div className="h-10 w-24 shrink-0 animate-pulse rounded-full bg-surface-100" />
-                    <div className="h-10 w-28 shrink-0 animate-pulse rounded-full bg-surface-100" />
-                  </>
+                  <div className="h-10 w-10 shrink-0 animate-pulse rounded-full bg-surface-100" />
                 ) : session?.user ? (
-                  <div className="relative shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => setUserMenuOpen((open) => !open)}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-surface-200 bg-white shadow-sm transition-colors hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
-                      aria-label="เปิดเมนูบัญชี"
-                      aria-haspopup="menu"
-                      aria-expanded={userMenuOpen}
-                      aria-controls={userMenuId}
-                    >
-                      <Avatar
-                        src={session.user.image}
-                        name={session.user.name}
-                        email={session.user.email}
-                        size={30}
-                      />
-                    </button>
-                    {userMenuOpen ? renderUserMenu() : null}
-                  </div>
+                  <>
+                    <Link href={routes.membership} className="inline-flex h-10 shrink-0 items-center rounded-full border border-amber-200 bg-[linear-gradient(135deg,#fff8dc,#fff4bf)] px-3 text-[14px] leading-[22px] font-semibold text-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] transition-colors hover:border-amber-300 hover:bg-[linear-gradient(135deg,#fff9e7,#fff1b0)] hover:text-amber-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/40 focus-visible:ring-offset-2">
+                      KC Premium
+                    </Link>
+                    <div className="relative shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setUserMenuOpen((open) => !open)}
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-surface-200 bg-white shadow-sm transition-colors hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
+                        aria-label="เปิดเมนูบัญชี"
+                        aria-haspopup="menu"
+                        aria-expanded={userMenuOpen}
+                        aria-controls={userMenuId}
+                      >
+                        <Avatar
+                          src={session.user.image}
+                          name={session.user.name}
+                          email={session.user.email}
+                          size={30}
+                        />
+                      </button>
+                      {userMenuOpen ? renderUserMenu() : null}
+                    </div>
+                  </>
                 ) : (
                   <>
-                    <Link href={routes.login} className="inline-flex h-10 shrink-0 items-center rounded-full px-3 text-[14px] leading-[22px] font-medium text-text-secondary transition-colors hover:bg-surface-100 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2">
+                    <Link href={routes.login} className={cn(MARKETPLACE_CATEGORY_ITEM_CLASS_NAME, "border-surface-300 bg-surface-100 px-3 text-text-primary shadow-sm")}>
                       เข้าสู่ระบบ
                     </Link>
                     <Link href={routes.register} className="inline-flex h-10 shrink-0 items-center rounded-full bg-brand-600 px-3 text-[14px] leading-[22px] font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2">
@@ -510,14 +511,18 @@ function NavbarInner({
               ))}
             </nav>
 
-            <NavbarItem
-              href={routes.membership}
-              variant="default"
-              className="h-10 rounded-full border border-amber-200 bg-[linear-gradient(135deg,#fff8dc,#fff4bf)] px-4 text-[14px] leading-[22px] font-semibold text-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] hover:border-amber-300 hover:bg-[linear-gradient(135deg,#fff9e7,#fff1b0)] hover:text-amber-950"
-            >
-              KC Plus
-            </NavbarItem>
-            <div className="mx-1 h-5 w-px bg-surface-200/70" aria-hidden />
+            {!isLoading && session?.user ? (
+              <>
+                <NavbarItem
+                  href={routes.membership}
+                  variant="default"
+                  className="h-10 rounded-full border border-amber-200 bg-[linear-gradient(135deg,#fff8dc,#fff4bf)] px-4 text-[14px] leading-[22px] font-semibold text-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] hover:border-amber-300 hover:bg-[linear-gradient(135deg,#fff9e7,#fff1b0)] hover:text-amber-950"
+                >
+                  KC Plus
+                </NavbarItem>
+                <div className="mx-1 h-5 w-px bg-surface-200/70" aria-hidden />
+              </>
+            ) : null}
 
             {isLoading ? (
               <div className="flex items-center gap-2.5">
@@ -547,7 +552,7 @@ function NavbarInner({
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <NavbarItem href={routes.login}>เข้าสู่ระบบ</NavbarItem>
+                <NavbarItem href={routes.login} variant="active" className="rounded-full">เข้าสู่ระบบ</NavbarItem>
                 <NavbarItem href={routes.register} variant="secondary">
                   เริ่มต้นใช้งาน
                 </NavbarItem>
@@ -586,17 +591,19 @@ function NavbarInner({
             ))}
           </nav>
 
-          <div className="mt-4">
-            <NavbarItem
-              href={routes.membership}
-              onClick={closeAll}
-              variant="default"
-              mobile
-              className="border border-amber-200 bg-[linear-gradient(135deg,#fff8dc,#fff4bf)] text-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] hover:border-amber-300 hover:bg-[linear-gradient(135deg,#fff9e7,#fff1b0)] hover:text-amber-950"
-            >
-              KC Plus
-            </NavbarItem>
-          </div>
+          {session?.user ? (
+            <div className="mt-4">
+              <NavbarItem
+                href={routes.membership}
+                onClick={closeAll}
+                variant="default"
+                mobile
+                className="border border-amber-200 bg-[linear-gradient(135deg,#fff8dc,#fff4bf)] text-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] hover:border-amber-300 hover:bg-[linear-gradient(135deg,#fff9e7,#fff1b0)] hover:text-amber-950"
+              >
+                KC Plus
+              </NavbarItem>
+            </div>
+          ) : null}
 
           <div className="mt-4 flex flex-col gap-2 border-t border-surface-100 pt-4">
             {session?.user ? (

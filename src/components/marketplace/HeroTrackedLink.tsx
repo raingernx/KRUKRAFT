@@ -10,6 +10,7 @@ interface HeroTrackedLinkProps {
   href: string;
   className: string;
   children: ReactNode;
+  resourcesNavigationMode?: "auto" | "discover" | "listing" | "detail" | null;
 }
 
 export function HeroTrackedLink({
@@ -19,6 +20,7 @@ export function HeroTrackedLink({
   href,
   className,
   children,
+  resourcesNavigationMode = "auto",
 }: HeroTrackedLinkProps) {
   function handleClick(_event: MouseEvent<HTMLAnchorElement>) {
     if (!heroId) {
@@ -45,7 +47,7 @@ export function HeroTrackedLink({
       prefetchMode="intent"
       prefetchScope="hero-cta"
       prefetchLimit={1}
-      resourcesNavigationMode="auto"
+      resourcesNavigationMode={resourcesNavigationMode ?? undefined}
     >
       {children}
     </IntentPrefetchLink>
