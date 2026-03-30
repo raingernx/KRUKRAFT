@@ -104,12 +104,15 @@ jobs:
           BASE_URL="${BASE_URL}" npm run warm:cache 2>&1 | tee artifacts/warm-cache.log
 
       - name: Warm Internal Public Cache Layers
-        if: ${{ secrets.PERFORMANCE_WARM_SECRET != '' }}
         shell: bash
         env:
           PERFORMANCE_WARM_SECRET: ${{ secrets.PERFORMANCE_WARM_SECRET }}
         run: |
           set -euo pipefail
+          if [ -z "${PERFORMANCE_WARM_SECRET:-}" ]; then
+            echo "[post-deploy-warm] PERFORMANCE_WARM_SECRET is not configured; skipping internal cache warm."
+            exit 0
+          fi
           WARM_BASE_URL="${BASE_URL}" npm run performance:warm 2>&1 | tee artifacts/warm-internal.log
 
       - name: Upload Warm Artifacts
