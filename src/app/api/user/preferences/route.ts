@@ -1,7 +1,22 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getUserPreferences, updateUserPreferences } from "@/lib/preferences";
+import {
+  getUserPreferences,
+  updateUserPreferences,
+  ALLOWED_LANGUAGES,
+  ALLOWED_THEMES,
+  ALLOWED_CURRENCIES,
+  ALLOWED_TIMEZONES,
+  type Language,
+  type Theme,
+  type Currency,
+  type Timezone,
+} from "@/lib/preferences";
+
+function isOneOf<T extends string>(value: unknown, allowed: readonly T[]): value is T {
+  return typeof value === "string" && (allowed as readonly string[]).includes(value);
+}
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -42,10 +57,10 @@ export async function PATCH(req: Request) {
   } = body as Record<string, unknown>;
 
   const updated = await updateUserPreferences(session.user.id, {
-    language: typeof language === "string" ? (language as any) : undefined,
-    theme: typeof theme === "string" ? (theme as any) : undefined,
-    currency: typeof currency === "string" ? (currency as any) : undefined,
-    timezone: typeof timezone === "string" ? (timezone as any) : undefined,
+    language: isOneOf<Language>(language, ALLOWED_LANGUAGES) ? language : undefined,
+    theme: isOneOf<Theme>(theme, ALLOWED_THEMES) ? theme : undefined,
+    currency: isOneOf<Currency>(currency, ALLOWED_CURRENCIES) ? currency : undefined,
+    timezone: isOneOf<Timezone>(timezone, ALLOWED_TIMEZONES) ? timezone : undefined,
     emailNotifications: typeof emailNotifications === "boolean" ? emailNotifications : undefined,
     purchaseReceipts: typeof purchaseReceipts === "boolean" ? purchaseReceipts : undefined,
     productUpdates: typeof productUpdates === "boolean" ? productUpdates : undefined,

@@ -3,6 +3,7 @@ import { SecuritySettings } from "@/components/settings/SecuritySettings";
 import { NotificationSettings } from "@/components/settings/NotificationSettings";
 import { PreferenceSettings } from "@/components/settings/PreferenceSettings";
 import { DangerZone } from "@/components/settings/DangerZone";
+import type { UserPreferences } from "@/lib/preferences";
 
 type SettingsTabsProps = {
   user: {
@@ -10,16 +11,7 @@ type SettingsTabsProps = {
     email: string | null;
     image: string | null;
   } | null;
-  preferences: {
-    language: string;
-    theme: string;
-    currency: string;
-    timezone: string;
-    emailNotifications: boolean;
-    purchaseReceipts: boolean;
-    productUpdates: boolean;
-    marketingEmails: boolean;
-  };
+  preferences: UserPreferences;
 };
 
 export function SettingsTabs({ user, preferences }: SettingsTabsProps) {
@@ -38,9 +30,9 @@ export function SettingsTabs({ user, preferences }: SettingsTabsProps) {
         marketingEmails={preferences.marketingEmails}
       />
       <PreferenceSettings
-        theme={preferences.theme as any}
-        currency={preferences.currency as any}
-        timezone={preferences.timezone as any}
+        theme={preferences.theme}
+        currency={preferences.currency}
+        timezone={preferences.timezone}
       />
       <DangerZone />
     </div>

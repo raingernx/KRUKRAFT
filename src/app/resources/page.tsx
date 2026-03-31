@@ -188,19 +188,6 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
             {isDiscoverMode ? (
               <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(224,231,255,0.78),transparent_32%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
                 <Container className="space-y-4 py-4 sm:space-y-5 sm:py-6 lg:space-y-6 lg:py-7">
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-text-secondary">
-                    <span
-                      className="inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500"
-                      aria-hidden="true"
-                    />
-                    <p className="font-medium text-text-primary">
-                      Curated by educators and creators
-                    </p>
-                    <span className="hidden text-text-muted sm:inline">•</span>
-                    <p className="hidden sm:block">
-                      New releases, trending picks, and focused collections in one calmer library.
-                    </p>
-                  </div>
                   {heroPromise ? (
                     <Suspense fallback={<HeroBannerSkeleton className={discoverHeroClassName} />}>
                       <AwaitResolvedNode promise={heroPromise} />

@@ -14,7 +14,13 @@ export async function PATCH(
     const auth = await requireAdminApi();
     if (!auth.ok) return auth.res;
 
-    const { action, reason } = await req.json().catch(() => ({}));
+    let body: { action?: unknown; reason?: unknown };
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    }
+    const { action, reason } = body;
     const { userId } = await params;
 
     if (action === "approve") {

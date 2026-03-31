@@ -240,7 +240,7 @@ export async function findAdminActor(userId: string) {
   });
 }
 
-export async function findAdminResources(authorId?: string) {
+export async function findAdminResources(authorId?: string, take = 500) {
   return prisma.resource.findMany({
     where: {
       deletedAt: null,
@@ -248,6 +248,7 @@ export async function findAdminResources(authorId?: string) {
     },
     include: ADMIN_RESOURCE_LIST_INCLUDE,
     orderBy: { createdAt: "desc" },
+    take,
   });
 }
 
@@ -265,7 +266,7 @@ export async function findAdminResourcesPage(params: {
   });
 }
 
-export async function findCreatorOwnedResources(authorId: string) {
+export async function findCreatorOwnedResources(authorId: string, take = 200) {
   return prisma.resource.findMany({
     where: {
       authorId,
@@ -273,6 +274,7 @@ export async function findCreatorOwnedResources(authorId: string) {
     },
     select: CREATOR_DASHBOARD_RESOURCE_SELECT,
     orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+    take,
   });
 }
 

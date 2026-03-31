@@ -98,7 +98,7 @@ function marketplaceCategoryClassName(active: boolean) {
   return cn(
     MARKETPLACE_CATEGORY_ITEM_CLASS_NAME,
     active
-      ? "border-surface-300 bg-surface-100 text-text-primary shadow-sm"
+      ? "border-surface-200 bg-surface-100 text-text-primary"
       : "border-transparent bg-white text-text-secondary hover:bg-surface-50 hover:text-text-primary",
   );
 }
@@ -114,8 +114,8 @@ function marketplaceCategoryItemClassName(
   return cn(
     MARKETPLACE_CATEGORY_ITEM_CLASS_NAME,
     active
-      ? "border-surface-300 bg-surface-100 text-text-primary shadow-sm"
-      : "border-transparent bg-white text-text-secondary shadow-none hover:bg-surface-50 hover:text-text-primary",
+      ? "border-surface-200 bg-surface-100 text-text-primary"
+      : "border-transparent bg-white text-text-secondary hover:bg-surface-50 hover:text-text-primary",
   );
 }
 
@@ -211,7 +211,7 @@ function NavbarInner({
         />
         <div
           id={userMenuId}
-          className="absolute right-0 z-20 mt-2 w-56 overflow-hidden rounded-lg border border-surface-200 bg-white shadow-card-lg"
+          className="absolute right-0 z-20 mt-2 w-56 overflow-hidden rounded-lg border border-surface-200 bg-white"
         >
           <div className="border-b border-surface-100 px-4 py-3">
             <div className="min-w-0">
@@ -338,7 +338,7 @@ function NavbarInner({
                   </>
                 ) : (
                   <>
-                    <Link href={routes.login} className={cn(MARKETPLACE_CATEGORY_ITEM_CLASS_NAME, "border-surface-300 bg-surface-100 text-text-primary shadow-sm")}>
+                    <Link href={routes.login} className={cn(MARKETPLACE_CATEGORY_ITEM_CLASS_NAME, "border-surface-200 bg-surface-100 text-text-primary")}>
                       เข้าสู่ระบบ
                     </Link>
                     <Link href={routes.register} className={MARKETPLACE_PRIMARY_ACTION_CLASS_NAME}>
@@ -359,7 +359,7 @@ function NavbarInner({
                   </Link>
                 ) : (
                   <>
-                    <Link href={routes.login} className={cn(MARKETPLACE_CATEGORY_ITEM_CLASS_NAME, "border-surface-300 bg-surface-100 px-3 text-text-primary shadow-sm")}>
+                    <Link href={routes.login} className={cn(MARKETPLACE_CATEGORY_ITEM_CLASS_NAME, "border-surface-200 bg-surface-100 px-3 text-text-primary")}>
                       เข้าสู่ระบบ
                     </Link>
                     <Link href={routes.register} className="inline-flex h-10 shrink-0 items-center rounded-full bg-brand-600 px-3 text-[14px] leading-[22px] font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2">
@@ -377,7 +377,7 @@ function NavbarInner({
                   <button
                     type="button"
                     onClick={() => setUserMenuOpen((open) => !open)}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-surface-200 bg-white shadow-sm transition-colors hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-surface-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
                     aria-label="เปิดเมนูบัญชี"
                     aria-haspopup="menu"
                     aria-expanded={userMenuOpen}
@@ -447,7 +447,7 @@ function NavbarInner({
                   More
                 </summary>
 
-                <div className="absolute right-0 top-[calc(100%+0.5rem)] z-20 w-72 rounded-2xl border border-surface-200 bg-white p-1.5 shadow-card-lg">
+                <div className="absolute right-0 top-[calc(100%+0.5rem)] z-20 w-72 rounded-xl border border-surface-200 bg-white p-1.5">
                   <ul className="flex flex-col gap-1" aria-label="หมวดหมู่เพิ่มเติม">
                     {overflowMobileCategoryItems.map((item) => (
                       <li key={item.label}>
@@ -564,7 +564,7 @@ function NavbarInner({
       </Container>
 
       {mobileOpen ? (
-        <div className="border-b border-surface-200 bg-white px-4 pb-5 pt-3 shadow-card-md lg:hidden">
+        <div className="border-b border-surface-200 bg-white px-4 pb-5 pt-3 lg:hidden">
           <nav className="flex flex-col gap-0.5" aria-label="Mobile navigation">
             {NAV_LINKS.filter(({ href }) => href !== routes.library || Boolean(session?.user)).map(({ href, label }) => (
               <NavbarItem

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Navbar } from "@/components/layout/Navbar";
+import { HeroSearch } from "@/components/marketplace/HeroSearch";
 import {
   PageContainer,
   PageContent,
@@ -103,7 +104,7 @@ export default function MembershipPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
+      <Navbar headerSearch={<HeroSearch variant="listing" />} />
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-purple-950 py-20 text-center sm:py-24">

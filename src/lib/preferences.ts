@@ -1,14 +1,18 @@
 import { prisma } from "@/lib/prisma";
 
-const ALLOWED_LANGUAGES = ["th", "en"] as const;
-const ALLOWED_THEMES = ["light", "dark", "system"] as const;
-const ALLOWED_CURRENCIES = ["THB", "USD"] as const;
-const ALLOWED_TIMEZONES = ["Asia/Bangkok", "UTC"] as const;
+function isOneOf<T extends string>(value: string, allowed: readonly T[]): value is T {
+  return (allowed as readonly string[]).includes(value);
+}
 
-type Language = (typeof ALLOWED_LANGUAGES)[number];
-type Theme = (typeof ALLOWED_THEMES)[number];
-type Currency = (typeof ALLOWED_CURRENCIES)[number];
-type Timezone = (typeof ALLOWED_TIMEZONES)[number];
+export const ALLOWED_LANGUAGES = ["th", "en"] as const;
+export const ALLOWED_THEMES = ["light", "dark", "system"] as const;
+export const ALLOWED_CURRENCIES = ["THB", "USD"] as const;
+export const ALLOWED_TIMEZONES = ["Asia/Bangkok", "UTC"] as const;
+
+export type Language = (typeof ALLOWED_LANGUAGES)[number];
+export type Theme = (typeof ALLOWED_THEMES)[number];
+export type Currency = (typeof ALLOWED_CURRENCIES)[number];
+export type Timezone = (typeof ALLOWED_TIMEZONES)[number];
 
 export type UserPreferences = {
   language: Language;
@@ -73,10 +77,10 @@ export async function getUserPreferences(userId: string): Promise<UserPreference
   });
 
   return {
-    language: preferences.language as Language,
-    theme: preferences.theme as Theme,
-    currency: preferences.currency as Currency,
-    timezone: preferences.timezone as Timezone,
+    language: isOneOf(preferences.language, ALLOWED_LANGUAGES) ? preferences.language : DEFAULT_USER_PREFERENCES.language,
+    theme: isOneOf(preferences.theme, ALLOWED_THEMES) ? preferences.theme : DEFAULT_USER_PREFERENCES.theme,
+    currency: isOneOf(preferences.currency, ALLOWED_CURRENCIES) ? preferences.currency : DEFAULT_USER_PREFERENCES.currency,
+    timezone: isOneOf(preferences.timezone, ALLOWED_TIMEZONES) ? preferences.timezone : DEFAULT_USER_PREFERENCES.timezone,
     emailNotifications: preferences.emailNotifications,
     purchaseReceipts: preferences.purchaseReceipts,
     productUpdates: preferences.productUpdates,

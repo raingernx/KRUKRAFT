@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Navbar } from "@/components/layout/Navbar";
+import { HeroSearch } from "@/components/marketplace/HeroSearch";
 import { Container } from "@/components/layout/container";
 import { Badge } from "@/design-system";
 import { ResourceGrid, RESOURCE_GRID_CLASSES } from "@/components/resources/ResourceGrid";
@@ -79,7 +80,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   return (
     <div className="flex min-h-screen flex-col bg-surface-50">
-      <Navbar />
+      <Navbar headerSearch={<HeroSearch variant="listing" />} />
 
       {/* Hero banner */}
       <div className={`relative overflow-hidden bg-gradient-to-br ${meta.color}`}>
