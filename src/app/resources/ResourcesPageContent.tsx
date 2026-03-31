@@ -1412,9 +1412,28 @@ function RecommendedForYouFallbackSection() {
         description="A focused set of picks to help you keep momentum without sorting through the whole library."
         viewAllHref={routes.marketplaceQuery("sort=trending&category=all")}
       />
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs font-medium text-text-secondary">
+          Tailored picks are still loading.
+        </span>
         {DISCOVER_FALLBACK_PRIMARY_LINKS.slice(0, 3).map((link) => (
-          <DiscoverFallbackLinkCard key={link.title} link={link} />
+          <IntentPrefetchLink
+            key={link.title}
+            href={link.href}
+            prefetchMode="intent"
+            prefetchScope={`recommended-fallback-${link.prefetchScope}`}
+            prefetchLimit={1}
+            resourcesNavigationMode="listing"
+            className="inline-flex items-center gap-1 rounded-full border border-surface-200 bg-white px-3 py-1.5 text-xs font-medium text-primary-700 transition hover:border-primary-200 hover:bg-primary-50"
+          >
+            {link.eyebrow.toLowerCase()}
+            <ArrowRight className="h-3 w-3" />
+          </IntentPrefetchLink>
+        ))}
+      </div>
+      <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <ResourceCardSkeleton key={index} />
         ))}
       </div>
     </section>

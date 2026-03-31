@@ -139,35 +139,31 @@ export function ResourceDetailRelatedQuickLinks({
           Keep exploring nearby resources while we load tailored suggestions.
         </p>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="flex flex-wrap gap-2">
         <Link
           href={`/categories/${categorySlug}`}
-          className="rounded-2xl border border-surface-200 bg-white p-5 transition hover:border-primary-200 hover:bg-primary-50/40"
+          className="inline-flex items-center gap-1 rounded-full border border-surface-200 bg-white px-3 py-1.5 text-xs font-medium text-primary-700 transition hover:border-primary-200 hover:bg-primary-50"
         >
-          <p className="text-caption font-semibold uppercase tracking-[0.08em] text-primary-600">
-            Category
-          </p>
-          <p className="mt-2 text-lg font-semibold text-zinc-900">
-            Browse more in {categoryName}
-          </p>
-          <p className="mt-2 text-small leading-6 text-zinc-500">
-            Jump straight into similar resources from the same subject area.
-          </p>
+          Browse {categoryName}
         </Link>
         <Link
           href="/resources?sort=newest"
-          className="rounded-2xl border border-surface-200 bg-white p-5 transition hover:border-primary-200 hover:bg-primary-50/40"
+          className="inline-flex items-center gap-1 rounded-full border border-surface-200 bg-white px-3 py-1.5 text-xs font-medium text-primary-700 transition hover:border-primary-200 hover:bg-primary-50"
         >
-          <p className="text-caption font-semibold uppercase tracking-[0.08em] text-primary-600">
-            Explore
-          </p>
-          <p className="mt-2 text-lg font-semibold text-zinc-900">
-            See the newest marketplace picks
-          </p>
-          <p className="mt-2 text-small leading-6 text-zinc-500">
-            Open the latest uploads while the tailored list finishes loading.
-          </p>
+          See newest picks
         </Link>
+      </div>
+      <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="overflow-hidden rounded-xl border border-border-subtle bg-white">
+            <LoadingSkeleton className="aspect-[4/3] w-full rounded-none" />
+            <div className="space-y-2 p-3">
+              <LoadingSkeleton className="h-4 w-full" />
+              <LoadingSkeleton className="h-3 w-3/4" />
+              <LoadingSkeleton className="h-5 w-16" />
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
