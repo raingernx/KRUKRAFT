@@ -6,6 +6,8 @@ const cliArgs = new Set(process.argv.slice(2));
 const baseUrl = process.env.BASE_URL?.trim();
 const hotSlug =
   process.env.HOT_SLUG?.trim() || "middle-school-science-quiz-assessment-set";
+const hotCreator = process.env.HOT_CREATOR?.trim() || "kru-mint";
+const categorySlug = process.env.CATEGORY?.trim() || "science";
 const resultsDir = path.resolve(process.env.PERF_RESULTS_DIR?.trim() || "artifacts/k6");
 const summaryPath = path.resolve(
   process.env.PERF_SUMMARY_PATH?.trim() || "artifacts/perf-summary.json",
@@ -34,7 +36,7 @@ type RouteSpec = {
   name: string;
   script: string;
   thresholdMs: number;
-  hotSlug?: string;
+  env?: Record<string, string>;
 };
 
 type K6MetricValues = Record<string, number>;
@@ -66,46 +68,58 @@ const routeSpecsBySuite: Record<PerfSuite, RouteSpec[]> = {
     {
       name: "resources_home_smoke",
       script: "k6/routes/resources-home-smoke.js",
-      thresholdMs: 1200,
+      thresholdMs: 900,
     },
     {
       name: "listing_recommended_smoke",
       script: "k6/routes/listing-recommended-smoke.js",
-      thresholdMs: 2000,
+      thresholdMs: 1000,
     },
     {
       name: "listing_newest_smoke",
       script: "k6/routes/listing-newest-smoke.js",
-      thresholdMs: 1000,
+      thresholdMs: 900,
     },
     {
       name: "resource_detail_smoke",
       script: "k6/routes/resource-detail-smoke.js",
+      thresholdMs: 900,
+      env: { HOT_SLUG: hotSlug },
+    },
+    {
+      name: "creator_detail_smoke",
+      script: "k6/routes/creator-detail-smoke.js",
       thresholdMs: 1000,
-      hotSlug,
+      env: { HOT_CREATOR: hotCreator },
+    },
+    {
+      name: "category_listing_smoke",
+      script: "k6/routes/category-listing-smoke.js",
+      thresholdMs: 1000,
+      env: { CATEGORY: categorySlug },
     },
   ],
   full: [
     {
       name: "resources_home_full",
       script: "k6/routes/resources-home.js",
-      thresholdMs: 2000,
+      thresholdMs: 1500,
     },
     {
       name: "listing_recommended_experiment_full",
       script: "k6/routes/listing-recommended-experiment.js",
-      thresholdMs: 2000,
+      thresholdMs: 1500,
     },
     {
       name: "listing_newest_control_full",
       script: "k6/routes/listing-newest-control.js",
-      thresholdMs: 2000,
+      thresholdMs: 1500,
     },
     {
       name: "resource_detail_hot_full",
       script: "k6/routes/resource-detail-hot.js",
-      thresholdMs: 2500,
-      hotSlug,
+      thresholdMs: 1800,
+      env: { HOT_SLUG: hotSlug },
     },
   ],
 };
@@ -205,7 +219,7 @@ async function runK6Route(
   const env = {
     ...process.env,
     BASE_URL: baseUrl,
-    ...(route.hotSlug ? { HOT_SLUG: route.hotSlug } : {}),
+    ...(route.env ?? {}),
   };
 
   return new Promise((resolve, reject) => {

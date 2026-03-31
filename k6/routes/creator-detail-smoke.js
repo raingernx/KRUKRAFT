@@ -1,18 +1,18 @@
 /**
- * Purpose: Lightweight CI smoke check for the hot public resource detail route.
- * Run: BASE_URL=https://krucrafts.com HOT_SLUG=middle-school-science-quiz-assessment-set k6 run k6/routes/resource-detail-smoke.js
+ * Purpose: Lightweight CI smoke check for the hot public creator route.
+ * Run: BASE_URL=https://krucrafts.com HOT_CREATOR=kru-mint k6 run k6/routes/creator-detail-smoke.js
  */
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
 const BASE_URL = __ENV.BASE_URL || 'https://krucrafts.com';
-const HOT_SLUG = __ENV.HOT_SLUG || 'middle-school-science-quiz-assessment-set';
-const ROUTE_TAG = 'resource_detail_hot';
+const HOT_CREATOR = __ENV.HOT_CREATOR || 'kru-mint';
+const ROUTE_TAG = 'creator_hot';
 
 export const options = {
   scenarios: {
-    resource_detail_smoke: {
+    creator_detail_smoke: {
       executor: 'ramping-vus',
       startVUs: 0,
       stages: [
@@ -26,17 +26,17 @@ export const options = {
   },
   thresholds: {
     http_req_failed: ['rate<0.01'],
-    http_req_duration: ['p(95)<900'],
+    http_req_duration: ['p(95)<1000'],
   },
 };
 
 export default function () {
-  const response = http.get(`${BASE_URL}/resources/${HOT_SLUG}`, {
+  const response = http.get(`${BASE_URL}/creators/${HOT_CREATOR}`, {
     tags: { route: ROUTE_TAG },
   });
 
   check(response, {
-    'resource detail smoke returns 200': (res) => res.status === 200,
+    'creator detail smoke returns 200': (res) => res.status === 200,
   });
 
   sleep(1);
