@@ -793,10 +793,13 @@ export function findAdminResourceVersionPageResource(resourceId: string) {
   });
 }
 
+const MAX_RESOURCE_VERSIONS_HISTORY = 200;
+
 export function findResourceVersionsByResourceId(resourceId: string) {
   return prisma.resourceVersion.findMany({
     where: { resourceId },
     orderBy: { version: "desc" },
+    take: MAX_RESOURCE_VERSIONS_HISTORY,
     include: {
       createdBy: {
         select: { id: true, name: true, email: true },

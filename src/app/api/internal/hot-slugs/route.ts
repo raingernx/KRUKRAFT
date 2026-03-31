@@ -1,14 +1,9 @@
 import { NextResponse } from "next/server";
+import { hasValidInternalRouteSecret } from "@/lib/internal-route-auth";
 import { findHotResourceSlugs } from "@/repositories/resources/resource.repository";
 
 const MAX_LIMIT = 50;
 const DEFAULT_LIMIT = 20;
-
-function isAuthorized(request: Request, secret: string) {
-  const bearer = request.headers.get("authorization");
-  const headerSecret = request.headers.get("x-warm-secret");
-  return bearer === `Bearer ${secret}` || headerSecret === secret;
-}
 
 export async function GET(request: Request) {
   const secret = process.env.PERFORMANCE_WARM_SECRET?.trim();
@@ -20,7 +15,7 @@ export async function GET(request: Request) {
     );
   }
 
-  if (!isAuthorized(request, secret)) {
+  if (!hasValidInternalRouteSecret(request, secret)) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 

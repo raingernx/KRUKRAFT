@@ -377,7 +377,9 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
       categoryId: resource.categoryId,
       isFree: resource.isFree || resource.price === 0,
     },
-  }).catch(() => {});
+  }).catch((error) => {
+    console.error("[RESOURCE_PAGE] Failed to log resource detail view activity:", error);
+  });
 
   return (
     <ResourceDetailShell>

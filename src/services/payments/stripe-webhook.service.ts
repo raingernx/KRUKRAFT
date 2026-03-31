@@ -57,7 +57,7 @@ export async function handleStripeWebhookEvent(event: Stripe.Event) {
     }
 
     default:
-      console.log("[WEBHOOK] Unhandled event type:", event.type);
+      console.warn("[WEBHOOK] Unhandled event type:", event.type);
   }
 }
 
@@ -271,5 +271,7 @@ async function recordStripePurchaseAnalytics(
   void sendPurchaseConfirmationEmail({
     userId: context.userId,
     resourceId: context.resourceId,
-  }).catch(() => {});
+  }).catch((error) => {
+    console.error("[WEBHOOK] Failed to send purchase confirmation email:", error);
+  });
 }

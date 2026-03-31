@@ -1,13 +1,7 @@
 import { NextResponse } from "next/server";
+import { hasValidInternalRouteSecret } from "@/lib/internal-route-auth";
 import { logPerformanceEvent, withPerformanceTiming } from "@/lib/performance/observability";
 import { warmPublicCaches } from "@/services/performance/public-cache-warm.service";
-
-function isAuthorized(request: Request, secret: string) {
-  const bearer = request.headers.get("authorization");
-  const headerSecret = request.headers.get("x-warm-secret");
-
-  return bearer === `Bearer ${secret}` || headerSecret === secret;
-}
 
 export async function POST(request: Request) {
   const secret = process.env.PERFORMANCE_WARM_SECRET?.trim();
@@ -19,7 +13,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!isAuthorized(request, secret)) {
+  if (!hasValidInternalRouteSecret(request, secret)) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 

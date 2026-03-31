@@ -206,5 +206,7 @@ async function recordXenditPurchaseAnalytics(
   void sendPurchaseConfirmationEmail({
     userId: context.userId,
     resourceId: context.resourceId,
-  }).catch(() => {});
+  }).catch((error) => {
+    console.error("[XENDIT_WEBHOOK] Failed to send purchase confirmation email:", error);
+  });
 }

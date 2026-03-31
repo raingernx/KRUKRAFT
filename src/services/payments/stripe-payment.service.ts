@@ -184,7 +184,7 @@ export async function createLegacyStripeCheckout(body: unknown, userId: string) 
 
   await setPurchaseStripeSessionId(purchase.id, checkoutSession.id);
 
-  logActivity({
+  void logActivity({
     userId,
     action: "PURCHASE_CHECKOUT_STARTED",
     entity: "Resource",
@@ -193,7 +193,9 @@ export async function createLegacyStripeCheckout(body: unknown, userId: string) 
       price: resource.price,
       currency: "usd",
     },
-  }).catch(() => {});
+  }).catch((error) => {
+    console.error("[STRIPE_CHECKOUT] Failed to log checkout start activity:", error);
+  });
 
   return { data: { url: checkoutSession.url } };
 }

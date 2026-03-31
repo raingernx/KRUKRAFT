@@ -128,7 +128,9 @@ export async function registerCredentialUser(input: {
     entity: "User",
     entityId: user.id,
     metadata: { email },
-  }).catch(() => {});
+  }).catch((error) => {
+    console.error("[AUTH] Failed to log signup activity:", error);
+  });
 
   return { data: user };
 }

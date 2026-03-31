@@ -1,4 +1,4 @@
-import type { NextRequest } from "next/server";
+import type { NextFetchEvent, NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { withAuth, NextRequestWithAuth } from "next-auth/middleware";
 import {
@@ -65,7 +65,14 @@ const authMiddleware = withAuth(
   }
 );
 
-export default function middleware(req: NextRequestWithAuth) {
+function isNextResponse(response: Response | null | void): response is NextResponse {
+  return response instanceof NextResponse;
+}
+
+export default async function middleware(
+  req: NextRequestWithAuth,
+  event: NextFetchEvent,
+) {
   const { pathname } = req.nextUrl;
 
   const localePrefix = locales.find(
@@ -89,9 +96,14 @@ export default function middleware(req: NextRequestWithAuth) {
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/admin")
   ) {
-    const response = (authMiddleware as any)(req) as NextResponse;
-    assignRankingVariantIfAbsent(req, response);
-    return response;
+    const response = await authMiddleware(req, event);
+
+    if (isNextResponse(response)) {
+      assignRankingVariantIfAbsent(req, response);
+      return response;
+    }
+
+    return response ?? NextResponse.next();
   }
 
   const response = NextResponse.next();

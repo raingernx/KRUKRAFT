@@ -23,9 +23,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const platform = await getPlatform();
+  const htmlLang = platform.defaultLanguage.trim() || "th";
 
   return (
-    <html lang="th" data-scroll-behavior="smooth" className="min-h-screen bg-white">
+    <html lang={htmlLang} data-scroll-behavior="smooth" className="min-h-screen bg-white">
       <body
         className={`${fontVariables} min-h-screen bg-white font-sans text-foreground antialiased`.trim()}
       >

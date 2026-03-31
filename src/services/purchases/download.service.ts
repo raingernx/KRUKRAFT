@@ -144,20 +144,24 @@ function recordDownloadSideEffects(
     console.error("[DOWNLOAD] Failed to record download analytics:", err);
   });
 
-  logActivity({
+  void logActivity({
     userId,
     action: "RESOURCE_DOWNLOAD",
     entity: "Resource",
     entityId: resourceId,
-  }).catch(() => {});
+  }).catch((error) => {
+    console.error("[DOWNLOAD] Failed to log resource download activity:", error);
+  });
 
-  logActivity({
+  void logActivity({
     userId,
     action: "DOWNLOAD_STARTED",
     entity: "Resource",
     entityId: resourceId,
     metadata: { resourceId, userId },
-  }).catch(() => {});
+  }).catch((error) => {
+    console.error("[DOWNLOAD] Failed to log download started activity:", error);
+  });
 }
 
 /**
@@ -192,8 +196,8 @@ function recordFirstPaidDownloadIfApplicable(
         metadata: { resourceId, userId, purchaseId, creatorId },
       });
     })
-    .catch(() => {
-      // Analytics must never break the download flow.
+    .catch((error) => {
+      console.error("[DOWNLOAD] Failed to record first paid download activity:", error);
     });
 }
 

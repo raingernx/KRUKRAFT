@@ -51,7 +51,9 @@ export async function getResourceRouteData(resourceId: string) {
     });
   }
 
-  void incrementResourceViewCount(resourceId).catch(() => {});
+  void incrementResourceViewCount(resourceId).catch((error) => {
+    console.error("[RESOURCE_ROUTE] Failed to increment resource view count:", error);
+  });
 
   return resource;
 }
