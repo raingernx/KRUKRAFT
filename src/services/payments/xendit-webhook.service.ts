@@ -35,8 +35,28 @@ export function assertValidXenditWebhookToken(token: string | null) {
   }
 }
 
+function parseXenditInvoicePayload(payload: unknown): XenditInvoicePayload {
+  if (typeof payload !== "object" || payload === null) {
+    return {};
+  }
+  const p = payload as Record<string, unknown>;
+  return {
+    id: typeof p.id === "string" ? p.id : undefined,
+    external_id: typeof p.external_id === "string" ? p.external_id : undefined,
+    status: (p.status === "PENDING" || p.status === "PAID" || p.status === "SETTLED" || p.status === "EXPIRED")
+      ? p.status
+      : undefined,
+    amount: typeof p.amount === "number" ? p.amount : undefined,
+    paid_amount: typeof p.paid_amount === "number" ? p.paid_amount : undefined,
+    currency: typeof p.currency === "string" ? p.currency : undefined,
+    metadata: (typeof p.metadata === "object" && p.metadata !== null)
+      ? p.metadata as XenditInvoicePayload["metadata"]
+      : undefined,
+  };
+}
+
 export async function handleXenditWebhookPayload(payload: unknown) {
-  const invoice = payload as XenditInvoicePayload;
+  const invoice = parseXenditInvoicePayload(payload);
   const isPaid =
     invoice.status === "PAID" || invoice.status === "SETTLED";
 

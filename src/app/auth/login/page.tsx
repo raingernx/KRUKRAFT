@@ -191,9 +191,22 @@ function LoginForm() {
   );
 }
 
+function LoginFormSkeleton() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-surface-50 px-4">
+      <div className="w-full max-w-sm space-y-4">
+        <div className="h-8 w-32 animate-pulse rounded-lg bg-surface-200 mx-auto" />
+        <div className="h-12 w-full animate-pulse rounded-xl bg-surface-200" />
+        <div className="h-12 w-full animate-pulse rounded-xl bg-surface-200" />
+        <div className="h-12 w-full animate-pulse rounded-xl bg-surface-200" />
+      </div>
+    </div>
+  );
+}
+
 export default function LoginPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<LoginFormSkeleton />}>
       <LoginForm />
     </Suspense>
   );
