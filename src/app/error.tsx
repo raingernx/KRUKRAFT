@@ -6,7 +6,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/components/layout/container";
 import { routes } from "@/lib/routes";
 
-export default function GlobalError({
+export default function RootError({
   error,
   reset,
 }: {
