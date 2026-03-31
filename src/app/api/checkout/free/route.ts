@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { PaymentServiceError } from "@/services/payments/payment.service";
 import { claimFreeResource } from "@/services/payments/checkout.service";
+import { checkRateLimit, getClientIp, LIMITS } from "@/lib/rate-limit";
 
 /**
  * POST /api/checkout/free
@@ -24,6 +25,22 @@ import { claimFreeResource } from "@/services/payments/checkout.service";
  */
 export async function POST(req: Request) {
   try {
+    const { success, limit, remaining, reset } = await checkRateLimit(LIMITS.freeCheckout, getClientIp(req));
+    if (!success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again shortly." },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit":     String(limit),
+            "X-RateLimit-Remaining": String(remaining),
+            "X-RateLimit-Reset":     String(reset),
+            "Retry-After":           String(Math.ceil((reset - Date.now()) / 1000)),
+          },
+        }
+      );
+    }
+
     const session = await getServerSession(authOptions);
 
     if (!session?.user) {

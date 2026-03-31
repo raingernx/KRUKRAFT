@@ -101,6 +101,15 @@ export const LIMITS = {
 
   /** Recommendation analytics: 60 per minute per IP (5 impressions × ~12 page loads). */
   recommendationAnalytics: makeLimiter(60, 60),
+
+  /** Account registration: 5 per hour per IP to prevent account factory abuse. */
+  register: makeLimiter(5, 3600),
+
+  /** Creator application: 3 per hour per IP — one-time action, very low threshold. */
+  creatorApply: makeLimiter(3, 3600),
+
+  /** Free resource claim: 10 per minute per IP to prevent bulk-claim scripting. */
+  freeCheckout: makeLimiter(10, 60),
 } as const;
 
 // ── Public helper ─────────────────────────────────────────────────────────────

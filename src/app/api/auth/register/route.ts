@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { registerCredentialUser } from "@/services/user-account.service";
+import { checkRateLimit, getClientIp, LIMITS } from "@/lib/rate-limit";
 
 const RegisterSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -14,6 +15,22 @@ const RegisterSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    const { success, limit, remaining, reset } = await checkRateLimit(LIMITS.register, getClientIp(req));
+    if (!success) {
+      return NextResponse.json(
+        { error: "Too many registration attempts. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit":     String(limit),
+            "X-RateLimit-Remaining": String(remaining),
+            "X-RateLimit-Reset":     String(reset),
+            "Retry-After":           String(Math.ceil((reset - Date.now()) / 1000)),
+          },
+        }
+      );
+    }
+
     const body = await req.json();
     const parsed = RegisterSchema.safeParse(body);
 
