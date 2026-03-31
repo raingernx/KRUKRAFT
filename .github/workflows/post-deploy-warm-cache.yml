@@ -8,22 +8,100 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  resolve_context:
+    name: Resolve Deployment Context
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.classify.outputs.should_run }}
+      base_url: ${{ steps.classify.outputs.base_url }}
+      reason: ${{ steps.classify.outputs.reason }}
+    env:
+      PRODUCTION_BASE_URL: https://krucrafts.com
+
+    steps:
+      - name: Classify Deployment
+        id: classify
+        shell: bash
+        env:
+          DEPLOYMENT_STATE: ${{ github.event.deployment_status.state }}
+          DEPLOYMENT_ENVIRONMENT: ${{ github.event.deployment.environment }}
+          DEPLOYMENT_STATUS_ENVIRONMENT: ${{ github.event.deployment_status.environment }}
+          DEPLOYMENT_ENVIRONMENT_URL: ${{ github.event.deployment_status.environment_url }}
+          DEPLOYMENT_TARGET_URL: ${{ github.event.deployment_status.target_url }}
+        run: |
+          set -euo pipefail
+
+          lower() {
+            printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
+          }
+
+          url_host() {
+            local value="${1:-}"
+            value="${value#http://}"
+            value="${value#https://}"
+            value="${value%%/*}"
+            lower "$value"
+          }
+
+          deployment_state="$(lower "${DEPLOYMENT_STATE:-}")"
+          deployment_environment="$(lower "${DEPLOYMENT_ENVIRONMENT:-}")"
+          deployment_status_environment="$(lower "${DEPLOYMENT_STATUS_ENVIRONMENT:-}")"
+          production_host="$(url_host "${PRODUCTION_BASE_URL:-}")"
+          environment_url="${DEPLOYMENT_ENVIRONMENT_URL:-}"
+          target_url="${DEPLOYMENT_TARGET_URL:-}"
+          environment_host="$(url_host "$environment_url")"
+          target_host="$(url_host "$target_url")"
+
+          base_url="${PRODUCTION_BASE_URL:-}"
+          source_name="PRODUCTION_BASE_URL"
+
+          if [ -z "$base_url" ] && [ -n "$environment_url" ]; then
+            base_url="$environment_url"
+            source_name="deployment_status.environment_url"
+          fi
+          if [ -z "$base_url" ] && [ -n "$target_url" ]; then
+            base_url="$target_url"
+            source_name="deployment_status.target_url"
+          fi
+
+          should_run="false"
+          reason="deployment state is not success"
+
+          if [ "$deployment_state" = "success" ]; then
+            if [ "$deployment_environment" = "production" ] || [ "$deployment_status_environment" = "production" ]; then
+              should_run="true"
+              reason="deployment environment marked as production"
+            elif [ -n "$production_host" ] && { [ "$environment_host" = "$production_host" ] || [ "$target_host" = "$production_host" ]; }; then
+              should_run="true"
+              reason="deployment URL matches production host"
+            else
+              reason="deployment did not match production environment or production host"
+            fi
+          fi
+
+          echo "should_run=$should_run" >> "$GITHUB_OUTPUT"
+          echo "reason=$reason" >> "$GITHUB_OUTPUT"
+
+          if [ -n "$base_url" ]; then
+            base_url="${base_url%/}"
+            echo "base_url=$base_url" >> "$GITHUB_OUTPUT"
+            echo "[post-deploy-warm] Resolved BASE_URL from ${source_name}: $base_url"
+          else
+            echo "[post-deploy-warm] BASE_URL could not be resolved from deployment payload."
+          fi
+
+          echo "[post-deploy-warm] should_run=${should_run} reason=${reason}"
+
   warm_cache:
     name: Warm Public Cache
-    if: >-
-      github.event.deployment_status.state == 'success' &&
-      (
-        github.event.deployment.environment == 'Production' ||
-        github.event.deployment.environment == 'production' ||
-        github.event.deployment_status.environment == 'Production' ||
-        github.event.deployment_status.environment == 'production'
-      )
+    needs: resolve_context
+    if: needs.resolve_context.outputs.should_run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     outputs:
-      base_url: ${{ steps.resolve-base-url.outputs.base_url }}
+      base_url: ${{ needs.resolve_context.outputs.base_url }}
     env:
-      PRODUCTION_BASE_URL: https://krucrafts.com
+      BASE_URL: ${{ needs.resolve_context.outputs.base_url }}
       HOT_DETAIL_SLUG: middle-school-science-quiz-assessment-set
 
     steps:
@@ -39,35 +117,14 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Resolve BASE_URL
-        id: resolve-base-url
+      - name: Validate BASE_URL
         shell: bash
-        env:
-          DEPLOYMENT_ENVIRONMENT_URL: ${{ github.event.deployment_status.environment_url }}
-          DEPLOYMENT_TARGET_URL: ${{ github.event.deployment_status.target_url }}
         run: |
           set -euo pipefail
-
-          base_url="${PRODUCTION_BASE_URL:-}"
-          source_name="PRODUCTION_BASE_URL"
-
-          if [ -z "$base_url" ]; then
-            base_url="${DEPLOYMENT_ENVIRONMENT_URL:-}"
-            source_name="deployment_status.environment_url"
-          fi
-          if [ -z "$base_url" ]; then
-            base_url="${DEPLOYMENT_TARGET_URL:-}"
-            source_name="deployment_status.target_url"
-          fi
-          if [ -z "$base_url" ]; then
-            echo "[post-deploy-warm] Failed to resolve BASE_URL. Set PRODUCTION_BASE_URL or provide a deployment URL."
+          if [ -z "${BASE_URL:-}" ]; then
+            echo "[post-deploy-warm] Failed to resolve BASE_URL from deployment context."
             exit 1
           fi
-
-          base_url="${base_url%/}"
-          echo "base_url=$base_url" >> "$GITHUB_OUTPUT"
-          echo "BASE_URL=$base_url" >> "$GITHUB_ENV"
-          echo "[post-deploy-warm] Resolved BASE_URL from ${source_name}: $base_url"
 
       - name: Wait For Production To Go Live
         shell: bash
@@ -129,15 +186,10 @@ jobs:
 
   perf_smoke:
     name: Run Post-Deploy Performance Verification
-    if: >-
-      github.event.deployment_status.state == 'success' &&
-      (
-        github.event.deployment.environment == 'Production' ||
-        github.event.deployment.environment == 'production' ||
-        github.event.deployment_status.environment == 'Production' ||
-        github.event.deployment_status.environment == 'production'
-      )
-    needs: warm_cache
+    needs:
+      - resolve_context
+      - warm_cache
+    if: needs.resolve_context.outputs.should_run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
