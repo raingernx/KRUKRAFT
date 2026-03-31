@@ -26,6 +26,8 @@ Primary bottleneck class is now:
 - public remote preview images bypass `/_next/image` in many high-value surfaces
 - build-time Prisma warning from `platformSettings.findFirst()` was removed by separating build-safe platform config from admin live config
 - category smoke route now matches its actual page intent and is warmed explicitly
+- `/resources` discover fallback no longer swaps in fake CTA content while data resolves
+- discover hero loading now falls back to a plain blue banner shell; discover sections fall back to section/card skeletons that match final geometry
 
 ---
 

@@ -5,6 +5,7 @@ import {
   HeroSurfaceSkeleton,
   type HeroSurfaceConfig,
 } from "@/components/marketplace/HeroSurface";
+import { cn } from "@/lib/utils";
 
 export type HomepageHeroConfig = HeroSurfaceConfig | null;
 
@@ -70,4 +71,20 @@ export function HeroBannerSkeleton({
   className?: string;
 }) {
   return <HeroSurfaceSkeleton config={config} className={className} />;
+}
+
+export function HeroBannerFallback({
+  className,
+}: {
+  className?: string;
+}) {
+  return (
+    <div
+      aria-hidden
+      className={cn(
+        "w-full rounded-[32px] border border-surface-200/70 bg-[#4338ca]",
+        className,
+      )}
+    />
+  );
 }

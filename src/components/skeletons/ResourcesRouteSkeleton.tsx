@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/components/layout/container";
-import { HeroBannerSkeleton } from "@/components/marketplace/HeroBanner";
+import { HeroBannerFallback } from "@/components/marketplace/HeroBanner";
 import {
   ResourcesCatalogControlsSkeleton,
   ResourcesCatalogSearchSkeleton,
@@ -35,7 +35,7 @@ export function ResourcesRouteSkeleton() {
               <span className="hidden text-text-muted sm:inline">•</span>
               <LoadingSkeleton className="hidden h-4 w-72 sm:block" />
             </div>
-            <HeroBannerSkeleton className={discoverHeroClassName} />
+            <HeroBannerFallback className={discoverHeroClassName} />
           </Container>
         </section>
 

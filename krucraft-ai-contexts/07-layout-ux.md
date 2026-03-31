@@ -64,6 +64,10 @@ grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6
 - Gap: `gap-6` to `gap-8`
 - Hero: full-width background, content inside `max-w-[1600px]` container
 - Typography: headings and paragraphs wrapped with `max-w-2xl` or `max-w-3xl`
+- Loading behavior:
+  - hero loading state uses a plain blue banner shell, not the final hero content
+  - discover sections load with section/card skeletons that match the real listing layout
+  - discover fallback should not show alternate CTA sections that diverge from the final recommendations UI
 
 ### /resources/[slug] (Resource Detail)
 
