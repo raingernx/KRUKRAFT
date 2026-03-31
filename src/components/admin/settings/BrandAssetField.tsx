@@ -11,6 +11,8 @@ interface BrandAssetFieldProps {
   label: string;
   helperText: string;
   value: string;
+  previewValue?: string;
+  inheritedLabel?: string | null;
   platformName: string;
   previewVariant: BrandAssetPreviewVariant;
   isUploading: boolean;
@@ -21,17 +23,20 @@ interface BrandAssetFieldProps {
 function BrandAssetPreview({
   label,
   value,
+  previewValue,
   platformName,
   previewVariant,
   isUploading,
 }: {
   label: string;
   value: string;
+  previewValue?: string;
   platformName: string;
   previewVariant: BrandAssetPreviewVariant;
   isUploading: boolean;
 }) {
-  const hasAsset = Boolean(value);
+  const effectiveValue = previewValue ?? value;
+  const hasAsset = Boolean(effectiveValue);
   const isWide = previewVariant === "wide";
 
   return (
@@ -46,9 +51,9 @@ function BrandAssetPreview({
 
       <div className="relative flex h-full w-full items-center justify-center px-4 py-3">
         {hasAsset ? (
-          value.startsWith("/") ? (
+          effectiveValue.startsWith("/") ? (
             <Image
-              src={value}
+              src={effectiveValue}
               alt={`${platformName} ${label.toLowerCase()} preview`}
               width={previewVariant === "wide" ? 320 : 96}
               height={96}
@@ -66,7 +71,7 @@ function BrandAssetPreview({
             />
           ) : (
             <img
-              src={value}
+              src={effectiveValue}
               alt={`${platformName} ${label.toLowerCase()} preview`}
               className={[
                 "max-w-full object-contain",
@@ -115,6 +120,8 @@ export function BrandAssetField({
   label,
   helperText,
   value,
+  previewValue,
+  inheritedLabel,
   platformName,
   previewVariant,
   isUploading,
@@ -134,6 +141,7 @@ export function BrandAssetField({
         <BrandAssetPreview
           label={label}
           value={value}
+          previewValue={previewValue}
           platformName={platformName}
           previewVariant={previewVariant}
           isUploading={isUploading}
@@ -176,6 +184,8 @@ export function BrandAssetField({
             <span className="min-w-0 truncate text-xs text-text-muted">
               {value}
             </span>
+          ) : inheritedLabel ? (
+            <span className="text-xs text-text-muted">{inheritedLabel}</span>
           ) : (
             <span className="text-xs text-text-muted">No asset uploaded yet.</span>
           )}

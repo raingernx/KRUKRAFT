@@ -85,6 +85,11 @@ Admin-manageable hero system includes:
 - User and order management
 - Platform settings including brand assets
 
+Platform settings notes:
+- Full, icon, OG, email, and favicon assets can be edited independently
+- Admin previews may show inherited fallback assets, but stored values must remain distinct from inherited preview state
+- Public metadata and tab/icon surfaces now read brand assets through runtime `/brand-assets/*` routes so uploads propagate without falling back to stale build-time defaults
+
 ## Payment Flow
 
 ### Providers

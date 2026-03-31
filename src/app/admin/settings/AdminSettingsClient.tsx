@@ -15,7 +15,10 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { BrandAssetField } from "@/components/admin/settings/BrandAssetField";
 import Link from "next/link";
 import { PLATFORM_DEFAULTS } from "@/lib/platform/platform-defaults";
-import type { PlatformConfig } from "@/lib/platform/platform.types";
+import type {
+  PlatformConfig,
+  PlatformStoredSettings,
+} from "@/lib/platform/platform.types";
 import { routes } from "@/lib/routes";
 
 type Currency = "USD" | "THB" | "EUR";
@@ -148,8 +151,13 @@ const DEFAULT_SETTINGS: AdminSettingsState = {
   seoTwitterCardImageUrl: "",
 };
 
+function normalizeStoredValue(value: string | null | undefined) {
+  return value?.trim() ?? "";
+}
+
 function toPersistedPlatformState(
   platform: PlatformConfig,
+  stored?: PlatformStoredSettings,
 ): PersistedPlatformState {
   return {
     platformName: platform.platformName,
@@ -159,12 +167,15 @@ function toPersistedPlatformState(
     defaultMetaTitle: platform.defaultMetaTitle,
     defaultMetaDescription: platform.defaultMetaDescription,
     ogSiteName: platform.ogSiteName,
-    logoUrl: platform.logoUrl,
-    logoFullUrl: platform.logoFullUrl,
-    logoIconUrl: platform.logoIconUrl,
-    logoOgUrl: platform.logoOgUrl,
-    logoEmailUrl: platform.logoEmailUrl,
-    faviconUrl: platform.faviconUrl,
+    logoUrl: normalizeStoredValue(stored?.logoUrl) || platform.logoUrl,
+    logoFullUrl:
+      normalizeStoredValue(stored?.logoFullUrl) ||
+      normalizeStoredValue(stored?.logoUrl) ||
+      platform.logoFullUrl,
+    logoIconUrl: normalizeStoredValue(stored?.logoIconUrl),
+    logoOgUrl: normalizeStoredValue(stored?.logoOgUrl),
+    logoEmailUrl: normalizeStoredValue(stored?.logoEmailUrl),
+    faviconUrl: normalizeStoredValue(stored?.faviconUrl),
     supportEmail: platform.supportEmail,
     emailSenderName: platform.emailSenderName,
     defaultCurrency: platform.defaultCurrency as Currency,
@@ -172,15 +183,65 @@ function toPersistedPlatformState(
   };
 }
 
-function buildSettingsState(platform: PlatformConfig): AdminSettingsState {
+function buildSettingsState(
+  platform: PlatformConfig,
+  stored: PlatformStoredSettings,
+): AdminSettingsState {
   return {
     ...DEFAULT_SETTINGS,
-    ...toPersistedPlatformState(platform),
+    ...toPersistedPlatformState(platform, stored),
   };
 }
 
+function resolveBrandAssetPreview(
+  settings: Pick<
+    AdminSettingsState,
+    "logoUrl" | "logoFullUrl" | "logoIconUrl" | "logoOgUrl" | "logoEmailUrl" | "faviconUrl"
+  >,
+  field: BrandAssetFieldKey,
+) {
+  const fullLogo =
+    settings.logoFullUrl || settings.logoUrl || PLATFORM_DEFAULTS.logoFullUrl;
+  const iconLogo =
+    settings.logoIconUrl || fullLogo || PLATFORM_DEFAULTS.logoIconUrl;
+
+  switch (field) {
+    case "logoFullUrl":
+      return { value: fullLogo, inheritedLabel: null };
+    case "logoIconUrl":
+      return {
+        value: settings.logoIconUrl || iconLogo,
+        inheritedLabel: settings.logoIconUrl
+          ? null
+          : "Using full logo until an icon logo is uploaded.",
+      };
+    case "logoOgUrl":
+      return {
+        value: settings.logoOgUrl || fullLogo || PLATFORM_DEFAULTS.logoOgUrl,
+        inheritedLabel: settings.logoOgUrl
+          ? null
+          : "Using full logo until an Open Graph logo is uploaded.",
+      };
+    case "logoEmailUrl":
+      return {
+        value:
+          settings.logoEmailUrl || fullLogo || PLATFORM_DEFAULTS.logoEmailUrl,
+        inheritedLabel: settings.logoEmailUrl
+          ? null
+          : "Using full logo until an email logo is uploaded.",
+      };
+    case "faviconUrl":
+      return {
+        value: settings.faviconUrl || iconLogo || PLATFORM_DEFAULTS.faviconUrl,
+        inheritedLabel: settings.faviconUrl
+          ? null
+          : "Using icon logo until a favicon is uploaded.",
+      };
+  }
+}
+
 function getPersistedSettingsFromState(
-  settings: AdminSettingsState,
+  settings: PersistedPlatformState,
 ): PersistedPlatformState {
   return {
     platformName: settings.platformName,
@@ -205,19 +266,21 @@ function getPersistedSettingsFromState(
 
 interface AdminSettingsClientProps {
   initialPlatformSettings: PlatformConfig;
+  initialStoredSettings: PlatformStoredSettings;
 }
 
 export function AdminSettingsClient({
   initialPlatformSettings,
+  initialStoredSettings,
 }: AdminSettingsClientProps) {
   const initialPersistedState = useMemo(
-    () => toPersistedPlatformState(initialPlatformSettings),
-    [initialPlatformSettings],
+    () => toPersistedPlatformState(initialPlatformSettings, initialStoredSettings),
+    [initialPlatformSettings, initialStoredSettings],
   );
   const [persistedPlatform, setPersistedPlatform] =
     useState<PersistedPlatformState>(initialPersistedState);
   const [settings, setSettings] = useState<AdminSettingsState>(
-    buildSettingsState(initialPlatformSettings),
+    buildSettingsState(initialPlatformSettings, initialStoredSettings),
   );
   const [isSaving, setIsSaving] = useState(false);
   const [uploadingAsset, setUploadingAsset] =
@@ -268,26 +331,7 @@ export function AdminSettingsClient({
   }
 
   async function persistPlatformSettings(
-    nextSettings: Pick<
-      AdminSettingsState,
-      | "platformName"
-      | "platformShortName"
-      | "platformDescription"
-      | "siteUrl"
-      | "defaultMetaTitle"
-      | "defaultMetaDescription"
-      | "ogSiteName"
-      | "logoUrl"
-      | "logoFullUrl"
-      | "logoIconUrl"
-      | "logoOgUrl"
-      | "logoEmailUrl"
-      | "faviconUrl"
-      | "supportEmail"
-      | "emailSenderName"
-      | "defaultCurrency"
-      | "defaultLanguage"
-    >,
+    nextSettings: PersistedPlatformState,
   ) {
     try {
       const response = await fetch("/api/admin/settings/platform", {
@@ -321,7 +365,7 @@ export function AdminSettingsClient({
         throw new Error(payload?.error ?? "Unable to save platform settings.");
       }
 
-      const nextPersisted = toPersistedPlatformState(payload as PlatformConfig);
+      const nextPersisted = getPersistedSettingsFromState(nextSettings);
       setPersistedPlatform(nextPersisted);
       setSettings((prev) => ({
         ...prev,
@@ -492,6 +536,7 @@ export function AdminSettingsClient({
             label="Full Logo"
             helperText="Used in desktop navigation and wide brand areas."
             value={settings.logoFullUrl}
+            previewValue={resolveBrandAssetPreview(settings, "logoFullUrl").value}
             platformName={settings.platformName}
             previewVariant="wide"
             isUploading={uploadingAsset === "logoFullUrl"}
@@ -502,6 +547,8 @@ export function AdminSettingsClient({
             label="Icon Logo"
             helperText="Used in mobile navigation, compact layouts, and fallback marks."
             value={settings.logoIconUrl}
+            previewValue={resolveBrandAssetPreview(settings, "logoIconUrl").value}
+            inheritedLabel={resolveBrandAssetPreview(settings, "logoIconUrl").inheritedLabel}
             platformName={settings.platformName}
             previewVariant="square"
             isUploading={uploadingAsset === "logoIconUrl"}
@@ -512,6 +559,8 @@ export function AdminSettingsClient({
             label="Open Graph Logo"
             helperText="Used for social sharing previews and metadata."
             value={settings.logoOgUrl}
+            previewValue={resolveBrandAssetPreview(settings, "logoOgUrl").value}
+            inheritedLabel={resolveBrandAssetPreview(settings, "logoOgUrl").inheritedLabel}
             platformName={settings.platformName}
             previewVariant="wide"
             isUploading={uploadingAsset === "logoOgUrl"}
@@ -522,6 +571,8 @@ export function AdminSettingsClient({
             label="Email Logo"
             helperText="Used in email templates. Choose a clean, high-contrast version."
             value={settings.logoEmailUrl}
+            previewValue={resolveBrandAssetPreview(settings, "logoEmailUrl").value}
+            inheritedLabel={resolveBrandAssetPreview(settings, "logoEmailUrl").inheritedLabel}
             platformName={settings.platformName}
             previewVariant="wide"
             isUploading={uploadingAsset === "logoEmailUrl"}
@@ -532,6 +583,8 @@ export function AdminSettingsClient({
             label="Favicon"
             helperText="Used for browser tabs and app icons."
             value={settings.faviconUrl}
+            previewValue={resolveBrandAssetPreview(settings, "faviconUrl").value}
+            inheritedLabel={resolveBrandAssetPreview(settings, "faviconUrl").inheritedLabel}
             platformName={settings.platformName}
             previewVariant="square"
             isUploading={uploadingAsset === "faviconUrl"}

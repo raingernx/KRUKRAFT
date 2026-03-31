@@ -101,6 +101,7 @@ admin/*     → force-dynamic, role-gated
 Admin settings note:
 - build-safe platform config is only for branding-only build surfaces
 - `/admin/settings` must read live DB-backed platform settings
+- admin brand-asset editing must distinguish stored values from inherited preview fallbacks
 
 ## Authentication
 
@@ -120,6 +121,10 @@ root layout / metadata / selected public pages
 
 admin settings / live platform editing
   → DB-backed platform config
+
+public logo / favicon / OG asset delivery
+  → `/brand-assets/*` runtime routes
+  → resolve latest DB-backed platform assets without forcing Prisma into build-time metadata generation
 ```
 
 This separation exists to avoid Prisma build-time warnings and DB dependency in static build paths.

@@ -9,12 +9,12 @@ import { PublicSiteFooter } from "@/components/layout/PublicSiteFooter";
 import { Footer } from "@/components/layout/Footer";
 import { fontVariables } from "@/lib/fonts";
 import { getCachedServerSession } from "@/lib/auth";
-import { getBuildSafePlatformConfig } from "@/services/platform.service";
+import { getBuildSafePublicPlatformConfig } from "@/services/platform.service";
 import { buildPlatformMetadata } from "@/lib/platform/platform-metadata";
 import { Providers } from "./providers";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const platform = getBuildSafePlatformConfig();
+  const platform = getBuildSafePublicPlatformConfig();
   return buildPlatformMetadata(platform);
 }
 
@@ -24,7 +24,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const [platform, session] = await Promise.all([
-    getBuildSafePlatformConfig(),
+    getBuildSafePublicPlatformConfig(),
     getCachedServerSession(),
   ]);
   const htmlLang = platform.defaultLanguage.trim() || "th";

@@ -41,4 +41,5 @@ track the current codebase state, not just earlier conversation exports.
 - Public image delivery now bypasses `/_next/image` for many remote preview assets to reduce image-optimizer bottlenecks.
 - Resource detail pages were decomposed into shell + deferred body/footer/purchase/review/related paths to reduce first-render latency.
 - Admin settings must read live DB-backed platform config; build-safe platform config is only for branding-only build paths.
+- Public logo / favicon / OG assets now flow through runtime `/brand-assets/*` routes so admin brand uploads can update public surfaces without reintroducing build-time Prisma dependency.
 - This directory was refreshed against the repo on `2026-03-31`. If architecture/perf/deploy behavior changes materially, update these docs in the same branch.

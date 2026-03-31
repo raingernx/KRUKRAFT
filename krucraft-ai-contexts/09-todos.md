@@ -8,12 +8,13 @@
 - [ ] Keep post-deploy warm targets aligned with perf smoke coverage
 - [ ] Re-run perf measurements after major listing/detail changes and update thresholds intentionally
 - [ ] Continue refining detail-page CTA/trust/review timing if new regressions appear
+- [ ] Verify uploaded favicon and OG logo changes propagate correctly through `/brand-assets/*` in production browsers and social crawlers
 
 ## Product / UX Follow-Ups
 
 - [ ] Keep discover fallbacks aligned with final section intent; avoid misleading placeholder destinations
 - [ ] Audit live search, filter/sidebar fallbacks, and creator-profile fallbacks for usable-but-consistent loading states
-- [ ] Verify brand asset changes against admin settings and production cache behavior after logo updates
+- [ ] Re-audit brand asset previews if legacy stored values from earlier fallback behavior still exist in the database
 
 ## Audit Scope (Useful Ongoing Areas)
 

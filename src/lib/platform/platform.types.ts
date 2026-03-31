@@ -38,6 +38,26 @@ export type PlatformSettingsInput = {
   defaultCurrency?: string | null;
 };
 
+export type PlatformStoredSettings = {
+  name?: string | null;
+  description?: string | null;
+  shortName?: string | null;
+  siteUrl?: string | null;
+  defaultMetaTitle?: string | null;
+  defaultMetaDescription?: string | null;
+  ogSiteName?: string | null;
+  logoUrl?: string | null;
+  logoFullUrl?: string | null;
+  logoIconUrl?: string | null;
+  logoOgUrl?: string | null;
+  logoEmailUrl?: string | null;
+  faviconUrl?: string | null;
+  supportEmail?: string | null;
+  emailSenderName?: string | null;
+  defaultLanguage?: string | null;
+  defaultCurrency?: string | null;
+};
+
 export type PlatformEmailDefaults = {
   senderName: string;
   supportEmail: string;

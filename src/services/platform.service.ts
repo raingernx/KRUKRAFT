@@ -19,7 +19,16 @@ import type {
   PlatformConfig,
   PlatformEmailDefaults,
   PlatformSettingsInput,
+  PlatformStoredSettings,
 } from "@/lib/platform/platform.types";
+
+export const PUBLIC_PLATFORM_ASSET_ROUTES = {
+  logoFullUrl: "/brand-assets/full-logo",
+  logoIconUrl: "/brand-assets/icon-logo",
+  logoOgUrl: "/brand-assets/og-logo",
+  logoEmailUrl: "/brand-assets/email-logo",
+  faviconUrl: "/brand-assets/favicon",
+} as const;
 
 const readPlatformSettings = unstable_cache(
   async () => {
@@ -90,8 +99,50 @@ function looksLikeFaviconAsset(value: string | null | undefined) {
   }
 }
 
-export function resolvePlatformConfig(
+function sanitizeAdminStoredSettings(
   settings: Awaited<ReturnType<typeof getStoredPlatformSettings>>,
+): PlatformStoredSettings {
+  if (!settings) return {};
+
+  const hasCustomFullLogo =
+    !!settings.logoFullUrl?.trim() &&
+    settings.logoFullUrl.trim() !== PLATFORM_DEFAULTS.logoFullUrl;
+  const hasLegacyFullLogo =
+    !!settings.logoUrl?.trim() &&
+    settings.logoUrl.trim() !== PLATFORM_DEFAULTS.logoFullUrl;
+  const hasCustomIconLogo =
+    !!settings.logoIconUrl?.trim() &&
+    settings.logoIconUrl.trim() !== PLATFORM_DEFAULTS.logoIconUrl;
+
+  const logoOgUrl =
+    settings.logoOgUrl?.trim() === PLATFORM_DEFAULTS.logoOgUrl &&
+    (hasCustomFullLogo || hasLegacyFullLogo)
+      ? null
+      : settings.logoOgUrl;
+  const logoEmailUrl =
+    settings.logoEmailUrl?.trim() === PLATFORM_DEFAULTS.logoEmailUrl &&
+    (hasCustomFullLogo || hasLegacyFullLogo)
+      ? null
+      : settings.logoEmailUrl;
+  const faviconUrl =
+    settings.faviconUrl?.trim() === PLATFORM_DEFAULTS.faviconUrl &&
+    hasCustomIconLogo
+      ? null
+      : settings.faviconUrl;
+
+  return {
+    ...settings,
+    logoOgUrl,
+    logoEmailUrl,
+    faviconUrl,
+  };
+}
+
+export function resolvePlatformConfig(
+  settings:
+    | Awaited<ReturnType<typeof getStoredPlatformSettings>>
+    | PlatformStoredSettings
+    | null,
 ): PlatformConfig {
   const platformName = settings?.name?.trim() || PLATFORM_DEFAULTS.platformName;
   const platformDescription =
@@ -175,6 +226,33 @@ export const getPlatform = cache(getPlatformConfig);
 
 export function getBuildSafePlatformConfig(): PlatformConfig {
   return resolvePlatformConfig(null);
+}
+
+export function getBuildSafePublicPlatformConfig(): PlatformConfig {
+  const platform = resolvePlatformConfig(null);
+
+  return {
+    ...platform,
+    logoFullUrl: PUBLIC_PLATFORM_ASSET_ROUTES.logoFullUrl,
+    logoIconUrl: PUBLIC_PLATFORM_ASSET_ROUTES.logoIconUrl,
+    logoOgUrl: PUBLIC_PLATFORM_ASSET_ROUTES.logoOgUrl,
+    logoEmailUrl: PUBLIC_PLATFORM_ASSET_ROUTES.logoEmailUrl,
+    logoUrl: PUBLIC_PLATFORM_ASSET_ROUTES.logoFullUrl,
+    faviconUrl: PUBLIC_PLATFORM_ASSET_ROUTES.faviconUrl,
+  };
+}
+
+export async function getPlatformAdminSettings(): Promise<{
+  resolved: PlatformConfig;
+  stored: PlatformStoredSettings;
+}> {
+  const rawSettings = await readPlatformSettings();
+  const settings = sanitizeAdminStoredSettings(rawSettings);
+
+  return {
+    resolved: resolvePlatformConfig(settings),
+    stored: settings,
+  };
 }
 
 export async function updatePlatformConfig(input: PlatformSettingsInput) {
