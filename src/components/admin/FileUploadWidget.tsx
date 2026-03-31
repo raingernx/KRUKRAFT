@@ -31,6 +31,27 @@ interface Props {
   onRemoveCurrentFile?: () => void;
   /** When provided, will be called to lazily ensure a resource id exists before uploading (e.g. create draft). */
   onEnsureResourceId?: () => Promise<string | undefined>;
+  /** Upload target route. Defaults to the admin upload endpoint. */
+  uploadEndpoint?: string;
+  /** Optional callback when upload succeeds. */
+  onUploadComplete?: (payload: {
+    fileKey?: string | null;
+    fileName?: string | null;
+    fileSize?: number | null;
+  }) => void;
+  /** Override UI copy when reusing the widget outside admin. */
+  copy?: Partial<{
+    saveFirstError: string;
+    dragAndDrop: string;
+    formats: string;
+    maxSize: string;
+    replaceFile: string;
+    uploading: string;
+    uploadFile: string;
+    uploadSuccess: string;
+    removeFileAriaLabel: string;
+    removeSelectedFileAriaLabel: string;
+  }>;
 }
 
 type UploadStatus = "idle" | "uploading" | "success" | "error";
@@ -65,6 +86,9 @@ export function FileUploadWidget({
   initialFileSize,
   onRemoveCurrentFile,
   onEnsureResourceId,
+  uploadEndpoint = "/api/admin/resources/upload",
+  onUploadComplete,
+  copy,
 }: Props) {
   // ── State ──────────────────────────────────────────────────────────────────
   const [status, setStatus] = useState<UploadStatus>("idle");
@@ -73,6 +97,19 @@ export function FileUploadWidget({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const labels = {
+    saveFirstError: "Save or create the resource before uploading a file.",
+    dragAndDrop: "Drag & drop file here, or click to browse",
+    formats: `PDF, DOCX, XLSX, ZIP — up to ${MAX_MB} MB`,
+    maxSize: `Max file size: ${MAX_MB} MB`,
+    replaceFile: "Replace file",
+    uploading: "Uploading…",
+    uploadFile: "Upload file",
+    uploadSuccess: "File uploaded successfully.",
+    removeFileAriaLabel: "Remove file",
+    removeSelectedFileAriaLabel: "Remove selected file",
+    ...copy,
+  };
 
   // Keep uploadedFile in sync with latest props (initialFileName / initialFileSize)
   useEffect(() => {
@@ -114,7 +151,7 @@ export function FileUploadWidget({
     }
 
     if (!targetResourceId) {
-      setErrorMsg("Save or create the resource before uploading a file.");
+      setErrorMsg(labels.saveFirstError);
       return;
     }
 
@@ -132,7 +169,7 @@ export function FileUploadWidget({
       body.append("resourceId", targetResourceId);
       body.append("file", selectedFile);
 
-      const res = await fetch("/api/admin/resources/upload", {
+      const res = await fetch(uploadEndpoint, {
         method: "POST",
         body,
       });
@@ -146,6 +183,11 @@ export function FileUploadWidget({
       setUploadedFile({
         name: (json.fileName as string | undefined) ?? selectedFile.name,
         size: (json.fileSize as number | undefined) ?? selectedFile.size,
+      });
+      onUploadComplete?.({
+        fileKey: (json.fileKey as string | undefined) ?? null,
+        fileName: (json.fileName as string | undefined) ?? selectedFile.name,
+        fileSize: (json.fileSize as number | undefined) ?? selectedFile.size,
       });
       setSelectedFile(null);
       setStatus("success");
@@ -204,11 +246,11 @@ export function FileUploadWidget({
                 </p>
               )}
             </div>
-            <PickerIconButton
-              aria-label="Remove file"
-              onClick={handleRemoveExisting}
-              className="ml-auto inline-flex h-6 w-6 items-center justify-center rounded-full p-0"
-            >
+              <PickerIconButton
+                aria-label={labels.removeFileAriaLabel}
+                onClick={handleRemoveExisting}
+                className="ml-auto inline-flex h-6 w-6 items-center justify-center rounded-full p-0"
+              >
               <X className="h-4 w-4" />
             </PickerIconButton>
           </PreviewCard>
@@ -220,7 +262,7 @@ export function FileUploadWidget({
               actionStyle="dashed"
             >
               <Upload className="h-4 w-4" />
-              Replace file
+              {labels.replaceFile}
             </PickerActionButton>
             <input
               ref={inputRef}
@@ -250,13 +292,13 @@ export function FileUploadWidget({
             <PickerDropzoneShell disabled={!resourceId && !onEnsureResourceId}>
               <Upload className="mb-2 h-5 w-5 text-text-muted" />
               <p className="font-medium text-text-primary">
-                Drag & drop file here, or click to browse
+                {labels.dragAndDrop}
               </p>
               <p className="mt-1 text-[11px] text-text-secondary">
-                PDF, DOCX, XLSX, ZIP — up to {MAX_MB} MB
+                {labels.formats}
               </p>
               <p className="mt-0.5 text-[11px] text-text-secondary">
-                Max file size: {MAX_MB} MB
+                {labels.maxSize}
               </p>
             </PickerDropzoneShell>
             <input
@@ -280,7 +322,7 @@ export function FileUploadWidget({
               </p>
               <PickerIconButton
                 onClick={handleClear}
-                aria-label="Remove selected file"
+                aria-label={labels.removeSelectedFileAriaLabel}
                 tone="info"
                 className="p-1"
               >
@@ -292,19 +334,19 @@ export function FileUploadWidget({
           <PickerActionButton
             type="button"
             onClick={handleUpload}
-            disabled={!resourceId || !selectedFile || status === "uploading"}
+            disabled={!(resourceId || onEnsureResourceId) || !selectedFile || status === "uploading"}
             variant="primary"
             className="h-10 w-full justify-center px-5 text-[13px] font-semibold disabled:opacity-40"
           >
             {status === "uploading" ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Uploading…
+                {labels.uploading}
               </>
             ) : (
               <>
                 <Upload className="h-4 w-4" />
-                Upload file
+                {labels.uploadFile}
               </>
             )}
           </PickerActionButton>
@@ -316,7 +358,7 @@ export function FileUploadWidget({
         <div className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3">
           <CheckCircle className="h-4 w-4 shrink-0 text-emerald-500" />
           <p className="text-[13px] text-emerald-700 font-medium">
-            File uploaded successfully.
+            {labels.uploadSuccess}
           </p>
         </div>
       )}

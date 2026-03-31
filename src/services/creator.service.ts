@@ -54,7 +54,10 @@ import {
   rejectCreatorApplicationRecord,
   type CreatorApplicationInput,
 } from "@/repositories/creators/creator.repository";
-import { findResourceBySlug } from "@/repositories/resources/resource.repository";
+import {
+  createDraftResourceRecord,
+  findResourceBySlug,
+} from "@/repositories/resources/resource.repository";
 
 // Request-level memoization: deduplicates getCreatorStats calls within one render pass.
 const getCachedCreatorStats = cache(getCreatorStats);
@@ -1277,6 +1280,7 @@ export async function getCreatorResourceForEdit(userId: string, resourceId: stri
   return {
     ...resource,
     previewUrls: resource.previews.map((preview) => preview.imageUrl),
+    aiDraft: resource.aiDraft,
   };
 }
 
@@ -1368,6 +1372,24 @@ export async function createCreatorResource(userId: string, input: unknown) {
   return resource;
 }
 
+export async function createCreatorResourceDraft(userId: string) {
+  const access = await requireCreatorAccess(userId);
+
+  if (!access.canCreate) {
+    throw new CreatorServiceError(403, {
+      error: "This account can manage creator resources, but it cannot create new resources.",
+    });
+  }
+
+  const slug = await generateUniqueResourceSlug("untitled-draft", userId);
+
+  return createDraftResourceRecord({
+    title: "Untitled draft",
+    slug,
+    authorId: userId,
+  });
+}
+
 export async function updateCreatorResource(userId: string, resourceId: string, input: unknown) {
   await requireCreatorAccess(userId);
 
@@ -1448,7 +1470,7 @@ async function ensureCreatorResourcePublishable(userId: string, resourceId: stri
     missingFields.push("slug");
   }
 
-  if (!resource.fileUrl?.trim()) {
+  if (!resource.fileUrl?.trim() && !resource.fileKey?.trim()) {
     missingFields.push("file");
   }
 

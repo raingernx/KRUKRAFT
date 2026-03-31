@@ -3,6 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Input, Select, Textarea } from "@/design-system";
+import {
+  CreatorAIDraftGenerator,
+  type CreatorAIDraftResourceSeed,
+  type CreatorAIDraftValues,
+} from "@/components/creator/CreatorAIDraftGenerator";
 import { CreatorStickyActionBar } from "@/components/creator/CreatorStickyActionBar";
 import {
   CreatorPublishReadiness,
@@ -11,6 +16,9 @@ import {
 import { CreatorResourcePreview } from "@/components/creator/CreatorResourcePreview";
 import { CreatorBuyerPreviewModal } from "@/components/creator/CreatorBuyerPreviewModal";
 import { CreatorPublishSuccessModal } from "@/components/creator/CreatorPublishSuccessModal";
+import { ImageDropzone } from "@/components/admin/ImageDropzone";
+import { PreviewImageSortableList } from "@/components/admin/PreviewImageSortableList";
+import { FileUploadWidget } from "@/components/ui/forms";
 import { routes } from "@/lib/routes";
 
 export interface CreatorResourceFormCategory {
@@ -30,6 +38,9 @@ export interface CreatorResourceFormValues {
   price: string;
   categoryId: string;
   fileUrl: string;
+  fileKey?: string;
+  fileName?: string;
+  fileSize?: number | null;
   previewUrls: string[];
   /** Thumbnail URL for live preview only — not yet persisted by the backend. */
   thumbnailUrl?: string;
@@ -39,6 +50,7 @@ interface CreatorResourceFormProps {
   mode: "create" | "edit";
   categories: CreatorResourceFormCategory[];
   initialValues?: CreatorResourceFormValues;
+  initialAIDraft?: CreatorAIDraftValues | null;
   /** True when this creator has no resources yet. Enables guided UI. */
   isFirstResource?: boolean;
   /** When set, scroll-to and temporarily highlight this field on mount. */
@@ -74,6 +86,7 @@ export function CreatorResourceForm({
   mode,
   categories,
   initialValues = DEFAULT_VALUES,
+  initialAIDraft,
   isFirstResource = false,
   focusField,
 }: CreatorResourceFormProps) {
@@ -88,6 +101,8 @@ export function CreatorResourceForm({
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState<string | null>(null);
   const [highlightedField, setHighlightedField] = useState<FieldName | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [publishSuccess, setPublishSuccess] = useState(false);
@@ -104,9 +119,9 @@ export function CreatorResourceForm({
     if (!form.title || form.title.trim().length < 3) missing.push("title");
     if (!form.description || form.description.trim().length < 10) missing.push("description");
     if (!form.isFree && (!form.price || Number(form.price) <= 0)) missing.push("price");
-    if (!form.fileUrl) missing.push("file");
+    if (!form.fileUrl && !form.fileKey) missing.push("file");
     return missing;
-  }, [form.title, form.description, form.isFree, form.price, form.fileUrl]);
+  }, [form.title, form.description, form.isFree, form.price, form.fileKey, form.fileUrl]);
 
   const completion = 4 - missingFields.length;
   const canPublish = missingFields.length === 0;
@@ -143,6 +158,40 @@ export function CreatorResourceForm({
 
   const previewUrls = useMemo(() => fromPreviewTextarea(previewInput), [previewInput]);
 
+  function setPreviewUrls(next: string[]) {
+    setPreviewInput(toPreviewTextarea(next));
+  }
+
+  async function persistCurrentFormToResource(
+    resourceId: string,
+    overrides?: {
+      previewUrls?: string[];
+      fileUrl?: string | null;
+    },
+  ) {
+    const response = await fetch(`/api/creator/resources/${resourceId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: form.title,
+        description: form.description,
+        slug: form.slug,
+        type: form.type,
+        status: form.status,
+        isFree: form.isFree,
+        price: form.isFree ? 0 : Math.round((Number(form.price) || 0) * 100),
+        categoryId: form.categoryId || null,
+        fileUrl: overrides?.fileUrl !== undefined ? overrides.fileUrl : form.fileUrl || null,
+        previewUrls: overrides?.previewUrls ?? previewUrls,
+      }),
+    });
+
+    const json = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(json.error ?? "ยังไม่สามารถบันทึกข้อมูลลงฉบับร่างได้");
+    }
+  }
+
   function handleChange(
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) {
@@ -162,20 +211,200 @@ export function CreatorResourceForm({
     });
   }
 
+  async function ensureDraftResourceId() {
+    if (form.id) {
+      return form.id;
+    }
+
+    const response = await fetch("/api/creator/resources/draft", {
+      method: "POST",
+    });
+    const json = await response.json().catch(() => ({}));
+
+    if (!response.ok || typeof json.id !== "string") {
+      throw new Error(json.error ?? "ยังไม่สามารถสร้างฉบับร่างสำหรับอัปโหลดได้");
+    }
+
+    const resourceId = json.id as string;
+    setForm((prev) => ({ ...prev, id: resourceId }));
+    await persistCurrentFormToResource(resourceId);
+    return resourceId;
+  }
+
+  async function uploadImageFile(file: File): Promise<string | null> {
+    setImageUploadError(null);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/creator/upload/image", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      setImageUploadError((data as { error?: string }).error ?? "อัปโหลดรูปภาพไม่สำเร็จ");
+      return null;
+    }
+
+    return typeof (data as { url?: string }).url === "string"
+      ? (data as { url: string }).url
+      : null;
+  }
+
+  async function handleCoverUpload(file: File) {
+    setImageUploading(true);
+    setImageUploadError(null);
+
+    try {
+      const url = await uploadImageFile(file);
+      if (!url) return;
+
+      const nextPreviewUrls = [url, ...previewUrls.filter((item) => item !== url)];
+      setForm((prev) => ({ ...prev, thumbnailUrl: url }));
+      setPreviewUrls(nextPreviewUrls);
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next.previewUrls;
+        return next;
+      });
+
+      const resourceId = form.id ?? (mode === "create" ? await ensureDraftResourceId() : undefined);
+      if (resourceId) {
+        await persistCurrentFormToResource(resourceId, {
+          previewUrls: nextPreviewUrls,
+        });
+      }
+    } finally {
+      setImageUploading(false);
+    }
+  }
+
+  async function handlePreviewImagesUpload(files: File[]) {
+    setImageUploading(true);
+    setImageUploadError(null);
+
+    try {
+      const uploaded: string[] = [];
+
+      for (const file of files) {
+        const url = await uploadImageFile(file);
+        if (url) {
+          uploaded.push(url);
+        }
+      }
+
+      if (uploaded.length > 0) {
+        const nextPreviewUrls = [...previewUrls.filter(Boolean), ...uploaded];
+        setPreviewUrls(nextPreviewUrls);
+        setForm((prev) => ({
+          ...prev,
+          thumbnailUrl: prev.thumbnailUrl || previewUrls[0] || uploaded[0] || "",
+        }));
+        setFieldErrors((prev) => {
+          const next = { ...prev };
+          delete next.previewUrls;
+          return next;
+        });
+
+        const resourceId = form.id ?? (mode === "create" ? await ensureDraftResourceId() : undefined);
+        if (resourceId) {
+          await persistCurrentFormToResource(resourceId, {
+            previewUrls: nextPreviewUrls,
+          });
+        }
+      }
+    } finally {
+      setImageUploading(false);
+    }
+  }
+
+  async function handleRemoveUploadedFile() {
+    if (!form.id) {
+      setForm((prev) => ({ ...prev, fileKey: "", fileName: "", fileSize: null }));
+      return;
+    }
+
+    const response = await fetch(`/api/creator/resources/${form.id}/file`, {
+      method: "DELETE",
+    });
+    const json = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(json.error ?? "ลบไฟล์ไม่สำเร็จ");
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      fileKey: "",
+      fileName: "",
+      fileSize: null,
+    }));
+  }
+
+  async function handleRemovePreviewAtIndex(index: number) {
+    const nextPreviewUrls = previewUrls.filter((_, currentIndex) => currentIndex !== index);
+    const removedUrl = previewUrls[index];
+
+    setPreviewUrls(nextPreviewUrls);
+    setForm((prev) => ({
+      ...prev,
+      thumbnailUrl:
+        nextPreviewUrls.length === 0
+          ? ""
+          : prev.thumbnailUrl === removedUrl
+            ? nextPreviewUrls[0]
+            : prev.thumbnailUrl,
+    }));
+
+    if (form.id) {
+      await persistCurrentFormToResource(form.id, {
+        previewUrls: nextPreviewUrls,
+      });
+    }
+  }
+
+  async function handleSetPreviewAsCover(index: number) {
+    const nextPreviewUrls = [...previewUrls];
+    const [selected] = nextPreviewUrls.splice(index, 1);
+    nextPreviewUrls.unshift(selected);
+
+    setPreviewUrls(nextPreviewUrls);
+    setForm((prev) => ({ ...prev, thumbnailUrl: selected }));
+
+    if (form.id) {
+      await persistCurrentFormToResource(form.id, {
+        previewUrls: nextPreviewUrls,
+      });
+    }
+  }
+
+  async function handleReorderPreviews(nextPreviewUrls: string[]) {
+    setPreviewUrls(nextPreviewUrls);
+
+    if (form.id) {
+      await persistCurrentFormToResource(form.id, {
+        previewUrls: nextPreviewUrls,
+      });
+    }
+  }
+
   async function submitWithStatus(status: "DRAFT" | "PUBLISHED" | "ARCHIVED") {
     setSaving(true);
     setError(null);
     setFieldErrors({});
 
     const submittedForm = { ...form, status };
+    const hasExistingDraft = Boolean(submittedForm.id);
 
     try {
       const response = await fetch(
-        mode === "create"
-          ? "/api/creator/resources"
-          : `/api/creator/resources/${submittedForm.id}`,
+        hasExistingDraft
+          ? `/api/creator/resources/${submittedForm.id}`
+          : "/api/creator/resources",
         {
-          method: mode === "create" ? "POST" : "PATCH",
+          method: hasExistingDraft ? "PATCH" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             title: submittedForm.title,
@@ -229,6 +458,42 @@ export function CreatorResourceForm({
   // then falls back to previewUrls[0] — the same image the backend saves to
   // resource.previewUrl and displays in the marketplace.
   const previewThumbnail = form.thumbnailUrl || previewUrls[0] || null;
+  const aiDraftResourceSeed = useMemo<CreatorAIDraftResourceSeed>(
+    () => ({
+      title: form.title,
+      description: form.description,
+      slug: form.slug,
+      type: form.type,
+      isFree: form.isFree,
+      price: form.isFree ? 0 : Math.round((Number(form.price) || 0) * 100),
+      categoryId: form.categoryId || null,
+      fileUrl: form.fileUrl || null,
+      previewUrls,
+    }),
+    [
+      form.title,
+      form.description,
+      form.slug,
+      form.type,
+      form.isFree,
+      form.price,
+      form.categoryId,
+      form.fileUrl,
+      previewUrls,
+    ],
+  );
+
+  function handleApplySummary(summary: string) {
+    setForm((prev) => ({
+      ...prev,
+      description: summary,
+    }));
+    setFieldErrors((prev) => {
+      const next = { ...prev };
+      delete next.description;
+      return next;
+    });
+  }
 
   return (
     <>
@@ -252,6 +517,14 @@ export function CreatorResourceForm({
 
       {/* ── Left column: all form sections ───────────────────────────────── */}
       <div className={isCreateMode ? "space-y-6 pb-24" : "space-y-8"}>
+
+      <CreatorAIDraftGenerator
+        mode={mode}
+        resourceId={form.id}
+        initialDraft={initialAIDraft}
+        resourceSeed={aiDraftResourceSeed}
+        onApplySummary={handleApplySummary}
+      />
 
       {/* ── Section 1: Basic info ─────────────────────────────────────────── */}
       <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
@@ -446,46 +719,132 @@ export function CreatorResourceForm({
         </div>
 
         <div className="grid gap-5">
-          {/* Thumbnail URL — drives live preview and, when present, is the first
-              image buyers see. Not yet persisted separately; add it to Preview
-              image URLs below to save it with the resource. */}
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-neutral-700">
-              Thumbnail URL{" "}
-              <span className="ml-1 text-xs font-normal text-neutral-400">(optional)</span>
+              รูปปก (Cover){" "}
+              <span className="ml-1 text-xs font-normal text-neutral-400">(แนะนำ)</span>
             </label>
-            <Input
-              name="thumbnailUrl"
-              value={form.thumbnailUrl ?? ""}
-              onChange={handleChange}
-              placeholder="https://example.com/cover.jpg"
-              hint="This is what buyers see first · Recommended: 1280×720 (16:9) · Updates the preview on the right"
-            />
+            <div className="space-y-3 rounded-xl border border-neutral-200 bg-neutral-50 p-4">
+              <p className="text-xs text-neutral-500">
+                รูปแรกจะถูกใช้เป็นภาพหน้าปกของ resource ใน marketplace
+              </p>
+              <input
+                id="creator-cover-upload"
+                type="file"
+                accept="image/*"
+                className="block w-full rounded-xl border border-dashed border-blue-300 bg-white px-3 py-2.5 text-sm text-neutral-700 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-600 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-blue-700"
+                disabled={imageUploading}
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) {
+                    void handleCoverUpload(file);
+                  }
+                  event.target.value = "";
+                }}
+              />
+              <Input
+                name="thumbnailUrl"
+                value={form.thumbnailUrl ?? ""}
+                onChange={handleChange}
+                placeholder="หรือวาง URL ของรูปปก"
+                hint="แนะนำขนาด 1280×720 หรืออัตราส่วน 16:9"
+              />
+            </div>
           </div>
 
           <div
             ref={fileRef}
             className={`space-y-1.5 rounded-xl p-1 -m-1 transition-all duration-300${highlightedField === "file" ? " ring-2 ring-inset ring-indigo-400/60 bg-indigo-50/60" : ""}`}
           >
-            <label className="text-sm font-medium text-neutral-700">File URL</label>
-            <Input
-              name="fileUrl"
-              value={form.fileUrl}
-              onChange={handleChange}
-              placeholder="https://r2.example.com/uploads/my-worksheet.pdf"
-              hint="Paste the direct download URL for the file buyers will receive. Private uploads remain an admin-only flow today."
-            />
+            <label className="text-sm font-medium text-neutral-700">ไฟล์สำหรับผู้ซื้อดาวน์โหลด</label>
+            <div className="space-y-4 rounded-xl border border-neutral-200 bg-neutral-50 p-4">
+              <FileUploadWidget
+                resourceId={form.id}
+                initialFileName={form.fileName ?? null}
+                initialFileSize={form.fileSize ?? null}
+                uploadEndpoint="/api/creator/resources/upload"
+                onEnsureResourceId={ensureDraftResourceId}
+                onUploadComplete={(payload) => {
+                  setForm((prev) => ({
+                    ...prev,
+                    id: prev.id,
+                    fileUrl: "",
+                    fileKey: payload.fileKey ?? "",
+                    fileName: payload.fileName ?? "",
+                    fileSize: payload.fileSize ?? null,
+                  }));
+                  setFieldErrors((prev) => {
+                    const next = { ...prev };
+                    delete next.fileUrl;
+                    return next;
+                  });
+                }}
+                onRemoveCurrentFile={async () => {
+                  try {
+                    await handleRemoveUploadedFile();
+                  } catch (removeError) {
+                    setError(
+                      removeError instanceof Error ? removeError.message : "ลบไฟล์ไม่สำเร็จ",
+                    );
+                  }
+                }}
+                copy={{
+                  saveFirstError: "ยังไม่สามารถสร้างฉบับร่างเพื่ออัปโหลดไฟล์ได้",
+                  dragAndDrop: "ลากไฟล์มาวาง หรือคลิกเพื่อเลือกไฟล์",
+                  formats: "PDF, DOCX, XLSX, ZIP หรือรูปภาพ สูงสุด 50 MB",
+                  maxSize: "ขนาดไฟล์สูงสุด 50 MB",
+                  replaceFile: "เปลี่ยนไฟล์",
+                  uploading: "กำลังอัปโหลด…",
+                  uploadFile: "อัปโหลดไฟล์",
+                  uploadSuccess: "อัปโหลดไฟล์เรียบร้อยแล้ว",
+                  removeFileAriaLabel: "ลบไฟล์",
+                  removeSelectedFileAriaLabel: "ลบไฟล์ที่เลือก",
+                }}
+              />
+
+              <Input
+                name="fileUrl"
+                value={form.fileUrl}
+                onChange={handleChange}
+                placeholder="หรือวาง URL ไฟล์ภายนอก เช่น https://example.com/worksheet.pdf"
+                hint="ถ้าไฟล์ถูกโฮสต์ไว้ภายนอกอยู่แล้ว สามารถวางลิงก์ตรงได้"
+              />
+            </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-neutral-700">Preview image URLs</label>
-            <Textarea
-              value={previewInput}
-              onChange={(event) => setPreviewInput(event.target.value)}
-              rows={isFirstResource ? 4 : 5}
-              placeholder={"/uploads/preview-cover.webp\nhttps://example.com/preview-2.webp"}
-              hint="One image URL per line. The first image becomes the card thumbnail and detail header. Use a clean, readable cover for best results."
-            />
+            <label className="text-sm font-medium text-neutral-700">รูปภาพพรีวิว</label>
+            <div className="space-y-4 rounded-xl border border-neutral-200 bg-neutral-50 p-4">
+              <ImageDropzone
+                disabled={imageUploading}
+                onFilesAccepted={(files) => {
+                  void handlePreviewImagesUpload(files);
+                }}
+                helpText="ลากรูปภาพมาวาง หรือคลิกเพื่อเพิ่มรูปพรีวิว"
+              />
+              <PreviewImageSortableList
+                images={previewUrls}
+                onReorder={(next) => {
+                  void handleReorderPreviews(next);
+                }}
+                onRemoveIndex={(index) => {
+                  void handleRemovePreviewAtIndex(index);
+                }}
+                onSetCover={(index) => {
+                  void handleSetPreviewAsCover(index);
+                }}
+              />
+              <Textarea
+                value={previewInput}
+                onChange={(event) => setPreviewInput(event.target.value)}
+                rows={isFirstResource ? 4 : 5}
+                placeholder={"/uploads/preview-cover.webp\nhttps://example.com/preview-2.webp"}
+                hint="หรือวาง URL รูปภาพทีละบรรทัด รูปแรกจะถูกใช้เป็นหน้าปก"
+              />
+              {imageUploadError && (
+                <p className="text-xs text-red-600">{imageUploadError}</p>
+              )}
+            </div>
             {fieldErrors.previewUrls && (
               <p className="text-xs text-red-600">{fieldErrors.previewUrls}</p>
             )}
@@ -566,6 +925,9 @@ export function CreatorResourceForm({
         isFree: form.isFree,
         previewUrls: previewUrls,
         thumbnailUrl: form.thumbnailUrl || previewUrls[0] || null,
+        fileName: form.fileName || null,
+        fileSize: form.fileSize ?? null,
+        hasPrivateFile: Boolean(form.fileKey),
         fileUrl: form.fileUrl || undefined,
         type: form.type,
       }}

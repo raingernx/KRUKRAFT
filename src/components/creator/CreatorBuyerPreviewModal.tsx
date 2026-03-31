@@ -20,6 +20,9 @@ export type CreatorBuyerPreviewResource = {
   previewUrls: string[];
   thumbnailUrl?: string | null;
   fileUrl?: string;
+  fileName?: string | null;
+  fileSize?: number | null;
+  hasPrivateFile?: boolean;
   /** Resource type from the form ("PDF" | "DOCUMENT"). */
   type?: string;
 };
@@ -74,12 +77,14 @@ export function CreatorBuyerPreviewModal({
     resource.thumbnailUrl ?? resource.previewUrls[0] ?? null;
 
   // Derive a display file entry from fileUrl when present so ResourceFiles renders
-  const includedFiles = resource.fileUrl
+  const includedFiles = resource.fileUrl || resource.hasPrivateFile
     ? [
         {
           name:
-            resource.fileUrl.split("/").pop() ||
+            resource.fileName ||
+            resource.fileUrl?.split("/").pop() ||
             (resource.type === "PDF" ? "Downloadable PDF" : "Downloadable file"),
+          size: resource.fileSize ?? null,
         },
       ]
     : [];

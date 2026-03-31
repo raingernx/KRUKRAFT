@@ -144,8 +144,8 @@ function NavbarInner({
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { data: session, status } = useSession();
-  const isLoading = status === "loading";
+  const { data: session } = useSession();
+  const authUser = session?.user;
   const isMarketplaceNavbar = Boolean(headerSearch);
   const currentCategory = searchParams.get("category");
   const userMenuId = useId();
@@ -198,7 +198,7 @@ function NavbarInner({
   }
 
   function renderUserMenu() {
-    if (!session?.user) {
+    if (!authUser) {
       return null;
     }
 
@@ -216,10 +216,10 @@ function NavbarInner({
           <div className="border-b border-surface-100 px-4 py-3">
             <div className="min-w-0">
               <p className="truncate text-[13px] font-semibold text-text-primary">
-                {session.user.name}
+                {authUser.name}
               </p>
               <p className="mt-0.5 truncate text-[11px] text-text-muted">
-                {session.user.email}
+                {authUser.email}
               </p>
             </div>
           </div>
@@ -306,12 +306,7 @@ function NavbarInner({
               </div>
 
               <div className="ml-auto hidden items-center gap-2.5 lg:flex">
-                {isLoading ? (
-                  <div className="flex items-center gap-2.5">
-                    <div className="h-10 w-24 animate-pulse rounded-full bg-surface-100" />
-                    <div className="h-10 w-10 animate-pulse rounded-full bg-surface-100" />
-                  </div>
-                ) : session?.user ? (
+                {authUser ? (
                   <>
                     <Link href={routes.library} className={MARKETPLACE_ACTION_LINK_CLASS_NAME}>
                       คลังของฉัน
@@ -327,9 +322,9 @@ function NavbarInner({
                         aria-controls={userMenuId}
                       >
                         <AccountTrigger
-                          name={session.user.name?.split(" ")[0] ?? "Account"}
-                          image={session.user.image}
-                          email={session.user.email}
+                          name={authUser.name?.split(" ")[0] ?? "Account"}
+                          image={authUser.image}
+                          email={authUser.email}
                           isOpen={userMenuOpen}
                         />
                       </button>
@@ -351,9 +346,7 @@ function NavbarInner({
               {/* Scrollable links — overflow-x-auto would clip an absolute
                   dropdown, so the avatar button lives outside this div. */}
               <div className={cn("ml-auto flex min-w-0 max-w-[68vw] items-center gap-1.5 lg:hidden", HORIZONTAL_SCROLL_CLASS_NAME)}>
-                {isLoading ? (
-                  <div className="h-10 w-24 shrink-0 animate-pulse rounded-full bg-surface-100" />
-                ) : session?.user ? (
+                {authUser ? (
                   <Link href={routes.library} className="inline-flex h-10 shrink-0 items-center rounded-full px-3 text-[14px] leading-[22px] font-medium text-text-secondary transition-colors hover:bg-surface-100 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2">
                     คลังของฉัน
                   </Link>
@@ -370,9 +363,7 @@ function NavbarInner({
               </div>
 
               {/* Avatar sits outside overflow-x-auto so its dropdown is not clipped */}
-              {isLoading ? (
-                <div className="h-10 w-10 shrink-0 animate-pulse rounded-full bg-surface-100 lg:hidden" />
-              ) : session?.user ? (
+              {authUser ? (
                 <div className="relative shrink-0 lg:hidden">
                   <button
                     type="button"
@@ -384,9 +375,9 @@ function NavbarInner({
                     aria-controls={userMenuId}
                   >
                     <Avatar
-                      src={session.user.image}
-                      name={session.user.name}
-                      email={session.user.email}
+                      src={authUser.image}
+                      name={authUser.name}
+                      email={authUser.email}
                       size={30}
                     />
                   </button>
@@ -502,7 +493,7 @@ function NavbarInner({
         <div className={headerSearch ? "order-2 ml-auto lg:order-3 lg:ml-0" : "ml-auto"}>
           <div className="hidden shrink-0 items-center gap-3.5 lg:flex">
             <nav className="hidden items-center gap-2 lg:flex" aria-label="เมนูหลัก">
-              {NAV_LINKS.filter(({ href }) => href !== routes.library || (!isLoading && Boolean(session?.user))).map(({ href, label }) => (
+              {NAV_LINKS.filter(({ href }) => href !== routes.library || Boolean(authUser)).map(({ href, label }) => (
                 <NavbarItem
                   key={href}
                   href={href}
@@ -515,12 +506,7 @@ function NavbarInner({
               ))}
             </nav>
 
-            {isLoading ? (
-              <div className="flex items-center gap-2.5">
-                <div className="h-10 w-24 animate-pulse rounded-full bg-surface-100" />
-                <div className="h-10 w-10 animate-pulse rounded-full bg-surface-100" />
-              </div>
-            ) : session?.user ? (
+            {authUser ? (
               <div className="relative">
                 <button
                   type="button"
@@ -532,9 +518,9 @@ function NavbarInner({
                   aria-controls={userMenuId}
                 >
                   <AccountTrigger
-                    name={session.user.name?.split(" ")[0] ?? "Account"}
-                    image={session.user.image}
-                    email={session.user.email}
+                    name={authUser.name?.split(" ")[0] ?? "Account"}
+                    image={authUser.image}
+                    email={authUser.email}
                     isOpen={userMenuOpen}
                   />
                 </button>
@@ -566,7 +552,7 @@ function NavbarInner({
       {mobileOpen ? (
         <div className="border-b border-surface-200 bg-white px-4 pb-5 pt-3 lg:hidden">
           <nav className="flex flex-col gap-0.5" aria-label="Mobile navigation">
-            {NAV_LINKS.filter(({ href }) => href !== routes.library || Boolean(session?.user)).map(({ href, label }) => (
+            {NAV_LINKS.filter(({ href }) => href !== routes.library || Boolean(authUser)).map(({ href, label }) => (
               <NavbarItem
                 key={href}
                 href={href}
@@ -583,20 +569,20 @@ function NavbarInner({
           </nav>
 
           <div className="mt-4 flex flex-col gap-2 border-t border-surface-100 pt-4">
-            {session?.user ? (
+            {authUser ? (
               <>
                 <div className="flex items-center gap-3 rounded-lg bg-surface-50 px-3 py-2.5">
                   <Avatar
-                    src={session.user.image}
-                    name={session.user.name}
-                    email={session.user.email}
+                    src={authUser.image}
+                    name={authUser.name}
+                    email={authUser.email}
                     size={28}
                   />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-text-primary">
-                      {session.user.name}
+                      {authUser.name}
                     </p>
-                    <p className="truncate text-xs text-text-muted">{session.user.email}</p>
+                    <p className="truncate text-xs text-text-muted">{authUser.email}</p>
                   </div>
                 </div>
 

@@ -50,8 +50,10 @@ export default async function CreatorApplyPage() {
 
   const access = await getCreatorAccessState(userId);
 
-  // Already approved — send them to creator dashboard
-  if (canAccessCreatorWorkspace(access) || access.applicationStatus === "APPROVED") {
+  // Redirect only when the workspace is actually accessible.
+  // An APPROVED application without active creator access can otherwise loop
+  // between /dashboard/creator and /dashboard/creator/apply.
+  if (canAccessCreatorWorkspace(access)) {
     redirect(routes.creatorDashboard);
   }
 
@@ -100,6 +102,7 @@ export default async function CreatorApplyPage() {
       </div>
 
       {/* State-based action panel */}
+      {applicationStatus === "APPROVED" && <ApprovedPanel />}
       {applicationStatus === "PENDING" && <PendingPanel />}
       {applicationStatus === "REJECTED" && (
         <RejectedPanel userId={userId} />
@@ -121,6 +124,24 @@ function PendingPanel() {
           <p className="mt-1.5 text-sm text-amber-800">
             Your creator application has been submitted and is currently being reviewed by our team.
             We typically respond within 1–3 business days. You'll be notified when a decision is made.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ApprovedPanel() {
+  return (
+    <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 shadow-card">
+      <div className="flex items-start gap-3">
+        <Clock className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-600" />
+        <div>
+          <h2 className="text-base font-semibold text-emerald-900">Application approved</h2>
+          <p className="mt-1.5 text-sm text-emerald-800">
+            Your creator application has been approved. Creator workspace access is still being
+            finalized for this account. Please refresh again shortly or contact support if this
+            status does not update.
           </p>
         </div>
       </div>

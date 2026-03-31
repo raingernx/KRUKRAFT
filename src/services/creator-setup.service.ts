@@ -1,4 +1,6 @@
 import {
+  canAccessCreatorWorkspace,
+  getCreatorAccessState,
   getCreatorProfile,
   getCreatorResourceStatusSummary,
 } from "@/services/creator.service";
@@ -27,10 +29,18 @@ export interface CreatorSetupState {
  * Reuses existing service functions — no new DB queries introduced.
  */
 export async function getCreatorSetupState(userId: string): Promise<CreatorSetupState> {
-  const [profile, statusSummary] = await Promise.all([
+  const [access, profile] = await Promise.all([
+    getCreatorAccessState(userId),
     getCreatorProfile(userId),
-    getCreatorResourceStatusSummary(userId),
   ]);
+
+  const statusSummary = canAccessCreatorWorkspace(access)
+    ? await getCreatorResourceStatusSummary(userId)
+    : {
+        draft: 0,
+        published: 0,
+        archived: 0,
+      };
 
   const profileComplete = Boolean(
     profile?.creatorSlug &&

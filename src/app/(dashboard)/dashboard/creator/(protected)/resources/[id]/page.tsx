@@ -49,6 +49,23 @@ export default async function CreatorEditResourcePage({
         mode="edit"
         focusField={focusField}
         categories={formData.categories}
+        initialAIDraft={
+          resource.aiDraft
+            ? {
+                resourceId: resource.aiDraft.resourceId,
+                sourceText: resource.aiDraft.sourceText,
+                sourceFileName: resource.aiDraft.sourceFileName,
+                subject: resource.aiDraft.subject,
+                grade: resource.aiDraft.grade,
+                language: resource.aiDraft.language,
+                quizCount: resource.aiDraft.quizCount,
+                summary: resource.aiDraft.summary,
+                learningOutcomes: resource.aiDraft.learningOutcomes,
+                quizDraft: resource.aiDraft.quizDraft,
+                generationMode: resource.aiDraft.generationMode,
+              }
+            : null
+        }
         initialValues={{
           id: resource.id,
           title: resource.title,
@@ -60,6 +77,9 @@ export default async function CreatorEditResourcePage({
           price: resource.isFree || resource.price === 0 ? "" : String(resource.price / 100),
           categoryId: resource.categoryId ?? "",
           fileUrl: resource.fileUrl ?? "",
+          fileKey: resource.fileKey ?? "",
+          fileName: resource.fileName ?? "",
+          fileSize: resource.fileSize ?? null,
           previewUrls: resource.previewUrls,
         }}
       />

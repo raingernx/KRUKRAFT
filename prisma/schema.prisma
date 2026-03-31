@@ -341,6 +341,7 @@ model Resource {
   analyticsEvents AnalyticsEvent[]
   resourceStat    ResourceStat?
   creatorRevenue  CreatorRevenue[] @relation("CreatorRevenueResource")
+  aiDraft         ResourceAIDraft?
 
   // Indexes for common marketplace listing queries
   @@index([status, createdAt])
@@ -354,6 +355,27 @@ model Resource {
   @@index([deletedAt])
   @@index([deletedAt, createdAt])
   @@index([authorId, deletedAt, createdAt])
+}
+
+model ResourceAIDraft {
+  id               String   @id @default(cuid())
+  resourceId       String   @unique
+  sourceText       String   @db.Text
+  sourceFileName   String?
+  subject          String?
+  grade            String?
+  language         String   @default("th")
+  quizCount        Int      @default(5)
+  summary          String   @db.Text
+  learningOutcomes String   @db.Text
+  quizDraft        String   @db.Text
+  generationMode   String   @default("HEURISTIC_V1")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@index([updatedAt])
 }
 
 model ResourceVersion {

@@ -1187,14 +1187,36 @@ export async function createOwnedResourceRecord(input: CreateAdminResourceRecord
 export async function deleteStaleDraftResources(cutoff: Date) {
   return prisma.resource.deleteMany({
     where: {
-      title: "",
+      title: {
+        in: ["", "Untitled draft", "AI resource draft"],
+      },
       description: "",
       fileUrl: null,
       fileKey: null,
+      previewUrl: null,
+      categoryId: null,
+      isFree: true,
+      price: 0,
       status: "DRAFT",
       createdAt: {
         lt: cutoff,
       },
+      OR: [
+        {
+          aiDraft: {
+            is: null,
+          },
+        },
+        {
+          aiDraft: {
+            is: {
+              updatedAt: {
+                lt: cutoff,
+              },
+            },
+          },
+        },
+      ],
     },
   });
 }
