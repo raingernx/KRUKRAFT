@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { defaultLocale } from "@/i18n/config";
 
 // global-error.tsx wraps the root layout itself — no providers or Navbar
 // available here. Must include its own <html> and <body>.
@@ -11,12 +12,17 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const htmlLang =
+    typeof document !== "undefined" && document.documentElement.lang
+      ? document.documentElement.lang
+      : defaultLocale;
+
   useEffect(() => {
     console.error("[GLOBAL_ERROR]", error);
   }, [error]);
 
   return (
-    <html lang="th">
+    <html lang={htmlLang}>
       <body style={{ margin: 0, fontFamily: "sans-serif", background: "#f8fafc" }}>
         <div
           style={{

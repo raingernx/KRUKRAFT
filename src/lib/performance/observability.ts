@@ -1,11 +1,12 @@
 import "server-only";
 
 import { AsyncLocalStorage } from "node:async_hooks";
+import { env } from "@/env";
 
-const PERFORMANCE_DEBUG_LOGS_ENABLED = process.env.PERFORMANCE_DEBUG_LOGS === "1";
+const PERFORMANCE_DEBUG_LOGS_ENABLED = env.PERFORMANCE_DEBUG_LOGS === "1";
 const PERFORMANCE_MONITORING_ENABLED =
-  PERFORMANCE_DEBUG_LOGS_ENABLED || process.env.PERFORMANCE_MONITORING === "1";
-const DEFAULT_SLOW_QUERY_MS = Number(process.env.PERFORMANCE_SLOW_QUERY_MS ?? "75");
+  PERFORMANCE_DEBUG_LOGS_ENABLED || env.PERFORMANCE_MONITORING === "1";
+const DEFAULT_SLOW_QUERY_MS = Number(env.PERFORMANCE_SLOW_QUERY_MS ?? "75");
 
 type PerformanceDetails = Record<string, unknown>;
 

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { env } from "@/env";
 import { hasValidInternalRouteSecret } from "@/lib/internal-route-auth";
 import { findHotResourceSlugs } from "@/repositories/resources/resource.repository";
 
@@ -6,7 +7,7 @@ const MAX_LIMIT = 50;
 const DEFAULT_LIMIT = 20;
 
 export async function GET(request: Request) {
-  const secret = process.env.PERFORMANCE_WARM_SECRET?.trim();
+  const secret = env.PERFORMANCE_WARM_SECRET?.trim();
 
   if (!secret) {
     return NextResponse.json(

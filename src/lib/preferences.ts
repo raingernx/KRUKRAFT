@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { env } from "@/env";
 
 function isOneOf<T extends string>(value: string, allowed: readonly T[]): value is T {
   return (allowed as readonly string[]).includes(value);
@@ -59,7 +60,7 @@ export async function getUserPreferences(userId: string): Promise<UserPreference
   });
 
   if (!userExists) {
-    if (process.env.NODE_ENV !== "production") {
+    if (env.NODE_ENV !== "production") {
       console.warn(`getUserPreferences: user ${userId} not found; returning defaults`);
     }
 

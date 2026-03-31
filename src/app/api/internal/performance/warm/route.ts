@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
+import { env } from "@/env";
 import { hasValidInternalRouteSecret } from "@/lib/internal-route-auth";
 import { logPerformanceEvent, withPerformanceTiming } from "@/lib/performance/observability";
 import { warmPublicCaches } from "@/services/performance/public-cache-warm.service";
 
 export async function POST(request: Request) {
-  const secret = process.env.PERFORMANCE_WARM_SECRET?.trim();
+  const secret = env.PERFORMANCE_WARM_SECRET?.trim();
 
   if (!secret) {
     return NextResponse.json(

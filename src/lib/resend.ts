@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { env } from "@/env";
 
 /**
  * Returns a configured Resend client when RESEND_API_KEY is present in the
@@ -23,7 +24,7 @@ let _client: Resend | null | undefined;
 export function getResendClient(): Resend | null {
   if (_client !== undefined) return _client;
 
-  const key = process.env.RESEND_API_KEY;
+  const key = env.RESEND_API_KEY;
 
   if (!key) {
     _client = null;

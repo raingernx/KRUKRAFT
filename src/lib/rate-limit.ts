@@ -39,6 +39,7 @@
 
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { env } from "@/env";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -59,8 +60,8 @@ export interface RateLimitResult {
  * Returns a no-op limiter when Upstash env vars are not configured.
  */
 function makeLimiter(requests: number, windowSeconds: number) {
-  const url   = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const url = env.UPSTASH_REDIS_REST_URL;
+  const token = env.UPSTASH_REDIS_REST_TOKEN;
 
   if (!url || !token) {
     // Dev fallback — always allow, never throw.

@@ -7,7 +7,7 @@ export async function runAnalyticsWorker() {
 if (require.main === module) {
   runAnalyticsWorker()
     .then((result) => {
-      console.log("[analytics.worker] aggregation complete", result);
+      console.info("[analytics.worker] aggregation complete", result);
       process.exit(0);
     })
     .catch((error) => {

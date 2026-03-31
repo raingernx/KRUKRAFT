@@ -34,6 +34,9 @@ const EnvSchema = z
     UPSTASH_REDIS_REST_URL: z.string().url().optional(),
     UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
     PERFORMANCE_WARM_SECRET: z.string().min(1).optional(),
+    PERFORMANCE_DEBUG_LOGS: z.enum(["0", "1"]).optional(),
+    PERFORMANCE_MONITORING: z.enum(["0", "1"]).optional(),
+    PERFORMANCE_SLOW_QUERY_MS: z.string().regex(/^\d+$/).optional(),
   })
   .superRefine((value, ctx) => {
     const addGroupedIssue = (keys: string[], message: string) => {

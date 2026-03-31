@@ -86,6 +86,36 @@ export interface ResourcePayload {
   previewUrls: string[];
 }
 
+type ResourceFormFieldErrors = Record<string, string | string[] | undefined>;
+
+function extractFieldErrors(error: unknown): Record<string, string> | null {
+  if (!error || typeof error !== "object" || !("fields" in error)) {
+    return null;
+  }
+
+  const { fields } = error as { fields?: unknown };
+  if (!fields || typeof fields !== "object") {
+    return null;
+  }
+
+  const next: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(fields as ResourceFormFieldErrors)) {
+    if (Array.isArray(value)) {
+      if (typeof value[0] === "string" && value[0]) {
+        next[key] = value[0];
+      }
+      continue;
+    }
+
+    if (typeof value === "string") {
+      next[key] = value;
+    }
+  }
+
+  return next;
+}
+
 interface FormState {
   title: string;
   description: string;
@@ -539,17 +569,9 @@ export function ResourceForm({
       );
       setSaveState("saved");
     } catch (err) {
-      if (err && typeof err === "object" && "fields" in (err as any)) {
-        const fields = (err as any).fields as Record<string, string | string[] | undefined>;
-        const next: Record<string, string> = {};
-        Object.entries(fields || {}).forEach(([key, value]) => {
-          if (Array.isArray(value)) {
-            if (value[0]) next[key] = value[0] as string;
-          } else if (typeof value === "string") {
-            next[key] = value;
-          }
-        });
-        setFieldErrors(next);
+      const nextFieldErrors = extractFieldErrors(err);
+      if (nextFieldErrors) {
+        setFieldErrors(nextFieldErrors);
       }
       setError(
         err instanceof Error ? err.message : "Network error. Please try again.",

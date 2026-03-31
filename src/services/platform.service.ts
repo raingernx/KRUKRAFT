@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
+import { env } from "@/env";
 import {
   getPlatformSettings as getStoredPlatformSettings,
   updatePlatformSettings as savePlatformSettings,
@@ -101,7 +102,7 @@ export function resolvePlatformConfig(
     PLATFORM_DEFAULTS.platformShortName;
   const siteUrl =
     settings?.siteUrl?.trim() ||
-    process.env.NEXTAUTH_URL?.trim() ||
+    env.appBaseUrl ||
     PLATFORM_DEFAULTS.siteUrl;
   const legacyLogoUrl = settings?.logoUrl?.trim() || "";
   const logoFullUrl =

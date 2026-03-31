@@ -1,5 +1,6 @@
 import "server-only";
 import { PrismaClient } from "@prisma/client";
+import { env } from "@/env";
 import {
   isPerformanceMonitoringEnabled,
   recordPrismaQuery,
@@ -19,7 +20,7 @@ export const prisma =
     //   causing duplicate output for expected errors (e.g. P2003 FK misses).
     //   Application-level catch blocks surface unexpected errors via console.error.
     // "warn" kept — Prisma-level connection, schema, and deprecation warnings remain visible.
-    log: process.env.NODE_ENV === "development" ? ["warn"] : ["error"],
+    log: env.NODE_ENV === "development" ? ["warn"] : ["error"],
   });
 
 if (isPerformanceMonitoringEnabled() && !global.prismaPerformanceMiddlewareAttached) {
@@ -40,6 +41,6 @@ if (isPerformanceMonitoringEnabled() && !global.prismaPerformanceMiddlewareAttac
   global.prismaPerformanceMiddlewareAttached = true;
 }
 
-if (process.env.NODE_ENV !== "production") {
+if (env.NODE_ENV !== "production") {
   global.prisma = prisma;
 }

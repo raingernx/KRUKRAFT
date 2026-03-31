@@ -7,7 +7,7 @@ export async function runTrendingWorker() {
 if (require.main === module) {
   runTrendingWorker()
     .then((count) => {
-      console.log("[trending.worker] trending scores refreshed", { count });
+      console.info("[trending.worker] trending scores refreshed", { count });
       process.exit(0);
     })
     .catch((error) => {
