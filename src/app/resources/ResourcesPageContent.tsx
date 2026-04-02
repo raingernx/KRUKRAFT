@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Suspense } from "react";
 import { ArrowRight } from "lucide-react";
 import { isMissingTableError } from "@/lib/prismaErrors";
@@ -11,6 +12,7 @@ import { SearchRecoveryPanel } from "@/components/resources/SearchRecoveryPanel"
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { HeroBanner } from "@/components/marketplace/HeroBanner";
 import { FilterBar } from "@/components/marketplace/FilterBar";
+import { CategoryBrowseCardLink } from "@/components/marketplace/CategoryBrowseCardLink";
 import { FilterSidebar, type FilterCategory } from "@/components/marketplace/FilterSidebar";
 import { CreatorCTA } from "@/components/discover/CreatorCTA";
 import { BlogSection } from "@/components/discover/BlogSection";
@@ -435,9 +437,93 @@ async function ResourcesDiscoverDeferredSections({
     return shouldEager ? "eager" : undefined;
   };
   const globalFiltered = discoverData.recommended as ResourceCardData[];
+  const quickBrowseTiles = [
+    {
+      title: "Top picks",
+      description: "A tighter shortlist ranked to surface strong marketplace picks first.",
+      href: routes.marketplaceQuery("sort=recommended&category=all"),
+      eyebrow: "Browse",
+    },
+    {
+      title: "Worksheets",
+      description: "Jump straight into printable practice materials and guided exercises.",
+      href: routes.marketplaceQuery("tag=worksheet&sort=newest"),
+      eyebrow: "Format",
+    },
+    {
+      title: "Flashcards",
+      description: "Review-ready cards for memorisation, recall, and speaking drills.",
+      href: routes.marketplaceQuery("tag=flashcard&sort=trending"),
+      eyebrow: "Format",
+    },
+    {
+      title: "Free to start",
+      description: "Open free resources first, then decide what is worth saving or buying.",
+      href: routes.marketplaceQuery("price=free&category=all"),
+      eyebrow: "Budget",
+    },
+  ] as const;
+  const curatedCollections = [
+    discoverData.newReleases[0]
+      ? {
+          key: "new-releases",
+          title: "New releases",
+          description: "Fresh uploads from creators and educators added most recently.",
+          href: routes.marketplaceQuery("sort=newest&category=all"),
+          badge: "Fresh",
+          resource: discoverData.newReleases[0] as ResourceCardData,
+        }
+      : null,
+    discoverData.featured[0]
+      ? {
+          key: "featured-picks",
+          title: "Featured picks",
+          description: "Editor-shaped highlights for browsing with a little more curation.",
+          href: routes.marketplaceQuery("featured=true&category=all"),
+          badge: "Featured",
+          resource: discoverData.featured[0] as ResourceCardData,
+        }
+      : null,
+    discoverData.mostDownloaded[0]
+      ? {
+          key: "most-downloaded",
+          title: "Most downloaded",
+          description: "Reliable bestsellers with strong learner demand right now.",
+          href: routes.marketplaceQuery("sort=downloads&category=all"),
+          badge: "Popular",
+          resource: discoverData.mostDownloaded[0] as ResourceCardData,
+        }
+      : null,
+  ].filter((tile) => tile !== null);
 
   return (
     <div className="space-y-16 lg:space-y-20">
+      <section className="space-y-5">
+        <SectionHeader
+          title="Start with a clearer path"
+          description="Browse by intent first so the marketplace feels closer to a toolkit than a wall of cards."
+          viewAllHref={routes.marketplace}
+          viewAllLabel="Browse everything"
+        />
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {quickBrowseTiles.map((tile) => (
+            <DiscoverBrowseCard
+              key={tile.title}
+              title={tile.title}
+              description={tile.description}
+              href={tile.href}
+              eyebrow={tile.eyebrow}
+            />
+          ))}
+        </div>
+      </section>
+
+      <ResourcesDiscoverPersonalizedSection
+        fallbackCards={globalFiltered.slice(0, eagerDiscoverCardCount)}
+        eagerCardCount={eagerDiscoverCardCount}
+        eagerPreviewUrls={[...eagerDiscoverPreviewUrls]}
+      />
+
       {discoverData.trending.length > 0 ? (
         <section className="space-y-5">
           <SectionHeader
@@ -463,130 +549,41 @@ async function ResourcesDiscoverDeferredSections({
         </section>
       ) : null}
 
-      {discoverData.topCreator?.creator.creatorSlug ? (
-        <section className="rounded-[22px] border border-surface-200 bg-surface-50/75 p-4 sm:p-5">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="max-w-2xl">
-              <p className="font-ui text-caption tracking-[0.12em] text-primary-700">
-                Top creator this week
-              </p>
-              <h2 className="mt-2 text-xl font-semibold tracking-tight text-zinc-900">
-                {discoverData.topCreator.creator.creatorDisplayName ??
+      {curatedCollections.length > 0 || discoverData.topCreator?.creator.creatorSlug ? (
+        <section className="space-y-5">
+          <SectionHeader
+            title="Collections to explore"
+            description="A smaller set of curated paths gives the page more shape than stacking another four rows of cards."
+            viewAllHref={routes.marketplace}
+            viewAllLabel="Open marketplace"
+          />
+          <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
+            {curatedCollections.map((tile) => (
+              <DiscoverCollectionCard
+                key={tile.key}
+                title={tile.title}
+                description={tile.description}
+                href={tile.href}
+                badge={tile.badge}
+                resource={tile.resource}
+              />
+            ))}
+            {discoverData.topCreator?.creator.creatorSlug ? (
+              <TopCreatorSpotlightCard
+                href={routes.creatorPublicProfile(discoverData.topCreator.creator.creatorSlug)}
+                name={
+                  discoverData.topCreator.creator.creatorDisplayName ??
                   discoverData.topCreator.creator.name ??
-                  "Top creator"}
-              </h2>
-              <p className="mt-1 text-sm leading-6 text-zinc-600">
-                {discoverData.topCreator.last7dRevenue > 0
-                  ? `${formatPrice(discoverData.topCreator.last7dRevenue / 100)} generated this week with ${formatNumber(discoverData.topCreator.last30dDownloads)} recent downloads across ${formatNumber(discoverData.topCreator.resources)} resources.`
-                  : `${formatNumber(discoverData.topCreator.last30dDownloads)} recent downloads across ${formatNumber(discoverData.topCreator.resources)} resources are giving this creator extra visibility right now.`}
-              </p>
-              {discoverData.topCreator.creator.creatorBio ? (
-                <p className="mt-2 line-clamp-2 text-sm text-zinc-500">
-                  {discoverData.topCreator.creator.creatorBio}
-                </p>
-              ) : null}
-            </div>
-            <IntentPrefetchLink
-              href={routes.creatorPublicProfile(discoverData.topCreator.creator.creatorSlug)}
-              className="inline-flex items-center gap-2 self-start rounded-full border border-border-subtle bg-white px-4 py-2 text-sm font-semibold text-primary-700 transition hover:border-surface-300 hover:bg-white lg:self-auto"
-              prefetchMode="intent"
-              prefetchScope="top-creator-cta"
-              prefetchLimit={1}
-            >
-              Explore creator
-              <ArrowRight className="h-4 w-4" />
-            </IntentPrefetchLink>
-          </div>
-        </section>
-      ) : null}
-
-      <ResourcesDiscoverPersonalizedSection
-        fallbackCards={globalFiltered.slice(0, eagerDiscoverCardCount)}
-        eagerCardCount={eagerDiscoverCardCount}
-        eagerPreviewUrls={[...eagerDiscoverPreviewUrls]}
-      />
-
-      {discoverData.newReleases.length > 0 ? (
-        <section className="space-y-5">
-          <SectionHeader
-            title="New releases"
-            description="Fresh additions from creators and educators, surfaced with the newest material first."
-            viewAllHref={routes.marketplaceQuery("sort=newest&category=all")}
-          />
-          <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-            {(discoverData.newReleases as ResourceCardData[]).map((resource, index) => (
-              <ViewerAwareResourceCard
-                key={resource.id}
-                resource={resource}
-                variant="marketplace"
-                linkPrefetchMode="viewport"
-                imageLoading={resolveDiscoverImageLoading(resource, index)}
+                  "Top creator"
+                }
+                description={
+                  discoverData.topCreator.last7dRevenue > 0
+                    ? `${formatPrice(discoverData.topCreator.last7dRevenue / 100)} generated this week with ${formatNumber(discoverData.topCreator.last30dDownloads)} recent downloads.`
+                    : `${formatNumber(discoverData.topCreator.last30dDownloads)} recent downloads across ${formatNumber(discoverData.topCreator.resources)} resources.`
+                }
+                bio={discoverData.topCreator.creator.creatorBio ?? null}
               />
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {discoverData.featured.length > 0 ? (
-        <section className="space-y-5">
-          <SectionHeader
-            title="Featured picks"
-            viewAllHref={routes.marketplaceQuery("featured=true&category=all")}
-          />
-          <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-            {(discoverData.featured as ResourceCardData[]).map((resource, index) => (
-              <ViewerAwareResourceCard
-                key={resource.id}
-                resource={resource}
-                variant="marketplace"
-                linkPrefetchMode="viewport"
-                imageLoading={resolveDiscoverImageLoading(resource, index)}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {discoverData.freeResources.length > 0 ? (
-        <section className="space-y-4">
-          <SectionHeader
-            title="Free resources"
-            viewAllHref={routes.marketplaceQuery("price=free&category=all")}
-          />
-          <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-            {(discoverData.freeResources as ResourceCardData[]).map((resource, index) => (
-              <ViewerAwareResourceCard
-                key={resource.id}
-                resource={resource}
-                variant="marketplace"
-                linkPrefetchMode="viewport"
-                imageLoading={resolveDiscoverImageLoading(resource, index)}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {discoverData.mostDownloaded.length > 0 ? (
-        <section className="space-y-4">
-          <SectionHeader
-            title="Most downloaded"
-            viewAllHref={routes.marketplaceQuery("sort=downloads&category=all")}
-          />
-          <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-            {(discoverData.mostDownloaded as ResourceCardData[]).map((resource, index) => (
-              <ViewerAwareResourceCard
-                key={resource.id}
-                resource={{
-                  ...resource,
-                  highlightBadge: index < 2 ? "Popular right now" : null,
-                  socialProofLabel: index < 2 ? "High demand right now" : null,
-                }}
-                variant="marketplace"
-                linkPrefetchMode="viewport"
-                imageLoading={resolveDiscoverImageLoading(resource, index)}
-              />
-            ))}
+            ) : null}
           </div>
         </section>
       ) : null}
@@ -672,10 +669,12 @@ function SectionHeader({
   title,
   description,
   viewAllHref,
+  viewAllLabel = "View all",
 }: {
   title: string;
   description?: string;
   viewAllHref: string;
+  viewAllLabel?: string;
 }) {
   return (
     <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-3 sm:flex-row sm:items-end sm:justify-between">
@@ -694,11 +693,134 @@ function SectionHeader({
         className="group inline-flex items-center gap-1 self-start rounded-full px-2.5 py-1 text-small font-medium text-primary-700 transition-colors hover:bg-primary-50 hover:text-primary-800 sm:self-auto"
       >
         <span className="inline-flex items-center gap-1">
-          <span>View all</span>
+          <span>{viewAllLabel}</span>
           <ArrowRight className="h-3.5 w-3.5" />
         </span>
       </IntentPrefetchLink>
     </div>
+  );
+}
+
+function DiscoverBrowseCard({
+  title,
+  description,
+  href,
+  eyebrow,
+}: {
+  title: string;
+  description: string;
+  href: string;
+  eyebrow: string;
+}) {
+  return (
+    <CategoryBrowseCardLink
+      href={href}
+      className="group rounded-[24px] border border-surface-200 bg-white p-5 shadow-sm transition hover:border-primary-200 hover:bg-primary-50/30 hover:shadow-card"
+    >
+      <div className="flex h-full flex-col gap-4">
+        <div className="space-y-2">
+          <p className="font-ui text-caption tracking-[0.12em] text-primary-700">{eyebrow}</p>
+          <h3 className="text-lg font-semibold tracking-tight text-text-primary">{title}</h3>
+          <p className="text-sm leading-6 text-text-secondary">{description}</p>
+        </div>
+        <span className="mt-auto inline-flex items-center gap-1 text-sm font-medium text-primary-700 transition group-hover:text-primary-800">
+          Explore
+          <ArrowRight className="h-4 w-4" />
+        </span>
+      </div>
+    </CategoryBrowseCardLink>
+  );
+}
+
+function DiscoverCollectionCard({
+  title,
+  description,
+  href,
+  badge,
+  resource,
+}: {
+  title: string;
+  description: string;
+  href: string;
+  badge?: string;
+  resource: ResourceCardData;
+}) {
+  const previewUrl = getResourcePreviewUrl(resource);
+
+  return (
+    <IntentPrefetchLink
+      href={href}
+      prefetchMode="intent"
+      prefetchScope="discover-collection-card"
+      prefetchLimit={4}
+      resourcesNavigationMode="listing"
+      className="group overflow-hidden rounded-[24px] border border-surface-200 bg-white shadow-sm transition hover:border-primary-200 hover:shadow-card"
+    >
+      <div className="flex h-full flex-col">
+        <div className="relative aspect-[5/3] overflow-hidden border-b border-surface-200 bg-surface-100">
+          {previewUrl ? (
+            <Image
+              src={previewUrl}
+              alt={title}
+              fill
+              sizes="(max-width: 1024px) 100vw, 25vw"
+              className="object-cover transition duration-200 group-hover:scale-[1.02]"
+            />
+          ) : null}
+          {badge ? (
+            <span className="absolute left-3 top-3 inline-flex items-center rounded-full border border-white/80 bg-white/90 px-2.5 py-1 text-[11px] font-medium text-primary-700 shadow-sm">
+              {badge}
+            </span>
+          ) : null}
+        </div>
+        <div className="flex flex-1 flex-col gap-3 p-5">
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold tracking-tight text-text-primary">{title}</h3>
+            <p className="text-sm leading-6 text-text-secondary">{description}</p>
+          </div>
+          <p className="line-clamp-2 text-sm font-medium text-text-primary">{resource.title}</p>
+          <span className="mt-auto inline-flex items-center gap-1 text-sm font-medium text-primary-700 transition group-hover:text-primary-800">
+            Open collection
+            <ArrowRight className="h-4 w-4" />
+          </span>
+        </div>
+      </div>
+    </IntentPrefetchLink>
+  );
+}
+
+function TopCreatorSpotlightCard({
+  href,
+  name,
+  description,
+  bio,
+}: {
+  href: string;
+  name: string;
+  description: string;
+  bio: string | null;
+}) {
+  return (
+    <IntentPrefetchLink
+      href={href}
+      prefetchMode="intent"
+      prefetchScope="top-creator-spotlight"
+      prefetchLimit={1}
+      className="group rounded-[24px] border border-surface-200 bg-surface-50/80 p-5 shadow-sm transition hover:border-primary-200 hover:bg-white hover:shadow-card"
+    >
+      <div className="flex h-full flex-col gap-4">
+        <div className="space-y-2">
+          <p className="font-ui text-caption tracking-[0.12em] text-primary-700">Creator spotlight</p>
+          <h3 className="text-lg font-semibold tracking-tight text-text-primary">{name}</h3>
+          <p className="text-sm leading-6 text-text-secondary">{description}</p>
+          {bio ? <p className="line-clamp-3 text-sm text-text-muted">{bio}</p> : null}
+        </div>
+        <span className="mt-auto inline-flex items-center gap-1 text-sm font-medium text-primary-700 transition group-hover:text-primary-800">
+          Explore creator
+          <ArrowRight className="h-4 w-4" />
+        </span>
+      </div>
+    </IntentPrefetchLink>
   );
 }
 
@@ -815,8 +937,36 @@ function DeferredSectionFallback({
 function DiscoverSectionsSkeleton() {
   return (
     <div className="space-y-16 lg:space-y-20">
-      <DeferredSectionFallback titleWidth="w-52" cardCount={5} />
+      <section className="space-y-5">
+        <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-1.5">
+            <LoadingSkeleton className="h-6 w-56" />
+            <LoadingSkeleton className="h-4 w-80" />
+          </div>
+          <LoadingSkeleton className="h-6 w-28" />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <LoadingSkeleton key={index} className="h-48 rounded-[24px]" />
+          ))}
+        </div>
+      </section>
+      <DeferredSectionFallback titleWidth="w-52" cardCount={4} />
       <DeferredSectionFallback titleWidth="w-40" cardCount={4} />
+      <section className="space-y-5">
+        <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-1.5">
+            <LoadingSkeleton className="h-6 w-52" />
+            <LoadingSkeleton className="h-4 w-72" />
+          </div>
+          <LoadingSkeleton className="h-6 w-28" />
+        </div>
+        <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <LoadingSkeleton key={index} className="h-72 rounded-[24px]" />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

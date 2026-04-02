@@ -26,22 +26,28 @@ test("resources homepage renders and reveals at least one card image", async ({
   expect(consoleErrors).toEqual([]);
 });
 
-test("featured picks view all opens the featured listing filter", async ({
+test("featured picks collection opens the featured listing filter", async ({
   page,
 }) => {
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
   await page.goto("/resources");
 
-  const featuredSection = page
+  const collectionsSection = page
     .locator("section")
-    .filter({ has: page.getByRole("heading", { name: "Featured picks" }) })
+    .filter({ has: page.getByRole("heading", { name: "Collections to explore" }) })
     .first();
-  await expect(featuredSection).toBeVisible();
+  await expect(collectionsSection).toBeVisible();
+
+  const featuredCollectionCard = collectionsSection
+    .locator("a")
+    .filter({ has: page.getByText("Featured picks") })
+    .first();
+  await expect(featuredCollectionCard).toBeVisible();
 
   await Promise.all([
     page.waitForURL(/\/resources\?category=all&featured=true|\/resources\?featured=true&category=all/),
-    featuredSection.getByRole("link", { name: /View all/i }).click(),
+    featuredCollectionCard.click(),
   ]);
 
   await expect(page).toHaveURL(/featured=true/);

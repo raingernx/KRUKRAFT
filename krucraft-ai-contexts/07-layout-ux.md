@@ -49,7 +49,12 @@
 
 **Discover mode**
 - full-width hero section above the main content container
-- streamed discover sections such as trending, creator spotlight, personalized recommendations, new releases, featured picks, and free resources
+- discover now favors fewer, clearer blocks instead of stacking many near-identical rails
+- the main sequence is:
+  - quick browse tiles for entry intents like top picks, worksheets, flashcards, and free resources
+  - personalized recommendations (or a public "Top picks" fallback for anonymous viewers)
+  - one high-signal trending rail
+  - a curated collections grid that links deeper into listing modes such as newest, featured, and most-downloaded
 - viewer-aware personalization hydrates after the public shell instead of blocking the initial route render
 - discover-section CTAs should only appear when the target listing matches the section's promise; purely personalized rows can omit `View all` rather than sending users to a generic fallback list
 
@@ -60,6 +65,7 @@
 - optional spotlight card when the listing context supports it
 - canonical results grid
 - no-result recovery panel when a search miss occurs
+- public activation-weighted `sort=recommended` remains the canonical query value for backward compatibility, but UI copy now labels it as `Top picks` so it is not mistaken for personalized recommendations
 
 **Marketplace search UX**
 - focusing/clicking the empty navbar search input now opens a quick-browse dropdown with recent searches plus curated browse shortcuts

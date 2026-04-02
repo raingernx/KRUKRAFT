@@ -117,16 +117,16 @@ export function ResourcesDiscoverPersonalizedSection({
       {recommendedForYou.length > 0 ? (
         <section className="space-y-5">
           <ResourcesSectionHeader
-            title={shouldUseRecommendedLabel ? "Recommended for you" : "Popular right now"}
+            title={shouldUseRecommendedLabel ? "Recommended for you" : "Top picks"}
             description={
               shouldUseRecommendedLabel
                 ? "A focused set of picks to help you keep momentum without sorting through the whole library."
-                : "Top resources other learners are exploring this week."
+                : "A tighter shortlist of strong marketplace picks when you want a faster place to start."
             }
             viewAllHref={
               shouldUseRecommendedLabel
                 ? undefined
-                : routes.marketplaceQuery("sort=trending&category=all")
+                : routes.marketplaceQuery("sort=recommended&category=all")
             }
           />
           {recommendationVariant ? (
