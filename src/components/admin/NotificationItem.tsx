@@ -1,6 +1,5 @@
 "use client";
 import { CheckCircle2, Info, AlertCircle } from "lucide-react";
-import { motion } from "framer-motion";
 
 import type { Notification } from "@/features/admin-ux/types";
 
@@ -31,13 +30,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
   const Icon = iconConfig.Icon;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.18 }}
-      className="pointer-events-auto relative flex min-w-[260px] max-w-[340px] items-center gap-3 rounded-xl border border-border-subtle/80 bg-white px-4 py-3"
-    >
+    <div className="pointer-events-auto relative flex min-w-[260px] max-w-[340px] animate-fade-up items-center gap-3 rounded-xl border border-border-subtle/80 bg-white px-4 py-3 motion-reduce:animate-none">
       <div
         className={[
           "flex h-8 w-8 items-center justify-center rounded-full text-xs",
@@ -82,6 +75,6 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
           ×
         </span>
       </button>
-    </motion.div>
+    </div>
   );
 }

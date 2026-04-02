@@ -9,7 +9,8 @@ The public paths now have deliberate performance engineering in place:
 - RSC streaming decomposition on the resource detail page
 - Root layout no longer reads the authenticated server session on every request
 - Post-deploy warm-cache + smoke perf workflow
-- Remote preview image delivery optimized to bypass `/_next/image` where that path was hurting LCP
+- Optimizer-compatible preview images now stay on Next Image by default, with selective bypass only for sources that are not safely optimizable
+- Above-the-fold marketplace hero, spotlight, and card images now use targeted eager loading instead of blanket eager behavior
 - Build-safe platform config on branding-only build paths
 
 Primary bottleneck class is now:
@@ -24,7 +25,7 @@ Primary bottleneck class is now:
 - post-deploy warm + smoke workflow is active
 - resource detail route was decomposed into shell + deferred purchase/body/footer/review/related paths
 - optional session work was pushed off several anonymous critical paths
-- public remote preview images bypass `/_next/image` in many high-value surfaces
+- public remote preview image delivery now keeps optimizer-compatible hosts on Next Image, while still bypassing the optimizer for GIFs, non-HTTPS assets, and non-allowlisted hosts
 - build-time Prisma warning from `platformSettings.findFirst()` was removed by separating build-safe platform config from admin live config
 - root layout stopped SSR-seeding `SessionProvider` from `getServerSession`, which restores a cleaner caching baseline for public routes
 - the root client provider tree no longer mounts `SessionProvider`; auth-aware navbar/pricing/checkout UI now use a smaller `/api/auth/viewer` fetch instead of the global NextAuth client-session baseline
@@ -53,12 +54,23 @@ Primary bottleneck class is now:
 - the shared ranked-search SQL no longer couples every result page to `COUNT(*) OVER()`; live search now reads ranked rows only, and marketplace search computes totals in a separate path when needed, which reduces unnecessary window-count work on the hottest search requests
 - the ranked-search SQL now stages a cheaper candidate-resource filter before it computes `tag_metrics` via lateral aggregation, which removes one of the biggest remaining per-query costs from obvious title/category/creator matches
 - trigram index coverage now also includes `Resource.slug`, `Category.slug`, and `Tag.slug`, so the ranked query's slug-based `ILIKE` and similarity branches are no longer leaning only on btree uniqueness indexes
+- marketplace cards, search dropdown thumbnails, and resource preview galleries now use a simplified shared image primitive that keeps images visible by default and relies on the container background for placeholder treatment, eliminating the class of "image fetched but still hidden until refresh" regressions caused by JS reveal state drift
+- optimizer-compatible remote preview images no longer bypass Next Image automatically, the app now allows AVIF alongside WebP, and above-the-fold marketplace card surfaces can opt specific images into eager loading to reduce residual LCP pressure without over-eagering the whole catalog
+- local browser reruns on 2026-04-02 stopped reproducing the old Next dev `loading="eager"` advice on `/resources`, `/resources?search=worksheet`, and `/resources/[slug]` after widening the eager window for query-driven listings, carrying eager preview URLs forward across repeated discover/personalized cards, and marking the active duplicate-src detail thumbnail eager/high alongside the main priority image
 - the same public search endpoints now declare short-lived shared cache headers in source, but production verification on 2026-04-01 only surfaced `Cache-Control: public`, so CDN/edge response caching is still an open follow-up rather than a verified gain
 - no-result search UX now recovers with alternate query suggestions plus category/tag browse links, reducing dead-end searches without adding a separate search backend
 - `/resources` search headings now render search-specific copy instead of falling back to browse headings on uncategorized searches
 - local verification now has a repo-owned `npm run smoke:local:search` path that checks the search results page, no-results recovery page, `/api/search`, search recovery, and `/api/auth/viewer` sequentially with retries, avoiding the flakiness of ad-hoc localhost curls in constrained environments
 - the shared smoke path now gates on `/api/internal/ready` before deeper route/API assertions, which separates server-readiness problems from search/auth regressions and makes local verification more stable
 - `npm run smoke:prod:search` now reuses the same verification flow against `https://krucrafts.com`, while preview deployments can use `BASE_URL=<preview-url> npm run smoke:search`
+- Playwright now provides a browser-level smoke layer (`npm run test:e2e`) for catching hydration/image regressions that route/API smokes and k6 cannot see; the local project still uses the `chromium` project name, but on this macOS setup it launches the locally installed Chrome stable binary via `channel: "chrome"` because Google Chrome for Testing was unstable
+- browser-level coverage now includes `/resources`, top-bar search submit into canonical `/resources?search=...`, canonical search results, no-results recovery, and resource detail image rendering
+- the repo now also has first-party hooks for accessibility and perf auditing at the browser layer: `@axe-core/playwright` can be used inside Playwright specs, `@lhci/cli` is configured through `.lighthouserc.json` for key `/resources` routes, and `@next/bundle-analyzer` is wired behind `npm run analyze`
+- 2026-04-02 bundle follow-up removed `framer-motion` from the admin notification stack entirely, split preview-image drag/drop upload behind a lazy client chunk, and replaced `next-auth/middleware` in `src/proxy.ts` with direct `next-auth/jwt` checks; the follow-up `npm run analyze` build no longer surfaced `framer-motion` or `next-auth/middleware` in the analyzer output, while `react-dropzone` remained only as a code-split uploader dependency
+- Storybook is now available as a design-system-only surface for primitives/components; `npm run storybook:build` and `npm run storybook:smoke` are the verified paths right now because Storybook v10's `dev --smoke-test` flow hit a local CLI port bug in this environment
+- Next dev now explicitly allows `127.0.0.1` in `allowedDevOrigins`, which removes a noisy class of local Playwright/HMR cross-origin failures during browser verification
+- the CSP header now allowlists `https://va.vercel-scripts.com`, so local/runtime browser verification no longer reports Vercel Analytics / Speed Insights scripts as blocked console errors
+- the app now serves a generated `robots.txt` from `src/app/robots.ts` using build-safe public platform config, closing the old local/public 404 without making metadata generation DB-bound
 - `/resources/[slug]` stopped reading cookies/session at the page level; ownership, payment-success recovery, and owner-review UI now hydrate from `/api/resources/[id]/viewer-state`
 - `/resources/[slug]` detail viewer-state is now split into `scope=base` and `scope=review` so purchase/success/ownership UI does not wait on the owner-review query
 - anonymous `/resources/[slug]` visits now skip the private detail viewer-state API entirely until the lightweight auth viewer confirms the user is signed in
@@ -119,8 +131,9 @@ Primary bottleneck class is now:
 
 1. Production/build path still warns that `XENDIT_SECRET_KEY` is a test key
 2. Perf thresholds should stay aligned with what warm-cache actually warms
-3. Search still deserves real DB indexing work
+3. Search indexing is no longer the obvious gap; remaining work is query-plan tuning and deciding whether Postgres-backed relevance is still enough long-term
 4. Future regressions should be judged against the warmed perf workflow, not older cold-path assumptions
+5. LHCI is still configured against `npm run dev`, so local Lighthouse numbers remain useful for regression detection but not as production-grade LCP truth
 
 ---
 
@@ -131,8 +144,8 @@ Older assumptions that should not be treated as current truth:
 - “Build runs migrations” — false now
 - “Platform settings DB lookup warns during build” — fixed
 - “Resource detail is monolithic and blocks on session/trust/reviews” — largely fixed
-- “Every public preview image should go through `/_next/image`” — false now
+- “Every public preview image should bypass `/_next/image`” — false now
 
 ---
 
-*Refreshed against the repo state on 2026-04-01.*
+*Refreshed against the repo state on 2026-04-02.*

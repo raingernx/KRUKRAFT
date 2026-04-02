@@ -5,7 +5,7 @@ import { useDropzone, FileRejection } from "react-dropzone";
 import { ImagePlus, UploadCloud } from "lucide-react";
 import { PickerDropzoneShell } from "@/design-system";
 
-interface ImageDropzoneProps {
+export interface ImageDropzoneProps {
   onFilesAccepted: (files: File[]) => void;
   disabled?: boolean;
   maxSizeBytes?: number;

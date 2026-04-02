@@ -1,6 +1,6 @@
-import type { NextFetchEvent, NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { withAuth, NextRequestWithAuth } from "next-auth/middleware";
+import { getToken } from "next-auth/jwt";
 import {
   RANKING_EXPERIMENT_COOKIE,
   RANKING_EXPERIMENT_DURATION_DAYS,
@@ -8,6 +8,9 @@ import {
   type RankingVariant,
 } from "@/lib/ranking-experiment";
 import { locales } from "@/i18n/config";
+
+const LOGIN_PATH = "/auth/login";
+const DASHBOARD_PATH = "/dashboard";
 
 function assignRankingVariantIfAbsent(
   req: NextRequest,
@@ -26,37 +29,34 @@ function assignRankingVariantIfAbsent(
   });
 }
 
-const authProxy = withAuth(
-  function authProxy(req: NextRequestWithAuth) {
-    const { token } = req.nextauth;
-    const { pathname } = req.nextUrl;
-
-    if (pathname.startsWith("/admin") && token?.role !== "ADMIN") {
-      const url = req.nextUrl.clone();
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
-    }
-
-    return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => !!token,
-    },
-    pages: {
-      signIn: "/auth/login",
-    },
-  },
-);
-
-function isNextResponse(response: Response | null | void): response is NextResponse {
-  return response instanceof NextResponse;
+function buildProtectedRedirect(req: NextRequest): NextResponse {
+  const url = req.nextUrl.clone();
+  const next = `${req.nextUrl.pathname}${req.nextUrl.search}`;
+  url.pathname = LOGIN_PATH;
+  url.search = "";
+  url.searchParams.set("next", next);
+  return NextResponse.redirect(url);
 }
 
-export async function proxy(
-  req: NextRequestWithAuth,
-  event: NextFetchEvent,
-) {
+async function handleProtectedRoute(req: NextRequest): Promise<NextResponse> {
+  const token = await getToken({ req });
+  const { pathname } = req.nextUrl;
+
+  if (!token) {
+    return buildProtectedRedirect(req);
+  }
+
+  if (pathname.startsWith("/admin") && token.role !== "ADMIN") {
+    const url = req.nextUrl.clone();
+    url.pathname = DASHBOARD_PATH;
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
+  return NextResponse.next();
+}
+
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const localePrefix = locales.find(
@@ -78,14 +78,9 @@ export async function proxy(
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/admin")
   ) {
-    const response = await authProxy(req, event);
-
-    if (isNextResponse(response)) {
-      assignRankingVariantIfAbsent(req, response);
-      return response;
-    }
-
-    return response ?? NextResponse.next();
+    const response = await handleProtectedRoute(req);
+    assignRankingVariantIfAbsent(req, response);
+    return response;
   }
 
   const response = NextResponse.next();

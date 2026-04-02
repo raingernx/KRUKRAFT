@@ -24,7 +24,7 @@ import {
   Textarea,
 } from "@/design-system";
 import { FileUploadWidget } from "@/components/ui/forms";
-import { ImageDropzone } from "@/components/admin/ImageDropzone";
+import { LazyImageDropzone } from "@/components/admin/LazyImageDropzone";
 import { PreviewImageSortableList } from "@/components/admin/PreviewImageSortableList";
 import { TagInput } from "@/components/admin/TagInput";
 import { UserSearchSelect } from "@/components/admin/UserSearchSelect";
@@ -981,7 +981,7 @@ export function ResourceForm({
             <p className="text-[11px] text-text-secondary">
               First image is the cover. Drag to reorder; use first position as cover.
             </p>
-            <ImageDropzone
+            <LazyImageDropzone
               disabled={thumbnailUploading}
               onFilesAccepted={async (files) => {
                 const uploaded: string[] = [];

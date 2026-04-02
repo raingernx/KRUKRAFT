@@ -46,6 +46,12 @@ Current proxy concerns:
 - locale-prefix cleanup / redirect behavior
 - ranking experiment cookie work
 
+Current proxy behavior:
+- protected-route gating is now handled directly inside `src/proxy.ts` with `getToken()` checks instead of `withAuth`
+- unauthenticated `/dashboard*` and `/admin*` requests redirect to `/auth/login?next=...`
+- authenticated non-admin `/admin*` requests redirect to `/dashboard`
+- public branches still avoid auth work entirely apart from ranking-cookie assignment and locale cleanup
+
 ## Caching Architecture
 
 ```
@@ -117,7 +123,7 @@ Key details:
 - viewer-specific ownership/success state now hydrates from `/api/resources/[id]/viewer-state?scope=base`
 - owner review state hydrates separately from `/api/resources/[id]/viewer-state?scope=review`
 - anonymous detail views skip the detail viewer-state API entirely until auth-aware UI is actually needed
-- remote preview images bypass `/_next/image` in many places to reduce LCP and image-optimizer bottlenecks
+- remote preview images use Next Image when the source is optimizer-compatible; bypass is reserved for non-optimizable cases
 - purchase rail is decomposed so CTA can appear before all trust/meta subparts
 
 ## Dashboard / Admin
@@ -188,6 +194,11 @@ This separation exists to avoid Prisma build-time warnings and DB dependency in 
 - `/resources` no-result search states now render a server-first recovery panel with alternate query suggestions, category/tag browse links, and quick routes back into trending/free/discover inventory
 - `/resources` switches from discover mode to listing mode whenever search, filters, pagination, or non-default sort are active; category is no longer the only trigger
 - `/resources` listing headings now distinguish search results from general browsing so search-without-category flows render as "Search results" instead of inheriting browse copy
+- public resource thumbnails and search-result thumbnails now use a simplified shared `RevealImage` primitive that favors stable, always-visible image rendering over JS-driven reveal state; container backgrounds now own the placeholder treatment so cached/fast image loads cannot get stuck hidden behind an overlay
+- remote preview images on optimizer-compatible hosts (`*.r2.dev`, Google avatars) no longer bypass Next Image by default, so cards/search/detail previews can benefit from Next's optimization pipeline and modern output formats
+- Next Image output now advertises both AVIF and WebP, which improves the chance of smaller payloads on supported browsers
+- above-the-fold marketplace hero, spotlight, and leading grid-card images can now opt into eager loading without changing the default lazy behavior for the rest of the catalog; discover sections now carry eager state forward for duplicate preview URLs, and search-result listings widen the eager window when a query is active so Lighthouse/browser runs do not keep flagging lower first-page cards as lazy LCP candidates
+- the detail preview gallery now marks both the main preview image and the currently active matching thumbnail as eager/high-priority so duplicate-src thumbnails do not re-trigger Next dev LCP warnings by overwriting the main priority image entry
 - homepage/discover hero resolution now defaults anonymous callers to a static seed unless request-bound behavior is explicitly requested
 - `/resources/[slug]` no longer reads session/cookies at the page level; ownership/success now hydrate ahead of owner-review state from the client-side detail viewer-state API, and post-checkout refresh can bypass the short-lived ownership cache
 - `/resources/[slug]` detail viewer-state now waits for the lightweight auth viewer before calling the private detail viewer-state API, so anonymous detail visits skip that extra request
@@ -201,9 +212,18 @@ This separation exists to avoid Prisma build-time warnings and DB dependency in 
 - admin analytics/creator pages rely on the admin layout auth gate instead of repeating the same session check inside each page
 - Post-deploy warm/perf workflow includes smoke coverage for resources home, listings, creator detail, resource detail, and category listing
 - search/auth verification now has repo-owned smoke commands: `npm run smoke:local:search` for localhost and `npm run smoke:prod:search` for the production alias; other environments can reuse the same script with `BASE_URL=... npm run smoke:search`
+- Playwright browser automation is now scaffolded for local/CI use via `playwright.config.ts` and `npm run test:e2e`; the local project still uses the `chromium` project name, but on this macOS setup it launches the locally installed Chrome stable binary via `channel: "chrome"` because Google Chrome for Testing proved crash-prone
+- browser-level route coverage now includes `/resources`, top-bar search submit into canonical `/resources?search=...`, canonical search results, no-results recovery, and resource detail image rendering
+- browser-level verification tooling now also includes `@axe-core/playwright` for in-test accessibility checks, `@lhci/cli` via `.lighthouserc.json` for Lighthouse route audits, and `@next/bundle-analyzer` behind `ANALYZE=true` / `npm run analyze` for bundle inspection
+- Storybook is now scaffolded only for `src/design-system/primitives/*` and `src/design-system/components/*`, with repo-owned config under `.storybook/` and a verified build-based smoke path via `npm run storybook:smoke`
+- local browser automation against `http://127.0.0.1:3000` is now explicitly allowed through Next's `allowedDevOrigins`, so Playwright no longer depends on blocked dev-resource/HMR fallbacks when it uses that origin
+- the global CSP header now explicitly allows `https://va.vercel-scripts.com`, matching the Vercel Analytics / Speed Insights scripts that the app mounts in runtime
+- root metadata now also serves `robots.txt` from `src/app/robots.ts`; the file is generated from build-safe public platform config so local/public crawlers stop seeing a 404 without reintroducing DB-backed metadata reads
+- `src/proxy.ts` no longer imports `next-auth/middleware`; request interception now uses direct JWT inspection via `next-auth/jwt`, which keeps the protected-route behavior explicit while trimming one middleware helper layer from the hot request path
+- admin notification toasts now use CSS-only entry animation, and preview-image drag/drop uploaders are code-split behind a lazy client boundary so admin/creator forms do not pull notification motion runtime or `react-dropzone` into the same initial client shell chunk
 - Category landing pages intentionally use `newest` for their first-page curated feed
 - `src/env.ts` is the central server env validation surface
 
 ---
 
-*Refreshed against the repo state on 2026-04-01.*
+*Refreshed against the repo state on 2026-04-02.*

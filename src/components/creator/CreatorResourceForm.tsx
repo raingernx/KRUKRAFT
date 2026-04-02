@@ -16,7 +16,7 @@ import {
 import { CreatorResourcePreview } from "@/components/creator/CreatorResourcePreview";
 import { CreatorBuyerPreviewModal } from "@/components/creator/CreatorBuyerPreviewModal";
 import { CreatorPublishSuccessModal } from "@/components/creator/CreatorPublishSuccessModal";
-import { ImageDropzone } from "@/components/admin/ImageDropzone";
+import { LazyImageDropzone } from "@/components/admin/LazyImageDropzone";
 import { PreviewImageSortableList } from "@/components/admin/PreviewImageSortableList";
 import { FileUploadWidget } from "@/components/ui/forms";
 import { routes } from "@/lib/routes";
@@ -815,7 +815,7 @@ export function CreatorResourceForm({
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-neutral-700">รูปภาพพรีวิว</label>
             <div className="space-y-4 rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-              <ImageDropzone
+              <LazyImageDropzone
                 disabled={imageUploading}
                 onFilesAccepted={(files) => {
                   void handlePreviewImagesUpload(files);
