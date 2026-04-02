@@ -1,12 +1,23 @@
 import { notFound } from "next/navigation";
+import nextDynamic from "next/dynamic";
 import { requireSession } from "@/lib/auth/require-session";
-import { CreatorResourceForm } from "@/components/creator/CreatorResourceForm";
+import { CreatorResourceFormLoadingShell } from "@/components/creator/CreatorResourceFormLoadingShell";
 import { PageContent } from "@/design-system";
 import { routes } from "@/lib/routes";
 import {
   getCreatorResourceForEdit,
   getCreatorResourceFormData,
 } from "@/services/creator.service";
+
+const CreatorResourceForm = nextDynamic(
+  () =>
+    import("@/components/creator/CreatorResourceForm").then(
+      (mod) => mod.CreatorResourceForm,
+    ),
+  {
+    loading: () => <CreatorResourceFormLoadingShell />,
+  },
+);
 
 export const metadata = {
   title: "Edit Resource",

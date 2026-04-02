@@ -32,6 +32,12 @@ const EMPTY_AUTH_VIEWER: AuthViewerPayload = {
 let cachedViewer: AuthViewerPayload | null = null;
 let inFlightViewer: Promise<AuthViewerPayload> | null = null;
 
+const DEV_TRANSIENT_FETCH_ERROR_PATTERNS = [
+  /failed to fetch/i,
+  /networkerror/i,
+  /load failed/i,
+];
+
 type IdleCallbackHandle = number;
 type IdleCallbackDeadline = {
   didTimeout: boolean;
@@ -61,6 +67,30 @@ async function fetchAuthViewer() {
   };
 
   return json.data ?? EMPTY_AUTH_VIEWER;
+}
+
+function isTransientAuthViewerError(error: unknown) {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return (
+    error.name === "AbortError" ||
+    DEV_TRANSIENT_FETCH_ERROR_PATTERNS.some((pattern) =>
+      pattern.test(error.message),
+    )
+  );
+}
+
+function reportAuthViewerError(error: unknown) {
+  if (
+    process.env.NODE_ENV !== "production" &&
+    isTransientAuthViewerError(error)
+  ) {
+    return;
+  }
+
+  console.error("[AUTH_VIEWER_HOOK]", error);
 }
 
 function loadAuthViewer() {
@@ -113,7 +143,7 @@ export function clearCachedAuthViewer() {
 
 export function primeAuthViewer() {
   return loadAuthViewer().catch((error) => {
-    console.error("[AUTH_VIEWER_HOOK]", error);
+    reportAuthViewerError(error);
     return EMPTY_AUTH_VIEWER;
   });
 }
@@ -158,7 +188,7 @@ export function useAuthViewer(options: UseAuthViewerOptions = {}): AuthViewerSta
             return;
           }
 
-          console.error("[AUTH_VIEWER_HOOK]", error);
+          reportAuthViewerError(error);
           setState({
             ...EMPTY_AUTH_VIEWER,
             isReady: true,

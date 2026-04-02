@@ -1,12 +1,23 @@
 import { redirect } from "next/navigation";
+import nextDynamic from "next/dynamic";
 import { requireSession } from "@/lib/auth/require-session";
-import { CreatorResourceForm } from "@/components/creator/CreatorResourceForm";
 import { CreatorResourceProgress } from "@/components/creator/CreatorResourceProgress";
 import { CreatorResourceHelperCard } from "@/components/creator/CreatorResourceHelperCard";
+import { CreatorResourceFormLoadingShell } from "@/components/creator/CreatorResourceFormLoadingShell";
 import { routes } from "@/lib/routes";
 import { getCreatorAccessState, getCreatorResourceFormData } from "@/services/creator.service";
 import { getCreatorSetupState } from "@/services/creator-setup.service";
 import { logActivity } from "@/lib/activity";
+
+const CreatorResourceForm = nextDynamic(
+  () =>
+    import("@/components/creator/CreatorResourceForm").then(
+      (mod) => mod.CreatorResourceForm,
+    ),
+  {
+    loading: () => <CreatorResourceFormLoadingShell />,
+  },
+);
 
 export const metadata = {
   title: "Create Resource",

@@ -29,6 +29,7 @@
 - `perf:post-deploy`: warm cache + smoke perf suite
 - GitHub post-deploy warm workflow supports both `deployment_status` and manual `workflow_dispatch` runs, which covers direct CLI production deploys
 - `test:e2e`: Playwright browser verification for `/resources`, canonical search flows, no-result recovery, and resource detail image rendering
+- `smoke:local:browser`: repo-owned pre-merge Playwright smoke path for key public/auth/uploader browser flows, including authenticated preview-image upload on admin and creator resource forms
 - `storybook:smoke`: build-based Storybook smoke for design-system primitives/components
 - `lhci:*`: Lighthouse CI collection/assertion flow backed by `.lighthouserc.json`
 - `analyze`: Next bundle analyzer via `ANALYZE=true npm run build`
@@ -51,7 +52,7 @@ Important: build must stay schema-mutation-free. Migration deploy is a separate 
 
 ## Browser / UI Verification Surfaces
 
-- Playwright is configured in `playwright.config.ts`; the local project name remains `chromium`, but it launches the locally installed Chrome stable browser via `channel: "chrome"` on this macOS setup.
+- Playwright is configured in `playwright.config.ts`; the local project name remains `chromium`, but it launches the locally installed Chrome stable browser via `channel: "chrome"` on this macOS setup, and the default local base URL now resolves to `http://127.0.0.1:3000`.
 - Storybook is intentionally scoped to `src/design-system/primitives/**/*.stories.*` and `src/design-system/components/**/*.stories.*`.
 - Accessibility checks are available through `@axe-core/playwright`.
 - Lighthouse CI is configured through `.lighthouserc.json`.
