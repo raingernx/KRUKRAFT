@@ -27,6 +27,7 @@
 - `lint`: scoped ESLint run that does not depend on `.next` artifacts
 - `db:deploy`: `prisma migrate deploy`
 - `perf:post-deploy`: warm cache + smoke perf suite
+- GitHub post-deploy warm workflow supports both `deployment_status` and manual `workflow_dispatch` runs, which covers direct CLI production deploys
 - `test:e2e`: Playwright browser verification for `/resources`, canonical search flows, no-result recovery, and resource detail image rendering
 - `storybook:smoke`: build-based Storybook smoke for design-system primitives/components
 - `lhci:*`: Lighthouse CI collection/assertion flow backed by `.lighthouserc.json`

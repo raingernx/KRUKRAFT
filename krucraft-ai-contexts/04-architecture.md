@@ -92,7 +92,7 @@ Database search note:
     → `/api/resources/viewer-state` serves `scope=base|discover` so ownership and recommendation work stay decoupled
     → signed-in discover payloads use short-lived private caching to smooth repeat navigations
     → recommendation impressions are now recorded from client-side section exposure via `/api/recommendations/impression`, not from discover cache misses
-    → post-deploy warm + smoke perf workflow
+    → post-deploy warm + smoke perf workflow (`deployment_status` + manual `workflow_dispatch` fallback for CLI deploys)
     → selective usable fallbacks where they match final section intent
 ```
 

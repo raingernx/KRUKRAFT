@@ -8,7 +8,7 @@ The public paths now have deliberate performance engineering in place:
 - Leaner select projections for listing/detail shells
 - RSC streaming decomposition on the resource detail page
 - Root layout no longer reads the authenticated server session on every request
-- Post-deploy warm-cache + smoke perf workflow
+- Post-deploy warm-cache + smoke perf workflow, with a manual `workflow_dispatch` fallback for CLI-driven deploys
 - Optimizer-compatible preview images now stay on Next Image by default, with selective bypass only for sources that are not safely optimizable
 - Above-the-fold marketplace hero, spotlight, and card images now use targeted eager loading instead of blanket eager behavior
 - Build-safe platform config on branding-only build paths
@@ -22,7 +22,7 @@ Primary bottleneck class is now:
 ## Important Fixes Already Landed
 
 - `npm run build` no longer runs `prisma migrate deploy`
-- post-deploy warm + smoke workflow is active
+- post-deploy warm + smoke workflow is active, and can now be triggered manually when production deploys bypass GitHub deployment events
 - resource detail route was decomposed into shell + deferred purchase/body/footer/review/related paths
 - optional session work was pushed off several anonymous critical paths
 - public remote preview image delivery now keeps optimizer-compatible hosts on Next Image, while still bypassing the optimizer for GIFs, non-HTTPS assets, and non-allowlisted hosts

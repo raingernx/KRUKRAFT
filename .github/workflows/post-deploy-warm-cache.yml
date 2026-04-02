@@ -2,6 +2,12 @@ name: Post-Deploy Warm Cache
 
 on:
   deployment_status:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Base URL to warm and smoke-test
+        required: false
+        default: https://krucrafts.com
 
 concurrency:
   group: post-deploy-perf-${{ github.event.deployment.id || github.ref }}-${{ github.event.deployment.environment || github.event.deployment_status.environment || 'unknown' }}
@@ -23,11 +29,13 @@ jobs:
         id: classify
         shell: bash
         env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
           DEPLOYMENT_STATE: ${{ github.event.deployment_status.state }}
           DEPLOYMENT_ENVIRONMENT: ${{ github.event.deployment.environment }}
           DEPLOYMENT_STATUS_ENVIRONMENT: ${{ github.event.deployment_status.environment }}
           DEPLOYMENT_ENVIRONMENT_URL: ${{ github.event.deployment_status.environment_url }}
           DEPLOYMENT_TARGET_URL: ${{ github.event.deployment_status.target_url }}
+          DISPATCH_BASE_URL: ${{ inputs.base_url }}
         run: |
           set -euo pipefail
 
@@ -43,12 +51,14 @@ jobs:
             lower "$value"
           }
 
+          event_name="$(lower "${GITHUB_EVENT_NAME:-}")"
           deployment_state="$(lower "${DEPLOYMENT_STATE:-}")"
           deployment_environment="$(lower "${DEPLOYMENT_ENVIRONMENT:-}")"
           deployment_status_environment="$(lower "${DEPLOYMENT_STATUS_ENVIRONMENT:-}")"
           production_host="$(url_host "${PRODUCTION_BASE_URL:-}")"
           environment_url="${DEPLOYMENT_ENVIRONMENT_URL:-}"
           target_url="${DEPLOYMENT_TARGET_URL:-}"
+          dispatch_base_url="${DISPATCH_BASE_URL:-}"
           environment_host="$(url_host "$environment_url")"
           target_host="$(url_host "$target_url")"
 
@@ -63,11 +73,22 @@ jobs:
             base_url="$target_url"
             source_name="deployment_status.target_url"
           fi
+          if [ -n "$dispatch_base_url" ]; then
+            base_url="$dispatch_base_url"
+            source_name="workflow_dispatch.input.base_url"
+          fi
 
           should_run="false"
           reason="deployment state is not success"
 
-          if [ "$deployment_state" = "success" ]; then
+          if [ "$event_name" = "workflow_dispatch" ]; then
+            if [ -n "$base_url" ]; then
+              should_run="true"
+              reason="manual workflow_dispatch"
+            else
+              reason="manual workflow_dispatch missing base_url"
+            fi
+          elif [ "$deployment_state" = "success" ]; then
             if [ "$deployment_environment" = "production" ] || [ "$deployment_status_environment" = "production" ]; then
               should_run="true"
               reason="deployment environment marked as production"
