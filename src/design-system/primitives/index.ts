@@ -39,3 +39,4 @@ export {
 export { SearchInput } from "./SearchInput";
 export type { SearchInputProps } from "./SearchInput";
 export { useToast, type ToastFn, type ToastOptions } from "./useToast";
+export { RevealImage } from "./RevealImage";

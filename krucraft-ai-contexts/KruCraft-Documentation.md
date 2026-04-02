@@ -25,7 +25,8 @@ API Route → Service → Repository → Prisma
 - `src/proxy.ts` is the active request interception entry
 - Build is schema-mutation-free; Prisma migrations are a separate deploy step
 - Public marketplace and detail pages now use multi-tier caching and more granular RSC streaming
-- Public remote preview images often bypass `/_next/image` for better LCP
+- Public preview images use Next Image when the source is optimizer-compatible and bypass the optimizer only for non-optimizable cases
+- Local verification now spans Playwright browser smoke, Storybook build smoke, Lighthouse CI, and bundle analysis
 - Admin settings must use live DB-backed platform config; build-safe defaults are only for branding/build paths
 - Current notable ops warning: production still uses an Xendit test key
 
@@ -38,4 +39,4 @@ historical prose.
 
 ---
 
-*Refreshed against the repo state on 2026-03-31.*
+*Refreshed against the repo state on 2026-04-02.*

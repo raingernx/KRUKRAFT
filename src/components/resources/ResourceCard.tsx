@@ -2,8 +2,8 @@
 
 import dynamic from "next/dynamic";
 import { memo, useState, type ReactNode } from "react";
-import Image from "next/image";
 import { FileText } from "lucide-react";
+import { RevealImage } from "@/design-system";
 import { beginResourcesNavigation } from "@/components/marketplace/resourcesNavigationState";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { formatPrice } from "@/lib/format";
@@ -91,6 +91,7 @@ interface ResourceCardProps {
   linkPrefetchMode?: "intent" | "viewport" | "none";
   linkPrefetchScope?: string;
   badge?: ReactNode;
+  imageLoading?: "lazy" | "eager";
 }
 
 const ResourceCardLibraryFooter = dynamic(() =>
@@ -172,6 +173,7 @@ function CardBody({
   isOwned,
   isNavigating = false,
   badge,
+  imageLoading,
 }: {
   resource: ResourceCardResource;
   variant: ResourceCardVariant;
@@ -180,6 +182,7 @@ function CardBody({
   isOwned: boolean;
   isNavigating?: boolean;
   badge?: ReactNode;
+  imageLoading?: "lazy" | "eager";
 }) {
   const isFree = resource.isFree ?? (resource.price === 0 || !resource.price);
   const isHero = variant === "hero";
@@ -238,13 +241,16 @@ function CardBody({
       {/* ── Thumbnail: 4:3 ratio, overflow-hidden, rounded; thumbnailUrl → previewImages[0] → previewUrl → placeholder ── */}
       <div className={thumbWrapperClass}>
         {thumbnail && !imageError ? (
-          <Image
+          <RevealImage
             src={thumbnail}
             alt={resource.title}
             fill
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
             unoptimized={bypassImageOptimizer}
+            loading={imageLoading}
+            fetchPriority={imageLoading === "eager" ? "high" : undefined}
             className={thumbImgClass}
+            overlayClassName="bg-surface-100"
             onError={() => {
               setImageError(true);
             }}
@@ -338,6 +344,7 @@ function ResourceCardInner({
   linkPrefetchMode = "viewport",
   linkPrefetchScope = "resource-card-grid",
   badge,
+  imageLoading,
 }: ResourceCardProps) {
   const { authorName } = normalizeResource(resource);
   const effectiveVariant = variant === "preview" ? "compact" : variant ?? "marketplace";
@@ -370,6 +377,7 @@ function ResourceCardInner({
     isOwned,
     isNavigating,
     badge,
+    imageLoading,
   };
 
   // Library and previewMode cards are not wrapped in a Link (they have their own CTA buttons or are static previews)

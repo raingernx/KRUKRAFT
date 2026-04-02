@@ -174,7 +174,12 @@ export function Hero({ heroResources }: HeroProps) {
                 <div
                   className="hero-card h-full rounded-xl will-change-transform shadow-[0_8px_20px_rgba(0,0,0,0.08)] transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-4 hover:shadow-[0_20px_40px_rgba(0,0,0,0.16)]"
                 >
-                  <ResourceCard resource={resource} variant="hero" size="lg" />
+                  <ResourceCard
+                    resource={resource}
+                    variant="hero"
+                    size="lg"
+                    imageLoading={i === 0 ? "eager" : undefined}
+                  />
                 </div>
               </div>
             ))}

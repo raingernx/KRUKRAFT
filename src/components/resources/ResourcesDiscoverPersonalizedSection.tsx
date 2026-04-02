@@ -10,6 +10,10 @@ import type { ResourcesViewerDiscoverState } from "@/lib/resources/viewer-state"
 import { useResourcesViewerState } from "./ResourcesViewerStateProvider";
 import { ViewerAwareResourceCard } from "./ViewerAwareResourceCard";
 
+function getResourcePreviewUrl(resource: ResourceCardData) {
+  return resource.thumbnailUrl ?? resource.previewImages?.[0] ?? resource.previewUrl ?? null;
+}
+
 function ResourcesSectionHeader({
   title,
   description,
@@ -47,28 +51,49 @@ function ResourcesSectionHeader({
 function ResourceCardRow({
   resources,
   decorate,
+  eagerCardCount = 0,
+  eagerPreviewUrls = [],
 }: {
   resources: ResourceCardData[];
   decorate?: (resource: ResourceCardData, index: number) => ResourceCardData;
+  eagerCardCount?: number;
+  eagerPreviewUrls?: string[];
 }) {
+  const eagerPreviewUrlSet = new Set(eagerPreviewUrls);
+
   return (
     <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-      {resources.map((resource, index) => (
-        <ViewerAwareResourceCard
-          key={resource.id}
-          resource={decorate ? decorate(resource, index) : resource}
-          variant="marketplace"
-          linkPrefetchMode="viewport"
-        />
-      ))}
+      {resources.map((resource, index) => {
+        const decoratedResource = decorate ? decorate(resource, index) : resource;
+        const previewUrl = getResourcePreviewUrl(decoratedResource);
+        const imageLoading =
+          index < eagerCardCount ||
+          (previewUrl !== null && eagerPreviewUrlSet.has(previewUrl))
+            ? "eager"
+            : undefined;
+
+        return (
+          <ViewerAwareResourceCard
+            key={resource.id}
+            resource={decoratedResource}
+            variant="marketplace"
+            linkPrefetchMode="viewport"
+            imageLoading={imageLoading}
+          />
+        );
+      })}
     </div>
   );
 }
 
 export function ResourcesDiscoverPersonalizedSection({
   fallbackCards,
+  eagerCardCount = 0,
+  eagerPreviewUrls = [],
 }: {
   fallbackCards: ResourceCardData[];
+  eagerCardCount?: number;
+  eagerPreviewUrls?: string[];
 }) {
   const { isAuthenticated, isReady } = useResourcesViewerState();
   const { data: discover } = useFetchJson<ResourcesViewerDiscoverState>({
@@ -83,6 +108,7 @@ export function ResourcesDiscoverPersonalizedSection({
       ? discover.recommendedForYou
       : fallbackCards;
   const shouldUseRecommendedLabel = Boolean(discover);
+  const eagerPreviewUrlSet = new Set(eagerPreviewUrls);
 
   return (
     <>
@@ -104,19 +130,33 @@ export function ResourcesDiscoverPersonalizedSection({
               resourceIds={recommendedForYou.map((resource) => resource.id)}
             >
               <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-                {recommendedForYou.map((resource) => (
-                  <div key={resource.id} data-resource-id={resource.id}>
-                    <ViewerAwareResourceCard
-                      resource={resource}
-                      variant="marketplace"
-                      linkPrefetchMode="viewport"
-                    />
-                  </div>
-                ))}
+                {recommendedForYou.map((resource, index) => {
+                  const previewUrl = getResourcePreviewUrl(resource);
+                  const imageLoading =
+                    index < eagerCardCount ||
+                    (previewUrl !== null && eagerPreviewUrlSet.has(previewUrl))
+                      ? "eager"
+                      : undefined;
+
+                  return (
+                    <div key={resource.id} data-resource-id={resource.id}>
+                      <ViewerAwareResourceCard
+                        resource={resource}
+                        variant="marketplace"
+                        linkPrefetchMode="viewport"
+                        imageLoading={imageLoading}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </RecommendationSection>
           ) : (
-            <ResourceCardRow resources={recommendedForYou} />
+            <ResourceCardRow
+              resources={recommendedForYou}
+              eagerCardCount={eagerCardCount}
+              eagerPreviewUrls={eagerPreviewUrls}
+            />
           )}
         </section>
       ) : null}
@@ -134,6 +174,8 @@ export function ResourcesDiscoverPersonalizedSection({
               ...resource,
               socialProofLabel: `More in ${discover.recentCategoryName}`,
             })}
+            eagerCardCount={eagerCardCount}
+            eagerPreviewUrls={eagerPreviewUrls}
           />
         </section>
       ) : null}
@@ -151,6 +193,8 @@ export function ResourcesDiscoverPersonalizedSection({
               ...resource,
               socialProofLabel: "Recommended for your current pace",
             })}
+            eagerCardCount={eagerCardCount}
+            eagerPreviewUrls={eagerPreviewUrls}
           />
         </section>
       ) : null}

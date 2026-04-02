@@ -14,6 +14,7 @@ export function ViewerAwareResourceCard({
   previewMode?: boolean;
   linkPrefetchMode?: "intent" | "viewport" | "none";
   linkPrefetchScope?: string;
+  imageLoading?: "lazy" | "eager";
 }) {
   const { ownedIdSet } = useResourcesViewerState();
   const isOwned = owned ?? ownedIdSet.has(props.resource.id);

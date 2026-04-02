@@ -319,6 +319,7 @@ async function ResourcesListingContent({
                   }}
                   variant="hero"
                   linkPrefetchMode="viewport"
+                  imageLoading="eager"
                 />
               </div>
             ) : null}
@@ -379,17 +380,38 @@ async function ResourcesDiscoverContent() {
   );
 }
 
+function getResourcePreviewUrl(resource: ResourceCardData) {
+  return resource.thumbnailUrl ?? resource.previewImages?.[0] ?? resource.previewUrl ?? null;
+}
+
 async function ResourcesDiscoverDeferredSections({
   discoverDataPromise,
 }: {
   discoverDataPromise: Promise<DiscoverData | null>;
 }) {
+  const eagerDiscoverCardCount = 4;
+  const eagerDiscoverPreviewUrls = new Set<string>();
   const discoverData = await discoverDataPromise;
 
   if (!discoverData) {
     return null;
   }
 
+  const resolveDiscoverImageLoading = (
+    resource: ResourceCardData,
+    index: number,
+  ) => {
+    const previewUrl = getResourcePreviewUrl(resource);
+    const shouldEager =
+      index < eagerDiscoverCardCount ||
+      (previewUrl !== null && eagerDiscoverPreviewUrls.has(previewUrl));
+
+    if (shouldEager && previewUrl) {
+      eagerDiscoverPreviewUrls.add(previewUrl);
+    }
+
+    return shouldEager ? "eager" : undefined;
+  };
   const globalFiltered = discoverData.recommended as ResourceCardData[];
 
   return (
@@ -412,6 +434,7 @@ async function ResourcesDiscoverDeferredSections({
                 }}
                 variant="marketplace"
                 linkPrefetchMode="viewport"
+                imageLoading={resolveDiscoverImageLoading(resource, index)}
               />
             ))}
           </div>
@@ -455,7 +478,11 @@ async function ResourcesDiscoverDeferredSections({
         </section>
       ) : null}
 
-      <ResourcesDiscoverPersonalizedSection fallbackCards={globalFiltered.slice(0, 5)} />
+      <ResourcesDiscoverPersonalizedSection
+        fallbackCards={globalFiltered.slice(0, 5)}
+        eagerCardCount={eagerDiscoverCardCount}
+        eagerPreviewUrls={[...eagerDiscoverPreviewUrls]}
+      />
 
       {discoverData.newReleases.length > 0 ? (
         <section className="space-y-5">
@@ -465,12 +492,13 @@ async function ResourcesDiscoverDeferredSections({
             viewAllHref={routes.marketplaceQuery("sort=newest&category=all")}
           />
           <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-            {(discoverData.newReleases as ResourceCardData[]).map((resource) => (
+            {(discoverData.newReleases as ResourceCardData[]).map((resource, index) => (
               <ViewerAwareResourceCard
                 key={resource.id}
                 resource={resource}
                 variant="marketplace"
                 linkPrefetchMode="viewport"
+                imageLoading={resolveDiscoverImageLoading(resource, index)}
               />
             ))}
           </div>
@@ -484,12 +512,13 @@ async function ResourcesDiscoverDeferredSections({
             viewAllHref={routes.marketplaceQuery("sort=featured&category=all")}
           />
           <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-            {(discoverData.featured as ResourceCardData[]).map((resource) => (
+            {(discoverData.featured as ResourceCardData[]).map((resource, index) => (
               <ViewerAwareResourceCard
                 key={resource.id}
                 resource={resource}
                 variant="marketplace"
                 linkPrefetchMode="viewport"
+                imageLoading={resolveDiscoverImageLoading(resource, index)}
               />
             ))}
           </div>
@@ -503,12 +532,13 @@ async function ResourcesDiscoverDeferredSections({
             viewAllHref={routes.marketplaceQuery("price=free&category=all")}
           />
           <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-            {(discoverData.freeResources as ResourceCardData[]).map((resource) => (
+            {(discoverData.freeResources as ResourceCardData[]).map((resource, index) => (
               <ViewerAwareResourceCard
                 key={resource.id}
                 resource={resource}
                 variant="marketplace"
                 linkPrefetchMode="viewport"
+                imageLoading={resolveDiscoverImageLoading(resource, index)}
               />
             ))}
           </div>
@@ -532,6 +562,7 @@ async function ResourcesDiscoverDeferredSections({
                 }}
                 variant="marketplace"
                 linkPrefetchMode="viewport"
+                imageLoading={resolveDiscoverImageLoading(resource, index)}
               />
             ))}
           </div>

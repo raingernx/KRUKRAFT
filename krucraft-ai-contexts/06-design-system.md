@@ -1,188 +1,98 @@
 # KruCraft — Design System
 
-> Design/system reference. For runtime implementation details, prefer the repo
-> design-system code and current component usage patterns over older exported
+> Design-system reference. For implementation details, prefer the repo design
+> system code and current component usage patterns over older exported design
 > conversation wording.
 
-## Brand Foundation
+## Source of Truth
 
-- **Platform:** KRU Craft
-- **Type:** SaaS marketplace for digital learning resources
-- **Users:** Teachers, creators, students, buyers, admins
-- **Style goal:** Modern, clean, premium, minimal, scalable, easy to maintain
-- **Tech stack:** Next.js (App Router) + React + TypeScript + Tailwind CSS
+- App and feature code should import design-system-covered surfaces from `@/design-system`.
+- `src/components/ui/*` is a transitional primitive layer for maintenance only, not the default import surface for new app code.
+- Core design-system directories:
+  - `src/design-system/tokens/*`
+  - `src/design-system/primitives/*`
+  - `src/design-system/components/*`
+  - `src/design-system/layout/*`
+- The design-system barrel exports tokens, primitives, components, and layout helpers from `src/design-system/index.ts`.
 
-## Design Priorities
+## Token / Layout Surfaces
 
-1. Consistency
-2. Scalability
-3. Clean UI
-4. Reusable components
-5. Fast implementation (solo founder + AI workflow)
+- `src/design-system/tokens/index.ts` exports shared token maps for:
+  - colors
+  - spacing
+  - radius
+  - typography
+- `src/design-system/layout/index.ts` exports the shared layout shell helpers:
+  - `Container`
+  - `PageContainer`
+  - `PageContent`
+  - `PageContentWide`
+  - `PageContentNarrow`
+  - `PageSection`
 
----
+## Primitive Inventory
 
-## Color System (Semantic)
-
-| Category | Token | Usage |
-|---------|-------|-------|
-| **Core** | primary, secondary, accent | Brand identity |
-| **Neutral** | background, foreground, surface, muted, border | Structural |
-| **Semantic** | success, warning, danger, info | Status feedback |
-| **Text** | heading, body, muted, inverse | Typography |
-| **States** | hover, active, selected, disabled, focus | Interaction |
-
-Light mode primary with optional dark mode direction.
-
----
-
-## Typography System
-
-- Font pairing: Bold geometric sans-serif (KRU) + Soft rounded script (Craft)
-- Scale: Display, H1–H4, Body (lg/md/sm), Caption, Label, Button text
-- Line clamp for cards: `line-clamp-2` for titles
-- Table text: dense, small
-- Form text: readable, medium
-
----
-
-## Spacing Scale
-
-- Section spacing: `py-12` to `py-16` (hero: `py-20`)
-- Card padding: `p-4` or `p-5`
-- Container: `max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8`
-- Grid gap: `gap-6` standard, `gap-8` large screens
-
----
-
-## Border Radius Scale
-
-| Element | Radius |
-|---------|--------|
-| Cards | `rounded-3xl` |
-| Buttons (standard) | `rounded-lg` |
-| Badges/Pills | `rounded-full` |
-| Inputs | `rounded-lg` |
-| Modals | `rounded-2xl` |
-
----
-
-## Button System
-
-- **Variants:** primary, secondary, ghost, outline, destructive, link
-- **Sizes:** sm, md, lg
-- **States:** default, hover, active, disabled, loading
-- **Icon:** left/right icon support
-- **Mobile:** full-width on small screens where appropriate
-
----
+- `Avatar`
+- `Badge`
+- `Button`
+- `Card`
+- `Input`
+- `Modal`
+- `RevealImage`
+- `SearchInput`
+- `Select`
+- `Switch`
+- `Textarea`
+- `ToastProvider` and `useToast`
 
 ## Component Inventory
 
-### Foundations
-Logo, Container, Section header, Divider, Icon wrapper
+- `EmptyState`
+- `FormSection`
+- `Pagination`
+- `PickerControls`
+- `ResourceCard`
+- `RowActions`
 
-### Navigation
-Top navbar, Sidebar, Tab, Mobile nav, Breadcrumb
+## Current Implementation Notes
 
-### Inputs
-Text input, Select, Checkbox, Radio, Textarea, File upload, Search bar
+- `RevealImage` is the shared image primitive for already-sized containers. It wraps `next/image`, keeps images visible by default, and expects the surrounding container to own placeholder/background treatment.
+- The image delivery policy is selective:
+  - optimizer-compatible HTTPS sources use Next Image
+  - bypass happens only for non-optimizable cases surfaced through `shouldBypassImageOptimizer`
+- `SearchInput` is the canonical DS search primitive with:
+  - `default` and `hero` variants
+  - clear and loading affordances
+  - optional submit-button slot
+  - optional leading and trailing adornments
+- `ResourceCard` in the design-system component barrel is currently a thin re-export of the marketplace implementation in `src/components/resources/ResourceCard`. Product-card changes may therefore land outside `src/design-system/components` while still affecting the DS surface.
 
-### Actions
-Button (primary/secondary/ghost/destructive), Link button, Icon button
+## Visual Language Cues
 
-### Data Display
-Resource card, Stat card, Admin card, Table, Badge, Avatar
+- Semantic utility classes center on DS token names such as:
+  - `bg-surface-*`
+  - `border-surface-*`
+  - `text-text-primary`
+  - `text-text-secondary`
+  - `text-text-muted`
+  - `text-primary-*`
+- Current marketplace and admin UI favors:
+  - large radii (`rounded-xl` through `rounded-3xl`)
+  - soft surface borders instead of heavy shadows
+  - image-led cards with concise metadata rows
+  - structural skeletons and empty states that match final geometry closely
+- Search, marketplace cards, and empty states are now first-class design-system concerns, not isolated one-off widgets.
 
-### Feedback
-Toast, Alert, Skeleton, Loading spinner, Progress, Empty state
+## Storybook Scope
 
-### Overlays
-Modal, Sheet, Dropdown menu, Popover, Tooltip
-
----
-
-## Card Types
-
-- **Resource card** (marketplace grid)
-- **Library card** (user library, with action buttons)
-- **Stat card** (admin/dashboard metrics)
-- **Featured card** (homepage highlight, aspect-[16/9] or aspect-[16/10])
-- **Admin card** (management screens)
-
----
-
-## Resource Card Design Spec (Production-Ready)
-
-### Card Container
-
-```css
-bg-white
-border border-neutral-200/80
-rounded-3xl
-overflow-hidden
-```
-
-### Hover State
-
-```css
-border-color: slightly darker
-/* OR very subtle lift: */
-translate-y-[-2px]
-/* NO heavy shadow animations */
-```
-
-### Image Area
-
-```css
-aspect-[4/3] /* or aspect-[5/4] */
-object-cover /* or object-contain as needed */
-/* Rounded top corners */
-```
-
-### Badge System (ONE badge per card, priority order)
-
-1. **Featured** — `bg-amber-50 text-amber-700 border border-amber-200`
-2. **New** — `bg-blue-50 text-blue-700`
-3. **Free** — `bg-emerald-50 text-emerald-700`
-4. **Best Seller** — amber
-5. **Updated** — violet
-
-Badge style: `text-xs font-medium px-3 py-1.5 rounded-full` positioned top-left of image container
-
-### Title
-
-```css
-text-[17px] font-semibold leading-tight line-clamp-2
-```
-
-### Creator + Category Row
-
-Format: `"Kru Craft · Science"` (creator first, category second, dot separator)
-
-```css
-text-sm text-neutral-500
-```
-
-### Utility Row
-
-Examples: `"156 sales · Printable"`, `"4.8 ★ · 120 sales"`
-
-```css
-text-xs text-neutral-500
-```
-
-### Divider Above Price
-
-```css
-border-t border-neutral-200 mt-3 pt-3
-```
-
-### Price
-
-- Paid: `text-lg font-semibold text-neutral-900`
-- Free: `text-lg font-semibold text-emerald-600`
+- Storybook is intentionally scoped to the design-system surface only:
+  - `src/design-system/primitives/**/*.stories.*`
+  - `src/design-system/components/**/*.stories.*`
+- Current local verification paths:
+  - `npm run storybook:build`
+  - `npm run storybook:smoke`
+- In this environment, the build-based smoke path is the verified Storybook workflow.
 
 ---
 
-*Extracted from Claude conversation exports (conversations-008.json) dated 2026-03-29.*
+*Refreshed against the repo state on 2026-04-02.*

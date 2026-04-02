@@ -4,9 +4,11 @@
 
 ### Marketplace UX
 
-- Discover feed with curated sections
+- Discover feed with curated sections when `/resources` is in discover mode
 - Category and tag filtering
-- Search + live search suggestions
+- Canonical marketplace search routed through `/resources?search=...`
+- Debounced live search suggestions with direct-to-detail selection
+- No-result recovery with alternate queries plus category/tag browse links
 - Public creator pages
 - Resource detail page with gallery, purchase rail, reviews, related content, and creator context
 - Library-style ownership states in marketplace/detail surfaces
@@ -55,6 +57,12 @@ Standard public sort menu:
 4. Price: Low → High
 5. Price: High → Low
 
+Search behavior notes:
+- `/resources` defaults to relevance / best-match sorting when a search query is present
+- selecting a suggestion opens the resource detail directly
+- pressing Enter or using the dropdown footer routes to the canonical marketplace results page
+- no-result flows recover on the same marketplace route instead of bouncing to ad-hoc pages
+
 Behavior notes:
 - `/resources` default vs experiment treatment can vary with the ranking experiment cookie
 - `/categories/[slug]` currently presents a newest-first curated listing
@@ -66,6 +74,9 @@ Behavior notes:
 - Tags filter
 - Search text
 - Sort by
+
+The marketplace route switches from discover mode into listing mode whenever
+search, filters, pagination, or a non-default sort are active.
 
 ## Hero CMS System
 
@@ -135,4 +146,4 @@ Resource detail page
 
 ---
 
-*Refreshed against the repo state on 2026-03-31.*
+*Refreshed against the repo state on 2026-04-02.*

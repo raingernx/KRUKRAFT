@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { RevealImage } from "@/design-system";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -38,12 +38,13 @@ export function PreviewGallery({ previews, resourceTitle }: Props) {
 
       {/* ── Main image ── */}
       <div className="relative aspect-[3/4] h-[676px] w-full overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
-        <Image
+        <RevealImage
           src={current.imageUrl}
           alt={`${resourceTitle} – preview ${active + 1} of ${previews.length}`}
           fill
           sizes="(max-width: 768px) 100vw, 640px"
           unoptimized={bypassCurrentImageOptimizer}
+          overlayClassName="bg-surface-100"
           className="object-contain"
         />
 
@@ -97,20 +98,21 @@ export function PreviewGallery({ previews, resourceTitle }: Props) {
               onClick={() => setActive(i)}
               aria-label={`View preview ${i + 1}`}
               className={[
-                "shrink-0 overflow-hidden rounded-xl border-2 transition",
+                "relative shrink-0 overflow-hidden rounded-xl border-2 transition",
                 i === active
                   ? "border-blue-500 shadow-sm"
                   : "border-transparent opacity-60 hover:opacity-90",
               ].join(" ")}
               style={{ width: 72, height: 72 }}
             >
-              <Image
+              <RevealImage
                 src={p.imageUrl}
                 alt={`Thumbnail ${i + 1}`}
                 width={72}
                 height={72}
                 sizes="72px"
                 unoptimized={shouldBypassImageOptimizer(p.imageUrl)}
+                overlayClassName="rounded-xl bg-surface-100"
                 className="h-full w-full object-cover"
               />
             </button>

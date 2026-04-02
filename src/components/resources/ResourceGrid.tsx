@@ -186,6 +186,11 @@ function ResourceGridBody({
   const displayedResources = progressiveLoad
     ? [...resources, ...appendedResources]
     : resources;
+  const queryParams = new URLSearchParams(queryKey.split("?")[1] ?? "");
+  const hasSearchQuery = Boolean(queryParams.get("search")?.trim());
+  const eagerImageCount = hasSearchQuery
+    ? Math.min(displayedResources.length, 10)
+    : 4;
   const loadedCount = displayedResources.length;
   const hasMore = progressiveLoad && loadedCount < total && nextPage <= totalPages;
 
@@ -269,6 +274,7 @@ function ResourceGridBody({
               linkPrefetchMode={cardPrefetchMode}
               linkPrefetchScope={cardPrefetchScope}
               badge={badgeNodes?.[index]}
+              imageLoading={index < eagerImageCount ? "eager" : undefined}
             />
           ))}
         </div>

@@ -4,16 +4,18 @@
 
 - [ ] Replace `XENDIT_SECRET_KEY` test key in production environment
 - [ ] Verify `DIRECT_URL` is present and correct for Prisma CLI / migration workflows in production
-- [ ] Add DB indexing / tuning for search (`pg_trgm`) and other high-value filter paths
-- [ ] Keep post-deploy warm targets aligned with perf smoke coverage
-- [ ] Re-run perf measurements after major listing/detail changes and update thresholds intentionally
+- [ ] Keep tuning ranked-search query plans and decide whether Postgres-backed relevance is still sufficient before introducing a separate search engine
+- [ ] Keep post-deploy warm targets aligned with perf smoke and browser verification coverage
+- [ ] Re-run perf measurements after major listing/detail/search changes and update thresholds intentionally
 - [ ] Continue refining detail-page CTA/trust/review timing if new regressions appear
+- [ ] Recheck preview/production LCP after major marketplace image or layout changes; local dev reruns on 2026-04-02 stopped reproducing the old Next `loading="eager"` advice, but dev-mode LHCI is still not production truth
 - [ ] Verify uploaded favicon and OG logo changes propagate correctly through `/brand-assets/*` in production browsers and social crawlers
 
 ## Product / UX Follow-Ups
 
 - [ ] Keep discover fallbacks aligned with final section intent; avoid misleading placeholder destinations
 - [ ] Audit live search, filter/sidebar fallbacks, and creator-profile fallbacks for usable-but-consistent loading states
+- [ ] Keep Playwright search smoke aligned with real canonical submit flows as marketplace search UX evolves
 - [ ] Re-audit brand asset previews if legacy stored values from earlier fallback behavior still exist in the database
 
 ## Audit Scope (Useful Ongoing Areas)
@@ -41,4 +43,4 @@
 
 ---
 
-*Refreshed against the repo state on 2026-03-31.*
+*Refreshed against the repo state on 2026-04-02.*

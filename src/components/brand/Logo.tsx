@@ -103,13 +103,13 @@ export function Logo({
         return renderLogoAsset(emailLogoUrl, imageAlt, FULL_IMAGE_CLASS[size]);
       }
 
-        return (
-          <span
-            className={cn(
-              "block font-heading font-semibold leading-none tracking-tight",
-              TEXT_SIZE_CLASS[size],
-              textColor,
-            )}
+      return (
+        <span
+          className={cn(
+            "block font-heading font-semibold leading-none tracking-tight",
+            TEXT_SIZE_CLASS[size],
+            textColor,
+          )}
         >
           {platformName}
         </span>

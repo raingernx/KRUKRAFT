@@ -14,12 +14,11 @@
 
 ## Layout Rules
 
-- **Marketplace pages:** Full-width background sections, content inside Container
-- **Dashboard pages:** Same Container as marketplace
-- **Admin pages:** Same Container, identical layout rules
-- **Hero section:** Full-width background, inner content inside Container with `max-w-2xl` for text
+- Marketplace pages use full-width section backgrounds with the main content constrained inside the shared `Container`.
+- Dashboard and admin pages reuse the same container baseline.
+- Hero and discover sections keep broad backgrounds, but text blocks stay constrained with `max-w-*` wrappers instead of stretching across the full catalog width.
 
-## Responsive Breakpoints (Tailwind standard)
+## Responsive Breakpoints
 
 | Breakpoint | Width |
 |-----------|-------|
@@ -30,105 +29,86 @@
 ## Grid Scaling
 
 ```css
-/* Resource grid on large screens */
-grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6
-/* Or preferred adaptive: */
+[grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]
 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]
 ```
 
-## Max-Width Philosophy
-
-- **1600px** = sweet spot for marketplace with many cards
-- Never let headline text span full 1600px — wrap with `max-w-2xl` or `max-w-3xl`
-- Card grid fills space naturally via `auto-fill + minmax`
-- Section padding: `py-16` standard, hero `py-20`
-
----
+- Catalog and discover sections use adaptive auto-fill grids rather than a fixed card count per breakpoint.
+- Large-screen gaps usually sit in the `gap-6` to `gap-8` range.
 
 ## Page Layouts
 
-### /resources (Main Marketplace / Discover)
+### /resources (Main Marketplace)
 
-- Primary public page — functions as the homepage
-- Contains discovery sections + filtered listing
-- Hero banner at top
-- Category quick links
-- Search and filter sidebar
-- Featured resource card
-- Resource grid with cards
-- Recommendation sections
+- Primary public marketplace route with two explicit modes:
+  - **Discover mode:** active when no search, filter, pagination, or non-default sort intent is present
+  - **Listing mode:** active when search, filters, pagination, or a non-default sort are present
+- Shared shell:
+  - navbar with canonical marketplace search in the header row
+  - secondary controls row with discover button plus scrollable category chips
 
-**Layout settings:**
-- Max-width: `max-w-[1600px]`
-- Grid: `grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))`
-- Gap: `gap-6` to `gap-8`
-- Hero: full-width background, content inside `max-w-[1600px]` container
-- Typography: headings and paragraphs wrapped with `max-w-2xl` or `max-w-3xl`
-- Loading behavior:
-  - hero loading state uses a plain blue banner shell, not the final hero content
-  - discover sections load with section/card skeletons that match the real listing layout
-  - discover fallback should not show alternate CTA sections that diverge from the final recommendations UI
+**Discover mode**
+- full-width hero section above the main content container
+- streamed discover sections such as trending, creator spotlight, personalized recommendations, new releases, featured picks, and free resources
+- viewer-aware personalization hydrates after the public shell instead of blocking the initial route render
+
+**Listing mode**
+- no discover hero
+- listing intro with result count and sort summary
+- desktop filter sidebar plus in-content filter bar
+- optional spotlight card when the listing context supports it
+- canonical results grid
+- no-result recovery panel when a search miss occurs
+
+**Marketplace search UX**
+- search suggestions are debounced and open below the navbar search input
+- selecting a suggestion opens the resource detail directly
+- pressing Enter or using the dropdown footer navigates to canonical `/resources?search=...`
+- no-result dropdown and full-page recovery both offer alternate queries plus taxonomy browse links
+
+**Loading behavior**
+- discover hero loading uses a plain banner shell, not synthetic alternate content
+- discover sections use section/card skeletons that match the live geometry
+- listing mode uses structural content fallbacks instead of a generic card wall
 
 ### /resources/[slug] (Resource Detail)
 
-Three-column layout:
+High-level shell:
 
-```
+```text
 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8
-  ↳ breadcrumb
-  ↳ title / metadata
-  ↳ main grid: [auto_minmax(0,1fr)_380px]
-      left: thumbnail rail (fixed)
-      center: preview area (max-w-[1100px])
-      right: purchase sidebar (380px fixed)
+  → breadcrumb
+  → title / metadata
+  → main grid
+      left/center: gallery + preview body
+      right: purchase rail
+  → deferred footer / review / related sections
 ```
 
 - Breadcrumb navigation
-- Full-screen preview capability
-- Purchase options
-- Related resources section
-- Reviews section
+- Gallery / preview media at the top of the content stack
+- Purchase rail resolves ownership state separately and can show a structural "Checking your library…" placeholder
+- Reviews and related resources are deferred separately from the initial shell
+- Detail pages no longer rely on page-level auth/session reads for anonymous rendering
 
-### /library (User Library)
+### /library
 
-- Shows purchased/owned resources
-- Cards have consistent action button alignment (fixed with `h-full flex flex-col` + `mt-auto`)
-- Action buttons: Download, Preview, Open
-- Filter and sort options
+- Purchased and owned resources
+- Consistent action alignment for preview/download/open buttons
+- Filter and sort controls where relevant
 
-### /dashboard (User Dashboard)
+### /dashboard
 
 - Per-user dynamic rendering
-- Purchases section
-- Download history
-- Learning profile
-- Creator access state
+- Purchases and learning profile surfaces
+- Download history and creator-access state
+
+### /admin
+
+- Shared container-based shell
+- Metrics, resource management, moderation, and settings surfaces
+- Admin subtree is role-gated upstream; pages should not duplicate layout-level auth checks unless a route has an extra requirement
 
 ---
 
-## Admin Dashboard Layout
-
-```
-Sidebar:
-  - Dashboard
-  - Resources
-  - Creators
-  - Users
-  - Sales
-  - Analytics
-  - Payouts
-  - Settings
-
-Main Content:
-  - Top Bar
-  - Metrics Cards (4 cols)
-  - Revenue Chart (col-span-8)
-  - Activity Timeline
-  - Resource Performance
-  - Creator Earnings
-  - Recent Sales
-```
-
----
-
-*Extracted from Claude conversation exports (conversations-008.json) dated 2026-03-29.*
+*Refreshed against the repo state on 2026-04-02.*

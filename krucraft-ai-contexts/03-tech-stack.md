@@ -27,6 +27,10 @@
 - `lint`: scoped ESLint run that does not depend on `.next` artifacts
 - `db:deploy`: `prisma migrate deploy`
 - `perf:post-deploy`: warm cache + smoke perf suite
+- `test:e2e`: Playwright browser verification for `/resources`, canonical search flows, no-result recovery, and resource detail image rendering
+- `storybook:smoke`: build-based Storybook smoke for design-system primitives/components
+- `lhci:*`: Lighthouse CI collection/assertion flow backed by `.lighthouserc.json`
+- `analyze`: Next bundle analyzer via `ANALYZE=true npm run build`
 
 Important: build must stay schema-mutation-free. Migration deploy is a separate operational step.
 
@@ -40,9 +44,17 @@ Important: build must stay schema-mutation-free. Migration deploy is a separate 
 
 | Use case | Method |
 |---------|--------|
-| Public preview image | public R2/CDN URL, often bypassing `/_next/image` for faster delivery |
+| Public preview image | `next/image` + shared `RevealImage` for optimizer-compatible HTTPS sources; bypass optimizer only for non-optimizable cases |
 | Paid/private file | protected route: `/api/download/[resourceId]` |
 | Secure file delivery | purchase/ownership check → guarded access / signed URL flow |
+
+## Browser / UI Verification Surfaces
+
+- Playwright is configured in `playwright.config.ts`; the local project name remains `chromium`, but it launches the locally installed Chrome stable browser via `channel: "chrome"` on this macOS setup.
+- Storybook is intentionally scoped to `src/design-system/primitives/**/*.stories.*` and `src/design-system/components/**/*.stories.*`.
+- Accessibility checks are available through `@axe-core/playwright`.
+- Lighthouse CI is configured through `.lighthouserc.json`.
+- Bundle inspection is available through `@next/bundle-analyzer`.
 
 ## Environment Variables (Core)
 
@@ -77,4 +89,4 @@ UPSTASH_REDIS_REST_TOKEN
 
 ---
 
-*Refreshed against the repo state on 2026-03-31.*
+*Refreshed against the repo state on 2026-04-02.*

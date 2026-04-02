@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   useCallback,
   useEffect,
@@ -11,7 +10,7 @@ import {
 } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { FileText, Search } from "lucide-react";
-import { SearchInput } from "@/design-system";
+import { RevealImage, SearchInput } from "@/design-system";
 import { cn } from "@/lib/utils";
 import {
   beginResourcesNavigation,
@@ -479,14 +478,15 @@ export function HeroSearch({
                 index === activeIndex ? "bg-surface-50" : "hover:bg-surface-50",
               )}
             >
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50">
+              <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50">
                 {result.previewUrl ? (
-                  <Image
+                  <RevealImage
                     src={result.previewUrl}
                     alt={result.title}
                     width={44}
                     height={44}
                     unoptimized={shouldBypassImageOptimizer(result.previewUrl)}
+                    overlayClassName="rounded-xl bg-surface-100"
                     className="h-11 w-11 rounded-xl object-cover"
                   />
                 ) : (
@@ -570,6 +570,7 @@ export function HeroSearch({
             }
           }}
           placeholder={placeholder}
+          aria-label="Search resources"
           onClear={handleClear}
           disabled={isPending}
           loading={isPending || isLoadingResults}

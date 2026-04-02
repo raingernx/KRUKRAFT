@@ -15,8 +15,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Search, FileText } from "lucide-react";
-import Image from "next/image";
-import { SearchInput } from "@/design-system";
+import { RevealImage, SearchInput } from "@/design-system";
 import {
   beginResourcesNavigation,
   inferResourcesNavigationMode,
@@ -261,14 +260,15 @@ export function LiveSearch({
               }`}
             >
               {/* Thumbnail */}
-              <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-blue-50 to-violet-50">
+              <div className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-blue-50 to-violet-50">
                 {r.previewUrl ? (
-                  <Image
+                  <RevealImage
                     src={r.previewUrl}
                     alt={r.title}
                     width={36}
                     height={36}
                     unoptimized={shouldBypassImageOptimizer(r.previewUrl)}
+                    overlayClassName="rounded-lg bg-surface-100"
                     className="h-9 w-9 rounded-lg object-cover"
                   />
                 ) : (

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { ChevronUp, ChevronDown, FileText, X, ZoomIn } from "lucide-react";
+import { RevealImage } from "@/design-system";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 
 const VISIBLE_THUMBNAILS = 5;
@@ -101,12 +101,13 @@ export function ResourceGallery({
             className="relative max-h-[90vh] max-w-[90vw]"
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
+            <RevealImage
               src={current.imageUrl}
               alt={`${resourceTitle} – preview ${activeIndex + 1} of ${total}`}
               width={1400}
               height={1050}
               unoptimized={currentIsRemotePreview}
+              overlayClassName="rounded-xl bg-black/20"
               className="max-h-[90vh] max-w-[90vw] rounded-xl object-contain"
             />
           </div>
@@ -159,12 +160,15 @@ export function ResourceGallery({
                       : "border-surface-200 opacity-70 hover:border-zinc-300 hover:opacity-100",
                   ].join(" ")}
                 >
-                  <Image
+                  <RevealImage
                     src={p.imageUrl}
                     alt={`Thumbnail ${globalIndex + 1}`}
                     fill
                     sizes="(max-width: 1023px) 64px, 80px"
                     unoptimized={shouldBypassImageOptimizer(p.imageUrl)}
+                    loading={globalIndex === activeIndex ? "eager" : undefined}
+                    fetchPriority={globalIndex === activeIndex ? "high" : undefined}
+                    overlayClassName="bg-surface-100"
                     className="object-cover"
                   />
                 </button>
@@ -205,14 +209,17 @@ export function ResourceGallery({
         aria-label="Enlarge preview"
         className="group relative order-1 w-full cursor-zoom-in overflow-hidden rounded-xl border border-surface-200 bg-surface-50 aspect-[4/3] min-h-[420px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 lg:order-2"
       >
-        <Image
+        <RevealImage
           src={current.imageUrl}
           alt={`${resourceTitle} – preview ${activeIndex + 1} of ${total}`}
           fill
           sizes="(max-width: 1023px) calc(100vw - 2rem), 910px"
           className="h-full w-full object-contain object-top"
           priority
+          loading="eager"
+          fetchPriority="high"
           unoptimized={currentIsRemotePreview}
+          overlayClassName="bg-surface-100"
         />
 
         {/* Enlarge badge — visual hint only, top-right, visible on hover */}
