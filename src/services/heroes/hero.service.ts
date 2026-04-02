@@ -994,14 +994,12 @@ export async function recordHeroImpressionEvent(input: HeroAnalyticsEventInput) 
   const experiment = validateExperimentFields(input.experimentId, input.variant);
 
   try {
-    await Promise.all([
-      incrementHeroImpression(input.heroId),
-      createHeroImpression({
-        heroId: input.heroId,
-        experimentId: experiment.experimentId,
-        variant: experiment.variant,
-      }),
-    ]);
+    await incrementHeroImpression(input.heroId);
+    await createHeroImpression({
+      heroId: input.heroId,
+      experimentId: experiment.experimentId,
+      variant: experiment.variant,
+    });
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -1020,14 +1018,12 @@ export async function recordHeroClickEvent(input: HeroAnalyticsEventInput) {
   const experiment = validateExperimentFields(input.experimentId, input.variant);
 
   try {
-    await Promise.all([
-      incrementHeroClick(input.heroId),
-      createHeroClick({
-        heroId: input.heroId,
-        experimentId: experiment.experimentId,
-        variant: experiment.variant,
-      }),
-    ]);
+    await incrementHeroClick(input.heroId);
+    await createHeroClick({
+      heroId: input.heroId,
+      experimentId: experiment.experimentId,
+      variant: experiment.variant,
+    });
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&

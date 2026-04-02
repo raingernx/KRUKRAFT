@@ -51,6 +51,7 @@
 - full-width hero section above the main content container
 - streamed discover sections such as trending, creator spotlight, personalized recommendations, new releases, featured picks, and free resources
 - viewer-aware personalization hydrates after the public shell instead of blocking the initial route render
+- discover-section CTAs should only appear when the target listing matches the section's promise; purely personalized rows can omit `View all` rather than sending users to a generic fallback list
 
 **Listing mode**
 - no discover hero
@@ -61,7 +62,8 @@
 - no-result recovery panel when a search miss occurs
 
 **Marketplace search UX**
-- search suggestions are debounced and open below the navbar search input
+- focusing/clicking the empty navbar search input now opens a quick-browse dropdown with recent searches plus curated browse shortcuts
+- search suggestions are still debounced and replace the quick-browse panel once the user types enough text
 - selecting a suggestion opens the resource detail directly
 - pressing Enter or using the dropdown footer navigates to canonical `/resources?search=...`
 - no-result dropdown and full-page recovery both offer alternate queries plus taxonomy browse links

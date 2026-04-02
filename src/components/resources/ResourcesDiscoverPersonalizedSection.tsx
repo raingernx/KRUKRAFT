@@ -21,7 +21,7 @@ function ResourcesSectionHeader({
 }: {
   title: string;
   description?: string;
-  viewAllHref: string;
+  viewAllHref?: string;
 }) {
   return (
     <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-3 sm:flex-row sm:items-end sm:justify-between">
@@ -31,19 +31,21 @@ function ResourcesSectionHeader({
           <p className="max-w-2xl text-sm leading-6 text-text-secondary">{description}</p>
         ) : null}
       </div>
-      <IntentPrefetchLink
-        href={viewAllHref}
-        prefetchMode="intent"
-        prefetchScope="resources-section-view-all"
-        prefetchLimit={2}
-        resourcesNavigationMode="listing"
-        className="group inline-flex items-center gap-1 self-start rounded-full px-2.5 py-1 text-small font-medium text-primary-700 transition-colors hover:bg-primary-50 hover:text-primary-800 sm:self-auto"
-      >
-        <span className="inline-flex items-center gap-1">
-          <span>View all</span>
-          <ArrowRight className="h-3.5 w-3.5" />
-        </span>
-      </IntentPrefetchLink>
+      {viewAllHref ? (
+        <IntentPrefetchLink
+          href={viewAllHref}
+          prefetchMode="intent"
+          prefetchScope="resources-section-view-all"
+          prefetchLimit={2}
+          resourcesNavigationMode="listing"
+          className="group inline-flex items-center gap-1 self-start rounded-full px-2.5 py-1 text-small font-medium text-primary-700 transition-colors hover:bg-primary-50 hover:text-primary-800 sm:self-auto"
+        >
+          <span className="inline-flex items-center gap-1">
+            <span>View all</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </span>
+        </IntentPrefetchLink>
+      ) : null}
     </div>
   );
 }
@@ -121,7 +123,11 @@ export function ResourcesDiscoverPersonalizedSection({
                 ? "A focused set of picks to help you keep momentum without sorting through the whole library."
                 : "Top resources other learners are exploring this week."
             }
-            viewAllHref={routes.marketplaceQuery("sort=trending&category=all")}
+            viewAllHref={
+              shouldUseRecommendedLabel
+                ? undefined
+                : routes.marketplaceQuery("sort=trending&category=all")
+            }
           />
           {recommendationVariant ? (
             <RecommendationSection
@@ -166,7 +172,16 @@ export function ResourcesDiscoverPersonalizedSection({
           <ResourcesSectionHeader
             title={`Because you studied ${discover.recentStudyTitle}`}
             description={`More resources in ${discover.recentCategoryName} you haven't tried yet.`}
-            viewAllHref={routes.marketplaceQuery("category=all&sort=newest")}
+            viewAllHref={
+              discover.recentCategorySlug
+                ? routes.marketplaceQuery(
+                    new URLSearchParams({
+                      category: discover.recentCategorySlug,
+                      sort: "newest",
+                    }),
+                  )
+                : undefined
+            }
           />
           <ResourceCardRow
             resources={discover.becauseYouStudied}
@@ -185,7 +200,6 @@ export function ResourcesDiscoverPersonalizedSection({
           <ResourcesSectionHeader
             title="Recommended for your level"
             description="Deterministic picks shaped by the difficulty level your recent purchases suggest."
-            viewAllHref={routes.marketplaceQuery("sort=trending&category=all")}
           />
           <ResourceCardRow
             resources={discover.recommendedForLevel}

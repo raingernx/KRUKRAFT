@@ -24,6 +24,8 @@ type CachedDiscoverReader = () => Promise<ResourcesViewerDiscoverState | null>;
 
 const _viewerDiscoverCacheMap = new Map<string, CachedDiscoverReader>();
 const DISCOVER_VIEWER_REVALIDATE_SECONDS = 30;
+const DISCOVER_VIEWER_DEV_SEQUENTIAL =
+  process.env.NODE_ENV === "development";
 
 function isResourcesViewerStateTransientError(error: unknown) {
   if (
@@ -141,13 +143,14 @@ export async function getResourcesViewerDiscoverState(input: {
           () =>
             runSingleFlight(cacheKey, async () => {
               const ownedIds = await loadOwnedResourceIdsSafe(userId);
+              const learningProfile = await loadLearningProfileSafe(userId);
 
-              const [learningProfile, discoverData] = await Promise.all([
-                loadLearningProfileSafe(userId),
-                loadDiscoverDataSafe(),
-              ]);
+              if (!learningProfile?.hasHistory) {
+                return null;
+              }
 
-              if (!learningProfile?.hasHistory || !discoverData) {
+              const discoverData = await loadDiscoverDataSafe();
+              if (!discoverData) {
                 return null;
               }
 
@@ -156,32 +159,78 @@ export async function getResourcesViewerDiscoverState(input: {
               );
               const topCategoryIds = learningProfile.topCategories.map((item) => item.id);
               const recommendationVariant = assignRecommendationVariant(userId);
-              const recommendedForYou = (await (
-                recommendationVariant === "phase1"
-                  ? getPhase1Recommendations(topCategoryIds, ownedIds, globalFiltered, 5)
-                  : getBehaviorBasedRecommendations(
-                      userId,
-                      ownedIds,
-                      topCategoryIds,
-                      globalFiltered,
-                      5,
-                    )
-              )) as ResourceCardData[];
+              let recommendedForYou: ResourceCardData[];
+
+              try {
+                recommendedForYou = (await (
+                  recommendationVariant === "phase1"
+                    ? getPhase1Recommendations(topCategoryIds, ownedIds, globalFiltered, 5)
+                    : getBehaviorBasedRecommendations(
+                        userId,
+                        ownedIds,
+                        topCategoryIds,
+                        globalFiltered,
+                        5,
+                      )
+                )) as ResourceCardData[];
+              } catch (error) {
+                if (
+                  !isMissingTableError(error) &&
+                  !isResourcesViewerStateTransientError(error)
+                ) {
+                  throw error;
+                }
+
+                return null;
+              }
 
               const recentCategoryId = learningProfile.recentCategoryId ?? null;
               const preferredLevels = learningProfile.preferredLevels;
-              const [becauseYouStudied, recommendedForLevel] = await Promise.all([
-                recentCategoryId
-                  ? getCachedNewResourcesInCategories([recentCategoryId], 8).then((resources) =>
-                      resources.filter((resource) => !ownedIds.has(resource.id)).slice(0, 5),
-                    )
-                  : Promise.resolve([] as ResourceCardData[]),
-                preferredLevels.length > 0
-                  ? getCachedRecommendedResourcesByLevels(preferredLevels, 6).then((resources) =>
-                      resources.filter((resource) => !ownedIds.has(resource.id)).slice(0, 4),
-                    )
-                  : Promise.resolve([] as ResourceCardData[]),
-              ]);
+              let becauseYouStudied: ResourceCardData[] = [];
+              let recommendedForLevel: ResourceCardData[] = [];
+
+              try {
+                if (DISCOVER_VIEWER_DEV_SEQUENTIAL) {
+                  becauseYouStudied = recentCategoryId
+                    ? (await getCachedNewResourcesInCategories([recentCategoryId], 8))
+                        .filter((resource) => !ownedIds.has(resource.id))
+                        .slice(0, 5)
+                    : [];
+
+                  recommendedForLevel =
+                    preferredLevels.length > 0
+                      ? (await getCachedRecommendedResourcesByLevels(preferredLevels, 6))
+                          .filter((resource) => !ownedIds.has(resource.id))
+                          .slice(0, 4)
+                      : [];
+                } else {
+                  [becauseYouStudied, recommendedForLevel] = await Promise.all([
+                    recentCategoryId
+                      ? getCachedNewResourcesInCategories([recentCategoryId], 8).then(
+                          (resources) =>
+                            resources
+                              .filter((resource) => !ownedIds.has(resource.id))
+                              .slice(0, 5),
+                        )
+                      : Promise.resolve([] as ResourceCardData[]),
+                    preferredLevels.length > 0
+                      ? getCachedRecommendedResourcesByLevels(preferredLevels, 6).then(
+                          (resources) =>
+                            resources
+                              .filter((resource) => !ownedIds.has(resource.id))
+                              .slice(0, 4),
+                        )
+                      : Promise.resolve([] as ResourceCardData[]),
+                  ]);
+                }
+              } catch (error) {
+                if (
+                  !isMissingTableError(error) &&
+                  !isResourcesViewerStateTransientError(error)
+                ) {
+                  throw error;
+                }
+              }
 
               return {
                 recommendationVariant,
@@ -190,6 +239,7 @@ export async function getResourcesViewerDiscoverState(input: {
                 recommendedForLevel,
                 recentStudyTitle: learningProfile.recentStudyTitle ?? null,
                 recentCategoryName: learningProfile.recentCategoryName ?? null,
+                recentCategorySlug: learningProfile.recentCategorySlug ?? null,
               };
             }),
           {

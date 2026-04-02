@@ -15,4 +15,5 @@ export interface ResourcesViewerDiscoverState {
   recommendedForLevel: ResourceCardData[];
   recentStudyTitle: string | null;
   recentCategoryName: string | null;
+  recentCategorySlug: string | null;
 }

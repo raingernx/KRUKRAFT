@@ -32,6 +32,8 @@ Primary bottleneck class is now:
 - build-time Prisma warning from `platformSettings.findFirst()` was removed by separating build-safe platform config from admin live config
 - root layout stopped SSR-seeding `SessionProvider` from `getServerSession`, which restores a cleaner caching baseline for public routes
 - the root client provider tree no longer mounts `SessionProvider`; auth-aware navbar/pricing/checkout UI now use a smaller `/api/auth/viewer` fetch instead of the global NextAuth client-session baseline
+- `/api/auth/viewer` now reads the signed JWT cookie through `next-auth/jwt` instead of `getServerSession`, which removes a Prisma-backed session lookup from the lightweight public auth-chrome path
+- the marketplace/detail private viewer-state APIs now read the same signed JWT snapshot instead of `getServerSession`, which removes another public-route session lookup from the Prisma pool before owned-state/review queries begin
 - the auth-viewer hook no longer hydrates from module cache during the initial render, which avoids navbar server/client drift; navbar auth controls now hold their footprint with lightweight loading placeholders until the viewer request settles
 - public navbar auth resolution now defers to browser idle time and warms on interaction, which trims eager auth fetch pressure on public routes while keeping auth-aware chrome responsive when users engage it
 - local dev/HMR transient auth-viewer network failures now fall back silently to the signed-out snapshot instead of spamming `[AUTH_VIEWER_HOOK] Failed to fetch`, which keeps browser/dev logs usable while preserving real production/non-transient error reporting
@@ -42,9 +44,14 @@ Primary bottleneck class is now:
 - `/resources` signed-in discover payloads now use short-lived private Redis + `unstable_cache` reuse so repeat navigations do not recompute the full recommendation state every time
 - purchase-derived learning profiles used by signed-in discover hydration now also go through Redis + single-flight, reducing cross-instance rebuilds of the same viewer profile
 - personalized discover now also pushes user-interest profiles and shared Phase 2 candidate pools through Redis + single-flight, which cuts cross-instance recomputation when recommendation requests fan out
+- when a cold discover refresh hits Prisma pool pressure, section loaders now stop and let the outer best-effort discover response degrade for that request instead of spending extra fallback DB queries; local development also keeps section-source loading sequential to avoid starving auth/session requests on the small local pool
 - recommendation impressions are no longer written from the cached discover miss path; they now fire from a client-side section exposure tracker through `/api/recommendations/impression`, which keeps the cached discover loader read-only and aligns analytics with actual viewport exposure
+- marketplace discover personalization now also treats recommendation-path transient DB failures as best-effort and can return `null`/empty secondary personalized sections instead of failing the private viewer-state route under pool pressure
 - repeat personalized client JSON fetches now use a small browser-side TTL/dedupe cache, reducing quick remount/refetch churn for discover and owner-review sections
 - discover hero anonymous selection now uses a static seed instead of request cookie/header inputs on the marketplace route, and anonymous callers now default to that static seed unless they explicitly opt into request-bound behavior
+- hero cache fallback/legacy reads now also use process-level single-flight, and hero impression/click analytics writes are serialized instead of running two concurrent Prisma mutations per event to reduce public-route pool spikes
+- `/brand-assets/*` runtime delivery now guards against self-referential alias values and falls back to concrete default assets instead of redirecting a logo/icon request back to the same runtime route
+- `/brand-assets/*` runtime alias routes now also bypass `src/proxy.ts`, removing unnecessary proxy/ranking-cookie overhead from logo/favicon requests
 - trigram index coverage now extends beyond `Resource.title/description` to `Category.name`, `Tag.name`, `User.name`, and `User.email` so marketplace search and admin user lookup avoid the remaining text-search scan hotspots
 - marketplace search and live search now share a broader weighted relevance query across title, slug, description, category, tag, and creator fields instead of using narrower title/description-only listing filters
 - search now tokenizes multi-word queries and expands a small synonym/alias set for common study terms, which improves recall without adding a separate search engine

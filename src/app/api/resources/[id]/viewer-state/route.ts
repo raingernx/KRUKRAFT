@@ -1,6 +1,5 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
+import { getAuthTokenSnapshot } from "@/lib/auth/token-snapshot";
 import type { ResourceDetailViewerScope } from "@/lib/resources/resource-detail-viewer-state";
 import {
   getResourceDetailViewerBaseState,
@@ -17,24 +16,23 @@ function getViewerScope(searchParams: URLSearchParams): ResourceDetailViewerScop
   return searchParams.get("scope") === "review" ? "review" : "base";
 }
 
-export async function GET(req: Request, { params }: Params) {
+export async function GET(req: NextRequest, { params }: Params) {
   try {
-    const session = await getServerSession(authOptions);
+    const auth = await getAuthTokenSnapshot(req);
     const { id } = await params;
     const { searchParams } = new URL(req.url);
     const scope = getViewerScope(searchParams);
-    const userId = session?.user?.id ?? null;
     const data =
       scope === "review"
         ? await getResourceDetailViewerReviewState({
             resourceId: id,
-            userId,
+            userId: auth.userId,
           })
         : await getResourceDetailViewerBaseState({
             fresh: searchParams.get("fresh") === "1",
             resourceId: id,
-            userId,
-            subscriptionStatus: session?.user?.subscriptionStatus ?? null,
+            userId: auth.userId,
+            subscriptionStatus: auth.subscriptionStatus,
           });
 
     return NextResponse.json(

@@ -6,7 +6,10 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { env } from "@/env";
 import { prisma } from "./prisma";
-import { isMissingTableError } from "./prismaErrors";
+import {
+  isMissingTableError,
+  isTransientPrismaInfrastructureError,
+} from "./prismaErrors";
 import { routes } from "./routes";
 
 // ── JWT role cache ────────────────────────────────────────────────────────────
@@ -57,6 +60,26 @@ function setCachedRole(
   subscriptionStatus: string | null
 ): void {
   roleCache.set(userId, { role, subscriptionStatus, cachedAt: Date.now() });
+}
+
+function backoffTokenRoleRefresh(
+  token: Record<string, unknown>,
+  userId: string,
+  now: number,
+) {
+  const fallbackRole =
+    typeof token.role === "string"
+      ? (token.role as AppUserRole)
+      : "STUDENT";
+  const fallbackSubscriptionStatus =
+    typeof token.subscriptionStatus === "string"
+      ? token.subscriptionStatus
+      : null;
+
+  token.role = fallbackRole;
+  token.subscriptionStatus = fallbackSubscriptionStatus ?? undefined;
+  token.roleRefreshedAt = now;
+  setCachedRole(userId, fallbackRole, fallbackSubscriptionStatus);
 }
 
 // ── Auth options ──────────────────────────────────────────────────────────────
@@ -189,7 +212,11 @@ export const authOptions: NextAuthOptions = {
               setCachedRole(userId, dbUser.role, dbUser.subscriptionStatus);
             }
           } catch (error) {
-            if (!isMissingTableError(error)) throw error;
+            if (isTransientPrismaInfrastructureError(error)) {
+              backoffTokenRoleRefresh(token, userId, now);
+            } else if (!isMissingTableError(error)) {
+              throw error;
+            }
             // User table missing (local dev schema drift) — keep existing token values.
           }
         }

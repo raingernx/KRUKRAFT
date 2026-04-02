@@ -51,6 +51,7 @@ Current proxy behavior:
 - unauthenticated `/dashboard*` and `/admin*` requests redirect to `/auth/login?next=...`
 - authenticated non-admin `/admin*` requests redirect to `/dashboard`
 - public branches still avoid auth work entirely apart from ranking-cookie assignment and locale cleanup
+- `/brand-assets/*` runtime alias routes are now excluded from the proxy matcher, so logo/favicon asset redirects do not pay the ranking-cookie/proxy hop
 
 ## Caching Architecture
 
@@ -102,6 +103,8 @@ Database search note:
 Root rendering note:
 - the root app layout uses build-safe public platform config only and does not read the authenticated server session
 - the root client provider tree no longer mounts `SessionProvider`; public routes avoid the NextAuth client-session baseline by using targeted auth-viewer fetches only where auth-aware UI is needed
+- `/api/auth/viewer` now resolves directly from the signed JWT token via `next-auth/jwt` instead of `getServerSession`, so lightweight auth chrome does not spend Prisma connections just to confirm the signed-in snapshot
+- `/api/resources/viewer-state` and `/api/resources/[id]/viewer-state` now resolve the same auth snapshot from the signed JWT token instead of calling `getServerSession`, so owned-state/detail-state hydration no longer burns Prisma connections on session reads before the feature-specific queries start
 - lightweight client JSON fetches now use a small browser-side dedupe/TTL cache for repeat personalized requests, and sign-out clears that cache alongside auth viewer state
 
 ## Resource Detail Architecture
@@ -151,6 +154,7 @@ NextAuth JWT strategy
   → credentials login
   → Google OAuth
   → role-aware protected routes
+  → lightweight `/api/auth/viewer` reads JWT cookies directly and avoids Prisma-backed session resolution
   → password reset + soft email verification
 ```
 
@@ -166,6 +170,8 @@ admin settings / live platform editing
 public logo / favicon / OG asset delivery
   → `/brand-assets/*` runtime routes
   → resolve latest DB-backed platform assets without forcing Prisma into build-time metadata generation
+  → runtime asset delivery now guards against `/brand-assets/*` alias values stored in platform settings and falls back to concrete asset URLs instead of redirecting back to itself
+  → runtime asset alias requests also bypass `src/proxy.ts`, so asset delivery no longer spends time in the ranking-cookie/proxy layer
 ```
 
 This separation exists to avoid Prisma build-time warnings and DB dependency in static build paths.
@@ -181,12 +187,16 @@ This separation exists to avoid Prisma build-time warnings and DB dependency in 
 - `/resources` signed-in discover personalization now uses a short-lived private cache layer to reduce repeat recommendation work across navigations
 - `/resources` learning-profile reads inside signed-in viewer-state now also use Redis + single-flight, so repeat cross-instance discover hydration does not keep rebuilding the same purchase-derived profile
 - personalized discover now also reuses Redis + single-flight for user interest profiles and Phase 2 candidate pools, reducing cross-instance cold-tail work when multiple signed-in users share the same recommendation slice
+- when Prisma pool pressure hits a cold discover refresh, section loaders now stop and fall back through the outer best-effort discover shell instead of spending extra DB queries on fallback IDs; development also keeps section-source loading sequential to avoid starving auth/session paths on tiny local pools
 - recommendation impression writes no longer happen inside the cached discover loader; impressions are emitted from the client recommendation section when that section actually enters the viewport
 - personalized client fetches for discover/review sections now also use short-lived browser-side dedupe to avoid re-requesting the same JSON during quick remounts
+- signed-in marketplace discover hydration now also treats recommendation-path transient DB failures as best-effort and returns `null`/empty secondary sections instead of failing the private viewer-state route
 - `/resources` with a search query now defaults to `relevance` sorting, while still allowing the user to switch to other marketplace sort orders within the matched set
 - search synonym groups, recovery fallback terms, relevance weights, and match-reason copy now live in a shared `src/config/search.ts` config surface instead of being hardcoded inline across helpers and repository SQL
 - the search config surface is now driven by typed term rules (`SEARCH_TERM_RULES`) plus shared weight/copy maps, so synonym and recovery tuning can happen in one place instead of editing helper logic and SQL together
 - shared marketplace search inputs now use debounced typeahead suggestions from `/api/search`, with direct-result navigation for selected resources and canonical `/resources` navigation for full-result queries
+- shared marketplace search inputs now also open an empty-query quick-browse panel on focus/click, using client-side recent searches plus curated marketplace/category shortcuts; typed queries still switch into the debounced `/api/search?view=suggestions` flow once enough text is present
+- personalized discover sections now only expose `View all` when there is a truthful listing destination: category-driven "Because you studied ..." links go to that category's newest listing, while purely personalized recommendation slices no longer route users to a misleading generic trending page
 - shared marketplace typeahead inputs now call `/api/search?view=suggestions`, which uses a lighter ranked-search result shape than the full search API and avoids review-count work that the dropdowns do not render
 - typeahead suggestion fetches now reuse a short-lived browser-side cache, and no-result dropdown recovery now comes from a dedicated `/api/search/recovery` endpoint so the ranked search query is not rerun just to render fallback suggestions
 - public search results and search-recovery payloads now reuse `unstable_cache` plus Redis + single-flight on the backend, reducing duplicate ranked-search and taxonomy work both within a warm instance and across repeated queries
@@ -203,6 +213,7 @@ This separation exists to avoid Prisma build-time warnings and DB dependency in 
 - above-the-fold marketplace hero, spotlight, and leading grid-card images can now opt into eager loading without changing the default lazy behavior for the rest of the catalog; discover sections now carry eager state forward for duplicate preview URLs, and search-result listings widen the eager window when a query is active so Lighthouse/browser runs do not keep flagging lower first-page cards as lazy LCP candidates
 - the detail preview gallery now marks both the main preview image and the currently active matching thumbnail as eager/high-priority so duplicate-src thumbnails do not re-trigger Next dev LCP warnings by overwriting the main priority image entry
 - homepage/discover hero resolution now defaults anonymous callers to a static seed unless request-bound behavior is explicitly requested
+- homepage hero cache reads now also use process-level single-flight, and hero impression/click analytics writes are serialized instead of running two concurrent Prisma mutations per event to reduce avoidable public-route pool spikes
 - `/resources/[slug]` no longer reads session/cookies at the page level; ownership/success now hydrate ahead of owner-review state from the client-side detail viewer-state API, and post-checkout refresh can bypass the short-lived ownership cache
 - `/resources/[slug]` detail viewer-state now waits for the lightweight auth viewer before calling the private detail viewer-state API, so anonymous detail visits skip that extra request
 - `/resources/[slug]` detail purchase rail now holds a structural "Checking your library…" placeholder instead of flashing a buy CTA before deferred ownership state resolves
@@ -219,6 +230,8 @@ This separation exists to avoid Prisma build-time warnings and DB dependency in 
 - key browser verification now also has a repo-owned `npm run smoke:local:browser` path that exercises the main public search/detail/auth-guard flows plus authenticated admin/creator preview-image uploader flows before merge
 - Playwright browser automation is now scaffolded for local/CI use via `playwright.config.ts` and `npm run test:e2e`; the local project still uses the `chromium` project name, but on this macOS setup it launches the locally installed Chrome stable binary via `channel: "chrome"` because Google Chrome for Testing proved crash-prone
 - browser-level route coverage now includes `/resources`, top-bar search submit into canonical `/resources?search=...`, canonical search results, no-results recovery, resource detail image rendering, and authenticated preview-image uploader flows on both `/admin/resources/new` and `/dashboard/creator/resources/new`
+- browser-level search coverage now also verifies the empty-query quick-browse dropdown and recent-search chip behavior before the canonical search submit path
+- browser-level discover coverage now also verifies that the "Featured picks" `View all` CTA opens the featured listing filter instead of falling through a legacy sort alias, and that the seeded creator discover shell does not expose misleading personalized CTA affordances when no history-backed personalized slice exists
 - browser-level verification tooling now also includes `@axe-core/playwright` for in-test accessibility checks, `@lhci/cli` via `.lighthouserc.json` for Lighthouse route audits, and `@next/bundle-analyzer` behind `ANALYZE=true` / `npm run analyze` for bundle inspection
 - Storybook is now scaffolded only for `src/design-system/primitives/*` and `src/design-system/components/*`, with repo-owned config under `.storybook/` and a verified build-based smoke path via `npm run storybook:smoke`
 - local browser automation against `http://127.0.0.1:3000` is now explicitly allowed through Next's `allowedDevOrigins`, so Playwright no longer depends on blocked dev-resource/HMR fallbacks when it uses that origin

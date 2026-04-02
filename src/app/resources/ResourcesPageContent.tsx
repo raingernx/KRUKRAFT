@@ -289,38 +289,60 @@ async function ResourcesListingContent({
             </Suspense>
 
             {spotlightResource ? (
-              <div className="rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50/85 to-white p-4 sm:p-5">
-                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                  <div className="space-y-1.5">
-                    <p className="font-ui text-caption tracking-[0.12em] text-primary-700">
-                      {spotlightLabel}
-                    </p>
-                    <p className="max-w-2xl text-small leading-6 text-text-secondary">
-                      Start with the clearest signal in {(activeCategoryName ?? "the marketplace").toLowerCase()} before
-                      you scan the rest of the collection.
-                    </p>
+              <div className="rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50/80 via-white to-white p-4 sm:p-5">
+                <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(280px,320px)] lg:items-start">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <p className="font-ui text-caption tracking-[0.12em] text-primary-700">
+                        {spotlightLabel}
+                      </p>
+                      <h2 className="text-xl font-semibold tracking-tight text-text-primary sm:text-2xl">
+                        Start with the strongest pick first
+                      </h2>
+                      <p className="max-w-2xl text-small leading-6 text-text-secondary">
+                        Use this highlighted pick as your first stop in {(activeCategoryName ?? "the marketplace").toLowerCase()} before
+                        you scan the rest of the collection.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <span className="inline-flex items-center rounded-full border border-primary-100 bg-white/85 px-3 py-1 text-xs font-medium text-primary-700">
+                        {sortLabel}
+                      </span>
+                      {activeCategoryName ? (
+                        <span className="inline-flex items-center rounded-full border border-surface-200 bg-white/85 px-3 py-1 text-xs font-medium text-text-secondary">
+                          {activeCategoryName}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <IntentPrefetchLink
+                      href={routes.resource(spotlightResource.slug)}
+                      prefetchMode="intent"
+                      prefetchScope="spotlight-resource"
+                      prefetchLimit={1}
+                      resourcesNavigationMode="detail"
+                      className="inline-flex items-center gap-1 text-small font-medium text-primary-700 transition hover:text-primary-800"
+                    >
+                      View resource
+                      <ArrowRight className="h-4 w-4" />
+                    </IntentPrefetchLink>
                   </div>
-                  <IntentPrefetchLink
-                    href={routes.resource(spotlightResource.slug)}
-                    prefetchMode="intent"
-                    prefetchScope="spotlight-resource"
-                    prefetchLimit={1}
-                    resourcesNavigationMode="detail"
-                    className="inline-flex items-center gap-1 text-small font-medium text-primary-700 transition hover:text-primary-800"
-                  >
-                    View resource
-                    <ArrowRight className="h-4 w-4" />
-                  </IntentPrefetchLink>
+
+                  <div className="w-full max-w-[320px] justify-self-start lg:justify-self-end">
+                    <div className="rounded-[1.35rem] border border-primary-100/80 bg-white/90 p-2 shadow-[0_18px_40px_-28px_rgba(59,91,219,0.45)]">
+                      <ViewerAwareResourceCard
+                        resource={{
+                          ...spotlightResource,
+                          highlightBadge: spotlightLabel,
+                        }}
+                        variant="marketplace"
+                        linkPrefetchMode="viewport"
+                        imageLoading="eager"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <ViewerAwareResourceCard
-                  resource={{
-                    ...spotlightResource,
-                    highlightBadge: spotlightLabel,
-                  }}
-                  variant="hero"
-                  linkPrefetchMode="viewport"
-                  imageLoading="eager"
-                />
               </div>
             ) : null}
 
@@ -509,7 +531,7 @@ async function ResourcesDiscoverDeferredSections({
         <section className="space-y-5">
           <SectionHeader
             title="Featured picks"
-            viewAllHref={routes.marketplaceQuery("sort=featured&category=all")}
+            viewAllHref={routes.marketplaceQuery("featured=true&category=all")}
           />
           <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
             {(discoverData.featured as ResourceCardData[]).map((resource, index) => (

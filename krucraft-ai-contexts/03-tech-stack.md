@@ -36,6 +36,8 @@
 - `storybook:smoke`: build-based Storybook smoke for design-system primitives/components
 - `lhci:*`: Lighthouse CI collection/assertion flow backed by `.lighthouserc.json`
 - `analyze`: Next bundle analyzer via `ANALYZE=true npm run build`
+- `/api/auth/viewer` now reads the signed NextAuth JWT through `next-auth/jwt` instead of `getServerSession`, which keeps lightweight auth-chrome checks off the Prisma pool
+- the marketplace/detail private viewer-state APIs now use the same JWT-token snapshot pattern instead of Prisma-backed `getServerSession` reads, which removes a second source of auth-related pool pressure on public routes
 
 Important: build must stay schema-mutation-free. Migration deploy is a separate operational step.
 

@@ -1,24 +1,22 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
+import { getAuthTokenSnapshot } from "@/lib/auth/token-snapshot";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    const user = session?.user;
+    const auth = await getAuthTokenSnapshot(req);
 
     return NextResponse.json(
       {
         data: {
-          authenticated: Boolean(user?.id),
-          user: user?.id
+          authenticated: auth.authenticated,
+          user: auth.userId
             ? {
-                id: user.id,
-                name: user.name ?? null,
-                email: user.email ?? null,
-                image: user.image ?? null,
+                id: auth.userId,
+                name: auth.name,
+                email: auth.email,
+                image: auth.image,
               }
             : null,
         },

@@ -71,11 +71,10 @@ function SortableItem({ id, index, url, onRemove, onSetCover }: SortableItemProp
         <Image
           src={url}
           alt=""
-          width={96}
-          height={64}
+          fill
           sizes="96px"
           unoptimized={shouldBypassImageOptimizer(url)}
-          className="h-16 w-24 object-cover"
+          className="object-cover"
         />
       </MediaPreview>
 

@@ -9,7 +9,7 @@ import {
   useTransition,
 } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { FileText, Search } from "lucide-react";
+import { Compass, FileText, Search, Sparkles } from "lucide-react";
 import { RevealImage, SearchInput } from "@/design-system";
 import { cn } from "@/lib/utils";
 import {
@@ -63,6 +63,79 @@ interface SearchRecoveryData {
   tagMatches: SearchRecoveryMatch[];
 }
 
+const RECENT_SEARCHES_STORAGE_KEY = "marketplace_recent_searches";
+const RECENT_SEARCHES_LIMIT = 4;
+const QUICK_BROWSE_LINKS = [
+  {
+    label: "ยอดนิยมตอนนี้",
+    href: routes.marketplaceQuery("sort=trending&category=all"),
+    icon: Sparkles,
+  },
+  {
+    label: "มาใหม่",
+    href: routes.marketplaceQuery("sort=newest&category=all"),
+    icon: Search,
+  },
+  {
+    label: "ฟรี",
+    href: routes.marketplaceQuery("price=free&category=all"),
+    icon: Compass,
+  },
+] as const;
+const QUICK_BROWSE_CATEGORIES = [
+  { label: "ทั้งหมด", href: routes.marketplaceCategory("all") },
+  { label: "ภาษา", href: routes.marketplaceCategory("language") },
+  { label: "คณิตศาสตร์", href: routes.marketplaceCategory("mathematics") },
+  { label: "วิทยาศาสตร์", href: routes.marketplaceCategory("science") },
+  { label: "Test Prep", href: routes.marketplaceCategory("test-prep") },
+] as const;
+
+function normalizeSearchQuery(query: string) {
+  return query.trim().replace(/\s+/g, " ");
+}
+
+function readRecentSearches(): string[] {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const raw = window.localStorage.getItem(RECENT_SEARCHES_STORAGE_KEY);
+    if (!raw) {
+      return [];
+    }
+
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed
+      .filter((entry): entry is string => typeof entry === "string")
+      .map(normalizeSearchQuery)
+      .filter(Boolean)
+      .slice(0, RECENT_SEARCHES_LIMIT);
+  } catch {
+    return [];
+  }
+}
+
+function writeRecentSearches(next: string[]) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(
+      RECENT_SEARCHES_STORAGE_KEY,
+      JSON.stringify(next),
+    );
+  } catch {
+    // Ignore quota/storage access failures. The dropdown still works without
+    // persisted recents.
+  }
+}
+
 /**
  * Canonical marketplace search input.
  * - On `/resources`, it refines the current catalogue context.
@@ -97,6 +170,12 @@ export function HeroSearch({
   const [isLoadingResults, setIsLoadingResults] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [recovery, setRecovery] = useState<SearchRecoveryData | null>(null);
+  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+
+  useEffect(() => {
+    setRecentSearches(readRecentSearches());
+  }, []);
 
   // Keep the input in sync with the URL (browser back/forward)
   useEffect(() => {
@@ -113,6 +192,7 @@ export function HeroSearch({
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
       ) {
+        setIsInputFocused(false);
         setIsDropdownOpen(false);
       }
     }
@@ -143,6 +223,41 @@ export function HeroSearch({
       router.push(href);
     });
   }, [router, startTransition]);
+
+  const rememberRecentSearch = useCallback((query: string) => {
+    const normalizedQuery = normalizeSearchQuery(query);
+    if (!normalizedQuery) {
+      return;
+    }
+
+    setRecentSearches((currentSearches) => {
+      const nextSearches = [
+        normalizedQuery,
+        ...currentSearches.filter(
+          (entry) => entry.toLowerCase() !== normalizedQuery.toLowerCase(),
+        ),
+      ].slice(0, RECENT_SEARCHES_LIMIT);
+
+      writeRecentSearches(nextSearches);
+      return nextSearches;
+    });
+  }, []);
+
+  const navigateToSearchQuery = useCallback((query: string) => {
+    const normalizedQuery = normalizeSearchQuery(query);
+    if (!normalizedQuery) {
+      return;
+    }
+
+    rememberRecentSearch(normalizedQuery);
+    navigateToHref(
+      buildMarketplaceSearchHref({
+        pathname,
+        searchParams,
+        query: normalizedQuery,
+      }),
+    );
+  }, [navigateToHref, pathname, rememberRecentSearch, searchParams]);
 
   const loadSearchRecovery = useCallback(async ({
     controller,
@@ -176,7 +291,7 @@ export function HeroSearch({
     if (!endpoint) {
       setResults([]);
       setRecovery(null);
-      setIsDropdownOpen(false);
+      setIsDropdownOpen(isInputFocused && value.trim().length === 0);
       setIsLoadingResults(false);
       setActiveIndex(-1);
       return;
@@ -237,14 +352,18 @@ export function HeroSearch({
       fetchAbortRef.current?.abort();
       fetchAbortRef.current = null;
     };
-  }, [loadSearchRecovery, pathname, searchParams, value]);
+  }, [isInputFocused, loadSearchRecovery, pathname, searchParams, value]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (isPending) return;
 
+    const normalizedQuery = normalizeSearchQuery(value);
     const activeResult = activeIndex >= 0 ? results[activeIndex] : null;
     if (activeResult) {
+      if (normalizedQuery) {
+        rememberRecentSearch(normalizedQuery);
+      }
       navigateToResource(activeResult.slug);
       return;
     }
@@ -255,11 +374,15 @@ export function HeroSearch({
       query: value,
     });
 
-    if (!value.trim() && !syncWithUrl) {
+    if (!normalizedQuery && !syncWithUrl) {
       setIsDropdownOpen(false);
       setResults([]);
       setActiveIndex(-1);
       return;
+    }
+
+    if (normalizedQuery) {
+      rememberRecentSearch(normalizedQuery);
     }
 
     navigateToHref(href);
@@ -270,7 +393,7 @@ export function HeroSearch({
     setResults([]);
     setRecovery(null);
     setActiveIndex(-1);
-    setIsDropdownOpen(false);
+    setIsDropdownOpen(!syncWithUrl && isInputFocused);
 
     if (isPending || !syncWithUrl) {
       inputRef.current?.focus();
@@ -312,10 +435,13 @@ export function HeroSearch({
     }
   }
 
-  const showDropdown =
+  const normalizedValue = normalizeSearchQuery(value);
+  const showQuickBrowseDropdown =
+    isDropdownOpen && normalizedValue.length === 0;
+  const showTypeaheadDropdown =
     isDropdownOpen &&
-    value.trim().length > 0 &&
-    (isLoadingResults || results.length > 0 || value.trim().length >= 2);
+    normalizedValue.length > 0 &&
+    (isLoadingResults || results.length > 0 || normalizedValue.length >= 2);
 
   function renderSuggestedQueries() {
     if (!recovery?.suggestedQueries?.length) {
@@ -332,15 +458,7 @@ export function HeroSearch({
             <button
               key={suggestion}
               type="button"
-              onClick={() =>
-                navigateToHref(
-                  buildMarketplaceSearchHref({
-                    pathname,
-                    searchParams,
-                    query: suggestion,
-                  }),
-                )
-              }
+              onClick={() => navigateToSearchQuery(suggestion)}
               className="inline-flex items-center rounded-full border border-surface-200 bg-surface-50 px-3 py-1.5 text-xs font-medium text-text-primary transition hover:border-surface-300 hover:bg-white"
             >
               {suggestion}
@@ -402,8 +520,76 @@ export function HeroSearch({
   }
 
   function renderDropdown() {
-    if (!showDropdown) {
+    if (!showQuickBrowseDropdown && !showTypeaheadDropdown) {
       return null;
+    }
+
+    if (showQuickBrowseDropdown) {
+      return (
+        <div
+          id={listboxId}
+          className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-surface-200 bg-white shadow-2xl shadow-slate-900/8"
+        >
+          <div className="space-y-5 px-4 py-4">
+            {recentSearches.length > 0 ? (
+              <div className="space-y-2">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+                  ค้นหาล่าสุด
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {recentSearches.map((query) => (
+                    <button
+                      key={query}
+                      type="button"
+                      onClick={() => navigateToSearchQuery(query)}
+                      className="inline-flex items-center rounded-full border border-surface-200 bg-white px-3 py-1.5 text-xs font-medium text-text-primary transition hover:border-surface-300 hover:bg-surface-50"
+                    >
+                      {query}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+                ลัดไปที่
+              </p>
+              <div className="grid gap-2 sm:grid-cols-3">
+                {QUICK_BROWSE_LINKS.map(({ href, icon: Icon, label }) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => navigateToHref(href)}
+                    className="flex items-center gap-2 rounded-2xl border border-surface-200 bg-surface-50 px-3 py-3 text-left text-sm font-medium text-text-primary transition hover:border-surface-300 hover:bg-white"
+                  >
+                    <Icon className="h-4 w-4 shrink-0 text-brand-600" />
+                    <span>{label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+                เลือกดูตามหมวด
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {QUICK_BROWSE_CATEGORIES.map(({ href, label }) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => navigateToHref(href)}
+                    className="inline-flex items-center rounded-full border border-surface-200 bg-white px-3 py-1.5 text-xs font-medium text-text-primary transition hover:border-surface-300 hover:bg-surface-50"
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
     }
 
     if (results.length === 0 && !isLoadingResults) {
@@ -424,15 +610,7 @@ export function HeroSearch({
           </div>
           <button
             type="button"
-            onClick={() =>
-              navigateToHref(
-                buildMarketplaceSearchHref({
-                  pathname,
-                  searchParams,
-                  query: value,
-                }),
-              )
-            }
+            onClick={() => navigateToSearchQuery(value)}
             className="flex w-full items-center justify-center gap-2 border-t border-surface-100 px-4 py-3 text-sm font-semibold text-brand-700 transition hover:bg-surface-50"
           >
             <Search className="h-4 w-4" />
@@ -471,7 +649,12 @@ export function HeroSearch({
               type="button"
               role="option"
               aria-selected={index === activeIndex}
-              onClick={() => navigateToResource(result.slug)}
+              onClick={() => {
+                if (normalizedValue) {
+                  rememberRecentSearch(normalizedValue);
+                }
+                navigateToResource(result.slug);
+              }}
               onMouseEnter={() => setActiveIndex(index)}
               className={cn(
                 "flex w-full items-center gap-3 px-4 py-3 text-left transition",
@@ -525,15 +708,7 @@ export function HeroSearch({
 
         <button
           type="button"
-          onClick={() =>
-            navigateToHref(
-              buildMarketplaceSearchHref({
-                pathname,
-                searchParams,
-                query: value,
-              }),
-            )
-          }
+          onClick={() => navigateToSearchQuery(value)}
           className="flex w-full items-center justify-center gap-2 border-t border-surface-100 px-4 py-3 text-sm font-semibold text-brand-700 transition hover:bg-surface-50"
         >
           <Search className="h-4 w-4" />
@@ -555,17 +730,34 @@ export function HeroSearch({
           variant={variant === "hero" ? "hero" : "default"}
           type="text"
           role="combobox"
-          aria-controls={showDropdown ? listboxId : undefined}
-          aria-expanded={showDropdown}
+          aria-controls={
+            showQuickBrowseDropdown || showTypeaheadDropdown
+              ? listboxId
+              : undefined
+          }
+          aria-expanded={showQuickBrowseDropdown || showTypeaheadDropdown}
           aria-autocomplete="list"
           aria-activedescendant={
-            activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined
+            showTypeaheadDropdown && activeIndex >= 0
+              ? `${listboxId}-option-${activeIndex}`
+              : undefined
           }
           value={value}
-          onChange={(event) => setValue(event.target.value)}
+          onChange={(event) => {
+            const nextValue = event.target.value;
+            setValue(nextValue);
+            if (normalizeSearchQuery(nextValue).length === 0 && isInputFocused) {
+              setIsDropdownOpen(true);
+            }
+          }}
           onKeyDown={handleKeyDown}
           onFocus={() => {
-            if (results.length > 0 || (value.trim().length >= 2 && !isLoadingResults)) {
+            setIsInputFocused(true);
+            if (
+              normalizeSearchQuery(value).length === 0 ||
+              results.length > 0 ||
+              (normalizeSearchQuery(value).length >= 2 && !isLoadingResults)
+            ) {
               setIsDropdownOpen(true);
             }
           }}

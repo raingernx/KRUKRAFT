@@ -1,6 +1,5 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
+import { getAuthTokenSnapshot } from "@/lib/auth/token-snapshot";
 import type { ResourcesViewerScope } from "@/lib/resources/viewer-state";
 import {
   getResourcesViewerBaseState,
@@ -19,16 +18,15 @@ function getViewerScope(searchParams: URLSearchParams): ResourcesViewerScope {
   return searchParams.get("mode") === "discover" ? "discover" : "base";
 }
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const auth = await getAuthTokenSnapshot(req);
     const { searchParams } = new URL(req.url);
     const scope = getViewerScope(searchParams);
-    const userId = session?.user?.id ?? null;
     const data =
       scope === "discover"
-        ? await getResourcesViewerDiscoverState({ userId })
-        : await getResourcesViewerBaseState({ userId });
+        ? await getResourcesViewerDiscoverState({ userId: auth.userId })
+        : await getResourcesViewerBaseState({ userId: auth.userId });
 
     return NextResponse.json(
       { data },

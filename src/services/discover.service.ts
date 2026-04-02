@@ -46,6 +46,8 @@ const TRENDING_WINDOW_DAYS = 30;
 const DISCOVER_DATA_SINGLE_FLIGHT_KEY = "discover-data:refresh";
 const DISCOVER_SECTION_SOURCE_LIMIT = 6;
 const DISCOVER_SECTION_DISPLAY_LIMIT = 4;
+const DISCOVER_SECTION_SOURCE_CONCURRENCY =
+  process.env.NODE_ENV === "development" ? 1 : 3;
 
 function isDiscoverPoolPressureError(error: unknown) {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -116,22 +118,25 @@ async function getDiscoverSectionIds(options: {
     `${cacheKey}:${limit}`,
     CACHE_TTLS.homepageList,
     async () => {
-      let ids: string[] = [];
-
       try {
-        ids = await primaryLoader();
+        const ids = await primaryLoader();
+        return resolveDiscoverFallbackIds(
+          ids,
+          limit,
+          fallbackOrderBy,
+          fallbackWhere,
+        );
       } catch (error) {
         if (!isDiscoverPoolPressureError(error)) {
           throw error;
         }
-      }
 
-      return resolveDiscoverFallbackIds(
-        ids,
-        limit,
-        fallbackOrderBy,
-        fallbackWhere,
-      );
+        // When the pool is already saturated, do not spend more connections on
+        // "fallback" DB queries for best-effort discover sections. Let the
+        // outer discover loader return an uncached empty payload for this
+        // request and preserve the last-good cache entry instead.
+        throw error;
+      }
     },
     {
       metricName,
@@ -182,19 +187,11 @@ async function getTrendingResourceIds(limit = 8) {
         "discover.getTrendingResourceIds",
         async () => {
           const since = new Date(Date.now() - DAY_MS * TRENDING_WINDOW_DAYS);
-          let candidates: Awaited<ReturnType<typeof findTrendingResourceSignals>> = [];
-
-          try {
-            candidates = await traceServerStep(
-              "discover.findTrendingResourceSignals",
-              () => findTrendingResourceSignals(since, Math.max(limit * 4, 24)),
-              { candidateLimit: Math.max(limit * 4, 24) },
-            );
-          } catch (error) {
-            if (!isDiscoverPoolPressureError(error)) {
-              throw error;
-            }
-          }
+          const candidates = await traceServerStep(
+            "discover.findTrendingResourceSignals",
+            () => findTrendingResourceSignals(since, Math.max(limit * 4, 24)),
+            { candidateLimit: Math.max(limit * 4, 24) },
+          );
 
           if (candidates.length === 0) {
             return traceServerStep(
@@ -358,13 +355,11 @@ const readDiscoverData = unstable_cache(
                   load: () => getTopCreatorForDiscover(),
                 },
               ],
-              // Phase 1 confirmed pgbouncer=true&connection_limit=2 in env.
-              // Each section loader checks Redis first via rememberJson() so most
-              // calls never open a DB connection. On a cold Redis miss, at most 3
-              // queries contend for 2 pooler connections — the third queues briefly.
-              // Raised from 1 (fully sequential) to 3 to reduce cold-path latency
-              // without saturating the connection pool.
-              3,
+              // Production keeps a modest amount of overlap to shorten cold
+              // refreshes, while development stays sequential to avoid letting
+              // public discover traffic starve auth/session reads on small
+              // local Prisma pools.
+              DISCOVER_SECTION_SOURCE_CONCURRENCY,
               async (entry) => ({
                 key: entry.key,
                 value: await entry.load(),
@@ -375,7 +370,10 @@ const readDiscoverData = unstable_cache(
               sectionSourceEntries.map(({ key, value }) => [key, value]),
             ) as DiscoverSectionSources;
           },
-          { sectionLimit: DISCOVER_SECTION_SOURCE_LIMIT },
+          {
+            sectionLimit: DISCOVER_SECTION_SOURCE_LIMIT,
+            sectionConcurrency: DISCOVER_SECTION_SOURCE_CONCURRENCY,
+          },
         );
 
         const resourceIds = Array.from(

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { PLATFORM_DEFAULTS } from "@/lib/platform/platform-defaults";
 import { getPlatform } from "@/services/platform.service";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +10,14 @@ const ASSET_KEYS = {
   "og-logo": "logoOgUrl",
   "email-logo": "logoEmailUrl",
   favicon: "faviconUrl",
+} as const;
+
+const ASSET_DEFAULTS = {
+  "full-logo": PLATFORM_DEFAULTS.logoFullUrl,
+  "icon-logo": PLATFORM_DEFAULTS.logoIconUrl,
+  "og-logo": PLATFORM_DEFAULTS.logoOgUrl,
+  "email-logo": PLATFORM_DEFAULTS.logoEmailUrl,
+  favicon: PLATFORM_DEFAULTS.faviconUrl,
 } as const;
 
 type AssetKey = keyof typeof ASSET_KEYS;
@@ -25,6 +34,35 @@ function toAssetUrl(request: NextRequest, value: string) {
   return new URL(value, request.url).toString();
 }
 
+function isSelfReferentialAssetRoute(
+  request: NextRequest,
+  asset: AssetKey,
+  value: string,
+) {
+  const normalized = value.trim();
+  if (!normalized) {
+    return false;
+  }
+
+  try {
+    const pathname = normalized.startsWith("http://") || normalized.startsWith("https://")
+      ? new URL(normalized).pathname
+      : normalized;
+
+    if (pathname === request.nextUrl.pathname) {
+      return true;
+    }
+
+    return pathname === `/brand-assets/${asset}`;
+  } catch {
+    if (normalized === request.nextUrl.pathname) {
+      return true;
+    }
+
+    return normalized === `/brand-assets/${asset}`;
+  }
+}
+
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ asset: string }> },
@@ -36,7 +74,10 @@ export async function GET(
 
   const platform = await getPlatform();
   const key = ASSET_KEYS[asset];
-  const value = platform[key];
+  const resolvedValue = platform[key];
+  const value = isSelfReferentialAssetRoute(request, asset, resolvedValue)
+    ? ASSET_DEFAULTS[asset]
+    : resolvedValue;
 
   if (!value) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });

@@ -99,6 +99,32 @@ function looksLikeFaviconAsset(value: string | null | undefined) {
   }
 }
 
+function normalizeStoredPlatformAssetUrl(value: string | null | undefined) {
+  const trimmed = value?.trim() ?? "";
+
+  if (!trimmed) {
+    return "";
+  }
+
+  try {
+    const pathname = trimmed.startsWith("http://") || trimmed.startsWith("https://")
+      ? new URL(trimmed).pathname
+      : trimmed;
+
+    return Object.values(PUBLIC_PLATFORM_ASSET_ROUTES).includes(
+      pathname as (typeof PUBLIC_PLATFORM_ASSET_ROUTES)[keyof typeof PUBLIC_PLATFORM_ASSET_ROUTES],
+    )
+      ? ""
+      : trimmed;
+  } catch {
+    return Object.values(PUBLIC_PLATFORM_ASSET_ROUTES).includes(
+      trimmed as (typeof PUBLIC_PLATFORM_ASSET_ROUTES)[keyof typeof PUBLIC_PLATFORM_ASSET_ROUTES],
+    )
+      ? ""
+      : trimmed;
+  }
+}
+
 function sanitizeAdminStoredSettings(
   settings: Awaited<ReturnType<typeof getStoredPlatformSettings>>,
 ): PlatformStoredSettings {
@@ -115,23 +141,26 @@ function sanitizeAdminStoredSettings(
     settings.logoIconUrl.trim() !== PLATFORM_DEFAULTS.logoIconUrl;
 
   const logoOgUrl =
-    settings.logoOgUrl?.trim() === PLATFORM_DEFAULTS.logoOgUrl &&
+    normalizeStoredPlatformAssetUrl(settings.logoOgUrl) === PLATFORM_DEFAULTS.logoOgUrl &&
     (hasCustomFullLogo || hasLegacyFullLogo)
       ? null
-      : settings.logoOgUrl;
+      : normalizeStoredPlatformAssetUrl(settings.logoOgUrl) || null;
   const logoEmailUrl =
-    settings.logoEmailUrl?.trim() === PLATFORM_DEFAULTS.logoEmailUrl &&
+    normalizeStoredPlatformAssetUrl(settings.logoEmailUrl) === PLATFORM_DEFAULTS.logoEmailUrl &&
     (hasCustomFullLogo || hasLegacyFullLogo)
       ? null
-      : settings.logoEmailUrl;
+      : normalizeStoredPlatformAssetUrl(settings.logoEmailUrl) || null;
   const faviconUrl =
-    settings.faviconUrl?.trim() === PLATFORM_DEFAULTS.faviconUrl &&
+    normalizeStoredPlatformAssetUrl(settings.faviconUrl) === PLATFORM_DEFAULTS.faviconUrl &&
     hasCustomIconLogo
       ? null
-      : settings.faviconUrl;
+      : normalizeStoredPlatformAssetUrl(settings.faviconUrl) || null;
 
   return {
     ...settings,
+    logoUrl: normalizeStoredPlatformAssetUrl(settings.logoUrl) || null,
+    logoFullUrl: normalizeStoredPlatformAssetUrl(settings.logoFullUrl) || null,
+    logoIconUrl: normalizeStoredPlatformAssetUrl(settings.logoIconUrl) || null,
     logoOgUrl,
     logoEmailUrl,
     faviconUrl,
@@ -155,28 +184,33 @@ export function resolvePlatformConfig(
     settings?.siteUrl?.trim() ||
     env.appBaseUrl ||
     PLATFORM_DEFAULTS.siteUrl;
-  const legacyLogoUrl = settings?.logoUrl?.trim() || "";
+  const legacyLogoUrl = normalizeStoredPlatformAssetUrl(settings?.logoUrl);
+  const storedFullLogoUrl = normalizeStoredPlatformAssetUrl(settings?.logoFullUrl);
+  const storedIconLogoUrl = normalizeStoredPlatformAssetUrl(settings?.logoIconUrl);
+  const storedOgLogoUrl = normalizeStoredPlatformAssetUrl(settings?.logoOgUrl);
+  const storedEmailLogoUrl = normalizeStoredPlatformAssetUrl(settings?.logoEmailUrl);
+  const storedFaviconUrl = normalizeStoredPlatformAssetUrl(settings?.faviconUrl);
   const logoFullUrl =
-    settings?.logoFullUrl?.trim() ||
+    storedFullLogoUrl ||
     legacyLogoUrl ||
     PLATFORM_DEFAULTS.logoFullUrl;
   const logoIconUrl =
-    settings?.logoIconUrl?.trim() ||
+    storedIconLogoUrl ||
     logoFullUrl ||
     legacyLogoUrl ||
     PLATFORM_DEFAULTS.logoIconUrl;
   const logoOgUrl =
-    settings?.logoOgUrl?.trim() ||
+    storedOgLogoUrl ||
     logoFullUrl ||
     legacyLogoUrl ||
     PLATFORM_DEFAULTS.logoOgUrl;
   const logoEmailUrl =
-    settings?.logoEmailUrl?.trim() ||
+    storedEmailLogoUrl ||
     logoFullUrl ||
     legacyLogoUrl ||
     PLATFORM_DEFAULTS.logoEmailUrl;
   const faviconUrl =
-    settings?.faviconUrl?.trim() ||
+    storedFaviconUrl ||
     (looksLikeFaviconAsset(logoIconUrl) ? logoIconUrl : "") ||
     (looksLikeFaviconAsset(legacyLogoUrl) ? legacyLogoUrl : "") ||
     PLATFORM_DEFAULTS.faviconUrl;

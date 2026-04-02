@@ -1,6 +1,44 @@
 import { expect, test } from "@playwright/test";
 import { collectRuntimeErrors } from "./helpers/browser";
 
+test("resources search focus opens quick browse and stores recent searches", async ({
+  page,
+}) => {
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+
+  await page.addInitScript(() => {
+    window.localStorage.removeItem("marketplace_recent_searches");
+  });
+
+  await page.goto("/resources");
+
+  const searchInput = page.getByRole("combobox", { name: "Search resources" });
+
+  await searchInput.click();
+
+  await expect(page.getByText("ลัดไปที่")).toBeVisible();
+  await expect(page.getByRole("button", { name: "ยอดนิยมตอนนี้" })).toBeVisible();
+  await expect(page.getByText("เลือกดูตามหมวด")).toBeVisible();
+
+  await searchInput.fill("worksheet");
+
+  await Promise.all([
+    page.waitForURL(/\/resources\?search=worksheet/),
+    searchInput.press("Enter"),
+  ]);
+
+  await searchInput.fill("");
+  await searchInput.click();
+
+  await expect(page.getByText("ค้นหาล่าสุด")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "worksheet", exact: true }),
+  ).toBeVisible();
+
+  expect(pageErrors).toEqual([]);
+  expect(consoleErrors).toEqual([]);
+});
+
 test("resources top-bar search submit navigates to canonical results route", async ({
   page,
 }) => {
@@ -9,12 +47,8 @@ test("resources top-bar search submit navigates to canonical results route", asy
   await page.goto("/resources");
 
   const searchInput = page.getByRole("combobox", { name: "Search resources" });
-  const searchSuggestionsFooter = page.getByRole("button", {
-    name: /ดูผลลัพธ์ทั้งหมดสำหรับ/i,
-  });
 
   await searchInput.fill("worksheet");
-  await expect(searchSuggestionsFooter).toBeVisible();
   await Promise.all([
     page.waitForURL(/\/resources\?search=worksheet/),
     searchInput.press("Enter"),

@@ -230,6 +230,7 @@ export interface UserLearningProfile {
   recentStudyTitle: string | null;
   recentCategoryId: string | null;
   recentCategoryName: string | null;
+  recentCategorySlug: string | null;
   topCategories: Array<{
     id: string;
     name: string;
@@ -266,6 +267,7 @@ export const getUserLearningProfile = unstable_cache(
               recentStudyTitle: null,
               recentCategoryId: null,
               recentCategoryName: null,
+              recentCategorySlug: null,
               topCategories: [],
               preferredLevels: [],
             };
@@ -308,6 +310,7 @@ export const getUserLearningProfile = unstable_cache(
             recentStudyTitle: rows[0]?.resource.title ?? null,
             recentCategoryId: rows[0]?.resource.category?.id ?? null,
             recentCategoryName: rows[0]?.resource.category?.name ?? null,
+            recentCategorySlug: rows[0]?.resource.category?.slug ?? null,
             topCategories: Array.from(categoryScores.values())
               .sort((left, right) => right.score - left.score)
               .slice(0, 3),

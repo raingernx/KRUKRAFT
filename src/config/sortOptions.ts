@@ -8,7 +8,9 @@
  * change for bookmarked/shared URLs, so treat them like a public API.
  */
 export const SORT_OPTIONS = [
-  { value: "recommended", label: "Recommended"       },
+  // Public marketplace sort. Keep the stable query value "recommended" for URL
+  // compatibility, but use a non-personalized label in UI copy.
+  { value: "recommended", label: "Top picks"         },
   { value: "trending",    label: "Trending"          },
   { value: "newest",      label: "Newest"            },
   { value: "downloads",   label: "Most downloaded"   },
