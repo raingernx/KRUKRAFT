@@ -44,6 +44,8 @@ import {
 const DAY_MS = 86_400_000;
 const TRENDING_WINDOW_DAYS = 30;
 const DISCOVER_DATA_SINGLE_FLIGHT_KEY = "discover-data:refresh";
+const DISCOVER_SECTION_SOURCE_LIMIT = 6;
+const DISCOVER_SECTION_DISPLAY_LIMIT = 4;
 
 function isDiscoverPoolPressureError(error: unknown) {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -290,16 +292,17 @@ const readDiscoverData = unstable_cache(
               [
                 {
                   key: "trendingIds" as const,
-                  load: () => getTrendingResourceIds(8),
+                  load: () => getTrendingResourceIds(DISCOVER_SECTION_SOURCE_LIMIT),
                 },
                 {
                   key: "popularIds" as const,
                   load: () =>
                     getDiscoverSectionIds({
                       cacheKey: CACHE_KEYS.popularResources,
-                      limit: 8,
+                      limit: DISCOVER_SECTION_SOURCE_LIMIT,
                       metricName: "discover.popularResources",
-                      primaryLoader: () => findTopDownloadedResourceIds(8),
+                      primaryLoader: () =>
+                        findTopDownloadedResourceIds(DISCOVER_SECTION_SOURCE_LIMIT),
                       fallbackOrderBy: [
                         { downloadCount: "desc" },
                         { createdAt: "desc" },
@@ -311,9 +314,10 @@ const readDiscoverData = unstable_cache(
                   load: () =>
                     getDiscoverSectionIds({
                       cacheKey: CACHE_KEYS.newestResources,
-                      limit: 8,
+                      limit: DISCOVER_SECTION_SOURCE_LIMIT,
                       metricName: "discover.newestResources",
-                      primaryLoader: () => findNewestResourceIds(8),
+                      primaryLoader: () =>
+                        findNewestResourceIds(DISCOVER_SECTION_SOURCE_LIMIT),
                       fallbackOrderBy: { createdAt: "desc" },
                     }),
                 },
@@ -322,9 +326,10 @@ const readDiscoverData = unstable_cache(
                   load: () =>
                     getDiscoverSectionIds({
                       cacheKey: CACHE_KEYS.featuredResources,
-                      limit: 8,
+                      limit: DISCOVER_SECTION_SOURCE_LIMIT,
                       metricName: "discover.featuredResources",
-                      primaryLoader: () => findFeaturedResourceIds(8),
+                      primaryLoader: () =>
+                        findFeaturedResourceIds(DISCOVER_SECTION_SOURCE_LIMIT),
                       fallbackOrderBy: [
                         { downloadCount: "desc" },
                         { createdAt: "desc" },
@@ -337,9 +342,10 @@ const readDiscoverData = unstable_cache(
                   load: () =>
                     getDiscoverSectionIds({
                       cacheKey: CACHE_KEYS.freeResources,
-                      limit: 8,
+                      limit: DISCOVER_SECTION_SOURCE_LIMIT,
                       metricName: "discover.freeResources",
-                      primaryLoader: () => findFreeResourceIds(8),
+                      primaryLoader: () =>
+                        findFreeResourceIds(DISCOVER_SECTION_SOURCE_LIMIT),
                       fallbackOrderBy: [
                         { downloadCount: "desc" },
                         { createdAt: "desc" },
@@ -369,7 +375,7 @@ const readDiscoverData = unstable_cache(
               sectionSourceEntries.map(({ key, value }) => [key, value]),
             ) as DiscoverSectionSources;
           },
-          { sectionLimit: 8 },
+          { sectionLimit: DISCOVER_SECTION_SOURCE_LIMIT },
         );
 
         const resourceIds = Array.from(
@@ -397,12 +403,12 @@ const readDiscoverData = unstable_cache(
             .map(withPreview);
 
         const trendingResources = mapSection(trendingIds);
-        const trending = trendingResources.slice(0, 5);
-        const newReleases = mapSection(newestIds).slice(0, 5);
-        const featured = mapSection(featuredIds).slice(0, 5);
-        const freeResources = mapSection(freeIds).slice(0, 5);
-        const mostDownloaded = mapSection(popularIds).slice(0, 5);
-        const recommended = trendingResources.slice(0, 8);
+        const trending = trendingResources.slice(0, DISCOVER_SECTION_DISPLAY_LIMIT);
+        const newReleases = mapSection(newestIds).slice(0, DISCOVER_SECTION_DISPLAY_LIMIT);
+        const featured = mapSection(featuredIds).slice(0, DISCOVER_SECTION_DISPLAY_LIMIT);
+        const freeResources = mapSection(freeIds).slice(0, DISCOVER_SECTION_DISPLAY_LIMIT);
+        const mostDownloaded = mapSection(popularIds).slice(0, DISCOVER_SECTION_DISPLAY_LIMIT);
+        const recommended = trendingResources.slice(0, DISCOVER_SECTION_DISPLAY_LIMIT);
 
         return {
           trending,

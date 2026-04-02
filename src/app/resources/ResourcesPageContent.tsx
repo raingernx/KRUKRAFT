@@ -479,7 +479,7 @@ async function ResourcesDiscoverDeferredSections({
       ) : null}
 
       <ResourcesDiscoverPersonalizedSection
-        fallbackCards={globalFiltered.slice(0, 5)}
+        fallbackCards={globalFiltered.slice(0, eagerDiscoverCardCount)}
         eagerCardCount={eagerDiscoverCardCount}
         eagerPreviewUrls={[...eagerDiscoverPreviewUrls]}
       />

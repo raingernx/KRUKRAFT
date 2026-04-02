@@ -93,6 +93,7 @@ Database search note:
     → signed-in discover payloads use short-lived private caching to smooth repeat navigations
     → recommendation impressions are now recorded from client-side section exposure via `/api/recommendations/impression`, not from discover cache misses
     → post-deploy warm + smoke perf workflow (`deployment_status` + manual `workflow_dispatch` fallback for CLI deploys)
+    → warm workflow install now retries and uploads npm install logs when it fails before warm artifacts exist
     → selective usable fallbacks where they match final section intent
 ```
 
@@ -224,6 +225,8 @@ This separation exists to avoid Prisma build-time warnings and DB dependency in 
 - `src/proxy.ts` no longer imports `next-auth/middleware`; request interception now uses direct JWT inspection via `next-auth/jwt`, which keeps the protected-route behavior explicit while trimming one middleware helper layer from the hot request path
 - admin notification toasts now use CSS-only entry animation, and preview-image drag/drop uploaders use a native file-input + drag/drop implementation behind a lazy client boundary that mounts on visibility or user interaction so admin/creator forms do not pull notification motion runtime or uploader-specific package code into the first render path
 - creator resource create/edit pages now also load the heavy client form through `next/dynamic` with structural loading shells, and admin create-form lazy loading now includes a matching form skeleton instead of a blank gap while the client chunk resolves
+- discover-mode `/resources` now trims its curated section source pool from 8 to 6 candidates and renders 4 cards per server section/fallback row, which reduces the hot-path HTML/render workload without changing listing-mode result counts
+- the `/resources` category chip rail no longer asks Prisma for per-category `_count` data on the hot path; discover category loading now uses a lean `id/name/slug` projection because the chip UI never rendered counts
 - Category landing pages intentionally use `newest` for their first-page curated feed
 - `src/env.ts` is the central server env validation surface
 

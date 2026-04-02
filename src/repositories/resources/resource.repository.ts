@@ -1448,7 +1448,11 @@ export async function findDiscoverResourcesByIds(resourceIds: string[]) {
 export async function findDiscoverCategoriesWithCounts() {
   return prisma.category.findMany({
     where: { resources: { some: LISTED_RESOURCE_WHERE } },
-    include: { _count: { select: { resources: true } } },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
     orderBy: { name: "asc" },
   });
 }

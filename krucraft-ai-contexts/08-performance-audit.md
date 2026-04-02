@@ -9,6 +9,7 @@ The public paths now have deliberate performance engineering in place:
 - RSC streaming decomposition on the resource detail page
 - Root layout no longer reads the authenticated server session on every request
 - Post-deploy warm-cache + smoke perf workflow, with a manual `workflow_dispatch` fallback for CLI-driven deploys
+- Warm workflow installs now retry `npm ci` and preserve install logs as artifacts, which makes failed warm runs debuggable even when the job dies before `warm-cache.log` exists
 - Optimizer-compatible preview images now stay on Next Image by default, with selective bypass only for sources that are not safely optimizable
 - Above-the-fold marketplace hero, spotlight, and card images now use targeted eager loading instead of blanket eager behavior
 - Build-safe platform config on branding-only build paths
@@ -70,6 +71,7 @@ Primary bottleneck class is now:
 - the repo now also has first-party hooks for accessibility and perf auditing at the browser layer: `@axe-core/playwright` can be used inside Playwright specs, `@lhci/cli` is configured through `.lighthouserc.json` for key `/resources` routes, and `@next/bundle-analyzer` is wired behind `npm run analyze`
 - 2026-04-02 bundle follow-up removed `framer-motion` from the admin notification stack entirely, replaced `next-auth/middleware` in `src/proxy.ts` with direct `next-auth/jwt` checks, and switched preview-image drag/drop upload to a native file-input + drag/drop implementation behind a lazy client boundary that mounts only on viewport proximity or user intent; the follow-up analyzer/build state no longer includes `framer-motion`, `next-auth/middleware`, or `react-dropzone`
 - the protected creator resource create/edit routes now also defer the heavy client form bundle behind `next/dynamic` with structural loading shells, and admin create-form lazy loading now renders a matching skeleton while the client chunk hydrates
+- the `/resources` discover home now uses a smaller curated server payload: source pools are capped at 6 items per section, rendered server sections/fallback rows are capped at 4 cards, and the category chip loader now uses a lean category projection instead of querying category resource counts the UI never displayed
 - Storybook is now available as a design-system-only surface for primitives/components; `npm run storybook:build` and `npm run storybook:smoke` are the verified paths right now because Storybook v10's `dev --smoke-test` flow hit a local CLI port bug in this environment
 - Next dev now explicitly allows `127.0.0.1` in `allowedDevOrigins`, which removes a noisy class of local Playwright/HMR cross-origin failures during browser verification
 - the CSP header now allowlists `https://va.vercel-scripts.com`, so local/runtime browser verification no longer reports Vercel Analytics / Speed Insights scripts as blocked console errors

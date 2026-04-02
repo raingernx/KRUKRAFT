@@ -137,7 +137,34 @@ jobs:
           cache: npm
 
       - name: Install Dependencies
-        run: npm ci
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/npm-logs
+
+          max_attempts=3
+          attempt=1
+
+          while [ "$attempt" -le "$max_attempts" ]; do
+            echo "[post-deploy-warm] npm ci attempt ${attempt}/${max_attempts}"
+
+            if npm ci 2>&1 | tee "artifacts/npm-ci-attempt-${attempt}.log"; then
+              exit 0
+            fi
+
+            cp -R ~/.npm/_logs/. artifacts/npm-logs/ 2>/dev/null || true
+
+            if [ "$attempt" -lt "$max_attempts" ]; then
+              backoff_seconds=$((attempt * 5))
+              echo "[post-deploy-warm] npm ci failed on attempt ${attempt}; retrying in ${backoff_seconds}s"
+              sleep "$backoff_seconds"
+            fi
+
+            attempt=$((attempt + 1))
+          done
+
+          echo "[post-deploy-warm] npm ci failed after ${max_attempts} attempts"
+          exit 1
 
       - name: Validate BASE_URL
         shell: bash
@@ -202,6 +229,8 @@ jobs:
         with:
           name: post-deploy-warm-artifacts
           path: |
+            artifacts/npm-ci-attempt-*.log
+            artifacts/npm-logs/**
             artifacts/warm-cache.log
             artifacts/warm-internal.log
           if-no-files-found: warn
