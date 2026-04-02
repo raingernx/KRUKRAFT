@@ -10,6 +10,7 @@ The public paths now have deliberate performance engineering in place:
 - Root layout no longer reads the authenticated server session on every request
 - Post-deploy warm-cache + smoke perf workflow, with a manual `workflow_dispatch` fallback for CLI-driven deploys
 - Warm workflow installs now retry `npm ci` and preserve install logs as artifacts, which makes failed warm runs debuggable even when the job dies before `warm-cache.log` exists
+- The same post-deploy workflow now installs on Node 24 instead of Node 20 so GitHub Actions uses the same lockfile/npm resolution behavior that currently passes locally
 - Optimizer-compatible preview images now stay on Next Image by default, with selective bypass only for sources that are not safely optimizable
 - Above-the-fold marketplace hero, spotlight, and card images now use targeted eager loading instead of blanket eager behavior
 - Build-safe platform config on branding-only build paths
