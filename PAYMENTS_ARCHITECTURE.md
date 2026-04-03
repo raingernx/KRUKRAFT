@@ -1,6 +1,6 @@
-# KruCraft – Payments Architecture
+# Krukraft – Payments Architecture
 
-This document describes the payment system of KruCraft.
+This document describes the payment system of Krukraft.
 
 Payments are handled through Stripe and optionally Xendit.
 

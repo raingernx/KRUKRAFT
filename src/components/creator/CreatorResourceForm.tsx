@@ -16,8 +16,10 @@ import {
 import { CreatorResourcePreview } from "@/components/creator/CreatorResourcePreview";
 import { CreatorBuyerPreviewModal } from "@/components/creator/CreatorBuyerPreviewModal";
 import { CreatorPublishSuccessModal } from "@/components/creator/CreatorPublishSuccessModal";
-import { LazyImageDropzone } from "@/components/admin/LazyImageDropzone";
-import { PreviewImageSortableList } from "@/components/admin/PreviewImageSortableList";
+import {
+  LazyImageDropzone,
+  PreviewImageSortableList,
+} from "@/components/admin/resources";
 import { routes } from "@/lib/routes";
 
 export interface CreatorResourceFormCategory {

@@ -73,7 +73,7 @@ function buildConfirmationEmailHtml(input: TemplateInput): string {
           <!-- ── Header ───────────────────────────────────────────────────── -->
           <tr>
             <td style="background:#18181b;padding:18px 32px;">
-              <p style="margin:0;font-size:15px;font-weight:700;color:#ffffff;letter-spacing:-0.01em;">KruCraft</p>
+              <p style="margin:0;font-size:15px;font-weight:700;color:#ffffff;letter-spacing:-0.01em;">Krukraft</p>
             </td>
           </tr>
 
@@ -135,9 +135,9 @@ function buildConfirmationEmailHtml(input: TemplateInput): string {
           <tr>
             <td style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:16px 32px;">
               <p style="margin:0;font-size:11px;color:#9ca3af;text-align:center;line-height:1.7;">
-                You received this because you completed a purchase on KruCraft.<br />
+                You received this because you completed a purchase on Krukraft.<br />
                 If you didn&rsquo;t make this purchase,
-                <a href="mailto:support@krucraft.com" style="color:#9ca3af;text-decoration:underline;">contact support</a>.
+                <a href="mailto:support@krukraft.com" style="color:#9ca3af;text-decoration:underline;">contact support</a>.
               </p>
             </td>
           </tr>
@@ -205,7 +205,7 @@ export async function sendPurchaseConfirmationEmail(
 
     const downloadUrl = `${appUrl}/api/download/${input.resourceId}`;
     const resourceUrl = `${appUrl}${routes.resourcePaymentSuccess(resource.slug)}`;
-    const from = env.EMAIL_FROM ?? "KruCraft <noreply@krucraft.com>";
+    const from = env.EMAIL_FROM ?? "Krukraft <noreply@krukraft.com>";
 
     const { error } = await resend.emails.send({
       from,

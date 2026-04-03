@@ -1,13 +1,13 @@
 /**
  * Purpose: Isolate the authenticated admin resources route under load.
- * Run: BASE_URL=https://krucrafts.com SESSION_TOKEN=... k6 run k6/routes/admin-resources.js
+ * Run: BASE_URL=https://krukraft.com SESSION_TOKEN=... k6 run k6/routes/admin-resources.js
  */
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { buildSessionCookieHeader, requireSessionToken } from '../lib/auth.js';
 
-const BASE_URL = __ENV.BASE_URL || 'https://krucrafts.com';
+const BASE_URL = __ENV.BASE_URL || 'https://krukraft.com';
 const ROUTE_TAG = 'admin_resources';
 const SESSION_TOKEN = requireSessionToken('admin-resources.js');
 const COOKIE_HEADER = buildSessionCookieHeader(SESSION_TOKEN);

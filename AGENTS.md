@@ -8,7 +8,7 @@ The goal is to help AI understand the architecture, conventions, and development
 
 # Project Overview
 
-StudyPlatform is a SaaS web application that provides a marketplace for digital learning resources.
+Krukraft is a SaaS web application that provides a marketplace for digital learning resources.
 
 Users can:
 
@@ -442,12 +442,25 @@ duplicate `FormSection` / `PageContainer` aliases, and if a needed primitive is
 missing, add it to `src/design-system` first. Treat remaining legacy backbone
 files as implementation details only.
 
+## UI Hierarchy And Anti-Nesting Rules
+
+When editing UI structure, agents must prefer visual hierarchy over box stacking.
+
+- do not nest `Card` or card-like bordered white surfaces inside another `Card` unless the inner surface represents a materially different semantic zone or interaction mode
+- do not stack multiple layers with the same `bg-white + border + rounded-*` treatment just to create separation; remove a layer and use spacing, typography, divider lines, or background contrast first
+- settings, admin inspectors, and form-heavy management screens should default to flat sections with dividers and spacing before introducing inset panels
+- if an inner panel is truly required, it must look intentionally subordinate to the parent surface through weaker contrast or a different background treatment, not as a duplicate card
+- when a surface contains repeated rows or controls, prefer section headers plus divided rows over wrapping every row in its own card
+- when changing final UI hierarchy, review the associated loading, empty, and error states so they do not preserve the old nested-card geometry
+
 ## UI Loading And Streaming Rules
 
 When editing any UI that has loading, streaming, or deferred states:
 
 - changing the final UI means changing the related skeleton/fallback/loading UI in the same patch
 - skeletons must match the final layout closely in structure, spacing, hierarchy, and approximate height
+- skeletons should stay neutral; do not use brand/accent colors in placeholder fills unless the color itself communicates indispensable status
+- on a given skeleton surface, keep placeholder fills within a tight palette of at most three tones
 - generic skeletons must not replace feature-specific loading states when the final UI has a distinctive layout
 - every affected `loading.tsx`, `Suspense fallback`, empty state, and error fallback must be reviewed when the final UI changes
 - `fallback={null}` is allowed only for intentionally invisible or non-structural subtrees where reserving space is unnecessary and layout shift risk is negligible
@@ -534,21 +547,27 @@ AI agents should avoid large architectural changes unless explicitly requested.
 The repo includes a shared AI context pack under:
 
 ```
-krucraft-ai-contexts/
+krukraft-ai-contexts/
 ```
 
 Agents should treat that directory as a maintained reference for current
 project truth, not a frozen export.
 
-Updating `krucraft-ai-contexts/` after system-level changes is not optional housekeeping.
+Updating `krukraft-ai-contexts/` after system-level changes is not optional housekeeping.
 It is part of completing the task whenever shared understanding of the system changed.
 If the implementation changes architecture, rendering, caching, routing, auth behavior,
 major UX flows, or operational expectations, the relevant context files must be updated
 in the same work session before the task is considered complete.
 
+For design-system and Figma handoff work, also keep these repo-owned references aligned:
+
+- `src/design-system/README.md` for DS inventory and ownership
+- `figma-component-map.md` for manual Figma-to-code component/pattern mapping
+- `design-system.md` for Figma reconstruction, variable/component mapping, and handoff rules
+
 ## When context updates are required
 
-Update the relevant files in `krucraft-ai-contexts/` in the **same commit** when
+Update the relevant files in `krukraft-ai-contexts/` in the **same commit** when
 the change affects system-level understanding, including:
 
 - architecture or request/data flow
@@ -557,6 +576,8 @@ the change affects system-level understanding, including:
 - deployment, build, migration, or environment requirements
 - major feature flows (payments, downloads, account recovery, admin workflows)
 - brand/platform behavior that affects shared understanding across agents
+- design-system ownership, token naming, or Figma handoff conventions
+- manual Figma-to-code mapping registry changes or new reusable library components/patterns
 
 ## When context updates are usually not required
 
@@ -589,7 +610,7 @@ git config core.hooksPath .githooks
 ```
 
 This repo now enforces the staged check in pre-commit. Commits that touch
-system-level behavior but do not update `krucraft-ai-contexts/` will fail until
+system-level behavior but do not update `krukraft-ai-contexts/` will fail until
 the relevant context files are included in the same commit.
 
 To run the blocking version manually:
@@ -607,5 +628,8 @@ For non-trivial changes, agents should usually finish by reporting:
 - which route, API, or user flow was verified
 - whether the flow was verified at runtime
 - any remaining uncertainty or blocked verification
+
+For design-system/Figma handoff changes, also report whether `npm run figma-map:check`
+was run and whether the live Figma file needed a corresponding update.
 
 Do not report success based only on static analysis when a runtime check was practical and relevant.

@@ -1,14 +1,14 @@
 import { Suspense } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { HeroSearch } from "@/components/marketplace/HeroSearch";
-import { Container } from "@/components/layout/container";
+import { Container } from "@/design-system";
 import { Badge } from "@/design-system";
 import { ResourceGrid, RESOURCE_GRID_CLASSES } from "@/components/resources/ResourceGrid";
 import { ResourceCardSkeleton } from "@/components/resources/ResourceCard";
 import Link from "next/link";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { routes } from "@/lib/routes";
-import { getMarketplaceResources } from "@/services/resources/public-resource-read.service";
+import { getMarketplaceResources } from "@/services/resources";
 
 const CATEGORY_META: Record<
   string,

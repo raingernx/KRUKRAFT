@@ -1,12 +1,12 @@
 /**
  * Purpose: Isolate the cold public resource detail route under load.
- * Run: BASE_URL=https://krucrafts.com COLD_SLUG=basic-solar-system-flashcards k6 run k6/routes/resource-detail-cold.js
+ * Run: BASE_URL=https://krukraft.com COLD_SLUG=basic-solar-system-flashcards k6 run k6/routes/resource-detail-cold.js
  */
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const BASE_URL = __ENV.BASE_URL || 'https://krucrafts.com';
+const BASE_URL = __ENV.BASE_URL || 'https://krukraft.com';
 const COLD_SLUG = __ENV.COLD_SLUG || 'basic-solar-system-flashcards';
 const ROUTE_TAG = 'resource_detail_cold';
 

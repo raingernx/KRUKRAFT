@@ -7,13 +7,13 @@ import { Filter, Search } from "lucide-react";
 import { Button, Input, Select } from "@/design-system";
 import { useDebounce } from "@/hooks/useDebounce";
 import { AdminResourcesClearButton } from "./AdminResourcesClearButton";
-import { FilterChips } from "@/components/admin/FilterChips";
+import { FilterChips } from "@/components/admin/resources";
 import { TableToolbar } from "@/components/admin/table";
 import { routes } from "@/lib/routes";
 import {
   SavedFiltersDropdown,
   type SavedFilterPresetId,
-} from "@/components/admin/SavedFiltersDropdown";
+} from "@/components/admin/resources";
 
 interface AdminResourcesFiltersProps {
   q: string;

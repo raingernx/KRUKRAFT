@@ -17,6 +17,7 @@ export function SecuritySettings() {
 
   return (
     <FormSection
+      variant="flat"
       title="Security"
       description="Manage your password and login security."
       footer={
@@ -32,15 +33,15 @@ export function SecuritySettings() {
     >
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1.5">
-          <p className="flex items-center gap-2 text-[13px] font-medium text-zinc-900">
-            <Lock className="h-4 w-4 text-zinc-400" />
+          <p className="flex items-center gap-2 text-sm font-medium text-text-primary">
+            <Lock className="h-4 w-4 text-text-muted" />
             Password
           </p>
-          <p className="text-[12px] text-zinc-500">
+          <p className="text-small text-text-secondary">
             Keep your account secure by using a strong, unique password.
           </p>
-          <p className="mt-1 flex items-center gap-1 text-[11px] text-zinc-400">
-            <ShieldCheck className="h-3.5 w-3.5" />
+          <p className="mt-1 flex items-center gap-1 text-caption text-text-muted">
+            <ShieldCheck className="h-3.5 w-3.5 text-text-muted" />
             Password last updated: <span className="font-medium">—</span>
           </p>
         </div>

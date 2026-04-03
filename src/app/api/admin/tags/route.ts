@@ -4,7 +4,7 @@ import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import {
   createAdminTag,
   getAdminTagsPageData,
-} from "@/services/admin-operations.service";
+} from "@/services/admin";
 
 // ── Schemas ───────────────────────────────────────────────────────────────────
 

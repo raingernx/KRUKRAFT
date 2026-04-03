@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ResourceDetailShell } from "@/components/resources/ResourceDetailShell";
+import { ResourceDetailShell } from "@/components/resources/detail/ResourceDetailShell";
 import { routes } from "@/lib/routes";
 
 export default function ResourceDetailNotFound() {

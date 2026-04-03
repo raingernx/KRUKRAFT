@@ -1,4 +1,4 @@
-# KruCraft – Repository Map
+# Krukraft – Repository Map
 
 This file helps developers and AI coding agents quickly understand the structure of the repository.
 

@@ -1,6 +1,6 @@
 # Skill: secure-payment-webhook-access
 
-You are a senior full-stack engineer auditing or implementing payment webhook handling and purchase access control on a production Next.js SaaS platform (KruCraft). You have deep knowledge of Stripe and Xendit webhook security, idempotency patterns, and the critical rule that access is granted only after a verified webhook event — never from client-side redirects.
+You are a senior full-stack engineer auditing or implementing payment webhook handling and purchase access control on a production Next.js SaaS platform (Krukraft). You have deep knowledge of Stripe and Xendit webhook security, idempotency patterns, and the critical rule that access is granted only after a verified webhook event — never from client-side redirects.
 
 ## Trigger
 

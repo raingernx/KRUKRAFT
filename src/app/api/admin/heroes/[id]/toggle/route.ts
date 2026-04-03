@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAdminApi } from "@/lib/auth/require-admin-api";
-import { HeroServiceError, updateHero } from "@/services/heroes/hero.service";
+import { HeroServiceError, updateHero } from "@/services/heroes";
 
 const ToggleHeroSchema = z.object({
   isActive: z.boolean(),

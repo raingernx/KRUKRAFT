@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import {
   getAdminResourceEditPageData,
   getAdminResourceEditTitle,
-} from "@/services/admin-operations.service";
+} from "@/services/admin";
 import { EditResourceForm } from "./EditResourceForm";
 import type { ResourceCardData } from "@/components/resources/ResourceCard";
 import { routes } from "@/lib/routes";

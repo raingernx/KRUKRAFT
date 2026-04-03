@@ -40,6 +40,8 @@ export { SearchInput } from "./SearchInput";
 export type { SearchInputProps } from "./SearchInput";
 export { useToast, type ToastFn, type ToastOptions } from "./useToast";
 export { RevealImage } from "./RevealImage";
+export { LoadingSkeleton } from "./LoadingSkeleton";
+export type { LoadingSkeletonProps } from "./LoadingSkeleton";
 export {
   Dropdown,
   DropdownTrigger,

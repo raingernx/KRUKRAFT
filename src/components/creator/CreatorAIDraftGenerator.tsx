@@ -267,7 +267,7 @@ export function CreatorAIDraftGenerator({
             สร้างสรุปเนื้อหา ผลลัพธ์การเรียนรู้ และชุดคำถามเบื้องต้น
           </h2>
           <p className="text-sm text-neutral-600">
-            กรอกเฉพาะข้อมูลที่จำเป็น: วิชา ระดับชั้น จำนวนข้อ และเนื้อหาต้นฉบับ จากนั้น KruCraft จะสร้างฉบับร่างให้แก้ไขต่อได้ทันที
+            กรอกเฉพาะข้อมูลที่จำเป็น: วิชา ระดับชั้น จำนวนข้อ และเนื้อหาต้นฉบับ จากนั้น Krukraft จะสร้างฉบับร่างให้แก้ไขต่อได้ทันที
           </p>
         </div>
         <div className="rounded-xl border border-blue-200 bg-white px-3 py-2 text-xs text-neutral-600">

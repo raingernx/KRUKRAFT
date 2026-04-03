@@ -1,12 +1,12 @@
 /**
  * Purpose: Isolate the cold public creator route under load.
- * Run: BASE_URL=https://krucrafts.com COLD_CREATOR=kru-mint k6 run k6/routes/creator-cold.js
+ * Run: BASE_URL=https://krukraft.com COLD_CREATOR=kru-mint k6 run k6/routes/creator-cold.js
  */
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const BASE_URL = __ENV.BASE_URL || 'https://krucrafts.com';
+const BASE_URL = __ENV.BASE_URL || 'https://krukraft.com';
 const COLD_CREATOR = __ENV.COLD_CREATOR || 'kru-mint';
 const ROUTE_TAG = 'creator_cold';
 

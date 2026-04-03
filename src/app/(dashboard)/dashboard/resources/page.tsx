@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { requireSession } from "@/lib/auth/require-session";
 import { routes } from "@/lib/routes";
-import { canAccessCreatorWorkspace, getCreatorAccessState } from "@/services/creator.service";
+import { canAccessCreatorWorkspace, getCreatorAccessState } from "@/services/creator";
 
 export const metadata = {
   title: "My Resources",

@@ -1,18 +1,28 @@
 import Link from "next/link";
 import { BarChart2, DollarSign, Download, FileText, MessageSquare, ShoppingBag, Star } from "lucide-react";
+import { Badge, Button, Card, CardContent, SectionHeader } from "@/design-system";
 import { requireSession } from "@/lib/auth/require-session";
+import { StatusBadge } from "@/components/admin/StatusBadge";
 import { formatDate, formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";
 import {
   getCreatorAnalytics,
   getCreatorReviewAnalytics,
-} from "@/services/creator.service";
+} from "@/services/creator";
 
 export const metadata = {
   title: "Creator Analytics",
 };
 
 export const dynamic = "force-dynamic";
+
+const PANEL_CLASS = "rounded-2xl border border-border-subtle bg-white shadow-card";
+const PANEL_HEADER_CLASS = "border-b border-surface-100 px-6 py-4";
+const PANEL_TITLE_CLASS = "text-sm font-semibold text-text-primary";
+const PANEL_DESCRIPTION_CLASS = "mt-1 text-xs text-text-secondary";
+const TABLE_HEAD_CLASS =
+  "border-b border-surface-100 text-left text-xs font-semibold uppercase tracking-wide text-text-muted";
+const TABLE_BODY_CLASS = "divide-y divide-surface-100";
 
 type CreatorAnalyticsPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -27,8 +37,8 @@ function rangeLink(range: string, currentRange: string) {
 
   return `inline-flex rounded-full px-3 py-1.5 text-sm font-medium transition ${
     active
-      ? "bg-neutral-900 text-white"
-      : "border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50"
+      ? "bg-surface-900 text-white"
+      : "border border-border-subtle bg-white text-text-secondary hover:bg-surface-50"
   }`;
 }
 
@@ -69,25 +79,25 @@ export default async function CreatorAnalyticsPage({
       label: "Gross revenue",
       value: formatPrice(analytics.summary.grossRevenue / 100),
       icon: DollarSign,
-      colorClass: "bg-amber-50 text-amber-600",
+      colorClass: "bg-surface-100 text-warning-700",
     },
     {
       label: "Creator share",
       value: formatPrice(analytics.summary.creatorShare / 100),
       icon: BarChart2,
-      colorClass: "bg-blue-50 text-blue-600",
+      colorClass: "bg-surface-100 text-info-700",
     },
     {
       label: "Total sales",
       value: analytics.summary.totalSales.toLocaleString(),
       icon: ShoppingBag,
-      colorClass: "bg-violet-50 text-violet-600",
+      colorClass: "bg-surface-100 text-primary-700",
     },
     {
       label: "Total downloads",
       value: analytics.summary.totalDownloads.toLocaleString(),
       icon: Download,
-      colorClass: "bg-emerald-50 text-emerald-600",
+      colorClass: "bg-surface-100 text-success-700",
     },
   ];
   const reviewSummaryCards = [
@@ -95,40 +105,32 @@ export default async function CreatorAnalyticsPage({
       label: "Average rating",
       value: reviewAnalytics.overview.averageRating?.toFixed(1) ?? "—",
       icon: Star,
-      colorClass: "bg-amber-50 text-amber-600",
+      colorClass: "bg-surface-100 text-warning-700",
       description: "Visible marketplace rating across your owned resources.",
     },
     {
       label: "Visible reviews",
       value: reviewAnalytics.overview.totalVisibleReviews.toLocaleString(),
       icon: MessageSquare,
-      colorClass: "bg-blue-50 text-blue-600",
+      colorClass: "bg-surface-100 text-info-700",
       description: "Public reviews that remain visible after moderation.",
     },
     {
       label: "Resources with reviews",
       value: reviewAnalytics.overview.resourcesWithVisibleReviews.toLocaleString(),
       icon: FileText,
-      colorClass: "bg-violet-50 text-violet-600",
+      colorClass: "bg-surface-100 text-primary-700",
       description: "Owned resources with at least one visible marketplace review.",
     },
   ];
 
   return (
     <div className="space-y-8">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-500">
-              Creator
-            </p>
-            <h1 className="mt-2 font-display text-h2 font-semibold tracking-tight text-neutral-900">
-              Analytics
-            </h1>
-            <p className="mt-1 text-sm text-neutral-500">
-              Revenue, downloads, and top-performing resources for your creator business.
-            </p>
-          </div>
-
+      <SectionHeader
+        eyebrow="Creator"
+        title="Analytics"
+        description="Revenue, downloads, and top-performing resources for your creator business."
+        actions={
           <div className="flex flex-wrap gap-2">
             {(["7d", "30d", "90d", "all"] as const).map((value) => (
               <Link
@@ -140,96 +142,95 @@ export default async function CreatorAnalyticsPage({
               </Link>
             ))}
           </div>
-        </div>
+        }
+      />
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {summaryCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <div
-                key={card.label}
-                className="rounded-2xl border border-neutral-100 bg-white p-5 shadow-card"
-              >
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {summaryCards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <Card key={card.label}>
+              <CardContent className="p-5">
                 <span
                   className={`flex h-10 w-10 items-center justify-center rounded-xl ${card.colorClass}`}
                 >
                   <Icon className="h-4 w-4" />
                 </span>
-                <p className="mt-4 text-2xl font-bold tracking-tight text-neutral-900">
+                <p className="mt-4 text-2xl font-bold tracking-tight text-text-primary">
                   {card.value}
                 </p>
-                <p className="mt-1 text-sm font-medium text-neutral-700">{card.label}</p>
-              </div>
-            );
-          })}
-        </div>
+                <p className="mt-1 text-sm font-medium text-text-secondary">{card.label}</p>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
-          {reviewSummaryCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <div
-                key={card.label}
-                className="rounded-2xl border border-neutral-100 bg-white p-5 shadow-card"
-              >
+      <div className="grid gap-4 md:grid-cols-3">
+        {reviewSummaryCards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <Card key={card.label}>
+              <CardContent className="p-5">
                 <span
                   className={`flex h-10 w-10 items-center justify-center rounded-xl ${card.colorClass}`}
                 >
                   <Icon className="h-4 w-4" />
                 </span>
-                <p className="mt-4 text-2xl font-bold tracking-tight text-neutral-900">
+                <p className="mt-4 text-2xl font-bold tracking-tight text-text-primary">
                   {card.value}
                 </p>
-                <p className="mt-1 text-sm font-medium text-neutral-700">{card.label}</p>
-                <p className="mt-2 text-xs leading-5 text-neutral-500">{card.description}</p>
-              </div>
-            );
-          })}
-        </div>
+                <p className="mt-1 text-sm font-medium text-text-secondary">{card.label}</p>
+                <p className="mt-2 text-xs leading-5 text-text-secondary">{card.description}</p>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
 
-        <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-          <section className="overflow-hidden rounded-2xl border border-neutral-100 bg-white shadow-card">
-            <div className="border-b border-neutral-100 px-6 py-4">
-              <h2 className="text-sm font-semibold text-neutral-900">Performance over time</h2>
-              <p className="mt-1 text-xs text-neutral-500">
+      <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+        <section className={PANEL_CLASS}>
+          <div className={PANEL_HEADER_CLASS}>
+            <h2 className={PANEL_TITLE_CLASS}>Performance over time</h2>
+            <p className={PANEL_DESCRIPTION_CLASS}>
                 Daily rollup for revenue, sales, and downloads in the selected range.
-              </p>
-            </div>
+            </p>
+          </div>
 
-            {seriesRows.length === 0 ? (
-              <p className="px-6 py-12 text-sm text-neutral-500">No analytics data in this range.</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-neutral-100 text-left text-xs font-semibold uppercase tracking-wide text-neutral-400">
-                      <th className="px-6 py-3">Date</th>
-                      <th className="px-4 py-3 text-right">Revenue</th>
-                      <th className="px-4 py-3 text-right">Sales</th>
-                      <th className="px-6 py-3 text-right">Downloads</th>
+          {seriesRows.length === 0 ? (
+            <p className="px-6 py-12 text-sm text-text-secondary">No analytics data in this range.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className={TABLE_HEAD_CLASS}>
+                    <th className="px-6 py-3">Date</th>
+                    <th className="px-4 py-3 text-right">Revenue</th>
+                    <th className="px-4 py-3 text-right">Sales</th>
+                    <th className="px-6 py-3 text-right">Downloads</th>
+                  </tr>
+                </thead>
+                <tbody className={TABLE_BODY_CLASS}>
+                  {seriesRows.map((row) => (
+                    <tr key={row.date}>
+                      <td className="px-6 py-4 font-medium text-text-primary">
+                        {formatDate(row.date)}
+                      </td>
+                      <td className="px-4 py-4 text-right text-text-secondary">
+                        {formatPrice(row.revenue / 100)}
+                      </td>
+                      <td className="px-4 py-4 text-right text-text-secondary">{row.sales}</td>
+                      <td className="px-6 py-4 text-right text-text-secondary">{row.downloads}</td>
                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral-50">
-                    {seriesRows.map((row) => (
-                      <tr key={row.date}>
-                        <td className="px-6 py-4 font-medium text-neutral-900">
-                          {formatDate(row.date)}
-                        </td>
-                        <td className="px-4 py-4 text-right text-neutral-700">
-                          {formatPrice(row.revenue / 100)}
-                        </td>
-                        <td className="px-4 py-4 text-right text-neutral-700">{row.sales}</td>
-                        <td className="px-6 py-4 text-right text-neutral-700">{row.downloads}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
 
-          <section className="space-y-6">
-            {[
+        <section className="space-y-6">
+          {[
               {
                 title: "Top by revenue",
                 resources: analytics.topByRevenue,
@@ -251,298 +252,281 @@ export default async function CreatorAnalyticsPage({
                 renderMetric: (value: typeof analytics.topByPurchases[number]) =>
                   value.salesCount.toLocaleString(),
               },
-            ].map((section) => (
-              <div
-                key={section.title}
-                className="rounded-2xl border border-neutral-100 bg-white p-6 shadow-card"
-              >
-                <div className="flex items-center justify-between">
-                  <h2 className="text-sm font-semibold text-neutral-900">{section.title}</h2>
-                  <span className="text-xs uppercase tracking-wide text-neutral-400">
+          ].map((section) => (
+            <div
+              key={section.title}
+              className="rounded-2xl border border-border-subtle bg-white p-6 shadow-card"
+            >
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-text-primary">{section.title}</h2>
+                <span className="text-xs uppercase tracking-wide text-text-muted">
                     {section.metricLabel}
-                  </span>
-                </div>
-
-                {section.resources.length === 0 ? (
-                  <p className="mt-4 text-sm text-neutral-500">No resources yet.</p>
-                ) : (
-                  <ul className="mt-4 space-y-3">
-                    {section.resources.map((resource) => (
-                      <li key={`${section.title}-${resource.id}`}>
-                        <div className="flex items-center justify-between gap-3 rounded-xl border border-neutral-100 px-4 py-3">
-                          <div className="min-w-0">
-                            <Link
-                              href={routes.resource(resource.slug)}
-                              className="truncate text-sm font-medium text-neutral-900 hover:text-blue-600"
-                            >
-                              {resource.title}
-                            </Link>
-                            <p className="mt-1 text-xs text-neutral-400">{resource.slug}</p>
-                          </div>
-                          <span className="text-sm font-semibold text-neutral-900">
-                            {section.renderMetric(resource)}
-                          </span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                </span>
               </div>
-            ))}
-          </section>
-        </div>
 
-        <div className="grid gap-6 xl:grid-cols-2">
-          <section className="rounded-2xl border border-neutral-100 bg-white shadow-card xl:col-span-2">
-            <div className="border-b border-neutral-100 px-6 py-4">
-              <h2 className="text-sm font-semibold text-neutral-900">Resource ratings</h2>
-              <p className="mt-1 text-xs text-neutral-500">
-                Visible marketplace review performance across the resources you own.
-              </p>
-            </div>
-
-            {reviewAnalytics.resources.length === 0 ? (
-              <p className="px-6 py-12 text-sm text-neutral-500">
-                No owned resources are available for review analytics yet.
-              </p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[760px] text-sm">
-                  <thead>
-                    <tr className="border-b border-neutral-100 text-left text-xs font-semibold uppercase tracking-wide text-neutral-400">
-                      <th className="px-6 py-3">Resource</th>
-                      <th className="px-4 py-3 text-right">Rating</th>
-                      <th className="px-4 py-3 text-right">Visible reviews</th>
-                      <th className="px-4 py-3 text-right">Last review</th>
-                      <th className="px-6 py-3 text-right">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral-50">
-                    {reviewAnalytics.resources.map((resource) => (
-                      <tr key={resource.resourceId}>
-                        <td className="px-6 py-4">
-                          <div className="min-w-0">
-                            <Link
-                              href={routes.resource(resource.slug)}
-                              className="truncate text-sm font-medium text-neutral-900 hover:text-blue-600"
-                            >
-                              {resource.title}
-                            </Link>
-                            <p className="mt-1 text-xs text-neutral-400">
-                              {resource.isFree ? "Free" : formatPrice(resource.price / 100)}
-                            </p>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-right text-neutral-700">
-                          {resource.averageRating?.toFixed(1) ?? "—"}
-                        </td>
-                        <td className="px-4 py-4 text-right text-neutral-700">
-                          {resource.visibleReviewCount.toLocaleString()}
-                        </td>
-                        <td className="px-4 py-4 text-right text-neutral-700">
-                          {resource.lastReviewDate ? formatDate(resource.lastReviewDate) : "—"}
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <span
-                            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
-                              resource.status === "PUBLISHED"
-                                ? "bg-emerald-50 text-emerald-700"
-                                : resource.status === "ARCHIVED"
-                                  ? "bg-amber-50 text-amber-700"
-                                  : "bg-neutral-100 text-neutral-600"
-                            }`}
+              {section.resources.length === 0 ? (
+                <p className="mt-4 text-sm text-text-secondary">No resources yet.</p>
+              ) : (
+                <ul className="mt-4 space-y-3">
+                  {section.resources.map((resource) => (
+                    <li key={`${section.title}-${resource.id}`}>
+                      <div className="flex items-center justify-between gap-3 rounded-xl border border-surface-100 px-4 py-3">
+                        <div className="min-w-0">
+                          <Link
+                            href={routes.resource(resource.slug)}
+                            className="truncate text-sm font-medium text-text-primary hover:text-brand-600"
                           >
-                            {resource.status.toLowerCase()}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
-
-          <section className="rounded-2xl border border-neutral-100 bg-white shadow-card">
-            <div className="border-b border-neutral-100 px-6 py-4">
-              <h2 className="text-sm font-semibold text-neutral-900">Recent visible reviews</h2>
-              <p className="mt-1 text-xs text-neutral-500">
-                Latest public marketplace feedback for resources you own.
-              </p>
-            </div>
-
-            {reviewAnalytics.recentReviews.length === 0 ? (
-              <p className="px-6 py-12 text-sm text-neutral-500">
-                No visible reviews yet.
-              </p>
-            ) : (
-              <ul className="divide-y divide-neutral-50">
-                {reviewAnalytics.recentReviews.map((review) => (
-                  <li key={review.id} className="px-6 py-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <Link
-                          href={routes.resource(review.resourceSlug)}
-                          className="truncate text-sm font-medium text-neutral-900 hover:text-blue-600"
-                        >
-                          {review.resourceTitle}
-                        </Link>
-                        <p className="mt-1 text-xs text-neutral-500">
-                          {review.reviewerName} · {formatDate(review.createdAt)}
-                        </p>
-                        {review.body ? (
-                          <p className="mt-2 line-clamp-3 text-sm leading-6 text-neutral-600">
-                            {review.body}
-                          </p>
-                        ) : (
-                          <p className="mt-2 text-sm text-neutral-400">No written comment.</p>
-                        )}
+                            {resource.title}
+                          </Link>
+                          <p className="mt-1 text-xs text-text-muted">{resource.slug}</p>
+                        </div>
+                        <span className="text-sm font-semibold text-text-primary">
+                          {section.renderMetric(resource)}
+                        </span>
                       </div>
-                      <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
-                        {review.rating}/5
-                      </span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-
-          <section className="rounded-2xl border border-neutral-100 bg-white shadow-card">
-            <div className="border-b border-neutral-100 px-6 py-4">
-              <h2 className="text-sm font-semibold text-neutral-900">Rating distribution</h2>
-              <p className="mt-1 text-xs text-neutral-500">
-                Visible review counts by star rating across your resources.
-              </p>
-            </div>
-
-            {reviewAnalytics.distribution.every((row) => row.count === 0) ? (
-              <p className="px-6 py-12 text-sm text-neutral-500">
-                Ratings will appear here once visible reviews are available.
-              </p>
-            ) : (
-              <ul className="divide-y divide-neutral-50">
-                {[5, 4, 3, 2, 1].map((rating) => {
-                  const count =
-                    reviewAnalytics.distribution.find((row) => row.rating === rating)?.count ?? 0;
-
-                  return (
-                    <li
-                      key={rating}
-                      className="flex items-center justify-between px-6 py-4"
-                    >
-                      <div className="flex items-center gap-2 text-sm font-medium text-neutral-900">
-                        <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                        {rating} star{rating === 1 ? "" : "s"}
-                      </div>
-                      <span className="text-sm font-semibold text-neutral-700">
-                        {count.toLocaleString()}
-                      </span>
                     </li>
-                  );
-                })}
-              </ul>
-            )}
-          </section>
-
-          <section className="rounded-2xl border border-neutral-100 bg-white shadow-card">
-            <div className="border-b border-neutral-100 px-6 py-4">
-              <h2 className="text-sm font-semibold text-neutral-900">Recent sales activity</h2>
-              <p className="mt-1 text-xs text-neutral-500">
-                Latest completed creator revenue events across your resources.
-              </p>
+                  ))}
+                </ul>
+              )}
             </div>
+          ))}
+        </section>
+      </div>
 
-            {analytics.recentSales.length === 0 ? (
-              <p className="px-6 py-12 text-sm text-neutral-500">No recent sales yet.</p>
-            ) : (
-              <ul className="divide-y divide-neutral-50">
-                {analytics.recentSales.map((sale) => (
-                  <li key={sale.id} className="flex items-start justify-between gap-4 px-6 py-4">
+      <div className="grid gap-6 xl:grid-cols-2">
+        <section className={`${PANEL_CLASS} xl:col-span-2`}>
+          <div className={PANEL_HEADER_CLASS}>
+            <h2 className={PANEL_TITLE_CLASS}>Resource ratings</h2>
+            <p className={PANEL_DESCRIPTION_CLASS}>
+                Visible marketplace review performance across the resources you own.
+            </p>
+          </div>
+
+          {reviewAnalytics.resources.length === 0 ? (
+            <p className="px-6 py-12 text-sm text-text-secondary">
+                No owned resources are available for review analytics yet.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[760px] text-sm">
+                <thead>
+                  <tr className={TABLE_HEAD_CLASS}>
+                    <th className="px-6 py-3">Resource</th>
+                    <th className="px-4 py-3 text-right">Rating</th>
+                    <th className="px-4 py-3 text-right">Visible reviews</th>
+                    <th className="px-4 py-3 text-right">Last review</th>
+                    <th className="px-6 py-3 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className={TABLE_BODY_CLASS}>
+                  {reviewAnalytics.resources.map((resource) => (
+                    <tr key={resource.resourceId}>
+                      <td className="px-6 py-4">
+                        <div className="min-w-0">
+                          <Link
+                            href={routes.resource(resource.slug)}
+                            className="truncate text-sm font-medium text-text-primary hover:text-brand-600"
+                          >
+                            {resource.title}
+                          </Link>
+                          <p className="mt-1 text-xs text-text-muted">
+                            {resource.isFree ? "Free" : formatPrice(resource.price / 100)}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 text-right text-text-secondary">
+                        {resource.averageRating?.toFixed(1) ?? "—"}
+                      </td>
+                      <td className="px-4 py-4 text-right text-text-secondary">
+                        {resource.visibleReviewCount.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-4 text-right text-text-secondary">
+                        {resource.lastReviewDate ? formatDate(resource.lastReviewDate) : "—"}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <StatusBadge status={resource.status} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        <section className={PANEL_CLASS}>
+          <div className={PANEL_HEADER_CLASS}>
+            <h2 className={PANEL_TITLE_CLASS}>Recent visible reviews</h2>
+            <p className={PANEL_DESCRIPTION_CLASS}>
+                Latest public marketplace feedback for resources you own.
+            </p>
+          </div>
+
+          {reviewAnalytics.recentReviews.length === 0 ? (
+            <p className="px-6 py-12 text-sm text-text-secondary">
+                No visible reviews yet.
+            </p>
+          ) : (
+            <ul className={TABLE_BODY_CLASS}>
+              {reviewAnalytics.recentReviews.map((review) => (
+                <li key={review.id} className="px-6 py-4">
+                  <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
                       <Link
-                        href={routes.resource(sale.resourceSlug)}
-                        className="truncate text-sm font-medium text-neutral-900 hover:text-blue-600"
+                        href={routes.resource(review.resourceSlug)}
+                        className="truncate text-sm font-medium text-text-primary hover:text-brand-600"
                       >
-                        {sale.resourceTitle}
+                        {review.resourceTitle}
                       </Link>
-                      <p className="mt-1 text-xs text-neutral-500">
-                        {sale.buyerName} · {sale.status} · {formatDate(sale.createdAt)}
+                      <p className="mt-1 text-xs text-text-secondary">
+                        {review.reviewerName} · {formatDate(review.createdAt)}
                       </p>
+                      {review.body ? (
+                        <p className="mt-2 line-clamp-3 text-sm leading-6 text-text-secondary">
+                          {review.body}
+                        </p>
+                      ) : (
+                        <p className="mt-2 text-sm text-text-muted">No written comment.</p>
+                      )}
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-neutral-900">
-                        {formatPrice(sale.amount / 100)}
-                      </p>
-                      <p className="mt-1 text-xs text-blue-600">
-                        Share {formatPrice(sale.creatorShare / 100)}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+                    <Badge variant="warning" className="px-2.5 py-1 font-semibold">
+                      {review.rating}/5
+                    </Badge>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
 
-          <section className="rounded-2xl border border-neutral-100 bg-white shadow-card">
-            <div className="border-b border-neutral-100 px-6 py-4">
-              <h2 className="text-sm font-semibold text-neutral-900">Recent download activity</h2>
-              <p className="mt-1 text-xs text-neutral-500">
-                Latest downloads across the resources you publish.
-              </p>
-            </div>
+        <section className={PANEL_CLASS}>
+          <div className={PANEL_HEADER_CLASS}>
+            <h2 className={PANEL_TITLE_CLASS}>Rating distribution</h2>
+            <p className={PANEL_DESCRIPTION_CLASS}>
+              Visible review counts by star rating across your resources.
+            </p>
+          </div>
 
-            {analytics.recentDownloads.length === 0 ? (
-              <p className="px-6 py-12 text-sm text-neutral-500">No recent downloads yet.</p>
-            ) : (
-              <ul className="divide-y divide-neutral-50">
-                {analytics.recentDownloads.map((download) => (
-                  <li key={download.id} className="flex items-start justify-between gap-4 px-6 py-4">
-                    <div className="min-w-0">
-                      <Link
-                        href={routes.resource(download.resourceSlug)}
-                        className="truncate text-sm font-medium text-neutral-900 hover:text-blue-600"
-                      >
-                        {download.resourceTitle}
-                      </Link>
-                      <p className="mt-1 text-xs text-neutral-500">
-                        {download.userId ? `User ${download.userId.slice(0, 8)}` : "Anonymous user"} ·{" "}
-                        {formatDate(download.createdAt)}
-                      </p>
+          {reviewAnalytics.distribution.every((row) => row.count === 0) ? (
+            <p className="px-6 py-12 text-sm text-text-secondary">
+              Ratings will appear here once visible reviews are available.
+            </p>
+          ) : (
+            <ul className={TABLE_BODY_CLASS}>
+              {[5, 4, 3, 2, 1].map((rating) => {
+                const count =
+                  reviewAnalytics.distribution.find((row) => row.rating === rating)?.count ?? 0;
+
+                return (
+                  <li key={rating} className="flex items-center justify-between px-6 py-4">
+                    <div className="flex items-center gap-2 text-sm font-medium text-text-primary">
+                      <Star className="h-4 w-4 fill-warning-500 text-warning-500" />
+                      {rating} star{rating === 1 ? "" : "s"}
                     </div>
-                    <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-                      Download
+                    <span className="text-sm font-semibold text-text-secondary">
+                      {count.toLocaleString()}
                     </span>
                   </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        </div>
+                );
+              })}
+            </ul>
+          )}
+        </section>
 
-        <div className="rounded-2xl border border-neutral-100 bg-white p-6 shadow-card">
-          <div className="flex items-center gap-2">
-            <FileText className="h-4 w-4 text-neutral-400" />
-            <h2 className="text-sm font-semibold text-neutral-900">Next action</h2>
+        <section className={PANEL_CLASS}>
+          <div className={PANEL_HEADER_CLASS}>
+            <h2 className={PANEL_TITLE_CLASS}>Recent sales activity</h2>
+            <p className={PANEL_DESCRIPTION_CLASS}>
+              Latest completed creator revenue events across your resources.
+            </p>
           </div>
-          <p className="mt-2 text-sm text-neutral-500">
+
+          {analytics.recentSales.length === 0 ? (
+            <p className="px-6 py-12 text-sm text-text-secondary">No recent sales yet.</p>
+          ) : (
+            <ul className={TABLE_BODY_CLASS}>
+              {analytics.recentSales.map((sale) => (
+                <li key={sale.id} className="flex items-start justify-between gap-4 px-6 py-4">
+                  <div className="min-w-0">
+                    <Link
+                      href={routes.resource(sale.resourceSlug)}
+                      className="truncate text-sm font-medium text-text-primary hover:text-brand-600"
+                    >
+                      {sale.resourceTitle}
+                    </Link>
+                    <p className="mt-1 text-xs text-text-secondary">
+                      {sale.buyerName} · {sale.status} · {formatDate(sale.createdAt)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-text-primary">
+                      {formatPrice(sale.amount / 100)}
+                    </p>
+                    <p className="mt-1 text-xs text-success-700">
+                      Share {formatPrice(sale.creatorShare / 100)}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className={PANEL_CLASS}>
+          <div className={PANEL_HEADER_CLASS}>
+            <h2 className={PANEL_TITLE_CLASS}>Recent download activity</h2>
+            <p className={PANEL_DESCRIPTION_CLASS}>
+              Latest downloads across the resources you publish.
+            </p>
+          </div>
+
+          {analytics.recentDownloads.length === 0 ? (
+            <p className="px-6 py-12 text-sm text-text-secondary">No recent downloads yet.</p>
+          ) : (
+            <ul className={TABLE_BODY_CLASS}>
+              {analytics.recentDownloads.map((download) => (
+                <li key={download.id} className="flex items-start justify-between gap-4 px-6 py-4">
+                  <div className="min-w-0">
+                    <Link
+                      href={routes.resource(download.resourceSlug)}
+                      className="truncate text-sm font-medium text-text-primary hover:text-brand-600"
+                    >
+                      {download.resourceTitle}
+                    </Link>
+                    <p className="mt-1 text-xs text-text-secondary">
+                      {download.userId ? `User ${download.userId.slice(0, 8)}` : "Anonymous user"} ·{" "}
+                      {formatDate(download.createdAt)}
+                    </p>
+                  </div>
+                  <Badge variant="success" className="px-2.5 py-1 font-semibold">
+                    Download
+                  </Badge>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
+
+      <section className={PANEL_CLASS}>
+        <div className={PANEL_HEADER_CLASS}>
+          <div className="flex items-center gap-2">
+            <FileText className="h-4 w-4 text-text-muted" />
+            <h2 className={PANEL_TITLE_CLASS}>Next action</h2>
+          </div>
+          <p className={PANEL_DESCRIPTION_CLASS}>
             Use these numbers to decide which resources to promote, publish, or refresh first.
           </p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Link
-              href={routes.creatorResources}
-              className="inline-flex rounded-xl border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
-            >
-              Manage resources
-            </Link>
-            <Link
-              href={routes.creatorSales}
-              className="inline-flex rounded-xl bg-neutral-900 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-800"
-            >
-              Review sales
-            </Link>
-          </div>
         </div>
+        <div className="flex flex-wrap gap-3 px-6 py-5">
+          <Button variant="outline" asChild>
+            <Link href={routes.creatorResources}>Manage resources</Link>
+          </Button>
+          <Button asChild>
+            <Link href={routes.creatorSales}>Review sales</Link>
+          </Button>
+        </div>
+      </section>
     </div>
   );
 }

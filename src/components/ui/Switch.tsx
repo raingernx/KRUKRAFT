@@ -1,31 +1,6 @@
-import * as React from "react";
-import * as SwitchPrimitives from "@radix-ui/react-switch";
-
-export const Switch = React.forwardRef<
-  React.ElementRef<typeof SwitchPrimitives.Root>,
-  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
->(({ className, ...props }, ref) => {
-  const rootClasses = [
-    "inline-flex h-6 w-[46px] items-center rounded-full",
-    "bg-surface-300",
-    "data-[state=checked]:bg-primary-500",
-    "transition-colors duration-200",
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const thumbClasses = [
-    "h-5 w-5 rounded-full bg-white shadow",
-    "translate-x-0.5 data-[state=checked]:translate-x-[24px]",
-    "transition-transform duration-200",
-  ].join(" ");
-
-  return (
-    <SwitchPrimitives.Root ref={ref} className={rootClasses} {...props}>
-      <SwitchPrimitives.Thumb className={thumbClasses} />
-    </SwitchPrimitives.Root>
-  );
-});
-
-Switch.displayName = "Switch";
+/**
+ * DO NOT USE DIRECTLY
+ * This is a transitional compatibility re-export.
+ * Use "@/design-system" instead.
+ */
+export { Switch } from "@/design-system/primitives/Switch"

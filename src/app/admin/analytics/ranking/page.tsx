@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getRankingDebugReport } from "@/services/analytics/ranking-debug.service";
+import { getRankingDebugReport } from "@/services/analytics";
 import { SlidersHorizontal, ExternalLink } from "lucide-react";
 import { Button, Input, Select } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";

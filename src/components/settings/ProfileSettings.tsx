@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { User, Mail, Camera } from "lucide-react";
-import { Avatar, Button, FormSection } from "@/design-system";
+import { Avatar, Button, FormSection, Input } from "@/design-system";
 
 type ProfileSettingsProps = {
   name?: string | null;
@@ -46,12 +46,13 @@ export function ProfileSettings({ name, email, image }: ProfileSettingsProps) {
 
   return (
     <FormSection
+      variant="flat"
       title="Profile"
       description="Update your basic account information."
       footer={
         <div className="flex w-full items-center justify-between gap-3">
           {error && (
-            <p className="text-[11px] text-red-600">
+            <p className="text-caption text-danger-600">
               {error}
             </p>
           )}
@@ -63,17 +64,17 @@ export function ProfileSettings({ name, email, image }: ProfileSettingsProps) {
         </div>
       }
     >
-      <form id="profile-settings-form" onSubmit={handleSave} className="space-y-6">
+      <form id="profile-settings-form" onSubmit={handleSave} className="space-y-5">
         <div className="flex items-center gap-4">
           <Avatar
             src={image}
             name={displayName}
             email={displayEmail}
             size={56}
-            className="ring-2 ring-zinc-100"
+            className="ring-2 ring-surface-100"
           />
           <div>
-            <p className="text-[13px] text-zinc-500">Avatar</p>
+            <p className="text-small text-text-secondary">Avatar</p>
             <div className="mt-1 flex gap-2">
               <Button type="button" variant="secondary" size="sm">
                 <Camera className="h-3.5 w-3.5" />
@@ -85,28 +86,34 @@ export function ProfileSettings({ name, email, image }: ProfileSettingsProps) {
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-1.5">
-            <label className="flex items-center gap-1.5 text-[12px] font-medium text-zinc-700">
-              <User className="h-3.5 w-3.5 text-zinc-400" />
+            <label
+              htmlFor="profile-display-name"
+              className="flex items-center gap-1.5 text-caption font-medium text-text-secondary"
+            >
+              <User className="h-3.5 w-3.5 text-text-muted" />
               Name
             </label>
-            <input
+            <Input
+              id="profile-display-name"
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] text-zinc-900 shadow-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
               placeholder="Your name"
             />
           </div>
           <div className="space-y-1.5">
-            <label className="flex items-center gap-1.5 text-[12px] font-medium text-zinc-700">
-              <Mail className="h-3.5 w-3.5 text-zinc-400" />
+            <label
+              htmlFor="profile-display-email"
+              className="flex items-center gap-1.5 text-caption font-medium text-text-secondary"
+            >
+              <Mail className="h-3.5 w-3.5 text-text-muted" />
               Email
             </label>
-            <input
+            <Input
+              id="profile-display-email"
               type="email"
               value={displayEmail}
               onChange={(e) => setDisplayEmail(e.target.value)}
-              className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] text-zinc-900 shadow-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
               placeholder="you@example.com"
             />
           </div>

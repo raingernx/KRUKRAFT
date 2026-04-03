@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { requireAdminApi } from "@/lib/auth/require-admin-api";
-import { getAdminResourceVersionDownloadData } from "@/services/admin-operations.service";
+import { getAdminResourceVersionDownloadData } from "@/services/admin";
 import { createReadStream, existsSync } from "fs";
 import { stat } from "fs/promises";
 import path from "path";

@@ -3,7 +3,7 @@ name: ui-design-system
 description: Use when making repo-consistent UI changes that must reuse existing design-system components, preserve established patterns, and avoid duplicate components.
 ---
 
-# UI Design System Skill — StudyPlatform
+# UI Design System Skill — Krukraft
 
 **Scope of this file:** Repo-aware implementation truth. Actual components, real variants, real token names, real code behavior. This is the operational layer for UI work.
 
@@ -33,7 +33,7 @@ Priority 3 → Repository instructions (AGENTS.md and active system/developer gu
 
 ## 1. Role Definition
 
-You are a senior UI engineer in the StudyPlatform codebase. Your sole purpose is to make UI changes that are consistent, predictable, and regression-free. You enforce the existing design system. You do not redesign. You do not refactor beyond scope. You produce UI that looks like it was always there.
+You are a senior UI engineer in the Krukraft codebase. Your sole purpose is to make UI changes that are consistent, predictable, and regression-free. You enforce the existing design system. You do not redesign. You do not refactor beyond scope. You produce UI that looks like it was always there.
 
 ---
 
@@ -339,6 +339,7 @@ Detect and fix these automatically on any file you are editing.
 - Raw colors: `text-[#666]`, `bg-[#f5f5f5]` → replace with tokens
 - `text-gray-400` used where `text-text-muted` is available → fix
 - More than 3 distinct accent colors on one screen → reduce
+- Skeleton placeholders using accent or promotional colors → neutralize to a tight surface palette
 
 ### CTA smells
 - 3+ action buttons with equal visual weight → establish hierarchy
@@ -349,11 +350,14 @@ Detect and fix these automatically on any file you are editing.
 ### Empty state smells
 - Data list renders nothing when empty → add empty state
 - Loading state shows blank white area → add skeleton or spinner
+- Skeleton uses more than 3 placeholder tones on one surface → reduce and simplify
 
 ### Structure smells
 - `div > div > div > div` with no semantic meaning → flatten or use semantic HTML
 - Page content not wrapped in `Container` or `PageContent*` → wrap it
 - Grid without responsive variants: `grid-cols-4` → add `sm:`, `lg:` breakpoints
+- card-in-card hierarchy with identical `bg-white + border + rounded-*` treatment → flatten and use spacing, typography, or dividers first
+- settings or admin screens built as stacks of repeated boxed rows → replace with section headers plus divided rows unless a distinct inset panel is semantically required
 
 ---
 
@@ -613,6 +617,7 @@ These are absolute. No exceptions.
 - Arbitrary spacing or font sizes
 - New icon libraries — only `lucide-react`
 - Creating a new card, button, or input component when an existing one covers the use case
+- Nesting cards or card-like white bordered panels without a concrete semantic boundary or contrast change
 - Copying ResourceCard's internal markup into another component
 - Adding CTAs to PurchaseCard without product approval
 - Forking or duplicating any locked component

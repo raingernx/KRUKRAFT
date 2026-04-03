@@ -18,7 +18,7 @@ import { Avatar } from "@/design-system";
 import { AccountTrigger } from "@/components/layout/account/AccountTrigger";
 import { NavbarBrand } from "@/components/layout/NavbarBrand";
 import { NavbarItem } from "@/components/layout/navbar/NavbarItem";
-import { Container } from "@/components/layout/container";
+import { Container } from "@/design-system";
 import { beginResourcesNavigation } from "@/components/marketplace/resourcesNavigationState";
 import {
   clearCachedAuthViewer,

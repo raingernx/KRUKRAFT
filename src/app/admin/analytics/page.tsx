@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getPlatformMetrics } from "@/services/analytics.service";
+import { getPlatformMetrics } from "@/services/analytics";
 import { Card } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { formatPrice, formatNumber } from "@/lib/format";

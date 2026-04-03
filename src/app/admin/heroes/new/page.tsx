@@ -2,10 +2,10 @@ import { HERO_STYLE_DEFAULTS } from "@/lib/heroes/hero-style";
 import { routes } from "@/lib/routes";
 import { requireAdminSession } from "@/lib/auth/require-admin-session";
 import dynamic from "next/dynamic";
-import type { HeroFormValues } from "@/components/admin/heroes/HeroForm";
+import type { HeroFormValues } from "@/components/admin/heroes";
 
 const HeroForm = dynamic(() =>
-  import("@/components/admin/heroes/HeroForm").then((m) => m.HeroForm),
+  import("@/components/admin/heroes").then((m) => m.HeroForm),
 );
 
 export const metadata = {

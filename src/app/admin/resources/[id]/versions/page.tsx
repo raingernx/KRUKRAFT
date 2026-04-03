@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/design-system";
-import { getAdminResourceVersionsPageData } from "@/services/admin-operations.service";
+import { getAdminResourceVersionsPageData } from "@/services/admin";
 import { ResourceVersionsClient } from "./ResourceVersionsClient";
 import { routes } from "@/lib/routes";
 import { requireAdminSession } from "@/lib/auth/require-admin-session";

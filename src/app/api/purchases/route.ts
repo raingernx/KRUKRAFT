@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getUserPurchases } from "@/services/purchase.service";
+import { getUserPurchases } from "@/services/purchases";
 
 // GET /api/purchases  –  returns the current user's completed purchases
 export async function GET() {

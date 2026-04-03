@@ -10,7 +10,7 @@ import {
   CreatorServiceError,
   getCreatorProfile,
   updateCreatorProfile,
-} from "@/services/creator.service";
+} from "@/services/creator";
 
 function handleCreatorError(error: unknown, label: string) {
   if (error instanceof CreatorServiceError) {

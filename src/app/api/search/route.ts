@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { getSearchRecoveryData } from "@/services/search-recovery.service";
+import { getSearchRecoveryData } from "@/services/search";
 import {
   searchResources,
   searchSuggestions,
-} from "@/services/search.service";
+} from "@/services/search";
 
 const SEARCH_RESPONSE_HEADERS = {
   "Cache-Control": "public, s-maxage=120, stale-while-revalidate=300",

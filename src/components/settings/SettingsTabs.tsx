@@ -16,7 +16,7 @@ type SettingsTabsProps = {
 
 export function SettingsTabs({ user, preferences }: SettingsTabsProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-0">
       <ProfileSettings
         name={user?.name}
         email={user?.email}

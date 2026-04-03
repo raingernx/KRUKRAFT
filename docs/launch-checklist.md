@@ -1,4 +1,4 @@
-# KruCraft Launch Checklist
+# Krukraft Launch Checklist
 
 ## Marketplace
 

@@ -7,7 +7,7 @@ import {
   getPlatform,
   resolvePlatformConfig,
   updatePlatformConfig,
-} from "@/services/platform.service";
+} from "@/services/platform";
 
 const OptionalStringSchema = z.preprocess(
   (value) => {

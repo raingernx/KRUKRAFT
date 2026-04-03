@@ -1,12 +1,12 @@
 /**
  * Purpose: Isolate the marketplace category-filtered listing path under load.
- * Run: BASE_URL=https://krucrafts.com CATEGORY=science k6 run k6/routes/resources-filtered-category.js
+ * Run: BASE_URL=https://krukraft.com CATEGORY=science k6 run k6/routes/resources-filtered-category.js
  */
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const BASE_URL = __ENV.BASE_URL || 'https://krucrafts.com';
+const BASE_URL = __ENV.BASE_URL || 'https://krukraft.com';
 const CATEGORY = __ENV.CATEGORY || 'science';
 const ROUTE_TAG = 'resources_filtered_category';
 

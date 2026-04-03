@@ -1,4 +1,4 @@
-import { getAdminAuditPageData } from "@/services/admin-operations.service";
+import { getAdminAuditPageData } from "@/services/admin";
 import { routes } from "@/lib/routes";
 import { requireAdminSession } from "@/lib/auth/require-admin-session";
 import { AuditTrailClient } from "./AuditTrailClient";

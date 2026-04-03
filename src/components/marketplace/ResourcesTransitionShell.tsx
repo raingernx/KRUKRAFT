@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ResourceDetailLoadingShell } from "@/components/resources/ResourceDetailLoadingShell";
+import { ResourceDetailLoadingShell } from "@/components/resources/detail/ResourceDetailLoadingShell";
 import {
   canonicalizeResourcesHref,
   clearResourcesNavigation,

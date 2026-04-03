@@ -5,7 +5,7 @@ import { checkRateLimit, getClientIp, LIMITS } from "@/lib/rate-limit";
 import {
   HeroServiceError,
   recordHeroClickEvent,
-} from "@/services/heroes/hero.service";
+} from "@/services/heroes";
 
 const TrackHeroClickSchema = z.object({
   heroId: z.string().min(1, "Hero id is required."),

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { ResourceDetailShell } from "@/components/resources/ResourceDetailShell";
+import { ResourceDetailShell } from "@/components/resources/detail/ResourceDetailShell";
 import { routes } from "@/lib/routes";
 
 export default function ResourceDetailError({

@@ -10,7 +10,7 @@ import {
   getResourceDetailDataTag,
 } from "@/lib/cache";
 import { checkRateLimit, getClientIp, LIMITS } from "@/lib/rate-limit";
-import { createReview, ReviewServiceError, updateReview } from "@/services/review.service";
+import { createReview, ReviewServiceError, updateReview } from "@/services/reviews";
 
 type Params = {
   params: Promise<{ id: string }>;

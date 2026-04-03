@@ -4,7 +4,7 @@ import {
   CreatorServiceError,
   approveCreatorApplication,
   rejectCreatorApplication,
-} from "@/services/creator.service";
+} from "@/services/creator";
 
 export async function PATCH(
   req: NextRequest,

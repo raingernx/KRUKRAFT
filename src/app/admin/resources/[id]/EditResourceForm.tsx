@@ -3,17 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  AdminFormLayout,
+  DetailsCard,
   ResourceForm,
   type ResourceFormCategory,
   type ResourceFormResource,
   type ResourceFormTag,
   type ResourcePayload,
-} from "@/components/admin/ResourceForm";
+  StatsCard,
+} from "@/components/admin/resources";
 import { Card } from "@/design-system";
-import { AdminFormLayout } from "@/components/admin/AdminFormLayout";
 import { ResourceCard } from "@/components/resources/ResourceCard";
-import { StatsCard } from "@/components/admin/StatsCard";
-import { DetailsCard } from "@/components/admin/DetailsCard";
 import type { ResourceCardData } from "@/components/resources/ResourceCard";
 import { routes } from "@/lib/routes";
 

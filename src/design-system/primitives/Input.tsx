@@ -1,22 +1,25 @@
 import * as React from "react"
 
-import { Input as UIInput, type InputProps as UIInputProps } from "@/components/ui/Input"
 import { cn } from "@/lib/utils"
 
-export interface InputProps extends UIInputProps {
+export interface InputProps extends Omit<React.ComponentProps<"input">, "prefix"> {
+  leftAdornment?: React.ReactNode
+  rightAdornment?: React.ReactNode
   error?: string
   hint?: string
 }
 
-function Input({
+const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
   error,
   hint,
   id,
   className,
+  leftAdornment,
+  rightAdornment,
   "aria-describedby": ariaDescribedBy,
   "aria-invalid": ariaInvalid,
   ...props
-}: InputProps) {
+}, ref) {
   const generatedId = React.useId()
   const inputId = id ?? generatedId
   const hintId = `${inputId}-hint`
@@ -27,15 +30,51 @@ function Input({
 
   return (
     <div className="w-full space-y-1">
-      <UIInput
-        id={inputId}
-        className={className}
-        aria-describedby={describedBy}
-        aria-invalid={ariaInvalid ?? Boolean(error)}
-        {...props}
-      />
+      {leftAdornment || rightAdornment ? (
+        <div className="relative">
+          {leftAdornment ? (
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex w-11 items-center justify-center text-text-muted">
+              {leftAdornment}
+            </span>
+          ) : null}
+          <input
+            ref={ref}
+            id={inputId}
+            data-slot="input"
+            className={cn(
+              "input-base min-w-0",
+              "aria-invalid:border-danger-600 aria-invalid:ring-2 aria-invalid:ring-danger-600/20",
+              leftAdornment && "pl-11",
+              rightAdornment && "pr-11",
+              className,
+            )}
+            aria-describedby={describedBy}
+            aria-invalid={ariaInvalid ?? Boolean(error)}
+            {...props}
+          />
+          {rightAdornment ? (
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex w-11 items-center justify-center text-text-muted">
+              {rightAdornment}
+            </span>
+          ) : null}
+        </div>
+      ) : (
+        <input
+          ref={ref}
+          id={inputId}
+          data-slot="input"
+          className={cn(
+            "input-base min-w-0",
+            "aria-invalid:border-danger-600 aria-invalid:ring-2 aria-invalid:ring-danger-600/20",
+            className,
+          )}
+          aria-describedby={describedBy}
+          aria-invalid={ariaInvalid ?? Boolean(error)}
+          {...props}
+        />
+      )}
       {error ? (
-        <p id={errorId} className="text-caption text-red-600">
+        <p id={errorId} className="text-caption text-danger-700">
           {error}
         </p>
       ) : hint ? (
@@ -45,7 +84,7 @@ function Input({
       ) : null}
     </div>
   )
-}
+})
 
 Input.displayName = "Input"
 

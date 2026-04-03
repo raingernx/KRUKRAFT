@@ -3,7 +3,7 @@ import { DollarSign, Receipt, ShoppingBag, Wallet } from "lucide-react";
 import { requireSession } from "@/lib/auth/require-session";
 import { formatDate, formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";
-import { getCreatorSales } from "@/services/creator.service";
+import { getCreatorSales } from "@/services/creator";
 
 export const metadata = {
   title: "Creator Sales",

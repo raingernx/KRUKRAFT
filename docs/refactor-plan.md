@@ -1,4 +1,4 @@
-## Refactor Plan – KruCraft
+## Refactor Plan – Krukraft
 
 ### Routing Improvements
 

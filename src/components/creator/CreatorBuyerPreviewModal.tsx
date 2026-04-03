@@ -2,10 +2,10 @@
 
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
-import { ResourceHeader } from "@/components/resource/ResourceHeader";
-import { ResourceGallery } from "@/components/resource/ResourceGallery";
-import { ResourceDescription } from "@/components/resource/ResourceDescription";
-import { ResourceFiles } from "@/components/resource/ResourceFiles";
+import { ResourceHeader } from "@/components/resources/detail/ResourceHeader";
+import { ResourceGallery } from "@/components/resources/detail/ResourceGallery";
+import { ResourceDescription } from "@/components/resources/detail/ResourceDescription";
+import { ResourceFiles } from "@/components/resources/detail/ResourceFiles";
 import { formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";
 

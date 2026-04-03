@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/auth/require-admin-api";
-import { getRecommendationReport } from "@/services/analytics/recommendation-report.service";
+import { getRecommendationReport } from "@/services/analytics";
 
 export async function GET(req: NextRequest) {
   const auth = await requireAdminApi();

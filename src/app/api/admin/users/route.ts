@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/auth/require-admin-api";
-import { getAdminUserLookupData } from "@/services/admin-operations.service";
+import { getAdminUserLookupData } from "@/services/admin";
 
 /**
  * GET /api/admin/users?q=

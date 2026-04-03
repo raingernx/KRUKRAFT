@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { requireAdminApi } from "@/lib/auth/require-admin-api";
-import { getAdminActivityFeedData } from "@/services/admin-operations.service";
+import { getAdminActivityFeedData } from "@/services/admin";
 
 export async function GET() {
   try {

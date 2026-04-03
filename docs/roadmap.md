@@ -1,6 +1,6 @@
 ## Project Overview
 
-KruCraft is a SaaS marketplace for downloadable educational resources. Students and educators can browse, purchase, and download learning materials, while creators and admins manage content through dedicated dashboards. The platform runs on Next.js 16 (App Router) with TypeScript, Tailwind CSS, Prisma/PostgreSQL, NextAuth, Stripe/Xendit, and `next-intl` for i18n.
+Krukraft is a SaaS marketplace for downloadable educational resources. Students and educators can browse, purchase, and download learning materials, while creators and admins manage content through dedicated dashboards. The platform runs on Next.js 16 (App Router) with TypeScript, Tailwind CSS, Prisma/PostgreSQL, NextAuth, Stripe/Xendit, and `next-intl` for i18n.
 
 ## Current Systems
 

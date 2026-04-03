@@ -1,6 +1,6 @@
-# KruCraft – Analytics Architecture
+# Krukraft – Analytics Architecture
 
-This document describes the analytics system used by the KruCraft marketplace.
+This document describes the analytics system used by the Krukraft marketplace.
 
 The analytics system powers:
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CheckCircle, BookOpen, Download, Library } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
-import { Container } from "@/components/layout/container";
+import { Container } from "@/design-system";
 import { CheckoutSuccessTracker } from "@/components/checkout/CheckoutSuccessTracker";
 import { routes } from "@/lib/routes";
 

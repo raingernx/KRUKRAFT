@@ -6,7 +6,7 @@ import {
   getResourceRouteData,
   ResourceRouteServiceError,
   updateResourceRoute,
-} from "@/services/resources/resource-route.service";
+} from "@/services/resources";
 
 type Params = { params: Promise<{ id: string }> };
 

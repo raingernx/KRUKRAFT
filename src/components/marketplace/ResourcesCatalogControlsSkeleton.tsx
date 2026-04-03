@@ -1,6 +1,5 @@
-import { Container } from "@/components/layout/container";
+import { Container, LoadingSkeleton } from "@/design-system";
 import { ScrollableCategoryNav } from "@/components/marketplace/ScrollableCategoryNav";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 
 const CONTROLS_BAR_CLASS_NAME = "border-y border-surface-200 bg-white";
 const CONTROLS_BAR_MAIN_CLASS_NAME = "flex min-w-0 items-center gap-2.5 overflow-hidden";
@@ -43,7 +42,7 @@ export function DiscoverFallback() {
 function SearchFallback() {
   return (
     <div className="flex h-10 w-full items-center gap-3 rounded-xl border border-border-subtle bg-white px-4 text-base text-text-muted shadow-sm sm:rounded-2xl">
-      <LoadingSkeleton className="h-2.5 w-2.5 rounded-full bg-primary-500" />
+      <LoadingSkeleton className="h-2.5 w-2.5 rounded-full bg-surface-300" />
       <span>กำลังค้นหา...</span>
     </div>
   );

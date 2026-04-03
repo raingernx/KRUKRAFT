@@ -5,7 +5,7 @@ import {
   HeroServiceError,
   trackHeroClick,
   trackHeroImpression,
-} from "@/services/heroes/hero.service";
+} from "@/services/heroes";
 
 const TrackHeroAnalyticsSchema = z.object({
   event: z.enum(["impression", "click"]),

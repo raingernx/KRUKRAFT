@@ -1,4 +1,4 @@
-## System Status – KruCraft
+## System Status – Krukraft
 
 | System                | Status       | Notes |
 |-----------------------|-------------|-------|

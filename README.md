@@ -1,4 +1,4 @@
-# KruCraft — Session 1: Architecture Scaffold
+# Krukraft — Session 1: Architecture Scaffold
 
 Next.js 14 (App Router) · Tailwind CSS · PostgreSQL · Prisma · NextAuth · Stripe
 
@@ -7,7 +7,7 @@ Next.js 14 (App Router) · Tailwind CSS · PostgreSQL · Prisma · NextAuth · S
 ## Folder Structure
 
 ```
-krucraft/
+krukraft/
 ├── prisma/
 │   ├── schema.prisma          ← Full data model (User, Resource, Purchase, Review, …)
 │   └── seed.ts                ← Dev seed data

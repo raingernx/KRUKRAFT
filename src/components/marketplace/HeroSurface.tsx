@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
-import { buttonVariants, colorScales } from "@/design-system";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { buttonVariants, colorScales, LoadingSkeleton } from "@/design-system";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
@@ -69,7 +68,7 @@ const DEFAULT_HERO: HeroSurfaceConfig = {
   primaryCtaLink: routes.marketplaceCategory("all"),
   secondaryCtaText: "Become a creator",
   secondaryCtaLink: routes.membership,
-  badgeText: "KruCraft marketplace",
+  badgeText: "Krukraft marketplace",
   imageUrl: null,
   mediaUrl: null,
   mediaType: null,
@@ -296,6 +295,9 @@ const HERO_SUPPORTING_CALLOUTS = [
 ] as const;
 
 const HERO_TOPIC_PILLS = ["Worksheets", "Flashcards", "Lesson packs"] as const;
+const HERO_SKELETON_DARK_SOFT = "bg-surface-100/18";
+const HERO_SKELETON_DARK_STRONG = "bg-surface-100/26";
+const HERO_SKELETON_LIGHT = "bg-surface-200";
 
 function normalizeOptionalString(value: string | null | undefined) {
   const trimmed = value?.trim();
@@ -704,32 +706,47 @@ export function HeroSurfaceSkeleton({
         <div className="absolute inset-0 bg-gradient-to-br from-surface-900 via-surface-800 to-surface-950" />
         <div className="relative z-10 grid h-full gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)_240px] lg:items-center">
           <div className="flex max-w-[38rem] flex-col gap-6">
-            <LoadingSkeleton className="h-4 w-40 bg-surface-50/45" />
+            <LoadingSkeleton className={cn("h-4 w-40", HERO_SKELETON_DARK_STRONG)} />
             <div className="space-y-3">
-              <LoadingSkeleton className="h-16 w-full max-w-[32rem] rounded-[24px] bg-primary-300/80" />
-              <LoadingSkeleton className="h-16 w-4/5 rounded-[24px] bg-primary-200/65" />
+              <LoadingSkeleton
+                className={cn(
+                  "h-16 w-full max-w-[32rem] rounded-[24px]",
+                  HERO_SKELETON_DARK_STRONG,
+                )}
+              />
+              <LoadingSkeleton
+                className={cn("h-16 w-4/5 rounded-[24px]", HERO_SKELETON_DARK_SOFT)}
+              />
             </div>
             <div className="space-y-2">
-              <LoadingSkeleton className="h-5 w-full max-w-[32rem] bg-surface-50/70" />
-              <LoadingSkeleton className="h-5 w-4/5 max-w-[28rem] bg-surface-100/60" />
+              <LoadingSkeleton
+                className={cn("h-5 w-full max-w-[32rem]", HERO_SKELETON_DARK_STRONG)}
+              />
+              <LoadingSkeleton
+                className={cn("h-5 w-4/5 max-w-[28rem]", HERO_SKELETON_DARK_SOFT)}
+              />
             </div>
             <div className="flex flex-wrap gap-2.5">
               {Array.from({ length: 3 }).map((_, index) => (
                 <LoadingSkeleton
                   key={index}
-                  className="h-8 w-28 rounded-full bg-surface-50/25"
+                  className={cn("h-8 w-28 rounded-full", HERO_SKELETON_DARK_SOFT)}
                 />
               ))}
             </div>
             <div className="flex flex-wrap gap-3">
-              <LoadingSkeleton className="h-12 w-40 rounded-full bg-primary-300/85" />
-              <LoadingSkeleton className="h-12 w-36 rounded-full bg-surface-50/18" />
+              <LoadingSkeleton
+                className={cn("h-12 w-40 rounded-full", HERO_SKELETON_DARK_STRONG)}
+              />
+              <LoadingSkeleton
+                className={cn("h-12 w-36 rounded-full", HERO_SKELETON_DARK_SOFT)}
+              />
             </div>
             <div className="flex flex-wrap gap-x-5 gap-y-2">
               {Array.from({ length: 3 }).map((_, index) => (
                 <LoadingSkeleton
                   key={index}
-                  className="h-4 w-52 bg-surface-100/28"
+                  className={cn("h-4 w-52", HERO_SKELETON_DARK_SOFT)}
                 />
               ))}
             </div>
@@ -738,15 +755,23 @@ export function HeroSurfaceSkeleton({
           <div className="relative">
             <div className="overflow-hidden rounded-[28px] border border-surface-100/12 bg-surface-900">
               <div className="relative aspect-[16/11] min-h-[260px]">
-                <LoadingSkeleton className="h-full w-full rounded-none bg-surface-50/14" />
+                <LoadingSkeleton
+                  className={cn("h-full w-full rounded-none", HERO_SKELETON_DARK_SOFT)}
+                />
                 <div className="absolute left-4 top-4">
-                  <LoadingSkeleton className="h-7 w-28 rounded-full bg-surface-50/24" />
+                  <LoadingSkeleton
+                    className={cn("h-7 w-28 rounded-full", HERO_SKELETON_DARK_SOFT)}
+                  />
                 </div>
                 <div className="absolute inset-x-4 bottom-4">
                   <div className="max-w-[18rem] rounded-[20px] border border-surface-100/14 bg-surface-950/72 px-4 py-3">
-                    <LoadingSkeleton className="h-3 w-32 bg-surface-100/26" />
-                    <LoadingSkeleton className="mt-3 h-4 w-full bg-surface-50/18" />
-                    <LoadingSkeleton className="mt-2 h-4 w-4/5 bg-surface-50/14" />
+                    <LoadingSkeleton className={cn("h-3 w-32", HERO_SKELETON_DARK_STRONG)} />
+                    <LoadingSkeleton
+                      className={cn("mt-3 h-4 w-full", HERO_SKELETON_DARK_SOFT)}
+                    />
+                    <LoadingSkeleton
+                      className={cn("mt-2 h-4 w-4/5", HERO_SKELETON_DARK_SOFT)}
+                    />
                   </div>
                 </div>
               </div>
@@ -754,20 +779,22 @@ export function HeroSurfaceSkeleton({
           </div>
 
           <div className="rounded-[24px] border border-surface-200 bg-white p-5">
-            <LoadingSkeleton className="h-3 w-10 bg-surface-200" />
-            <LoadingSkeleton className="mt-3 h-9 w-24 bg-surface-200" />
+            <LoadingSkeleton className={cn("h-3 w-10", HERO_SKELETON_LIGHT)} />
+            <LoadingSkeleton className={cn("mt-3 h-9 w-24", HERO_SKELETON_LIGHT)} />
             <div className="mt-5 space-y-3 border-t border-surface-200 pt-4">
               {Array.from({ length: 3 }).map((_, index) => (
                 <div key={index} className="flex items-start gap-2.5">
-                  <LoadingSkeleton className="mt-1 size-1.5 rounded-full bg-primary-300" />
-                  <LoadingSkeleton className="h-4 w-full bg-surface-200" />
+                  <LoadingSkeleton
+                    className={cn("mt-1 size-1.5 rounded-full", HERO_SKELETON_LIGHT)}
+                  />
+                  <LoadingSkeleton className={cn("h-4 w-full", HERO_SKELETON_LIGHT)} />
                 </div>
               ))}
             </div>
             <div className="mt-5 rounded-2xl border border-surface-200 bg-surface-50 px-4 py-3">
-              <LoadingSkeleton className="h-3 w-32 bg-surface-200" />
-              <LoadingSkeleton className="mt-3 h-4 w-full bg-surface-200" />
-              <LoadingSkeleton className="mt-2 h-4 w-4/5 bg-surface-200" />
+              <LoadingSkeleton className={cn("h-3 w-32", HERO_SKELETON_LIGHT)} />
+              <LoadingSkeleton className={cn("mt-3 h-4 w-full", HERO_SKELETON_LIGHT)} />
+              <LoadingSkeleton className={cn("mt-2 h-4 w-4/5", HERO_SKELETON_LIGHT)} />
             </div>
           </div>
         </div>

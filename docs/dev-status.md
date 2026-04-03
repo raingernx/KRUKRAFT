@@ -1,4 +1,4 @@
-## Development Status – KruCraft
+## Development Status – Krukraft
 
 ### System Status
 

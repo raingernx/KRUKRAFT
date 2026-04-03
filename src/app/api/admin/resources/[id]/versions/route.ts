@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { requireAdminApi } from "@/lib/auth/require-admin-api";
-import { getAdminResourceVersionsApiData } from "@/services/admin-operations.service";
+import { getAdminResourceVersionsApiData } from "@/services/admin";
 
 type Params = { params: Promise<{ id: string }> };
 

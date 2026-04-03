@@ -11,8 +11,17 @@ import {
   Star,
   Wallet,
 } from "lucide-react";
-import { Button, Card, CardContent, CardHeader, CardTitle } from "@/design-system";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  SectionHeader,
+} from "@/design-system";
 import { requireSession } from "@/lib/auth/require-session";
+import { StatusBadge } from "@/components/admin/StatusBadge";
 import { CreatorResourceStatusButton } from "@/components/creator/CreatorResourceStatusButton";
 import { CreatorWelcomeCard } from "@/components/creator/CreatorWelcomeCard";
 import { CreatorSetupChecklist } from "@/components/creator/CreatorSetupChecklist";
@@ -30,8 +39,8 @@ import {
   getCreatorMostRecentDraft,
   getCreatorRecentSalesForDashboard,
   getCreatorResourceStatusSummary,
-} from "@/services/creator.service";
-import { getCreatorSetupState } from "@/services/creator-setup.service";
+} from "@/services/creator";
+import { getCreatorSetupState } from "@/services/creator";
 import { logActivity } from "@/lib/activity";
 
 export const metadata = {
@@ -40,16 +49,14 @@ export const metadata = {
 
 export const dynamic = "force-dynamic";
 
-function statusTone(status: string) {
-  switch (status) {
-    case "PUBLISHED":
-      return "bg-emerald-50 text-emerald-700 ring-emerald-200";
-    case "ARCHIVED":
-      return "bg-amber-50 text-amber-700 ring-amber-200";
-    default:
-      return "bg-neutral-50 text-neutral-600 ring-neutral-200";
-  }
-}
+const PANEL_CLASS = "rounded-2xl border border-border-subtle bg-white shadow-card";
+const PANEL_HEADER_CLASS =
+  "flex flex-col gap-2 border-b border-surface-100 px-6 py-5 sm:flex-row sm:items-center sm:justify-between";
+const PANEL_TITLE_CLASS = "text-sm font-semibold text-text-primary";
+const PANEL_DESCRIPTION_CLASS = "mt-1 text-xs text-text-secondary";
+const TABLE_HEAD_CLASS =
+  "border-b border-surface-100 text-left text-xs font-semibold uppercase tracking-wide text-text-muted";
+const TABLE_BODY_CLASS = "divide-y divide-surface-100";
 
 function buildMomentumMilestones(resource: {
   downloadCount: number;
@@ -125,20 +132,11 @@ export default async function CreatorDashboardPage() {
 
     return (
       <div className="space-y-8">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-500">
-              Creator
-            </p>
-            <h1 className="mt-2 font-display text-h2 font-semibold tracking-tight text-neutral-900">
-              Creator Dashboard
-            </h1>
-            <p className="mt-1 max-w-2xl text-sm text-neutral-500">
-              Review the resources you own in the marketplace. This dashboard is read-only and
-              shows only listings attached to your account.
-            </p>
-          </div>
-        </div>
+        <SectionHeader
+          eyebrow="Creator"
+          title="Creator Dashboard"
+          description="Review the resources you own in the marketplace. This dashboard is read-only and shows only listings attached to your account."
+        />
 
         <CreatorWelcomeCard creatorName={session.user.name} canCreate={access.canCreate} />
 
@@ -175,48 +173,40 @@ export default async function CreatorDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-500">
-            Creator
-          </p>
-          <h1 className="mt-2 font-display text-h2 font-semibold tracking-tight text-neutral-900">
-            Creator Dashboard
-          </h1>
-          <p className="mt-1 max-w-2xl text-sm text-neutral-500">
-            Review the resources you own in the marketplace. This dashboard is read-only and
-            shows only listings attached to your account.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap gap-3">
-          <Button variant="outline" asChild>
-            <Link href={routes.creatorResources}>Open resource manager</Link>
-          </Button>
-          {access.canCreate && (
-            <Button asChild>
-              <Link href={routes.creatorNewResource}>
-                <Plus className="h-4 w-4" />
-                Create resource
-              </Link>
+      <SectionHeader
+        eyebrow="Creator"
+        title="Creator Dashboard"
+        description="Review the resources you own in the marketplace. This dashboard is read-only and shows only listings attached to your account."
+        actions={
+          <div className="flex flex-wrap gap-3">
+            <Button variant="outline" asChild>
+              <Link href={routes.creatorResources}>Open resource manager</Link>
             </Button>
-          )}
-        </div>
-      </div>
+            {access.canCreate && (
+              <Button asChild>
+                <Link href={routes.creatorNewResource}>
+                  <Plus className="h-4 w-4" />
+                  Create resource
+                </Link>
+              </Button>
+            )}
+          </div>
+        }
+      />
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium text-neutral-600">
-              <DollarSign className="h-4 w-4 text-emerald-600" />
+            <CardTitle className="flex items-center gap-2 text-sm font-medium text-text-secondary">
+              <DollarSign className="h-4 w-4 text-success-600" />
               Total revenue
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold tracking-tight text-neutral-900">
+            <p className="text-3xl font-semibold tracking-tight text-text-primary">
               {formatPrice(stats.totalRevenue / 100)}
             </p>
-            <p className="mt-2 text-sm text-neutral-500">
+            <p className="mt-2 text-sm text-text-secondary">
               Completed purchase revenue using purchase-time author snapshots.
             </p>
           </CardContent>
@@ -224,16 +214,16 @@ export default async function CreatorDashboardPage() {
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium text-neutral-600">
-              <ShoppingBag className="h-4 w-4 text-blue-600" />
+            <CardTitle className="flex items-center gap-2 text-sm font-medium text-text-secondary">
+              <ShoppingBag className="h-4 w-4 text-info-600" />
               Total sales
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold tracking-tight text-neutral-900">
+            <p className="text-3xl font-semibold tracking-tight text-text-primary">
               {stats.totalSales.toLocaleString()}
             </p>
-            <p className="mt-2 text-sm text-neutral-500">
+            <p className="mt-2 text-sm text-text-secondary">
               Completed purchases across all resources you currently own.
             </p>
           </CardContent>
@@ -241,16 +231,16 @@ export default async function CreatorDashboardPage() {
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium text-neutral-600">
-              <FileText className="h-4 w-4 text-violet-600" />
+            <CardTitle className="flex items-center gap-2 text-sm font-medium text-text-secondary">
+              <FileText className="h-4 w-4 text-primary-700" />
               Total resources
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold tracking-tight text-neutral-900">
+            <p className="text-3xl font-semibold tracking-tight text-text-primary">
               {stats.totalResources}
             </p>
-            <p className="mt-2 text-sm text-neutral-500">
+            <p className="mt-2 text-sm text-text-secondary">
               {statusSummary.published} published · {statusSummary.draft} draft ·{" "}
               {statusSummary.archived} archived
             </p>
@@ -261,37 +251,37 @@ export default async function CreatorDashboardPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card size="sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-neutral-600">Draft</CardTitle>
+            <CardTitle className="text-sm font-medium text-text-secondary">Draft</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold tracking-tight text-neutral-900">
+            <p className="text-2xl font-semibold tracking-tight text-text-primary">
               {statusSummary.draft}
             </p>
-            <p className="mt-1 text-sm text-neutral-500">Private and not purchasable.</p>
+            <p className="mt-1 text-sm text-text-secondary">Private and not purchasable.</p>
           </CardContent>
         </Card>
 
         <Card size="sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-neutral-600">Published</CardTitle>
+            <CardTitle className="text-sm font-medium text-text-secondary">Published</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold tracking-tight text-neutral-900">
+            <p className="text-2xl font-semibold tracking-tight text-text-primary">
               {statusSummary.published}
             </p>
-            <p className="mt-1 text-sm text-neutral-500">Visible in the marketplace and sellable.</p>
+            <p className="mt-1 text-sm text-text-secondary">Visible in the marketplace and sellable.</p>
           </CardContent>
         </Card>
 
         <Card size="sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-neutral-600">Archived</CardTitle>
+            <CardTitle className="text-sm font-medium text-text-secondary">Archived</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold tracking-tight text-neutral-900">
+            <p className="text-2xl font-semibold tracking-tight text-text-primary">
               {statusSummary.archived}
             </p>
-            <p className="mt-1 text-sm text-neutral-500">Hidden from listings until restored.</p>
+            <p className="mt-1 text-sm text-text-secondary">Hidden from listings until restored.</p>
           </CardContent>
         </Card>
       </div>
@@ -306,7 +296,7 @@ export default async function CreatorDashboardPage() {
       )}
 
       {lifecycleMessage && (
-        <div className="rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4 text-sm text-blue-700">
+        <div className="rounded-2xl border border-info-100 bg-info-50 px-5 py-4 text-sm text-info-700">
           <p className="font-semibold">{lifecycleMessage.title}</p>
           <p className="mt-1">{lifecycleMessage.description}</p>
         </div>
@@ -316,14 +306,14 @@ export default async function CreatorDashboardPage() {
 
       {topPerformer && (
         <div className="space-y-4">
-          <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-5 py-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
+          <div className="rounded-2xl border border-success-100 bg-success-50 px-5 py-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-success-700">
               Best performing resource
             </p>
             <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm font-semibold text-emerald-900">{topPerformer.title}</p>
-                <p className="mt-1 text-sm text-emerald-700">
+                <p className="text-sm font-semibold text-success-700">{topPerformer.title}</p>
+                <p className="mt-1 text-sm text-success-700">
                   {topPerformer.salesCount.toLocaleString()} sales ·{" "}
                   {topPerformer.downloadCount.toLocaleString()} downloads
                   {typeof topPerformer.averageRating === "number" &&
@@ -341,29 +331,30 @@ export default async function CreatorDashboardPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-100 bg-amber-50 px-5 py-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">
+          <div className="rounded-2xl border border-warning-100 bg-warning-50 px-5 py-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-warning-700">
               Creator momentum
             </p>
             {momentumMilestones.length > 0 ? (
               <div className="mt-3 flex flex-wrap gap-2">
                 {momentumMilestones.map((milestone) => (
-                  <span
+                  <Badge
                     key={milestone}
-                    className="inline-flex items-center rounded-full bg-white px-3 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200"
+                    variant="warning"
+                    className="bg-white px-3 py-1 font-semibold text-warning-700 ring-1 ring-inset ring-warning-200"
                   >
                     {milestone}
-                  </span>
+                  </Badge>
                 ))}
               </div>
             ) : (
-              <p className="mt-3 text-sm text-amber-800">
+              <p className="mt-3 text-sm text-warning-700">
                 Your next milestone is close. A few more downloads, sales, or visible reviews will
                 make this listing stand out faster.
               </p>
             )}
             {qualityFeedback && (
-              <p className="mt-3 text-sm text-amber-800">{qualityFeedback}</p>
+              <p className="mt-3 text-sm text-warning-700">{qualityFeedback}</p>
             )}
           </div>
         </div>
@@ -372,34 +363,34 @@ export default async function CreatorDashboardPage() {
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium text-neutral-600">
-              <Wallet className="h-4 w-4 text-emerald-600" />
+            <CardTitle className="flex items-center gap-2 text-sm font-medium text-text-secondary">
+              <Wallet className="h-4 w-4 text-success-600" />
               Balance
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-5">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-400">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">
                 Available balance
               </p>
-              <p className="mt-2 text-3xl font-semibold tracking-tight text-neutral-900">
+              <p className="mt-2 text-3xl font-semibold tracking-tight text-text-primary">
                 {formatPrice(balance.availableBalance / 100)}
               </p>
-              <p className="mt-2 text-sm text-neutral-500">
+              <p className="mt-2 text-sm text-text-secondary">
                 Read-only payout-ready balance based on purchase earnings minus recorded payouts.
               </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-xl border border-neutral-100 bg-neutral-50 px-4 py-4">
-                <p className="text-xs uppercase tracking-wide text-neutral-500">Total earnings</p>
-                <p className="mt-2 text-lg font-semibold text-neutral-900">
+              <div className="rounded-xl border border-surface-100 bg-surface-50 px-4 py-4">
+                <p className="text-xs uppercase tracking-wide text-text-secondary">Total earnings</p>
+                <p className="mt-2 text-lg font-semibold text-text-primary">
                   {formatPrice(balance.totalEarnings / 100)}
                 </p>
               </div>
-              <div className="rounded-xl border border-neutral-100 bg-neutral-50 px-4 py-4">
-                <p className="text-xs uppercase tracking-wide text-neutral-500">Total paid out</p>
-                <p className="mt-2 text-lg font-semibold text-neutral-900">
+              <div className="rounded-xl border border-surface-100 bg-surface-50 px-4 py-4">
+                <p className="text-xs uppercase tracking-wide text-text-secondary">Total paid out</p>
+                <p className="mt-2 text-lg font-semibold text-text-primary">
                   {formatPrice(balance.totalPayouts / 100)}
                 </p>
               </div>
@@ -409,7 +400,7 @@ export default async function CreatorDashboardPage() {
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between gap-3 text-sm font-medium text-neutral-600">
+            <CardTitle className="flex items-center justify-between gap-3 text-sm font-medium text-text-secondary">
               <span>Payout history</span>
               <Button type="button" variant="outline" size="sm" disabled>
                 Request payout
@@ -418,7 +409,7 @@ export default async function CreatorDashboardPage() {
           </CardHeader>
           <CardContent>
             {balance.payouts.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-4 py-6 text-sm text-neutral-500">
+              <div className="rounded-xl border border-dashed border-border-subtle bg-surface-50 px-4 py-6 text-sm text-text-secondary">
                 No payouts recorded yet. This account is payout-ready, but payout execution has not
                 been enabled.
               </div>
@@ -427,17 +418,17 @@ export default async function CreatorDashboardPage() {
                 {balance.payouts.slice(0, 5).map((payout) => (
                   <li
                     key={payout.id}
-                    className="flex items-center justify-between gap-4 rounded-xl border border-neutral-100 px-4 py-3"
+                    className="flex items-center justify-between gap-4 rounded-xl border border-surface-100 px-4 py-3"
                   >
                     <div>
-                      <p className="text-sm font-medium text-neutral-900">
+                      <p className="text-sm font-medium text-text-primary">
                         {formatPrice(payout.amount / 100)}
                       </p>
-                      <p className="mt-1 text-xs text-neutral-500">{formatDate(payout.createdAt)}</p>
+                      <p className="mt-1 text-xs text-text-secondary">{formatDate(payout.createdAt)}</p>
                     </div>
-                    <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-600">
+                    <Badge variant="neutral" className="px-2.5 py-1 text-[11px] uppercase tracking-wide">
                       {payout.status}
-                    </span>
+                    </Badge>
                   </li>
                 ))}
               </ul>
@@ -446,26 +437,26 @@ export default async function CreatorDashboardPage() {
         </Card>
       </div>
 
-      <section className="overflow-hidden rounded-2xl border border-neutral-100 bg-white shadow-card">
-        <div className="flex flex-col gap-2 border-b border-neutral-100 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+      <section className={PANEL_CLASS}>
+        <div className={PANEL_HEADER_CLASS}>
           <div>
-            <h2 className="text-sm font-semibold text-neutral-900">Resource performance</h2>
-            <p className="mt-1 text-xs text-neutral-500">
+            <h2 className={PANEL_TITLE_CLASS}>Resource performance</h2>
+            <p className={PANEL_DESCRIPTION_CLASS}>
               Revenue and sales reflect completed purchases with available author snapshot data.
             </p>
           </div>
-          <p className="text-xs font-medium text-neutral-400">
+          <p className="text-xs font-medium text-text-muted">
             {performance.length} resource{performance.length === 1 ? "" : "s"}
           </p>
         </div>
 
         {performance.length === 0 ? (
           <div className="px-6 py-16 text-center">
-            <FolderOpen className="mx-auto h-10 w-10 text-neutral-300" />
-            <p className="mt-4 text-sm font-semibold text-neutral-700">
+            <FolderOpen className="mx-auto h-10 w-10 text-text-muted" />
+            <p className="mt-4 text-sm font-semibold text-text-primary">
               You have not created any resources yet
             </p>
-            <p className="mt-2 text-sm text-neutral-500">
+            <p className="mt-2 text-sm text-text-secondary">
               Start your creator catalog by adding your first marketplace listing.
             </p>
             {access.canCreate && (
@@ -481,7 +472,7 @@ export default async function CreatorDashboardPage() {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[860px] text-sm">
               <thead>
-                <tr className="border-b border-neutral-100 text-left text-xs font-semibold uppercase tracking-wide text-neutral-400">
+                <tr className={TABLE_HEAD_CLASS}>
                   <th className="px-6 py-3">Resource</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3 text-right">Price</th>
@@ -494,55 +485,51 @@ export default async function CreatorDashboardPage() {
                   <th className="px-6 py-3 text-right">Links</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-50">
+              <tbody className={TABLE_BODY_CLASS}>
                 {performance.map((resource) => (
-                  <tr key={resource.resourceId} className="hover:bg-neutral-50/60">
+                  <tr key={resource.resourceId} className="hover:bg-surface-50/60">
                     <td className="px-6 py-4">
                       <div className="flex items-start gap-3">
-                        <span className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500">
+                        <span className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-surface-100 text-text-muted">
                           <FileText className="h-4 w-4" />
                         </span>
                         <div className="min-w-0">
-                          <p className="truncate font-medium text-neutral-900">{resource.title}</p>
-                          <p className="mt-1 text-xs text-neutral-400">{resource.slug}</p>
+                          <p className="truncate font-medium text-text-primary">{resource.title}</p>
+                          <p className="mt-1 text-xs text-text-muted">{resource.slug}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ring-inset ${statusTone(resource.status)}`}
-                      >
-                        {resource.status}
-                      </span>
+                      <StatusBadge status={resource.status} />
                     </td>
-                    <td className="px-4 py-4 text-right font-medium text-neutral-700">
+                    <td className="px-4 py-4 text-right font-medium text-text-secondary">
                       {resource.isFree ? "Free" : formatPrice(resource.price / 100)}
                     </td>
-                    <td className="px-4 py-4 text-right font-medium text-neutral-700">
+                    <td className="px-4 py-4 text-right font-medium text-text-secondary">
                       <span className="inline-flex items-center gap-1.5">
-                        <Download className="h-3.5 w-3.5 text-neutral-400" />
+                        <Download className="h-3.5 w-3.5 text-text-muted" />
                         {resource.downloadCount.toLocaleString()}
                       </span>
                     </td>
-                    <td className="px-4 py-4 text-right font-medium text-neutral-700">
+                    <td className="px-4 py-4 text-right font-medium text-text-secondary">
                       {resource.salesCount.toLocaleString()}
                     </td>
-                    <td className="px-4 py-4 text-right font-medium text-neutral-700">
+                    <td className="px-4 py-4 text-right font-medium text-text-secondary">
                       {typeof resource.averageRating === "number" &&
                       resource.visibleReviewCount > 0 ? (
                         <span className="inline-flex items-center gap-1.5">
-                          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                          <Star className="h-3.5 w-3.5 fill-warning-500 text-warning-500" />
                           {resource.averageRating.toFixed(1)}
                         </span>
                       ) : (
                         "—"
                       )}
                     </td>
-                    <td className="px-4 py-4 text-right font-semibold text-neutral-900">
+                    <td className="px-4 py-4 text-right font-semibold text-text-primary">
                       {formatPrice(resource.revenue / 100)}
                     </td>
-                    <td className="px-4 py-4 text-neutral-500">{formatDate(resource.createdAt)}</td>
-                    <td className="px-4 py-4 text-neutral-500">{formatDate(resource.updatedAt)}</td>
+                    <td className="px-4 py-4 text-text-secondary">{formatDate(resource.createdAt)}</td>
+                    <td className="px-4 py-4 text-text-secondary">{formatDate(resource.updatedAt)}</td>
                     <td className="px-6 py-4">
                       <div className="flex justify-end gap-2">
                         <Button variant="outline" size="sm" asChild>

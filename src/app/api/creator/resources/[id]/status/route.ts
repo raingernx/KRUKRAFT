@@ -18,7 +18,7 @@ import {
   CreatorServiceError,
   getCreatorResourcePublicCacheTarget,
   updateCreatorResourceStatus,
-} from "@/services/creator.service";
+} from "@/services/creator";
 
 type Params = {
   params: Promise<{ id: string }>;

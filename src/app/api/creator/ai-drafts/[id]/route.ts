@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { Prisma } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
-import { CreatorServiceError } from "@/services/creator.service";
-import { updateCreatorResourceAIDraft } from "@/services/creator-resource-ai-draft.service";
+import { CreatorServiceError } from "@/services/creator";
+import { updateCreatorResourceAIDraft } from "@/services/creator";
 
 type Params = {
   params: Promise<{ id: string }>;

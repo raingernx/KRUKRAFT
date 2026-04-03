@@ -29,7 +29,7 @@ import {
   getHeroList,
   HeroServiceError,
   updateHero,
-} from "@/services/heroes/hero.service";
+} from "@/services/heroes";
 
 const heroTypeSchema = z.enum(["featured", "promotion", "seasonal", "search", "fallback"]);
 const overlayOpacitySchema = z

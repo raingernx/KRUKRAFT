@@ -1,6 +1,6 @@
-# KruCraft – Cache Architecture
+# Krukraft – Cache Architecture
 
-This document describes the caching strategy used in KruCraft.
+This document describes the caching strategy used in Krukraft.
 
 The purpose of caching is to reduce database load, improve page speed,
 and ensure the marketplace can scale to large traffic volumes.
@@ -28,7 +28,7 @@ Caching is especially important for:
 
 # Cache Layers
 
-KruCraft uses multiple caching layers.
+Krukraft uses multiple caching layers.
 
 Client Request
 ↓

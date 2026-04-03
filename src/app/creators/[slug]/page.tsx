@@ -6,7 +6,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { HeroSearch } from "@/components/marketplace/HeroSearch";
 import { Avatar, PageContainer, PageContentWide } from "@/design-system";
 import { ResourceCard } from "@/components/resources/ResourceCard";
-import { getCreatorPublicProfile } from "@/services/creator.service";
+import { getCreatorPublicProfile } from "@/services/creator";
 
 type CreatorProfilePageProps = {
   params: Promise<{ slug: string }>;

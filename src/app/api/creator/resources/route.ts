@@ -6,7 +6,7 @@ import { Prisma } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
 import { CACHE_TAGS, deleteDiscoverRedisKeys, getCreatorPublicCacheTag } from "@/lib/cache";
 import { warmTargetedPublicCaches } from "@/services/performance/public-cache-warm.service";
-import { CreatorServiceError, createCreatorResource } from "@/services/creator.service";
+import { CreatorServiceError, createCreatorResource } from "@/services/creator";
 
 function handleCreatorError(error: unknown, label: string) {
   if (error instanceof CreatorServiceError) {

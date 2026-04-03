@@ -2,11 +2,11 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { isMissingTableError } from "@/lib/prismaErrors";
 import { AlertCircle, BookOpen } from "lucide-react";
-import { ResourceHeader } from "@/components/resource/ResourceHeader";
-import { ResourceGallery } from "@/components/resource/ResourceGallery";
-import { PurchaseCardSkeleton } from "@/components/resource/PurchaseCardSkeleton";
-import { ResourceDetailShell } from "@/components/resources/ResourceDetailShell";
-import { ResourceDetailViewerStateProvider } from "@/components/resources/ResourceDetailViewerStateProvider";
+import { ResourceHeader } from "@/components/resources/detail/ResourceHeader";
+import { ResourceGallery } from "@/components/resources/detail/ResourceGallery";
+import { PurchaseCardSkeleton } from "@/components/resources/detail/PurchaseCardSkeleton";
+import { ResourceDetailShell } from "@/components/resources/detail/ResourceDetailShell";
+import { ResourceDetailViewerStateProvider } from "@/components/resources/detail/ResourceDetailViewerStateProvider";
 import {
   ResourceDetailBodyFallback,
   ResourceDetailBodySection,
@@ -22,7 +22,7 @@ import {
   ResourceDetailReviewsFallback,
   ResourceDetailSuccessShell,
   ResourceDetailSuccessSkeleton,
-} from "@/components/resources/ResourceDetailSections";
+} from "@/components/resources/detail/ResourceDetailSections";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import {
   getResourceDetailPageBodyContent,
@@ -31,11 +31,11 @@ import {
   getResourceDetailPageResource,
   getResourceDetailPageReviewList,
   getResourceDetailPageTrustSummary,
-} from "@/services/resources/resource-detail-page.service";
+} from "@/services/resources";
 import {
   logResourceDetailFailure,
   runNonCriticalResourceDetailTask,
-} from "@/services/resources/resource-detail-resilience";
+} from "@/services/resources";
 import { traceServerStep, withRequestPerformanceTrace } from "@/lib/performance/observability";
 import { routes } from "@/lib/routes";
 

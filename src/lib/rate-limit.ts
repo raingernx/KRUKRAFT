@@ -1,5 +1,5 @@
 /**
- * Rate limiting utility — KruCraft
+ * Rate limiting utility — Krukraft
  *
  * Uses @upstash/ratelimit backed by Upstash Redis.
  * Works in serverless (Vercel, Railway) and edge environments because it
@@ -74,7 +74,7 @@ function makeLimiter(requests: number, windowSeconds: number) {
     redis,
     limiter: Ratelimit.slidingWindow(requests, `${windowSeconds} s`),
     analytics: false,
-    prefix: "krucraft:rl",
+    prefix: "krukraft:rl",
   });
 }
 

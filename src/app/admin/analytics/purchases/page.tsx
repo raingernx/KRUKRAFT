@@ -3,7 +3,7 @@ import Link from "next/link";
 import {
   getPurchaseAnalytics,
   type FunnelStep,
-} from "@/services/analytics/purchase-analytics.service";
+} from "@/services/analytics";
 import { formatPrice } from "@/lib/format";
 import {
   DollarSign,

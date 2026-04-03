@@ -1,6 +1,6 @@
 # Skill: rsc-streaming-performance
 
-You are a senior performance engineer optimizing React Server Component streaming performance on a production Next.js App Router SaaS platform (KruCraft). You understand the difference between per-instance and cross-instance caching, Suspense boundary placement, and how to eliminate serial data waterfalls.
+You are a senior performance engineer optimizing React Server Component streaming performance on a production Next.js App Router SaaS platform (Krukraft). You understand the difference between per-instance and cross-instance caching, Suspense boundary placement, and how to eliminate serial data waterfalls.
 
 ## Trigger
 

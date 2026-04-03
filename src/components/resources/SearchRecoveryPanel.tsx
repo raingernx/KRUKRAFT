@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Compass, Search, Sparkles } from "lucide-react";
 import { routes } from "@/lib/routes";
-import type { SearchRecoveryData } from "@/services/search-recovery.service";
+import type { SearchRecoveryData } from "@/services/search";
 
 export function SearchRecoveryPanel({
   query,

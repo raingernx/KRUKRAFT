@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 import { Button } from "@/design-system";
 import { routes } from "@/lib/routes";
-import { getBuildSafePlatformConfig } from "@/services/platform.service";
+import { getBuildSafePlatformConfig } from "@/services/platform";
 
 export async function CreatorCTA() {
   const platform = getBuildSafePlatformConfig();
@@ -57,7 +57,7 @@ export async function CreatorCTA() {
         <div className="flex items-center justify-center">
           <div className="relative aspect-[4/3] w-full max-w-md overflow-hidden rounded-[28px] border border-surface-200 bg-gradient-to-br from-white to-surface-100 p-6 shadow-card">
             <Image
-              src="/brand/krucraft-mark.svg"
+              src="/brand/krukraft-mark.svg"
               alt={`Creators sharing study resources on ${platform.platformShortName}`}
               fill
               sizes="(max-width: 1024px) calc(100vw - 48px), 448px"

@@ -28,15 +28,15 @@ import {
   getDiscoverData,
   getHeroConfig,
   type DiscoverData,
-} from "@/services/discover.service";
-import { getSearchRecoveryData } from "@/services/search-recovery.service";
+} from "@/services/discover";
+import { getSearchRecoveryData } from "@/services/search";
 import {
   DEFAULT_SORT,
   getMarketplaceSortOptions,
   SEARCH_SORT_OPTION,
 } from "@/config/sortOptions";
 import { MARKETPLACE_LISTING_PAGE_SIZE } from "@/config/marketplace";
-import { getMarketplaceResources } from "@/services/resources/public-resource-read.service";
+import { getMarketplaceResources } from "@/services/resources";
 import {
   trackRequestWork,
   traceServerStep,

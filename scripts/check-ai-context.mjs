@@ -110,7 +110,7 @@ function unique(values) {
 
 const changedFiles = getChangedFiles();
 const changedContextFiles = changedFiles.filter((file) =>
-  file.startsWith("krucraft-ai-contexts/"),
+  file.startsWith("krukraft-ai-contexts/"),
 );
 
 const matchedReasons = unique(
@@ -151,7 +151,7 @@ console.warn("[context-check] This change likely affects shared AI understanding
 console.warn(`[context-check] Why: ${matchedReasons.join("; ")}`);
 console.warn(
   `[context-check] Consider updating: ${suggestedDocs
-    .map((doc) => `krucraft-ai-contexts/${doc}`)
+    .map((doc) => `krukraft-ai-contexts/${doc}`)
     .join(", ")}`,
 );
 console.warn("[context-check] Run: npm run context:check:staged");

@@ -1,4 +1,4 @@
-import { ResourceDetailLoadingShell } from "@/components/resources/ResourceDetailLoadingShell";
+import { ResourceDetailLoadingShell } from "@/components/resources/detail/ResourceDetailLoadingShell";
 
 export default function Loading() {
   return <ResourceDetailLoadingShell />;

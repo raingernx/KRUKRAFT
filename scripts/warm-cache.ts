@@ -19,7 +19,7 @@ const warmSecret = process.env.PERFORMANCE_WARM_SECRET?.trim();
 // thundering herd during the k6 ramp.  This timeout only applies to the CI
 // warm step — it has no effect on the hot request path.
 const timeoutMs = 15000;
-const userAgent = "KruCraft-Warmup/1.0";
+const userAgent = "Krukraft-Warmup/1.0";
 
 if (!baseUrl) {
   console.error(

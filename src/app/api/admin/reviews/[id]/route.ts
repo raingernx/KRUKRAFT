@@ -12,7 +12,7 @@ import {
   hideReview,
   ReviewServiceError,
   unhideReview,
-} from "@/services/review.service";
+} from "@/services/reviews";
 
 type Params = {
   params: Promise<{ id: string }>;

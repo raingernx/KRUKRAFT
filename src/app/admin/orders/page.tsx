@@ -14,7 +14,7 @@ import {
   TableEmptyState,
   TableToolbar,
 } from "@/components/admin/table";
-import { getAdminOrdersPageData } from "@/services/admin-operations.service";
+import { getAdminOrdersPageData } from "@/services/admin";
 import {
   traceServerStep,
   withRequestPerformanceTrace,

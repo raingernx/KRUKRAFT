@@ -1,4 +1,4 @@
-KruCraft is a SaaS marketplace for digital study resources.
+Krukraft is a SaaS marketplace for digital study resources.
 
 Core flows:
 - browse resources

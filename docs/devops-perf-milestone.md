@@ -1,4 +1,4 @@
-# KruCraft — DevOps & Performance Milestone (Post-Deploy Phase)
+# Krukraft — DevOps & Performance Milestone (Post-Deploy Phase)
 
 ## Status
 
@@ -41,7 +41,7 @@
 
 ## Manual Full Benchmark
 
-- `BASE_URL=https://krucrafts.com npm run perf:full:prod`
+- `BASE_URL=https://krukraft.com npm run perf:full:prod`
 
 ## Latest Smoke Baseline
 

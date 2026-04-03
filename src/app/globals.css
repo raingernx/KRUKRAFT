@@ -72,7 +72,7 @@
 @layer base {
   :root {
     /* Theme values mirror `themeColors.light` in src/design-system/tokens/colors.ts. */
-    /* ── shadcn/ui v3 design tokens aligned to KRUCraft surface system ── */
+    /* ── shadcn/ui v3 design tokens aligned to Krukraft surface system ── */
     --background:            0 0% 100%;
     --foreground:            222 47.4% 11.2%;
 
@@ -198,7 +198,7 @@
 }
 
 @layer components {
-  /* KruCraft logotype — Apotek Variable Extended Bold (Adobe Fonts) */
+  /* Krukraft logotype — Apotek Variable Extended Bold (Adobe Fonts) */
   .apotek-logo {
     font-family: "apotek-variable", sans-serif;
     font-variation-settings: "wdth" 200, "wght" 700;

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { confirmPasswordReset } from "@/services/user-account.service";
+import { confirmPasswordReset } from "@/services/users";
 
 const ConfirmPasswordResetSchema = z.object({
   token: z.string().min(1, "Reset token is required."),

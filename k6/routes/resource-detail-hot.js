@@ -1,12 +1,12 @@
 /**
  * Purpose: Isolate the hot public resource detail route under load.
- * Run: BASE_URL=https://krucrafts.com HOT_SLUG=middle-school-science-quiz-assessment-set k6 run k6/routes/resource-detail-hot.js
+ * Run: BASE_URL=https://krukraft.com HOT_SLUG=middle-school-science-quiz-assessment-set k6 run k6/routes/resource-detail-hot.js
  */
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const BASE_URL = __ENV.BASE_URL || 'https://krucrafts.com';
+const BASE_URL = __ENV.BASE_URL || 'https://krukraft.com';
 const HOT_SLUG = __ENV.HOT_SLUG || 'middle-school-science-quiz-assessment-set';
 const ROUTE_TAG = 'resource_detail_hot';
 

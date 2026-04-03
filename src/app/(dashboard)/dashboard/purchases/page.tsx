@@ -14,8 +14,8 @@ import { requireSession } from "@/lib/auth/require-session";
 import { formatDate, formatPrice } from "@/lib/format";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 import { routes } from "@/lib/routes";
-import { getDashboardPurchaseHistoryPageData } from "@/services/admin-operations.service";
-import { getBuildSafePlatformConfig } from "@/services/platform.service";
+import { getDashboardPurchaseHistoryPageData } from "@/services/admin";
+import { getBuildSafePlatformConfig } from "@/services/platform";
 import { EmptyState } from "@/design-system";
 
 export const metadata = {

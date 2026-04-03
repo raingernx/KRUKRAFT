@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/auth/require-admin-api";
-import { getAdminAuditApiData } from "@/services/admin-operations.service";
+import { getAdminAuditApiData } from "@/services/admin";
 
 const MAX_PAGE_SIZE = 50;
 

@@ -1,11 +1,50 @@
-import type { ComponentProps } from "react";
+import type { ReactNode } from "react";
 
-import { SectionHeader as UISectionHeader } from "@/components/ui/SectionHeader";
+import { cn } from "@/lib/utils";
 
-export type SectionHeaderProps = ComponentProps<typeof UISectionHeader>;
-
-function SectionHeader(props: SectionHeaderProps) {
-  return <UISectionHeader {...props} />;
+export interface SectionHeaderProps {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  align?: "left" | "center";
+  actions?: ReactNode;
+  className?: string;
 }
 
-export { SectionHeader };
+export function SectionHeader({
+  eyebrow,
+  title,
+  description,
+  align = "left",
+  actions,
+  className,
+}: SectionHeaderProps) {
+  const alignClass =
+    align === "center" ? "items-center text-center" : "items-start text-left";
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between",
+        className,
+      )}
+    >
+      <div className={cn("flex flex-col gap-2", alignClass)}>
+        {eyebrow ? (
+          <p className="font-ui text-caption tracking-[0.12em] text-text-muted">
+            {eyebrow}
+          </p>
+        ) : null}
+        <h2 className="font-heading text-h2 font-semibold text-text-primary">
+          {title}
+        </h2>
+        {description ? (
+          <p className="max-w-xl text-small text-text-secondary">
+            {description}
+          </p>
+        ) : null}
+      </div>
+      {actions ? <div className="mt-3 sm:mt-0">{actions}</div> : null}
+    </div>
+  );
+}

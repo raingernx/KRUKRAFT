@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { routes } from "@/lib/routes";
-import { confirmEmailVerification } from "@/services/user-account.service";
+import { confirmEmailVerification } from "@/services/users";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);

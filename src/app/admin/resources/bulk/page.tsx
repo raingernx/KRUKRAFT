@@ -1,10 +1,11 @@
 import { Navbar } from "@/components/layout/Navbar";
-import { PageContainer, PageContent } from "@/design-system";
+import { Button, PageContainer, PageContent } from "@/design-system";
 import { BulkUploadClient } from "./BulkUploadClient";
 import Link from "next/link";
 import { Layers } from "lucide-react";
 import { routes } from "@/lib/routes";
 import { requireAdminSession } from "@/lib/auth/require-admin-session";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 export const metadata = {
   title: "Bulk Upload – Admin",
@@ -19,46 +20,30 @@ export default async function BulkUploadPage() {
     <div className="flex min-h-screen flex-col">
       <Navbar />
 
-      <main className="flex-1 bg-zinc-50">
+      <main className="flex-1 bg-surface-50">
         <PageContainer className="py-10">
-          <PageContent>
+          <PageContent className="space-y-8">
+            <AdminPageHeader
+              title="Bulk Upload"
+              description="Paste a JSON array to create up to 100 resources in one operation."
+              actions={
+                <>
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={routes.adminResources}>← Resources</Link>
+                  </Button>
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={routes.admin}>Admin home</Link>
+                  </Button>
+                </>
+              }
+            />
 
-          {/* ── Page header ── */}
-          <div className="mb-8 flex items-start justify-between">
-            <div>
-              <p className="eyebrow mb-1">Admin · Resources</p>
-              <h1 className="flex items-center gap-2.5 font-display text-h2 font-semibold tracking-tight text-text-primary">
-                <Layers className="h-6 w-6 text-blue-500" />
-                Bulk Upload
-              </h1>
-              <p className="mt-1 text-meta text-zinc-500">
-                Paste a JSON array to create up to 100 resources in one operation.
-              </p>
+            <div className="inline-flex items-center gap-2 rounded-full border border-surface-200 bg-white px-3 py-1.5 text-caption text-text-secondary shadow-sm">
+              <Layers className="h-4 w-4 text-brand-600" />
+              Admin · Resources
             </div>
 
-            {/* Nav links */}
-            <div className="flex items-center gap-2">
-              <Link
-                href={routes.adminResources}
-                className="rounded-xl border border-zinc-200 bg-white px-4 py-2
-                           text-[13px] font-medium text-zinc-600 shadow-sm transition
-                           hover:bg-zinc-50 hover:text-zinc-900"
-              >
-                ← Resources
-              </Link>
-              <Link
-                href={routes.admin}
-                className="rounded-xl border border-zinc-200 bg-white px-4 py-2
-                           text-[13px] font-medium text-zinc-600 shadow-sm transition
-                           hover:bg-zinc-50 hover:text-zinc-900"
-              >
-                Admin home
-              </Link>
-            </div>
-          </div>
-
-          {/* ── Client component with all interactive logic ── */}
-          <BulkUploadClient />
+            <BulkUploadClient />
           </PageContent>
         </PageContainer>
       </main>

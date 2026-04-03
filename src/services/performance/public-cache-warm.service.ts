@@ -1,25 +1,21 @@
 import { findResourceById } from "@/repositories/resources/resource.repository";
 import { deleteMarketplaceRecommendedListingRedisKeys } from "@/lib/cache";
 import { logPerformanceEvent, withPerformanceTiming } from "@/lib/performance/observability";
-import { getCreatorPublicProfile } from "@/services/creator.service";
+import { getCreatorPublicProfile } from "@/services/creator";
 import {
   getDiscoverCategories,
   getDiscoverData,
   getHeroConfig,
   type DiscoverData,
-} from "@/services/discover.service";
-import {
-  getPublicResourcePageData,
-  getResourceMetadataBySlug,
-} from "@/services/resources/public-resource-read.service";
-import {
-  getMarketplaceResources,
-  type MarketplaceFilters,
-} from "@/services/resources/public-resource-read.service";
+} from "@/services/discover";
 import {
   MARKETPLACE_DEFAULT_PAGE,
-} from "@/services/resource.service";
-import { getResourceTrustSummary } from "@/services/review.service";
+  getMarketplaceResources,
+  getPublicResourcePageData,
+  getResourceMetadataBySlug,
+  type MarketplaceFilters,
+} from "@/services/resources";
+import { getResourceTrustSummary } from "@/services/reviews";
 import { DEFAULT_SORT } from "@/config/sortOptions";
 import { MARKETPLACE_LISTING_PAGE_SIZE } from "@/config/marketplace";
 

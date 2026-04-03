@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
-import { Container } from "@/components/layout/container";
+import { Container } from "@/design-system";
 import { routes } from "@/lib/routes";
 
 export const metadata = {

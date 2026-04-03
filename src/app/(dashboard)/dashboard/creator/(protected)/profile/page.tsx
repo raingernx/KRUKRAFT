@@ -5,7 +5,7 @@ import { requireSession } from "@/lib/auth/require-session";
 import { CreatorProfileForm } from "@/components/creator/CreatorProfileForm";
 import { PageContent } from "@/design-system";
 import { routes } from "@/lib/routes";
-import { getCreatorProfile } from "@/services/creator.service";
+import { getCreatorProfile } from "@/services/creator";
 
 export const metadata = {
   title: "Creator Profile",

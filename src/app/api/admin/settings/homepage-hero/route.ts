@@ -5,7 +5,7 @@ import {
   getFallbackHero,
   HeroServiceError,
   upsertFallbackHero,
-} from "@/services/heroes/hero.service";
+} from "@/services/heroes";
 
 // Deprecated compatibility route kept because generated App Router types still reference it.
 const UpdateHeroSchema = z.object({

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { isMissingTableError } from "@/lib/prismaErrors";
-import { Container } from "@/components/layout/container";
+import { Container } from "@/design-system";
 import {
   CategoryChips,
   DiscoverButton,
@@ -11,7 +11,7 @@ import {
   DiscoverFallback,
 } from "@/components/marketplace/ResourcesCatalogControlsSkeleton";
 import { ScrollableCategoryNav } from "@/components/marketplace/ScrollableCategoryNav";
-import { getDiscoverCategories } from "@/services/discover.service";
+import { getDiscoverCategories } from "@/services/discover";
 
 const CONTROLS_BAR_CLASS_NAME = "border-y border-surface-200 bg-white";
 const CONTROLS_BAR_MAIN_CLASS_NAME = "flex min-w-0 items-center gap-2.5 overflow-hidden";

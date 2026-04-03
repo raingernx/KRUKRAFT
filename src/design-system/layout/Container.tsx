@@ -1,23 +1,30 @@
 import type { ReactNode } from "react";
+
 import { cn } from "@/lib/utils";
-import {
-  CONTAINER_BASE_CLASS_NAME,
-  CONTAINER_CLASS_NAME,
-  CONTAINER_NARROW_MAX_WIDTH_CLASS_NAME,
-  CONTAINER_PADDING_CLASS_NAME,
-  PAGE_CONTENT_MAX_WIDTH_CLASS_NAME,
-  PAGE_CONTENT_NARROW_MAX_WIDTH_CLASS_NAME,
-  PAGE_CONTENT_WIDE_MAX_WIDTH_CLASS_NAME,
-} from "@/components/layout/container";
 
 interface LayoutPrimitiveProps {
   children: ReactNode;
   className?: string;
 }
 
-interface ContainerProps extends LayoutPrimitiveProps {
+export interface ContainerProps extends LayoutPrimitiveProps {
   narrow?: boolean;
 }
+
+export const CONTAINER_BASE_CLASS_NAME = "mx-auto w-full min-w-0";
+export const CONTAINER_MAX_WIDTH_CLASS_NAME =
+  `${CONTAINER_BASE_CLASS_NAME} max-w-[var(--container-max-width)]`;
+export const CONTAINER_NARROW_MAX_WIDTH_CLASS_NAME =
+  "max-w-[var(--container-narrow-max-width)]";
+export const CONTAINER_PADDING_CLASS_NAME = "px-4 sm:px-6 lg:px-8";
+export const CONTAINER_CLASS_NAME =
+  `${CONTAINER_MAX_WIDTH_CLASS_NAME} ${CONTAINER_PADDING_CLASS_NAME}`;
+export const PAGE_CONTENT_MAX_WIDTH_CLASS_NAME =
+  "max-w-[var(--page-content-max-width)]";
+export const PAGE_CONTENT_WIDE_MAX_WIDTH_CLASS_NAME =
+  "max-w-[var(--page-content-wide-max-width)]";
+export const PAGE_CONTENT_NARROW_MAX_WIDTH_CLASS_NAME =
+  "max-w-[var(--page-content-narrow-max-width)]";
 
 export function Container({ children, className, narrow = false }: ContainerProps) {
   return (
@@ -33,11 +40,15 @@ export function Container({ children, className, narrow = false }: ContainerProp
   );
 }
 
+interface PageWidthProps extends LayoutPrimitiveProps {
+  maxWidthClassName: string;
+}
+
 function PageWidth({
   children,
   className,
   maxWidthClassName,
-}: LayoutPrimitiveProps & { maxWidthClassName: string }) {
+}: PageWidthProps) {
   return (
     <div className={cn(CONTAINER_BASE_CLASS_NAME, maxWidthClassName, className)}>
       {children}

@@ -1,12 +1,12 @@
 /**
  * Purpose: Isolate the public /resources homepage under load.
- * Run: BASE_URL=https://krucrafts.com k6 run k6/routes/resources-home.js
+ * Run: BASE_URL=https://krukraft.com k6 run k6/routes/resources-home.js
  */
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const BASE_URL = __ENV.BASE_URL || 'https://krucrafts.com';
+const BASE_URL = __ENV.BASE_URL || 'https://krukraft.com';
 const ROUTE_TAG = 'resources_home';
 
 export const options = {

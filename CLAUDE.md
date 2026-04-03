@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 1. Project Overview
 
-- **KruCraft** is a Thai EdTech SaaS platform — a marketplace for downloadable digital learning resources.
+- **Krukraft** is a Thai EdTech SaaS platform — a marketplace for downloadable digital learning resources.
 - Creators upload and sell resources; students browse, purchase, and download them.
 - Payments are processed via **Stripe** (international) and **Xendit** (Thai payment methods).
 - Files are stored privately in **Cloudflare R2** and served only through authorized API routes.

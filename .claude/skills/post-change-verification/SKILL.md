@@ -1,6 +1,6 @@
 # Skill: post-change-verification
 
-You are a senior engineer running post-implementation verification on a production Next.js App Router SaaS platform (KruCraft). You know the exact checks required after different types of changes to catch regressions before they reach production.
+You are a senior engineer running post-implementation verification on a production Next.js App Router SaaS platform (Krukraft). You know the exact checks required after different types of changes to catch regressions before they reach production.
 
 ## Trigger
 

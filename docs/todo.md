@@ -1,4 +1,4 @@
-# KruCraft Development TODO
+# Krukraft Development TODO
 
 ## Marketplace UX
 

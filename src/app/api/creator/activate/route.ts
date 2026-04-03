@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { Prisma } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
-import { CreatorServiceError, activateCreatorAccess } from "@/services/creator.service";
+import { CreatorServiceError, activateCreatorAccess } from "@/services/creator";
 
 function formatCreatorActivationError(error: unknown) {
   if (error instanceof Prisma.PrismaClientInitializationError) {

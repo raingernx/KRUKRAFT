@@ -6,7 +6,7 @@ import { requireSession } from "@/lib/auth/require-session";
 import { formatDate, formatFileSize } from "@/lib/format";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 import { routes } from "@/lib/routes";
-import { getUserDownloadHistory } from "@/services/purchase.service";
+import { getUserDownloadHistory } from "@/services/purchases";
 import { EmptyState } from "@/design-system";
 
 export const metadata = {

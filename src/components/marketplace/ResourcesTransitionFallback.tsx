@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { ResourcesRouteSkeleton } from "@/components/skeletons/ResourcesRouteSkeleton";
-import { ResourceDetailLoadingShell } from "@/components/resources/ResourceDetailLoadingShell";
+import { ResourceDetailLoadingShell } from "@/components/resources/detail/ResourceDetailLoadingShell";
 import { useResourcesNavigationState } from "@/components/marketplace/resourcesNavigationState";
 import { routes } from "@/lib/routes";
 

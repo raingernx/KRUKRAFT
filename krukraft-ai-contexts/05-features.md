@@ -1,0 +1,151 @@
+# Krukraft — Features and Functionality
+
+## Core Marketplace Features
+
+### Marketplace UX
+
+- Discover feed with curated sections when `/resources` is in discover mode
+- Category and tag filtering
+- Canonical marketplace search routed through `/resources?search=...`
+- Debounced live search suggestions with direct-to-detail selection
+- No-result recovery with alternate queries plus category/tag browse links
+- Public creator pages
+- Resource detail page with gallery, purchase rail, reviews, related content, and creator context
+- Library-style ownership states in marketplace/detail surfaces
+
+### Upload / Admin Resource Flow
+
+- Admin resource create/edit flows
+- Preview image uploads and live preview states
+- Version history browsing for resources
+- Review moderation and platform settings
+
+### Purchase → Download Flow
+
+- Checkout flow with Stripe and Xendit
+- Free-resource checkout path
+- Purchase record creation and state transitions
+- Protected download access after ownership is confirmed
+
+## Discover Sections
+
+The marketplace discover page currently centers around these public sections:
+
+1. Trending resources
+2. Popular resources
+3. Newest resources
+4. Featured resources
+5. Free resources
+6. Top creator / creator spotlight content
+
+The discover page now mixes:
+- streamed server sections
+- warmed cache variants
+- lighter-weight fallbacks that match the final section intent
+- a route-level loading shell that mirrors the live discover shape:
+  - plain blue hero block
+  - section header + resource-card skeletons
+  - no extra discover-meta strip above the hero while loading
+
+## Sorting Options
+
+Standard public sort menu:
+
+1. Trending
+2. Newest
+3. Most downloaded
+4. Price: Low → High
+5. Price: High → Low
+
+Search behavior notes:
+- `/resources` defaults to relevance / best-match sorting when a search query is present
+- selecting a suggestion opens the resource detail directly
+- pressing Enter or using the dropdown footer routes to the canonical marketplace results page
+- no-result flows recover on the same marketplace route instead of bouncing to ad-hoc pages
+
+Behavior notes:
+- `/resources` default vs experiment treatment can vary with the ranking experiment cookie
+- `/categories/[slug]` currently presents a newest-first curated listing
+
+## Filtering
+
+- Category filter
+- Price filter
+- Tags filter
+- Search text
+- Sort by
+
+The marketplace route switches from discover mode into listing mode whenever
+search, filters, pagination, or a non-default sort are active.
+
+## Hero CMS System
+
+Admin-manageable hero system includes:
+
+- Featured resource hero
+- Search-focus hero
+- Collection / category hero
+- Promotion / seasonal hero
+- Fallback hero
+- A/B testing hero behavior
+- Admin live preview and hero analytics routes
+
+## Admin Features
+
+- Analytics and activity views
+- Hero management
+- Resource moderation / trash / bulk operations
+- Category and tag management
+- Review moderation
+- User and order management
+- Platform settings including brand assets
+
+Platform settings notes:
+- Full, icon, OG, email, and favicon assets can be edited independently
+- Admin previews may show inherited fallback assets, but stored values must remain distinct from inherited preview state
+- Public metadata and tab/icon surfaces now read brand assets through runtime `/brand-assets/*` routes so uploads propagate without falling back to stale build-time defaults
+
+## Payment Flow
+
+### Providers
+
+1. Stripe
+2. Xendit
+
+### Purchase Flow
+
+```
+Resource detail page
+  → purchase / free access CTA
+  → checkout (Stripe or Xendit)
+  → success redirect
+  → confirmation page
+  → purchase record created in DB
+  → library/download access unlocked
+```
+
+### Webhook Handling
+
+- Stripe webhook handler
+- Xendit webhook handler
+- Purchase state is confirmed via webhook, not just redirect
+
+## Account Recovery / Verification
+
+- Password reset request + confirm flow
+- Email verification flow (soft verification approach)
+- Credentials + Google login
+- canonical seeded/local admin identity now uses `admin@krukraft.dev`
+
+## Secure Download Endpoint
+
+- Route: `/api/download/[resourceId]`
+- Checks ownership via purchase record
+- Generates protected access to the file
+- Includes logging and guarded error handling
+- Does not expose private storage directly without verification
+- Branded allowlist examples now assume `files.krukraft.com` for custom R2/public delivery hosts
+
+---
+
+*Refreshed against the repo state on 2026-04-03.*

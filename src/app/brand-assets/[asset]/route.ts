@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PLATFORM_DEFAULTS } from "@/lib/platform/platform-defaults";
-import { getPlatform } from "@/services/platform.service";
+import { getPlatform } from "@/services/platform";
 
 export const dynamic = "force-dynamic";
 

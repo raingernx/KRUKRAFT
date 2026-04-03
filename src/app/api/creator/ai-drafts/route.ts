@@ -4,8 +4,8 @@ import { Prisma } from "@prisma/client";
 import { authOptions } from "@/lib/auth";
 import {
   CreatorServiceError,
-} from "@/services/creator.service";
-import { generateCreatorResourceAIDraft } from "@/services/creator-resource-ai-draft.service";
+} from "@/services/creator";
+import { generateCreatorResourceAIDraft } from "@/services/creator";
 
 function handleCreatorError(error: unknown, label: string) {
   if (error instanceof CreatorServiceError) {

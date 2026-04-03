@@ -7,7 +7,7 @@ on:
       base_url:
         description: Base URL to warm and smoke-test
         required: false
-        default: https://krucrafts.com
+        default: https://krukraft.com
 
 concurrency:
   group: post-deploy-perf-${{ github.event.deployment.id || github.ref }}-${{ github.event.deployment.environment || github.event.deployment_status.environment || 'unknown' }}
@@ -22,7 +22,7 @@ jobs:
       base_url: ${{ steps.classify.outputs.base_url }}
       reason: ${{ steps.classify.outputs.reason }}
     env:
-      PRODUCTION_BASE_URL: https://krucrafts.com
+      PRODUCTION_BASE_URL: https://krukraft.com
 
     steps:
       - name: Classify Deployment
@@ -187,7 +187,7 @@ jobs:
           echo "[post-deploy-warm] Waiting for ${url} to return success"
 
           for attempt in $(seq 1 "$max_attempts"); do
-            status="$(curl -A 'KruCraft-Warmup/1.0' -L -s -o /dev/null -w '%{http_code}' "$url" || true)"
+            status="$(curl -A 'Krukraft-Warmup/1.0' -L -s -o /dev/null -w '%{http_code}' "$url" || true)"
 
             if [ "$status" -ge 200 ] && [ "$status" -lt 400 ]; then
               echo "[post-deploy-warm] Production is live (status ${status})"

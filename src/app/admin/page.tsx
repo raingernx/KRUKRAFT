@@ -2,7 +2,7 @@ import { Users, Package, CreditCard, Download } from "lucide-react";
 import { Card } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { formatNumber, formatDate, formatPrice } from "@/lib/format";
-import { getAdminDashboardOverview } from "@/services/analytics.service";
+import { getAdminDashboardOverview } from "@/services/analytics";
 import { routes } from "@/lib/routes";
 import { requireAdminSession } from "@/lib/auth/require-admin-session";
 import {

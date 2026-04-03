@@ -5,14 +5,14 @@ import { logActivity } from "@/lib/activity";
 import { logAdminAction } from "@/lib/auditLogger";
 import { slugify } from "@/lib/utils";
 import { CACHE_TAGS, CACHE_TTLS } from "@/lib/cache";
-import { getOwnedDetailState } from "@/services/purchase.service";
-import { getRelatedResources } from "@/services/resource.service";
+import { getOwnedDetailState } from "@/services/purchases";
+import { getRelatedResources } from "./public/marketplace-resource-read.service";
 import {
   getResourceReviews,
   getResourceTrustSummary,
   getResourceTrustSummaryWithPrefetchedSales,
   getUserResourceReview,
-} from "@/services/review.service";
+} from "@/services/reviews";
 import {
   createAdminResourceRecord,
   createDraftResourceRecord,

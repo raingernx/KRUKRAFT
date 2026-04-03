@@ -1,6 +1,6 @@
-# UI_RULES.md — KruCraft Design System Enforcement
+# UI_RULES.md — Krukraft Design System Enforcement
 
-This file defines **strict UI implementation rules** for the KruCraft codebase.
+This file defines **strict UI implementation rules** for the Krukraft codebase.
 
 This is NOT a guideline. It is a **constraint system** that must be followed by all engineers and AI tools.
 

@@ -4,7 +4,7 @@ import type { ResourceDetailViewerScope } from "@/lib/resources/resource-detail-
 import {
   getResourceDetailViewerBaseState,
   getResourceDetailViewerReviewState,
-} from "@/services/resources/resource-detail-viewer-state.service";
+} from "@/services/resources";
 
 type Params = {
   params: Promise<{ id: string }>;

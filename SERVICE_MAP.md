@@ -1,6 +1,6 @@
-# KruCraft – Service Map
+# Krukraft – Service Map
 
-This document maps the service layer of the KruCraft backend.
+This document maps the service layer of the Krukraft backend.
 
 Purpose:
 

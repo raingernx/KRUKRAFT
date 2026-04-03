@@ -1,11 +1,31 @@
-import type { ComponentProps } from "react";
+import { formatPrice } from "@/lib/price";
 
-import { PriceBadge as UIPriceBadge } from "@/components/ui/PriceBadge";
-
-export type PriceBadgeProps = ComponentProps<typeof UIPriceBadge>;
-
-function PriceBadge(props: PriceBadgeProps) {
-  return <UIPriceBadge {...props} />;
+export interface PriceBadgeProps {
+  priceMinorUnits: number | null | undefined;
+  isFree?: boolean;
+  currency?: "THB" | "USD";
 }
 
-export { PriceBadge };
+export function PriceBadge({
+  priceMinorUnits,
+  isFree,
+  currency = "THB",
+}: PriceBadgeProps) {
+  const value = priceMinorUnits ?? 0;
+
+  if (isFree || value === 0) {
+    return (
+      <span className="rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+        Free
+      </span>
+    );
+  }
+
+  const majorUnits = value / 100;
+
+  return (
+    <span className="rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+      {formatPrice(majorUnits, currency)}
+    </span>
+  );
+}

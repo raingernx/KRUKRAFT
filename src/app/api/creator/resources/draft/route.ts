@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import {
   CreatorServiceError,
   createCreatorResourceDraft,
-} from "@/services/creator.service";
+} from "@/services/creator";
 
 function handleCreatorError(error: unknown, label: string) {
   if (error instanceof CreatorServiceError) {

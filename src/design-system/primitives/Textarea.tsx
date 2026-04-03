@@ -1,15 +1,14 @@
-import * as React from "react";
+import * as React from "react"
 
-import { Textarea as UITextarea } from "@/components/ui/Textarea";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
 export interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  error?: string;
-  hint?: string;
+  error?: string
+  hint?: string
 }
 
-function Textarea({
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea({
   error,
   hint,
   id,
@@ -17,38 +16,44 @@ function Textarea({
   "aria-describedby": ariaDescribedBy,
   "aria-invalid": ariaInvalid,
   ...props
-}: TextareaProps) {
-  const generatedId = React.useId();
-  const textareaId = id ?? generatedId;
-  const hintId = `${textareaId}-hint`;
-  const errorId = `${textareaId}-error`;
+}, ref) {
+  const generatedId = React.useId()
+  const textareaId = id ?? generatedId
+  const hintId = `${textareaId}-hint`
+  const errorId = `${textareaId}-error`
   const describedBy =
     [ariaDescribedBy, error ? errorId : null, !error && hint ? hintId : null]
       .filter(Boolean)
-      .join(" ") || undefined;
+      .join(" ") || undefined
 
   return (
     <div className="w-full space-y-1">
-      <UITextarea
+      <textarea
+        ref={ref}
         id={textareaId}
-        className={className}
+        data-slot="textarea"
+        className={cn(
+          "input-base min-h-[120px] resize-y py-2.5",
+          "aria-invalid:border-danger-600 aria-invalid:ring-2 aria-invalid:ring-danger-600/20",
+          className,
+        )}
         aria-describedby={describedBy}
         aria-invalid={ariaInvalid ?? Boolean(error)}
         {...props}
       />
       {error ? (
-        <p id={errorId} className="text-xs text-red-600">
+        <p id={errorId} className="text-caption text-danger-700">
           {error}
         </p>
       ) : hint ? (
-        <p id={hintId} className={cn("text-xs text-text-muted")}>
+        <p id={hintId} className={cn("text-caption text-text-muted")}>
           {hint}
         </p>
       ) : null}
     </div>
-  );
-}
+  )
+})
 
-Textarea.displayName = "Textarea";
+Textarea.displayName = "Textarea"
 
-export { Textarea };
+export { Textarea }

@@ -16,7 +16,7 @@ import {
   ResourceServiceError,
   trashAdminResource,
   updateAdminResource,
-} from "@/services/resources/resource.service";
+} from "@/services/resources";
 
 type Params = { params: Promise<{ id: string }> };
 

@@ -12,10 +12,10 @@ import {
   recordDownloadAnalytics,
 } from "@/repositories/purchases/purchase.repository";
 import { findDownloadableResourceById } from "@/repositories/resources/resource.repository";
-import { getCompletedPurchaseAccess } from "@/services/purchase.service";
+import { getCompletedPurchaseAccess } from "@/services/purchases/purchase.service";
 
 const ALLOWED_DOWNLOAD_HOSTS = [
-  "files.krucraft.com",
+  "files.krukraft.com",
   "storage.googleapis.com",
 ] as const;
 

@@ -1,5 +1,5 @@
 import { Navbar } from "@/components/layout/Navbar";
-import { Container } from "@/components/layout/container";
+import { Container } from "@/design-system";
 
 export const metadata = {
   title: "Terms of Service",

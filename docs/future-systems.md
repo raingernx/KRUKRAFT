@@ -1,4 +1,4 @@
-# KruCraft Future Systems
+# Krukraft Future Systems
 
 Systems planned but not implemented yet.
 

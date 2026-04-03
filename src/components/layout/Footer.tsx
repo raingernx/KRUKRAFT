@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
-import { Container } from "@/components/layout/container";
+import { Container } from "@/design-system";
 import { routes } from "@/lib/routes";
 
 const CREATORS_LINKS = [

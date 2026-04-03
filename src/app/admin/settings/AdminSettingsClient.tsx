@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react";
 import {
   Button,
-  Card,
+  FormSection,
   Input,
   PageContent,
   Select,
@@ -12,14 +12,12 @@ import {
   Textarea,
   useToast,
 } from "@/design-system";
-import { BrandAssetField } from "@/components/admin/settings/BrandAssetField";
-import Link from "next/link";
+import { BrandAssetField } from "@/components/admin/settings";
 import { PLATFORM_DEFAULTS } from "@/lib/platform/platform-defaults";
 import type {
   PlatformConfig,
   PlatformStoredSettings,
 } from "@/lib/platform/platform.types";
-import { routes } from "@/lib/routes";
 
 type Currency = "USD" | "THB" | "EUR";
 type CurrencyDisplayFormat = "symbol" | "thai_text";
@@ -441,50 +439,86 @@ export function AdminSettingsClient({
         description="Manage global platform branding and metadata. Other sections stay local-only for now."
       />
 
-      <Card className="space-y-6 rounded-2xl p-6 shadow-card sm:p-7">
-        <div>
-          <h2 className="text-sm font-semibold text-text-primary">General</h2>
-          <p className="mt-1 text-meta text-text-secondary">
-            Persisted platform settings used across branding, metadata, and support surfaces.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="space-y-0 rounded-2xl border border-border-subtle bg-white px-6 py-6 shadow-card sm:px-7 sm:py-7">
+        <FormSection
+          title="General"
+          description="Persisted platform settings used across branding, metadata, and support surfaces."
+          contentClassName="grid grid-cols-1 gap-4 sm:grid-cols-2"
+        >
           <div className="space-y-1.5">
             <label htmlFor="platformName" className="text-sm font-medium text-text-primary">
               Platform Name
             </label>
-            <Input id="platformName" name="platformName" value={settings.platformName} onChange={handleInputChange} />
+            <Input
+              id="platformName"
+              name="platformName"
+              value={settings.platformName}
+              onChange={handleInputChange}
+            />
           </div>
           <div className="space-y-1.5">
             <label htmlFor="platformShortName" className="text-sm font-medium text-text-primary">
               Short Name
             </label>
-            <Input id="platformShortName" name="platformShortName" value={settings.platformShortName} onChange={handleInputChange} />
+            <Input
+              id="platformShortName"
+              name="platformShortName"
+              value={settings.platformShortName}
+              onChange={handleInputChange}
+            />
           </div>
           <div className="space-y-1.5">
             <label htmlFor="supportEmail" className="text-sm font-medium text-text-primary">
               Support Email
             </label>
-            <Input id="supportEmail" type="email" name="supportEmail" value={settings.supportEmail} onChange={handleInputChange} />
+            <Input
+              id="supportEmail"
+              type="email"
+              name="supportEmail"
+              value={settings.supportEmail}
+              onChange={handleInputChange}
+            />
           </div>
           <div className="space-y-1.5 sm:col-span-2">
-            <label htmlFor="platformDescription" className="text-sm font-medium text-text-primary">
+            <label
+              htmlFor="platformDescription"
+              className="text-sm font-medium text-text-primary"
+            >
               Platform Description
             </label>
-            <Textarea id="platformDescription" name="platformDescription" rows={3} value={settings.platformDescription} onChange={handleInputChange} />
+            <Textarea
+              id="platformDescription"
+              name="platformDescription"
+              rows={3}
+              value={settings.platformDescription}
+              onChange={handleInputChange}
+            />
           </div>
           <div className="space-y-1.5 sm:col-span-2">
             <label htmlFor="siteUrl" className="text-sm font-medium text-text-primary">
               Site URL
             </label>
-            <Input id="siteUrl" name="siteUrl" value={settings.siteUrl} onChange={handleInputChange} placeholder="https://www.example.com" />
-            <p className="text-xs text-text-muted">Used for canonical metadata, social URLs, and other platform-level references.</p>
+            <Input
+              id="siteUrl"
+              name="siteUrl"
+              value={settings.siteUrl}
+              onChange={handleInputChange}
+              placeholder="https://www.example.com"
+            />
+            <p className="text-caption text-text-muted">
+              Used for canonical metadata, social URLs, and other platform-level references.
+            </p>
           </div>
           <div className="space-y-1.5">
             <label htmlFor="defaultCurrency" className="text-sm font-medium text-text-primary">
               Default Currency
             </label>
-            <Select id="defaultCurrency" name="defaultCurrency" value={settings.defaultCurrency} onChange={handleInputChange}>
+            <Select
+              id="defaultCurrency"
+              name="defaultCurrency"
+              value={settings.defaultCurrency}
+              onChange={handleInputChange}
+            >
               <option value="THB">THB – Thai Baht</option>
               <option value="USD">USD – US Dollar</option>
               <option value="EUR">EUR – Euro</option>
@@ -494,7 +528,12 @@ export function AdminSettingsClient({
             <label htmlFor="timezone" className="text-sm font-medium text-text-primary">
               Timezone
             </label>
-            <Select id="timezone" name="timezone" value={settings.timezone} onChange={handleInputChange}>
+            <Select
+              id="timezone"
+              name="timezone"
+              value={settings.timezone}
+              onChange={handleInputChange}
+            >
               <option value="Asia/Bangkok">Asia/Bangkok (UTC+7)</option>
               <option value="UTC">UTC</option>
               <option value="Asia/Singapore">Asia/Singapore</option>
@@ -503,35 +542,50 @@ export function AdminSettingsClient({
             </Select>
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="currencyDisplayFormat" className="text-sm font-medium text-text-primary">
+            <label
+              htmlFor="currencyDisplayFormat"
+              className="text-sm font-medium text-text-primary"
+            >
               Currency Display Format
             </label>
-            <Select id="currencyDisplayFormat" name="currencyDisplayFormat" value={settings.currencyDisplayFormat} onChange={handleInputChange}>
-              <option value="symbol" className="font-thai">THB 199</option>
-              <option value="thai_text" className="font-thai">199 บาท</option>
+            <Select
+              id="currencyDisplayFormat"
+              name="currencyDisplayFormat"
+              value={settings.currencyDisplayFormat}
+              onChange={handleInputChange}
+            >
+              <option value="symbol" className="font-thai">
+                THB 199
+              </option>
+              <option value="thai_text" className="font-thai">
+                199 บาท
+              </option>
             </Select>
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="defaultLanguage" className="text-sm font-medium text-text-primary">
+            <label
+              htmlFor="defaultLanguage"
+              className="text-sm font-medium text-text-primary"
+            >
               Default Language
             </label>
-            <Select id="defaultLanguage" name="defaultLanguage" value={settings.defaultLanguage} onChange={handleInputChange}>
+            <Select
+              id="defaultLanguage"
+              name="defaultLanguage"
+              value={settings.defaultLanguage}
+              onChange={handleInputChange}
+            >
               <option value="th">Thai</option>
               <option value="en">English</option>
             </Select>
           </div>
-        </div>
-      </Card>
+        </FormSection>
 
-      <Card className="space-y-6 rounded-2xl p-6 shadow-card sm:p-7">
-        <div>
-          <h2 className="text-sm font-semibold text-text-primary">Brand Assets</h2>
-          <p className="mt-1 text-meta text-text-secondary">
-            Manage dedicated logo assets for navigation, social previews, email, and browser surfaces.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <FormSection
+          title="Brand Assets"
+          description="Manage dedicated logo assets for navigation, social previews, email, and browser surfaces."
+          contentClassName="grid grid-cols-1 gap-4 xl:grid-cols-2"
+        >
           <BrandAssetField
             label="Full Logo"
             helperText="Used in desktop navigation and wide brand areas."
@@ -591,27 +645,39 @@ export function AdminSettingsClient({
             error={brandAssetErrors.faviconUrl}
             onUpload={(file) => handleBrandAssetUpload("faviconUrl", file)}
           />
-        </div>
-      </Card>
+        </FormSection>
 
-      <Card className="space-y-6 rounded-2xl p-6 shadow-card sm:p-7">
-        <div>
-          <h2 className="text-sm font-semibold text-text-primary">Moderation</h2>
-          <p className="mt-1 text-meta text-text-secondary">
-            Control how resources and user-generated content are reviewed.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <FormSection
+          title="Moderation"
+          description="Control how resources and user-generated content are reviewed."
+          contentClassName="divide-y divide-border-subtle"
+        >
           {[
-            ["autoPublishResources", "Auto Publish Resources", "If enabled, new resources go live immediately after submission."],
-            ["requireReviewBeforePublish", "Require Admin Review Before Publish", "New resources must be approved by an admin before going live."],
-            ["allowUserReviews", "Allow User Reviews", "Let users leave ratings and reviews on resources."],
-            ["allowReportingResources", "Allow Reporting Resources", "Enable users to report inappropriate or low-quality resources."],
+            [
+              "autoPublishResources",
+              "Auto Publish Resources",
+              "If enabled, new resources go live immediately after submission.",
+            ],
+            [
+              "requireReviewBeforePublish",
+              "Require Admin Review Before Publish",
+              "New resources must be approved by an admin before going live.",
+            ],
+            [
+              "allowUserReviews",
+              "Allow User Reviews",
+              "Let users leave ratings and reviews on resources.",
+            ],
+            [
+              "allowReportingResources",
+              "Allow Reporting Resources",
+              "Enable users to report inappropriate or low-quality resources.",
+            ],
           ].map(([key, title, description]) => (
-            <div key={key} className="flex items-center justify-between gap-3 rounded-xl border border-border-subtle bg-surface-50 px-4 py-3">
-              <div>
+            <div key={key} className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
+              <div className="space-y-1">
                 <p className="text-sm font-medium text-text-primary">{title}</p>
-                <p className="text-xs text-text-secondary">{description}</p>
+                <p className="text-caption text-text-secondary">{description}</p>
               </div>
               <Switch
                 checked={Boolean(settings[key as keyof AdminSettingsState])}
@@ -619,181 +685,408 @@ export function AdminSettingsClient({
               />
             </div>
           ))}
-        </div>
-      </Card>
+        </FormSection>
 
-      <Card className="space-y-6 rounded-2xl p-6 shadow-card sm:p-7">
-        <div>
-          <h2 className="text-sm font-semibold text-text-primary">Marketplace</h2>
-          <p className="mt-1 text-meta text-text-secondary">
-            Control pricing rules and publication workflow.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <FormSection
+          title="Marketplace"
+          description="Control pricing rules and publication workflow."
+          contentClassName="grid grid-cols-1 gap-4 md:grid-cols-2"
+        >
           <div className="space-y-1.5">
-            <label htmlFor="defaultCommission" className="text-sm font-medium text-text-primary">
+            <label
+              htmlFor="defaultCommission"
+              className="text-sm font-medium text-text-primary"
+            >
               Default Commission (%)
             </label>
-            <Input id="defaultCommission" name="defaultCommission" type="number" min={0} max={100} value={settings.defaultCommission} onChange={handleInputChange} />
+            <Input
+              id="defaultCommission"
+              name="defaultCommission"
+              type="number"
+              min={0}
+              max={100}
+              value={settings.defaultCommission}
+              onChange={handleInputChange}
+            />
           </div>
           <div className="space-y-1.5">
             <label htmlFor="minPrice" className="text-sm font-medium text-text-primary">
               Minimum Resource Price
             </label>
-            <Input id="minPrice" name="minPrice" type="number" min={0} value={settings.minPrice} onChange={handleInputChange} />
-            <p className="text-xs text-text-muted">Recommended minimum price for Thai market: 19–29 THB</p>
+            <Input
+              id="minPrice"
+              name="minPrice"
+              type="number"
+              min={0}
+              value={settings.minPrice}
+              onChange={handleInputChange}
+            />
+            <p className="text-caption text-text-muted">
+              Recommended minimum price for Thai market: 19–29 THB
+            </p>
           </div>
-        </div>
-      </Card>
+        </FormSection>
 
-      <Card className="space-y-6 rounded-2xl p-6 shadow-card sm:p-7">
-        <div>
-          <h2 className="text-sm font-semibold text-text-primary">Payments</h2>
-          <p className="mt-1 text-meta text-text-secondary">
-            Configure payment provider and API keys.
-          </p>
-        </div>
-        <div className="space-y-4">
+        <FormSection
+          title="Payments"
+          description="Configure payment provider and API keys."
+          contentClassName="space-y-4"
+        >
           <div className="space-y-1.5">
-            <label htmlFor="paymentProvider" className="text-sm font-medium text-text-primary">
+            <label
+              htmlFor="paymentProvider"
+              className="text-sm font-medium text-text-primary"
+            >
               Payment Provider
             </label>
-            <Select id="paymentProvider" name="paymentProvider" value={settings.paymentProvider} onChange={handleInputChange}>
+            <Select
+              id="paymentProvider"
+              name="paymentProvider"
+              value={settings.paymentProvider}
+              onChange={handleInputChange}
+            >
               <option value="stripe">Stripe</option>
               <option value="promptpay">PromptPay (Manual)</option>
             </Select>
           </div>
 
-          {settings.paymentProvider === "stripe" && (
+          {settings.paymentProvider === "stripe" ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-1.5">
-                <label htmlFor="stripePublicKey" className="text-sm font-medium text-text-primary">Stripe Public Key</label>
-                <Input id="stripePublicKey" name="stripePublicKey" value={settings.stripePublicKey} onChange={handleInputChange} placeholder="pk_live_..." />
+                <label
+                  htmlFor="stripePublicKey"
+                  className="text-sm font-medium text-text-primary"
+                >
+                  Stripe Public Key
+                </label>
+                <Input
+                  id="stripePublicKey"
+                  name="stripePublicKey"
+                  value={settings.stripePublicKey}
+                  onChange={handleInputChange}
+                  placeholder="pk_live_..."
+                />
               </div>
               <div className="space-y-1.5">
-                <label htmlFor="stripeSecretKey" className="text-sm font-medium text-text-primary">Stripe Secret Key</label>
-                <Input id="stripeSecretKey" name="stripeSecretKey" type="password" value={settings.stripeSecretKey} onChange={handleInputChange} placeholder="sk_live_..." />
+                <label
+                  htmlFor="stripeSecretKey"
+                  className="text-sm font-medium text-text-primary"
+                >
+                  Stripe Secret Key
+                </label>
+                <Input
+                  id="stripeSecretKey"
+                  name="stripeSecretKey"
+                  type="password"
+                  value={settings.stripeSecretKey}
+                  onChange={handleInputChange}
+                  placeholder="sk_live_..."
+                />
               </div>
               <div className="space-y-1.5 md:col-span-2">
-                <label htmlFor="stripeWebhookSecret" className="text-sm font-medium text-text-primary">Webhook Secret</label>
-                <Input id="stripeWebhookSecret" name="stripeWebhookSecret" type="password" value={settings.stripeWebhookSecret} onChange={handleInputChange} placeholder="whsec_..." />
+                <label
+                  htmlFor="stripeWebhookSecret"
+                  className="text-sm font-medium text-text-primary"
+                >
+                  Webhook Secret
+                </label>
+                <Input
+                  id="stripeWebhookSecret"
+                  name="stripeWebhookSecret"
+                  type="password"
+                  value={settings.stripeWebhookSecret}
+                  onChange={handleInputChange}
+                  placeholder="whsec_..."
+                />
               </div>
             </div>
-          )}
+          ) : null}
 
-          {settings.paymentProvider === "promptpay" && (
+          {settings.paymentProvider === "promptpay" ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-1.5">
-                <label htmlFor="promptpayQrId" className="text-sm font-medium text-text-primary">PromptPay QR ID</label>
-                <Input id="promptpayQrId" name="promptpayQrId" value={settings.promptpayQrId} onChange={handleInputChange} placeholder="Your PromptPay QR ID" />
+                <label
+                  htmlFor="promptpayQrId"
+                  className="text-sm font-medium text-text-primary"
+                >
+                  PromptPay QR ID
+                </label>
+                <Input
+                  id="promptpayQrId"
+                  name="promptpayQrId"
+                  value={settings.promptpayQrId}
+                  onChange={handleInputChange}
+                  placeholder="Your PromptPay QR ID"
+                />
               </div>
               <div className="space-y-1.5">
-                <label htmlFor="promptpayPhoneNumber" className="text-sm font-medium text-text-primary">PromptPay Phone Number</label>
-                <Input id="promptpayPhoneNumber" name="promptpayPhoneNumber" value={settings.promptpayPhoneNumber} onChange={handleInputChange} placeholder="0XX-XXX-XXXX" />
+                <label
+                  htmlFor="promptpayPhoneNumber"
+                  className="text-sm font-medium text-text-primary"
+                >
+                  PromptPay Phone Number
+                </label>
+                <Input
+                  id="promptpayPhoneNumber"
+                  name="promptpayPhoneNumber"
+                  value={settings.promptpayPhoneNumber}
+                  onChange={handleInputChange}
+                  placeholder="0XX-XXX-XXXX"
+                />
               </div>
             </div>
-          )}
-        </div>
-      </Card>
+          ) : null}
+        </FormSection>
 
-      <Card className="space-y-6 rounded-2xl p-6 shadow-card sm:p-7">
-        <div>
-          <h2 className="text-sm font-semibold text-text-primary">Upload Settings</h2>
-          <p className="mt-1 text-meta text-text-secondary">
-            Control how files are uploaded and stored.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="space-y-1.5">
-            <label htmlFor="maxFileSizeMb" className="text-sm font-medium text-text-primary">Max File Size (MB)</label>
-            <Input id="maxFileSizeMb" name="maxFileSizeMb" type="number" min={1} value={settings.maxFileSizeMb} onChange={handleInputChange} />
+        <FormSection
+          title="Upload Settings"
+          description="Control how files are uploaded and stored."
+          contentClassName="space-y-4"
+        >
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="space-y-1.5">
+              <label
+                htmlFor="maxFileSizeMb"
+                className="text-sm font-medium text-text-primary"
+              >
+                Max File Size (MB)
+              </label>
+              <Input
+                id="maxFileSizeMb"
+                name="maxFileSizeMb"
+                type="number"
+                min={1}
+                value={settings.maxFileSizeMb}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label
+                htmlFor="storageProvider"
+                className="text-sm font-medium text-text-primary"
+              >
+                Storage Provider
+              </label>
+              <Select
+                id="storageProvider"
+                name="storageProvider"
+                value={settings.storageProvider}
+                onChange={handleInputChange}
+              >
+                <option value="local">Local</option>
+                <option value="s3">Amazon S3</option>
+              </Select>
+            </div>
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="storageProvider" className="text-sm font-medium text-text-primary">Storage Provider</label>
-            <Select id="storageProvider" name="storageProvider" value={settings.storageProvider} onChange={handleInputChange}>
-              <option value="local">Local</option>
-              <option value="s3">Amazon S3</option>
-            </Select>
+            <label
+              htmlFor="allowedFileTypes"
+              className="text-sm font-medium text-text-primary"
+            >
+              Allowed File Types
+            </label>
+            <Input
+              id="allowedFileTypes"
+              name="allowedFileTypes"
+              placeholder="e.g. pdf, docx, pptx, xlsx, zip"
+              value={settings.allowedFileTypes}
+              onChange={handleInputChange}
+            />
+            <p className="text-caption text-text-muted">
+              Comma-separated list of extensions (without dots).
+            </p>
           </div>
-        </div>
-        <div className="space-y-1.5">
-          <label htmlFor="allowedFileTypes" className="text-sm font-medium text-text-primary">Allowed File Types</label>
-          <Input id="allowedFileTypes" name="allowedFileTypes" placeholder="e.g. pdf, docx, pptx, xlsx, zip" value={settings.allowedFileTypes} onChange={handleInputChange} />
-          <p className="text-xs text-text-muted">Comma-separated list of extensions (without dots).</p>
-        </div>
-      </Card>
+        </FormSection>
 
-      <Card className="space-y-6 rounded-2xl p-6 shadow-card sm:p-7">
-        <div>
-          <h2 className="text-sm font-semibold text-text-primary">Email</h2>
-          <p className="mt-1 text-meta text-text-secondary">
-            Configure persisted sender identity alongside local-only SMTP details.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <FormSection
+          title="Email"
+          description="Configure persisted sender identity alongside local-only SMTP details."
+          contentClassName="grid grid-cols-1 gap-4 md:grid-cols-2"
+        >
           <div className="space-y-1.5 md:col-span-2">
-            <label htmlFor="emailSenderName" className="text-sm font-medium text-text-primary">Sender Name</label>
-            <Input id="emailSenderName" name="emailSenderName" value={settings.emailSenderName} onChange={handleInputChange} />
-            <p className="text-xs text-text-muted">Used as the default sender label for platform emails.</p>
+            <label
+              htmlFor="emailSenderName"
+              className="text-sm font-medium text-text-primary"
+            >
+              Sender Name
+            </label>
+            <Input
+              id="emailSenderName"
+              name="emailSenderName"
+              value={settings.emailSenderName}
+              onChange={handleInputChange}
+            />
+            <p className="text-caption text-text-muted">
+              Used as the default sender label for platform emails.
+            </p>
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="smtpHost" className="text-sm font-medium text-text-primary">SMTP Host</label>
-            <Input id="smtpHost" name="smtpHost" value={settings.smtpHost} onChange={handleInputChange} />
+            <label htmlFor="smtpHost" className="text-sm font-medium text-text-primary">
+              SMTP Host
+            </label>
+            <Input
+              id="smtpHost"
+              name="smtpHost"
+              value={settings.smtpHost}
+              onChange={handleInputChange}
+            />
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="smtpPort" className="text-sm font-medium text-text-primary">SMTP Port</label>
-            <Input id="smtpPort" name="smtpPort" type="number" min={1} value={settings.smtpPort} onChange={handleInputChange} />
+            <label htmlFor="smtpPort" className="text-sm font-medium text-text-primary">
+              SMTP Port
+            </label>
+            <Input
+              id="smtpPort"
+              name="smtpPort"
+              type="number"
+              min={1}
+              value={settings.smtpPort}
+              onChange={handleInputChange}
+            />
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="smtpUsername" className="text-sm font-medium text-text-primary">SMTP Username</label>
-            <Input id="smtpUsername" name="smtpUsername" value={settings.smtpUsername} onChange={handleInputChange} />
+            <label
+              htmlFor="smtpUsername"
+              className="text-sm font-medium text-text-primary"
+            >
+              SMTP Username
+            </label>
+            <Input
+              id="smtpUsername"
+              name="smtpUsername"
+              value={settings.smtpUsername}
+              onChange={handleInputChange}
+            />
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="smtpPassword" className="text-sm font-medium text-text-primary">SMTP Password</label>
-            <Input id="smtpPassword" name="smtpPassword" type="password" value={settings.smtpPassword} onChange={handleInputChange} />
+            <label
+              htmlFor="smtpPassword"
+              className="text-sm font-medium text-text-primary"
+            >
+              SMTP Password
+            </label>
+            <Input
+              id="smtpPassword"
+              name="smtpPassword"
+              type="password"
+              value={settings.smtpPassword}
+              onChange={handleInputChange}
+            />
           </div>
           <div className="space-y-1.5 md:col-span-2">
-            <label htmlFor="smtpFromEmail" className="text-sm font-medium text-text-primary">From Email</label>
-            <Input id="smtpFromEmail" name="smtpFromEmail" type="email" value={settings.smtpFromEmail} onChange={handleInputChange} />
+            <label
+              htmlFor="smtpFromEmail"
+              className="text-sm font-medium text-text-primary"
+            >
+              From Email
+            </label>
+            <Input
+              id="smtpFromEmail"
+              name="smtpFromEmail"
+              type="email"
+              value={settings.smtpFromEmail}
+              onChange={handleInputChange}
+            />
           </div>
-        </div>
-      </Card>
+        </FormSection>
 
-      <Card className="space-y-6 p-6">
-        <div>
-          <h2 className="text-sm font-semibold text-text-primary">SEO</h2>
-          <p className="mt-1 text-meta text-text-secondary">
-            Persisted base metadata used across the app, plus optional local-only social image fields.
-          </p>
-        </div>
-        <div className="space-y-4">
+        <FormSection
+          title="SEO"
+          description="Persisted base metadata used across the app, plus optional local-only social image fields."
+          contentClassName="space-y-4"
+        >
           <div className="space-y-1.5">
-            <label htmlFor="defaultMetaTitle" className="text-sm font-medium text-text-primary">Default Meta Title</label>
-            <Input id="defaultMetaTitle" name="defaultMetaTitle" value={settings.defaultMetaTitle} onChange={handleInputChange} placeholder={PLATFORM_DEFAULTS.defaultMetaTitle} className="font-thai" />
-            <p className="text-xs text-text-muted">Used as the main title in browser tabs and search results.</p>
+            <label
+              htmlFor="defaultMetaTitle"
+              className="text-sm font-medium text-text-primary"
+            >
+              Default Meta Title
+            </label>
+            <Input
+              id="defaultMetaTitle"
+              name="defaultMetaTitle"
+              value={settings.defaultMetaTitle}
+              onChange={handleInputChange}
+              placeholder={PLATFORM_DEFAULTS.defaultMetaTitle}
+              className="font-thai"
+            />
+            <p className="text-caption text-text-muted">
+              Used as the main title in browser tabs and search results.
+            </p>
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="defaultMetaDescription" className="text-sm font-medium text-text-primary">Default Meta Description</label>
-            <Textarea id="defaultMetaDescription" name="defaultMetaDescription" rows={3} value={settings.defaultMetaDescription} onChange={handleInputChange} placeholder={PLATFORM_DEFAULTS.defaultMetaDescription} className="font-thai" />
-            <p className="text-xs text-text-muted">Short description shown in search results; aim for 120–160 characters.</p>
+            <label
+              htmlFor="defaultMetaDescription"
+              className="text-sm font-medium text-text-primary"
+            >
+              Default Meta Description
+            </label>
+            <Textarea
+              id="defaultMetaDescription"
+              name="defaultMetaDescription"
+              rows={3}
+              value={settings.defaultMetaDescription}
+              onChange={handleInputChange}
+              placeholder={PLATFORM_DEFAULTS.defaultMetaDescription}
+              className="font-thai"
+            />
+            <p className="text-caption text-text-muted">
+              Short description shown in search results; aim for 120–160 characters.
+            </p>
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="ogSiteName" className="text-sm font-medium text-text-primary">Open Graph Site Name</label>
-            <Input id="ogSiteName" name="ogSiteName" value={settings.ogSiteName} onChange={handleInputChange} placeholder={PLATFORM_DEFAULTS.ogSiteName} />
-            <p className="text-xs text-text-muted">Shown as the site name in social previews when pages inherit base Open Graph metadata.</p>
+            <label htmlFor="ogSiteName" className="text-sm font-medium text-text-primary">
+              Open Graph Site Name
+            </label>
+            <Input
+              id="ogSiteName"
+              name="ogSiteName"
+              value={settings.ogSiteName}
+              onChange={handleInputChange}
+              placeholder={PLATFORM_DEFAULTS.ogSiteName}
+            />
+            <p className="text-caption text-text-muted">
+              Shown as the site name in social previews when pages inherit base Open Graph metadata.
+            </p>
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="seoOpenGraphImageUrl" className="text-sm font-medium text-text-primary">OpenGraph Image URL</label>
-            <Input id="seoOpenGraphImageUrl" name="seoOpenGraphImageUrl" value={settings.seoOpenGraphImageUrl} onChange={handleInputChange} placeholder="https://example.com/og-image.jpg" />
-            <p className="text-xs text-text-muted">Image used when sharing your site on social platforms (Open Graph).</p>
+            <label
+              htmlFor="seoOpenGraphImageUrl"
+              className="text-sm font-medium text-text-primary"
+            >
+              OpenGraph Image URL
+            </label>
+            <Input
+              id="seoOpenGraphImageUrl"
+              name="seoOpenGraphImageUrl"
+              value={settings.seoOpenGraphImageUrl}
+              onChange={handleInputChange}
+              placeholder="https://example.com/og-image.jpg"
+            />
+            <p className="text-caption text-text-muted">
+              Image used when sharing your site on social platforms (Open Graph).
+            </p>
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="seoTwitterCardImageUrl" className="text-sm font-medium text-text-primary">Twitter Card Image</label>
-            <Input id="seoTwitterCardImageUrl" name="seoTwitterCardImageUrl" value={settings.seoTwitterCardImageUrl} onChange={handleInputChange} placeholder="https://example.com/twitter-card.jpg" />
-            <p className="text-xs text-text-muted">Image used for Twitter/X cards; can match your OpenGraph image.</p>
+            <label
+              htmlFor="seoTwitterCardImageUrl"
+              className="text-sm font-medium text-text-primary"
+            >
+              Twitter Card Image
+            </label>
+            <Input
+              id="seoTwitterCardImageUrl"
+              name="seoTwitterCardImageUrl"
+              value={settings.seoTwitterCardImageUrl}
+              onChange={handleInputChange}
+              placeholder="https://example.com/twitter-card.jpg"
+            />
+            <p className="text-caption text-text-muted">
+              Image used for Twitter/X cards; can match your OpenGraph image.
+            </p>
           </div>
-        </div>
-      </Card>
+        </FormSection>
+      </div>
 
       <div className="sticky bottom-4 z-10 flex flex-wrap items-center justify-end gap-3 rounded-2xl border border-surface-200 bg-white/95 p-3 shadow-card backdrop-blur">
         <Button type="button" variant="outline" onClick={handleReset}>

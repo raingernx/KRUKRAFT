@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { CreatorServiceError } from "@/services/creator.service";
+import { CreatorServiceError } from "@/services/creator";
 import {
   CreatorResourceUploadServiceError,
   clearCreatorResourceFile,
-} from "@/services/resources/creator-resource-upload.service";
+} from "@/services/resources";
 
 export async function DELETE(
   _req: Request,

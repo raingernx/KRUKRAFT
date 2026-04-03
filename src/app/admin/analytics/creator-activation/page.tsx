@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getCreatorActivationFunnel } from "@/services/analytics/creator-activation.service";
+import { getCreatorActivationFunnel } from "@/services/analytics";
 import { ArrowRight, Users, MousePointerClick, FilePlus, Rocket } from "lucide-react";
 import { routes } from "@/lib/routes";
 

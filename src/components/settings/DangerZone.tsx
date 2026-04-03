@@ -4,11 +4,11 @@ import { Button } from "@/design-system";
 
 export function DangerZone() {
   return (
-    <div className="mb-8">
-      <div className="rounded-xl border border-border bg-card p-4 flex items-center justify-between gap-6">
+    <div className="pt-6">
+      <div className="flex items-center justify-between gap-6 rounded-xl border border-border-subtle bg-card p-4">
         <div>
-          <p className="text-[13px] font-medium text-zinc-900">Delete your account</p>
-          <p className="mt-1 max-w-md text-[12px] text-zinc-500">
+          <p className="text-sm font-medium text-text-primary">Delete your account</p>
+          <p className="mt-1 max-w-md text-small text-text-secondary">
             All your data will be permanently removed.
           </p>
         </div>

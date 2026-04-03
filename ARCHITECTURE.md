@@ -1,4 +1,4 @@
-# KruCraft – System Architecture
+# Krukraft – System Architecture
 
 ## Overview
 
@@ -79,7 +79,7 @@ External integrations include:
 
 # Backend Layers
 
-KruCraft backend follows a layered architecture to keep responsibilities separated.
+Krukraft backend follows a layered architecture to keep responsibilities separated.
 
 routes → services → repositories → Prisma → database
 

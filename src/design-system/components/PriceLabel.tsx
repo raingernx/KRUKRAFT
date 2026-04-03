@@ -1,11 +1,23 @@
-import type { ComponentProps } from "react";
+import { formatPrice } from "@/lib/format";
 
-import { PriceLabel as UIPriceLabel } from "@/components/ui/PriceLabel";
-
-export type PriceLabelProps = ComponentProps<typeof UIPriceLabel>;
-
-function PriceLabel(props: PriceLabelProps) {
-  return <UIPriceLabel {...props} />;
+export interface PriceLabelProps {
+  price: number | null | undefined;
+  isFree?: boolean;
 }
 
-export { PriceLabel };
+export function PriceLabel({ price, isFree }: PriceLabelProps) {
+  const resolvedPrice = price ?? 0;
+
+  if (isFree || resolvedPrice === 0) {
+    return <span className="font-medium text-green-600">Free</span>;
+  }
+
+  // Resource prices are stored in satang and need converting back to THB.
+  const baht = resolvedPrice / 100;
+
+  return (
+    <span className="font-semibold text-neutral-900">
+      {formatPrice(baht)}
+    </span>
+  );
+}

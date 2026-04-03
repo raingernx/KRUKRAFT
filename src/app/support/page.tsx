@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Mail, LifeBuoy, ArrowLeft } from "lucide-react";
-import { Container } from "@/components/layout/container";
+import { Container } from "@/design-system";
 import { Navbar } from "@/components/layout/Navbar";
 import { HeroSearch } from "@/components/marketplace/HeroSearch";
-import { getBuildSafePlatformConfig } from "@/services/platform.service";
+import { getBuildSafePlatformConfig } from "@/services/platform";
 import { routes } from "@/lib/routes";
 
 export const metadata: Metadata = {

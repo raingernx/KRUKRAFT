@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getCreatorMetrics } from "@/services/creator.service";
+import { getCreatorMetrics } from "@/services/creator";
 
 /**
  * Deprecated creator metrics route kept temporarily because generated App

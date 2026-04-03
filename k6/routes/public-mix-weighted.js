@@ -1,12 +1,12 @@
 /**
- * Purpose: Run a weighted public read-only mix to spot which KRUCraft public route family drives tail latency.
- * Run: BASE_URL=https://krucrafts.com k6 run k6/routes/public-mix-weighted.js
+ * Purpose: Run a weighted public read-only mix to spot which Krukraft public route family drives tail latency.
+ * Run: BASE_URL=https://krukraft.com k6 run k6/routes/public-mix-weighted.js
  */
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const BASE_URL = __ENV.BASE_URL || 'https://krucrafts.com';
+const BASE_URL = __ENV.BASE_URL || 'https://krukraft.com';
 const HOT_SLUG = __ENV.HOT_SLUG || 'middle-school-science-quiz-assessment-set';
 const COLD_SLUG = __ENV.COLD_SLUG || 'basic-solar-system-flashcards';
 const HOT_CREATOR = __ENV.HOT_CREATOR || 'kru-mint';

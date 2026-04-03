@@ -1,5 +1,5 @@
 import { Navbar } from "@/components/layout/Navbar";
-import { Container } from "@/components/layout/container";
+import { Container } from "@/design-system";
 import { HeroBannerFallback } from "@/components/marketplace/HeroBanner";
 import {
   ResourcesCatalogControlsSkeleton,

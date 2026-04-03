@@ -10,8 +10,8 @@ import {
   createOwnedResource,
   getMarketplaceResources,
   listPublicResources,
-} from "@/services/resources/public-resource-read.service";
-import { ResourceServiceError } from "@/services/resources/resource.service";
+} from "@/services/resources";
+import { ResourceServiceError } from "@/services/resources";
 
 function handleServiceError(err: unknown, label: string) {
   if (err instanceof ResourceServiceError) {

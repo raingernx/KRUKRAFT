@@ -13,7 +13,7 @@ import {
   TableEmptyState,
   TableToolbar,
 } from "@/components/admin/table";
-import { getAdminUsersPageData } from "@/services/admin-operations.service";
+import { getAdminUsersPageData } from "@/services/admin";
 import {
   traceServerStep,
   withRequestPerformanceTrace,

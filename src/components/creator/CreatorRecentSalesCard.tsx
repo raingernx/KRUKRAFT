@@ -1,7 +1,7 @@
 import { ShoppingBag } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/design-system";
 import { formatPrice, formatRelativeDate } from "@/lib/format";
-import type { DashboardRecentSale } from "@/services/creator.service";
+import type { DashboardRecentSale } from "@/services/creator";
 
 interface CreatorRecentSalesCardProps {
   sales: DashboardRecentSale[];

@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { PageContainer, PageContentWide } from "@/design-system";
 import Link from "next/link";
-import { getAdminTagsPageData } from "@/services/admin-operations.service";
+import { getAdminTagsPageData } from "@/services/admin";
 import { routes } from "@/lib/routes";
 import { requireAdminSession } from "@/lib/auth/require-admin-session";
 import { TagsClient, type TagRow } from "./TagsClient";

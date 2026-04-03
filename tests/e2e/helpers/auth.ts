@@ -9,13 +9,13 @@ const AUTH_NAVIGATION_TIMEOUT_MS = 120_000;
 const LOGIN_ERROR_TEXT = "Invalid email or password. Please try again.";
 
 const ADMIN_CREDENTIALS: LoginCredentials = {
-  email: "admin@krucraft.dev",
+  email: "admin@krukraft.dev",
   password: "admin123!",
 };
 
 const CREATOR_CREDENTIALS: LoginCredentials = {
-  email: "demo.instructor@krucraft.dev",
-  password: "KruCraft2024!",
+  email: "demo.instructor@krukraft.dev",
+  password: "Krukraft2024!",
 };
 
 async function loginWithCredentials(

@@ -1,5 +1,5 @@
 ---
-description: KruCraft project architecture and rules
+description: Krukraft project architecture and rules
 globs: ["src/**/*", "prisma/**/*", "middleware.ts"]
 alwaysApply: true
 ---

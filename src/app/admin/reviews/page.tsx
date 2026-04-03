@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { formatDate } from "@/lib/format";
-import { getAdminReviews, ReviewServiceError } from "@/services/review.service";
+import { getAdminReviews, ReviewServiceError } from "@/services/reviews";
 import { ReviewVisibilityAction } from "@/components/admin/ReviewVisibilityAction";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";

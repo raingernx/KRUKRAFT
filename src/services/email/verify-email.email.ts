@@ -31,7 +31,7 @@ function buildVerifyEmailHtml(input: {
         <table width="520" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;border-radius:16px;border:1px solid #e5e7eb;max-width:520px;width:100%;overflow:hidden;">
           <tr>
             <td style="background:#18181b;padding:18px 32px;">
-              <p style="margin:0;font-size:15px;font-weight:700;color:#ffffff;">KruCraft</p>
+              <p style="margin:0;font-size:15px;font-weight:700;color:#ffffff;">Krukraft</p>
             </td>
           </tr>
           <tr>
@@ -79,9 +79,9 @@ export async function sendVerificationEmail(input: {
     const verifyUrl = `${env.appBaseUrl}${routes.verifyEmail}?token=${encodeURIComponent(input.token)}`;
 
     const { error } = await resend.emails.send({
-      from: env.EMAIL_FROM ?? "KruCraft <noreply@krucraft.com>",
+      from: env.EMAIL_FROM ?? "Krukraft <noreply@krukraft.com>",
       to: input.email,
-      subject: "Verify your KruCraft email",
+      subject: "Verify your Krukraft email",
       html: buildVerifyEmailHtml({
         userName: input.userName,
         verifyUrl,

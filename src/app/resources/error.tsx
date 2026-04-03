@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
-import { Container } from "@/components/layout/container";
+import { Container } from "@/design-system";
 import { HeroSearch } from "@/components/marketplace/HeroSearch";
 import { routes } from "@/lib/routes";
 

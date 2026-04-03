@@ -14,7 +14,7 @@ import { z } from "zod";
 import {
   addFreeResourceToLibrary,
   LibraryServiceError,
-} from "@/services/purchases/library.service";
+} from "@/services/purchases";
 import { PaymentServiceError } from "@/services/payments/payment.service";
 import { createStripeCheckout } from "@/services/payments/stripe-payment.service";
 import { createXenditCheckout } from "@/services/payments/xendit-payment.service";

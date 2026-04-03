@@ -1,5 +1,5 @@
 import { AdminSettingsClient } from "./AdminSettingsClient";
-import { getPlatformAdminSettings } from "@/services/platform.service";
+import { getPlatformAdminSettings } from "@/services/platform";
 
 export const dynamic = "force-dynamic";
 

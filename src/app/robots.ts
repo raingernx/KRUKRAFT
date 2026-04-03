@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getBuildSafePublicPlatformConfig } from "@/services/platform.service";
+import { getBuildSafePublicPlatformConfig } from "@/services/platform";
 
 export default function robots(): MetadataRoute.Robots {
   const platform = getBuildSafePublicPlatformConfig();

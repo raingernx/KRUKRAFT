@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { CreatorServiceError, submitCreatorApplication } from "@/services/creator.service";
+import { CreatorServiceError, submitCreatorApplication } from "@/services/creator";
 import { checkRateLimit, getClientIp, LIMITS } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {

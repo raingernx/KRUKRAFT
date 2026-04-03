@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getRecommendationReport, type VariantMetrics } from "@/services/analytics/recommendation-report.service";
+import { getRecommendationReport, type VariantMetrics } from "@/services/analytics";
 import {
   Card,
   CardHeader,

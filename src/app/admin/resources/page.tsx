@@ -5,7 +5,7 @@ import { Button } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { EmptyState } from "@/design-system";
 import { AdminResourcesFilters } from "./AdminResourcesFilters";
-import { getAdminResourcesPageData } from "@/services/admin-operations.service";
+import { getAdminResourcesPageData } from "@/services/admin";
 import {
   traceServerStep,
   withRequestPerformanceTrace,
@@ -13,10 +13,10 @@ import {
 import { routes } from "@/lib/routes";
 import { requireAdminSession } from "@/lib/auth/require-admin-session";
 import dynamic from "next/dynamic";
-import type { AdminResourceRow } from "@/components/admin/ResourceTable";
+import type { AdminResourceRow } from "@/components/admin/resources";
 
 const ResourceTable = dynamic(() =>
-  import("@/components/admin/ResourceTable").then((m) => m.ResourceTable),
+  import("@/components/admin/resources").then((m) => m.ResourceTable),
 );
 
 export const metadata = {

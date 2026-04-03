@@ -1,4 +1,4 @@
-import { handleResourceDownload } from "@/services/purchases/download.service";
+import { handleResourceDownload } from "@/services/purchases";
 
 type RouteContext = {
   params: Promise<{ resourceId: string }>;

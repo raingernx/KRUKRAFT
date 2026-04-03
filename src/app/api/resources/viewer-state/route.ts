@@ -4,7 +4,7 @@ import type { ResourcesViewerScope } from "@/lib/resources/viewer-state";
 import {
   getResourcesViewerBaseState,
   getResourcesViewerDiscoverState,
-} from "@/services/resources/resources-viewer-state.service";
+} from "@/services/resources";
 
 export const dynamic = "force-dynamic";
 

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { requireSession } from "@/lib/auth/require-session";
-import { canAccessCreatorWorkspace, getCreatorAccessState } from "@/services/creator.service";
+import { canAccessCreatorWorkspace, getCreatorAccessState } from "@/services/creator";
 import { routes } from "@/lib/routes";
 
 export default async function CreatorProtectedLayout({ children }: { children: ReactNode }) {

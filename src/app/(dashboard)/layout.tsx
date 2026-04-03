@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { getCachedServerSession } from "@/lib/auth";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { getCreatorAccessState } from "@/services/creator.service";
+import { getCreatorAccessState } from "@/services/creator";
 import { traceServerStep } from "@/lib/performance/observability";
 
 export const dynamic = "force-dynamic";

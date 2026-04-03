@@ -1,4 +1,4 @@
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 
 interface ResourcesIntroSectionSkeletonProps {
   isDiscoverMode: boolean;

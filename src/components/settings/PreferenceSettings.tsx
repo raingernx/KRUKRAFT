@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { Sun, Coins, Clock4 } from "lucide-react";
 import { Button, FormSection, Select } from "@/design-system";
 import { useTheme } from "@/components/providers/ThemeProvider";
@@ -32,6 +33,38 @@ type PreferenceSettingsProps = {
   currency: CurrencyValue;
   timezone: TimezoneValue;
 };
+
+type PreferenceRowProps = {
+  id: string;
+  icon: ReactNode;
+  label: string;
+  description: string;
+  children: ReactNode;
+};
+
+function PreferenceRow({
+  id,
+  icon,
+  label,
+  description,
+  children,
+}: PreferenceRowProps) {
+  return (
+    <div className="grid gap-3 border-b border-border-subtle pb-4 last:border-b-0 last:pb-0 md:grid-cols-[minmax(0,1fr)_240px] md:items-start md:gap-6">
+      <div className="space-y-1">
+        <label
+          htmlFor={id}
+          className="flex items-center gap-2 text-sm font-medium text-text-primary"
+        >
+          {icon}
+          {label}
+        </label>
+        <p className="text-small text-text-secondary">{description}</p>
+      </div>
+      <div className="w-full md:justify-self-end">{children}</div>
+    </div>
+  );
+}
 
 export function PreferenceSettings({
   theme: initialTheme,
@@ -150,6 +183,7 @@ export function PreferenceSettings({
 
   return (
     <FormSection
+      variant="flat"
       title="Preferences"
       description={`Customize how ${platform.platformShortName} looks and behaves for you.`}
       footer={
@@ -159,7 +193,11 @@ export function PreferenceSettings({
             aria-live="polite"
           >
             {saveFeedback ? (
-              <span className={saveFeedback.tone === "error" ? "text-red-600" : "text-emerald-600"}>
+              <span
+                className={
+                  saveFeedback.tone === "error" ? "text-danger-600" : "text-success-600"
+                }
+              >
                 {saveFeedback.message}
               </span>
             ) : null}
@@ -175,22 +213,19 @@ export function PreferenceSettings({
           </Button>
         </div>
       }
+      contentClassName="space-y-4"
     >
-        {/* Theme */}
-        <div className="grid gap-3 md:grid-cols-[240px_minmax(0,1fr)] md:items-center">
-          <div>
-            <p className="flex items-center gap-2 text-[13px] font-medium text-zinc-900">
-              <Sun className="h-4 w-4 text-zinc-400" />
-              Theme
-            </p>
-            <p className="mt-0.5 text-[12px] text-zinc-500">
-              Switch between light, dark, or system theme.
-            </p>
-          </div>
+      <PreferenceRow
+        id="preference-theme"
+        icon={<Sun className="h-4 w-4 text-text-muted" />}
+        label="Theme"
+        description="Switch between light, dark, or system theme."
+      >
           <Select
+            id="preference-theme"
             value={pendingPreferences.theme}
             onChange={(e) => handleThemeChange(e.target.value as ThemeValue)}
-            className="w-full max-w-xs rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] text-zinc-900 shadow-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+            className="w-full max-w-xs"
           >
             {THEME_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -198,23 +233,19 @@ export function PreferenceSettings({
               </option>
             ))}
           </Select>
-        </div>
+      </PreferenceRow>
 
-        {/* Currency */}
-        <div className="grid gap-3 md:grid-cols-[240px_minmax(0,1fr)] md:items-center">
-          <div>
-            <p className="flex items-center gap-2 text-[13px] font-medium text-zinc-900">
-              <Coins className="h-4 w-4 text-zinc-400" />
-              Currency
-            </p>
-            <p className="mt-0.5 text-[12px] text-zinc-500">
-              Used for displaying prices in the interface.
-            </p>
-          </div>
+      <PreferenceRow
+        id="preference-currency"
+        icon={<Coins className="h-4 w-4 text-text-muted" />}
+        label="Currency"
+        description="Used for displaying prices in the interface."
+      >
           <Select
+            id="preference-currency"
             value={pendingPreferences.currency}
             onChange={(e) => handleCurrencyChange(e.target.value as CurrencyValue)}
-            className="w-full max-w-xs rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] text-zinc-900 shadow-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+            className="w-full max-w-xs"
           >
             {CURRENCY_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -222,23 +253,19 @@ export function PreferenceSettings({
               </option>
             ))}
           </Select>
-        </div>
+      </PreferenceRow>
 
-        {/* Timezone */}
-        <div className="grid gap-3 md:grid-cols-[240px_minmax(0,1fr)] md:items-center">
-          <div>
-            <p className="flex items-center gap-2 text-[13px] font-medium text-zinc-900">
-              <Clock4 className="h-4 w-4 text-zinc-400" />
-              Timezone
-            </p>
-            <p className="mt-0.5 text-[12px] text-zinc-500">
-              Future features will use this timezone for schedules and history.
-            </p>
-          </div>
+      <PreferenceRow
+        id="preference-timezone"
+        icon={<Clock4 className="h-4 w-4 text-text-muted" />}
+        label="Timezone"
+        description="Future features will use this timezone for schedules and history."
+      >
           <Select
+            id="preference-timezone"
             value={pendingPreferences.timezone}
             onChange={(e) => handleTimezoneChange(e.target.value as TimezoneValue)}
-            className="w-full max-w-xs rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px] text-zinc-900 shadow-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+            className="w-full max-w-xs"
           >
             {TIMEZONE_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -246,7 +273,7 @@ export function PreferenceSettings({
               </option>
             ))}
           </Select>
-        </div>
-      </FormSection>
+      </PreferenceRow>
+    </FormSection>
   );
 }

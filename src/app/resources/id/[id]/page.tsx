@@ -1,5 +1,5 @@
 import { redirect, notFound } from "next/navigation";
-import { getPublicResourceSlugRedirectTarget } from "@/services/admin-operations.service";
+import { getPublicResourceSlugRedirectTarget } from "@/services/admin";
 import { routes } from "@/lib/routes";
 
 interface PageProps {

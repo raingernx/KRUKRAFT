@@ -1,6 +1,6 @@
-# KruCraft – API Contracts
+# Krukraft – API Contracts
 
-This document defines the public API contracts of the KruCraft backend.
+This document defines the public API contracts of the Krukraft backend.
 
 AI agents and developers must not change these contracts unless explicitly instructed.
 

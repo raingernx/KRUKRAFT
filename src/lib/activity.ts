@@ -39,7 +39,7 @@ export interface LogActivityOptions {
 export type { LogActivityOptions as ActivityLogOptions };
 
 const SYNTHETIC_ACTIVITY_USER_AGENTS = [
-  /^KruCraft-Warmup\/1\.0/i,
+  /^Krukraft-Warmup\/1\.0/i,
   /^k6\//i,
 ] as const;
 const ANONYMOUS_RESOURCE_VIEW_LOG_COOLDOWN_MS = 60_000;

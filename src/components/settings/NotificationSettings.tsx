@@ -26,12 +26,12 @@ function ToggleRow({
   return (
     <div className="flex items-center justify-between gap-4 py-3">
       <div className="space-y-0.5">
-        <p className="text-[13px] font-medium text-zinc-900">{label}</p>
-        <p className="mt-0.5 text-[12px] text-zinc-500">{description}</p>
+        <p className="text-sm font-medium text-text-primary">{label}</p>
+        <p className="mt-0.5 text-small text-text-secondary">{description}</p>
         {meta ? (
           <p
             id={`${id}-status`}
-            className="text-[11px] font-medium text-brand-700"
+            className="text-caption font-medium text-primary-700"
             aria-live="polite"
           >
             {meta}
@@ -110,75 +110,76 @@ export function NotificationSettings({
 
   return (
     <FormSection
+      variant="flat"
       title="Notifications"
       description="Control which emails and alerts you receive."
-      className="mb-5"
+      contentClassName="space-y-4"
     >
-        <div className="flex items-center gap-2 rounded-xl bg-surface-50 px-3 py-2 text-[12px] text-zinc-600">
-          <Bell className="h-3.5 w-3.5 text-zinc-400" />
-          Notification preferences are stored locally for now.
-        </div>
-        {status.message ? (
-          <p
-            className={[
-              "mt-3 text-[12px] font-medium",
-              status.tone === "error" ? "text-red-600" : "text-zinc-600",
-            ].join(" ")}
-            aria-live="polite"
-          >
-            {status.message}
-          </p>
-        ) : null}
-        <div className="mt-3 divide-y divide-zinc-100">
-          <ToggleRow
-            id="email-notifications"
-            label="Email notifications"
-            description="General account and service updates."
-            checked={emailNotifications}
-            disabled={pendingKey !== null}
-            meta={pendingKey === "emailNotifications" ? "Saving…" : null}
-            onCheckedChange={(next) => {
-              setEmailNotifications(next);
-              void patch("emailNotifications", { emailNotifications: next });
-            }}
-          />
-          <ToggleRow
-            id="purchase-receipts"
-            label="Purchase receipts"
-            description="Receive receipts when you buy resources."
-            checked={purchaseReceipts}
-            disabled={pendingKey !== null}
-            meta={pendingKey === "purchaseReceipts" ? "Saving…" : null}
-            onCheckedChange={(next) => {
-              setPurchaseReceipts(next);
-              void patch("purchaseReceipts", { purchaseReceipts: next });
-            }}
-          />
-          <ToggleRow
-            id="product-updates"
-            label="Product updates"
-            description="Major new features and improvements."
-            checked={productUpdates}
-            disabled={pendingKey !== null}
-            meta={pendingKey === "productUpdates" ? "Saving…" : null}
-            onCheckedChange={(next) => {
-              setProductUpdates(next);
-              void patch("productUpdates", { productUpdates: next });
-            }}
-          />
-          <ToggleRow
-            id="marketing-emails"
-            label="Marketing emails"
-            description="Occasional tips, offers, and curated content."
-            checked={marketingEmails}
-            disabled={pendingKey !== null}
-            meta={pendingKey === "marketingEmails" ? "Saving…" : null}
-            onCheckedChange={(next) => {
-              setMarketingEmails(next);
-              void patch("marketingEmails", { marketingEmails: next });
-            }}
-          />
-        </div>
+      <div className="flex items-center gap-2 text-caption text-text-secondary">
+        <Bell className="h-3.5 w-3.5 text-text-muted" />
+        Notification preferences are stored locally for now.
+      </div>
+      {status.message ? (
+        <p
+          className={[
+            "text-caption font-medium",
+            status.tone === "error" ? "text-danger-600" : "text-text-secondary",
+          ].join(" ")}
+          aria-live="polite"
+        >
+          {status.message}
+        </p>
+      ) : null}
+      <div className="divide-y divide-zinc-100">
+        <ToggleRow
+          id="email-notifications"
+          label="Email notifications"
+          description="General account and service updates."
+          checked={emailNotifications}
+          disabled={pendingKey !== null}
+          meta={pendingKey === "emailNotifications" ? "Saving…" : null}
+          onCheckedChange={(next) => {
+            setEmailNotifications(next);
+            void patch("emailNotifications", { emailNotifications: next });
+          }}
+        />
+        <ToggleRow
+          id="purchase-receipts"
+          label="Purchase receipts"
+          description="Receive receipts when you buy resources."
+          checked={purchaseReceipts}
+          disabled={pendingKey !== null}
+          meta={pendingKey === "purchaseReceipts" ? "Saving…" : null}
+          onCheckedChange={(next) => {
+            setPurchaseReceipts(next);
+            void patch("purchaseReceipts", { purchaseReceipts: next });
+          }}
+        />
+        <ToggleRow
+          id="product-updates"
+          label="Product updates"
+          description="Major new features and improvements."
+          checked={productUpdates}
+          disabled={pendingKey !== null}
+          meta={pendingKey === "productUpdates" ? "Saving…" : null}
+          onCheckedChange={(next) => {
+            setProductUpdates(next);
+            void patch("productUpdates", { productUpdates: next });
+          }}
+        />
+        <ToggleRow
+          id="marketing-emails"
+          label="Marketing emails"
+          description="Occasional tips, offers, and curated content."
+          checked={marketingEmails}
+          disabled={pendingKey !== null}
+          meta={pendingKey === "marketingEmails" ? "Saving…" : null}
+          onCheckedChange={(next) => {
+            setMarketingEmails(next);
+            void patch("marketingEmails", { marketingEmails: next });
+          }}
+        />
+      </div>
     </FormSection>
   );
 }

@@ -1,4 +1,4 @@
-import { reconcileHistoricalDownloadCounts } from "@/services/analytics.service";
+import { reconcileHistoricalDownloadCounts } from "@/services/analytics";
 
 async function main() {
   const result = await reconcileHistoricalDownloadCounts();

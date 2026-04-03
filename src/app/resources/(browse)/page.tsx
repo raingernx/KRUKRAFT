@@ -1,6 +1,6 @@
 import { Suspense, type ReactNode } from "react";
 import { Navbar } from "@/components/layout/Navbar";
-import { Container } from "@/components/layout/container";
+import { Container } from "@/design-system";
 import { DEFAULT_SORT, getEffectiveMarketplaceSort } from "@/config/sortOptions";
 import { HeroSearch } from "@/components/marketplace/HeroSearch";
 import { ResourcesContentFallback } from "@/components/skeletons/ResourcesContentFallback";

@@ -1,12 +1,12 @@
 /**
  * Purpose: Isolate the marketplace search listing path under load.
- * Run: BASE_URL=https://krucrafts.com QUERY=science k6 run k6/routes/resources-search.js
+ * Run: BASE_URL=https://krukraft.com QUERY=science k6 run k6/routes/resources-search.js
  */
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const BASE_URL = __ENV.BASE_URL || 'https://krucrafts.com';
+const BASE_URL = __ENV.BASE_URL || 'https://krukraft.com';
 const QUERY = __ENV.QUERY || 'science';
 const ROUTE_TAG = 'resources_search';
 

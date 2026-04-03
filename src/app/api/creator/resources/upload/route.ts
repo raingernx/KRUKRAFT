@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { checkRateLimit, getClientIp, LIMITS } from "@/lib/rate-limit";
-import { CreatorServiceError } from "@/services/creator.service";
+import { CreatorServiceError } from "@/services/creator";
 import {
   CreatorResourceUploadServiceError,
   uploadCreatorResourceFile,
-} from "@/services/resources/creator-resource-upload.service";
+} from "@/services/resources";
 
 export async function POST(req: Request) {
   try {

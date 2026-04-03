@@ -13,7 +13,7 @@ import { CreatorResourceStatusButton } from "@/components/creator/CreatorResourc
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { formatDate, formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";
-import { getCreatorAccessState, getCreatorResourceManagementData } from "@/services/creator.service";
+import { getCreatorAccessState, getCreatorResourceManagementData } from "@/services/creator";
 
 export const metadata = {
   title: "Creator Resources",

@@ -7,7 +7,7 @@ export async function GET() {
     {
       data: {
         status: "ok",
-        service: "krucraft",
+        service: "krukraft",
         runtime: process.env.NODE_ENV ?? "unknown",
         timestamp: new Date().toISOString(),
       },

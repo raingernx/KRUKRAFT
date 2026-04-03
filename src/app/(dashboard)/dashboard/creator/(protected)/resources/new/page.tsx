@@ -5,8 +5,8 @@ import { CreatorResourceProgress } from "@/components/creator/CreatorResourcePro
 import { CreatorResourceHelperCard } from "@/components/creator/CreatorResourceHelperCard";
 import { CreatorResourceFormLoadingShell } from "@/components/creator/CreatorResourceFormLoadingShell";
 import { routes } from "@/lib/routes";
-import { getCreatorAccessState, getCreatorResourceFormData } from "@/services/creator.service";
-import { getCreatorSetupState } from "@/services/creator-setup.service";
+import { getCreatorAccessState, getCreatorResourceFormData } from "@/services/creator";
+import { getCreatorSetupState } from "@/services/creator";
 import { logActivity } from "@/lib/activity";
 
 const CreatorResourceForm = nextDynamic(

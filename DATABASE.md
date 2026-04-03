@@ -1,6 +1,6 @@
 # DATABASE.md
 
-This document describes the database architecture for KruCraft.
+This document describes the database architecture for Krukraft.
 
 Database: PostgreSQL  
 ORM: Prisma

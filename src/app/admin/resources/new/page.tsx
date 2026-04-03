@@ -1,4 +1,4 @@
-import { getAdminResourceCreatePageData } from "@/services/admin-operations.service";
+import { getAdminResourceCreatePageData } from "@/services/admin";
 import { CreateResourceForm } from "./CreateResourceForm";
 import { routes } from "@/lib/routes";
 import { requireAdminSession } from "@/lib/auth/require-admin-session";

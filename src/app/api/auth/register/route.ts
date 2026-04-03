@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { registerCredentialUser } from "@/services/user-account.service";
+import { registerCredentialUser } from "@/services/users";
 import { checkRateLimit, getClientIp, LIMITS } from "@/lib/rate-limit";
 
 const RegisterSchema = z.object({

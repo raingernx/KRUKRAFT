@@ -1,6 +1,6 @@
 ## Architecture Overview
 
-KruCraft is a SaaS marketplace for downloadable learning resources built on:
+Krukraft is a SaaS marketplace for downloadable learning resources built on:
 
 - **Next.js 16 App Router** with locale-based routing under `app/[locale]/...` and route groups for marketing, dashboard, and admin flows.
 - **TypeScript** and **Tailwind CSS** for strongly-typed, utility-first UI.

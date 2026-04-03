@@ -1,4 +1,4 @@
-import { getAllCreatorApplications } from "@/services/creator.service";
+import { getAllCreatorApplications } from "@/services/creator";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { CreatorApplicationActions } from "@/components/admin/CreatorApplicationActions";
 

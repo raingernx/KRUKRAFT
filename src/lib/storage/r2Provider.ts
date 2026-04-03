@@ -7,14 +7,14 @@
  *
  * Required environment variables:
  *   R2_ENDPOINT          https://<account-id>.r2.cloudflarestorage.com
- *   R2_BUCKET            Name of the R2 bucket (e.g. "krucraft-files")
+ *   R2_BUCKET            Name of the R2 bucket (e.g. "krukraft-files")
  *   R2_ACCESS_KEY_ID     R2 API token — Access Key ID
  *   R2_SECRET_ACCESS_KEY R2 API token — Secret Access Key
  *
  * Optional:
  *   R2_PUBLIC_URL        Custom domain / public bucket URL used by getUrl().
  *                        If omitted, getUrl() falls back to the R2 endpoint URL.
- *                        Example: https://files.krucraft.com
+ *                        Example: https://files.krukraft.com
  *
  * Upload/download flow:
  *   1. Admin uploads a file → upload() streams it to R2 via PutObjectCommand.
@@ -83,7 +83,7 @@ export class R2Provider implements StorageProvider {
       },
     });
 
-    // Optional custom domain (e.g. https://files.krucraft.com).
+    // Optional custom domain (e.g. https://files.krukraft.com).
     // If not set, getUrl() constructs a URL from the R2 endpoint.
     this.publicUrl = env.R2_PUBLIC_URL?.replace(/\/$/, "") ?? null;
   }

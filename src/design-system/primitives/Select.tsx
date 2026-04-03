@@ -1,15 +1,14 @@
-import * as React from "react";
+import * as React from "react"
 
-import { Select as UISelect } from "@/components/ui/Select";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
 export interface SelectProps
   extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  error?: string;
-  hint?: string;
+  error?: string
+  hint?: string
 }
 
-function Select({
+const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function Select({
   error,
   hint,
   id,
@@ -17,27 +16,33 @@ function Select({
   "aria-describedby": ariaDescribedBy,
   "aria-invalid": ariaInvalid,
   ...props
-}: SelectProps) {
-  const generatedId = React.useId();
-  const selectId = id ?? generatedId;
-  const hintId = `${selectId}-hint`;
-  const errorId = `${selectId}-error`;
+}, ref) {
+  const generatedId = React.useId()
+  const selectId = id ?? generatedId
+  const hintId = `${selectId}-hint`
+  const errorId = `${selectId}-error`
   const describedBy =
     [ariaDescribedBy, error ? errorId : null, !error && hint ? hintId : null]
       .filter(Boolean)
-      .join(" ") || undefined;
+      .join(" ") || undefined
 
   return (
     <div className="w-full space-y-1">
-      <UISelect
+      <select
+        ref={ref}
         id={selectId}
-        className={className}
+        data-slot="select"
+        className={cn(
+          "select-base",
+          "aria-invalid:border-danger-600 aria-invalid:ring-2 aria-invalid:ring-danger-600/20",
+          className,
+        )}
         aria-describedby={describedBy}
         aria-invalid={ariaInvalid ?? Boolean(error)}
         {...props}
       />
       {error ? (
-        <p id={errorId} className="text-caption text-red-600">
+        <p id={errorId} className="text-caption text-danger-700">
           {error}
         </p>
       ) : hint ? (
@@ -46,9 +51,9 @@ function Select({
         </p>
       ) : null}
     </div>
-  );
-}
+  )
+})
 
-Select.displayName = "Select";
+Select.displayName = "Select"
 
-export { Select };
+export { Select }

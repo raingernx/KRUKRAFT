@@ -15,10 +15,10 @@ import {
   getUserLearningProfile,
   getUserDownloadCount,
   getUserPurchases,
-} from "@/services/purchase.service";
+} from "@/services/purchases";
 import {
   getDashboardOverviewRecommendations,
-} from "@/services/resources/public-resource-read.service";
+} from "@/services/resources";
 import {
   traceServerStep,
   withRequestPerformanceTrace,

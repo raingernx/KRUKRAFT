@@ -7,7 +7,7 @@ import { storage } from "@/lib/storage";
 import {
   canAccessCreatorWorkspace,
   getCreatorAccessState,
-} from "@/services/creator.service";
+} from "@/services/creator";
 
 export const runtime = "nodejs";
 

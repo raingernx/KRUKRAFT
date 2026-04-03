@@ -1,3 +1,5 @@
+import { AdminSettingsPageSkeleton } from "@/components/skeletons/AdminSettingsPageSkeleton";
+
 export default function Loading() {
-  return null;
+  return <AdminSettingsPageSkeleton />;
 }

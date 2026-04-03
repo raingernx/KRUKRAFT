@@ -5,7 +5,7 @@ import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import { routes } from "@/lib/routes";
-import { getUserLibraryItems } from "@/services/purchase.service";
+import { getUserLibraryItems } from "@/services/purchases";
 import {
   traceServerStep,
   withRequestPerformanceTrace,

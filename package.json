@@ -1,5 +1,5 @@
 {
-  "name": "krucraft",
+  "name": "krukraft",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,7 @@
     "dev": "prisma generate && next dev --webpack",
     "dev:turbo": "prisma generate && next dev --turbopack",
     "build": "prisma generate && next build --webpack",
-    "lint": "eslint src scripts prisma eslint.config.mjs middleware.ts next.config.mjs tailwind.config.ts postcss.config.js load-public.js && npm run skeleton:check",
+    "lint": "eslint src scripts prisma eslint.config.mjs middleware.ts next.config.mjs tailwind.config.ts postcss.config.js load-public.js && npm run skeleton:check && npm run figma-map:check",
     "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",
     "start": "next start",
     "stripe": "stripe listen --forward-to localhost:3000/api/stripe/webhook",
@@ -24,7 +24,7 @@
     "perf:full:prod": "tsx scripts/run-post-deploy-perf.ts --suite=full",
     "smoke:search": "node scripts/smoke-local-search.mjs",
     "smoke:local:search": "BASE_URL=http://127.0.0.1:3000 npm run smoke:search",
-    "smoke:prod:search": "BASE_URL=https://krucrafts.com npm run smoke:search",
+    "smoke:prod:search": "BASE_URL=https://krukraft.com npm run smoke:search",
     "smoke:browser": "playwright test --project=chromium tests/e2e/resources.smoke.spec.ts tests/e2e/search-flows.spec.ts tests/e2e/resource-detail.spec.ts tests/e2e/auth-guards.spec.ts tests/e2e/uploader-flow.spec.ts tests/e2e/admin-heroes.spec.ts",
     "smoke:local:browser": "npm run smoke:browser",
     "skeleton:check": "node scripts/check-app-skeletons.mjs",
@@ -36,6 +36,7 @@
     "storybook:build": "HOME=/tmp storybook build",
     "storybook:smoke": "HOME=/tmp STORYBOOK_DISABLE_TELEMETRY=1 STORYBOOK_DISABLE_UPDATE_CHECK=1 storybook build --quiet",
     "chromatic": "chromatic",
+    "figma-map:check": "node scripts/check-figma-component-map.mjs",
     "repomix": "repomix --output repomix-output.xml --style xml",
     "repomix:split": "repomix --output repomix-output.xml --style xml --split-output 1mb",
     "lhci:autorun": "lhci autorun",

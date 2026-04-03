@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { checkRateLimit, getClientIp, LIMITS } from "@/lib/rate-limit";
-import { requestPasswordReset } from "@/services/user-account.service";
+import { requestPasswordReset } from "@/services/users";
 
 const RequestPasswordResetSchema = z.object({
   email: z.string().email("Invalid email address"),

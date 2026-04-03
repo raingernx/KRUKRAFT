@@ -1,4 +1,4 @@
-# KruCraft UI Skill
+# Krukraft UI Skill
 
 **Scope of this file:** Design decision quality, UX principles, and the "why" behind UI choices.
 

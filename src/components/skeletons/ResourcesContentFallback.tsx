@@ -1,5 +1,5 @@
 import { ResourceCardSkeleton } from "@/components/resources/ResourceCardSkeleton";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 import { ResourcesIntroSectionSkeleton } from "@/components/skeletons/ResourcesIntroSectionSkeleton";
 import { ResourcesDiscoverSectionsSkeleton } from "@/components/skeletons/ResourcesDiscoverSectionsSkeleton";
 
@@ -9,7 +9,7 @@ export function FilterBarFallback() {
       <LoadingSkeleton className="h-5 w-24 rounded-md" />
       <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:items-center">
         <LoadingSkeleton className="h-11 w-full rounded-full border border-surface-200 bg-white sm:w-28" />
-        <LoadingSkeleton className="h-11 w-full rounded-full border border-surface-200 bg-primary-50/70 sm:w-36" />
+        <LoadingSkeleton className="h-11 w-full rounded-full border border-surface-200 bg-surface-100 sm:w-36" />
         <LoadingSkeleton className="h-11 w-16 rounded-full sm:w-20" />
       </div>
     </div>

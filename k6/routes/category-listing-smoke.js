@@ -1,12 +1,12 @@
 /**
  * Purpose: Lightweight CI smoke check for the hot public category route.
- * Run: BASE_URL=https://krucrafts.com CATEGORY=science k6 run k6/routes/category-listing-smoke.js
+ * Run: BASE_URL=https://krukraft.com CATEGORY=science k6 run k6/routes/category-listing-smoke.js
  */
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const BASE_URL = __ENV.BASE_URL || 'https://krucrafts.com';
+const BASE_URL = __ENV.BASE_URL || 'https://krukraft.com';
 const CATEGORY = __ENV.CATEGORY || 'science';
 const ROUTE_TAG = 'category_listing';
 

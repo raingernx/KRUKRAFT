@@ -7,7 +7,7 @@ import { routes } from "@/lib/routes";
 import {
   getCreatorResourceForEdit,
   getCreatorResourceFormData,
-} from "@/services/creator.service";
+} from "@/services/creator";
 
 const CreatorResourceForm = nextDynamic(
   () =>

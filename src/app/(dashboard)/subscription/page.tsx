@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import { PageContentNarrow } from "@/design-system";
-import { getDashboardSubscriptionPageData } from "@/services/admin-operations.service";
-import { getBuildSafePlatformConfig } from "@/services/platform.service";
+import { getDashboardSubscriptionPageData } from "@/services/admin";
+import { getBuildSafePlatformConfig } from "@/services/platform";
 import { routes } from "@/lib/routes";
 
 export const metadata = {

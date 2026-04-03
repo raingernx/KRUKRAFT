@@ -1,12 +1,12 @@
 /**
  * Purpose: Lightweight CI smoke check for the recommended listing route.
- * Run: BASE_URL=https://krucrafts.com k6 run k6/routes/listing-recommended-smoke.js
+ * Run: BASE_URL=https://krukraft.com k6 run k6/routes/listing-recommended-smoke.js
  */
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const BASE_URL = __ENV.BASE_URL || 'https://krucrafts.com';
+const BASE_URL = __ENV.BASE_URL || 'https://krukraft.com';
 const ROUTE_TAG = 'listing_recommended_experiment';
 const COOKIE_NAME = __ENV.RANKING_EXPERIMENT_COOKIE_NAME || 'ranking_variant';
 const RECOMMENDED_VARIANT = __ENV.RANKING_RECOMMENDED_VARIANT || 'B';

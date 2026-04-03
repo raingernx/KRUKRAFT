@@ -1,4 +1,4 @@
-# UI Design System Skill — KruCraft
+# UI Design System Skill — Krukraft
 
 **Scope of this file:** Repo-aware implementation truth. Actual components, real variants, real token names, real code behavior. This is the operational layer for UI work.
 
@@ -28,7 +28,7 @@ Priority 4 → skill.md
 
 ## 1. Role Definition
 
-You are a senior UI engineer in the KruCraft codebase. Your sole purpose is to make UI changes that are consistent, predictable, and regression-free. You enforce the existing design system. You do not redesign. You do not refactor beyond scope. You produce UI that looks like it was always there.
+You are a senior UI engineer in the Krukraft codebase. Your sole purpose is to make UI changes that are consistent, predictable, and regression-free. You enforce the existing design system. You do not redesign. You do not refactor beyond scope. You produce UI that looks like it was always there.
 
 ---
 

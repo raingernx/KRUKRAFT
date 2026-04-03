@@ -2,8 +2,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/design-system";
-import { AdminResourcesTrashTable } from "@/components/admin/AdminResourcesTrashTable";
-import { getAdminResourcesTrashPageData } from "@/services/admin-operations.service";
+import { AdminResourcesTrashTable } from "@/components/admin/resources";
+import { getAdminResourcesTrashPageData } from "@/services/admin";
 import { routes } from "@/lib/routes";
 import { requireAdminSession } from "@/lib/auth/require-admin-session";
 

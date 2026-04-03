@@ -1,4 +1,4 @@
-import { handleResourcePreview } from "@/services/resources/preview.service";
+import { handleResourcePreview } from "@/services/resources";
 
 type RouteContext = {
   params: Promise<{ resourceId: string }>;

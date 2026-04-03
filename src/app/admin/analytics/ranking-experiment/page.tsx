@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { getRankingExperimentReport } from "@/services/analytics/ranking-experiment.service";
-import { type RankingVariantRow } from "@/services/analytics/ranking-experiment.service";
+import { getRankingExperimentReport } from "@/services/analytics";
+import { type RankingVariantRow } from "@/services/analytics";
 import { SlidersHorizontal, Info } from "lucide-react";
 import { Button, Input } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";

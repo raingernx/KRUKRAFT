@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import {
   addFreeResourceToLibrary,
   LibraryServiceError,
-} from "@/services/purchases/library.service";
+} from "@/services/purchases";
 
 const AddToLibrarySchema = z.object({
   resourceId: z.string().cuid(),

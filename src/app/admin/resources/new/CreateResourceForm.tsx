@@ -6,17 +6,17 @@ import dynamic from "next/dynamic";
 import { Card } from "@/design-system";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { ResourceCard } from "@/components/resources/ResourceCard";
-import { AdminFormLayout } from "@/components/admin/AdminFormLayout";
+import { AdminFormLayout } from "@/components/admin/resources";
 import type { ResourceCardData } from "@/components/resources/ResourceCard";
 import type {
   ResourceFormCategory,
   ResourceFormTag,
   ResourcePayload,
   ResourceFormResource,
-} from "@/components/admin/ResourceForm";
+} from "@/components/admin/resources";
 
 const ResourceForm = dynamic(() =>
-  import("@/components/admin/ResourceForm").then((m) => m.ResourceForm),
+  import("@/components/admin/resources").then((m) => m.ResourceForm),
   {
     loading: () => <AdminResourceFormLoadingShell />,
   },

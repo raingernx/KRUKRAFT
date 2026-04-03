@@ -1,23 +1,23 @@
 import type { PlatformConfig } from "./platform.types";
 
 export const PLATFORM_DEFAULTS: PlatformConfig = {
-  platformName: "KruCraft",
-  platformShortName: "KruCraft",
+  platformName: "Krukraft",
+  platformShortName: "Krukraft",
   platformDescription:
-    "KruCraft is a marketplace for high-quality educational resources.",
-  logoFullUrl: "/brand/krucraft-logo.svg",
-  logoIconUrl: "/brand/krucraft-mark.svg",
-  logoOgUrl: "/brand/krucraft-logo.svg",
-  logoEmailUrl: "/brand/krucraft-logo.svg",
-  logoUrl: "/brand/krucraft-logo.svg",
+    "Krukraft is a marketplace for high-quality educational resources.",
+  logoFullUrl: "/brand/krukraft-logo.svg",
+  logoIconUrl: "/brand/krukraft-mark.svg",
+  logoOgUrl: "/brand/krukraft-logo.svg",
+  logoEmailUrl: "/brand/krukraft-logo.svg",
+  logoUrl: "/brand/krukraft-logo.svg",
   faviconUrl: "/logo/72ppi/favicon-32x32.png",
-  supportEmail: "support@krucraft.app",
+  supportEmail: "support@krukraft.com",
   siteUrl: "",
-  defaultMetaTitle: "KruCraft",
+  defaultMetaTitle: "Krukraft",
   defaultMetaDescription:
-    "KruCraft is a marketplace for high-quality educational resources.",
-  ogSiteName: "KruCraft",
-  emailSenderName: "KruCraft",
+    "Krukraft is a marketplace for high-quality educational resources.",
+  ogSiteName: "Krukraft",
+  emailSenderName: "Krukraft",
   defaultLanguage: "th",
   defaultCurrency: "THB",
 };

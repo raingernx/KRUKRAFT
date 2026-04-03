@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import { deleteResourceRedisKeys, getResourceCacheTag } from "@/lib/cache";
-import { clearAdminResourceFile } from "@/services/admin-operations.service";
+import { clearAdminResourceFile } from "@/services/admin";
 
 // DELETE /api/admin/resources/:id/file
 export async function DELETE(

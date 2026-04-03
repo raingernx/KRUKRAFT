@@ -4,7 +4,7 @@ import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import {
   deleteAdminTag,
   updateAdminTag,
-} from "@/services/admin-operations.service";
+} from "@/services/admin";
 
 type Params = { params: Promise<{ id: string }> };
 

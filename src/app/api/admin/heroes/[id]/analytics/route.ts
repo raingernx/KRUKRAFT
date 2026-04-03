@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/auth/require-admin-api";
-import { getHeroAnalytics, HeroServiceError } from "@/services/heroes/hero.service";
+import { getHeroAnalytics, HeroServiceError } from "@/services/heroes";
 
 type Params = {
   params: Promise<{ id: string }>;

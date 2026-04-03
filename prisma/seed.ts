@@ -68,7 +68,7 @@ const TEST_RESOURCES: {
   { title: "SAT Math Practice Sheet",          slug: "sat-math-practice-sheet",       description: "Practice problems for SAT math section with answer key.",                               categorySlug: "test-prep" },
 ];
 
-// ── 15 KRUCraft marketplace demo resources ────────────────────────────────────
+// ── 15 Krukraft marketplace demo resources ────────────────────────────────────
 interface DemoResource {
   title: string;
   slug: string;
@@ -305,11 +305,11 @@ async function main() {
   const hashedAdminPassword = await bcrypt.hash("admin123!", 12);
 
   const admin = await prisma.user.upsert({
-    where: { email: "admin@krucraft.dev" },
+    where: { email: "admin@krukraft.dev" },
     update: {},
     create: {
       name: "Admin User",
-      email: "admin@krucraft.dev",
+      email: "admin@krukraft.dev",
       hashedPassword: hashedAdminPassword,
       role: UserRole.ADMIN,
       emailVerified: new Date(),
@@ -318,14 +318,14 @@ async function main() {
   console.log("✅ Admin user:", admin.email);
 
   // ── Demo instructor ─────────────────────────────────────────────────────────
-  const hashedInstructorPassword = await bcrypt.hash("KruCraft2024!", 12);
+  const hashedInstructorPassword = await bcrypt.hash("Krukraft2024!", 12);
 
   const instructor = await prisma.user.upsert({
-    where: { email: "demo.instructor@krucraft.dev" },
+    where: { email: "demo.instructor@krukraft.dev" },
     update: {},
     create: {
       name: "Kru Mint",
-      email: "demo.instructor@krucraft.dev",
+      email: "demo.instructor@krukraft.dev",
       hashedPassword: hashedInstructorPassword,
       role: UserRole.INSTRUCTOR,
       emailVerified: new Date(),
@@ -391,7 +391,7 @@ async function main() {
   }
   console.log("✅ Test resources seeded:", TEST_RESOURCES.length);
 
-  // ── 15 KRUCraft demo resources ────────────────────────────────────────────
+  // ── 15 Krukraft demo resources ────────────────────────────────────────────
   let demoCount = 0;
   for (const res of DEMO_RESOURCES) {
     const category = categoryMap.get(res.categorySlug);

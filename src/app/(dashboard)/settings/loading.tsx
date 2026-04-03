@@ -1,3 +1,5 @@
+import { SettingsPageSkeleton } from "@/components/skeletons/SettingsPageSkeleton";
+
 export default function Loading() {
-  return null;
+  return <SettingsPageSkeleton />;
 }

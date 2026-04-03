@@ -12,7 +12,7 @@ import { authOptions } from "@/lib/auth";
 import { requireSession } from "@/lib/auth/require-session";
 import { PageContent } from "@/design-system";
 import { routes } from "@/lib/routes";
-import { canAccessCreatorWorkspace, getCreatorAccessState } from "@/services/creator.service";
+import { canAccessCreatorWorkspace, getCreatorAccessState } from "@/services/creator";
 import { CreatorApplicationForm } from "@/components/creator/CreatorApplicationForm";
 import { findCreatorApplicationRecord } from "@/repositories/creators/creator.repository";
 
