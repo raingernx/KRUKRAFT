@@ -47,6 +47,11 @@ storybook-static/
 repomix-output*.xml
 repomix-output*.md
 repomix-output*.json
+.byom/
+.codex/environments/
+.agents/skills/*
+!.agents/skills/next-best-practices/
+!.agents/skills/next-best-practices/**
 
 # Vercel
 .vercel

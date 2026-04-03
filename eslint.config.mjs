@@ -8,11 +8,11 @@ const designSystemMessage =
 
 export default [
   {
-    name: "studyplatform/global-ignores",
+    name: "krucraft/global-ignores",
     ignores: [".next/**", "node_modules/**", "out/**", "build/**"],
   },
   {
-    name: "studyplatform/parser",
+    name: "krucraft/parser",
     files: ["**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}"],
     ignores: ["next-env.d.ts"],
     languageOptions: {
@@ -36,7 +36,7 @@ export default [
     },
   },
   {
-    name: "studyplatform/design-system-imports",
+    name: "krucraft/design-system-imports",
     files: [
       "src/app/**/*.{ts,tsx}",
       "src/components/**/*.{ts,tsx}",

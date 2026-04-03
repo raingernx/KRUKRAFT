@@ -135,6 +135,7 @@ Resource detail page
 - Password reset request + confirm flow
 - Email verification flow (soft verification approach)
 - Credentials + Google login
+- canonical seeded/local admin identity now uses `admin@krucraft.dev`
 
 ## Secure Download Endpoint
 
@@ -143,7 +144,8 @@ Resource detail page
 - Generates protected access to the file
 - Includes logging and guarded error handling
 - Does not expose private storage directly without verification
+- Branded allowlist examples now assume `files.krucraft.com` for custom R2/public delivery hosts
 
 ---
 
-*Refreshed against the repo state on 2026-04-02.*
+*Refreshed against the repo state on 2026-04-03.*

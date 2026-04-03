@@ -206,6 +206,7 @@ This separation exists to avoid Prisma build-time warnings and DB dependency in 
 - the shared ranked-search SQL now filters candidate resources before computing expensive `tag_metrics` lateral aggregates, so title/category/creator matches no longer pay tag-similarity aggregation across the whole public catalog
 - the public `/api/search` and `/api/search/recovery` routes now declare short-lived shared cache headers in source, but production verification on 2026-04-01 only surfaced `Cache-Control: public`, so infra-level response caching should not yet be treated as a verified win
 - `/api/internal/ready` now exists as a no-store readiness probe for local/remote smoke verification, and shared search/auth smoke flows use it before hitting `/resources`, `/api/search`, or `/api/auth/viewer`
+- the readiness payload now reports `service: "krucraft"` so smoke diagnostics and local tooling no longer expose the legacy `studyplatform` identifier
 - `/resources` no-result search states now render a server-first recovery panel with alternate query suggestions, category/tag browse links, and quick routes back into trending/free/discover inventory
 - `/resources` switches from discover mode to listing mode whenever search, filters, pagination, or non-default sort are active; category is no longer the only trigger
 - `/resources` listing headings now distinguish search results from general browsing so search-without-category flows render as "Search results" instead of inheriting browse copy
@@ -248,8 +249,9 @@ This separation exists to avoid Prisma build-time warnings and DB dependency in 
 - discover-mode `/resources` now trims its curated section source pool from 8 to 6 candidates and renders 4 cards per server section/fallback row, which reduces the hot-path HTML/render workload without changing listing-mode result counts
 - the `/resources` category chip rail no longer asks Prisma for per-category `_count` data on the hot path; discover category loading now uses a lean `id/name/slug` projection because the chip UI never rendered counts
 - Category landing pages intentionally use `newest` for their first-page curated feed
+- protected download redirects now allow the branded bucket host `files.krucraft.com`, matching the repo's current R2/public URL guidance instead of the old `cdn.studyplatform.com` example
 - `src/env.ts` is the central server env validation surface
 
 ---
 
-*Refreshed against the repo state on 2026-04-02.*
+*Refreshed against the repo state on 2026-04-03.*

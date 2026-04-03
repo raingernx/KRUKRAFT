@@ -7,7 +7,7 @@ Next.js 14 (App Router) · Tailwind CSS · PostgreSQL · Prisma · NextAuth · S
 ## Folder Structure
 
 ```
-studyplatform/
+krucraft/
 ├── prisma/
 │   ├── schema.prisma          ← Full data model (User, Resource, Purchase, Review, …)
 │   └── seed.ts                ← Dev seed data

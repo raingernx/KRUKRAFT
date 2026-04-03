@@ -36,10 +36,12 @@
 - `storybook:smoke`: build-based Storybook smoke for design-system primitives/components
 - `chromatic`: Chromatic CLI is installed as an optional visual-regression publish/review surface for Storybook once a `CHROMATIC_PROJECT_TOKEN` is configured
 - `repomix` / `repomix:split`: local repo-pack scripts for AI handoff/research workflows; output is intentionally excluded from git, and `.repomixignore` strips secrets, artifacts, and local tool state from packed context
+- the package/lockfile identity now uses `krucraft`, matching the repo folder rename and local service naming
 - `lhci:*`: Lighthouse CI collection/assertion flow backed by `.lighthouserc.json`
 - `analyze`: Next bundle analyzer via `ANALYZE=true npm run build`
 - `/api/auth/viewer` now reads the signed NextAuth JWT through `next-auth/jwt` instead of `getServerSession`, which keeps lightweight auth-chrome checks off the Prisma pool
 - the marketplace/detail private viewer-state APIs now use the same JWT-token snapshot pattern instead of Prisma-backed `getServerSession` reads, which removes a second source of auth-related pool pressure on public routes
+- local-only metadata/state folders `.byom/`, `.codex/environments/`, and ad-hoc `.agents/skills/*` copies are intentionally gitignored; only the tracked `.agents/skills/next-best-practices` subtree should remain under version control
 
 Important: build must stay schema-mutation-free. Migration deploy is a separate operational step.
 

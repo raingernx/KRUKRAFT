@@ -17,7 +17,7 @@
       "failRate": 0,
       "thresholdPassed": true,
       "exitCode": 0,
-      "summaryPath": "/Users/shanerinen/Projects/studyplatform/artifacts/k6/resources_home_smoke.json"
+      "summaryPath": "/Users/shanerinen/Projects/krucraft/artifacts/k6/resources_home_smoke.json"
     },
     {
       "name": "listing_recommended_smoke",
@@ -28,7 +28,7 @@
       "failRate": 0,
       "thresholdPassed": true,
       "exitCode": 0,
-      "summaryPath": "/Users/shanerinen/Projects/studyplatform/artifacts/k6/listing_recommended_smoke.json"
+      "summaryPath": "/Users/shanerinen/Projects/krucraft/artifacts/k6/listing_recommended_smoke.json"
     },
     {
       "name": "listing_newest_smoke",
@@ -39,7 +39,7 @@
       "failRate": 0,
       "thresholdPassed": true,
       "exitCode": 0,
-      "summaryPath": "/Users/shanerinen/Projects/studyplatform/artifacts/k6/listing_newest_smoke.json"
+      "summaryPath": "/Users/shanerinen/Projects/krucraft/artifacts/k6/listing_newest_smoke.json"
     },
     {
       "name": "resource_detail_smoke",
@@ -50,7 +50,7 @@
       "failRate": 0,
       "thresholdPassed": true,
       "exitCode": 0,
-      "summaryPath": "/Users/shanerinen/Projects/studyplatform/artifacts/k6/resource_detail_smoke.json"
+      "summaryPath": "/Users/shanerinen/Projects/krucraft/artifacts/k6/resource_detail_smoke.json"
     },
     {
       "name": "creator_detail_smoke",
@@ -61,7 +61,7 @@
       "failRate": 0,
       "thresholdPassed": true,
       "exitCode": 0,
-      "summaryPath": "/Users/shanerinen/Projects/studyplatform/artifacts/k6/creator_detail_smoke.json"
+      "summaryPath": "/Users/shanerinen/Projects/krucraft/artifacts/k6/creator_detail_smoke.json"
     },
     {
       "name": "category_listing_smoke",
@@ -72,7 +72,7 @@
       "failRate": 0,
       "thresholdPassed": true,
       "exitCode": 0,
-      "summaryPath": "/Users/shanerinen/Projects/studyplatform/artifacts/k6/category_listing_smoke.json"
+      "summaryPath": "/Users/shanerinen/Projects/krucraft/artifacts/k6/category_listing_smoke.json"
     }
   ]
 }

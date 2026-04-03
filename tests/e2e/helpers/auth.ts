@@ -9,7 +9,7 @@ const AUTH_NAVIGATION_TIMEOUT_MS = 120_000;
 const LOGIN_ERROR_TEXT = "Invalid email or password. Please try again.";
 
 const ADMIN_CREDENTIALS: LoginCredentials = {
-  email: "admin@studyplatform.dev",
+  email: "admin@krucraft.dev",
   password: "admin123!",
 };
 

@@ -15,7 +15,7 @@ import { findDownloadableResourceById } from "@/repositories/resources/resource.
 import { getCompletedPurchaseAccess } from "@/services/purchase.service";
 
 const ALLOWED_DOWNLOAD_HOSTS = [
-  "cdn.studyplatform.com",
+  "files.krucraft.com",
   "storage.googleapis.com",
 ] as const;
 
