@@ -43,7 +43,7 @@ const tokensDir = path.join(repoRoot, "tokens");
 const shouldValidate = process.argv.includes("--validate");
 
 const COLOR_VALUE_RE =
-  /^(#[0-9a-fA-F]{6}|#[0-9a-fA-F]{8}|rgb\([^)]+\)|rgba\([^)]+\)|\{[A-Za-z0-9._-]+\})$/;
+  /^(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|rgb\([^)]+\)|rgba\([^)]+\)|\{[A-Za-z0-9._-]+\})$/;
 
 function isTokenValue(input: unknown): input is TokenValue {
   return (
@@ -55,8 +55,30 @@ function isTokenValue(input: unknown): input is TokenValue {
   );
 }
 
+function normalizeColorValue(value: string): string {
+  if (value.startsWith("{")) {
+    return value;
+  }
+
+  const shortHexMatch = value.match(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{4})$/);
+  if (shortHexMatch) {
+    const expanded = shortHexMatch[1]
+      .split("")
+      .map((char) => `${char}${char}`)
+      .join("");
+    return `#${expanded.toUpperCase()}`;
+  }
+
+  const longHexMatch = value.match(/^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/);
+  if (longHexMatch) {
+    return `#${longHexMatch[1].toUpperCase()}`;
+  }
+
+  return value;
+}
+
 function colorToken(value: string): TokenValue {
-  return { value, type: "color" };
+  return { value: normalizeColorValue(value), type: "color" };
 }
 
 function numberToken(value: number): TokenValue {
@@ -293,7 +315,7 @@ function parseBoxShadow(input: string): BoxShadowLayer | BoxShadowLayer[] {
 
     const offsets = tokens.slice(inset ? 1 : 0, -1);
 
-    if (offsets.length < 3 || offsets.length > 4) {
+    if (offsets.length < 2 || offsets.length > 4) {
       throw new Error(`Unsupported box shadow layer "${layer}".`);
     }
 
@@ -302,7 +324,7 @@ function parseBoxShadow(input: string): BoxShadowLayer | BoxShadowLayer[] {
       y: offsets[1] ?? "0",
       blur: offsets[2] ?? "0",
       spread: offsets[3] ?? "0",
-      color,
+      color: normalizeColorValue(color),
       type: inset ? "innerShadow" : "dropShadow",
     } satisfies BoxShadowLayer;
   });

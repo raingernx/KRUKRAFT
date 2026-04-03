@@ -44,6 +44,9 @@ logs
 # Vercel
 .vercel
 
+repomix-output*.xml
+repomix-output*.md
+repomix-output*.json
 # macOS
 .DS_Store
 

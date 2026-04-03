@@ -34,6 +34,8 @@
 - `test:e2e`: Playwright browser verification for `/resources`, canonical search flows, no-result recovery, and resource detail image rendering
 - `smoke:local:browser`: repo-owned pre-merge Playwright smoke path for key public/auth/uploader browser flows, including authenticated preview-image upload on admin and creator resource forms
 - `storybook:smoke`: build-based Storybook smoke for design-system primitives/components
+- `chromatic`: Chromatic CLI is installed as an optional visual-regression publish/review surface for Storybook once a `CHROMATIC_PROJECT_TOKEN` is configured
+- `repomix` / `repomix:split`: local repo-pack scripts for AI handoff/research workflows; output is intentionally excluded from git, and `.repomixignore` strips secrets, artifacts, and local tool state from packed context
 - `lhci:*`: Lighthouse CI collection/assertion flow backed by `.lighthouserc.json`
 - `analyze`: Next bundle analyzer via `ANALYZE=true npm run build`
 - `/api/auth/viewer` now reads the signed NextAuth JWT through `next-auth/jwt` instead of `getServerSession`, which keeps lightweight auth-chrome checks off the Prisma pool
@@ -59,9 +61,11 @@ Important: build must stay schema-mutation-free. Migration deploy is a separate 
 
 - Playwright is configured in `playwright.config.ts`; the local project name remains `chromium`, but it launches the locally installed Chrome stable browser via `channel: "chrome"` on this macOS setup, and the default local base URL now resolves to `http://127.0.0.1:3000`.
 - Storybook is intentionally scoped to `src/design-system/primitives/**/*.stories.*` and `src/design-system/components/**/*.stories.*`.
+- Chromatic is available on top of that same Storybook surface for hosted visual review, but it is not wired into CI or usable until a project token is provisioned.
 - Accessibility checks are available through `@axe-core/playwright`.
 - Lighthouse CI is configured through `.lighthouserc.json`.
 - Bundle inspection is available through `@next/bundle-analyzer`.
+- Repomix is available as a local AI-context packing utility; `.repomixignore` is part of the repo and should remain aligned with secret/artifact handling policy when new generated directories or sensitive files are introduced.
 
 ## Environment Variables (Core)
 
@@ -96,4 +100,4 @@ UPSTASH_REDIS_REST_TOKEN
 
 ---
 
-*Refreshed against the repo state on 2026-04-02.*
+*Refreshed against the repo state on 2026-04-03.*

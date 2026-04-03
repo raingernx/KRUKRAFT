@@ -1,0 +1,27 @@
+# Secrets
+.env
+.env.*
+
+# Dependency and build output
+node_modules/
+.next/
+dist/
+build/
+out/
+
+# Generated local reports
+artifacts/
+playwright-report/
+test-results/
+storybook-static/
+.lighthouseci/
+
+# Local tool state
+.byom/
+.codex/environments/
+.understand-anything/
+
+# Packed output
+repomix-output*.xml
+repomix-output*.md
+repomix-output*.json

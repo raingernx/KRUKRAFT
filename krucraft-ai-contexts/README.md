@@ -30,7 +30,7 @@ track the current codebase state, not just earlier conversation exports.
 - **Architecture:** API Route → Service → Repository → Prisma (strictly enforced)
 - **Domain:** `krucrafts.com`
 - **Build policy:** `npm run build` is schema-mutation-free; Prisma migrations run separately via `npm run db:deploy`
-- **Current perf shape:** public marketplace/detail paths use multi-tier caching, RSC streaming, and browser/perf verification layers (Playwright, Storybook smoke, LHCI, bundle analysis)
+- **Current perf shape:** public marketplace/detail paths use multi-tier caching, RSC streaming, and browser/perf verification layers (Playwright, Storybook smoke, optional Chromatic visual review, LHCI, bundle analysis)
 - **Current ops warning:** production/build path still warns that `XENDIT_SECRET_KEY` is a test key
 
 ---
@@ -46,4 +46,5 @@ track the current codebase state, not just earlier conversation exports.
 - Public logo / favicon / OG assets now flow through runtime `/brand-assets/*` routes so admin brand uploads can update public surfaces without reintroducing build-time Prisma dependency.
 - Local browser verification uses Playwright via `npm run test:e2e`; the local project still uses the `chromium` name, but on this macOS setup it launches Chrome stable through `channel: "chrome"` because Google Chrome for Testing was crash-prone.
 - Storybook is scoped to `src/design-system/primitives/*` and `src/design-system/components/*`; `npm run storybook:smoke` is the stable local verification path.
-- This directory was refreshed against the repo on `2026-04-02`. If architecture/perf/deploy behavior changes materially, update these docs in the same branch.
+- `npm run chromatic` is available as an opt-in hosted Storybook review path once a Chromatic project token exists, and `npm run repomix` / `npm run repomix:split` are available for local AI-context export with repo-owned `.repomixignore` safeguards.
+- This directory was refreshed against the repo on `2026-04-03`. If architecture/perf/deploy behavior changes materially, update these docs in the same branch.

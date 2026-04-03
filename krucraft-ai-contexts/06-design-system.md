@@ -93,6 +93,7 @@
   - `npm run storybook:smoke`
 - In this environment, the build-based smoke path is the verified Storybook workflow.
 
+- Hosted visual review can be layered on the same Storybook surface through `npm run chromatic`, but that command remains opt-in until a `CHROMATIC_PROJECT_TOKEN` is configured for the repo/workspace.
 ---
 
-*Refreshed against the repo state on 2026-04-02.*
+*Refreshed against the repo state on 2026-04-03.*
