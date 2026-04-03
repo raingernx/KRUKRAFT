@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Button } from "@/design-system";
 import { Logo } from "@/components/brand/Logo";
+import { LoginFormSkeleton } from "@/components/skeletons/LoginFormSkeleton";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { routes } from "@/lib/routes";
 
@@ -221,19 +222,6 @@ function LoginForm() {
             Create one free
           </Link>
         </p>
-      </div>
-    </div>
-  );
-}
-
-function LoginFormSkeleton() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-surface-50 px-4">
-      <div className="w-full max-w-sm space-y-4">
-        <div className="h-8 w-32 animate-pulse rounded-lg bg-surface-200 mx-auto" />
-        <div className="h-12 w-full animate-pulse rounded-xl bg-surface-200" />
-        <div className="h-12 w-full animate-pulse rounded-xl bg-surface-200" />
-        <div className="h-12 w-full animate-pulse rounded-xl bg-surface-200" />
       </div>
     </div>
   );

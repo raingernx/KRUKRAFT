@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ResourceDetailLoadingShell } from "@/components/resources/ResourceDetailLoadingShell";
 import {
@@ -10,6 +10,24 @@ import {
 } from "@/components/marketplace/resourcesNavigationState";
 
 const MIN_PENDING_MS = 260;
+
+function scrollViewportToTopInstantly() {
+  const root = document.documentElement;
+  const body = document.body;
+  const previousRootBehavior = root.style.scrollBehavior;
+  const previousBodyBehavior = body.style.scrollBehavior;
+
+  root.style.scrollBehavior = "auto";
+  body.style.scrollBehavior = "auto";
+  window.scrollTo(0, 0);
+  if (document.scrollingElement) {
+    document.scrollingElement.scrollTop = 0;
+  }
+  root.scrollTop = 0;
+  body.scrollTop = 0;
+  root.style.scrollBehavior = previousRootBehavior;
+  body.style.scrollBehavior = previousBodyBehavior;
+}
 
 export function ResourcesTransitionShell({
   children,
@@ -37,6 +55,14 @@ export function ResourcesTransitionShell({
       setFrozenChildren(children);
     }
   }, [children, shouldFreezePreviousRoute]);
+
+  useLayoutEffect(() => {
+    if (!shouldShowPendingDetailShell) {
+      return;
+    }
+
+    scrollViewportToTopInstantly();
+  }, [shouldShowPendingDetailShell, navigationState.id]);
 
   useEffect(() => {
     if (!navigationState.mode || !navigationState.href || !reachedTarget) {

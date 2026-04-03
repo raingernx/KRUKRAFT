@@ -5,7 +5,6 @@ import { isMissingTableError } from "@/lib/prismaErrors";
 import { ResourcesDiscoverPersonalizedSection } from "@/components/resources/ResourcesDiscoverPersonalizedSection";
 import { ResourcesViewerStateProvider } from "@/components/resources/ResourcesViewerStateProvider";
 import type { ResourceCardData } from "@/components/resources/ResourceCard";
-import { ResourceCardSkeleton } from "@/components/resources/ResourceCardSkeleton";
 import { ViewerAwareResourceCard } from "@/components/resources/ViewerAwareResourceCard";
 import { ViewerAwareResourceGrid } from "@/components/resources/ViewerAwareResourceGrid";
 import { SearchRecoveryPanel } from "@/components/resources/SearchRecoveryPanel";
@@ -17,7 +16,12 @@ import { FilterSidebar, type FilterCategory } from "@/components/marketplace/Fil
 import { CreatorCTA } from "@/components/discover/CreatorCTA";
 import { BlogSection } from "@/components/discover/BlogSection";
 import { EmailSignup } from "@/components/discover/EmailSignup";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { ResourcesDiscoverSectionsSkeleton } from "@/components/skeletons/ResourcesDiscoverSectionsSkeleton";
+import {
+  FilterBarFallback,
+  ResourcesContentFallback,
+  SidebarFallback,
+} from "@/components/skeletons/ResourcesContentFallback";
 import { formatNumber, formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";
 import {
@@ -33,7 +37,6 @@ import {
 } from "@/config/sortOptions";
 import { MARKETPLACE_LISTING_PAGE_SIZE } from "@/config/marketplace";
 import { getMarketplaceResources } from "@/services/resources/public-resource-read.service";
-import { ResourcesIntroSectionSkeleton } from "@/components/skeletons/ResourcesIntroSectionSkeleton";
 import {
   trackRequestWork,
   traceServerStep,
@@ -398,7 +401,7 @@ async function ResourcesDiscoverContent() {
   const discoverDataPromise = trackRequestWork(loadDiscoverDataSafe());
 
   return (
-    <Suspense fallback={<DiscoverSectionsSkeleton />}>
+    <Suspense fallback={<ResourcesDiscoverSectionsSkeleton />}>
       <ResourcesDiscoverDeferredSections discoverDataPromise={discoverDataPromise} />
     </Suspense>
   );
@@ -821,195 +824,5 @@ function TopCreatorSpotlightCard({
         </span>
       </div>
     </IntentPrefetchLink>
-  );
-}
-
-function FilterBarFallback() {
-  return (
-    <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-      <LoadingSkeleton className="h-5 w-24 rounded-md" />
-      <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:items-center">
-        <LoadingSkeleton className="h-11 w-full rounded-full border border-surface-200 bg-white sm:w-28" />
-        <LoadingSkeleton className="h-11 w-full rounded-full border border-surface-200 bg-primary-50/70 sm:w-36" />
-        <LoadingSkeleton className="h-11 w-16 rounded-full sm:w-20" />
-      </div>
-    </div>
-  );
-}
-
-function SidebarFallbackGroup({
-  titleWidth,
-  rowWidths,
-  pillWidths,
-}: {
-  titleWidth: string;
-  rowWidths?: string[];
-  pillWidths?: string[];
-}) {
-  return (
-    <div className="border-b border-surface-200/80 pb-4">
-      <div className="mb-3 flex items-center justify-between">
-        <LoadingSkeleton className={`h-4 rounded ${titleWidth}`} />
-        <LoadingSkeleton className="h-4 w-4 rounded" />
-      </div>
-
-      {rowWidths ? (
-        <div className="space-y-0.5">
-          {rowWidths.map((width, index) => (
-            <LoadingSkeleton
-              key={`${titleWidth}-row-${index}`}
-              className={`h-10 rounded-xl ${width}`}
-            />
-          ))}
-        </div>
-      ) : null}
-
-      {pillWidths ? (
-        <div className="flex flex-wrap gap-2">
-          {pillWidths.map((width, index) => (
-            <LoadingSkeleton
-              key={`${titleWidth}-pill-${index}`}
-              className={`h-8 rounded-full border border-surface-200 bg-white ${width}`}
-            />
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function SidebarFallback() {
-  return (
-    <div className="w-[260px] flex-shrink-0 space-y-5">
-      <div className="flex items-center justify-between border-b border-surface-200/80 pb-2">
-        <LoadingSkeleton className="h-4 w-12 rounded" />
-        <LoadingSkeleton className="h-4 w-14 rounded" />
-      </div>
-      <SidebarFallbackGroup
-        titleWidth="w-12"
-        rowWidths={["w-full", "w-5/6", "w-3/4", "w-[92%]", "w-[88%]", "w-[80%]"]}
-      />
-      <SidebarFallbackGroup
-        titleWidth="w-16"
-        rowWidths={["w-full", "w-[90%]", "w-[84%]", "w-[72%]", "w-[76%]", "w-[68%]"]}
-      />
-      <SidebarFallbackGroup
-        titleWidth="w-12"
-        rowWidths={["w-full", "w-4/5", "w-[70%]"]}
-      />
-      <SidebarFallbackGroup
-        titleWidth="w-20"
-        pillWidths={["w-24", "w-28", "w-24"]}
-      />
-      <SidebarFallbackGroup
-        titleWidth="w-24"
-        pillWidths={["w-20", "w-28", "w-24"]}
-      />
-    </div>
-  );
-}
-
-function DeferredSectionFallback({
-  titleWidth,
-  cardCount,
-}: {
-  titleWidth: string;
-  cardCount: number;
-}) {
-  return (
-    <section className="space-y-5">
-      <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1.5">
-          <LoadingSkeleton className={`h-6 ${titleWidth}`} />
-          <LoadingSkeleton className="h-4 w-64" />
-        </div>
-        <LoadingSkeleton className="h-6 w-16" />
-      </div>
-      <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-        {Array.from({ length: cardCount }).map((_, index) => (
-          <ResourceCardSkeleton key={index} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function DiscoverSectionsSkeleton() {
-  return (
-    <div className="space-y-16 lg:space-y-20">
-      <section className="space-y-5">
-        <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-3 sm:flex-row sm:items-end sm:justify-between">
-          <div className="space-y-1.5">
-            <LoadingSkeleton className="h-6 w-56" />
-            <LoadingSkeleton className="h-4 w-80" />
-          </div>
-          <LoadingSkeleton className="h-6 w-28" />
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <LoadingSkeleton key={index} className="h-48 rounded-[24px]" />
-          ))}
-        </div>
-      </section>
-      <DeferredSectionFallback titleWidth="w-52" cardCount={4} />
-      <DeferredSectionFallback titleWidth="w-40" cardCount={4} />
-      <section className="space-y-5">
-        <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-3 sm:flex-row sm:items-end sm:justify-between">
-          <div className="space-y-1.5">
-            <LoadingSkeleton className="h-6 w-52" />
-            <LoadingSkeleton className="h-4 w-72" />
-          </div>
-          <LoadingSkeleton className="h-6 w-28" />
-        </div>
-        <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <LoadingSkeleton key={index} className="h-72 rounded-[24px]" />
-          ))}
-        </div>
-      </section>
-    </div>
-  );
-}
-
-export function ResourcesContentFallback({ isDiscoverMode }: { isDiscoverMode: boolean }) {
-  return (
-    <>
-      {!isDiscoverMode ? <ResourcesIntroSectionSkeleton isDiscoverMode={false} /> : null}
-
-      {isDiscoverMode ? (
-        <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <ResourceCardSkeleton key={index} />
-          ))}
-        </div>
-      ) : (
-        <section className="space-y-6">
-          <div className="space-y-5 pb-7 sm:pb-8">
-            <LoadingSkeleton className="h-3 w-16" />
-            <LoadingSkeleton className="h-8 w-56 rounded-lg" />
-            <LoadingSkeleton className="h-4 w-72" />
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-text-secondary">
-              <LoadingSkeleton className="h-4 w-20" />
-              <LoadingSkeleton className="h-4 w-24" />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-6 lg:flex-row lg:gap-10">
-            <div className="hidden lg:block">
-              <SidebarFallback />
-            </div>
-
-            <div className="min-w-0 flex-1 space-y-5">
-              <FilterBarFallback />
-              <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-                {Array.from({ length: 8 }).map((_, index) => (
-                  <ResourceCardSkeleton key={index} />
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-    </>
   );
 }

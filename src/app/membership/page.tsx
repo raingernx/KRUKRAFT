@@ -8,8 +8,8 @@ import {
   PageContent,
   PageContentNarrow,
 } from "@/design-system";
+import { PricingCard, type PricingTier } from "@/components/membership/PricingCard";
 import { usePlatformConfig } from "@/components/providers/PlatformConfigProvider";
-import { PricingCard, type PricingTier } from "@/components/ui/PricingCard";
 import { Check, HelpCircle } from "lucide-react";
 
 const TIERS: PricingTier[] = [

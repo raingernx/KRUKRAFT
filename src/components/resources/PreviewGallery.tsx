@@ -108,12 +108,11 @@ export function PreviewGallery({ previews, resourceTitle }: Props) {
               <RevealImage
                 src={p.imageUrl}
                 alt={`Thumbnail ${i + 1}`}
-                width={72}
-                height={72}
+                fill
                 sizes="72px"
                 unoptimized={shouldBypassImageOptimizer(p.imageUrl)}
                 overlayClassName="rounded-xl bg-surface-100"
-                className="h-full w-full object-cover"
+                className="object-cover"
               />
             </button>
           ))}

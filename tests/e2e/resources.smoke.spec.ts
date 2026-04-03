@@ -15,6 +15,9 @@ test("resources homepage renders and reveals at least one card image", async ({
   await expect(
     page.getByRole("link", { name: /Home/i }).first(),
   ).toBeVisible();
+  await expect(
+    page.locator('[data-hero-surface="discover"]').first(),
+  ).toBeVisible();
   await expect(page.getByText("Trending now").first()).toBeVisible();
 
   const firstCardImage = page.locator("main article img").first();
@@ -65,6 +68,90 @@ test("public recommended sort is labeled as top picks", async ({ page }) => {
   await expect(page).toHaveURL(/\/resources\?.*category=language.*sort=recommended|\/resources\?.*sort=recommended.*category=language/);
   await expect(page.getByText("Sorted by Top picks")).toBeVisible();
   await expect(page.getByText("Sorted by Recommended")).toHaveCount(0);
+
+  expect(pageErrors).toEqual([]);
+  expect(consoleErrors).toEqual([]);
+});
+
+test("navigating from a scrolled discover page to detail resets the viewport to top", async ({
+  page,
+}) => {
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+
+  await page.goto("/resources");
+  await expect(page.getByText("Trending now").first()).toBeVisible();
+
+  await page.evaluate(() => {
+    window.scrollTo({ top: 2200, behavior: "auto" });
+  });
+
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY))
+    .toBeGreaterThan(1200);
+
+  const resourceLinks = page.locator('main a[href^="/resources/"]:not([href*="?"])');
+  const linkCount = await resourceLinks.count();
+  expect(linkCount).toBeGreaterThan(0);
+  const targetLink = resourceLinks.nth(Math.min(linkCount - 1, 4));
+  await targetLink.scrollIntoViewIfNeeded();
+
+  await page.evaluate(() => {
+    const seenScopes: string[] = [];
+
+    const recordScopes = () => {
+      if (document.querySelector('[data-loading-scope="resources-browse"]')) {
+        seenScopes.push("resources-browse");
+      }
+      if (document.querySelector('[data-loading-scope="resource-detail"]')) {
+        seenScopes.push("resource-detail");
+      }
+    };
+
+    recordScopes();
+
+    const observer = new MutationObserver(() => {
+      recordScopes();
+    });
+
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["data-loading-scope"],
+    });
+
+    (window as Window & {
+      __resourcesLoadingScopeObserver?: MutationObserver;
+      __resourcesSeenLoadingScopes?: string[];
+    }).__resourcesLoadingScopeObserver = observer;
+    (window as Window & {
+      __resourcesSeenLoadingScopes?: string[];
+    }).__resourcesSeenLoadingScopes = seenScopes;
+  });
+
+  const targetHref = await targetLink.getAttribute("href");
+  expect(targetHref).toBeTruthy();
+
+  await targetLink.click();
+
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY), { timeout: 3_000 })
+    .toBeLessThan(80);
+
+  await expect(page).toHaveURL(new RegExp(`${targetHref?.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`));
+  await expect(page.locator("main h1").first()).toBeVisible();
+
+  const seenScopes = await page.evaluate(() => {
+    const windowWithScopes = window as Window & {
+      __resourcesLoadingScopeObserver?: MutationObserver;
+      __resourcesSeenLoadingScopes?: string[];
+    };
+
+    windowWithScopes.__resourcesLoadingScopeObserver?.disconnect();
+    return windowWithScopes.__resourcesSeenLoadingScopes ?? [];
+  });
+
+  expect(seenScopes).not.toContain("resources-browse");
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);

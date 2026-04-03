@@ -11,7 +11,7 @@ import {
   Sparkles,
   Star,
 } from "lucide-react";
-import { PriceLabel } from "@/components/ui/PriceLabel";
+import { PriceLabel } from "@/design-system";
 import { BuyButton } from "@/components/resources/BuyButton";
 import { PendingPurchasePoller } from "@/components/checkout/PendingPurchasePoller";
 import { formatFileSize, formatNumber } from "@/lib/format";

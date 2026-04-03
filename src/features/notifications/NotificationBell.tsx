@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { NotificationButton } from "@/design-system";
 import { useNotifications } from "./useNotifications";
-import { NotificationButton } from "@/components/ui/NotificationButton";
 
 export function NotificationBell() {
   const { notifications, unreadCount, markAllAsRead } = useNotifications();
@@ -82,4 +82,3 @@ export function NotificationBell() {
     </div>
   );
 }
-

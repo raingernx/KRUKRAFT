@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Input, Select, Textarea } from "@/design-system";
+import { Button, FileUploadWidget, Input, Select, Textarea } from "@/design-system";
 import {
   CreatorAIDraftGenerator,
   type CreatorAIDraftResourceSeed,
@@ -18,7 +18,6 @@ import { CreatorBuyerPreviewModal } from "@/components/creator/CreatorBuyerPrevi
 import { CreatorPublishSuccessModal } from "@/components/creator/CreatorPublishSuccessModal";
 import { LazyImageDropzone } from "@/components/admin/LazyImageDropzone";
 import { PreviewImageSortableList } from "@/components/admin/PreviewImageSortableList";
-import { FileUploadWidget } from "@/components/ui/forms";
 import { routes } from "@/lib/routes";
 
 export interface CreatorResourceFormCategory {
@@ -816,6 +815,7 @@ export function CreatorResourceForm({
             <label className="text-sm font-medium text-neutral-700">รูปภาพพรีวิว</label>
             <div className="space-y-4 rounded-xl border border-neutral-200 bg-neutral-50 p-4">
               <LazyImageDropzone
+                rootTestId="preview-image-uploader"
                 disabled={imageUploading}
                 onFilesAccepted={(files) => {
                   void handlePreviewImagesUpload(files);

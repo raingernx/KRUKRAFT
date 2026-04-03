@@ -24,7 +24,7 @@
 
 - `build`: `prisma generate && next build --webpack`
 - `typecheck`: `tsc -p tsconfig.typecheck.json --noEmit`
-- `lint`: scoped ESLint run that does not depend on `.next` artifacts
+- `lint`: scoped ESLint run plus `npm run skeleton:check`, which blocks inline `*Skeleton` / `*Fallback` component declarations inside `src/app/**`
 - `db:deploy`: `prisma migrate deploy`
 - `perf:post-deploy`: warm cache + smoke perf suite
 - GitHub post-deploy warm workflow supports both `deployment_status` and manual `workflow_dispatch` runs, which covers direct CLI production deploys
@@ -32,7 +32,7 @@
 - the post-deploy warm/perf workflow now installs on Node 24, matching the current local `npm ci` / lockfile resolver behavior and avoiding the old Node 20/npm 10 mismatch
 - the post-deploy warm/perf workflow now uses `actions/checkout@v6`, `actions/setup-node@v6`, and `actions/upload-artifact@v6`, which all declare `node24` runtimes upstream; `grafana/setup-k6-action@v1` remains unchanged because no newer upstream action line with explicit Node 24 guidance was available
 - `test:e2e`: Playwright browser verification for `/resources`, canonical search flows, no-result recovery, and resource detail image rendering
-- `smoke:local:browser`: repo-owned pre-merge Playwright smoke path for key public/auth/uploader browser flows, including authenticated preview-image upload on admin and creator resource forms
+- `smoke:local:browser`: repo-owned pre-merge Playwright smoke path for key public/auth/uploader browser flows, including authenticated preview-image upload on admin and creator resource forms plus the shared admin hero-editor preview surface
 - `storybook:smoke`: build-based Storybook smoke for design-system primitives/components
 - `chromatic`: Chromatic CLI is installed as an optional visual-regression publish/review surface for Storybook once a `CHROMATIC_PROJECT_TOKEN` is configured
 - `repomix` / `repomix:split`: local repo-pack scripts for AI handoff/research workflows; output is intentionally excluded from git, and `.repomixignore` strips secrets, artifacts, and local tool state from packed context

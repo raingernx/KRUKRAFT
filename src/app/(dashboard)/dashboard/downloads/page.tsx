@@ -95,16 +95,15 @@ export default async function DownloadsPage() {
                   <div className="grid grid-cols-[2fr_1fr_140px_100px_100px] items-center gap-4 px-6 py-4">
                     {/* Resource */}
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-zinc-50">
+                      <div className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-zinc-50">
                         {dl.resource.previewUrl ? (
                           <Image
                             src={dl.resource.previewUrl}
                             alt={dl.resource.title}
-                            width={36}
-                            height={36}
+                            fill
                             sizes="36px"
                             unoptimized={shouldBypassImageOptimizer(dl.resource.previewUrl)}
-                            className="h-9 w-9 rounded-xl object-cover"
+                            className="rounded-xl object-cover"
                           />
                         ) : (
                           <FileText className="h-4 w-4 text-zinc-300" />

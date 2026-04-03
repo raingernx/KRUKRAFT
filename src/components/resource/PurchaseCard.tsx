@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ChevronRight, CheckCircle, Download, Eye, ShieldCheck, Sparkles, Star } from "lucide-react";
-import { PriceLabel } from "@/components/ui/PriceLabel";
+import { PriceLabel } from "@/design-system";
 import { BuyButton } from "@/components/resources/BuyButton";
 import { PendingPurchasePoller } from "@/components/checkout/PendingPurchasePoller";
 import { formatFileSize, formatNumber } from "@/lib/format";

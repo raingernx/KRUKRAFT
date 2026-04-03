@@ -259,6 +259,53 @@ export function HeroSearch({
     );
   }, [navigateToHref, pathname, rememberRecentSearch, searchParams]);
 
+  const submitCurrentSearch = useCallback(() => {
+    if (isPending) {
+      return;
+    }
+
+    const liveInputValue = inputRef.current?.value ?? value;
+    const normalizedQuery = normalizeSearchQuery(liveInputValue);
+    const activeResult = activeIndex >= 0 ? results[activeIndex] : null;
+    if (activeResult) {
+      if (normalizedQuery) {
+        rememberRecentSearch(normalizedQuery);
+      }
+      navigateToResource(activeResult.slug);
+      return;
+    }
+
+    const href = buildMarketplaceSearchHref({
+      pathname,
+      searchParams,
+      query: liveInputValue,
+    });
+
+    if (!normalizedQuery && !syncWithUrl) {
+      setIsDropdownOpen(false);
+      setResults([]);
+      setActiveIndex(-1);
+      return;
+    }
+
+    if (normalizedQuery) {
+      rememberRecentSearch(normalizedQuery);
+    }
+
+    navigateToHref(href);
+  }, [
+    activeIndex,
+    isPending,
+    navigateToHref,
+    navigateToResource,
+    pathname,
+    rememberRecentSearch,
+    results,
+    searchParams,
+    syncWithUrl,
+    value,
+  ]);
+
   const loadSearchRecovery = useCallback(async ({
     controller,
     query,
@@ -356,36 +403,7 @@ export function HeroSearch({
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (isPending) return;
-
-    const normalizedQuery = normalizeSearchQuery(value);
-    const activeResult = activeIndex >= 0 ? results[activeIndex] : null;
-    if (activeResult) {
-      if (normalizedQuery) {
-        rememberRecentSearch(normalizedQuery);
-      }
-      navigateToResource(activeResult.slug);
-      return;
-    }
-
-    const href = buildMarketplaceSearchHref({
-      pathname,
-      searchParams,
-      query: value,
-    });
-
-    if (!normalizedQuery && !syncWithUrl) {
-      setIsDropdownOpen(false);
-      setResults([]);
-      setActiveIndex(-1);
-      return;
-    }
-
-    if (normalizedQuery) {
-      rememberRecentSearch(normalizedQuery);
-    }
-
-    navigateToHref(href);
+    submitCurrentSearch();
   }
 
   function handleClear() {
@@ -432,6 +450,12 @@ export function HeroSearch({
 
     if (event.key === "Escape") {
       setIsDropdownOpen(false);
+      return;
+    }
+
+    if (event.key === "Enter") {
+      event.preventDefault();
+      submitCurrentSearch();
     }
   }
 
@@ -666,11 +690,11 @@ export function HeroSearch({
                   <RevealImage
                     src={result.previewUrl}
                     alt={result.title}
-                    width={44}
-                    height={44}
+                    fill
+                    sizes="44px"
                     unoptimized={shouldBypassImageOptimizer(result.previewUrl)}
                     overlayClassName="rounded-xl bg-surface-100"
-                    className="h-11 w-11 rounded-xl object-cover"
+                    className="rounded-xl object-cover"
                   />
                 ) : (
                   <FileText className="h-4 w-4 text-brand-500" aria-hidden />

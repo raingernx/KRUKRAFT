@@ -78,13 +78,5 @@ export function HeroBannerFallback({
 }: {
   className?: string;
 }) {
-  return (
-    <div
-      aria-hidden
-      className={cn(
-        "w-full rounded-[32px] border border-surface-200/70 bg-[#4338ca]",
-        className,
-      )}
-    />
-  );
+  return <HeroSurfaceSkeleton className={cn("w-full", className)} />;
 }

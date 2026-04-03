@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { SidebarBadge } from "@/design-system";
 import type { DashboardNavItem } from "./dashboard-nav.types";
 import { cn } from "@/lib/utils";
-import { SidebarBadge } from "@/components/ui/sidebar";
 import { beginDashboardNavigation } from "./dashboardNavigationState";
 
 interface DashboardSidebarItemProps {

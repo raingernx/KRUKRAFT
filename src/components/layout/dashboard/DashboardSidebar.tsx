@@ -7,7 +7,7 @@ import { Logo } from "@/components/brand/Logo";
 import {
   SidebarContainer,
   SidebarNav,
-} from "@/components/ui/sidebar";
+} from "@/design-system";
 import { cn } from "@/lib/utils";
 import type {
   DashboardNavSection,

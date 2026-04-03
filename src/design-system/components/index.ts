@@ -11,6 +11,25 @@ export type {
   EmptyStateProps,
 } from "./EmptyState";
 export {
+  ConfirmDialog,
+} from "./ConfirmDialog";
+export type {
+  ConfirmDialogProps,
+  ConfirmVariant,
+} from "./ConfirmDialog";
+export {
+  FileUploadWidget,
+} from "./FileUploadWidget";
+export type {
+  FileUploadWidgetProps,
+} from "./FileUploadWidget";
+export {
+  NotificationButton,
+} from "./NotificationButton";
+export type {
+  NotificationButtonProps,
+} from "./NotificationButton";
+export {
   PickerActions,
   PickerActionButton,
   PickerIconButton,
@@ -41,3 +60,21 @@ export type {
   ResourceCardVariant,
   ResourceCardSize,
 } from "./ResourceCard";
+export {
+  PriceBadge,
+} from "./PriceBadge";
+export type {
+  PriceBadgeProps,
+} from "./PriceBadge";
+export {
+  PriceLabel,
+} from "./PriceLabel";
+export type {
+  PriceLabelProps,
+} from "./PriceLabel";
+export {
+  SectionHeader,
+} from "./SectionHeader";
+export type {
+  SectionHeaderProps,
+} from "./SectionHeader";

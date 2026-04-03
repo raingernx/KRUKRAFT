@@ -49,6 +49,8 @@
 
 **Discover mode**
 - full-width hero section above the main content container
+- the hero now uses a compact dark merchandising stage: editorial copy on the left, a media panel in the center, and a clean utility rail on the right for key browse value points
+- the discover hero intentionally stays shadow-free; emphasis comes from contrast, crop, and panel hierarchy rather than floating card chrome
 - discover now favors fewer, clearer blocks instead of stacking many near-identical rails
 - the main sequence is:
   - quick browse tiles for entry intents like top picks, worksheets, flashcards, and free resources
@@ -75,9 +77,13 @@
 - no-result dropdown and full-page recovery both offer alternate queries plus taxonomy browse links
 
 **Loading behavior**
-- discover hero loading uses a plain banner shell, not synthetic alternate content
+- discover hero loading uses the same stage geometry as the live hero rather than a generic promo banner
 - discover sections use section/card skeletons that match the live geometry
+- the browse index loading UI now lives under `src/app/resources/(browse)/loading.tsx`, which keeps the discover/listing skeleton scoped to `/resources` and prevents it from flashing before `/resources/[slug]` loading states on cold detail navigations
+- route-level browse loading and the in-page discover Suspense fallback now share the same discover skeleton source so layout changes do not require maintaining two divergent skeleton implementations
 - listing mode uses structural content fallbacks instead of a generic card wall
+- route files under `src/app/**` should not declare local `*Skeleton` or `*Fallback` components inline; shared loading/fallback UI now lives under `src/components/skeletons/*`, and `npm run lint` enforces that contract with `npm run skeleton:check`
+- forward navigation from a scrolled `/resources` view into `/resources/[slug]` now scrolls the viewport to the top before the detail loading shell renders, while browser back-navigation should still restore the previous discover scroll position
 
 ### /resources/[slug] (Resource Detail)
 
@@ -116,6 +122,7 @@ max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8
 - Shared container-based shell
 - Metrics, resource management, moderation, and settings surfaces
 - Admin subtree is role-gated upstream; pages should not duplicate layout-level auth checks unless a route has an extra requirement
+- the hero editor preview now reuses the exact same shared hero surface as the public `/resources` discover hero, so editor changes are made against the real browse-first layout instead of an admin-only approximation
 
 ---
 

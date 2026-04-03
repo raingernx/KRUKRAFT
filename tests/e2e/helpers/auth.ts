@@ -6,6 +6,7 @@ type LoginCredentials = {
 };
 
 const AUTH_NAVIGATION_TIMEOUT_MS = 120_000;
+const LOGIN_ERROR_TEXT = "Invalid email or password. Please try again.";
 
 const ADMIN_CREDENTIALS: LoginCredentials = {
   email: "admin@studyplatform.dev",
@@ -28,16 +29,36 @@ async function loginWithCredentials(
   await page.getByLabel("Email address").fill(credentials.email);
   await page.getByLabel("Password").fill(credentials.password);
 
-  await Promise.all([
-    page.waitForURL(
-      new RegExp(`${nextPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:$|\\?)`),
-      {
-        timeout: AUTH_NAVIGATION_TIMEOUT_MS,
-        waitUntil: "commit",
-      },
-    ),
-    page.getByRole("button", { name: "Sign in" }).click(),
-  ]);
+  const targetUrlPattern = new RegExp(
+    `${nextPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:$|\\?)`,
+  );
+  const submitButton = page.getByRole("button", { name: "Sign in" });
+  const loginError = page.getByText(LOGIN_ERROR_TEXT);
+
+  await submitButton.click();
+
+  try {
+    await page.waitForURL(targetUrlPattern, {
+      timeout: AUTH_NAVIGATION_TIMEOUT_MS,
+      waitUntil: "commit",
+    });
+  } catch (error) {
+    const visibleLoginError = (await loginError.isVisible().catch(() => false))
+      ? await loginError.textContent()
+      : null;
+    const currentUrl = page.url();
+    const buttonEnabled = await submitButton.isEnabled().catch(() => false);
+
+    throw new Error(
+      [
+        `Credential login did not navigate to ${nextPath}.`,
+        `Current URL: ${currentUrl}.`,
+        `Visible login error: ${visibleLoginError?.trim() ?? "none"}.`,
+        `Submit button enabled: ${buttonEnabled}.`,
+        `Underlying error: ${error instanceof Error ? error.message : String(error)}`,
+      ].join(" "),
+    );
+  }
 }
 
 export async function loginAsAdmin(page: Page, nextPath: string) {

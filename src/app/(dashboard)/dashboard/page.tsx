@@ -323,16 +323,15 @@ export default async function DashboardPage() {
                     href={routes.resource(purchase.resource.slug)}
                     className="flex items-center gap-4 px-5 py-4 transition hover:bg-surface-50/70 sm:px-6"
                   >
-                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-surface-200 bg-surface-50">
+                    <div className="relative flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-surface-200 bg-surface-50">
                       {purchase.resource.previewUrl ? (
                         <Image
                           src={purchase.resource.previewUrl}
                           alt={purchase.resource.title}
-                          width={44}
-                          height={44}
+                          fill
                           sizes="44px"
                           unoptimized={shouldBypassImageOptimizer(purchase.resource.previewUrl)}
-                          className="h-11 w-11 rounded-xl object-cover"
+                          className="rounded-xl object-cover"
                         />
                       ) : (
                         <FileText className="h-5 w-5 text-zinc-400" />
@@ -371,16 +370,15 @@ export default async function DashboardPage() {
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-surface-200 bg-surface-50">
+                  <div className="relative flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-surface-200 bg-surface-50">
                     {lastOpened.resource.previewUrl ? (
                       <Image
                         src={lastOpened.resource.previewUrl}
                         alt={lastOpened.resource.title}
-                        width={44}
-                        height={44}
+                        fill
                         sizes="44px"
                         unoptimized={shouldBypassImageOptimizer(lastOpened.resource.previewUrl)}
-                        className="h-11 w-11 rounded-xl object-cover"
+                        className="rounded-xl object-cover"
                       />
                     ) : (
                       <FileText className="h-5 w-5 text-zinc-400" />

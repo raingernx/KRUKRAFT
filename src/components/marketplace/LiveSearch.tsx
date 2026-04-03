@@ -265,11 +265,11 @@ export function LiveSearch({
                   <RevealImage
                     src={r.previewUrl}
                     alt={r.title}
-                    width={36}
-                    height={36}
+                    fill
+                    sizes="36px"
                     unoptimized={shouldBypassImageOptimizer(r.previewUrl)}
                     overlayClassName="rounded-lg bg-surface-100"
-                    className="h-9 w-9 rounded-lg object-cover"
+                    className="rounded-lg object-cover"
                   />
                 ) : (
                   <FileText className="h-4 w-4 text-blue-400" />

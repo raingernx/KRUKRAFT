@@ -436,10 +436,10 @@
       "default": {
         "value": {
           "x": "0",
-          "y": "1px",
-          "blur": "2px",
+          "y": "0",
+          "blur": "0",
           "spread": "0",
-          "color": "rgba(15,23,42,0.04)",
+          "color": "#00000000",
           "type": "dropShadow"
         },
         "type": "boxShadow"
@@ -447,10 +447,10 @@
       "lg": {
         "value": {
           "x": "0",
-          "y": "18px",
-          "blur": "40px",
-          "spread": "-24px",
-          "color": "rgba(15,23,42,0.18)",
+          "y": "0",
+          "blur": "0",
+          "spread": "0",
+          "color": "#00000000",
           "type": "dropShadow"
         },
         "type": "boxShadow"
@@ -458,10 +458,10 @@
       "md": {
         "value": {
           "x": "0",
-          "y": "8px",
-          "blur": "20px",
-          "spread": "-12px",
-          "color": "rgba(15,23,42,0.12)",
+          "y": "0",
+          "blur": "0",
+          "spread": "0",
+          "color": "#00000000",
           "type": "dropShadow"
         },
         "type": "boxShadow"
@@ -536,10 +536,10 @@
       "sm": {
         "value": {
           "x": "0",
-          "y": "1px",
-          "blur": "2px",
+          "y": "0",
+          "blur": "0",
           "spread": "0",
-          "color": "rgba(15,23,42,0.05)",
+          "color": "#00000000",
           "type": "innerShadow"
         },
         "type": "boxShadow"
@@ -547,26 +547,27 @@
     },
     "pricing": {
       "featured": {
-        "value": [
-          {
-            "x": "0",
-            "y": "0",
-            "blur": "0",
-            "spread": "1px",
-            "color": "rgba(79,70,229,0.10)",
-            "type": "dropShadow"
-          },
-          {
-            "x": "0",
-            "y": "18px",
-            "blur": "40px",
-            "spread": "-24px",
-            "color": "rgba(79,70,229,0.22)",
-            "type": "dropShadow"
-          }
-        ],
+        "value": {
+          "x": "0",
+          "y": "0",
+          "blur": "0",
+          "spread": "1px",
+          "color": "rgba(79,70,229,0.08)",
+          "type": "dropShadow"
+        },
         "type": "boxShadow"
       }
+    },
+    "sm": {
+      "value": {
+        "x": "0",
+        "y": "0",
+        "blur": "0",
+        "spread": "0",
+        "color": "#00000000",
+        "type": "dropShadow"
+      },
+      "type": "boxShadow"
     }
   },
   "spacing": {

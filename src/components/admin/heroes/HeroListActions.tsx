@@ -4,8 +4,12 @@ import { useState } from "react";
 import { Pencil, Power, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { routes } from "@/lib/routes";
-import { RowActions, RowActionButton, useToast } from "@/design-system";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import {
+  ConfirmDialog,
+  RowActions,
+  RowActionButton,
+  useToast,
+} from "@/design-system";
 
 interface HeroListActionsProps {
   heroId: string;

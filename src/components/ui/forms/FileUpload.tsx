@@ -1,3 +1,3 @@
 "use client";
 
-export { FileUploadWidget } from "@/components/admin/FileUploadWidget";
+export { FileUploadWidget } from "@/design-system";

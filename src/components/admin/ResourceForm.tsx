@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import {
   Button,
+  FileUploadWidget,
   MediaPreview,
   PickerActionButton,
   PickerActions,
@@ -23,7 +24,6 @@ import {
   Switch,
   Textarea,
 } from "@/design-system";
-import { FileUploadWidget } from "@/components/ui/forms";
 import { LazyImageDropzone } from "@/components/admin/LazyImageDropzone";
 import { PreviewImageSortableList } from "@/components/admin/PreviewImageSortableList";
 import { TagInput } from "@/components/admin/TagInput";
@@ -982,6 +982,7 @@ export function ResourceForm({
               First image is the cover. Drag to reorder; use first position as cover.
             </p>
             <LazyImageDropzone
+              rootTestId="preview-image-uploader"
               disabled={thumbnailUploading}
               onFilesAccepted={async (files) => {
                 const uploaded: string[] = [];

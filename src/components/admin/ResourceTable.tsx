@@ -8,19 +8,17 @@ import { FileText, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
 import {
   Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownSeparator,
+  DropdownTrigger,
   RowActions,
   RowActionButton,
   RowActionMenuTrigger,
   Select,
   useToast,
 } from "@/design-system";
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownSeparator,
-  DropdownTrigger,
-} from "@/components/ui/Dropdown";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { formatPrice, formatDate } from "@/lib/format";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
@@ -461,16 +459,15 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                   {/* Resource */}
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-surface-100">
+                      <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-surface-100">
                         {resource.previewUrl ? (
                           <Image
                             src={resource.previewUrl}
                             alt={displayTitle}
-                            width={48}
-                            height={48}
+                            fill
                             sizes="48px"
                             unoptimized={shouldBypassImageOptimizer(resource.previewUrl)}
-                            className="h-full w-full object-cover"
+                            className="object-cover"
                           />
                         ) : (
                           <FileText className="h-5 w-5 text-text-muted" />

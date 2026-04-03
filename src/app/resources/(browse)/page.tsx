@@ -3,11 +3,11 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/components/layout/container";
 import { DEFAULT_SORT, getEffectiveMarketplaceSort } from "@/config/sortOptions";
 import { HeroSearch } from "@/components/marketplace/HeroSearch";
+import { ResourcesContentFallback } from "@/components/skeletons/ResourcesContentFallback";
 import {
   ResourcesDiscoverHero,
   ResourcesPageContent,
-  ResourcesContentFallback,
-} from "./ResourcesPageContent";
+} from "../ResourcesPageContent";
 import { HeroBannerFallback } from "@/components/marketplace/HeroBanner";
 import { ResourcesCatalogControls } from "@/components/marketplace/ResourcesCatalogControls";
 import {

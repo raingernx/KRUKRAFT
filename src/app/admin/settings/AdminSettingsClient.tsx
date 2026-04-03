@@ -7,11 +7,11 @@ import {
   Input,
   PageContent,
   Select,
+  SectionHeader,
   Switch,
   Textarea,
   useToast,
 } from "@/design-system";
-import { SectionHeader } from "@/components/ui/SectionHeader";
 import { BrandAssetField } from "@/components/admin/settings/BrandAssetField";
 import Link from "next/link";
 import { PLATFORM_DEFAULTS } from "@/lib/platform/platform-defaults";

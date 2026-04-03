@@ -1,6 +1,6 @@
 "use client";
 
-import { SidebarSection, SidebarSectionLabel } from "@/components/ui/sidebar";
+import { SidebarSection, SidebarSectionLabel } from "@/design-system";
 import type { DashboardNavSection } from "./dashboard-nav.types";
 import { DashboardSidebarItem } from "./DashboardSidebarItem";
 import { cn } from "@/lib/utils";

@@ -19,6 +19,7 @@
 
 - `src/design-system/tokens/index.ts` exports shared token maps for:
   - colors
+  - hero
   - spacing
   - radius
   - typography
@@ -65,6 +66,7 @@
   - clear and loading affordances
   - optional submit-button slot
   - optional leading and trailing adornments
+- `src/design-system/tokens/hero.ts` now holds the browse-stage / merchandising-hero support layer for hero-specific spacing, radii, and typography only. Hero color decisions are expected to come from the shared DS semantic and scale tokens in `src/design-system/tokens/colors.ts`, and Pencil sync should bind hero surfaces to those canonical DS colors rather than a separate hero-only palette.
 - `ResourceCard` in the design-system component barrel is currently a thin re-export of the marketplace implementation in `src/components/resources/ResourceCard`. Product-card changes may therefore land outside `src/design-system/components` while still affecting the DS surface.
 
 ## Visual Language Cues
@@ -91,9 +93,9 @@
 - Current local verification paths:
   - `npm run storybook:build`
   - `npm run storybook:smoke`
+- Hosted visual review can be layered on the same Storybook surface through `npm run chromatic`, but that command remains opt-in until a `CHROMATIC_PROJECT_TOKEN` is configured for the repo/workspace.
 - In this environment, the build-based smoke path is the verified Storybook workflow.
 
-- Hosted visual review can be layered on the same Storybook surface through `npm run chromatic`, but that command remains opt-in until a `CHROMATIC_PROJECT_TOKEN` is configured for the repo/workspace.
 ---
 
 *Refreshed against the repo state on 2026-04-03.*

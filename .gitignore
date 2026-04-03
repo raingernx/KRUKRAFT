@@ -40,13 +40,17 @@ public/uploads/
 # Logs
 logs
 *.log
+playwright-report/
+test-results/
+.lighthouseci/
+storybook-static/
+repomix-output*.xml
+repomix-output*.md
+repomix-output*.json
 
 # Vercel
 .vercel
 
-repomix-output*.xml
-repomix-output*.md
-repomix-output*.json
 # macOS
 .DS_Store
 
@@ -57,3 +61,4 @@ repomix-output*.json
 # Private file uploads (local storage, not for version control)
 /private-uploads/*
 !/private-uploads/.gitkeep
+.env*.local

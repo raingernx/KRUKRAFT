@@ -17,6 +17,7 @@ import {
   lineHeights,
   typography,
 } from "./typography";
+import { hero, heroTokens } from "./hero";
 
 export {
   chartColors,
@@ -27,6 +28,8 @@ export {
   fontFamilyScale,
   fontSizeScale,
   fontWeights,
+  hero,
+  heroTokens,
   letterSpacingScale,
   lineHeights,
   radius,
@@ -38,6 +41,7 @@ export {
 
 export const designSystemTokens = {
   colors,
+  hero,
   spacing,
   radius,
   typography,
@@ -53,3 +57,8 @@ export type {
 export type { DesignSystemRadiusToken } from "./radius";
 export type { DesignSystemSpacingToken } from "./spacing";
 export type { DesignSystemTypographyScaleToken } from "./typography";
+export type {
+  DesignSystemHeroRadiusToken,
+  DesignSystemHeroSpacingToken,
+  DesignSystemHeroTypographyToken,
+} from "./hero";

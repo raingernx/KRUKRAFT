@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { PriceBadge } from "@/design-system";
 import Image from "next/image";
 import { FileText } from "lucide-react";
-import { PriceBadge } from "@/components/ui/PriceBadge";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 
 export type CreatorResourcePreviewProps = {

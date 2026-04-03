@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import { Upload, X } from "lucide-react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
+import { ChevronDown, Upload, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
@@ -170,6 +170,56 @@ function HeroColorField<T extends string>({
         })}
       </div>
     </fieldset>
+  );
+}
+
+function FormSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: ReactNode;
+}) {
+  return (
+    <Card className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+      <div className="space-y-1 border-b border-surface-100 px-5 py-4 sm:px-6">
+        <h3 className="text-base font-semibold text-text-primary">{title}</h3>
+        {description ? (
+          <p className="text-sm leading-6 text-text-secondary">{description}</p>
+        ) : null}
+      </div>
+      <div className="space-y-4 p-5 sm:p-6">{children}</div>
+    </Card>
+  );
+}
+
+function CollapsibleSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: ReactNode;
+}) {
+  return (
+    <details className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+      <summary className="flex cursor-pointer list-none items-start justify-between gap-4 px-5 py-4 sm:px-6 [&::-webkit-details-marker]:hidden">
+        <div className="space-y-1">
+          <h3 className="text-base font-semibold text-text-primary">{title}</h3>
+          {description ? (
+            <p className="text-sm leading-6 text-text-secondary">{description}</p>
+          ) : null}
+        </div>
+        <ChevronDown
+          aria-hidden
+          className="mt-1 h-4 w-4 shrink-0 text-text-muted transition-transform duration-200 ease-out"
+        />
+      </summary>
+      <div className="border-t border-surface-100 p-5 sm:p-6">{children}</div>
+    </details>
   );
 }
 
@@ -369,37 +419,26 @@ export function HeroForm({ mode, heroId, initialValues, isFallback = false }: He
   }
 
   return (
-    <PageContent className="space-y-6">
-      <aside className="min-w-0">
+    <PageContent className="grid gap-6 xl:grid-cols-[minmax(0,1.02fr)_420px]">
+      <div className="min-w-0 space-y-6">
         <Card className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
-          <div className="space-y-1 border-b border-surface-100 px-5 py-4 sm:px-6">
-            <p className="text-xs font-semibold uppercase tracking-tight text-zinc-500">
-              Live Preview
+          <div className="space-y-2 px-5 py-4 sm:px-6">
+            <h2 className="text-lg font-semibold text-text-primary">
+              {mode === "create" ? "Create hero campaign" : "Update hero campaign"}
+            </h2>
+            <p className="max-w-3xl text-sm leading-6 text-text-secondary">
+              {isFallback
+                ? "This protected fallback keeps discover populated whenever no campaign hero is eligible. Focus on headline, artwork, and one clear action."
+                : "Use this editor to update the shared marketplace hero surface. Keep the message tight, swap artwork when needed, and tuck visual tuning into the advanced controls."}
             </p>
-            <p className="text-sm text-text-secondary">
-              This uses the same hero surface contract as the public discover hero.
-            </p>
-          </div>
-          <div className="p-4 sm:p-5">
-            <HeroSurface config={previewConfig} className="rounded-[1.25rem]" />
           </div>
         </Card>
-      </aside>
 
-      <div className="min-w-0 space-y-6">
-        <Card className="w-full min-w-0 rounded-xl border border-zinc-200 bg-white px-8 pb-8 shadow-sm">
-          <form className="space-y-8 pt-8" onSubmit={handleSubmit}>
-            <div className="space-y-1">
-              <h2 className="text-base font-semibold text-text-primary">
-                {mode === "create" ? "Create Hero" : "Edit Hero"}
-              </h2>
-              <p className="text-sm text-text-secondary">
-                {isFallback
-                  ? "Edit the protected fallback hero that keeps the homepage populated when no campaign hero is eligible."
-                  : "Configure a marketing hero without affecting the protected fallback hero."}
-              </p>
-            </div>
-
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <FormSection
+            title="Hero basics"
+            description="Give the campaign a clear internal name, choose its role, and define when it can run."
+          >
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-primary" htmlFor="hero-name">
@@ -409,7 +448,7 @@ export function HeroForm({ mode, heroId, initialValues, isFallback = false }: He
                   id="hero-name"
                   value={values.name}
                   onChange={(event) => updateValue("name", event.target.value)}
-                  placeholder="Back to school campaign"
+                  placeholder="Spring exam prep push"
                 />
                 <FieldError message={errors.name} />
               </div>
@@ -435,50 +474,109 @@ export function HeroForm({ mode, heroId, initialValues, isFallback = false }: He
                 <FieldError message={errors.type} />
               </div>
 
+              <div className="space-y-2 sm:col-span-2">
+                <span className="text-sm font-medium text-text-primary">Active</span>
+                <div className="flex items-center gap-3 rounded-xl border border-surface-200 bg-surface-50 px-3 py-3">
+                  <Switch
+                    checked={values.isActive}
+                    disabled={isFallback}
+                    onCheckedChange={(checked) => updateValue("isActive", checked)}
+                  />
+                  <span className="text-sm text-text-secondary">
+                    {isFallback
+                      ? "Always active as the marketplace safety net"
+                      : values.isActive
+                        ? "Eligible for homepage rotation"
+                        : "Saved but not currently serving"}
+                  </span>
+                </div>
+                <FieldError message={errors.isActive} />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-text-primary" htmlFor="hero-start-date">
+                  Start date
+                </label>
+                <Input
+                  id="hero-start-date"
+                  type="datetime-local"
+                  value={values.startDate}
+                  disabled={isFallback}
+                  onChange={(event) => updateValue("startDate", event.target.value)}
+                />
+                <FieldError message={errors.startDate} />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-text-primary" htmlFor="hero-end-date">
+                  End date
+                </label>
+                <Input
+                  id="hero-end-date"
+                  type="datetime-local"
+                  value={values.endDate}
+                  disabled={isFallback}
+                  onChange={(event) => updateValue("endDate", event.target.value)}
+                />
+                <FieldError message={errors.endDate} />
+              </div>
+            </div>
+            {isFallback ? (
+              <p className="text-xs text-text-muted">
+                Fallback heroes ignore campaign timing and stay ready whenever no scheduled hero qualifies.
+              </p>
+            ) : null}
+          </FormSection>
+
+          <FormSection
+            title="Copy and actions"
+            description="These are the only fields most editors need. The right support card stays structurally fixed so campaigns remain consistent."
+          >
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5 sm:col-span-2">
                 <label className="text-sm font-medium text-text-primary" htmlFor="hero-title">
-                  Title
+                  Headline
                 </label>
                 <Input
                   id="hero-title"
                   value={values.title}
                   onChange={(event) => updateValue("title", event.target.value)}
-                  placeholder="Discover beautiful study resources"
+                  placeholder="Discover classroom-ready study resources"
                 />
                 <FieldError message={errors.title} />
               </div>
 
               <div className="space-y-1.5 sm:col-span-2">
                 <label className="text-sm font-medium text-text-primary" htmlFor="hero-subtitle">
-                  Subtitle
+                  Supporting copy
                 </label>
                 <Textarea
                   id="hero-subtitle"
                   rows={3}
                   value={values.subtitle}
                   onChange={(event) => updateValue("subtitle", event.target.value)}
-                  placeholder="Worksheets, flashcards, and study guides from educators and creators."
-                  className="min-h-[96px]"
+                  placeholder="Printable worksheets, flashcards, and fast-prep lesson packs from educators and creators."
+                  className="min-h-[112px]"
                 />
                 <FieldError message={errors.subtitle} />
               </div>
 
               <div className="space-y-1.5 sm:col-span-2">
                 <label className="text-sm font-medium text-text-primary" htmlFor="hero-badge">
-                  Badge Text
+                  Eyebrow label
                 </label>
                 <Input
                   id="hero-badge"
                   value={values.badgeText}
                   onChange={(event) => updateValue("badgeText", event.target.value)}
-                  placeholder="Trusted by 12,000+ educators"
+                  placeholder="Built for fast prep and instant access"
                 />
                 <FieldError message={errors.badgeText} />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-primary" htmlFor="hero-primary-cta-text">
-                  Primary CTA Text
+                  Primary CTA text
                 </label>
                 <Input
                   id="hero-primary-cta-text"
@@ -491,7 +589,7 @@ export function HeroForm({ mode, heroId, initialValues, isFallback = false }: He
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-primary" htmlFor="hero-primary-cta-link">
-                  Primary CTA Link
+                  Primary CTA link
                 </label>
                 <Input
                   id="hero-primary-cta-link"
@@ -504,20 +602,20 @@ export function HeroForm({ mode, heroId, initialValues, isFallback = false }: He
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-primary" htmlFor="hero-secondary-cta-text">
-                  Secondary CTA Text
+                  Secondary CTA text
                 </label>
                 <Input
                   id="hero-secondary-cta-text"
                   value={values.secondaryCtaText}
                   onChange={(event) => updateValue("secondaryCtaText", event.target.value)}
-                  placeholder="Start selling"
+                  placeholder="Sell your study resources"
                 />
                 <FieldError message={errors.secondaryCtaText} />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-primary" htmlFor="hero-secondary-cta-link">
-                  Secondary CTA Link
+                  Secondary CTA link
                 </label>
                 <Input
                   id="hero-secondary-cta-link"
@@ -527,23 +625,17 @@ export function HeroForm({ mode, heroId, initialValues, isFallback = false }: He
                 />
                 <FieldError message={errors.secondaryCtaLink} />
               </div>
+            </div>
+          </FormSection>
 
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-text-primary" htmlFor="hero-image-url">
-                  Image URL
-                </label>
-                <Input
-                  id="hero-image-url"
-                  value={values.imageUrl}
-                  onChange={(event) => updateValue("imageUrl", event.target.value)}
-                  placeholder="https://example.com/hero.jpg"
-                />
-                <FieldError message={errors.imageUrl} />
-              </div>
-
+          <FormSection
+            title="Artwork"
+            description="Upload campaign art first. Uploaded media overrides the manual image URL on the live hero."
+          >
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-primary" htmlFor="hero-media-url">
-                  Uploaded Media URL
+                  Uploaded media URL
                 </label>
                 <Input
                   id="hero-media-url"
@@ -556,7 +648,7 @@ export function HeroForm({ mode, heroId, initialValues, isFallback = false }: He
 
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-primary" htmlFor="hero-media-type">
-                  Media Type
+                  Media type
                 </label>
                 <Select
                   id="hero-media-type"
@@ -572,6 +664,481 @@ export function HeroForm({ mode, heroId, initialValues, isFallback = false }: He
                 <FieldError message={errors.mediaType} />
               </div>
 
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="text-sm font-medium text-text-primary" htmlFor="hero-image-url">
+                  Fallback image URL
+                </label>
+                <Input
+                  id="hero-image-url"
+                  value={values.imageUrl}
+                  onChange={(event) => updateValue("imageUrl", event.target.value)}
+                  placeholder="https://example.com/hero.jpg"
+                />
+                <FieldError message={errors.imageUrl} />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <span className="text-sm font-medium text-text-primary">Upload media</span>
+              <p className="text-xs text-text-muted">
+                PNG, JPG, JPEG, WEBP, GIF. Max 5 MB. This artwork is shared by the public discover hero and the admin preview.
+              </p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept={HERO_MEDIA_ACCEPT}
+                className="hidden"
+                onChange={handleMediaUpload}
+              />
+              <PickerActions>
+                <PickerActionButton
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                >
+                  <Upload className="h-4 w-4" />
+                  {uploading ? "Uploading..." : "Upload image or GIF"}
+                </PickerActionButton>
+                {values.mediaUrl ? (
+                  <PickerActionButton
+                    type="button"
+                    tone="danger"
+                    onClick={handleRemoveMedia}
+                  >
+                    <X className="h-4 w-4" />
+                    Remove media
+                  </PickerActionButton>
+                ) : null}
+              </PickerActions>
+            </div>
+          </FormSection>
+
+          <CollapsibleSection
+            title="Advanced appearance"
+            description="Use these controls when you need to fine-tune layout, typography, color, or button treatment. Most campaigns can leave this alone."
+          >
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-semibold text-text-primary">Layout</h4>
+                  <p className="text-xs text-text-secondary">
+                    Control alignment, content width, hero height, and spacing without breaking the shared hero composition.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-text-align">
+                      Text alignment
+                    </label>
+                    <Select
+                      id="hero-text-align"
+                      value={values.textAlign}
+                      onChange={(event) =>
+                        updateValue("textAlign", event.target.value as HeroTextAlign)
+                      }
+                    >
+                      {HERO_STYLE_OPTIONS.textAlign.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-content-width">
+                      Content width
+                    </label>
+                    <Select
+                      id="hero-content-width"
+                      value={values.contentWidth}
+                      onChange={(event) =>
+                        updateValue("contentWidth", event.target.value as HeroContentWidth)
+                      }
+                    >
+                      {HERO_STYLE_OPTIONS.contentWidth.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-height">
+                      Hero height
+                    </label>
+                    <Select
+                      id="hero-height"
+                      value={values.heroHeight}
+                      onChange={(event) =>
+                        updateValue("heroHeight", event.target.value as HeroHeight)
+                      }
+                    >
+                      {HERO_STYLE_OPTIONS.heroHeight.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-spacing-preset">
+                      Vertical spacing
+                    </label>
+                    <Select
+                      id="hero-spacing-preset"
+                      value={values.spacingPreset}
+                      onChange={(event) =>
+                        updateValue("spacingPreset", event.target.value as HeroSpacingPreset)
+                      }
+                    >
+                      {HERO_STYLE_OPTIONS.spacingPreset.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4 border-t border-surface-100 pt-6">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-semibold text-text-primary">Typography</h4>
+                  <p className="text-xs text-text-secondary">
+                    Use bounded font and size presets so the hero stays readable across the shared copy, media, and utility layout.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-heading-font">
+                      Heading font
+                    </label>
+                    <Select
+                      id="hero-heading-font"
+                      value={values.headingFont}
+                      onChange={(event) =>
+                        updateValue("headingFont", event.target.value as HeroHeadingFont)
+                      }
+                    >
+                      {HERO_STYLE_OPTIONS.headingFont.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-body-font">
+                      Body font
+                    </label>
+                    <Select
+                      id="hero-body-font"
+                      value={values.bodyFont}
+                      onChange={(event) =>
+                        updateValue("bodyFont", event.target.value as HeroBodyFont)
+                      }
+                    >
+                      {HERO_STYLE_OPTIONS.bodyFont.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-title-size">
+                      Title size
+                    </label>
+                    <Select
+                      id="hero-title-size"
+                      value={values.titleSize}
+                      onChange={(event) =>
+                        updateValue("titleSize", event.target.value as HeroTitleSize)
+                      }
+                    >
+                      {HERO_STYLE_OPTIONS.titleSize.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-subtitle-size">
+                      Subtitle size
+                    </label>
+                    <Select
+                      id="hero-subtitle-size"
+                      value={values.subtitleSize}
+                      onChange={(event) =>
+                        updateValue("subtitleSize", event.target.value as HeroSubtitleSize)
+                      }
+                    >
+                      {HERO_STYLE_OPTIONS.subtitleSize.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-title-weight">
+                      Title weight
+                    </label>
+                    <Select
+                      id="hero-title-weight"
+                      value={values.titleWeight}
+                      onChange={(event) =>
+                        updateValue("titleWeight", event.target.value as HeroTitleWeight)
+                      }
+                    >
+                      {HERO_STYLE_OPTIONS.titleWeight.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-subtitle-weight">
+                      Subtitle weight
+                    </label>
+                    <Select
+                      id="hero-subtitle-weight"
+                      value={values.subtitleWeight}
+                      onChange={(event) =>
+                        updateValue("subtitleWeight", event.target.value as HeroSubtitleWeight)
+                      }
+                    >
+                      {HERO_STYLE_OPTIONS.subtitleWeight.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-mobile-title-size">
+                      Mobile title size
+                    </label>
+                    <Select
+                      id="hero-mobile-title-size"
+                      value={values.mobileTitleSize}
+                      onChange={(event) =>
+                        updateValue("mobileTitleSize", event.target.value as HeroMobileTitleSize)
+                      }
+                    >
+                      {HERO_STYLE_OPTIONS.mobileTitleSize.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-mobile-subtitle-size">
+                      Mobile subtitle size
+                    </label>
+                    <Select
+                      id="hero-mobile-subtitle-size"
+                      value={values.mobileSubtitleSize}
+                      onChange={(event) =>
+                        updateValue(
+                          "mobileSubtitleSize",
+                          event.target.value as HeroMobileSubtitleSize,
+                        )
+                      }
+                    >
+                      {HERO_STYLE_OPTIONS.mobileSubtitleSize.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4 border-t border-surface-100 pt-6">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-semibold text-text-primary">Colors</h4>
+                  <p className="text-xs text-text-secondary">
+                    Use token-based colors only. The preview is the source of truth for contrast across the dark stage and white action card.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <HeroColorField
+                    label="Title color"
+                    name="hero-title-color"
+                    value={values.titleColor}
+                    options={HERO_COLOR_TOKEN_OPTIONS.titleColor}
+                    helper="Prefer light colors unless you intentionally want the copy block to sit on a lighter surface."
+                    onChange={(value) => updateValue("titleColor", value as HeroTitleColor)}
+                  />
+                  <HeroColorField
+                    label="Subtitle color"
+                    name="hero-subtitle-color"
+                    value={values.subtitleColor}
+                    options={HERO_COLOR_TOKEN_OPTIONS.subtitleColor}
+                    helper="Subtitle colors stay constrained so supporting copy remains readable over artwork."
+                    onChange={(value) =>
+                      updateValue("subtitleColor", value as HeroSubtitleColor)
+                    }
+                  />
+                  <HeroColorField
+                    label="Badge text color"
+                    name="hero-badge-text-color"
+                    value={values.badgeTextColor}
+                    options={HERO_COLOR_TOKEN_OPTIONS.badgeTextColor}
+                    helper="Keep the eyebrow short and high contrast."
+                    onChange={(value) =>
+                      updateValue("badgeTextColor", value as HeroBadgeTextColor)
+                    }
+                  />
+                  <HeroColorField
+                    label="Badge background"
+                    name="hero-badge-bg-color"
+                    value={values.badgeBgColor}
+                    options={HERO_COLOR_TOKEN_OPTIONS.badgeBgColor}
+                    helper="Use a small supporting surface rather than a second full-width banner."
+                    onChange={(value) =>
+                      updateValue("badgeBgColor", value as HeroBadgeBgColor)
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4 border-t border-surface-100 pt-6">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-semibold text-text-primary">Buttons</h4>
+                  <p className="text-xs text-text-secondary">
+                    Keep the hero actions clean and obvious. One primary action should do most of the work.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-primary-cta-variant">
+                      Primary CTA style
+                    </label>
+                    <Select
+                      id="hero-primary-cta-variant"
+                      value={values.primaryCtaVariant}
+                      onChange={(event) =>
+                        updateValue(
+                          "primaryCtaVariant",
+                          event.target.value as HeroPrimaryCtaVariant,
+                        )
+                      }
+                    >
+                      {HERO_STYLE_OPTIONS.primaryCtaVariant.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-secondary-cta-variant">
+                      Secondary CTA style
+                    </label>
+                    <Select
+                      id="hero-secondary-cta-variant"
+                      value={values.secondaryCtaVariant}
+                      onChange={(event) => {
+                        const nextVariant = event.target.value as HeroSecondaryCtaVariant;
+
+                        setValues((prev) => ({
+                          ...prev,
+                          secondaryCtaVariant: nextVariant,
+                        }));
+                      }}
+                    >
+                      {HERO_STYLE_OPTIONS.secondaryCtaVariant.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <HeroColorField
+                    label="Primary CTA color"
+                    name="hero-primary-cta-color"
+                    value={values.primaryCtaColor}
+                    options={HERO_COLOR_TOKEN_OPTIONS.primaryCtaColor}
+                    helper="Use one dominant action only."
+                    onChange={(value) =>
+                      updateValue("primaryCtaColor", value as HeroPrimaryCtaColor)
+                    }
+                  />
+                  <HeroColorField
+                    label="Secondary CTA color"
+                    name="hero-secondary-cta-color"
+                    value={values.secondaryCtaColor}
+                    options={secondaryCtaColorOptions}
+                    helper="Outline and ghost styles only expose compatible contrast-safe tones."
+                    onChange={(value) =>
+                      updateValue("secondaryCtaColor", value as HeroSecondaryCtaColor)
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4 border-t border-surface-100 pt-6">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-semibold text-text-primary">Background and overlay</h4>
+                  <p className="text-xs text-text-secondary">
+                    Tweak these only when artwork needs extra help with readability.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <HeroColorField
+                    label="Overlay color"
+                    name="hero-overlay-color"
+                    value={values.overlayColor}
+                    options={HERO_COLOR_TOKEN_OPTIONS.overlayColor}
+                    helper="Overlays apply to the artwork panel, not the whole card."
+                    onChange={(value) =>
+                      updateValue("overlayColor", value as HeroOverlayColor)
+                    }
+                  />
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-text-primary" htmlFor="hero-overlay-opacity">
+                      Overlay opacity ({values.overlayOpacity}%)
+                    </label>
+                    <input
+                      id="hero-overlay-opacity"
+                      type="range"
+                      min={0}
+                      max={80}
+                      step={5}
+                      value={values.overlayOpacity}
+                      onChange={(event) =>
+                        updateValue(
+                          "overlayOpacity",
+                          Number.parseInt(
+                            event.target.value || String(HERO_STYLE_DEFAULTS.overlayOpacity),
+                            10,
+                          ),
+                        )
+                      }
+                      className="h-10 w-full accent-brand-600"
+                    />
+                    <p className="text-xs text-text-muted">
+                      Raise this only when the artwork is too bright for the headline.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CollapsibleSection>
+
+          <CollapsibleSection
+            title="Experiment and delivery controls"
+            description="These govern rotation, weighting, and legacy experiment fields. Most editors can leave them untouched."
+          >
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-primary" htmlFor="hero-priority">
                   Priority
@@ -587,7 +1154,9 @@ export function HeroForm({ mode, heroId, initialValues, isFallback = false }: He
                 />
                 <FieldError message={errors.priority} />
                 {isFallback ? (
-                  <p className="text-xs text-text-muted">Fallback hero priority is managed automatically.</p>
+                  <p className="text-xs text-text-muted">
+                    Fallback hero priority is managed automatically.
+                  </p>
                 ) : null}
               </div>
 
@@ -607,7 +1176,9 @@ export function HeroForm({ mode, heroId, initialValues, isFallback = false }: He
                 />
                 <FieldError message={errors.weight} />
                 {isFallback ? (
-                  <p className="text-xs text-text-muted">Fallback hero does not participate in weighted rotation.</p>
+                  <p className="text-xs text-text-muted">
+                    Fallback hero does not participate in weighted rotation.
+                  </p>
                 ) : null}
               </div>
 
@@ -625,7 +1196,7 @@ export function HeroForm({ mode, heroId, initialValues, isFallback = false }: He
                 <FieldError message={errors.experimentId} />
               </div>
 
-              <div className="space-y-1.5 sm:col-span-2">
+              <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-primary" htmlFor="hero-variant">
                   Variant
                 </label>
@@ -639,9 +1210,9 @@ export function HeroForm({ mode, heroId, initialValues, isFallback = false }: He
                 <FieldError message={errors.variant} />
               </div>
 
-              <div className="space-y-1.5 sm:col-span-2">
+              <div className="space-y-1.5">
                 <label className="text-sm font-medium text-text-primary" htmlFor="hero-ab-group">
-                  Legacy A/B Group
+                  Legacy A/B group
                 </label>
                 <Input
                   id="hero-ab-group"
@@ -652,546 +1223,61 @@ export function HeroForm({ mode, heroId, initialValues, isFallback = false }: He
                 />
                 <FieldError message={errors.abGroup} />
                 {isFallback ? (
-                  <p className="text-xs text-text-muted">Fallback hero is excluded from A/B testing.</p>
+                  <p className="text-xs text-text-muted">
+                    Fallback hero is excluded from A/B testing.
+                  </p>
                 ) : (
                   <p className="text-xs text-text-muted">
-                    Optional legacy grouping key. Prefer Experiment ID + Variant for new tests.
+                    Prefer Experiment ID plus Variant for new tests.
                   </p>
                 )}
               </div>
-
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-text-primary" htmlFor="hero-start-date">
-                  Start Date
-                </label>
-                <Input
-                  id="hero-start-date"
-                  type="datetime-local"
-                  value={values.startDate}
-                  disabled={isFallback}
-                  onChange={(event) => updateValue("startDate", event.target.value)}
-                />
-                <FieldError message={errors.startDate} />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-text-primary" htmlFor="hero-end-date">
-                  End Date
-                </label>
-                <Input
-                  id="hero-end-date"
-                  type="datetime-local"
-                  value={values.endDate}
-                  disabled={isFallback}
-                  onChange={(event) => updateValue("endDate", event.target.value)}
-                />
-                <FieldError message={errors.endDate} />
-                {isFallback ? (
-                  <p className="text-xs text-text-muted">Fallback hero stays available whenever no campaign hero qualifies.</p>
-                ) : null}
-              </div>
-
-              <div className="space-y-2">
-                <span className="text-sm font-medium text-text-primary">Active</span>
-                <div className="flex items-center gap-3 rounded-lg border border-surface-200 bg-surface-50 px-3 py-2">
-                  <Switch
-                    checked={values.isActive}
-                    disabled={isFallback}
-                    onCheckedChange={(checked) => updateValue("isActive", checked)}
-                  />
-                  <span className="text-sm text-text-secondary">
-                    {isFallback
-                      ? "Always active as the homepage safety net"
-                      : values.isActive
-                        ? "Enabled on homepage rotation"
-                        : "Disabled"}
-                  </span>
-                </div>
-                <FieldError message={errors.isActive} />
-              </div>
-
-              <div className="space-y-2 sm:col-span-2">
-                <span className="text-sm font-medium text-text-primary">
-                  Upload media
-                </span>
-                <p className="text-xs text-text-muted">
-                  PNG, JPG, JPEG, WEBP, GIF. Max 5 MB. Uploaded media overrides Image URL on the homepage.
-                </p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept={HERO_MEDIA_ACCEPT}
-                  className="hidden"
-                  onChange={handleMediaUpload}
-                />
-                <PickerActions>
-                  <PickerActionButton
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploading}
-                  >
-                    <Upload className="h-4 w-4" />
-                    {uploading ? "Uploading…" : "Upload image or GIF"}
-                  </PickerActionButton>
-                  {values.mediaUrl ? (
-                    <PickerActionButton
-                      type="button"
-                      tone="danger"
-                      onClick={handleRemoveMedia}
-                    >
-                      <X className="h-4 w-4" />
-                      Remove media
-                    </PickerActionButton>
-                  ) : null}
-                </PickerActions>
-              </div>
             </div>
+          </CollapsibleSection>
 
-            <div className="space-y-4 border-t border-surface-100 pt-8">
-              <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-text-primary">Layout</h3>
-                <p className="text-xs text-text-secondary">
-                  Control alignment, content width, hero height, and spacing without breaking the layout.
-                </p>
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-text-align">
-                    Text Alignment
-                  </label>
-                  <Select
-                    id="hero-text-align"
-                    value={values.textAlign}
-                    onChange={(event) =>
-                      updateValue("textAlign", event.target.value as HeroTextAlign)
-                    }
-                  >
-                    {HERO_STYLE_OPTIONS.textAlign.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-content-width">
-                    Content Width
-                  </label>
-                  <Select
-                    id="hero-content-width"
-                    value={values.contentWidth}
-                    onChange={(event) =>
-                      updateValue("contentWidth", event.target.value as HeroContentWidth)
-                    }
-                  >
-                    {HERO_STYLE_OPTIONS.contentWidth.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-height">
-                    Hero Height
-                  </label>
-                  <Select
-                    id="hero-height"
-                    value={values.heroHeight}
-                    onChange={(event) =>
-                      updateValue("heroHeight", event.target.value as HeroHeight)
-                    }
-                  >
-                    {HERO_STYLE_OPTIONS.heroHeight.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-spacing-preset">
-                    Vertical Spacing
-                  </label>
-                  <Select
-                    id="hero-spacing-preset"
-                    value={values.spacingPreset}
-                    onChange={(event) =>
-                      updateValue("spacingPreset", event.target.value as HeroSpacingPreset)
-                    }
-                  >
-                    {HERO_STYLE_OPTIONS.spacingPreset.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4 border-t border-surface-100 pt-8">
-              <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-text-primary">Typography</h3>
-                <p className="text-xs text-text-secondary">
-                  Use bounded font and size presets so the hero stays responsive and readable.
-                </p>
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-heading-font">
-                    Heading Font
-                  </label>
-                  <Select
-                    id="hero-heading-font"
-                    value={values.headingFont}
-                    onChange={(event) =>
-                      updateValue("headingFont", event.target.value as HeroHeadingFont)
-                    }
-                  >
-                    {HERO_STYLE_OPTIONS.headingFont.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-body-font">
-                    Body Font
-                  </label>
-                  <Select
-                    id="hero-body-font"
-                    value={values.bodyFont}
-                    onChange={(event) =>
-                      updateValue("bodyFont", event.target.value as HeroBodyFont)
-                    }
-                  >
-                    {HERO_STYLE_OPTIONS.bodyFont.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-title-size">
-                    Title Size
-                  </label>
-                  <Select
-                    id="hero-title-size"
-                    value={values.titleSize}
-                    onChange={(event) =>
-                      updateValue("titleSize", event.target.value as HeroTitleSize)
-                    }
-                  >
-                    {HERO_STYLE_OPTIONS.titleSize.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-subtitle-size">
-                    Subtitle Size
-                  </label>
-                  <Select
-                    id="hero-subtitle-size"
-                    value={values.subtitleSize}
-                    onChange={(event) =>
-                      updateValue("subtitleSize", event.target.value as HeroSubtitleSize)
-                    }
-                  >
-                    {HERO_STYLE_OPTIONS.subtitleSize.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-title-weight">
-                    Title Weight
-                  </label>
-                  <Select
-                    id="hero-title-weight"
-                    value={values.titleWeight}
-                    onChange={(event) =>
-                      updateValue("titleWeight", event.target.value as HeroTitleWeight)
-                    }
-                  >
-                    {HERO_STYLE_OPTIONS.titleWeight.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-subtitle-weight">
-                    Subtitle Weight
-                  </label>
-                  <Select
-                    id="hero-subtitle-weight"
-                    value={values.subtitleWeight}
-                    onChange={(event) =>
-                      updateValue("subtitleWeight", event.target.value as HeroSubtitleWeight)
-                    }
-                  >
-                    {HERO_STYLE_OPTIONS.subtitleWeight.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-mobile-title-size">
-                    Mobile Title Size
-                  </label>
-                  <Select
-                    id="hero-mobile-title-size"
-                    value={values.mobileTitleSize}
-                    onChange={(event) =>
-                      updateValue("mobileTitleSize", event.target.value as HeroMobileTitleSize)
-                    }
-                  >
-                    {HERO_STYLE_OPTIONS.mobileTitleSize.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-mobile-subtitle-size">
-                    Mobile Subtitle Size
-                  </label>
-                  <Select
-                    id="hero-mobile-subtitle-size"
-                    value={values.mobileSubtitleSize}
-                    onChange={(event) =>
-                      updateValue(
-                        "mobileSubtitleSize",
-                        event.target.value as HeroMobileSubtitleSize,
-                      )
-                    }
-                  >
-                    {HERO_STYLE_OPTIONS.mobileSubtitleSize.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4 border-t border-surface-100 pt-8">
-              <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-text-primary">Colors</h3>
-                <p className="text-xs text-text-secondary">
-                  Choose from curated token-based colors so text stays on-brand and easy to read.
-                </p>
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <HeroColorField
-                  label="Title Color"
-                  name="hero-title-color"
-                  value={values.titleColor}
-                  options={HERO_COLOR_TOKEN_OPTIONS.titleColor}
-                  helper="Use a strong high-contrast title tone for the hero headline."
-                  onChange={(value) => updateValue("titleColor", value as HeroTitleColor)}
-                />
-                <HeroColorField
-                  label="Subtitle Color"
-                  name="hero-subtitle-color"
-                  value={values.subtitleColor}
-                  options={HERO_COLOR_TOKEN_OPTIONS.subtitleColor}
-                  helper="Subtitle colors are tuned for readable supporting copy."
-                  onChange={(value) =>
-                    updateValue("subtitleColor", value as HeroSubtitleColor)
-                  }
-                />
-                <HeroColorField
-                  label="Badge Text Color"
-                  name="hero-badge-text-color"
-                  value={values.badgeTextColor}
-                  options={HERO_COLOR_TOKEN_OPTIONS.badgeTextColor}
-                  helper="Badge text should stay short and high contrast."
-                  onChange={(value) =>
-                    updateValue("badgeTextColor", value as HeroBadgeTextColor)
-                  }
-                />
-                <HeroColorField
-                  label="Badge Background"
-                  name="hero-badge-bg-color"
-                  value={values.badgeBgColor}
-                  options={HERO_COLOR_TOKEN_OPTIONS.badgeBgColor}
-                  helper="Pick a small supporting surface that still reads over media."
-                  onChange={(value) =>
-                    updateValue("badgeBgColor", value as HeroBadgeBgColor)
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="space-y-4 border-t border-surface-100 pt-8">
-              <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-text-primary">Buttons</h3>
-                <p className="text-xs text-text-secondary">
-                  CTA styles are limited to approved design-system button variants.
-                </p>
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-primary-cta-variant">
-                    Primary CTA Style
-                  </label>
-                  <Select
-                    id="hero-primary-cta-variant"
-                    value={values.primaryCtaVariant}
-                    onChange={(event) =>
-                      updateValue(
-                        "primaryCtaVariant",
-                        event.target.value as HeroPrimaryCtaVariant,
-                      )
-                    }
-                  >
-                    {HERO_STYLE_OPTIONS.primaryCtaVariant.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-secondary-cta-variant">
-                    Secondary CTA Style
-                  </label>
-                  <Select
-                    id="hero-secondary-cta-variant"
-                    value={values.secondaryCtaVariant}
-                    onChange={(event) => {
-                      const nextVariant = event.target.value as HeroSecondaryCtaVariant;
-
-                      setValues((prev) => ({
-                        ...prev,
-                        secondaryCtaVariant: nextVariant,
-                        secondaryCtaColor:
-                          (nextVariant === "outline" || nextVariant === "ghost") &&
-                          prev.secondaryCtaColor === "dark"
-                            ? "white"
-                            : prev.secondaryCtaColor,
-                      }));
-                    }}
-                  >
-                    {HERO_STYLE_OPTIONS.secondaryCtaVariant.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <HeroColorField
-                  label="Primary CTA Color"
-                  name="hero-primary-cta-color"
-                  value={values.primaryCtaColor}
-                  options={HERO_COLOR_TOKEN_OPTIONS.primaryCtaColor}
-                  helper="Filled primary CTA colors always use system-controlled text contrast."
-                  onChange={(value) =>
-                    updateValue("primaryCtaColor", value as HeroPrimaryCtaColor)
-                  }
-                />
-                <HeroColorField
-                  label="Secondary CTA Color"
-                  name="hero-secondary-cta-color"
-                  value={values.secondaryCtaColor}
-                  options={secondaryCtaColorOptions}
-                  helper="Outline and ghost styles only show compatible high-contrast color presets."
-                  onChange={(value) =>
-                    updateValue("secondaryCtaColor", value as HeroSecondaryCtaColor)
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="space-y-4 border-t border-surface-100 pt-8">
-              <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-text-primary">Background & Overlay</h3>
-                <p className="text-xs text-text-secondary">
-                  Keep media readable with a controlled overlay color and bounded opacity.
-                </p>
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <HeroColorField
-                  label="Overlay Color"
-                  name="hero-overlay-color"
-                  value={values.overlayColor}
-                  options={HERO_COLOR_TOKEN_OPTIONS.overlayColor}
-                  helper="Overlay colors are limited to a few safe tones for readable text over media."
-                  onChange={(value) =>
-                    updateValue("overlayColor", value as HeroOverlayColor)
-                  }
-                />
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-text-primary" htmlFor="hero-overlay-opacity">
-                    Overlay Opacity ({values.overlayOpacity}%)
-                  </label>
-                  <input
-                    id="hero-overlay-opacity"
-                    type="range"
-                    min={0}
-                    max={80}
-                    step={5}
-                    value={values.overlayOpacity}
-                    onChange={(event) =>
-                      updateValue(
-                        "overlayOpacity",
-                        Number.parseInt(event.target.value || String(HERO_STYLE_DEFAULTS.overlayOpacity), 10),
-                      )
-                    }
-                    className="h-10 w-full accent-brand-600"
-                  />
-                  <p className="text-xs text-text-muted">
-                    Use higher opacity for light media or lower opacity for dark, high-contrast artwork.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-end gap-3 border-t border-surface-100 pt-6">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.push(routes.adminHeroes)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" loading={saving}>
-                {mode === "create" ? "Create Hero" : "Save Changes"}
-              </Button>
-            </div>
-          </form>
-        </Card>
+          <div className="flex flex-wrap items-center justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push(routes.adminHeroes)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" loading={saving}>
+              {mode === "create" ? "Create hero" : "Save changes"}
+            </Button>
+          </div>
+        </form>
 
         <Card className="p-5">
           <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-tight text-zinc-500">
-              Render Rules
-            </p>
-            <div className="space-y-2 text-sm text-text-secondary">
+            <p className="text-xs font-semibold text-zinc-500">Render rules</p>
+            <div className="space-y-2 text-sm leading-6 text-text-secondary">
               <p>Heroes render only when active and inside their schedule window.</p>
               <p>Lower priority values render first when multiple heroes are eligible.</p>
-              <p>Weight distributes traffic within the same priority and A/B group bucket.</p>
-              <p>If no campaign hero qualifies, the protected fallback hero in Marketing → Heroes is used.</p>
+              <p>Weight distributes traffic within the same priority and experiment bucket.</p>
+              <p>If no campaign hero qualifies, the protected fallback hero is used automatically.</p>
             </div>
           </div>
         </Card>
       </div>
+
+      <aside className="min-w-0 xl:sticky xl:top-24 xl:self-start">
+        <Card className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+          <div className="space-y-2 border-b border-surface-100 px-5 py-4 sm:px-6">
+            <p className="text-sm font-semibold text-text-primary">Live preview</p>
+            <p className="text-sm leading-6 text-text-secondary">
+              This preview uses the exact same hero surface as the public discover page, so editors tune one shared experience instead of a separate admin-only layout.
+            </p>
+          </div>
+          <div className="space-y-4 p-4 sm:p-5">
+            <HeroSurface config={previewConfig} className="rounded-[1.25rem]" />
+            <div className="rounded-2xl border border-surface-200 bg-surface-50 px-4 py-3 text-sm leading-6 text-text-secondary">
+              Tip: let the headline, artwork, and one strong CTA carry the hero first. Use the advanced controls only when readability or spacing needs extra tuning.
+            </div>
+          </div>
+        </Card>
+      </aside>
     </PageContent>
   );
 }

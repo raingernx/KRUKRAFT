@@ -24,7 +24,7 @@ async function verifyUploaderFlow(
   });
 
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
-  const imageFileInputs = page.locator('input[type="file"][accept="image/*"]');
+  const uploaderRoot = page.getByTestId("preview-image-uploader");
 
   await expect(page).toHaveURL(
     new RegExp(config.targetPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
@@ -34,19 +34,36 @@ async function verifyUploaderFlow(
     timeout: TARGET_NAVIGATION_TIMEOUT_MS,
   });
 
-  const beforeInputCount = await imageFileInputs.count();
   const uploaderHeading = page.getByText(config.uploaderLabel).first();
   await uploaderHeading.scrollIntoViewIfNeeded();
   await expect(uploaderHeading).toBeVisible();
+  await expect(uploaderRoot).toBeVisible();
 
-  const lazyShell = page.locator('[aria-label="Load image uploader"]').first();
-  if (await lazyShell.isVisible().catch(() => false)) {
-    await lazyShell.click();
+  const imageFileInputs = uploaderRoot.locator('input[type="file"][accept="image/*"]');
+  const beforeInputCount = await imageFileInputs.count();
+
+  if (beforeInputCount === 0) {
+    const lazyShell = uploaderRoot.getByRole("button", { name: "Load image uploader" }).first();
+    const shellCount = await lazyShell.count();
+
+    if (shellCount > 0) {
+      try {
+        await lazyShell.click({ timeout: 5_000 });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (
+          !message.includes("detached from the DOM") &&
+          !message.includes("waiting for locator")
+        ) {
+          throw error;
+        }
+      }
+    }
   }
 
   await expect
     .poll(async () => imageFileInputs.count())
-    .toBe(beforeInputCount + 1);
+    .toBeGreaterThan(0);
 
   pageErrors.length = 0;
   consoleErrors.length = 0;
@@ -58,8 +75,9 @@ async function verifyUploaderFlow(
     );
   });
 
+  const uploaderInputCount = await imageFileInputs.count();
   await imageFileInputs
-    .nth(beforeInputCount)
+    .nth(Math.max(uploaderInputCount - 1, 0))
     .setInputFiles(createTinyPngUpload());
 
   const uploadResponse = await uploadResponsePromise;

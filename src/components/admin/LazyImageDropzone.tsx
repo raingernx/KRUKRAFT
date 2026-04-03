@@ -8,6 +8,10 @@ import { PickerDropzoneShell } from "@/design-system";
 import { cn } from "@/lib/utils";
 import type { ImageDropzoneProps } from "@/components/admin/ImageDropzone";
 
+type LazyImageDropzoneProps = ImageDropzoneProps & {
+  rootTestId?: string;
+};
+
 const DynamicImageDropzone = dynamic(
   () =>
     import("@/components/admin/ImageDropzone").then((mod) => mod.ImageDropzone),
@@ -58,7 +62,10 @@ function ImageDropzoneLoadingShell({
   );
 }
 
-export function LazyImageDropzone(props: ImageDropzoneProps) {
+export function LazyImageDropzone({
+  rootTestId,
+  ...props
+}: LazyImageDropzoneProps) {
   const [shouldMountUploader, setShouldMountUploader] = useState(false);
   const shellRef = useRef<HTMLDivElement | null>(null);
 
@@ -98,11 +105,19 @@ export function LazyImageDropzone(props: ImageDropzoneProps) {
   }, [props.disabled, requestUploader, shouldMountUploader]);
 
   if (shouldMountUploader) {
-    return <DynamicImageDropzone {...props} />;
+    return (
+      <div data-testid={rootTestId}>
+        <DynamicImageDropzone {...props} />
+      </div>
+    );
   }
 
   return (
-    <div ref={shellRef} className="w-full min-w-0 space-y-1.5">
+    <div
+      ref={shellRef}
+      data-testid={rootTestId}
+      className="w-full min-w-0 space-y-1.5"
+    >
       <PickerDropzoneShell
         disabled={Boolean(props.disabled)}
         role="button"

@@ -84,7 +84,9 @@ Database search note:
 ```
 /resources
   public shell avoids page-level auth/cookie reads
+    → the browse index now lives under a route group (`src/app/resources/(browse)/*`) so the discover/listing loading UI is scoped to `/resources` itself and does not flash during `/resources/[slug]` navigations
     → discover hero uses a static anonymous seed
+    → the public discover hero and the admin hero editor preview now share the same browse-first stage component instead of maintaining a separate admin-only hero composition
     → listing/discover content streamed separately
     → listing caches keyed by sort/category/page
     → client viewer-state hydration restores owned badges first
@@ -230,15 +232,16 @@ This separation exists to avoid Prisma build-time warnings and DB dependency in 
 - key browser verification now also has a repo-owned `npm run smoke:local:browser` path that exercises the main public search/detail/auth-guard flows plus authenticated admin/creator preview-image uploader flows before merge
 - Playwright browser automation is now scaffolded for local/CI use via `playwright.config.ts` and `npm run test:e2e`; the local project still uses the `chromium` project name, but on this macOS setup it launches the locally installed Chrome stable binary via `channel: "chrome"` because Google Chrome for Testing proved crash-prone
 - browser-level route coverage now includes `/resources`, top-bar search submit into canonical `/resources?search=...`, canonical search results, no-results recovery, resource detail image rendering, and authenticated preview-image uploader flows on both `/admin/resources/new` and `/dashboard/creator/resources/new`
+- browser-level smoke coverage now also includes the admin hero editor preview, asserting that `/admin/heroes/new` renders the shared public hero surface while keeping advanced controls collapsed by default
 - browser-level search coverage now also verifies the empty-query quick-browse dropdown and recent-search chip behavior before the canonical search submit path
 - browser-level discover coverage now also verifies that the "Featured picks" `View all` CTA opens the featured listing filter instead of falling through a legacy sort alias, and that the seeded creator discover shell does not expose misleading personalized CTA affordances when no history-backed personalized slice exists
 - browser-level verification tooling now also includes `@axe-core/playwright` for in-test accessibility checks, `@lhci/cli` via `.lighthouserc.json` for Lighthouse route audits, and `@next/bundle-analyzer` behind `ANALYZE=true` / `npm run analyze` for bundle inspection
 - Storybook is now scaffolded only for `src/design-system/primitives/*` and `src/design-system/components/*`, with repo-owned config under `.storybook/` and a verified build-based smoke path via `npm run storybook:smoke`
+- Chromatic CLI is also installed as an optional Storybook publish/review layer for visual regression work, but it is dormant until a `CHROMATIC_PROJECT_TOKEN` is configured
+- Repomix is also installed as a local AI-context export utility, with repo-owned `.repomixignore` rules to keep secrets, generated artifacts, and local tool state out of packed outputs
 - local browser automation against `http://127.0.0.1:3000` is now explicitly allowed through Next's `allowedDevOrigins`, so Playwright no longer depends on blocked dev-resource/HMR fallbacks when it uses that origin
 - the global CSP header now explicitly allows `https://va.vercel-scripts.com`, matching the Vercel Analytics / Speed Insights scripts that the app mounts in runtime
 - root metadata now also serves `robots.txt` from `src/app/robots.ts`; the file is generated from build-safe public platform config so local/public crawlers stop seeing a 404 without reintroducing DB-backed metadata reads
-- Chromatic CLI is also installed as an optional Storybook publish/review layer for visual regression work, but it is dormant until a `CHROMATIC_PROJECT_TOKEN` is configured
-- Repomix is also installed as a local AI-context export utility, with repo-owned `.repomixignore` rules to keep secrets, generated artifacts, and local tool state out of packed outputs
 - `src/proxy.ts` no longer imports `next-auth/middleware`; request interception now uses direct JWT inspection via `next-auth/jwt`, which keeps the protected-route behavior explicit while trimming one middleware helper layer from the hot request path
 - admin notification toasts now use CSS-only entry animation, and preview-image drag/drop uploaders use a native file-input + drag/drop implementation behind a lazy client boundary that mounts on visibility or user interaction so admin/creator forms do not pull notification motion runtime or uploader-specific package code into the first render path
 - creator resource create/edit pages now also load the heavy client form through `next/dynamic` with structural loading shells, and admin create-form lazy loading now includes a matching form skeleton instead of a blank gap while the client chunk resolves

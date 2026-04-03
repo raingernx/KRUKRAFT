@@ -5,33 +5,7 @@ import {
   ResourcesCatalogControlsSkeleton,
   ResourcesCatalogSearchSkeleton,
 } from "@/components/marketplace/ResourcesCatalogControlsSkeleton";
-import { ResourceCardSkeleton } from "@/components/resources/ResourceCardSkeleton";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
-
-function DiscoverDeferredSectionFallback({
-  titleWidth,
-  cardCount,
-}: {
-  titleWidth: string;
-  cardCount: number;
-}) {
-  return (
-    <section className="space-y-5">
-      <div className="flex flex-col gap-3 border-b border-surface-200/80 pb-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1.5">
-          <LoadingSkeleton className={`h-6 ${titleWidth}`} />
-          <LoadingSkeleton className="h-4 w-64" />
-        </div>
-        <LoadingSkeleton className="h-6 w-16" />
-      </div>
-      <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-        {Array.from({ length: cardCount }).map((_, index) => (
-          <ResourceCardSkeleton key={index} />
-        ))}
-      </div>
-    </section>
-  );
-}
+import { ResourcesDiscoverSectionsSkeleton } from "@/components/skeletons/ResourcesDiscoverSectionsSkeleton";
 
 /**
  * Route-level skeleton for /resources.
@@ -45,7 +19,10 @@ export function ResourcesRouteSkeleton() {
     "min-h-[440px] rounded-[26px] border-white/70 sm:min-h-[500px] lg:min-h-[540px]";
 
   return (
-    <div className="flex min-h-screen flex-col bg-surface-50">
+    <div
+      data-loading-scope="resources-browse"
+      className="flex min-h-screen flex-col bg-surface-50"
+    >
       <Navbar
         headerSearch={<ResourcesCatalogSearchSkeleton />}
         secondaryRow={<ResourcesCatalogControlsSkeleton showDiscoverMeta />}
@@ -59,8 +36,7 @@ export function ResourcesRouteSkeleton() {
         </section>
 
         <Container className="space-y-16 pb-12 pt-5 sm:space-y-16 sm:pb-14 sm:pt-6 lg:space-y-20 lg:pb-16 lg:pt-8">
-          <DiscoverDeferredSectionFallback titleWidth="w-44" cardCount={4} />
-          <DiscoverDeferredSectionFallback titleWidth="w-52" cardCount={5} />
+          <ResourcesDiscoverSectionsSkeleton />
         </Container>
       </main>
     </div>

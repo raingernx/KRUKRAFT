@@ -56,39 +56,38 @@ export type HeroMobileSubtitleSize =
   (typeof HERO_MOBILE_SUBTITLE_SIZE_VALUES)[number];
 
 export const HERO_TITLE_COLOR_VALUES = [
-  "pure-white",
-  "soft-white",
-  "muted-light",
-  "slate",
-  "charcoal",
-  "black",
+  "background",
+  "surface",
+  "primary",
+  "text-secondary",
+  "text-primary",
 ] as const;
 export type HeroTitleColor = (typeof HERO_TITLE_COLOR_VALUES)[number];
 
 export const HERO_SUBTITLE_COLOR_VALUES = [
-  "soft-white",
-  "muted-light",
-  "slate",
-  "charcoal",
+  "surface",
+  "border",
+  "text-secondary",
+  "text-primary",
 ] as const;
 export type HeroSubtitleColor = (typeof HERO_SUBTITLE_COLOR_VALUES)[number];
 
 export const HERO_BADGE_TEXT_COLOR_VALUES = [
-  "pure-white",
-  "soft-white",
-  "charcoal",
-  "brand-blue",
-  "brand-purple",
+  "background",
+  "surface",
+  "text-primary",
+  "primary",
+  "info",
 ] as const;
 export type HeroBadgeTextColor =
   (typeof HERO_BADGE_TEXT_COLOR_VALUES)[number];
 
 export const HERO_BADGE_BG_COLOR_VALUES = [
   "transparent",
-  "frosted-white",
-  "soft-surface",
-  "brand-blue",
-  "brand-purple",
+  "background",
+  "surface",
+  "primary",
+  "info",
 ] as const;
 export type HeroBadgeBgColor = (typeof HERO_BADGE_BG_COLOR_VALUES)[number];
 
@@ -110,15 +109,15 @@ export type HeroSecondaryCtaVariant =
   (typeof HERO_SECONDARY_CTA_VARIANT_VALUES)[number];
 
 export const HERO_PRIMARY_CTA_COLOR_VALUES = [
-  "brand-blue",
-  "brand-purple",
+  "primary",
+  "info",
   "dark",
 ] as const;
 export type HeroPrimaryCtaColor =
   (typeof HERO_PRIMARY_CTA_COLOR_VALUES)[number];
 
 export const HERO_SECONDARY_CTA_COLOR_VALUES = [
-  "white",
+  "background",
   "neutral",
   "dark",
 ] as const;
@@ -127,10 +126,9 @@ export type HeroSecondaryCtaColor =
 
 export const HERO_OVERLAY_COLOR_VALUES = [
   "transparent",
-  "black",
-  "dark-slate",
-  "navy",
-  "purple",
+  "surface",
+  "surface-strong",
+  "primary",
 ] as const;
 export type HeroOverlayColor = (typeof HERO_OVERLAY_COLOR_VALUES)[number];
 
@@ -210,28 +208,28 @@ export type ResolvedHeroStyleConfig = {
 };
 
 export const HERO_STYLE_DEFAULTS: ResolvedHeroStyleConfig = {
-  textAlign: "center",
-  contentWidth: "normal",
+  textAlign: "left",
+  contentWidth: "wide",
   heroHeight: "default",
   spacingPreset: "normal",
   headingFont: "display",
   bodyFont: "body",
-  titleSize: "lg",
+  titleSize: "display",
   subtitleSize: "md",
-  titleWeight: "semibold",
+  titleWeight: "bold",
   subtitleWeight: "normal",
-  mobileTitleSize: "inherit",
+  mobileTitleSize: "md",
   mobileSubtitleSize: "inherit",
-  titleColor: "pure-white",
-  subtitleColor: "soft-white",
-  badgeTextColor: "soft-white",
+  titleColor: "primary",
+  subtitleColor: "surface",
+  badgeTextColor: "surface",
   badgeBgColor: "transparent",
   primaryCtaVariant: "primary",
   secondaryCtaVariant: "outline",
-  primaryCtaColor: "brand-blue",
-  secondaryCtaColor: "white",
-  overlayColor: "black",
-  overlayOpacity: 50,
+  primaryCtaColor: "primary",
+  secondaryCtaColor: "neutral",
+  overlayColor: "surface",
+  overlayOpacity: 20,
 };
 
 type Option<T extends string> = { value: T; label: string };
@@ -295,32 +293,31 @@ export const HERO_STYLE_OPTIONS = {
     { value: "md", label: "Medium" },
   ] satisfies Option<HeroMobileSubtitleSize>[],
   titleColor: [
-    { value: "pure-white", label: "Pure White" },
-    { value: "soft-white", label: "Soft White" },
-    { value: "muted-light", label: "Muted Light" },
-    { value: "slate", label: "Slate" },
-    { value: "charcoal", label: "Charcoal" },
-    { value: "black", label: "Black" },
+    { value: "background", label: "Background" },
+    { value: "surface", label: "Surface" },
+    { value: "primary", label: "Primary" },
+    { value: "text-secondary", label: "Text Secondary" },
+    { value: "text-primary", label: "Text Primary" },
   ] satisfies Option<HeroTitleColor>[],
   subtitleColor: [
-    { value: "soft-white", label: "Soft White" },
-    { value: "muted-light", label: "Muted Light" },
-    { value: "slate", label: "Slate" },
-    { value: "charcoal", label: "Charcoal" },
+    { value: "surface", label: "Surface" },
+    { value: "border", label: "Border" },
+    { value: "text-secondary", label: "Text Secondary" },
+    { value: "text-primary", label: "Text Primary" },
   ] satisfies Option<HeroSubtitleColor>[],
   badgeTextColor: [
-    { value: "pure-white", label: "Pure White" },
-    { value: "soft-white", label: "Soft White" },
-    { value: "charcoal", label: "Charcoal" },
-    { value: "brand-blue", label: "Brand Blue" },
-    { value: "brand-purple", label: "Brand Purple" },
+    { value: "background", label: "Background" },
+    { value: "surface", label: "Surface" },
+    { value: "text-primary", label: "Text Primary" },
+    { value: "primary", label: "Primary" },
+    { value: "info", label: "Info" },
   ] satisfies Option<HeroBadgeTextColor>[],
   badgeBgColor: [
     { value: "transparent", label: "Transparent" },
-    { value: "frosted-white", label: "Frosted White" },
-    { value: "soft-surface", label: "Soft Surface" },
-    { value: "brand-blue", label: "Brand Blue" },
-    { value: "brand-purple", label: "Brand Purple" },
+    { value: "background", label: "Background" },
+    { value: "surface", label: "Surface" },
+    { value: "primary", label: "Primary" },
+    { value: "info", label: "Info" },
   ] satisfies Option<HeroBadgeBgColor>[],
   primaryCtaVariant: [
     { value: "primary", label: "Primary" },
@@ -334,21 +331,20 @@ export const HERO_STYLE_OPTIONS = {
     { value: "outline", label: "Outline" },
   ] satisfies Option<HeroSecondaryCtaVariant>[],
   primaryCtaColor: [
-    { value: "brand-blue", label: "Brand Blue" },
-    { value: "brand-purple", label: "Brand Purple" },
+    { value: "primary", label: "Primary" },
+    { value: "info", label: "Info" },
     { value: "dark", label: "Dark" },
   ] satisfies Option<HeroPrimaryCtaColor>[],
   secondaryCtaColor: [
-    { value: "white", label: "White" },
+    { value: "background", label: "Background" },
     { value: "neutral", label: "Neutral" },
     { value: "dark", label: "Dark" },
   ] satisfies Option<HeroSecondaryCtaColor>[],
   overlayColor: [
     { value: "transparent", label: "Transparent" },
-    { value: "black", label: "Black" },
-    { value: "dark-slate", label: "Dark Slate" },
-    { value: "navy", label: "Navy" },
-    { value: "purple", label: "Purple" },
+    { value: "surface", label: "Surface" },
+    { value: "surface-strong", label: "Surface Strong" },
+    { value: "primary", label: "Primary" },
   ] satisfies Option<HeroOverlayColor>[],
 };
 
@@ -360,166 +356,154 @@ export type HeroColorTokenOption<T extends string> = Option<T> & {
 export const HERO_COLOR_TOKEN_OPTIONS = {
   titleColor: [
     {
-      value: "pure-white",
-      label: "Pure White",
-      swatchClassName: "bg-white border border-zinc-300",
+      value: "background",
+      label: "Background",
+      swatchClassName: "bg-background border border-surface-300",
     },
     {
-      value: "soft-white",
-      label: "Soft White",
-      swatchClassName: "bg-zinc-100 border border-zinc-300",
+      value: "surface",
+      label: "Surface",
+      swatchClassName: "bg-surface-50 border border-surface-200",
     },
     {
-      value: "muted-light",
-      label: "Muted Light",
-      swatchClassName: "bg-slate-300 border border-slate-400",
+      value: "primary",
+      label: "Primary",
+      swatchClassName: "bg-primary-500 border border-primary-600",
     },
     {
-      value: "slate",
-      label: "Slate",
-      swatchClassName: "bg-slate-500 border border-slate-600",
+      value: "text-secondary",
+      label: "Text Secondary",
+      swatchClassName: "bg-surface-600 border border-surface-700",
     },
     {
-      value: "charcoal",
-      label: "Charcoal",
-      swatchClassName: "bg-zinc-800 border border-zinc-900",
-    },
-    {
-      value: "black",
-      label: "Black",
-      swatchClassName: "bg-black border border-black",
+      value: "text-primary",
+      label: "Text Primary",
+      swatchClassName: "bg-surface-900 border border-surface-950",
     },
   ] satisfies HeroColorTokenOption<HeroTitleColor>[],
   subtitleColor: [
     {
-      value: "soft-white",
-      label: "Soft White",
-      swatchClassName: "bg-zinc-100 border border-zinc-300",
+      value: "surface",
+      label: "Surface",
+      swatchClassName: "bg-surface-50 border border-surface-200",
     },
     {
-      value: "muted-light",
-      label: "Muted Light",
-      swatchClassName: "bg-slate-300 border border-slate-400",
+      value: "border",
+      label: "Border",
+      swatchClassName: "bg-surface-200 border border-surface-300",
     },
     {
-      value: "slate",
-      label: "Slate",
-      swatchClassName: "bg-slate-500 border border-slate-600",
+      value: "text-secondary",
+      label: "Text Secondary",
+      swatchClassName: "bg-surface-600 border border-surface-700",
     },
     {
-      value: "charcoal",
-      label: "Charcoal",
-      swatchClassName: "bg-zinc-800 border border-zinc-900",
+      value: "text-primary",
+      label: "Text Primary",
+      swatchClassName: "bg-surface-900 border border-surface-950",
     },
   ] satisfies HeroColorTokenOption<HeroSubtitleColor>[],
   badgeTextColor: [
     {
-      value: "pure-white",
-      label: "Pure White",
-      swatchClassName: "bg-white border border-zinc-300",
+      value: "background",
+      label: "Background",
+      swatchClassName: "bg-background border border-surface-300",
     },
     {
-      value: "soft-white",
-      label: "Soft White",
-      swatchClassName: "bg-zinc-100 border border-zinc-300",
+      value: "surface",
+      label: "Surface",
+      swatchClassName: "bg-surface-50 border border-surface-200",
     },
     {
-      value: "charcoal",
-      label: "Charcoal",
-      swatchClassName: "bg-zinc-800 border border-zinc-900",
+      value: "text-primary",
+      label: "Text Primary",
+      swatchClassName: "bg-surface-900 border border-surface-950",
     },
     {
-      value: "brand-blue",
-      label: "Brand Blue",
-      swatchClassName: "bg-brand-600 border border-brand-700",
+      value: "primary",
+      label: "Primary",
+      swatchClassName: "bg-primary-600 border border-primary-700",
     },
     {
-      value: "brand-purple",
-      label: "Brand Purple",
-      swatchClassName: "bg-accent-600 border border-accent-700",
+      value: "info",
+      label: "Info",
+      swatchClassName: "bg-info-600 border border-info-700",
     },
   ] satisfies HeroColorTokenOption<HeroBadgeTextColor>[],
   badgeBgColor: [
     {
       value: "transparent",
       label: "Transparent",
-      swatchClassName:
-        "bg-[linear-gradient(45deg,#ffffff_25%,#e4e4e7_25%,#e4e4e7_50%,#ffffff_50%,#ffffff_75%,#e4e4e7_75%,#e4e4e7_100%)] bg-[length:8px_8px] border border-zinc-300",
+      swatchClassName: "bg-surface-50 border border-dashed border-surface-300",
     },
     {
-      value: "frosted-white",
-      label: "Frosted White",
-      swatchClassName: "bg-white/80 border border-zinc-300",
+      value: "background",
+      label: "Background",
+      swatchClassName: "bg-background border border-surface-300",
     },
     {
-      value: "soft-surface",
-      label: "Soft Surface",
+      value: "surface",
+      label: "Surface",
       swatchClassName: "bg-surface-100 border border-surface-300",
     },
     {
-      value: "brand-blue",
-      label: "Brand Blue",
-      swatchClassName: "bg-brand-100 border border-brand-300",
+      value: "primary",
+      label: "Primary",
+      swatchClassName: "bg-primary-100 border border-primary-300",
     },
     {
-      value: "brand-purple",
-      label: "Brand Purple",
-      swatchClassName: "bg-accent-100 border border-accent-300",
+      value: "info",
+      label: "Info",
+      swatchClassName: "bg-info-100 border border-info-300",
     },
   ] satisfies HeroColorTokenOption<HeroBadgeBgColor>[],
   overlayColor: [
     {
       value: "transparent",
       label: "Transparent",
-      swatchClassName:
-        "bg-[linear-gradient(45deg,#ffffff_25%,#e4e4e7_25%,#e4e4e7_50%,#ffffff_50%,#ffffff_75%,#e4e4e7_75%,#e4e4e7_100%)] bg-[length:8px_8px] border border-zinc-300",
+      swatchClassName: "bg-surface-50 border border-dashed border-surface-300",
     },
     {
-      value: "black",
-      label: "Black",
-      swatchClassName: "bg-black border border-black",
+      value: "surface",
+      label: "Surface",
+      swatchClassName: "bg-surface-900 border border-surface-950",
     },
     {
-      value: "dark-slate",
-      label: "Dark Slate",
-      swatchClassName: "bg-slate-800 border border-slate-900",
+      value: "surface-strong",
+      label: "Surface Strong",
+      swatchClassName: "bg-surface-950 border border-surface-950",
     },
     {
-      value: "navy",
-      label: "Navy",
-      swatchClassName: "bg-brand-900 border border-brand-950",
-    },
-    {
-      value: "purple",
-      label: "Purple",
-      swatchClassName: "bg-accent-800 border border-accent-900",
+      value: "primary",
+      label: "Primary",
+      swatchClassName: "bg-primary-900 border border-primary-900",
     },
   ] satisfies HeroColorTokenOption<HeroOverlayColor>[],
   primaryCtaColor: [
     {
-      value: "brand-blue",
-      label: "Brand Blue",
-      swatchClassName: "bg-brand-600 border border-brand-700",
-      helper: "Strong filled brand CTA with white text.",
+      value: "primary",
+      label: "Primary",
+      swatchClassName: "bg-primary-600 border border-primary-700",
+      helper: "Strong DS primary CTA with white text.",
     },
     {
-      value: "brand-purple",
-      label: "Brand Purple",
-      swatchClassName: "bg-accent-600 border border-accent-700",
-      helper: "Vivid accent CTA with white text.",
+      value: "info",
+      label: "Info",
+      swatchClassName: "bg-info-600 border border-info-700",
+      helper: "Alternate blue CTA using the DS info scale.",
     },
     {
       value: "dark",
       label: "Dark",
-      swatchClassName: "bg-zinc-900 border border-zinc-950",
+      swatchClassName: "bg-surface-950 border border-surface-950",
       helper: "High-contrast dark CTA with white text.",
     },
   ] satisfies HeroColorTokenOption<HeroPrimaryCtaColor>[],
   secondaryCtaColor: [
     {
-      value: "white",
-      label: "White",
-      swatchClassName: "bg-white border border-zinc-300",
+      value: "background",
+      label: "Background",
+      swatchClassName: "bg-background border border-surface-300",
       helper: "Light secondary action with dark text.",
     },
     {
@@ -531,55 +515,88 @@ export const HERO_COLOR_TOKEN_OPTIONS = {
     {
       value: "dark",
       label: "Dark",
-      swatchClassName: "bg-zinc-900 border border-zinc-950",
+      swatchClassName: "bg-surface-950 border border-surface-950",
       helper: "Dark secondary action with white text.",
     },
   ] satisfies HeroColorTokenOption<HeroSecondaryCtaColor>[],
 } as const;
 
 const HERO_TITLE_COLOR_ALIASES: Record<string, HeroTitleColor> = {
-  white: "pure-white",
-  "white-soft": "soft-white",
-  "zinc-900": "charcoal",
-  "text-primary": "charcoal",
+  white: "background",
+  "pure-white": "background",
+  "white-soft": "surface",
+  "soft-white": "surface",
+  lime: "primary",
+  green: "primary",
+  "muted-light": "surface",
+  slate: "text-secondary",
+  "zinc-700": "text-secondary",
+  "text-secondary": "text-secondary",
+  charcoal: "text-primary",
+  black: "text-primary",
+  "zinc-900": "text-primary",
+  "text-primary": "text-primary",
 };
 
 const HERO_SUBTITLE_COLOR_ALIASES: Record<string, HeroSubtitleColor> = {
-  "white-soft": "soft-white",
-  "white-muted": "muted-light",
-  "zinc-700": "slate",
-  "text-secondary": "slate",
+  "white-soft": "surface",
+  "soft-white": "surface",
+  "white-muted": "border",
+  "muted-light": "border",
+  slate: "text-secondary",
+  "zinc-700": "text-secondary",
+  "text-secondary": "text-secondary",
+  charcoal: "text-primary",
+  "zinc-900": "text-primary",
+  "text-primary": "text-primary",
 };
 
 const HERO_BADGE_TEXT_COLOR_ALIASES: Record<string, HeroBadgeTextColor> = {
-  white: "pure-white",
-  "white-soft": "soft-white",
-  "brand-700": "brand-blue",
-  "zinc-900": "charcoal",
+  white: "background",
+  "pure-white": "background",
+  "white-soft": "surface",
+  "soft-white": "surface",
+  charcoal: "text-primary",
+  "zinc-900": "text-primary",
+  "brand-700": "info",
+  "brand-blue": "info",
+  "brand-purple": "primary",
+  "accent-700": "primary",
 };
 
 const HERO_BADGE_BG_COLOR_ALIASES: Record<string, HeroBadgeBgColor> = {
-  "white-10": "frosted-white",
-  "white-15": "frosted-white",
-  "brand-50": "brand-blue",
-  "surface-100": "soft-surface",
+  "white-10": "background",
+  "white-15": "background",
+  "frosted-white": "background",
+  "surface-100": "surface",
+  "soft-surface": "surface",
+  "brand-50": "info",
+  "brand-blue": "info",
+  "brand-purple": "primary",
 };
 
 const HERO_OVERLAY_COLOR_ALIASES: Record<string, HeroOverlayColor> = {
-  black: "black",
-  "zinc-900": "dark-slate",
-  "brand-900": "navy",
+  black: "surface-strong",
+  "dark-slate": "surface",
+  "zinc-900": "surface",
+  navy: "primary",
+  purple: "primary",
+  "brand-900": "primary",
 };
 
 const HERO_PRIMARY_CTA_COLOR_ALIASES: Record<string, HeroPrimaryCtaColor> = {
-  primary: "brand-blue",
-  accent: "brand-purple",
+  primary: "primary",
+  accent: "primary",
+  "brand-blue": "info",
+  "brand-purple": "primary",
   dark: "dark",
+  lime: "primary",
 };
 
 const HERO_SECONDARY_CTA_COLOR_ALIASES: Record<string, HeroSecondaryCtaColor> = {
-  secondary: "white",
-  outline: "white",
+  secondary: "background",
+  white: "background",
+  outline: "background",
   ghost: "neutral",
   dark: "dark",
 };
