@@ -1,188 +1,178 @@
-# Krukraft — Session 1: Architecture Scaffold
+# Krukraft
 
-Next.js 14 (App Router) · Tailwind CSS · PostgreSQL · Prisma · NextAuth · Stripe
+AI-assisted marketplace for ready-made teaching resources, digital downloads,
+creator publishing, and school-focused subscriptions.
 
----
+Live site: [https://krukraft.com](https://krukraft.com)
 
-## Folder Structure
+## What This Repo Contains
 
-```
-krukraft/
-├── prisma/
-│   ├── schema.prisma          ← Full data model (User, Resource, Purchase, Review, …)
-│   └── seed.ts                ← Dev seed data
-│
-├── src/
-│   ├── app/
-│   │   ├── (auth)/            ← Login / Register pages (route group, no shared layout)
-│   │   │   ├── login/
-│   │   │   └── register/
-│   │   ├── (dashboard)/       ← Authenticated area (shared dashboard layout)
-│   │   │   ├── dashboard/
-│   │   │   └── resources/
-│   │   │       └── [id]/
-│   │   ├── api/
-│   │   │   ├── auth/
-│   │   │   │   ├── [...nextauth]/route.ts   ← NextAuth handler
-│   │   │   │   └── register/route.ts        ← POST email+password signup
-│   │   │   ├── resources/
-│   │   │   │   ├── route.ts                 ← GET (list) + POST (create)
-│   │   │   │   └── [id]/route.ts            ← GET + PATCH + DELETE
-│   │   │   ├── purchases/route.ts           ← GET user's purchases
-│   │   │   ├── subscriptions/route.ts       ← GET + DELETE (cancel)
-│   │   │   └── stripe/
-│   │   │       ├── checkout/route.ts        ← Create Stripe checkout session
-│   │   │       └── webhook/route.ts         ← Stripe event handler
-│   │   ├── globals.css
-│   │   └── layout.tsx
-│   │
-│   ├── components/
-│   │   ├── auth/              ← LoginForm, RegisterForm
-│   │   ├── layout/            ← Navbar, Sidebar, Footer
-│   │   ├── resources/         ← ResourceCard, ResourceGrid, ResourceDetail
-│   │   └── ui/                ← Legacy compatibility shims for covered DS primitives
-│   ├── design-system/         ← Canonical import surface for primitives, components, layout, and tokens
-│   │
-│   ├── hooks/                 ← useSession, useResources, usePurchases (SWR/React Query)
-│   ├── lib/
-│   │   ├── auth.ts            ← NextAuth config + callbacks
-│   │   ├── prisma.ts          ← Singleton Prisma client
-│   │   ├── stripe.ts          ← Stripe client + plan constants
-│   │   └── utils.ts           ← cn(), formatPrice(), slugify()
-│   └── types/
-│       └── index.ts           ← Shared TypeScript types
-│
-├── .env.example               ← Environment variable template
-├── next.config.ts
-├── tailwind.config.ts
-└── tsconfig.json
-```
+Krukraft is a Next.js App Router application with:
 
----
+- public resource discovery and search
+- resource detail pages with purchase and download flows
+- memberships and one-time purchases
+- creator dashboard for publishing and analytics
+- admin tooling for resources, users, reviews, tags, analytics, and settings
+- a repo-owned design system with Figma mapping and token audits
+
+## Stack
+
+- Next.js 16
+- React 18
+- TypeScript
+- Tailwind CSS
+- Prisma + PostgreSQL
+- NextAuth
+- Stripe
+- Xendit
+- Vercel
+
+## Key Product Areas
+
+### Public Marketplace
+
+- `/resources` for discover and listing modes
+- `/resources/[slug]` for resource detail and purchase rails
+- `/categories/[slug]` for taxonomy browsing
+- search suggestions, recovery states, and viewer-aware personalization
+
+### User Dashboard
+
+- `/dashboard`
+- `/dashboard/library`
+- `/dashboard/downloads`
+- `/dashboard/purchases`
+- `/subscription`
+- `/settings`
+
+### Creator Workspace
+
+- creator onboarding and application flow
+- creator resource creation/editing
+- creator analytics, sales, and publishing readiness
+
+### Admin
+
+- `/admin/resources`
+- `/admin/users`
+- `/admin/orders`
+- `/admin/reviews`
+- `/admin/analytics/*`
+- `/admin/settings`
 
 ## Design System
 
-Import covered primitives and composed UI from `@/design-system`.
+The canonical app-facing UI import surface lives under:
 
-Files under `src/components/ui` and `src/hooks/use-toast.ts` are retained only as backwards-compatible shims for the current migration scope. They should not be used for new app-facing imports.
+```text
+src/design-system/*
+```
 
----
+Important repo-owned references:
 
-## Quick Start
+- [src/design-system/README.md](src/design-system/README.md)
+- [design-system.md](design-system.md)
+- [figma-component-map.md](figma-component-map.md)
+- [krukraft-ai-contexts/06-design-system.md](krukraft-ai-contexts/06-design-system.md)
+- [krukraft-ai-contexts/07-layout-ux.md](krukraft-ai-contexts/07-layout-ux.md)
+
+Current DS conventions include:
+
+- theme-aware surfaces and typography
+- dark border hierarchy: `subtle`, `default`, `strong`
+- loading/fallback parity as part of feature work
+- optional `boneyard-js` DOM-capture workflow for skeleton generation
+
+## Local Development
 
 ```bash
-# 1. Install dependencies
 npm install
-
-# 2. Configure environment
 cp .env.example .env.local
-# Edit .env.local — fill in DATABASE_URL, NEXTAUTH_SECRET, Stripe keys
-
-# 3. Set up the database
-npm run db:push       # push schema to your local PostgreSQL
-npm run db:seed       # create admin user, categories, tags, sample resource
-
-# 4. Run the dev server
 npm run dev
-# → http://localhost:3000
-# Uses Webpack by default for local development
-# Optional Turbopack fallback: npm run dev:turbo
-
-# 5. Stripe webhooks (separate terminal)
-stripe listen --forward-to localhost:3000/api/stripe/webhook
 ```
 
----
+Default local URL:
 
-## Production Deployment
+```text
+http://localhost:3000
+```
 
-Application build and Prisma migration deploy are intentionally separate in this repo.
+Optional commands:
 
 ```bash
-# Build the app only (schema-mutation-free)
-npm run build
-
-# Apply Prisma migrations separately when production baseline is ready
-DIRECT_URL="postgresql://..." npm run db:deploy
+npm run dev:turbo
+npm run db:push
+npm run db:migrate
+npm run db:seed
+npm run db:studio
 ```
 
-- `npm run build` must stay schema-mutation-free for Vercel builds.
-- Run `npm run db:deploy` separately from app build or app deploy.
-- Use `DIRECT_URL` for Prisma migration commands. Do not use a pooled connection for migrations.
-- Do not reset or wipe a production database to satisfy Prisma migration history.
+## Verification
 
----
+Core checks used in this repo:
 
-## Data Model Summary
+```bash
+npm run typecheck
+npm run lint
+npm run context:check
+npm run context:check:staged:strict
+npm run smoke:local:browser
+```
 
-| Model            | Purpose                                                         |
-|------------------|-----------------------------------------------------------------|
-| `User`           | Auth + roles (ADMIN / INSTRUCTOR / STUDENT) + Stripe fields     |
-| `Account`        | NextAuth OAuth accounts (Google, etc.)                          |
-| `Session`        | NextAuth JWT sessions                                           |
-| `Resource`       | PDF/document entries with pricing, file URL, and metadata       |
-| `Category`       | Taxonomy for resources                                          |
-| `Tag`            | Many-to-many tags on resources                                  |
-| `Purchase`       | One-time purchase records linked to Stripe checkout sessions    |
-| `Review`         | User ratings (1–5) + optional body text                         |
+Design-system specific checks:
 
----
+```bash
+npm run skeleton:check
+npm run figma-map:check
+npm run tokens:audit
+```
 
-## API Routes
+Optional skeleton capture workflow:
 
-### Auth
-| Method | Route                         | Auth  | Description                         |
-|--------|-------------------------------|-------|-------------------------------------|
-| POST   | `/api/auth/register`          | —     | Email + password sign-up            |
-| GET    | `/api/auth/[...nextauth]`     | —     | NextAuth session handler            |
-| POST   | `/api/auth/[...nextauth]`     | —     | NextAuth sign-in / sign-out         |
+```bash
+npm run skeleton:boneyard:build
+npm run skeleton:boneyard:build:force
+```
 
-### Resources
-| Method | Route                  | Auth        | Description                             |
-|--------|------------------------|-------------|-----------------------------------------|
-| GET    | `/api/resources`       | —           | List published resources (filter/page)  |
-| POST   | `/api/resources`       | ADMIN/INSTR | Create a new resource                   |
-| GET    | `/api/resources/[id]`  | —           | Get a single resource + reviews         |
-| PATCH  | `/api/resources/[id]`  | Owner/ADMIN | Update resource fields                  |
-| DELETE | `/api/resources/[id]`  | ADMIN       | Delete a resource                       |
+## Production Notes
 
-### Payments
-| Method | Route                       | Auth     | Description                                    |
-|--------|-----------------------------|----------|------------------------------------------------|
-| POST   | `/api/stripe/checkout`      | Required | Create checkout session (payment or sub)       |
-| POST   | `/api/stripe/webhook`       | Stripe   | Handle payment/subscription lifecycle events   |
-| GET    | `/api/purchases`            | Required | List the current user's completed purchases    |
-| GET    | `/api/subscriptions`        | Required | Get subscription status                        |
-| DELETE | `/api/subscriptions`        | Required | Cancel subscription at period end              |
+- production deploys run on Vercel
+- the primary public domain is `https://krukraft.com`
+- `www.krukraft.com` should redirect to the apex domain
+- Prisma migration deploy is intentionally separate from app build
 
----
+Deploy-related commands:
 
-## Access Control
+```bash
+npm run build
+npm run db:deploy
+npm run vercel:prod
+```
 
-- **Public**: browse the resource library, view resource detail pages
-- **STUDENT**: purchase resources, manage subscription, download purchased files
-- **INSTRUCTOR**: all of STUDENT + create/edit their own resources
-- **ADMIN**: full access including delete and user management
+## Repository Structure
 
-Roles are stored in the database and propagated into the JWT via NextAuth callbacks so they're available on every server-side request without a DB round-trip.
+```text
+src/
+  app/                Next.js routes, layouts, API routes
+  components/         feature-level components
+  design-system/      canonical DS primitives, composed UI, layout, tokens
+  analytics/          analytics helpers and scoring logic
+  services/           business logic
+  repositories/       database access via Prisma
+  lib/                shared helpers, routing, theme/bootstrap, metadata
+  workers/            background and aggregation jobs
 
----
+prisma/               schema, migrations, seed data
+scripts/              audits, warmers, smoke helpers, tooling
+krukraft-ai-contexts/ maintained repo context pack for AI/codebase truth
+```
 
-## Stripe Integration
+## Current Branding
 
-Two modes are supported in `/api/stripe/checkout`:
+- Product name: `Krukraft`
+- Domain: `krukraft.com`
+- Repo name: `studyplatform`
 
-**One-time purchase** (`mode: "payment"`) — creates a Stripe Checkout session for a specific resource. On success, the `checkout.session.completed` webhook marks the `Purchase` row as `COMPLETED`.
-
-**Subscription** (`mode: "subscription"`) — creates a Checkout session for a plan. The webhook handles `customer.subscription.updated` / `deleted` to keep `User.subscriptionStatus` in sync.
-
----
-
-## Next Steps (Session 2+)
-
-- [ ] Build out page components: `ResourceCard`, `ResourceGrid`, auth forms
-- [ ] Implement file upload (S3 + presigned URLs) in resource creation flow
-- [ ] Add a download-gate: check `Purchase` or `subscriptionStatus` before serving `fileUrl`
-- [ ] Admin dashboard (resource management, user list, revenue summary)
-- [ ] Add `clsx` + `tailwind-merge` for component class utilities
-- [ ] Email notifications (Resend or SendGrid) for purchase receipts
+If the GitHub repository display metadata still shows older copy, update the
+GitHub `About` panel to match the values above.
