@@ -17,6 +17,7 @@ import { routes } from "@/lib/routes";
 import { getDashboardPurchaseHistoryPageData } from "@/services/admin";
 import { getBuildSafePlatformConfig } from "@/services/platform";
 import { EmptyState } from "@/design-system";
+import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
 
 export const metadata = {
   title: "Purchases",
@@ -145,7 +146,7 @@ export default async function PurchasesPage() {
                             <FileText className="h-4 w-4 text-muted-foreground/50" />
                           )}
                         </div>
-                        <Link
+                        <ResourceIntentLink
                           href={routes.resource(purchase.resource.slug)}
                           className="group flex min-w-0 items-center gap-1 truncate text-[13px] font-medium text-foreground hover:text-primary-700"
                         >
@@ -153,7 +154,7 @@ export default async function PurchasesPage() {
                             {purchase.resource.title}
                           </span>
                           <ExternalLink className="h-3 w-3 flex-shrink-0 opacity-0 transition group-hover:opacity-100" />
-                        </Link>
+                        </ResourceIntentLink>
                       </div>
 
                       {/* Creator */}

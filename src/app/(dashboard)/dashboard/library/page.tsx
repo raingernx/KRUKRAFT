@@ -1,11 +1,12 @@
+import Link from "next/link";
 import { requireSession } from "@/lib/auth/require-session";
 import { LibraryGridClient } from "@/components/library/LibraryGridClient";
 import { LastPurchaseRecovery } from "@/components/library/LastPurchaseRecovery";
-import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import { routes } from "@/lib/routes";
 import { getUserLibraryItems } from "@/services/purchases";
+import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
 import {
   traceServerStep,
   withRequestPerformanceTrace,
@@ -98,13 +99,13 @@ export default async function DashboardLibraryPage({
                 <p className="mt-1 text-caption text-muted-foreground">
                   {lastOpened.authorName ?? "Unknown"}
                 </p>
-                <Link
+                <ResourceIntentLink
                   href={routes.resource(lastOpened.slug)}
                   className="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-border bg-muted px-4 py-2.5 text-small font-medium text-foreground transition hover:bg-card"
                 >
                   <BookOpen className="h-4 w-4" />
                   Open resource
-                </Link>
+                </ResourceIntentLink>
               </div>
             ) : null}
           </section>

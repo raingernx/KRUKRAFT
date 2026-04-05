@@ -1,0 +1,173 @@
+"use client";
+
+import { Navbar } from "@/components/layout/Navbar";
+import { HeroSearch } from "@/components/marketplace/HeroSearch";
+import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { Container, PageContainer, PageContentWide } from "@/design-system";
+
+export function CategoryPageLoadingShell() {
+  return (
+    <div className="flex min-h-screen flex-col bg-background">
+      <Navbar headerSearch={<HeroSearch variant="listing" />} />
+
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-700 to-slate-900">
+        <Container className="space-y-6 pb-12 pt-10 lg:pb-14 lg:pt-12">
+          <LoadingSkeleton className="h-4 w-28 bg-white/20" />
+          <div className="flex items-center gap-4 sm:gap-5">
+            <LoadingSkeleton className="h-14 w-14 rounded-full bg-white/20" />
+            <div className="space-y-2">
+              <LoadingSkeleton className="h-10 w-56 rounded-2xl bg-white/20" />
+              <LoadingSkeleton className="h-4 w-[30rem] max-w-[70vw] bg-white/15" />
+            </div>
+          </div>
+          <LoadingSkeleton className="h-8 w-32 rounded-full bg-white/20" />
+        </Container>
+      </div>
+
+      <main className="flex-1">
+        <Container className="py-12 sm:py-14 lg:py-16">
+          <div className="rounded-[32px] border border-border bg-[hsl(var(--card)/0.85)] p-4 shadow-card sm:p-5 lg:p-6">
+            <div className="mb-6 flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-end sm:justify-between">
+              <div className="space-y-2">
+                <LoadingSkeleton className="h-3 w-28" />
+                <LoadingSkeleton className="h-8 w-64 rounded-2xl" />
+                <LoadingSkeleton className="h-4 w-[32rem] max-w-[75vw]" />
+              </div>
+              <LoadingSkeleton className="h-4 w-24" />
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="overflow-hidden rounded-xl border border-border-subtle bg-card">
+                  <LoadingSkeleton className="aspect-[4/3] w-full rounded-none" />
+                  <div className="space-y-2 p-4">
+                    <LoadingSkeleton className="h-4 w-4/5" />
+                    <LoadingSkeleton className="h-4 w-2/3" />
+                    <LoadingSkeleton className="h-3 w-1/2" />
+                    <LoadingSkeleton className="h-5 w-16" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </main>
+    </div>
+  );
+}
+
+export function CreatorPublicProfileLoadingShell() {
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar headerSearch={<HeroSearch variant="listing" />} />
+
+      <main>
+        <PageContainer className="py-10">
+          <PageContentWide>
+            <section className="overflow-hidden rounded-[28px] border border-border bg-card shadow-card">
+              <LoadingSkeleton className="h-48 w-full rounded-none" />
+
+              <div className="px-6 pb-8">
+                <div className="-mt-12 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                  <div className="flex items-end gap-4">
+                    <LoadingSkeleton className="h-24 w-24 rounded-[28px] border border-border bg-card" />
+                    <div className="space-y-2 pb-1">
+                      <LoadingSkeleton className="h-10 w-56 rounded-2xl" />
+                      <LoadingSkeleton className="h-4 w-36" />
+                      <LoadingSkeleton className="h-4 w-32" />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {Array.from({ length: 3 }).map((_, index) => (
+                      <LoadingSkeleton key={index} className="h-10 w-28 rounded-xl" />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-6 space-y-2">
+                  <LoadingSkeleton className="h-4 w-full max-w-3xl" />
+                  <LoadingSkeleton className="h-4 w-4/5 max-w-2xl" />
+                </div>
+              </div>
+            </section>
+
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="rounded-2xl border border-border bg-card p-5 shadow-card">
+                  <LoadingSkeleton className="h-4 w-20" />
+                  <LoadingSkeleton className="mt-3 h-8 w-28" />
+                </div>
+              ))}
+            </div>
+
+            <section className="mt-8 rounded-[28px] border border-border bg-card p-6 shadow-card">
+              <div className="space-y-2">
+                <LoadingSkeleton className="h-8 w-56 rounded-2xl" />
+                <LoadingSkeleton className="h-4 w-64" />
+              </div>
+              <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className="overflow-hidden rounded-xl border border-border-subtle bg-card">
+                    <LoadingSkeleton className="aspect-[4/3] w-full rounded-none" />
+                    <div className="space-y-2 p-4">
+                      <LoadingSkeleton className="h-4 w-4/5" />
+                      <LoadingSkeleton className="h-4 w-2/3" />
+                      <LoadingSkeleton className="h-3 w-1/2" />
+                      <LoadingSkeleton className="h-5 w-16" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </PageContentWide>
+        </PageContainer>
+      </main>
+    </div>
+  );
+}
+
+export function AdminCreatorsPageSkeleton() {
+  return (
+    <div className="min-w-0 space-y-8">
+      <div className="border-b border-border pb-4">
+        <LoadingSkeleton className="h-3 w-12" />
+        <LoadingSkeleton className="mt-2 h-10 w-64 rounded-2xl" />
+        <LoadingSkeleton className="mt-2 h-4 w-40" />
+      </div>
+
+      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
+        <div className="grid grid-cols-[1.2fr_1.2fr_1.6fr_0.8fr_0.7fr_0.8fr] gap-4 border-b border-border bg-muted px-4 py-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <LoadingSkeleton key={index} className="h-3 w-20" />
+          ))}
+        </div>
+
+        <div className="divide-y divide-border">
+          {Array.from({ length: 5 }).map((_, rowIndex) => (
+            <div
+              key={rowIndex}
+              className="grid grid-cols-[1.2fr_1.2fr_1.6fr_0.8fr_0.7fr_0.8fr] items-center gap-4 px-4 py-4"
+            >
+              <div className="space-y-2">
+                <LoadingSkeleton className="h-4 w-28" />
+                <LoadingSkeleton className="h-3 w-36" />
+              </div>
+              <div className="space-y-2">
+                <LoadingSkeleton className="h-4 w-24" />
+                <LoadingSkeleton className="h-3 w-20" />
+              </div>
+              <div className="space-y-2">
+                <LoadingSkeleton className="h-3 w-full" />
+                <LoadingSkeleton className="h-3 w-4/5" />
+              </div>
+              <LoadingSkeleton className="h-4 w-20" />
+              <LoadingSkeleton className="h-6 w-20 rounded-full" />
+              <LoadingSkeleton className="h-8 w-24 rounded-lg" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

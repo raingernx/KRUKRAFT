@@ -6,7 +6,10 @@ import type { MouseEvent } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { usePlatformConfig } from "@/components/providers/PlatformConfigProvider";
-import { beginResourcesNavigation } from "@/components/marketplace/resourcesNavigationState";
+import {
+  beginResourcesNavigation,
+  isResourcesSubtreePath,
+} from "@/components/marketplace/resourcesNavigationState";
 import { routes } from "@/lib/routes";
 
 export type LogoVariant = "full" | "icon" | "email";
@@ -188,7 +191,9 @@ export function Logo({
   }
 
   function handleLogoClick(event: MouseEvent<HTMLAnchorElement>) {
-    beginResourcesNavigation("discover", routes.marketplace);
+    beginResourcesNavigation("discover", routes.marketplace, {
+      overlay: !isResourcesSubtreePath(pathname),
+    });
 
     const isAlreadyDiscoverRoute =
       pathname === routes.marketplace &&

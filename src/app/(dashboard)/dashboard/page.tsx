@@ -25,6 +25,7 @@ import {
 } from "@/lib/performance/observability";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 import { routes } from "@/lib/routes";
+import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
 
 export const metadata = {
   title: "Overview",
@@ -87,7 +88,7 @@ function DashboardShelfCard({
   widthClassName?: string;
 }) {
   return (
-    <Link
+    <ResourceIntentLink
       href={routes.resource(resource.slug)}
       className={`group flex ${widthClassName} h-[248px] flex-shrink-0 flex-col rounded-xl border border-border bg-card p-3.5 transition hover:bg-accent/40`}
     >
@@ -123,7 +124,7 @@ function DashboardShelfCard({
           Open
         </span>
       </div>
-    </Link>
+    </ResourceIntentLink>
   );
 }
 
@@ -319,7 +320,7 @@ export default async function DashboardPage() {
             <ul className="divide-y divide-border">
               {recentPurchases.map((purchase) => (
                 <li key={purchase.id}>
-                  <Link
+                  <ResourceIntentLink
                     href={routes.resource(purchase.resource.slug)}
                     className="flex items-center gap-4 px-5 py-4 transition hover:bg-muted/70 sm:px-6"
                   >
@@ -350,7 +351,7 @@ export default async function DashboardPage() {
                         ? "Free"
                         : formatPrice(purchase.resource.price / 100)}
                     </span>
-                  </Link>
+                  </ResourceIntentLink>
                 </li>
               ))}
             </ul>
@@ -393,13 +394,13 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                 </div>
-                <Link
+                <ResourceIntentLink
                   href={routes.resource(lastOpened.resource.slug)}
                   className="inline-flex items-center gap-2 rounded-xl border border-border bg-muted px-4 py-2.5 text-small font-medium text-muted-foreground transition hover:bg-accent hover:text-foreground"
                 >
                   <BookOpen className="h-4 w-4" />
                   Open resource
-                </Link>
+                </ResourceIntentLink>
               </div>
             )}
 
@@ -428,13 +429,13 @@ export default async function DashboardPage() {
                     Recommended for your {levelLabel.toLowerCase()} study flow
                   </p>
                 )}
-                <Link
+                <ResourceIntentLink
                   href={routes.resource(nextBestAction.slug)}
                   className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-small font-semibold text-white transition hover:bg-primary-700"
                 >
                   Explore this next
                   <ArrowRight className="h-4 w-4" />
-                </Link>
+                </ResourceIntentLink>
               </div>
             )}
 

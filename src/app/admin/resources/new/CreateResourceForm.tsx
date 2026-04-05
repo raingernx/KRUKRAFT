@@ -4,9 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Card } from "@/design-system";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { ResourceCard } from "@/components/resources/ResourceCard";
-import { AdminFormLayout } from "@/components/admin/resources";
+import {
+  AdminFormLayout,
+  AdminResourceFormLoadingShell,
+} from "@/components/admin/resources";
 import type { ResourceCardData } from "@/components/resources/ResourceCard";
 import type {
   ResourceFormCategory,
@@ -43,30 +45,6 @@ const defaultPreviewData: ResourceCardData = {
   tags: [],
   _count: { purchases: 0, reviews: 0 },
 };
-
-function AdminResourceFormLoadingShell() {
-  return (
-    <div className="space-y-6">
-      <div className="space-y-3">
-        <LoadingSkeleton className="h-4 w-28" />
-        <LoadingSkeleton className="h-11 w-full rounded-2xl" />
-      </div>
-      <div className="space-y-3">
-        <LoadingSkeleton className="h-4 w-40" />
-        <LoadingSkeleton className="h-28 w-full rounded-3xl" />
-      </div>
-      <div className="grid gap-4 lg:grid-cols-2">
-        <LoadingSkeleton className="h-11 w-full rounded-2xl" />
-        <LoadingSkeleton className="h-11 w-full rounded-2xl" />
-      </div>
-      <LoadingSkeleton className="h-40 w-full rounded-3xl" />
-      <div className="flex justify-end gap-3">
-        <LoadingSkeleton className="h-10 w-28 rounded-full" />
-        <LoadingSkeleton className="h-10 w-36 rounded-full" />
-      </div>
-    </div>
-  );
-}
 
 export function CreateResourceForm({ categories, tags: initialTags, currentUser }: CreateResourceFormProps) {
   const router = useRouter();

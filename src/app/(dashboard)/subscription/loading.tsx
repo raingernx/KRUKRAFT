@@ -1,3 +1,5 @@
+import { DashboardSubscriptionSkeleton } from "@/components/skeletons/DashboardUserRouteSkeletons";
+
 export default function Loading() {
-  return null;
+  return <DashboardSubscriptionSkeleton />;
 }

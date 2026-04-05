@@ -19,7 +19,11 @@ import { AccountTrigger } from "@/components/layout/account/AccountTrigger";
 import { NavbarBrand } from "@/components/layout/NavbarBrand";
 import { NavbarItem } from "@/components/layout/navbar/NavbarItem";
 import { Container } from "@/design-system";
-import { beginResourcesNavigation } from "@/components/marketplace/resourcesNavigationState";
+import {
+  beginResourcesNavigation,
+  isResourcesSubtreePath,
+} from "@/components/marketplace/resourcesNavigationState";
+import { beginDashboardNavigation } from "@/components/layout/dashboard/dashboardNavigationState";
 import {
   clearCachedAuthViewer,
   primeAuthViewer,
@@ -97,6 +101,19 @@ function isMarketplaceCategoryActive(currentCategory: string | null, itemCategor
   }
 
   return currentCategory === itemCategory;
+}
+
+function handleProtectedAreaNavigation(href: string) {
+  if (
+    href === routes.dashboard ||
+    href === routes.library ||
+    href === routes.purchases ||
+    href === routes.settings ||
+    href === routes.subscription ||
+    href.startsWith("/dashboard/")
+  ) {
+    beginDashboardNavigation(href, { overlay: true });
+  }
 }
 
 function marketplaceCategoryClassName(active: boolean) {
@@ -223,12 +240,28 @@ function NavbarInner({
 
   function handleHomeNavigation(href: string) {
     if (href === routes.marketplace) {
-      beginResourcesNavigation("discover", href);
+      beginResourcesNavigation("discover", href, {
+        overlay: !isResourcesSubtreePath(pathname),
+      });
+      return;
     }
+
+    handleProtectedAreaNavigation(href);
+  }
+
+  function handlePrimaryNavigation(href: string) {
+    if (href === routes.marketplace) {
+      handleHomeNavigation(href);
+      return;
+    }
+
+    handleProtectedAreaNavigation(href);
   }
 
   function handleMarketplaceNavigation(mode: "discover" | "listing", href: string) {
-    beginResourcesNavigation(mode, href);
+    beginResourcesNavigation(mode, href, {
+      overlay: !isResourcesSubtreePath(pathname),
+    });
     closeMobileMoreMenu();
   }
 
@@ -286,7 +319,10 @@ function NavbarInner({
             <div className="my-1 border-t border-border-subtle" />
             <Link
               href={routes.dashboard}
-              onClick={() => setUserMenuOpen(false)}
+              onClick={() => {
+                handleProtectedAreaNavigation(routes.dashboard);
+                setUserMenuOpen(false);
+              }}
               className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
               <span className="inline-flex items-center gap-2.5">
@@ -296,7 +332,10 @@ function NavbarInner({
             </Link>
             <Link
               href={routes.library}
-              onClick={() => setUserMenuOpen(false)}
+              onClick={() => {
+                handleProtectedAreaNavigation(routes.library);
+                setUserMenuOpen(false);
+              }}
               className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
               <span className="inline-flex items-center gap-2.5">
@@ -306,7 +345,10 @@ function NavbarInner({
             </Link>
             <Link
               href={routes.purchases}
-              onClick={() => setUserMenuOpen(false)}
+              onClick={() => {
+                handleProtectedAreaNavigation(routes.purchases);
+                setUserMenuOpen(false);
+              }}
               className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
               <span className="inline-flex items-center gap-2.5">
@@ -319,7 +361,10 @@ function NavbarInner({
 
             <Link
               href={routes.settings}
-              onClick={() => setUserMenuOpen(false)}
+              onClick={() => {
+                handleProtectedAreaNavigation(routes.settings);
+                setUserMenuOpen(false);
+              }}
               className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
               <span className="inline-flex items-center gap-2.5">
@@ -363,7 +408,11 @@ function NavbarInner({
               >
                 {authUser ? (
                   <>
-                    <Link href={routes.library} className={MARKETPLACE_ACTION_LINK_CLASS_NAME}>
+                    <Link
+                      href={routes.library}
+                      onClick={() => handleProtectedAreaNavigation(routes.library)}
+                      className={MARKETPLACE_ACTION_LINK_CLASS_NAME}
+                    >
                       คลังของฉัน
                     </Link>
                     <div className="relative">
@@ -408,7 +457,11 @@ function NavbarInner({
                 onFocusCapture={warmAuthViewer}
               >
                 {authUser ? (
-                  <Link href={routes.library} className="inline-flex h-10 shrink-0 items-center rounded-full px-3 text-[14px] leading-[22px] font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2">
+                  <Link
+                    href={routes.library}
+                    onClick={() => handleProtectedAreaNavigation(routes.library)}
+                    className="inline-flex h-10 shrink-0 items-center rounded-full px-3 text-[14px] leading-[22px] font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
+                  >
                     คลังของฉัน
                   </Link>
                 ) : authViewer.isReady ? (
@@ -564,7 +617,7 @@ function NavbarInner({
                 <NavbarItem
                   key={href}
                   href={href}
-                  onClick={() => handleHomeNavigation(href)}
+                  onClick={() => handlePrimaryNavigation(href)}
                   variant="default"
                   className="h-10 rounded-full px-4 text-[14px] leading-[22px] font-semibold"
                 >
@@ -629,7 +682,7 @@ function NavbarInner({
                 key={href}
                 href={href}
                 onClick={() => {
-                  handleHomeNavigation(href);
+                  handlePrimaryNavigation(href);
                   closeAll();
                 }}
                 variant="default"
@@ -668,7 +721,10 @@ function NavbarInner({
 
                 <Link
                   href={routes.dashboard}
-                  onClick={closeAll}
+                  onClick={() => {
+                    handleProtectedAreaNavigation(routes.dashboard);
+                    closeAll();
+                  }}
                   className="flex items-center gap-2.5 rounded-lg border border-border-strong px-4 py-2.5 text-sm font-medium text-muted-foreground hover:border-border hover:bg-accent hover:text-foreground"
                 >
                   <span className="inline-flex items-center gap-2.5">

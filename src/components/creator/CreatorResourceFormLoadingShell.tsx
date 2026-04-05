@@ -1,6 +1,11 @@
+"use client";
+
+import { Skeleton } from "boneyard-js/react";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 
-export function CreatorResourceFormLoadingShell() {
+const CREATOR_RESOURCE_FORM_NAME = "creator-resource-form";
+
+export function CreatorResourceFormLoadingShellPreview() {
   return (
     <section className="space-y-6 rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-6">
       <div className="space-y-3">
@@ -34,5 +39,25 @@ export function CreatorResourceFormLoadingShell() {
         <LoadingSkeleton className="h-11 w-36 rounded-full" />
       </div>
     </section>
+  );
+}
+
+function CreatorResourceFormLoadingShellFallback() {
+  return <CreatorResourceFormLoadingShellPreview />;
+}
+
+export function CreatorResourceFormLoadingShell() {
+  return <CreatorResourceFormLoadingShellFallback />;
+}
+
+export function CreatorResourceFormLoadingShellBonesPreview() {
+  return (
+    <Skeleton
+      loading={false}
+      name={CREATOR_RESOURCE_FORM_NAME}
+      className="w-full"
+    >
+      <CreatorResourceFormLoadingShellPreview />
+    </Skeleton>
   );
 }

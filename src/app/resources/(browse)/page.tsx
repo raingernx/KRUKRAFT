@@ -10,6 +10,7 @@ import {
 } from "../ResourcesPageContent";
 import { HeroBannerFallback } from "@/components/marketplace/HeroBanner";
 import { ResourcesCatalogControls } from "@/components/marketplace/ResourcesCatalogControls";
+import { ResourcesRouteReady } from "@/components/marketplace/ResourcesRouteReady";
 import {
   ResourcesCatalogSearchSkeleton,
   ResourcesCatalogControlsSkeleton,
@@ -114,7 +115,11 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
       );
 
       return (
-        <div className="flex min-h-screen flex-col bg-background">
+        <div
+          data-route-shell-ready="resources-browse"
+          className="flex min-h-screen flex-col bg-background"
+        >
+          <ResourcesRouteReady />
           <Navbar
             headerSearch={
               <Suspense fallback={<ResourcesCatalogSearchSkeleton />}>

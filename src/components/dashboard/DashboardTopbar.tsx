@@ -59,7 +59,7 @@ export function DashboardTopbar({ user, onMenuToggle }: DashboardTopbarProps) {
   }
 
   function handleMarketplaceNavigation(href: string) {
-    beginResourcesNavigation("discover", href);
+    beginResourcesNavigation("discover", href, { overlay: true });
   }
 
   function handleSearch(e: React.FormEvent) {

@@ -5,11 +5,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { ResourceDetailLoadingShell } from "@/components/resources/detail/ResourceDetailLoadingShell";
 import {
   canonicalizeResourcesHref,
-  clearResourcesNavigation,
   useResourcesNavigationState,
 } from "@/components/marketplace/resourcesNavigationState";
-
-const MIN_PENDING_MS = 260;
 
 function scrollViewportToTopInstantly() {
   const root = document.documentElement;
@@ -46,8 +43,6 @@ export function ResourcesTransitionShell({
     isPending && navigationState.mode !== "detail";
   const shouldShowPendingDetailShell =
     isPending && navigationState.mode === "detail";
-  const reachedTarget =
-    isPending && currentHref === navigationState.href;
   const [frozenChildren, setFrozenChildren] = useState(children);
 
   useEffect(() => {
@@ -63,34 +58,6 @@ export function ResourcesTransitionShell({
 
     scrollViewportToTopInstantly();
   }, [shouldShowPendingDetailShell, navigationState.id]);
-
-  useEffect(() => {
-    if (!navigationState.mode || !navigationState.href || !reachedTarget) {
-      return;
-    }
-
-    const elapsed = Date.now() - navigationState.startedAt;
-    const remaining = Math.max(0, MIN_PENDING_MS - elapsed);
-    let frameId = 0;
-    let nestedFrameId = 0;
-    const timeoutId = window.setTimeout(() => {
-      frameId = window.requestAnimationFrame(() => {
-        nestedFrameId = window.requestAnimationFrame(() => {
-          clearResourcesNavigation(navigationState.id);
-        });
-      });
-    }, remaining);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-      if (frameId) {
-        window.cancelAnimationFrame(frameId);
-      }
-      if (nestedFrameId) {
-        window.cancelAnimationFrame(nestedFrameId);
-      }
-    };
-  }, [navigationState, reachedTarget]);
 
   return (
     <div className="relative min-h-full">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Download, FileText, BookOpen } from "lucide-react";
+import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
 import { authOptions } from "@/lib/auth";
 import { requireSession } from "@/lib/auth/require-session";
 import { formatDate, formatFileSize } from "@/lib/format";
@@ -110,12 +111,12 @@ export default async function DownloadsPage() {
                         )}
                       </div>
                       <div className="min-w-0">
-                        <Link
+                        <ResourceIntentLink
                           href={routes.resource(dl.resource.slug)}
                           className="block truncate text-[13px] font-medium text-foreground hover:text-primary-700"
                         >
                           {dl.resource.title}
-                        </Link>
+                        </ResourceIntentLink>
                         <span className="mt-0.5 inline-block rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium text-secondary-foreground">
                           {dl.resource.type}
                         </span>

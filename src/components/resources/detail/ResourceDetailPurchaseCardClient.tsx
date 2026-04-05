@@ -18,6 +18,7 @@ import { formatFileSize, formatNumber } from "@/lib/format";
 import { isPreviewSupported } from "@/lib/preview/previewPolicy";
 import { routes } from "@/lib/routes";
 import { useResourceDetailViewerState } from "./ResourceDetailViewerStateProvider";
+import type { ResourceDetailViewerBaseState } from "@/lib/resources/resource-detail-viewer-state";
 
 type TrustSummary = {
   averageRating: number | null;
@@ -34,6 +35,11 @@ type PurchaseMeta = {
     last30dPurchases: number;
   } | null;
 } | null;
+
+type ResourceDetailPurchaseCardViewerState = ResourceDetailViewerBaseState & {
+  isReady: boolean;
+  refresh?: () => Promise<void>;
+};
 
 interface PurchaseCardResource {
   id: string;
@@ -92,6 +98,7 @@ export function ResourceDetailPurchaseCardClient({
   hasFile,
   isReturningFromCheckout,
   platformShortName,
+  viewerStateOverride,
 }: {
   resource: PurchaseCardResource;
   purchaseMeta: PurchaseMeta;
@@ -99,8 +106,16 @@ export function ResourceDetailPurchaseCardClient({
   hasFile: boolean;
   isReturningFromCheckout: boolean;
   platformShortName: string;
+  viewerStateOverride?: ResourceDetailPurchaseCardViewerState;
 }) {
-  const viewer = useResourceDetailViewerState();
+  const contextViewer = useResourceDetailViewerState();
+  const viewer = viewerStateOverride
+    ? {
+        ...contextViewer,
+        ...viewerStateOverride,
+        refresh: viewerStateOverride.refresh ?? contextViewer.refresh,
+      }
+    : contextViewer;
   const isFree = resource.isFree || resource.price === 0;
   const isOwned = viewer.isOwned;
   const isPendingPurchase =

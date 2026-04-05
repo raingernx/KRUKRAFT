@@ -31,6 +31,7 @@ import { CreatorFirstSaleBanner } from "@/components/creator/CreatorFirstSaleBan
 import { CreatorRecentSalesCard } from "@/components/creator/CreatorRecentSalesCard";
 import { formatDate, formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";
+import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
 import {
   getCreatorAccessState,
   getCreatorBalance,
@@ -533,10 +534,10 @@ export default async function CreatorDashboardPage() {
                     <td className="px-6 py-4">
                       <div className="flex justify-end gap-2">
                         <Button variant="outline" size="sm" asChild>
-                          <Link href={routes.resource(resource.slug)}>
+                          <ResourceIntentLink href={routes.resource(resource.slug)}>
                             <ExternalLink className="h-4 w-4" />
                             View listing
-                          </Link>
+                          </ResourceIntentLink>
                         </Button>
                         <Button variant="ghost" size="sm" asChild>
                           <Link href={routes.creatorResource(resource.resourceId)}>

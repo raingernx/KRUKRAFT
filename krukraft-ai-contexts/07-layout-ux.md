@@ -30,6 +30,11 @@
   `document.documentElement.dataset.theme` before React hydration, which avoids
   the previous white-first flash when a returning `dark` or `system -> dark`
   session refreshed the page.
+- Root layout no longer imports the generated bones registry as a side effect.
+  Generated skeleton sets are now bootstrapped by the client-only
+  `BonesRegistryBootstrap` provider after hydration, which reduces the Fast
+  Refresh blast radius when `src/bones/registry.js` is regenerated during
+  skeleton work.
 - The no-preference/default theme path is now `light`; `system` remains
   available in user settings but is no longer the initial baseline for first
   paint or newly created preference records.
@@ -117,6 +122,92 @@
 - listing mode fallback now includes the optional spotlight geometry as part of
   the shared `ResourcesContentFallback` contract, so the live listing and
   loading states do not diverge when spotlight styling/layout changes
+- dashboard/library/purchases/downloads and creator-dashboard links that open
+  public resource detail pages should use navigation-aware resource links so
+  cross-group transitions into `/resources/[slug]` start the detail shell
+  immediately instead of waiting for the new route tree to mount cold.
+- resources navigation state should now clear from the mounted route shells
+  themselves, not from a shared `src/app/resources/template.tsx`. The browse
+  page mounts `ResourcesRouteReady` inside
+  `src/app/resources/(browse)/page.tsx`, and detail pages mount it inside
+  `ResourceDetailShell`, so pending detail/listing shells do not disappear
+  before the target route scaffolding is actually on screen.
+- Cross-group jumps into `/resources` now also have a root-level
+  `ResourcesNavigationOverlay` from `src/app/layout.tsx`. Links launched from
+  non-resources routes mark `overlay: true` in the resources navigation store,
+  so users moving from dashboard or other public pages into listing/detail
+  routes keep a visible resources shell on screen while the new route tree is
+  still mounting.
+- Dashboard and resources transition overlays no longer clear from a fixed
+  timeout alone. `DashboardOverlayReady`, `DashboardNavigationReady`, and
+  `ResourcesRouteReady` now wait for route-shell markers
+  (`data-route-shell-ready="dashboard"`, `"resources-browse"`,
+  `"resource-detail"`) plus a non-empty `main`/loading surface before they
+  clear pending navigation state, which prevents the previous flash-then-blank
+  gap on slower route-group transitions.
+- `DashboardGroupNavigationOverlay` and `ResourcesNavigationOverlay` now also
+  derive a fallback overlay directly from `usePathname()` transitions, not only
+  from click-started navigation state. That keeps shell coverage active for
+  browser back/forward and any route change where the intent state was not
+  started in time.
+- The root overlays are now target-aware instead of generic:
+  `DashboardGroupNavigationOverlay` maps the destination href to route-specific
+  dashboard, library, downloads, purchases, subscription, settings, creator,
+  and creator-resource shells, while `ResourcesNavigationOverlay` resolves
+  browse/listing vs detail from the destination resources href before it
+  renders. This prevents the earlier sequence where users briefly saw a
+  resource-detail shell while navigating to discover, or a generic dashboard
+  shell before the library/purchases-specific shell appeared.
+- The dashboard overlay now wraps those route-specific loading blocks in the
+  shared dashboard shell chrome instead of painting content-only previews over
+  the root app background. Cross-group jumps into dashboard pages should
+  therefore keep the dashboard sidebar/topbar visible from the first loading
+  frame, rather than showing library/downloads content under public chrome.
+- Public-navbar protected links such as `คลังของฉัน` now also start the
+  dashboard navigation intent immediately, not only after pathname fallback
+  detects that the app has already crossed into the dashboard subtree. This
+  keeps first-entry transitions from `/resources` into `/dashboard/library`
+  aligned with the target library shell from the initial frame.
+- `tests/e2e/navigation-shells.spec.ts` now samples the DOM every animation
+  frame during public/dashboard/resources transitions and is part of
+  `npm run smoke:local:browser`, so shell-coverage regressions can be caught in
+  browser automation instead of relying on manual visual checks alone.
+- Dashboard route-level loading inside the mounted shell now favors the manual
+  geometry from `DashboardUserRouteSkeletons.tsx` and
+  `CreatorDashboardRouteSkeletons.tsx` at runtime, while the generated bones
+  remain capture-only. This avoids the observed case where a dashboard shell
+  stayed on screen but the content pane went blank during transition.
+- Runtime `/resources` discover/listing loading now follows the same rule:
+  `ResourcesIntroSectionSkeleton`, `ResourcesDiscoverSectionsSkeleton`, and
+  listing-mode `ResourcesContentFallback` use their manual geometry directly
+  in live navigation, while boneyard preview exports stay capture-only. This
+  avoids the lower-page blank gap that could appear after the discover hero
+  shell mounted but before generated section bones resolved.
+- Default runtime skeletons should also stay neutral in tone: selected pills,
+  recovery banners, success strips, and promotional accent washes belong only
+  to condition-specific resolved UI, not the baseline loading shell. This is
+  especially important on dashboard library, resources listing, and other
+  cross-group transitions where a tinted block can read as the wrong page.
+- Route-level and Suspense-critical shells now apply that manual-runtime rule
+  more broadly as well: the resource-detail purchase rail, auth login shell,
+  admin settings shell, admin analytics route shells, and admin/creator
+  resource-form shells all render their manual fallback geometry directly in
+  the live app. This reduces the chance that boneyard runtime hydration or
+  delayed registry state leaves major secondary panes missing during
+  transition.
+- `/categories/[slug]`, `/creators/[slug]`, `/admin/creators`, the
+  compatibility redirect route `/resources/id/[id]`, and the legacy
+  dashboard alias `/purchases` now all have explicit route-level loading
+  coverage instead of falling back to blank shells during navigation.
+- `/admin/resources`, `/admin/resources/trash`, `/admin/resources/bulk`,
+  `/admin/resources/new`, `/admin/resources/[id]`, and
+  `/admin/resources/[id]/versions` now also declare explicit route-level
+  loading shells tailored to list, trash, bulk upload, form, and versions
+  layouts instead of streaming blank admin content while data resolves.
+- `/auth/login`, `/auth/register`, `/auth/reset-password`, and
+  `/auth/reset-password/confirm` now all declare route-level loading coverage
+  as well, so auth navigations no longer rely only on client-side Suspense or
+  blank route shells during streaming transitions.
 - route files under `src/app/**` should not declare local `*Skeleton` or `*Fallback` components inline; shared loading/fallback UI now lives under `src/components/skeletons/*`, and `npm run lint` enforces that contract with `npm run skeleton:check`
 - `boneyard-js` is now installed as an optional skeleton-capture workflow.
   Its config lives in `boneyard.config.json`, it writes generated bones under
@@ -126,7 +217,74 @@
   matching live DOM geometry more closely; it does not replace the existing
   requirement that route-level loading, skeleton, empty, and error states stay
   intentionally designed and parity-checked.
+- The current capture flow does not depend on route-loading timing. A dev-only
+  page at `src/app/dev/bones/page.tsx` renders
+  `ResourceCardBonesPreview`,
+  `SearchRecoveryPanelBonesPreview`,
+  `ResourcesCatalogSearchBonesPreview`,
+  `ResourcesCatalogControlsBonesPreview`,
+  `HeroSearchQuickBrowseBonesPreview`,
+  `HeroSearchResultsBonesPreview`,
+  `HeroSearchEmptyBonesPreview`,
+  `ResourcesDiscoverPersonalizedBonesPreview`,
+  `ResourcesIntroSectionDiscoverBonesPreview`,
+  `ResourcesIntroSectionListingBonesPreview`,
+  `ResourcesDiscoverSectionsBonesPreview`,
+  `ResourcesListingShellBonesPreview`, and `ResourcesRouteSkeletonBonesPreview`, plus
+  `ResourceDetailLoadingShellBonesPreview`, `SettingsPageSkeletonBonesPreview`,
+  `AdminSettingsPageSkeletonBonesPreview`, and
+  `CreatorApplyPageSkeletonBonesPreview`, plus
+  `CreatorResourceFormLoadingShellBonesPreview`, plus
+  `CreatorDashboardOverviewBonesPreview`,
+  `CreatorDashboardAnalyticsBonesPreview`,
+  `CreatorDashboardResourcesBonesPreview`,
+  `CreatorDashboardSalesBonesPreview`,
+  `CreatorDashboardProfileBonesPreview`, plus
+  `LoginFormSkeletonBonesPreview` (`loading={false}`) so `boneyard`
+  can extract stable DOM geometry, while the runtime
+  `ResourceCardSkeleton`, `ResourcesIntroSectionSkeleton`,
+  `ResourcesDiscoverSectionsSkeleton`,
+  listing-mode `ResourcesContentFallback`, `ResourcesRouteSkeleton`,
+  `PurchaseCardSkeleton`, `SettingsPageSkeleton`,
+  `AdminSettingsPageSkeleton`, `CreatorApplyPageSkeleton`,
+  `AdminAnalyticsOverviewSkeleton`,
+  `AdminAnalyticsRecommendationsSkeleton`,
+  `AdminAnalyticsRankingSkeleton`,
+  `AdminAnalyticsRankingExperimentSkeleton`,
+  `AdminAnalyticsPurchasesSkeleton`,
+  `AdminAnalyticsCreatorActivationSkeleton`,
+  `AdminResourceFormLoadingShell`, `CreatorResourceFormLoadingShell`,
+  `CreatorDashboardOverviewLoadingShell`,
+  `CreatorDashboardAnalyticsLoadingShell`,
+  `CreatorDashboardResourcesLoadingShell`,
+  `CreatorDashboardSalesLoadingShell`,
+  `CreatorDashboardProfileLoadingShell`, `CreatorResourceNewRouteSkeleton`,
+  `LoginFormSkeleton`,
+  `DashboardOverviewSkeleton`,
+  `DashboardLibrarySkeleton`,
+  `DashboardDownloadsSkeleton`,
+  `DashboardPurchasesSkeleton`,
+  `DashboardSubscriptionSkeleton`,
+  `DashboardResourcesRedirectSkeleton`, and
+  `ResourceDetailLoadingShell` keep manual fallbacks
+  if bones are missing or the registry has not loaded yet.
+  The current generated registry now includes 39 captured sets, covering
+  search recovery, catalog chrome, hero-search dropdown states,
+  intro discover/listing shells, discover sections, personalized discover
+  sections, listing shell, route shell, purchase rail, resource detail shell,
+  the base resource card, dedicated settings/admin/creator-apply route shells,
+  the admin analytics overview/recommendations/ranking/ranking-experiment/
+  purchases/creator-activation route shells, the admin resource form shell,
+  the creator resource form shell, creator dashboard overview/analytics/
+  resources/sales/profile shells, the creator new-resource route shell,
+  the auth login shell, and the user dashboard overview/library/downloads/
+  purchases/subscription/resources-redirect route shells.
 - forward navigation from a scrolled `/resources` view into `/resources/[slug]` now scrolls the viewport to the top before the detail loading shell renders, while browser back-navigation should still restore the previous discover scroll position
+- `ResourceDetailLoadingShell` currently prefers its manual runtime shell over
+  the generated `resource-detail-shell` bones set because the generated version
+  was producing blank output during real navigation. The bones preview/export is
+  still kept for capture work, but live route loading now prioritizes a visible
+  structural shell.
 
 ### /resources/[slug] (Resource Detail)
 
@@ -159,6 +317,30 @@ max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8
 - Per-user dynamic rendering
 - Purchases and learning profile surfaces
 - Download history and creator-access state
+- Route-level loading for `/dashboard`, `/dashboard/library`,
+  `/dashboard/downloads`, `/dashboard/purchases`,
+  `/dashboard/resources`, and `/subscription` now reuses the shared
+  `DashboardUserRouteSkeletons.tsx` hybrid boneyard layer instead of
+  returning `null`
+- The parent `(dashboard)` route group now also declares
+  `src/app/(dashboard)/loading.tsx`, which renders a shell-level dashboard
+  skeleton before the async dashboard layout resolves session and creator
+  access. First navigation from public routes into dashboard surfaces should
+  now show sidebar/topbar/content scaffolding instead of a blank gap while the
+  group layout is still loading.
+- Public `Navbar` links that enter protected dashboard surfaces now also
+  trigger a global dashboard navigation overlay from the root layout via
+  `DashboardGroupNavigationOverlay`, so first entry from public routes does not
+  depend solely on segment loading timing to reveal a visible shell. The
+  overlay now persists until the mounted client dashboard shell clears the
+  pending overlay state via `DashboardOverlayReady`, instead of hiding as soon
+  as the browser URL enters `/dashboard` or as soon as a route template mounts.
+- Template-based dashboard readiness now only clears in-dashboard transition
+  progress (`overlay: false`). First entry from public routes into the
+  protected dashboard subtree should clear from the actual `DashboardShell`
+  mount path instead of from a route-group template, which avoids the
+  flash-then-blank gap where the URL changed before the dashboard shell was
+  visibly ready.
 - `/settings` now favors flat, divider-based account sections instead of stacking card-inside-card form panels; section hierarchy should come from headers, spacing, and row separation first
 - `/settings` route-level loading now mirrors that same flat section rhythm instead of returning a null loading state
 

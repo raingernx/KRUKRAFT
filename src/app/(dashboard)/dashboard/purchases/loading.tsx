@@ -1,3 +1,5 @@
+import { DashboardPurchasesSkeleton } from "@/components/skeletons/DashboardUserRouteSkeletons";
+
 export default function Loading() {
-  return null;
+  return <DashboardPurchasesSkeleton />;
 }

@@ -6,6 +6,7 @@ export interface DashboardNavigationState {
   id: number;
   href: string | null;
   startedAt: number;
+  overlay: boolean;
 }
 
 let nextNavigationId = 1;
@@ -13,6 +14,7 @@ let state: DashboardNavigationState = {
   id: 0,
   href: null,
   startedAt: 0,
+  overlay: false,
 };
 
 const listeners = new Set<() => void>();
@@ -49,11 +51,15 @@ export function canonicalizeDashboardHref(href: string) {
   return search ? `${url.pathname}?${search}` : url.pathname;
 }
 
-export function beginDashboardNavigation(href: string) {
+export function beginDashboardNavigation(
+  href: string,
+  options?: { overlay?: boolean },
+) {
   state = {
     id: nextNavigationId++,
     href: canonicalizeDashboardHref(href),
     startedAt: Date.now(),
+    overlay: options?.overlay ?? false,
   };
   emit();
 }
@@ -67,6 +73,7 @@ export function clearDashboardNavigation(id: number) {
     id: 0,
     href: null,
     startedAt: 0,
+    overlay: false,
   };
   emit();
 }

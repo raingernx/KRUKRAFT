@@ -52,8 +52,10 @@ export {
 } from "./Pagination";
 export {
   ResourceCard,
-  ResourceCardSkeleton,
 } from "./ResourceCard";
+export {
+  ResourceCardSkeleton,
+} from "@/components/resources/ResourceCardSkeleton";
 export type {
   ResourceCardData,
   ResourceCardResource,

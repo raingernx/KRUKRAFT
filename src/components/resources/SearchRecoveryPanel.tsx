@@ -1,7 +1,12 @@
+"use client";
+
+import { Skeleton } from "boneyard-js/react";
 import Link from "next/link";
 import { Compass, Search, Sparkles } from "lucide-react";
 import { routes } from "@/lib/routes";
 import type { SearchRecoveryData } from "@/services/search";
+
+const SEARCH_RECOVERY_PANEL_NAME = "search-recovery-panel";
 
 export function SearchRecoveryPanel({
   query,
@@ -109,5 +114,40 @@ export function SearchRecoveryPanel({
         </Link>
       </section>
     </div>
+  );
+}
+
+const previewRecovery: SearchRecoveryData = {
+  suggestedQueries: ["worksheet", "science quiz", "flashcards"],
+  categoryMatches: [
+    { name: "Language", slug: "language", resourceCount: 42 },
+    { name: "Science", slug: "science", resourceCount: 35 },
+  ],
+  tagMatches: [
+    { name: "vocabulary", slug: "vocabulary", resourceCount: 18 },
+    { name: "quiz", slug: "quiz", resourceCount: 12 },
+    { name: "printable", slug: "printable", resourceCount: 22 },
+  ],
+};
+
+export function SearchRecoveryPanelPreview() {
+  return (
+    <SearchRecoveryPanel
+      query="zzzznotfound123"
+      recovery={previewRecovery}
+    />
+  );
+}
+
+export function SearchRecoveryPanelBonesPreview() {
+  return (
+    <Skeleton
+      name={SEARCH_RECOVERY_PANEL_NAME}
+      loading={false}
+      className="h-full w-full"
+      darkColor="rgba(255,255,255,0.07)"
+    >
+      <SearchRecoveryPanelPreview />
+    </Skeleton>
   );
 }

@@ -12,6 +12,7 @@ import {
   beginResourcesNavigation,
   canonicalizeResourcesHref,
   inferResourcesNavigationMode,
+  isResourcesSubtreePath,
   type ResourcesNavigationMode,
   useResourcesNavigationState,
 } from "@/components/marketplace/resourcesNavigationState";
@@ -104,7 +105,9 @@ function IntentPrefetchLinkBase({
         : resourcesNavigationMode ?? null;
 
     if (mode) {
-      beginResourcesNavigation(mode, href);
+      beginResourcesNavigation(mode, href, {
+        overlay: !isResourcesSubtreePath(pathname ?? ""),
+      });
     }
   }
 

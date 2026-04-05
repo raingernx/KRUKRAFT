@@ -1,41 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
-import {
-  canonicalizeDashboardHref,
-  clearDashboardNavigation,
-  useDashboardNavigationState,
-} from "./dashboardNavigationState";
-
-const MIN_PENDING_MS = 160;
+import { useDashboardNavigationState } from "./dashboardNavigationState";
 
 export function DashboardNavigationFeedback() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const navigationState = useDashboardNavigationState();
-  const currentSearch = searchParams.toString();
-  const currentHref = canonicalizeDashboardHref(
-    currentSearch ? `${pathname}?${currentSearch}` : pathname,
-  );
-
-  useEffect(() => {
-    if (!navigationState.href) {
-      return;
-    }
-
-    if (currentHref !== navigationState.href) {
-      return;
-    }
-
-    const elapsed = Date.now() - navigationState.startedAt;
-    const remaining = Math.max(0, MIN_PENDING_MS - elapsed);
-    const timeoutId = window.setTimeout(() => {
-      clearDashboardNavigation(navigationState.id);
-    }, remaining);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [navigationState, currentHref]);
 
   if (!navigationState.href) {
     return null;

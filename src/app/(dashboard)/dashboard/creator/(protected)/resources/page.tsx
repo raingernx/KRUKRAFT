@@ -14,6 +14,7 @@ import { StatusBadge } from "@/components/admin/StatusBadge";
 import { formatDate, formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";
 import { getCreatorAccessState, getCreatorResourceManagementData } from "@/services/creator";
+import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
 
 export const metadata = {
   title: "Creator Resources",
@@ -257,12 +258,12 @@ export default async function CreatorResourcesPage({
                       <StatusBadge status={resource.status} />
                     </td>
                     <td className="px-3 py-3 text-right">
-                      <RowActions>
-                        <RowActionButton asChild>
-                          <Link href={routes.resource(resource.slug)}>
+                        <RowActions>
+                          <RowActionButton asChild>
+                          <ResourceIntentLink href={routes.resource(resource.slug)}>
                             <Eye className="h-3.5 w-3.5" />
                             View
-                          </Link>
+                          </ResourceIntentLink>
                         </RowActionButton>
                         <RowActionButton asChild>
                           <Link href={routes.creatorResource(resource.id)}>

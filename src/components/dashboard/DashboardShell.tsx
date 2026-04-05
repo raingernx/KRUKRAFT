@@ -9,6 +9,7 @@ import { routes } from "@/lib/routes";
 import { getDashboardNav } from "@/lib/dashboard/getDashboardNav";
 import { getDashboardShellVariant } from "@/lib/dashboard/dashboard-permissions";
 import { DashboardShell as SharedDashboardShell } from "@/components/layout/dashboard/DashboardShell";
+import { DashboardOverlayReady } from "@/components/layout/dashboard/DashboardOverlayReady";
 import { usePlatformConfig } from "@/components/providers/PlatformConfigProvider";
 import { beginDashboardNavigation } from "@/components/layout/dashboard/dashboardNavigationState";
 
@@ -58,26 +59,29 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
   );
 
   return (
-    <SharedDashboardShell
-      variant={shellVariant}
-      sections={getDashboardNav({
-        area: "dashboard",
-        role: user.role,
-        isCreator: user.isCreator,
-      })}
-      profile={{
-        name: user.name,
-        email: user.email,
-        image: user.image,
-        fallbackName: "Student",
-      }}
-      sidebarTopSlot={topSlot}
-      sidebarFooter={footer}
-      renderTopbar={({ onMenuToggle }) => (
-        <DashboardTopbar user={user} onMenuToggle={onMenuToggle} />
-      )}
-    >
-      {children}
-    </SharedDashboardShell>
+    <>
+      <DashboardOverlayReady />
+      <SharedDashboardShell
+        variant={shellVariant}
+        sections={getDashboardNav({
+          area: "dashboard",
+          role: user.role,
+          isCreator: user.isCreator,
+        })}
+        profile={{
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          fallbackName: "Student",
+        }}
+        sidebarTopSlot={topSlot}
+        sidebarFooter={footer}
+        renderTopbar={({ onMenuToggle }) => (
+          <DashboardTopbar user={user} onMenuToggle={onMenuToggle} />
+        )}
+      >
+        {children}
+      </SharedDashboardShell>
+    </>
   );
 }

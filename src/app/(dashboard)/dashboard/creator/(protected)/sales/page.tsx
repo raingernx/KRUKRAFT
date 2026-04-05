@@ -4,6 +4,7 @@ import { requireSession } from "@/lib/auth/require-session";
 import { formatDate, formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";
 import { getCreatorSales } from "@/services/creator";
+import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
 
 export const metadata = {
   title: "Creator Sales",
@@ -104,12 +105,12 @@ export default async function CreatorSalesPage() {
                     <tr key={sale.id}>
                       <td className="px-6 py-4">
                         <div className="min-w-0">
-                          <Link
+                          <ResourceIntentLink
                             href={routes.resource(sale.resourceSlug)}
                             className="truncate font-medium text-foreground hover:text-blue-600"
                           >
                             {sale.resourceTitle}
-                          </Link>
+                          </ResourceIntentLink>
                           <p className="mt-1 text-xs text-muted-foreground">{sale.resourceSlug}</p>
                         </div>
                       </td>

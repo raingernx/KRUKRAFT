@@ -10,6 +10,7 @@ export interface ResourcesNavigationState {
   mode: ResourcesNavigationMode | null;
   href: string | null;
   startedAt: number;
+  overlay: boolean;
 }
 
 let nextNavigationId = 1;
@@ -18,6 +19,7 @@ let state: ResourcesNavigationState = {
   mode: null,
   href: null,
   startedAt: 0,
+  overlay: false,
 };
 
 const listeners = new Set<() => void>();
@@ -73,12 +75,21 @@ export function inferResourcesNavigationMode(href: string): ResourcesNavigationM
   return null;
 }
 
-export function beginResourcesNavigation(mode: ResourcesNavigationMode, href: string) {
+export function isResourcesSubtreePath(pathname: string) {
+  return pathname === routes.marketplace || pathname.startsWith(`${routes.marketplace}/`);
+}
+
+export function beginResourcesNavigation(
+  mode: ResourcesNavigationMode,
+  href: string,
+  options?: { overlay?: boolean },
+) {
   state = {
     id: nextNavigationId++,
     mode,
     href: canonicalizeResourcesHref(href),
     startedAt: Date.now(),
+    overlay: options?.overlay ?? false,
   };
   emit();
 }
@@ -93,6 +104,7 @@ export function clearResourcesNavigation(id: number) {
     mode: null,
     href: null,
     startedAt: 0,
+    overlay: false,
   };
   emit();
 }

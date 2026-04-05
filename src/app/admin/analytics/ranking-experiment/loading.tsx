@@ -1,3 +1,5 @@
+import { AdminAnalyticsRankingExperimentSkeleton } from "@/components/skeletons/AdminAnalyticsRouteSkeletons";
+
 export default function Loading() {
-  return null;
+  return <AdminAnalyticsRankingExperimentSkeleton />;
 }

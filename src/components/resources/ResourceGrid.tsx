@@ -13,7 +13,8 @@ import { Button } from "@/design-system";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { routes } from "@/lib/routes";
-import { ResourceCard, ResourceCardSkeleton, type ResourceCardData } from "./ResourceCard";
+import { ResourceCard, type ResourceCardData } from "./ResourceCard";
+import { ResourceCardSkeleton } from "./ResourceCardSkeleton";
 
 // Auto-fill: cards are at least 280 px wide and grow equally to fill available space.
 // Naturally produces ~2 cols on mobile, ~3 on tablet, ~4-5 on desktop, ~5-6 on 1600px.

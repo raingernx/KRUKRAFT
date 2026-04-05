@@ -9,6 +9,7 @@ import {
   getCreatorAnalytics,
   getCreatorReviewAnalytics,
 } from "@/services/creator";
+import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
 
 export const metadata = {
   title: "Creator Analytics",
@@ -272,12 +273,12 @@ export default async function CreatorAnalyticsPage({
                     <li key={`${section.title}-${resource.id}`}>
                       <div className="flex items-center justify-between gap-3 rounded-xl border border-border/70 px-4 py-3">
                         <div className="min-w-0">
-                          <Link
+                          <ResourceIntentLink
                             href={routes.resource(resource.slug)}
                             className="truncate text-sm font-medium text-foreground hover:text-brand-600"
                           >
                             {resource.title}
-                          </Link>
+                          </ResourceIntentLink>
                           <p className="mt-1 text-xs text-muted-foreground">{resource.slug}</p>
                         </div>
                         <span className="text-sm font-semibold text-foreground">
@@ -323,12 +324,12 @@ export default async function CreatorAnalyticsPage({
                     <tr key={resource.resourceId}>
                       <td className="px-6 py-4">
                         <div className="min-w-0">
-                          <Link
+                          <ResourceIntentLink
                             href={routes.resource(resource.slug)}
                             className="truncate text-sm font-medium text-foreground hover:text-brand-600"
                           >
                             {resource.title}
-                          </Link>
+                          </ResourceIntentLink>
                           <p className="mt-1 text-xs text-muted-foreground">
                             {resource.isFree ? "Free" : formatPrice(resource.price / 100)}
                           </p>
@@ -372,12 +373,12 @@ export default async function CreatorAnalyticsPage({
                 <li key={review.id} className="px-6 py-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
-                      <Link
+                      <ResourceIntentLink
                         href={routes.resource(review.resourceSlug)}
                         className="truncate text-sm font-medium text-foreground hover:text-brand-600"
                       >
                         {review.resourceTitle}
-                      </Link>
+                      </ResourceIntentLink>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {review.reviewerName} · {formatDate(review.createdAt)}
                       </p>
@@ -448,12 +449,12 @@ export default async function CreatorAnalyticsPage({
               {analytics.recentSales.map((sale) => (
                 <li key={sale.id} className="flex items-start justify-between gap-4 px-6 py-4">
                   <div className="min-w-0">
-                    <Link
+                    <ResourceIntentLink
                       href={routes.resource(sale.resourceSlug)}
                       className="truncate text-sm font-medium text-foreground hover:text-brand-600"
                     >
                       {sale.resourceTitle}
-                    </Link>
+                    </ResourceIntentLink>
                     <p className="mt-1 text-xs text-muted-foreground">
                       {sale.buyerName} · {sale.status} · {formatDate(sale.createdAt)}
                     </p>
@@ -487,12 +488,12 @@ export default async function CreatorAnalyticsPage({
               {analytics.recentDownloads.map((download) => (
                 <li key={download.id} className="flex items-start justify-between gap-4 px-6 py-4">
                   <div className="min-w-0">
-                    <Link
+                    <ResourceIntentLink
                       href={routes.resource(download.resourceSlug)}
                       className="truncate text-sm font-medium text-foreground hover:text-brand-600"
                     >
                       {download.resourceTitle}
-                    </Link>
+                    </ResourceIntentLink>
                     <p className="mt-1 text-xs text-muted-foreground">
                       {download.userId ? `User ${download.userId.slice(0, 8)}` : "Anonymous user"} ·{" "}
                       {formatDate(download.createdAt)}

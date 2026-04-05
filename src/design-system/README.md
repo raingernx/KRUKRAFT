@@ -102,6 +102,65 @@ surfaces.
   `src/bones`, and the current convenience commands are
   `npm run skeleton:boneyard:build` and
   `npm run skeleton:boneyard:build:force`.
+  The app now bootstraps generated bones through
+  `src/components/providers/BonesRegistryBootstrap.tsx`, which calls the safe
+  helper in `src/bones/index.ts` on the client instead of importing the
+  registry as a root-layout side effect, and the current pilot capture route
+  is `src/app/dev/bones/page.tsx`, which renders a
+  non-loading preview surface so `boneyard` can snapshot the live DOM into the
+  current catalog chrome pilots (`ResourcesCatalogSearchSkeleton`,
+  `ResourcesCatalogControlsSkeleton`) plus `HeroSearch` dropdown-state pilots
+  (quick browse, top matches, empty-result recovery), the
+  `SearchRecoveryPanel` empty-result surface, the
+  `ResourcesDiscoverPersonalizedSection` recommendation/because-you-studied/
+  level-based discover block, settings/admin/creator-apply route-shell
+  pilots, creator dashboard route shells, the creator resource form loading
+  shell, the admin resource form shell, the creator new-resource route shell,
+  the admin analytics overview/recommendations/ranking/ranking-experiment/
+  purchases/creator-activation route shells,
+  the auth login shell, the user dashboard overview/library/downloads/
+  purchases/subscription/resources-redirect route shells, and the
+  current generated sets:
+  `src/bones/admin-analytics-creator-activation.bones.json` and
+  `src/bones/admin-analytics-overview.bones.json` and
+  `src/bones/admin-analytics-purchases.bones.json` and
+  `src/bones/admin-analytics-ranking-experiment.bones.json` and
+  `src/bones/admin-analytics-ranking.bones.json` and
+  `src/bones/admin-analytics-recommendations.bones.json` and
+  `src/bones/admin-settings-page.bones.json` and
+  `src/bones/admin-resource-form.bones.json` and
+  `src/bones/creator-apply-page.bones.json` and
+  `src/bones/creator-dashboard-analytics.bones.json` and
+  `src/bones/creator-dashboard-overview.bones.json` and
+  `src/bones/creator-dashboard-profile.bones.json` and
+  `src/bones/creator-dashboard-resources.bones.json` and
+  `src/bones/creator-dashboard-sales.bones.json` and
+  `src/bones/creator-resource-form.bones.json` and
+  `src/bones/creator-resource-new-route.bones.json` and
+  `src/bones/dashboard-downloads.bones.json` and
+  `src/bones/dashboard-library.bones.json` and
+  `src/bones/dashboard-overview.bones.json` and
+  `src/bones/dashboard-purchases.bones.json` and
+  `src/bones/dashboard-resources-redirect.bones.json` and
+  `src/bones/dashboard-subscription.bones.json` and
+  `src/bones/hero-search-empty.bones.json` and
+  `src/bones/hero-search-quick-browse.bones.json` and
+  `src/bones/hero-search-results.bones.json` and
+  `src/bones/login-form.bones.json` and
+  `src/bones/purchase-card.bones.json` and
+  `src/bones/resource-card.bones.json` and
+  `src/bones/resource-detail-shell.bones.json` and
+  `src/bones/resources-catalog-controls.bones.json` and
+  `src/bones/resources-catalog-search.bones.json` and
+  `src/bones/resources-discover-personalized.bones.json` and
+  `src/bones/resources-discover-sections.bones.json` and
+  `src/bones/resources-intro-discover.bones.json` and
+  `src/bones/resources-intro-listing.bones.json` and
+  `src/bones/resources-listing-shell.bones.json` and
+  `src/bones/resources-route-shell.bones.json` and
+  `src/bones/search-recovery-panel.bones.json` and
+  `src/bones/settings-page.bones.json`,
+  without depending on a flaky route loading race.
 - Dark-theme borders now use a three-step hierarchy instead of one shared
   bright stroke:
   - `border-border-subtle` for passive card shells, dashed placeholders, and soft dividers

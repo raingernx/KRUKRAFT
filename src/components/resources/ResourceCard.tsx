@@ -2,9 +2,13 @@
 
 import dynamic from "next/dynamic";
 import { memo, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { FileText } from "lucide-react";
 import { RevealImage } from "@/design-system";
-import { beginResourcesNavigation } from "@/components/marketplace/resourcesNavigationState";
+import {
+  beginResourcesNavigation,
+  isResourcesSubtreePath,
+} from "@/components/marketplace/resourcesNavigationState";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { formatPrice } from "@/lib/format";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
@@ -350,6 +354,7 @@ function ResourceCardInner({
   const effectiveVariant = variant === "preview" ? "compact" : variant ?? "marketplace";
   const isOwned = effectiveVariant === "library" || owned;
   const [isNavigating, setIsNavigating] = useState(false);
+  const pathname = usePathname();
 
   function handleNavigationStart(event: React.MouseEvent<HTMLAnchorElement>) {
     if (
@@ -364,7 +369,9 @@ function ResourceCardInner({
     }
 
     if (resource.slug) {
-      beginResourcesNavigation("detail", routes.resource(resource.slug));
+      beginResourcesNavigation("detail", routes.resource(resource.slug), {
+        overlay: !isResourcesSubtreePath(pathname ?? ""),
+      });
     }
     setIsNavigating(true);
   }
@@ -418,5 +425,3 @@ function ResourceCardInner({
 
 export const ResourceCard = memo(ResourceCardInner);
 ResourceCard.displayName = "ResourceCard";
-
-export { ResourceCardSkeleton } from "./ResourceCardSkeleton";

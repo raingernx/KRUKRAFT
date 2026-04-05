@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Download, ExternalLink, Loader2 } from "lucide-react";
+import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
 import { routes } from "@/lib/routes";
 
 /**
@@ -113,13 +113,13 @@ export function LastPurchaseRecovery({
           </a>
 
           {/* Secondary: navigate to the resource page */}
-          <Link
+          <ResourceIntentLink
             href={routes.resource(item.slug)}
             className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-4 py-2.5 text-[13px] font-medium text-foreground transition hover:bg-muted"
           >
             <ExternalLink className="h-4 w-4" />
             View resource
-          </Link>
+          </ResourceIntentLink>
         </div>
       </div>
     </div>

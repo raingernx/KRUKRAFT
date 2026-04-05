@@ -1,4 +1,5 @@
 export { AdminFormLayout } from "./AdminFormLayout";
+export { AdminResourceFormLoadingShell } from "./AdminResourceFormLoadingShell";
 export {
   AdminResourcesTrashTable,
   type TrashResourceRow,

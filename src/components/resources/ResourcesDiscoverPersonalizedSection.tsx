@@ -1,14 +1,143 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
+import { Skeleton } from "boneyard-js/react";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { RecommendationSection } from "@/components/recommendations/RecommendationSection";
-import type { ResourceCardData } from "@/components/resources/ResourceCard";
+import {
+  ResourceCard,
+  type ResourceCardData,
+  type ResourceCardResource,
+} from "@/components/resources/ResourceCard";
 import { routes } from "@/lib/routes";
 import { useFetchJson } from "@/lib/use-fetch-json";
 import type { ResourcesViewerDiscoverState } from "@/lib/resources/viewer-state";
 import { useResourcesViewerState } from "./ResourcesViewerStateProvider";
 import { ViewerAwareResourceCard } from "./ViewerAwareResourceCard";
+
+const BONES_PREVIEW_IMAGE = "/uploads/c8fef7c0a5fecefa.png";
+const RESOURCES_DISCOVER_PERSONALIZED_NAME = "resources-discover-personalized";
+
+const personalizedPreviewFixtures: {
+  recommendedForYou: ResourceCardResource[];
+  becauseYouStudied: ResourceCardResource[];
+  recommendedForLevel: ResourceCardResource[];
+} = {
+  recommendedForYou: [
+    {
+      id: "discover-personalized-1",
+      slug: "reading-comprehension-exercise-pack-grades-4-6",
+      title: "Reading Comprehension Exercise Pack (Grades 4–6)",
+      price: 100,
+      isFree: false,
+      thumbnailUrl: BONES_PREVIEW_IMAGE,
+      author: { name: "Kru Craft" },
+      category: { name: "Language", slug: "language" },
+      highlightBadge: "Recommended for you",
+    },
+    {
+      id: "discover-personalized-2",
+      slug: "middle-school-science-quiz-assessment-set",
+      title: "Middle School Science Quiz & Assessment Set",
+      price: 2000,
+      isFree: false,
+      thumbnailUrl: BONES_PREVIEW_IMAGE,
+      author: { name: "Kru Craft" },
+      category: { name: "Science", slug: "science" },
+      socialProofLabel: "Picked from your recent views",
+    },
+    {
+      id: "discover-personalized-3",
+      slug: "student-study-planner-goal-tracker-printable",
+      title: "Student Study Planner & Goal Tracker (Printable)",
+      price: 100,
+      isFree: false,
+      thumbnailUrl: BONES_PREVIEW_IMAGE,
+      author: { name: "Kru Craft" },
+      category: { name: "Study Skills", slug: "study-skills" },
+    },
+    {
+      id: "discover-personalized-4",
+      slug: "primary-science-experiment-activity-cards",
+      title: "Primary Science Experiment Activity Cards",
+      price: 0,
+      isFree: true,
+      thumbnailUrl: BONES_PREVIEW_IMAGE,
+      author: { name: "Kru Craft" },
+      category: { name: "Science", slug: "science" },
+    },
+  ],
+  becauseYouStudied: [
+    {
+      id: "discover-because-1",
+      slug: "english-vocabulary-flashcards-essential-words",
+      title: "English Vocabulary Flashcards — 500 Essential Words",
+      price: 100,
+      isFree: false,
+      thumbnailUrl: BONES_PREVIEW_IMAGE,
+      author: { name: "Kru Craft" },
+      category: { name: "Language", slug: "language" },
+      socialProofLabel: "More in Language",
+    },
+    {
+      id: "discover-because-2",
+      slug: "guided-speaking-drills-classroom-pack",
+      title: "Guided Speaking Drills Classroom Pack",
+      price: 100,
+      isFree: false,
+      thumbnailUrl: BONES_PREVIEW_IMAGE,
+      author: { name: "Kru Craft" },
+      category: { name: "Language", slug: "language" },
+      socialProofLabel: "More in Language",
+    },
+    {
+      id: "discover-because-3",
+      slug: "thai-reading-practice-worksheets-bundle",
+      title: "Thai Reading Practice Worksheets Bundle",
+      price: 100,
+      isFree: false,
+      thumbnailUrl: BONES_PREVIEW_IMAGE,
+      author: { name: "Kru Craft" },
+      category: { name: "Language", slug: "language" },
+      socialProofLabel: "More in Language",
+    },
+  ],
+  recommendedForLevel: [
+    {
+      id: "discover-level-1",
+      slug: "grammar-review-worksheet-set-intermediate",
+      title: "Grammar Review Worksheet Set — Intermediate",
+      price: 100,
+      isFree: false,
+      thumbnailUrl: BONES_PREVIEW_IMAGE,
+      author: { name: "Kru Craft" },
+      category: { name: "Language", slug: "language" },
+      socialProofLabel: "Recommended for your current pace",
+    },
+    {
+      id: "discover-level-2",
+      slug: "science-lab-observation-journal-pack",
+      title: "Science Lab Observation Journal Pack",
+      price: 100,
+      isFree: false,
+      thumbnailUrl: BONES_PREVIEW_IMAGE,
+      author: { name: "Kru Craft" },
+      category: { name: "Science", slug: "science" },
+      socialProofLabel: "Recommended for your current pace",
+    },
+    {
+      id: "discover-level-3",
+      slug: "critical-thinking-prompt-cards-upper-primary",
+      title: "Critical Thinking Prompt Cards — Upper Primary",
+      price: 100,
+      isFree: false,
+      thumbnailUrl: BONES_PREVIEW_IMAGE,
+      author: { name: "Kru Craft" },
+      category: { name: "Humanities", slug: "humanities" },
+      socialProofLabel: "Recommended for your current pace",
+    },
+  ],
+};
 
 function getResourcePreviewUrl(resource: ResourceCardData) {
   return resource.thumbnailUrl ?? resource.previewImages?.[0] ?? resource.previewUrl ?? null;
@@ -213,5 +342,68 @@ export function ResourcesDiscoverPersonalizedSection({
         </section>
       ) : null}
     </>
+  );
+}
+
+function PreviewResourceCardRow({
+  resources,
+}: {
+  resources: ResourceCardResource[];
+}) {
+  return (
+    <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+      {resources.map((resource) => (
+        <ResourceCard
+          key={resource.id ?? resource.slug ?? resource.title}
+          resource={resource}
+          variant="marketplace"
+          previewMode
+        />
+      ))}
+    </div>
+  );
+}
+
+export function ResourcesDiscoverPersonalizedPreview() {
+  return (
+    <div className="space-y-12">
+      <section className="space-y-5">
+        <ResourcesSectionHeader
+          title="Recommended for you"
+          description="A focused set of picks to help you keep momentum without sorting through the whole library."
+        />
+        <PreviewResourceCardRow resources={personalizedPreviewFixtures.recommendedForYou} />
+      </section>
+
+      <section className="space-y-5">
+        <ResourcesSectionHeader
+          title="Because you studied English Vocabulary Flashcards"
+          description="More resources in Language you haven't tried yet."
+          viewAllHref={routes.marketplaceQuery("category=language&sort=newest")}
+        />
+        <PreviewResourceCardRow resources={personalizedPreviewFixtures.becauseYouStudied} />
+      </section>
+
+      <section className="space-y-5">
+        <ResourcesSectionHeader
+          title="Recommended for your level"
+          description="Deterministic picks shaped by the difficulty level your recent purchases suggest."
+        />
+        <PreviewResourceCardRow resources={personalizedPreviewFixtures.recommendedForLevel} />
+      </section>
+    </div>
+  );
+}
+
+export function ResourcesDiscoverPersonalizedBonesPreview() {
+  return (
+    <Skeleton
+      name={RESOURCES_DISCOVER_PERSONALIZED_NAME}
+      loading={false}
+      className="h-full w-full"
+      darkColor="rgba(255,255,255,0.07)"
+    >
+      <ResourcesDiscoverPersonalizedPreview />
+    </Skeleton>
   );
 }
