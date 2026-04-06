@@ -58,16 +58,5 @@ export function ResourceCardBonesPreview() {
 }
 
 export function ResourceCardSkeleton() {
-  return (
-    <Skeleton
-      name={RESOURCE_CARD_SKELETON_NAME}
-      loading
-      className="h-full w-full"
-      darkColor="rgba(255,255,255,0.07)"
-      fallback={<ManualResourceCardSkeleton />}
-      fixture={<ResourceCardFixture />}
-    >
-      {null}
-    </Skeleton>
-  );
+  return <ManualResourceCardSkeleton />;
 }

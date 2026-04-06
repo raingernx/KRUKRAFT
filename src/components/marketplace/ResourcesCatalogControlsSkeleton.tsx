@@ -16,7 +16,7 @@ function SearchFallback() {
   return (
     <div className="flex h-10 w-full items-center gap-3 rounded-xl border border-border-strong bg-card px-4 text-base text-muted-foreground shadow-sm sm:rounded-2xl">
       <LoadingSkeleton className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
-      <span>กำลังค้นหา...</span>
+      <LoadingSkeleton className="h-4 w-44 rounded" />
     </div>
   );
 }
@@ -44,24 +44,13 @@ export function ResourcesCatalogSearchBonesPreview() {
 }
 
 export function ResourcesCatalogSearchSkeleton() {
-  return (
-    <Skeleton
-      name={RESOURCES_CATALOG_SEARCH_NAME}
-      loading
-      className="h-full w-full"
-      darkColor="rgba(255,255,255,0.07)"
-      fallback={<SearchFallback />}
-      fixture={<CatalogSearchPreview />}
-    >
-      {null}
-    </Skeleton>
-  );
+  return <SearchFallback />;
 }
 
 export function DiscoverFallback() {
   return (
     <div className="inline-flex h-10 items-center rounded-full border border-border-strong bg-muted px-4 text-base font-medium text-muted-foreground shadow-sm">
-      <span>กำลังโหลด</span>
+      <LoadingSkeleton className="h-4 w-16 rounded" />
     </div>
   );
 }
@@ -77,17 +66,14 @@ function DiscoverPreview() {
 export function ChipsFallback() {
   return (
     <div className="flex gap-2.5 overflow-hidden">
-      {["ทั้งหมด", "คณิตศาสตร์", "วิทยาศาสตร์", "ภาษา", "มนุษยศาสตร์", "ปฐมวัย"].map((label, index) => (
+      {["w-16", "w-24", "w-28", "w-16", "w-24", "w-20"].map((width, index) => (
         <div
-          key={label}
+          key={`${width}-${index}`}
           className={`inline-flex h-10 shrink-0 items-center rounded-full border border-border-strong bg-muted px-4 text-base text-muted-foreground ${
             index === 0 ? "gap-2 pr-4" : ""
           }`}
         >
-          {index === 0 ? (
-            <LoadingSkeleton className="h-4 w-16" />
-          ) : null}
-          <span>{label}</span>
+          <LoadingSkeleton className={`h-4 ${width} rounded`} />
         </div>
       ))}
     </div>
@@ -167,16 +153,5 @@ export function ResourcesCatalogControlsSkeleton({
 }: {
   showDiscoverMeta?: boolean;
 }) {
-  return (
-    <Skeleton
-      name={RESOURCES_CATALOG_CONTROLS_NAME}
-      loading
-      className="h-full w-full"
-      darkColor="rgba(255,255,255,0.07)"
-      fallback={<ManualResourcesCatalogControlsSkeleton />}
-      fixture={<ResourcesCatalogControlsPreview />}
-    >
-      {null}
-    </Skeleton>
-  );
+  return <ManualResourcesCatalogControlsSkeleton />;
 }

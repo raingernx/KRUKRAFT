@@ -7,7 +7,9 @@ import { HeroBanner } from "@/components/marketplace/HeroBanner";
 import { HeroBannerFallback } from "@/components/marketplace/HeroBanner";
 import {
   ResourcesCatalogControlsBonesPreview,
+  ResourcesCatalogControlsSkeleton,
   ResourcesCatalogSearchBonesPreview,
+  ResourcesCatalogSearchSkeleton,
 } from "@/components/marketplace/ResourcesCatalogControlsSkeleton";
 import {
   ResourcesDiscoverSectionsBonesPreview,
@@ -32,8 +34,8 @@ function ManualResourcesDiscoverRouteSkeleton() {
       className="flex min-h-screen flex-col bg-background"
     >
       <Navbar
-        headerSearch={<ResourcesCatalogSearchBonesPreview />}
-        secondaryRow={<ResourcesCatalogControlsBonesPreview />}
+        headerSearch={<ResourcesCatalogSearchSkeleton />}
+        secondaryRow={<ResourcesCatalogControlsSkeleton />}
       />
 
       <main className="flex-1">
@@ -61,8 +63,8 @@ function ManualResourcesListingRouteSkeleton() {
       className="flex min-h-screen flex-col bg-background"
     >
       <Navbar
-        headerSearch={<ResourcesCatalogSearchBonesPreview />}
-        secondaryRow={<ResourcesCatalogControlsBonesPreview />}
+        headerSearch={<ResourcesCatalogSearchSkeleton />}
+        secondaryRow={<ResourcesCatalogControlsSkeleton />}
       />
 
       <main className="flex-1">

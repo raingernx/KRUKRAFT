@@ -90,6 +90,10 @@
 - Manual grouped route shells now also cover the remaining non-resource product/admin informational routes:
   - `src/components/skeletons/PublicProductRouteSkeletons.tsx` for checkout status, membership, support, and legal-policy pages
   - `src/components/skeletons/AdminCoreRouteSkeletons.tsx` for `/admin`, activity, audit, categories, orders, reviews, tags, and users
+- Marketplace runtime-critical shells now keep boneyard only on the preview/export path:
+  - `src/components/marketplace/ResourcesCatalogControlsSkeleton.tsx` returns manual search/controls placeholders for runtime and reserves `Skeleton` only for `*BonesPreview`
+  - `src/components/resources/ResourceCardSkeleton.tsx` returns the manual card geometry directly at runtime
+  - `src/components/skeletons/ResourcesRouteSkeleton.tsx` now wires runtime `Navbar` slots to those manual search/controls skeletons instead of the preview variants
 - Runtime route-level and Suspense-critical skeletons should stay visually
   neutral even when the resolved UI or the capture previews use richer accent,
   recovery, success, or marketing treatments. Default loading shells should

@@ -207,6 +207,12 @@
   the live app. This reduces the chance that boneyard runtime hydration or
   delayed registry state leaves major secondary panes missing during
   transition.
+- The `/resources` navbar search, category controls, and card grid now follow
+  the same rule too. `ResourcesCatalogSearchSkeleton`,
+  `ResourcesCatalogControlsSkeleton`, and `ResourceCardSkeleton` all render
+  manual runtime geometry directly, while the matching `*BonesPreview` exports
+  remain capture-only. `ResourcesRouteSkeleton` now wires its live navbar
+  slots to those manual runtime components instead of the preview variants.
 - Theme behavior on `/settings` is intentionally less aggressive now: opening
   the settings page no longer reapplies the persisted DB theme to the whole
   app just because `localStorage.user_theme` is empty. The live theme should
