@@ -5,7 +5,7 @@ import { useResourcesNavigationState } from "@/components/marketplace/resourcesN
 export function ResourcesNavigationFeedback() {
   const navigationState = useResourcesNavigationState();
 
-  if (!navigationState.mode) {
+  if (!navigationState.mode || navigationState.overlay) {
     return null;
   }
 

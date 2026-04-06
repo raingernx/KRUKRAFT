@@ -5,7 +5,7 @@ import { useDashboardNavigationState } from "./dashboardNavigationState";
 export function DashboardNavigationFeedback() {
   const navigationState = useDashboardNavigationState();
 
-  if (!navigationState.href) {
+  if (!navigationState.href || navigationState.overlay) {
     return null;
   }
 

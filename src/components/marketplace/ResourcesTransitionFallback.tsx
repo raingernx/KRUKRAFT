@@ -11,6 +11,10 @@ export function ResourcesTransitionFallback() {
   const navigationState = useResourcesNavigationState();
   const isDetailPath = pathname.startsWith(`${routes.marketplace}/`);
 
+  if (navigationState.overlay) {
+    return null;
+  }
+
   if (navigationState.mode === "detail" || isDetailPath) {
     return <ResourceDetailLoadingShell />;
   }

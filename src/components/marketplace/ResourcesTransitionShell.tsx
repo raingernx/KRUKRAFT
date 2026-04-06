@@ -39,10 +39,11 @@ export function ResourcesTransitionShell({
     currentSearch ? `${pathname}?${currentSearch}` : pathname,
   );
   const isPending = Boolean(navigationState.mode && navigationState.href);
+  const isOverlayPending = isPending && navigationState.overlay;
   const shouldFreezePreviousRoute =
-    isPending && navigationState.mode !== "detail";
+    isPending && !isOverlayPending && navigationState.mode !== "detail";
   const shouldShowPendingDetailShell =
-    isPending && navigationState.mode === "detail";
+    isPending && !isOverlayPending && navigationState.mode === "detail";
   const [frozenChildren, setFrozenChildren] = useState(children);
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export function ResourcesTransitionShell({
   return (
     <div className="relative min-h-full">
       <div
-        aria-busy={isPending}
+        aria-busy={isPending && !isOverlayPending}
         className={
           shouldFreezePreviousRoute
             ? "pointer-events-none opacity-[0.94] transition-opacity duration-150 ease-out motion-reduce:transition-none"
