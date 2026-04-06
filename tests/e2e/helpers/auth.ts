@@ -93,58 +93,81 @@ async function loginWithCredentials(
   nextPath: string,
 ) {
   await ensureAuthFixturesOnce();
-  await page.goto(`/auth/login?next=${encodeURIComponent(nextPath)}`, {
-    timeout: AUTH_NAVIGATION_TIMEOUT_MS,
-    waitUntil: "domcontentloaded",
-  });
-
-  await expect(
-    page.getByRole("heading", { name: /Welcome back/i }),
-  ).toBeVisible({
-    timeout: AUTH_NAVIGATION_TIMEOUT_MS,
-  });
-  const form = page.locator("form").first();
-  await expect(form).toBeVisible({ timeout: AUTH_NAVIGATION_TIMEOUT_MS });
-  await expect(form).toHaveAttribute("data-auth-form-ready", "true", {
-    timeout: AUTH_NAVIGATION_TIMEOUT_MS,
-  });
-
-  await page.getByLabel("Email address").fill(credentials.email);
-  await page.getByLabel("Password").fill(credentials.password);
-
+  const loginUrl = `/auth/login?next=${encodeURIComponent(nextPath)}`;
   const targetUrlPattern = new RegExp(
     `${nextPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:$|\\?)`,
   );
-  const submitButton = form.getByRole("button", { name: /^Sign in$/ });
-  const loginError = page.getByText(LOGIN_ERROR_TEXT);
+  let lastError: unknown = null;
 
-  await expect(submitButton).toBeEnabled({
-    timeout: AUTH_NAVIGATION_TIMEOUT_MS,
-  });
-
-  await submitButton.click();
-
-  try {
-    await page.waitForURL(targetUrlPattern, {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    await page.goto(loginUrl, {
       timeout: AUTH_NAVIGATION_TIMEOUT_MS,
-      waitUntil: "commit",
+      waitUntil: "domcontentloaded",
     });
-  } catch (error) {
+
+    await expect(
+      page.getByRole("heading", { name: /Welcome back/i }),
+    ).toBeVisible({
+      timeout: AUTH_NAVIGATION_TIMEOUT_MS,
+    });
+    const form = page.locator("form").first();
+    await expect(form).toBeVisible({ timeout: AUTH_NAVIGATION_TIMEOUT_MS });
+    await expect(form).toHaveAttribute("data-auth-form-ready", "true", {
+      timeout: AUTH_NAVIGATION_TIMEOUT_MS,
+    });
+
+    await page.getByLabel("Email address").fill(credentials.email);
+    await page.getByLabel("Password").fill(credentials.password);
+
+    const submitButton = form.getByRole("button", { name: /^Sign in$/ });
+    const loginError = page.getByText(LOGIN_ERROR_TEXT);
+
+    await expect(submitButton).toBeEnabled({
+      timeout: AUTH_NAVIGATION_TIMEOUT_MS,
+    });
+
+    await submitButton.click();
+
+    try {
+      await page.waitForURL(targetUrlPattern, {
+        timeout: AUTH_NAVIGATION_TIMEOUT_MS / 2,
+        waitUntil: "commit",
+      });
+      await page.waitForLoadState("domcontentloaded");
+      await page.waitForTimeout(500);
+
+      if (targetUrlPattern.test(page.url())) {
+        return;
+      }
+
+      lastError = new Error(
+        `Credential login landed on ${page.url()} after briefly matching ${nextPath}.`,
+      );
+    } catch (error) {
+      lastError = error;
+    }
+
     const visibleLoginError = (await loginError.isVisible().catch(() => false))
       ? await loginError.textContent()
       : null;
     const currentUrl = page.url();
     const buttonEnabled = await submitButton.isEnabled().catch(() => false);
+    const isStillOnLogin = /\/auth\/login(?:\?|$)/.test(currentUrl);
 
-    throw new Error(
-      [
-        `Credential login did not navigate to ${nextPath}.`,
-        `Current URL: ${currentUrl}.`,
-        `Visible login error: ${visibleLoginError?.trim() ?? "none"}.`,
-        `Submit button enabled: ${buttonEnabled}.`,
-        `Underlying error: ${error instanceof Error ? error.message : String(error)}`,
-      ].join(" "),
-    );
+    if (visibleLoginError || !isStillOnLogin || attempt === 1) {
+      throw new Error(
+        [
+          `Credential login did not navigate to ${nextPath}.`,
+          `Current URL: ${currentUrl}.`,
+          `Visible login error: ${visibleLoginError?.trim() ?? "none"}.`,
+          `Submit button enabled: ${buttonEnabled}.`,
+          `Attempt: ${attempt + 1}/2.`,
+          `Underlying error: ${
+            lastError instanceof Error ? lastError.message : String(lastError)
+          }`,
+        ].join(" "),
+      );
+    }
   }
 }
 

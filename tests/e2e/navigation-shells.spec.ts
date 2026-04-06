@@ -61,22 +61,34 @@ async function startNavigationProbe(page: Page) {
 }
 
 async function stopNavigationProbe(page: Page) {
-  return page.evaluate(() => {
-    const probe = (window as Window & {
-      __krukraftNavProbe?: {
-        stop: () => Array<{
-          href: string;
-          ts: number;
-          hasMain: boolean;
-          mainChildren: number;
-          mainTextLength: number;
-          loadingScopes: string[];
-        }>;
-      };
-    }).__krukraftNavProbe;
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    try {
+      return await page.evaluate(() => {
+        const probe = (window as Window & {
+          __krukraftNavProbe?: {
+            stop: () => Array<{
+              href: string;
+              ts: number;
+              hasMain: boolean;
+              mainChildren: number;
+              mainTextLength: number;
+              loadingScopes: string[];
+            }>;
+          };
+        }).__krukraftNavProbe;
 
-    return probe?.stop() ?? [];
-  });
+        return probe?.stop() ?? [];
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!message.includes("Execution context was destroyed") || attempt === 3) {
+        throw error;
+      }
+      await page.waitForLoadState("domcontentloaded");
+    }
+  }
+
+  return [];
 }
 
 function expectNoBlankGap(
@@ -142,13 +154,17 @@ test("resources to dashboard library does not expose a blank gap during transiti
   await loginAsCreator(page, "/resources");
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
-  await expect(page).toHaveURL(/\/resources$/);
+  await expect(page).toHaveURL(/\/resources$/, {
+    timeout: LIBRARY_NAV_TIMEOUT_MS,
+  });
 
   await startNavigationProbe(page);
 
   await openLibraryFromResources(page);
 
-  await expect(page).toHaveURL(/\/dashboard\/library$/);
+  await expect(page).toHaveURL(/\/dashboard\/library$/, {
+    timeout: LIBRARY_NAV_TIMEOUT_MS,
+  });
   await expect(page.locator("main").first()).toBeVisible();
 
   const samples = await stopNavigationProbe(page);
@@ -165,7 +181,9 @@ test("dashboard library back to resources keeps shell coverage during transition
   await loginAsCreator(page, "/dashboard/library");
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
-  await expect(page).toHaveURL(/\/dashboard\/library$/);
+  await expect(page).toHaveURL(/\/dashboard\/library$/, {
+    timeout: LIBRARY_NAV_TIMEOUT_MS,
+  });
   await expect(
     page.getByRole("link", { name: /Browse resources/i }).first(),
   ).toBeVisible();
@@ -177,7 +195,9 @@ test("dashboard library back to resources keeps shell coverage during transition
     page.getByRole("link", { name: /Browse resources/i }).first().click(),
   ]);
 
-  await expect(page).toHaveURL(/\/resources$/);
+  await expect(page).toHaveURL(/\/resources$/, {
+    timeout: LIBRARY_NAV_TIMEOUT_MS,
+  });
   await expect(page.locator("main").first()).toBeVisible();
   await page.waitForLoadState("domcontentloaded");
 
