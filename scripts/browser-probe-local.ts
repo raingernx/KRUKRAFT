@@ -5,7 +5,7 @@ import { expect } from "@playwright/test";
 import { chromium, webkit, type Browser, type BrowserContext, type Page } from "playwright";
 
 import { collectRuntimeErrors } from "../tests/e2e/helpers/browser";
-import { loginAsCreator } from "../tests/e2e/helpers/auth";
+import { loginAsAdmin, loginAsCreator } from "../tests/e2e/helpers/auth";
 
 const BASE_URL = process.env.BASE_URL ?? "http://127.0.0.1:3000";
 const HEADLESS = process.env.HEADLESS !== "0";
@@ -20,6 +20,8 @@ type ProbeScenarioName =
   | "resources-to-library"
   | "library-to-resources"
   | "settings-theme"
+  | "public-product-pages"
+  | "admin-core-pages"
   | "dashboard-to-downloads"
   | "dashboard-to-purchases"
   | "dashboard-to-settings";
@@ -34,6 +36,8 @@ const VALID_SCENARIOS: ProbeScenarioName[] = [
   "resources-to-library",
   "library-to-resources",
   "settings-theme",
+  "public-product-pages",
+  "admin-core-pages",
   "dashboard-to-downloads",
   "dashboard-to-purchases",
   "dashboard-to-settings",
@@ -303,6 +307,82 @@ async function runDashboardRouteScenario(
   }
 }
 
+async function runPublicProductPagesScenario({ browser }: ProbeContext) {
+  const context = await createContext(browser);
+  const page = await context.newPage();
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+  const pages: Array<{ path: string; heading: RegExp }> = [
+    { path: "/membership", heading: /Simple, transparent pricing/i },
+    { path: "/privacy", heading: /^Privacy Policy$/i },
+    { path: "/terms", heading: /^Terms of Service$/i },
+    { path: "/cookies", heading: /^Cookie Policy$/i },
+    { path: "/support", heading: /Need help with your purchase or account\?/i },
+    { path: "/checkout/success", heading: /You'?re all set!/i },
+    { path: "/checkout/cancel", heading: /No worries/i },
+  ];
+
+  try {
+    for (const target of pages) {
+      await page.goto(target.path, { waitUntil: "domcontentloaded" });
+      await expect(page).toHaveURL(new RegExp(`${target.path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`));
+      await expect(page.getByRole("heading", { name: target.heading }).first()).toBeVisible();
+    }
+
+    expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
+  } catch (error) {
+    const screenshot = await saveFailureScreenshot(page, "public-product-pages");
+    throw new Error(
+      `public-product-pages probe failed. Screenshot: ${screenshot}. ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  } finally {
+    await closeContext(context);
+  }
+}
+
+async function runAdminCorePagesScenario({ browser }: ProbeContext) {
+  const context = await createContext(browser);
+  const page = await context.newPage();
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+  const pages: Array<{ path: string; heading: RegExp }> = [
+    { path: "/admin", heading: /^Admin dashboard$/i },
+    { path: "/admin/activity", heading: /^Activity Log$/i },
+    { path: "/admin/audit", heading: /^Audit Trail$/i },
+    { path: "/admin/categories", heading: /^Categories$/i },
+    { path: "/admin/orders", heading: /^Orders$/i },
+    { path: "/admin/reviews", heading: /^Reviews$/i },
+    { path: "/admin/tags", heading: /^Tag Management$/i },
+    { path: "/admin/users", heading: /^Users$/i },
+  ];
+
+  try {
+    await loginAsAdmin(page, "/admin");
+    await expect(page).toHaveURL(/\/admin$/);
+
+    for (const target of pages) {
+      await page.goto(target.path, { waitUntil: "domcontentloaded" });
+      await expect(page).toHaveURL(
+        new RegExp(`${target.path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`),
+      );
+      await expect(page.getByRole("heading", { name: target.heading }).first()).toBeVisible();
+    }
+
+    expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
+  } catch (error) {
+    const screenshot = await saveFailureScreenshot(page, "admin-core-pages");
+    throw new Error(
+      `admin-core-pages probe failed. Screenshot: ${screenshot}. ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  } finally {
+    await closeContext(context);
+  }
+}
+
 async function runSettingsThemeScenario({ browser }: ProbeContext) {
   await setUserThemePreference(CREATOR_EMAIL, "dark");
 
@@ -361,6 +441,8 @@ const scenarioHandlers: Record<ProbeScenarioName, (context: ProbeContext) => Pro
       headingName: /^Settings$/,
       urlPattern: /\/settings$/,
     }),
+  "public-product-pages": runPublicProductPagesScenario,
+  "admin-core-pages": runAdminCorePagesScenario,
   "settings-theme": runSettingsThemeScenario,
 };
 

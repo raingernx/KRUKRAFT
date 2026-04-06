@@ -87,6 +87,9 @@
   - optional submit-button slot
   - optional leading and trailing adornments
 - `LoadingSkeleton` is the canonical DS loading primitive. New loading work should reference it instead of adding ad-hoc placeholder blocks or reviving `src/components/shared/LoadingSkeleton` as an implementation owner.
+- Manual grouped route shells now also cover the remaining non-resource product/admin informational routes:
+  - `src/components/skeletons/PublicProductRouteSkeletons.tsx` for checkout status, membership, support, and legal-policy pages
+  - `src/components/skeletons/AdminCoreRouteSkeletons.tsx` for `/admin`, activity, audit, categories, orders, reviews, tags, and users
 - Runtime route-level and Suspense-critical skeletons should stay visually
   neutral even when the resolved UI or the capture previews use richer accent,
   recovery, success, or marketing treatments. Default loading shells should
@@ -206,8 +209,12 @@
   shell clears the pending navigation state through
   `src/components/layout/dashboard/DashboardOverlayReady.tsx`, while
   `DashboardNavigationReady` remains responsible only for non-overlay
-  in-dashboard transitions. That split avoids the earlier flash-then-blank
-  gap during first entry from public routes.
+  in-dashboard transitions. `src/app/(dashboard)/dashboard/template.tsx` no
+  longer mounts a second `DashboardNavigationReady`, and
+  `DashboardNavigationFeedback` is now suppressed during overlay-driven
+  transitions so cross-group navigations do not clear or redraw twice. That
+  split avoids the earlier flash-then-blank gap during first entry from public
+  routes.
   Additional non-boneyard public/admin route shells now live in
   `src/components/skeletons/PublicRouteSkeletons.tsx` for
   `/categories/[slug]`, `/creators/[slug]`, and `/admin/creators`, while the
@@ -223,6 +230,13 @@
   `/auth/reset-password`, and `/auth/reset-password/confirm`, while
   `/auth/login/loading.tsx` now reuses the existing `LoginFormSkeleton`
   instead of leaving the route without explicit loading coverage.
+  `/checkout/success`, `/checkout/cancel`, `/membership`, `/privacy`,
+  `/terms`, `/cookies`, `/support`, `/admin`, `/admin/activity`,
+  `/admin/audit`, `/admin/categories`, `/admin/orders`, `/admin/reviews`,
+  `/admin/tags`, and `/admin/users` now also declare explicit `loading.tsx`
+  coverage through those grouped shells, leaving only the app root and the
+  dev-only `/dev/bones` tool route without dedicated route-level loading
+  files.
   `ResourceDetailLoadingShell` keeps its boneyard preview/export path for
   capture work, but the runtime route currently renders the manual structural
   shell directly because the generated `resource-detail-shell` set was not
@@ -233,8 +247,11 @@
   until the target shell is actually on screen.
   `src/components/providers/ResourcesNavigationOverlay.tsx` now mirrors the
   dashboard pattern at the root layout for cross-group listing/detail
-  navigations, while in-route `/resources` transitions continue to use
-  `ResourcesTransitionShell` instead of the global overlay.
+  navigations. During `overlay: true` jumps, the in-route
+  `ResourcesTransitionShell`, `ResourcesTransitionFallback`, and
+  `ResourcesNavigationFeedback` now stay silent so the root overlay is the
+  only active resources loading layer. In-route `/resources` transitions still
+  use `ResourcesTransitionShell` when no root overlay is involved.
   Dashboard and resources route shells now also publish
   `data-route-shell-ready` markers (`dashboard`, `resources-browse`,
   `resource-detail`) so navigation overlays only clear after the target shell
@@ -248,6 +265,11 @@
   routes, and creator resource create/edit paths to their corresponding
   route-specific runtime skeletons instead of always falling back to one
   generic dashboard shell.
+  `src/components/settings/PreferenceSettings.tsx` also no longer reapplies
+  `initialPreferences.theme` to the global theme on mount when local storage
+  is empty. The settings form still reflects the persisted preference, but
+  simply opening `/settings` should not flip the live theme for accounts whose
+  stored DB preference differs from the already-mounted client theme.
   Public-navbar dashboard links now start that target-aware dashboard
   navigation state on click as well, so `/resources -> /dashboard/library`
   does not have to wait for pathname-based fallback before showing the library

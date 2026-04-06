@@ -163,6 +163,12 @@
   the root app background. Cross-group jumps into dashboard pages should
   therefore keep the dashboard sidebar/topbar visible from the first loading
   frame, rather than showing library/downloads content under public chrome.
+- Dashboard overlay cleanup is now single-owner as well: the dashboard route
+  subtree no longer mounts a second `DashboardNavigationReady` under
+  `src/app/(dashboard)/dashboard/template.tsx`, and the thin
+  `DashboardNavigationFeedback` strip no longer renders during root-overlay
+  transitions. Cross-group jumps should therefore show one dashboard shell,
+  not a stacked overlay plus an immediate secondary dashboard progress layer.
 - Public-navbar protected links such as `คลังของฉัน` now also start the
   dashboard navigation intent immediately, not only after pathname fallback
   detects that the app has already crossed into the dashboard subtree. This
@@ -183,6 +189,12 @@
   in live navigation, while boneyard preview exports stay capture-only. This
   avoids the lower-page blank gap that could appear after the discover hero
   shell mounted but before generated section bones resolved.
+- When a cross-group resources overlay is active (`overlay: true` in the
+  resources navigation store), the in-route `ResourcesTransitionShell`,
+  `ResourcesTransitionFallback`, and `ResourcesNavigationFeedback` now stand
+  down completely. That keeps `/dashboard/library -> /resources` and similar
+  jumps on a single resources shell instead of briefly stacking the root
+  overlay with a second in-route skeleton layer.
 - Default runtime skeletons should also stay neutral in tone: selected pills,
   recovery banners, success strips, and promotional accent washes belong only
   to condition-specific resolved UI, not the baseline loading shell. This is
@@ -195,6 +207,11 @@
   the live app. This reduces the chance that boneyard runtime hydration or
   delayed registry state leaves major secondary panes missing during
   transition.
+- Theme behavior on `/settings` is intentionally less aggressive now: opening
+  the settings page no longer reapplies the persisted DB theme to the whole
+  app just because `localStorage.user_theme` is empty. The live theme should
+  remain whatever the mounted client is already using until the user changes
+  or saves a new preference explicitly.
 - `/categories/[slug]`, `/creators/[slug]`, `/admin/creators`, the
   compatibility redirect route `/resources/id/[id]`, and the legacy
   dashboard alias `/purchases` now all have explicit route-level loading
@@ -208,6 +225,16 @@
   `/auth/reset-password/confirm` now all declare route-level loading coverage
   as well, so auth navigations no longer rely only on client-side Suspense or
   blank route shells during streaming transitions.
+- `/checkout/success`, `/checkout/cancel`, `/membership`, `/privacy`,
+  `/terms`, `/cookies`, and `/support` now also have explicit route-level
+  loading shells. The checkout shells intentionally stay neutral and mirror
+  the final centered status-card geometry instead of using success/danger
+  accent fills during loading.
+- The remaining admin root/index pages now also have explicit loading shells:
+  `/admin`, `/admin/activity`, `/admin/audit`, `/admin/categories`,
+  `/admin/orders`, `/admin/reviews`, `/admin/tags`, and `/admin/users`.
+  Their loading state mirrors the eventual toolbar/table/stat layout inside
+  the mounted admin dashboard shell instead of streaming a blank content pane.
 - route files under `src/app/**` should not declare local `*Skeleton` or `*Fallback` components inline; shared loading/fallback UI now lives under `src/components/skeletons/*`, and `npm run lint` enforces that contract with `npm run skeleton:check`
 - `boneyard-js` is now installed as an optional skeleton-capture workflow.
   Its config lives in `boneyard.config.json`, it writes generated bones under
