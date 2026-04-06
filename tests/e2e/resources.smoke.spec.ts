@@ -156,7 +156,10 @@ test("navigating from a scrolled discover entry into detail resets the viewport 
     .toBeLessThan(80);
 
   await expect(page).toHaveURL(new RegExp(`${targetHref?.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`));
-  await expect(page.locator("main h1").first()).toBeVisible();
+  await expect(
+    page.locator('[data-route-shell-ready="resource-detail"]').first(),
+  ).toBeVisible();
+  await expect(page.locator("main").first()).toBeVisible();
 
   const seenScopes = await page.evaluate(() => {
     const windowWithScopes = window as Window & {
