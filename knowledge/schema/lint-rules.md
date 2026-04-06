@@ -21,6 +21,11 @@ Phase 4 semantic lint adds:
 - `npm run wiki:lint:semantic` to flag raw notes that no wiki page references
 - `npm run wiki:coverage` to print raw-note coverage and canonical-source coverage summaries
 
+Phase 5 drift checks add:
+
+- `npm run wiki:drift` to flag wiki pages whose implementation-linked files or raw evidence notes changed in the current diff while the page itself was not updated
+- `npm run wiki:drift -- --mode staged` for commit-time review of staged changes only
+
 Manual review still needs to check:
 
 - stale summaries

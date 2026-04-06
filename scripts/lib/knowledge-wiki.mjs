@@ -215,6 +215,14 @@ export function extractMarkdownLinks(content) {
   }));
 }
 
+export function extractBacktickPaths(content) {
+  const matches = [...content.matchAll(/`([^`]+)`/g)];
+  return matches
+    .map((match) => match[1].trim())
+    .filter(Boolean)
+    .filter((value) => /[/.]/.test(value));
+}
+
 export function resolveRepoRelativePath(fromFile, target) {
   if (/^(https?:)?\/\//.test(target) || target.startsWith("#")) {
     return null;
@@ -238,6 +246,33 @@ export function normalizeTitleKey(value) {
     .replace(/[`*_]/g, "")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+export function collectWikiRepoReferences(wikiFile) {
+  const content = normalizeContent(readFileSync(wikiFile, "utf8"));
+  const references = new Set();
+
+  for (const heading of ["## Key Files", "## Sources"]) {
+    const section = extractSection(content, heading);
+
+    for (const link of extractMarkdownLinks(section)) {
+      const resolved = resolveRepoRelativePath(wikiFile, link.target);
+      if (resolved) {
+        references.add(resolved);
+      }
+    }
+
+    for (const candidate of extractBacktickPaths(section)) {
+      if (candidate.startsWith("http://") || candidate.startsWith("https://")) {
+        continue;
+      }
+
+      const resolved = toPosixPath(candidate);
+      references.add(resolved);
+    }
+  }
+
+  return references;
 }
 
 export function slugify(value) {

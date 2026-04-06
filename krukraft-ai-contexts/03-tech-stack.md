@@ -30,6 +30,7 @@
 - `wiki:lint:semantic`: flags duplicate wiki titles, uncited raw notes, and wiki pages that rely only on low-priority knowledge links without canonical source backing
 - `wiki:coverage`: prints raw-note citation coverage and canonical-source coverage for the repo-owned knowledge layer
 - `wiki:stale`: flags wiki pages whose `Last Reviewed` date is older than the configured threshold or whose `Sources` section has no links
+- `wiki:drift`: flags wiki pages whose implementation-linked files or raw evidence notes changed in the current diff while the page itself was not updated, which helps keep page-level knowledge in sync with code/runtime changes without over-triggering on broad meta-doc edits
 - `wiki:ingest`: creates a raw knowledge note, appends `knowledge/log.md`, and can optionally seed a wiki page in one command
 - `db:deploy`: `prisma migrate deploy`
 - `perf:post-deploy`: warm cache + smoke perf suite

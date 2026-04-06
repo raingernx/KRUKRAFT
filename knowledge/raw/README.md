@@ -29,5 +29,6 @@ Operational helpers:
 - `npm run wiki:index` rebuilds `knowledge/index.md` from the current wiki tree.
 - `npm run wiki:stale` flags wiki pages whose `Last Reviewed` date is too old or whose `Sources` section has no links.
 - `npm run wiki:coverage` prints which raw notes are already cited by wiki pages and which pages still lack canonical source backing.
+- `npm run wiki:drift` checks whether canonical files changed without the related wiki pages being updated in the same diff.
 
 Canonical repo documents such as `AGENTS.md`, `krukraft-ai-contexts/`, `design-system.md`, and `figma-component-map.md` remain outside `knowledge/raw/` and should be linked, not duplicated, unless a specific snapshot is required.
