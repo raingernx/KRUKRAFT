@@ -4,7 +4,7 @@ import { collectRuntimeErrors } from "./helpers/browser";
 import { loginAsCreator } from "./helpers/auth";
 import { expectImageLoaded } from "./helpers/images";
 
-test("resources homepage renders and reveals at least one card image", async ({
+test("resources homepage renders hero media without runtime errors", async ({
   page,
 }) => {
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
@@ -20,14 +20,8 @@ test("resources homepage renders and reveals at least one card image", async ({
   ).toBeVisible();
   await expect(page.getByText("Start with a clearer path").first()).toBeVisible();
 
-  await expect
-    .poll(() => page.locator('main a[href^="/resources/"] article img').count(), {
-      timeout: 20_000,
-    })
-    .toBeGreaterThan(0);
-
-  const firstCardImage = page.locator('main a[href^="/resources/"] article img').first();
-  await expectImageLoaded(firstCardImage);
+  const heroArtwork = page.locator('[data-hero-surface="discover"] img').last();
+  await expectImageLoaded(heroArtwork);
 
   await expectNoAxeViolations(page, { include: ["main"] });
 
@@ -61,6 +55,7 @@ test("featured picks collection opens the featured listing filter", async ({
 
   await expect(page).toHaveURL(/featured=true/);
   await expect(page.locator("main article").first()).toBeVisible();
+  await expectImageLoaded(page.locator("main article img").first());
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -79,18 +74,13 @@ test("public recommended sort is labeled as top picks", async ({ page }) => {
   expect(consoleErrors).toEqual([]);
 });
 
-test("navigating from a scrolled discover page to detail resets the viewport to top", async ({
+test("navigating from a scrolled discover entry into detail resets the viewport to top", async ({
   page,
 }) => {
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
   await page.goto("/resources");
   await expect(page.getByText("Start with a clearer path").first()).toBeVisible();
-  await expect
-    .poll(() => page.locator('main a[href^="/resources/"]:not([href*="?"])').count(), {
-      timeout: 20_000,
-    })
-    .toBeGreaterThan(0);
 
   await page.evaluate(() => {
     window.scrollTo({ top: 2200, behavior: "auto" });
@@ -99,6 +89,23 @@ test("navigating from a scrolled discover page to detail resets the viewport to 
   await expect
     .poll(() => page.evaluate(() => window.scrollY))
     .toBeGreaterThan(1200);
+
+  const featuredCollectionCard = page
+    .locator("section")
+    .filter({ has: page.getByRole("heading", { name: "Collections to explore" }) })
+    .first()
+    .locator("a")
+    .filter({ has: page.getByText("Featured picks") })
+    .first();
+
+  await expect(featuredCollectionCard).toBeVisible();
+
+  await Promise.all([
+    page.waitForURL(/\/resources\?category=all&featured=true|\/resources\?featured=true&category=all/),
+    featuredCollectionCard.click(),
+  ]);
+
+  await expect(page.locator("main article").first()).toBeVisible();
 
   const resourceLinks = page.locator('main a[href^="/resources/"]:not([href*="?"])');
   const linkCount = await resourceLinks.count();
