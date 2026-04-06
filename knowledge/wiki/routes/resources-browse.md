@@ -9,6 +9,8 @@
 - The browse index lives under `src/app/resources/(browse)/*`.
 - Discover and listing modes share the route but switch based on search, filters, pagination, or sort state.
 - Route-level loading and skeleton shells are now intentionally maintained to match discover and listing geometry.
+- The resources transition overlay now mounts from `src/app/resources/layout.tsx` instead of the root layout, so unrelated routes do not hydrate resources-only navigation UI.
+- Signed-in personalized discover content now mounts behind a dedicated lazy client boundary, so the main discover route can paint before recommendation-specific client logic hydrates.
 
 ## Why It Matters
 
@@ -18,6 +20,7 @@ This route carries the highest amount of public browsing traffic and is central 
 
 - `src/app/resources/(browse)/page.tsx`
 - `src/app/resources/(browse)/loading.tsx`
+- `src/app/resources/layout.tsx`
 - `src/components/skeletons/ResourcesRouteSkeleton.tsx`
 - `src/components/marketplace/ResourcesLayoutShell.tsx`
 
@@ -34,6 +37,8 @@ This route carries the highest amount of public browsing traffic and is central 
 - `/resources` remains the canonical search/browse route.
 - Loading UI must match discover or listing mode rather than generic placeholders.
 - Public route performance changes must avoid request-bound auth at the page level.
+- Resources-specific transition helpers should stay scoped to the resources route group instead of being mounted globally.
+- Personalized discover and other auth-aware client sections should stay outside the minimal first-paint client payload when their data is non-critical.
 
 ## Known Risks
 
@@ -52,7 +57,9 @@ This route carries the highest amount of public browsing traffic and is central 
 - [`krukraft-ai-contexts/04-architecture.md`](../../../krukraft-ai-contexts/04-architecture.md)
 - [`krukraft-ai-contexts/05-features.md`](../../../krukraft-ai-contexts/05-features.md)
 - [`src/app/resources/(browse)/page.tsx`](../../../src/app/resources/%28browse%29/page.tsx)
+- [`src/app/resources/layout.tsx`](../../../src/app/resources/layout.tsx)
+- [`src/app/resources/ResourcesPageContent.tsx`](../../../src/app/resources/ResourcesPageContent.tsx)
 
 ## Last Reviewed
 
-- 2026-04-06
+- 2026-04-07

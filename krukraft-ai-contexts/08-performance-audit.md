@@ -26,7 +26,7 @@ The public paths now have deliberate performance engineering in place:
 
 Primary bottleneck class is now:
 
-**client personalization latency after hydration plus cold-instance cache misses on heavy query paths**, not basic bundle size or simple rendering overhead.
+**client personalization latency after hydration plus global client-JS overhead on public routes and cold-instance cache misses on heavy query paths**, not basic bundle size or simple rendering overhead.
 
 ---
 
@@ -40,6 +40,12 @@ Primary bottleneck class is now:
 - build-time Prisma warning from `platformSettings.findFirst()` was removed by separating build-safe platform config from admin live config
 - root layout stopped SSR-seeding `SessionProvider` from `getServerSession`, which restores a cleaner caching baseline for public routes
 - the root client provider tree no longer mounts `SessionProvider`; auth-aware navbar/pricing/checkout UI now use a smaller `/api/auth/viewer` fetch instead of the global NextAuth client-session baseline
+- route-group navigation overlays are no longer mounted globally from `src/app/layout.tsx`; `ResourcesNavigationOverlay` now lives in `src/app/resources/layout.tsx` and `DashboardGroupNavigationOverlay` now lives in `src/app/(dashboard)/layout.tsx`, which trims client JS/hydration work from unrelated routes
+- the full `HeroSearch` client bundle is now lazy-loaded on secondary public routes (support, category, creator, membership, resource-detail, and error/not-found surfaces), while loading shells now render the structural search placeholder directly instead of importing `HeroSearch`
+- `HeroSearch` runtime code no longer carries bones-preview exports and fixture data in the same module; those previews now live in `HeroSearchPreviews.tsx`, so dev-only search fixtures do not pad the live marketplace search bundle
+- the signed-in `/resources` personalized discover section now sits behind a dedicated lazy client boundary with a matching structural skeleton, so the main discover route no longer ships recommendation-section client logic in its initial payload
+- LHCI now samples the key `/resources` routes twice per run and treats the overall performance category, total blocking time, and cumulative layout shift as blocking floor assertions instead of advisory warnings, so obvious lab regressions fail faster before they hide behind a single noisy pass
+- the post-deploy warm/perf workflow summary now emits a rollup with pass/fail counts, the worst p95 route, and the route closest to its budget, so production perf regressions are easier to triage from the GitHub Actions summary without downloading artifacts first
 - `/api/auth/viewer` now reads the signed JWT cookie through `next-auth/jwt` instead of `getServerSession`, which removes a Prisma-backed session lookup from the lightweight public auth-chrome path
 - the marketplace/detail private viewer-state APIs now read the same signed JWT snapshot instead of `getServerSession`, which removes another public-route session lookup from the Prisma pool before owned-state/review queries begin
 - the auth-viewer hook no longer hydrates from module cache during the initial render, which avoids navbar server/client drift; navbar auth controls now hold their footprint with lightweight loading placeholders until the viewer request settles
@@ -132,6 +138,11 @@ Primary bottleneck class is now:
 - Global NextAuth client-session hydration was removed from the root.
 - Remaining public auth-aware UI now depends on a lightweight auth-viewer request, which is smaller but still a client-side personalization step.
 
+### 2.75 Global client-JS scope
+
+- Bundle/Lighthouse baseline work on 2026-04-07 still points to unused JavaScript / main-thread blocking as the clearest remaining client-side signal on `/resources` and `/resources/[slug]`.
+- Route-specific transition overlays now mount only inside their matching route layouts, but further client-boundary and lazy-loading work is still a likely high-value path before deeper query refactors.
+
 ### 3. Search indexing
 
 - Search still relies on `contains` / `ILIKE`-style matching.
@@ -160,6 +171,8 @@ Primary bottleneck class is now:
 3. Search indexing is no longer the obvious gap; remaining work is query-plan tuning and deciding whether Postgres-backed relevance is still enough long-term
 4. Future regressions should be judged against the warmed perf workflow, not older cold-path assumptions
 5. LHCI is still configured against `npm run dev`, so local Lighthouse numbers remain useful for regression detection but not as production-grade LCP truth
+6. The stronger LHCI gate is meant to catch obvious regressions early from the current repo baseline, not to replace warmed post-deploy k6 verification on production URLs or to act as an aspirational production budget by itself
+7. Operational perf review order is now explicit: check the warmed post-deploy perf summary first, then Speed Insights, then runtime logs if the route still needs deeper investigation
 
 ---
 

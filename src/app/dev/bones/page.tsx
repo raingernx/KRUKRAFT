@@ -20,7 +20,7 @@ import {
   HeroSearchEmptyBonesPreview,
   HeroSearchQuickBrowseBonesPreview,
   HeroSearchResultsBonesPreview,
-} from "@/components/marketplace/HeroSearch";
+} from "@/components/marketplace/HeroSearchPreviews";
 import {
   ResourcesCatalogControlsBonesPreview,
   ResourcesCatalogSearchBonesPreview,

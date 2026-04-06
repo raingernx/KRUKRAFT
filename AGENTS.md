@@ -527,6 +527,7 @@ For public or high-traffic routes:
 - shared cache keys must never include per-user state
 - per-user state must never be stored in shared cache layers
 - after performance-sensitive route changes, verify that public routes did not accidentally regain `cookies()`, `headers()`, or server-session reads at the page level
+- after performance-sensitive changes that reach deployable state, prefer reviewing signals in this order: warmed post-deploy perf summary, Speed Insights, then runtime logs
 
 ---
 

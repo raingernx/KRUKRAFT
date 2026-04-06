@@ -4,8 +4,6 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { BonesRegistryBootstrap } from "@/components/providers/BonesRegistryBootstrap";
-import { DashboardGroupNavigationOverlay } from "@/components/providers/DashboardGroupNavigationOverlay";
-import { ResourcesNavigationOverlay } from "@/components/providers/ResourcesNavigationOverlay";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { PlatformConfigProvider } from "@/components/providers/PlatformConfigProvider";
 import { PublicSiteFooter } from "@/components/layout/PublicSiteFooter";
@@ -44,8 +42,6 @@ export default function RootLayout({
         className={`${fontVariables} min-h-screen bg-background font-sans text-foreground antialiased`.trim()}
       >
         <BonesRegistryBootstrap />
-        <DashboardGroupNavigationOverlay />
-        <ResourcesNavigationOverlay />
         <PlatformConfigProvider initialConfig={platform}>
           <ThemeProvider>
             <Providers>

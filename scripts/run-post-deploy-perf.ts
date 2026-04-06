@@ -61,6 +61,23 @@ type PerfRouteResult = {
   summaryPath: string;
 };
 
+type PerfSummaryRollup = {
+  status: "pass" | "fail";
+  passedRouteCount: number;
+  failedRouteCount: number;
+  worstP95Route: {
+    name: string;
+    p95Ms: number | null;
+    thresholdMs: number;
+  } | null;
+  nearestBudgetRoute: {
+    name: string;
+    p95Ms: number | null;
+    thresholdMs: number;
+    headroomMs: number | null;
+  } | null;
+};
+
 let hasLoggedCiMetricDebug = false;
 
 const routeSpecsBySuite: Record<PerfSuite, RouteSpec[]> = {
@@ -130,6 +147,13 @@ function formatMs(value: number | null) {
 
 function formatRate(value: number | null) {
   return value === null ? "n/a" : `${(value * 100).toFixed(2)}%`;
+}
+
+function formatHeadroom(value: number | null) {
+  if (value === null) {
+    return "n/a";
+  }
+  return `${value >= 0 ? "+" : ""}${value.toFixed(2)}ms`;
 }
 
 function readMetricValue(
@@ -279,6 +303,7 @@ async function parseRouteResult(
 }
 
 function writeStepSummary(results: PerfRouteResult[]) {
+  const rollup = buildSummaryRollup(results);
   const stepSummaryPath = process.env.GITHUB_STEP_SUMMARY?.trim();
   if (!stepSummaryPath) {
     return Promise.resolve();
@@ -294,9 +319,65 @@ function writeStepSummary(results: PerfRouteResult[]) {
       return `| ${result.name} | ${formatMs(result.avgMs)} | ${formatMs(result.p95Ms)} | ${formatRate(result.failRate)} | ${result.thresholdMs}ms | ${status} |`;
     }),
     "",
+    `- Overall status: ${rollup.status.toUpperCase()}`,
+    `- Passed routes: ${rollup.passedRouteCount}/${results.length}`,
+    `- Failed routes: ${rollup.failedRouteCount}`,
+    `- Worst p95 route: ${rollup.worstP95Route ? `${rollup.worstP95Route.name} (${formatMs(rollup.worstP95Route.p95Ms)} / ${rollup.worstP95Route.thresholdMs}ms budget)` : "n/a"}`,
+    `- Nearest budget route: ${rollup.nearestBudgetRoute ? `${rollup.nearestBudgetRoute.name} (${formatMs(rollup.nearestBudgetRoute.p95Ms)}, headroom ${formatHeadroom(rollup.nearestBudgetRoute.headroomMs)})` : "n/a"}`,
+    "",
   ];
 
   return writeFile(stepSummaryPath, `${lines.join("\n")}\n`, { flag: "a" });
+}
+
+function buildSummaryRollup(results: PerfRouteResult[]): PerfSummaryRollup {
+  const passedRouteCount = results.filter((result) => result.thresholdPassed).length;
+  const failedRouteCount = results.length - passedRouteCount;
+
+  const routesWithP95 = results.filter((result) => result.p95Ms !== null);
+  const worstP95Route = routesWithP95.reduce<PerfSummaryRollup["worstP95Route"]>(
+    (currentWorst, result) => {
+      if (result.p95Ms === null) {
+        return currentWorst;
+      }
+      if (!currentWorst || result.p95Ms > (currentWorst.p95Ms ?? -Infinity)) {
+        return {
+          name: result.name,
+          p95Ms: result.p95Ms,
+          thresholdMs: result.thresholdMs,
+        };
+      }
+      return currentWorst;
+    },
+    null,
+  );
+
+  const nearestBudgetRoute = routesWithP95.reduce<PerfSummaryRollup["nearestBudgetRoute"]>(
+    (currentNearest, result) => {
+      if (result.p95Ms === null) {
+        return currentNearest;
+      }
+      const headroomMs = result.thresholdMs - result.p95Ms;
+      if (!currentNearest || headroomMs < (currentNearest.headroomMs ?? Infinity)) {
+        return {
+          name: result.name,
+          p95Ms: result.p95Ms,
+          thresholdMs: result.thresholdMs,
+          headroomMs,
+        };
+      }
+      return currentNearest;
+    },
+    null,
+  );
+
+  return {
+    status: failedRouteCount > 0 ? "fail" : "pass",
+    passedRouteCount,
+    failedRouteCount,
+    worstP95Route,
+    nearestBudgetRoute,
+  };
 }
 
 async function main() {
@@ -333,6 +414,7 @@ async function main() {
     baseUrl,
     hotSlug,
     warmCacheCompleted: true,
+    rollup: buildSummaryRollup(results),
     results,
   };
 

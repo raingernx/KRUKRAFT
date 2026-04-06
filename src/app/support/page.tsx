@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Mail, LifeBuoy, ArrowLeft } from "lucide-react";
 import { Container } from "@/design-system";
 import { Navbar } from "@/components/layout/Navbar";
-import { HeroSearch } from "@/components/marketplace/HeroSearch";
+import { MarketplaceNavbarSearch } from "@/components/marketplace/MarketplaceNavbarSearch";
 import { getBuildSafePlatformConfig } from "@/services/platform";
 import { routes } from "@/lib/routes";
 
@@ -17,7 +17,7 @@ export default async function SupportPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Navbar headerSearch={<HeroSearch variant="listing" />} />
+      <Navbar headerSearch={<MarketplaceNavbarSearch />} />
 
       <main className="flex-1">
         <Container className="py-12 sm:py-14 lg:py-16">

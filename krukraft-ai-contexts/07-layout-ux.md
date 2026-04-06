@@ -132,12 +132,13 @@
   `src/app/resources/(browse)/page.tsx`, and detail pages mount it inside
   `ResourceDetailShell`, so pending detail/listing shells do not disappear
   before the target route scaffolding is actually on screen.
-- Cross-group jumps into `/resources` now also have a root-level
-  `ResourcesNavigationOverlay` from `src/app/layout.tsx`. Links launched from
-  non-resources routes mark `overlay: true` in the resources navigation store,
-  so users moving from dashboard or other public pages into listing/detail
-  routes keep a visible resources shell on screen while the new route tree is
-  still mounting.
+- Cross-group jumps into `/resources` now get their shell coverage from
+  `ResourcesNavigationOverlay` inside `src/app/resources/layout.tsx`, not from
+  the root layout. Links launched from non-resources routes still mark
+  `overlay: true` in the resources navigation store, so users moving from
+  dashboard or other public pages into listing/detail routes keep a visible
+  resources shell on screen while the new route tree is still mounting, but
+  unrelated public routes no longer hydrate that overlay code by default.
 - Dashboard and resources transition overlays no longer clear from a fixed
   timeout alone. `DashboardOverlayReady`, `DashboardNavigationReady`, and
   `ResourcesRouteReady` now wait for route-shell markers
@@ -149,7 +150,8 @@
   derive a fallback overlay directly from `usePathname()` transitions, not only
   from click-started navigation state. That keeps shell coverage active for
   browser back/forward and any route change where the intent state was not
-  started in time.
+  started in time, even though each overlay now mounts only inside its own
+  route-group layout instead of the root layout.
 - The root overlays are now target-aware instead of generic:
   `DashboardGroupNavigationOverlay` maps the destination href to route-specific
   dashboard, library, downloads, purchases, subscription, settings, creator,

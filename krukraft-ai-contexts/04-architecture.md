@@ -129,6 +129,7 @@ Root rendering note:
 - the theme baseline for users with no stored preference is now `light`; `dark` and `system` remain opt-in user preferences rather than the default initial state
 - `UserPreference.theme` now also defaults to `light` at the Prisma/database layer, so new preference rows created outside the client bootstrap path cannot drift back to `system`
 - the root client provider tree no longer mounts `SessionProvider`; public routes avoid the NextAuth client-session baseline by using targeted auth-viewer fetches only where auth-aware UI is needed
+- the root layout no longer mounts route-specific navigation overlays; `ResourcesNavigationOverlay` now lives in `src/app/resources/layout.tsx` and `DashboardGroupNavigationOverlay` now lives in `src/app/(dashboard)/layout.tsx` so unrelated public routes do not hydrate those client stores or shells
 - `/api/auth/viewer` now resolves directly from the signed JWT token via `next-auth/jwt` instead of `getServerSession`, so lightweight auth chrome does not spend Prisma connections just to confirm the signed-in snapshot
 - `/api/resources/viewer-state` and `/api/resources/[id]/viewer-state` now resolve the same auth snapshot from the signed JWT token instead of calling `getServerSession`, so owned-state/detail-state hydration no longer burns Prisma connections on session reads before the feature-specific queries start
 - lightweight client JSON fetches now use a small browser-side dedupe/TTL cache for repeat personalized requests, and sign-out clears that cache alongside auth viewer state

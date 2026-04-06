@@ -2,6 +2,10 @@
 
 ## 2026-04-07
 
+- updated the shared performance/route docs for the 2026-04-07 performance initiative baseline: Phase A captured analyzer/Lighthouse signal that client-JS overhead is still a primary bottleneck on `/resources` routes, and Phase B moved dashboard/resources navigation overlays out of `src/app/layout.tsx` into their route-group layouts to trim unrelated public-route hydration work.
+- updated search/performance docs again after the first Phase C pass: secondary public routes now lazy-load `HeroSearch` through `MarketplaceNavbarSearch`, and public loading shells stopped importing the full search bundle directly.
+- trimmed the live marketplace search bundle further by moving bones/preview fixtures out of `HeroSearch.tsx` into `HeroSearchPreviews.tsx`, leaving the runtime module focused on real search UI only.
+- moved the signed-in `/resources` personalized discover section behind a dedicated lazy boundary with a structural fallback, so recommendation client logic no longer ships in the route's initial client payload.
 - captured [Platform Brand Assets Dark Theme Baseline](raw/operations/platform-brand-assets-dark-theme-baseline.md) in `operations` and seeded [Platform Brand Asset Delivery](wiki/operations/platform-brand-assets.md) so dark-logo fields, runtime asset aliases, and first-paint fallback behavior have a durable shared reference.
 
 ## 2026-04-06
@@ -48,3 +52,5 @@
 - Added initial core wiki pages for auth, payments, search, storage/downloads, core routes, CI browser smoke, browser verification, skeleton policy, and purchase-to-library flow.
 - Added `npm run wiki:lint` and a repo-owned structural checker for the knowledge layer.
 - Updated platform brand-asset delivery rules so dark-theme first paint no longer flashes the repo-owned dark fallback when only a light custom logo is configured.
+- Strengthened perf regression gates by raising LHCI to two runs with blocking performance/TBT/CLS assertions and expanded the post-deploy warm/perf summary with rollup reporting for worst-route and nearest-budget visibility.
+- Added a repo-owned performance observability playbook that defines the review order after deploy: warmed perf summary first, Speed Insights second, runtime logs third.

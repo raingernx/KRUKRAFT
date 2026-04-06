@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { getCachedServerSession } from "@/lib/auth";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
+import { DashboardGroupNavigationOverlay } from "@/components/providers/DashboardGroupNavigationOverlay";
 import { getCreatorAccessState } from "@/services/creator";
 import { traceServerStep } from "@/lib/performance/observability";
 
@@ -53,5 +54,10 @@ export default async function DashboardGroupLayout({
     creatorEnabled: creatorAccess.creatorEnabled,
   };
 
-  return <DashboardLayout user={user}>{children}</DashboardLayout>;
+  return (
+    <>
+      <DashboardGroupNavigationOverlay />
+      <DashboardLayout user={user}>{children}</DashboardLayout>
+    </>
+  );
 }

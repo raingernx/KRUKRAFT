@@ -1,14 +1,14 @@
 "use client";
 
 import { Navbar } from "@/components/layout/Navbar";
-import { HeroSearch } from "@/components/marketplace/HeroSearch";
+import { ResourcesCatalogSearchSkeleton } from "@/components/marketplace/ResourcesCatalogControlsSkeleton";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { Container, PageContainer, PageContentWide } from "@/design-system";
 
 export function CategoryPageLoadingShell() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Navbar headerSearch={<HeroSearch variant="listing" />} />
+      <Navbar headerSearch={<ResourcesCatalogSearchSkeleton />} />
 
       <div className="relative overflow-hidden bg-gradient-to-br from-slate-700 to-slate-900">
         <Container className="space-y-6 pb-12 pt-10 lg:pb-14 lg:pt-12">
@@ -59,7 +59,7 @@ export function CategoryPageLoadingShell() {
 export function CreatorPublicProfileLoadingShell() {
   return (
     <div className="min-h-screen bg-background">
-      <Navbar headerSearch={<HeroSearch variant="listing" />} />
+      <Navbar headerSearch={<ResourcesCatalogSearchSkeleton />} />
 
       <main>
         <PageContainer className="py-10">

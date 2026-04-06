@@ -1,7 +1,7 @@
 {
   "ci": {
     "collect": {
-      "numberOfRuns": 1,
+      "numberOfRuns": 2,
       "startServerCommand": "npm run dev",
       "startServerReadyPattern": "Ready in",
       "startServerReadyTimeout": 120000,
@@ -14,9 +14,27 @@
     "assert": {
       "assertions": {
         "categories:performance": [
+          "error",
+          {
+            "minScore": 0.4
+          }
+        ],
+        "largest-contentful-paint": [
           "warn",
           {
-            "minScore": 0.7
+            "maxNumericValue": 25000
+          }
+        ],
+        "total-blocking-time": [
+          "error",
+          {
+            "maxNumericValue": 8000
+          }
+        ],
+        "cumulative-layout-shift": [
+          "error",
+          {
+            "maxNumericValue": 0.1
           }
         ],
         "categories:accessibility": [

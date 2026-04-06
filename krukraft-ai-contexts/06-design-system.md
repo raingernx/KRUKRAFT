@@ -207,10 +207,10 @@
   so first entry from public routes into the dashboard group shows sidebar,
   topbar, and content scaffolding even before the async group layout resolves.
   `src/components/providers/DashboardGroupNavigationOverlay.tsx` now reuses
-  that same shell from the root layout during public-to-dashboard client
-  navigations so protected-shell entry does not flash blank while the target
-  group is still resolving. The overlay now stays mounted until the dashboard
-  shell clears the pending navigation state through
+  that same shell from `src/app/(dashboard)/layout.tsx` during
+  public-to-dashboard client navigations so protected-shell entry does not
+  flash blank while the target group is still resolving. The overlay now stays
+  mounted until the dashboard shell clears the pending navigation state through
   `src/components/layout/dashboard/DashboardOverlayReady.tsx`, while
   `DashboardNavigationReady` remains responsible only for non-overlay
   in-dashboard transitions. `src/app/(dashboard)/dashboard/template.tsx` no
@@ -250,8 +250,8 @@
   `src/app/resources/template.tsx`, so cross-route skeletons stay visible
   until the target shell is actually on screen.
   `src/components/providers/ResourcesNavigationOverlay.tsx` now mirrors the
-  dashboard pattern at the root layout for cross-group listing/detail
-  navigations. During `overlay: true` jumps, the in-route
+  dashboard pattern from `src/app/resources/layout.tsx` for cross-group
+  listing/detail navigations. During `overlay: true` jumps, the in-route
   `ResourcesTransitionShell`, `ResourcesTransitionFallback`, and
   `ResourcesNavigationFeedback` now stay silent so the root overlay is the
   only active resources loading layer. In-route `/resources` transitions still
@@ -260,9 +260,10 @@
   `data-route-shell-ready` markers (`dashboard`, `resources-browse`,
   `resource-detail`) so navigation overlays only clear after the target shell
   and a stable main/loading surface are actually present in the DOM.
-  The root overlay providers now also watch pathname-level cross-group changes
-  so runtime shell coverage still appears for browser history navigations and
-  other transitions that did not go through the explicit click-intent helpers.
+  The route-group overlay providers now also watch pathname-level cross-group
+  changes so runtime shell coverage still appears for browser history
+  navigations and other transitions that did not go through the explicit
+  click-intent helpers.
   Overlay rendering is now target-aware as well: the dashboard group overlay
   maps `/dashboard`, `/dashboard/library`, `/dashboard/downloads`,
   `/dashboard/purchases`, `/subscription`, `/settings`, creator dashboard

@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/design-system";
-import { HeroSearch } from "@/components/marketplace/HeroSearch";
+import { MarketplaceNavbarSearch } from "@/components/marketplace/MarketplaceNavbarSearch";
 import { routes } from "@/lib/routes";
 
 export default function ResourcesNotFound() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Navbar headerSearch={<HeroSearch variant="listing" />} />
+      <Navbar headerSearch={<MarketplaceNavbarSearch />} />
 
       <main className="flex-1">
         <Container className="py-10 sm:py-12 lg:py-14">

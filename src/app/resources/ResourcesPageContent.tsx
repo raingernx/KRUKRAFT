@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Suspense } from "react";
 import { ArrowRight } from "lucide-react";
 import { isMissingTableError } from "@/lib/prismaErrors";
-import { ResourcesDiscoverPersonalizedSection } from "@/components/resources/ResourcesDiscoverPersonalizedSection";
+import { LazyResourcesDiscoverPersonalizedSection } from "@/components/resources/LazyResourcesDiscoverPersonalizedSection";
 import { ResourcesViewerStateProvider } from "@/components/resources/ResourcesViewerStateProvider";
 import type { ResourceCardData } from "@/components/resources/ResourceCard";
 import { ViewerAwareResourceCard } from "@/components/resources/ViewerAwareResourceCard";
@@ -506,7 +506,7 @@ async function ResourcesDiscoverDeferredSections({
         </div>
       </section>
 
-      <ResourcesDiscoverPersonalizedSection
+      <LazyResourcesDiscoverPersonalizedSection
         fallbackCards={globalFiltered.slice(0, eagerDiscoverCardCount)}
         eagerCardCount={eagerDiscoverCardCount}
         eagerPreviewUrls={[...eagerDiscoverPreviewUrls]}

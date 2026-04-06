@@ -42,6 +42,7 @@ The discover page now mixes:
 - streamed server sections
 - warmed cache variants
 - lighter-weight fallbacks that match the final section intent
+- a lazy personalized client section so signed-in recommendation UI is not part of the initial `/resources` client payload
 - a route-level loading shell that mirrors the live discover shape:
   - lavender hero stage with the same split-banner footprint as the live route
   - section header + resource-card skeletons
@@ -67,6 +68,7 @@ Search behavior notes:
 - selecting a suggestion opens the resource detail directly
 - pressing Enter or using the dropdown footer routes to the canonical marketplace results page
 - no-result flows recover on the same marketplace route instead of bouncing to ad-hoc pages
+- the full `HeroSearch` client bundle is now treated as critical only on the main marketplace route; secondary public routes such as support, category, creator, membership, and resource-detail pages lazy-load the navbar search and show the structural search shell first
 
 Behavior notes:
 - `/resources` default vs experiment treatment can vary with the ranking experiment cookie

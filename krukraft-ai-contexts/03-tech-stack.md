@@ -38,6 +38,7 @@
 - default workflow is now `Codex triages first`: the agent should decide whether a change should be skipped, ingested as single-source knowledge, merged into an existing wiki page, or handled as a batch topic, then report that decision back to the user
 - `db:deploy`: `prisma migrate deploy`
 - `perf:post-deploy`: warm cache + smoke perf suite
+- post-deploy perf review is now a layered workflow: use LHCI for local regression floors, then the warmed k6 summary/rollup in GitHub Actions, then Vercel Speed Insights and runtime logs for production-only drift
 - GitHub post-deploy warm workflow supports both `deployment_status` and manual `workflow_dispatch` runs, which covers direct CLI production deploys
 - the post-deploy warm workflow now retries `npm ci` and uploads install logs alongside warm artifacts, so failed warm runs do not die without diagnostics
 - the post-deploy warm/perf workflow now installs on Node 24, matching the current local `npm ci` / lockfile resolver behavior and avoiding the old Node 20/npm 10 mismatch
@@ -80,6 +81,7 @@ Important: build must stay schema-mutation-free. Migration deploy is a separate 
 - Custom server-side performance tracing utilities live under `src/lib/performance/*`
 - Root-layout browser telemetry is production-only; local dev and CI browser verification do not inject the Vercel Analytics / Speed Insights scripts anymore, which keeps smoke suites from depending on outbound telemetry requests.
 - Security headers now use a production-only strict-transport profile: `Strict-Transport-Security` and CSP `upgrade-insecure-requests` stay enabled in production, but local dev / CI browser verification no longer upgrades `http://localhost` asset redirects to broken `https://localhost` requests.
+- Operational review order is: warmed post-deploy perf summary first, Speed Insights second, runtime logs third.
 
 ## File Storage Pattern
 
