@@ -47,6 +47,8 @@ Primary bottleneck class is now:
 - LHCI now samples the key `/resources` routes twice per run and treats the overall performance category, total blocking time, and cumulative layout shift as blocking floor assertions instead of advisory warnings, so obvious lab regressions fail faster before they hide behind a single noisy pass
 - the post-deploy warm/perf workflow summary now emits a rollup with pass/fail counts, the worst p95 route, and the route closest to its budget, so production perf regressions are easier to triage from the GitHub Actions summary without downloading artifacts first
 - the GitHub Actions perf-summary append step now uses a parser-safe inline `node --input-type=module -e ...` command instead of a heredoc block, after a broken YAML parse on push proved the previous summary script was too fragile inside `run: |`
+- the repo now also has a repo-owned workflow syntax gate: `scripts/check-workflow-syntax.mjs` parses every file under `.github/workflows/`, and `npm run lint` calls it so GitHub Actions YAML regressions are caught before push/CI parser failures
+- the post-deploy warm step now re-hits `/resources` twice on purpose, because production checks on 2026-04-07 showed that the first warm hit for the public home shell can still take ~10s immediately after deploy even when the steady-state smoke budget passes afterward
 - `/api/auth/viewer` now reads the signed JWT cookie through `next-auth/jwt` instead of `getServerSession`, which removes a Prisma-backed session lookup from the lightweight public auth-chrome path
 - the marketplace/detail private viewer-state APIs now read the same signed JWT snapshot instead of `getServerSession`, which removes another public-route session lookup from the Prisma pool before owned-state/review queries begin
 - the auth-viewer hook no longer hydrates from module cache during the initial render, which avoids navbar server/client drift; navbar auth controls now hold their footprint with lightweight loading placeholders until the viewer request settles
@@ -127,6 +129,7 @@ Primary bottleneck class is now:
 
 - Smoke failures can still happen when a route is not warmed or is warmed against the wrong query path.
 - Keep post-deploy warm targets aligned with the actual perf routes and route intent.
+- Some deploys still show first-hit instability on `/resources`; the warm workflow now intentionally gives that route a second pass before k6 begins, instead of loosening the budget blindly.
 
 ### 2. Discover feed cold path
 

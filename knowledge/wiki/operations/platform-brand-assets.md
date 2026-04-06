@@ -9,7 +9,7 @@ Krukraft now supports dedicated dark-theme brand assets for navigation surfaces 
 - `PlatformSettings` stores `logoFullDarkUrl` and `logoIconDarkUrl` alongside the light/default logo fields.
 - Build-safe public platform config exposes `/brand-assets/full-logo-dark` and `/brand-assets/icon-logo-dark` without making root layout or metadata DB-bound.
 - `Logo.tsx` mounts local repo-owned fallback assets first, then overlays theme-specific custom images and hides the fallback only after the active image has loaded.
-- because the runtime `/brand-assets/*` dark alias can still resolve to the same uploaded light logo, the dark-theme logo stack intentionally keeps using the light fallback for first paint on runtime-logo paths so refreshes do not flash a mismatched dark-default logo before the uploaded asset arrives.
+- dark runtime logo resolution no longer falls back to uploaded light logos; if no dedicated dark asset is stored, the stack now stays on the repo-owned dark fallback so dark refreshes do not settle onto a light wordmark after load.
 - the logo stack requests the fallback and active light/dark logo images at high priority from SSR markup because brand navigation is treated as critical-path UI.
 - Admin settings can now upload and preview both light and dark versions of full and icon logos.
 
@@ -39,13 +39,14 @@ Navigation branding is visible on nearly every route. If the logo waits on a run
 
 - root layout and metadata remain build-safe and must not read live DB-backed platform settings directly
 - `/brand-assets/*` must guard against self-referential alias values
-- dark surfaces must not rely on light-only logo artwork when a dedicated dark asset exists
+- dark surfaces must not settle onto light-only logo artwork after load when no dedicated dark asset exists
 - the logo wrapper should reserve fixed geometry so route refreshes do not shift layout
 
 ## Known Risks
 
 - runtime alias routes still use `no-store`, so the custom logo image itself remains network-bound until a stronger versioned asset strategy is introduced
 - preloading both light and dark logo routes increases request count slightly in exchange for faster theme-ready branding
+- dark-theme branding still depends on an explicit dark upload if the repo-owned fallback is not good enough for the brand
 
 ## Related Pages
 

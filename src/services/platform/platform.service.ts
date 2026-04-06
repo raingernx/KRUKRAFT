@@ -213,15 +213,10 @@ export function resolvePlatformConfig(
     PLATFORM_DEFAULTS.logoIconUrl;
   const logoFullDarkUrl =
     storedFullDarkLogoUrl ||
-    storedFullLogoUrl ||
-    legacyLogoUrl ||
-    logoFullUrl ||
     PLATFORM_DEFAULTS.logoFullDarkUrl;
   const logoIconDarkUrl =
     storedIconDarkLogoUrl ||
     storedIconLogoUrl ||
-    logoFullDarkUrl ||
-    logoIconUrl ||
     PLATFORM_DEFAULTS.logoIconDarkUrl;
   const logoOgUrl =
     storedOgLogoUrl ||

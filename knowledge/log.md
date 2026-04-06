@@ -55,3 +55,6 @@
 - Strengthened perf regression gates by raising LHCI to two runs with blocking performance/TBT/CLS assertions and expanded the post-deploy warm/perf summary with rollup reporting for worst-route and nearest-budget visibility.
 - Added a repo-owned performance observability playbook that defines the review order after deploy: warmed perf summary first, Speed Insights second, runtime logs third.
 - Replaced the post-deploy perf workflow's heredoc summary append with a parser-safe inline Node command after a push-triggered YAML syntax failure on `.github/workflows/post-deploy-warm-cache.yml`.
+- Added a repo-owned workflow syntax gate (`npm run workflow:check`) that parses every `.github/workflows/*.yml` file and now runs inside `lint`.
+- Added a lightweight root-level dashboard entry overlay to cover public → dashboard jumps and tightened dark-logo resolution so dark refreshes no longer settle onto uploaded light logos when no dedicated dark asset exists.
+- Tightened the post-deploy warm workflow so `/resources` gets a deliberate second warm pass before k6 starts, after production repros showed first-hit instability on the public home shell even when warmed steady-state latency later passed budget.

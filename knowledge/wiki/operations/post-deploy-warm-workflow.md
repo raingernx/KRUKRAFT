@@ -8,6 +8,7 @@ The post-deploy warm workflow warms critical public routes, then runs a k6-backe
 
 - The workflow auto-runs on production deployment success and can also be triggered manually with `workflow_dispatch`.
 - `Warm Public Cache` waits for `/resources` to return success, then warms public routes and optional internal cache layers before perf verification starts.
+- The warm script now gives `/resources` a deliberate second pass before the k6 smoke suite starts, because production checks showed first-hit instability on that route immediately after deploy even when its warmed steady-state budget still passed.
 - `Run Post-Deploy Performance Verification` executes `npm run perf:post-deploy`, which runs the smoke k6 suite and fails the job when any route exceeds its p95 budget or crosses a 1% failure rate.
 - The generated `artifacts/perf-summary.json` now includes a rollup with overall status, pass/fail counts, the worst p95 route, and the route nearest its budget.
 - The workflow summary now includes that rollup directly, so reviewers do not need to download artifacts first to see which route regressed.
@@ -33,6 +34,7 @@ This workflow is the repo-owned production perf truth source after deploy. It ve
 ## Invariants
 
 - Warm targets and perf targets must stay aligned; otherwise the workflow can report cold-path regressions as if they were warmed-route failures.
+- `/resources` is expected to receive an extra warm pass; removing it without replacing the stabilization strategy reintroduces noisy first-hit perf failures after deploy.
 - The smoke perf suite is a blocking gate: route budgets are not advisory.
 - Artifact JSON and GitHub step summary should tell the same story about which route was worst and which routes failed.
 

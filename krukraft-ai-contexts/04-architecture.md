@@ -129,7 +129,7 @@ Root rendering note:
 - the theme baseline for users with no stored preference is now `light`; `dark` and `system` remain opt-in user preferences rather than the default initial state
 - `UserPreference.theme` now also defaults to `light` at the Prisma/database layer, so new preference rows created outside the client bootstrap path cannot drift back to `system`
 - the root client provider tree no longer mounts `SessionProvider`; public routes avoid the NextAuth client-session baseline by using targeted auth-viewer fetches only where auth-aware UI is needed
-- the root layout no longer mounts route-specific navigation overlays; `ResourcesNavigationOverlay` now lives in `src/app/resources/layout.tsx` and `DashboardGroupNavigationOverlay` now lives in `src/app/(dashboard)/layout.tsx` so unrelated public routes do not hydrate those client stores or shells
+- the root layout no longer mounts the full route-specific dashboard/resources overlay stack; `ResourcesNavigationOverlay` still lives in `src/app/resources/layout.tsx` and `DashboardGroupNavigationOverlay` still lives in `src/app/(dashboard)/layout.tsx`, while a lighter `DashboardEntryNavigationOverlay` now mounts from the root only to cover public → dashboard jumps without rehydrating the full in-dashboard transition logic on every route
 - `/api/auth/viewer` now resolves directly from the signed JWT token via `next-auth/jwt` instead of `getServerSession`, so lightweight auth chrome does not spend Prisma connections just to confirm the signed-in snapshot
 - `/api/resources/viewer-state` and `/api/resources/[id]/viewer-state` now resolve the same auth snapshot from the signed JWT token instead of calling `getServerSession`, so owned-state/detail-state hydration no longer burns Prisma connections on session reads before the feature-specific queries start
 - lightweight client JSON fetches now use a small browser-side dedupe/TTL cache for repeat personalized requests, and sign-out clears that cache alongside auth viewer state
@@ -204,7 +204,7 @@ public logo / favicon / OG asset delivery
   → the alias surface now includes `full-logo-dark` and `icon-logo-dark` for theme-aware navigation branding
   → the `Logo` stack requests fallback and active runtime logo images at high priority from SSR markup so branding assets are requested before most other route imagery without duplicating manual head preloads
   → the `Logo` client component keeps a local repo-owned fallback asset mounted underneath the runtime logo image, so refreshes do not show a blank brand slot while the current custom light/dark asset is still loading
-  → because `/brand-assets/*` dark aliases can still resolve to the same uploaded light logo, the dark-theme stack now reuses the light fallback for first paint on runtime-logo paths so refreshes do not flash a mismatched white/default-dark logo before settling on the uploaded asset
+  → dark runtime logo resolution now stays on the repo-owned dark fallback when no dedicated dark asset is stored, so dark refreshes do not settle onto an uploaded light logo after first paint
 ```
 
 This separation exists to avoid Prisma build-time warnings and DB dependency in static build paths.

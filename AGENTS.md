@@ -560,6 +560,7 @@ When editing public routes with streaming or personalization:
 - after changes to search, auth, cache, or other runtime-sensitive flows, scan recent logs after the smoke test to check for repeated errors, hidden runtime failures, and hydration issues
 - when scanning logs, distinguish between historical errors and errors reproduced after the latest change; do not claim success if the latest smoke test still produces matching log failures
 - after image delivery, `next/image`, or asset-route changes, scan logs for optimizer/runtime image errors such as `next/image`, `valid image`, or `received null`, and verify the changed image path actually renders instead of assuming HTML markup alone proves success
+- after editing `.github/workflows/*.yml`, run the repo-owned workflow syntax check; `npm run lint` now includes `npm run workflow:check` so invalid YAML should fail before push
 
 ---
 

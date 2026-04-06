@@ -10,6 +10,7 @@ Krukraft treats performance review as a layered workflow: block obvious regressi
 - Production deploy verification uses the post-deploy warm/perf workflow, which warms public routes, runs the smoke k6 suite, and writes `artifacts/perf-summary.json` plus a GitHub Actions summary rollup.
 - Browser telemetry comes from production-only Vercel Analytics and Speed Insights in `src/app/layout.tsx`.
 - Runtime investigation for slow or unstable server paths should use Vercel runtime logs after the warmed perf summary and browser smoke outputs have already narrowed the failing route.
+- Workflow edits now have a repo-owned parser gate: `npm run workflow:check` parses all `.github/workflows/*.yml` files, and `npm run lint` includes that gate so broken YAML should fail before push.
 
 ## Why It Matters
 
@@ -19,6 +20,7 @@ Performance problems in this repo can come from different layers: client JS, war
 
 - `.lighthouserc.json`
 - `.github/workflows/post-deploy-warm-cache.yml`
+- `scripts/check-workflow-syntax.mjs`
 - `scripts/run-post-deploy-perf.ts`
 - `src/app/layout.tsx`
 - `artifacts/perf-summary.json`
@@ -26,6 +28,7 @@ Performance problems in this repo can come from different layers: client JS, war
 ## Flows
 
 - run LHCI locally or in CI to catch obvious `/resources` regression floors before deploy
+- if a change touches `.github/workflows/`, let `workflow:check` parse those files before trusting the deploy/perf automation path
 - after production deploy, read the post-deploy warm/perf summary first
 - if the summary fails, use the worst-route and nearest-budget rollup fields to choose the next route to inspect
 - if the warmed perf suite passes but users still report slowness, inspect Vercel Speed Insights for real-user regressions
@@ -34,6 +37,7 @@ Performance problems in this repo can come from different layers: client JS, war
 ## Invariants
 
 - The post-deploy warm/perf workflow is the first production perf truth source after deploy, not local Lighthouse alone.
+- GitHub workflow YAML must parse locally before it is considered a valid performance/deploy change.
 - Speed Insights is a real-user follow-up signal, not a replacement for route-level warmed verification.
 - Runtime logs should be read after a route has already been narrowed down by browser smoke, perf summary, or Speed Insights; they are not the first debugging surface.
 - Local LHCI thresholds should remain realistic blocking floors from the current repo baseline, not aspirational production budgets that fail on every run.
@@ -56,6 +60,7 @@ Performance problems in this repo can come from different layers: client JS, war
 
 - [Canonical source: .lighthouserc.json](../../../.lighthouserc.json)
 - [Canonical source: .github/workflows/post-deploy-warm-cache.yml](../../../.github/workflows/post-deploy-warm-cache.yml)
+- [Canonical source: scripts/check-workflow-syntax.mjs](../../../scripts/check-workflow-syntax.mjs)
 - [Canonical source: scripts/run-post-deploy-perf.ts](../../../scripts/run-post-deploy-perf.ts)
 - [Canonical source: src/app/layout.tsx](../../../src/app/layout.tsx)
 - [`krukraft-ai-contexts/03-tech-stack.md`](../../../krukraft-ai-contexts/03-tech-stack.md)

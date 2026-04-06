@@ -150,8 +150,9 @@
   derive a fallback overlay directly from `usePathname()` transitions, not only
   from click-started navigation state. That keeps shell coverage active for
   browser back/forward and any route change where the intent state was not
-  started in time, even though each overlay now mounts only inside its own
-  route-group layout instead of the root layout.
+  started in time, even though each overlay now mounts inside its own
+  route-group layout and the root only carries the lightweight
+  `DashboardEntryNavigationOverlay` for public-to-dashboard jumps.
 - The root overlays are now target-aware instead of generic:
   `DashboardGroupNavigationOverlay` maps the destination href to route-specific
   dashboard, library, downloads, purchases, subscription, settings, creator,
@@ -368,12 +369,12 @@ max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8
   now show sidebar/topbar/content scaffolding instead of a blank gap while the
   group layout is still loading.
 - Public `Navbar` links that enter protected dashboard surfaces now also
-  trigger a global dashboard navigation overlay from the root layout via
-  `DashboardGroupNavigationOverlay`, so first entry from public routes does not
-  depend solely on segment loading timing to reveal a visible shell. The
-  overlay now persists until the mounted client dashboard shell clears the
-  pending overlay state via `DashboardOverlayReady`, instead of hiding as soon
-  as the browser URL enters `/dashboard` or as soon as a route template mounts.
+  trigger a global dashboard entry overlay from the root layout via
+  `DashboardEntryNavigationOverlay`, so first entry from public routes does not
+  depend solely on segment loading timing to reveal dashboard shell chrome.
+  The heavier route-aware `DashboardGroupNavigationOverlay` remains scoped to
+  the dashboard layout for in-dashboard transitions, and pending state still
+  clears from the mounted client dashboard shell via `DashboardOverlayReady`.
 - Template-based dashboard readiness now only clears in-dashboard transition
   progress (`overlay: false`). First entry from public routes into the
   protected dashboard subtree should clear from the actual `DashboardShell`

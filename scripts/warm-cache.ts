@@ -31,6 +31,11 @@ if (!baseUrl) {
 type WarmRoute = {
   label: string;
   path: string;
+  /**
+   * Repeat the same warm request multiple times when the route is prone to
+   * post-deploy cold starts across successive compute instances.
+   */
+  repeat?: number;
   /** Extra request headers forwarded verbatim. Used to simulate experiment
    *  cookie state so the warm request exercises the same effectiveSort branch
    *  that CI smoke tests use. */
@@ -47,6 +52,10 @@ const routes: WarmRoute[] = [
   {
     label: "resources-home",
     path: "/resources",
+    // Hit the public home shell twice so the deployment-status workflow is
+    // less likely to hand the k6 smoke suite a just-born instance on its
+    // first measured request.
+    repeat: 2,
   },
   {
     label: "listing-default",
@@ -290,18 +299,23 @@ async function main() {
   const results: WarmResult[] = [];
 
   for (const route of routes) {
-    console.log(`[warm-cache] Warming ${route.label}: ${route.path}`);
-    const result = await warmRoute(route);
-    results.push(result);
+    const attempts = Math.max(1, route.repeat ?? 1);
 
-    if (result.ok) {
-      console.log(
-        `[warm-cache] OK ${result.status} ${result.label} ${result.elapsedMs}ms bodyBytes=${result.bodyBytes ?? "n/a"}`,
-      );
-    } else {
-      console.warn(
-        `[warm-cache] FAIL ${result.status ?? "ERR"} ${result.label} ${result.elapsedMs}ms${result.error ? ` ${result.error}` : ""}`,
-      );
+    for (let attempt = 1; attempt <= attempts; attempt += 1) {
+      const suffix = attempts > 1 ? ` (pass ${attempt}/${attempts})` : "";
+      console.log(`[warm-cache] Warming ${route.label}${suffix}: ${route.path}`);
+      const result = await warmRoute(route);
+      results.push(result);
+
+      if (result.ok) {
+        console.log(
+          `[warm-cache] OK ${result.status} ${result.label}${suffix} ${result.elapsedMs}ms bodyBytes=${result.bodyBytes ?? "n/a"}`,
+        );
+      } else {
+        console.warn(
+          `[warm-cache] FAIL ${result.status ?? "ERR"} ${result.label}${suffix} ${result.elapsedMs}ms${result.error ? ` ${result.error}` : ""}`,
+        );
+      }
     }
   }
 

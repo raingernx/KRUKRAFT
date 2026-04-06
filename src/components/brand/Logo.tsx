@@ -118,8 +118,7 @@ function ThemeAwareLogoAsset({
 }) {
   const [lightLoaded, setLightLoaded] = useState(false);
   const [darkLoaded, setDarkLoaded] = useState(false);
-  const usesDedicatedDarkAsset =
-    darkSrc !== lightSrc && !isRuntimeBrandAsset(darkSrc);
+  const usesDedicatedDarkAsset = darkSrc !== lightSrc;
   const effectiveFallbackDarkSrc = usesDedicatedDarkAsset
     ? fallbackDarkSrc
     : fallbackLightSrc;

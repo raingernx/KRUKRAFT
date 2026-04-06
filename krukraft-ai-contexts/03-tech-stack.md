@@ -25,6 +25,7 @@
 - `build`: `prisma generate && next build --webpack`
 - `typecheck`: `tsc -p tsconfig.typecheck.json --noEmit`
 - `lint`: scoped ESLint run plus `npm run skeleton:check`, which blocks inline `*Skeleton` / `*Fallback` component declarations inside `src/app/**`
+- `workflow:check`: repo-owned GitHub Actions YAML parser check powered by `scripts/check-workflow-syntax.mjs`; `lint` now runs it so broken workflow syntax fails locally/CI before GitHub rejects the file on push
 - `wiki:lint`: repo-owned knowledge-layer validation that checks required `knowledge/` roots, schema files, wiki-page section headings, and `knowledge/index.md` coverage
 - `wiki:index`: regenerates `knowledge/index.md` from the current wiki tree
 - `wiki:lint:semantic`: flags duplicate wiki titles, uncited raw notes, and wiki pages that rely only on low-priority knowledge links without canonical source backing
@@ -50,8 +51,9 @@
 - `browser:probe:management`: repo-owned authenticated management probe for `/admin/analytics`, `/admin/analytics/recommendations`, `/dashboard/creator/resources`, `/dashboard/creator/resources/new`, `/dashboard/creator/profile`, and `/dashboard/creator/analytics`
 - platform branding now includes dedicated `logoFullDarkUrl` / `logoIconDarkUrl` fields end-to-end (Prisma, admin settings, public config, and runtime `/brand-assets/*` aliases), so dark-theme logo swaps no longer need to reuse the light asset
 - `src/components/brand/Logo.tsx` now treats brand images as critical-path UI: it pre-renders a local fallback asset, layers theme-specific runtime logo images over that fallback, and hides the fallback only after the active custom asset has loaded
-- because `/brand-assets/*` dark aliases can still resolve to the same uploaded light logo, the dark-theme stack now uses the light fallback for first paint on runtime-logo paths instead of flashing a repo-owned dark fallback and then swapping back to the light custom logo
+- dark runtime logo resolution no longer falls back to uploaded light logos; if no dedicated dark asset is stored, the stack now stays on the repo-owned dark fallback instead of settling on a light custom logo after refresh
 - the logo stack now requests both the repo-owned fallback assets and the active light/dark runtime logo images at high priority from SSR markup, so navigation branding starts loading before most other route imagery without duplicating manual `<head>` preloads
+- the root layout now mounts a lightweight `DashboardEntryNavigationOverlay` so jumps from public pages into `/dashboard*`, `/settings`, `/purchases`, or `/subscription` reserve dashboard shell chrome before the dashboard subtree mounts
 - `src/services/resources/index.ts`: top-level import surface intentionally exposes only public marketplace/detail reads plus viewer-state helpers; route handlers and admin/mutation paths must import `resource.service` / `mutations` subpaths directly so browser-facing bundles do not accidentally pull `server-only` or `next/cache` mutation code
 - `src/components/resources/detail/ResourceDetailLoadingShell.tsx`: the client loading shell is intentionally self-contained and must not import `ResourceDetailSections.tsx` or other service-backed section files, because that overlay path mounts in browser navigation flows
 - `knowledge/`: repo-owned LLM wiki split into `knowledge/raw/` evidence captures, `knowledge/wiki/` synthesized topic pages, and `knowledge/schema/` ingest/query/lint rules; the layer is intentionally lighter-weight than a full external RAG stack and is maintained inside the repo
