@@ -1301,6 +1301,59 @@ function renderPlanTextSummary(plan, input, serializedPlan) {
   return lines.join("\n");
 }
 
+function buildCiHints(serializedPlan) {
+  const blocked = serializedPlan.policySummary.status === "blocked_by_policy";
+  const reviewRequired = serializedPlan.policySummary.status === "review_required";
+  const statusEmoji = blocked ? "x" : reviewRequired ? "!" : "ok";
+  const exitCode = blocked ? 2 : 0;
+  const recommendedActions = blocked
+    ? [
+        "Inspect policySummary.overrideViolations and reviewRequired annotations.",
+        "Loosen batch policy overrides only if the write scope is intentionally allowed.",
+        "Keep write mode blocked until the review-required items or targets are resolved.",
+      ]
+    : reviewRequired
+      ? [
+          "Review the listed items and wiki targets before auto-applying the plan.",
+          "Use the bundle annotations to focus on existing-page updates, merge groups, and backlink writes.",
+        ]
+      : ["Plan is safe to auto-apply under the current policy gate."];
+
+  const headline = blocked
+    ? "Ingest plan blocked by policy"
+    : reviewRequired
+      ? "Ingest plan requires review"
+      : "Ingest plan is safe to apply";
+
+  const markdownLines = [
+    `## Wiki Ingest Report`,
+    ``,
+    `- Status: \`${serializedPlan.policySummary.status}\``,
+    `- Raw notes: \`${serializedPlan.summary.rawNotes}\``,
+    `- Wiki targets: \`${serializedPlan.summary.wikiTargets}\``,
+    `- Backlink writes: \`${serializedPlan.summary.backlinkWrites}\``,
+    `- Knowledge log entries: \`${serializedPlan.summary.knowledgeLogEntries}\``,
+  ];
+
+  if (serializedPlan.policySummary.reasons.length > 0) {
+    markdownLines.push("", `### Policy Reasons`);
+    for (const reason of serializedPlan.policySummary.reasons) {
+      markdownLines.push(`- ${reason}`);
+    }
+  }
+
+  return {
+    headline,
+    status: serializedPlan.policySummary.status,
+    statusEmoji,
+    exitCode,
+    blocked,
+    reviewRequired,
+    recommendedActions,
+    markdownSummary: markdownLines.join("\n"),
+  };
+}
+
 function buildSerializedPlanReport(plan, input, serializedPlan) {
   if (reportFormat === "plan") {
     return serializedPlan;
@@ -1356,6 +1409,7 @@ function buildSerializedPlanReport(plan, input, serializedPlan) {
         label: entry.label,
       })),
     },
+    ciHints: buildCiHints(serializedPlan),
     sections: {
       summary: serializedPlan.summary,
       decisionSummary: serializedPlan.decisionSummary,
