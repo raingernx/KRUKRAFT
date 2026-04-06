@@ -10,6 +10,7 @@ Krukraft maintains a repo-owned LLM wiki under `knowledge/` with explicit script
 - `knowledge/wiki/` stores synthesized topic pages.
 - `knowledge/schema/` stores the maintenance rules.
 - `npm run wiki:ingest`, `npm run wiki:index`, `npm run wiki:lint`, and `npm run wiki:stale` are the operational commands for the layer.
+- `wiki:lint` now includes both structural and semantic checks, and `wiki:coverage` reports raw-note citation coverage plus canonical-source coverage.
 - The first raw evidence notes now cover browser smoke, skeleton policy, auth/viewer routing, browser verification split, and the decision to keep the knowledge layer repo-owned.
 
 ## Why It Matters
@@ -24,7 +25,9 @@ Without an explicit maintenance workflow, the repo-owned wiki would drift into d
 - `scripts/wiki-ingest.mjs`
 - `scripts/generate-knowledge-index.mjs`
 - `scripts/check-knowledge-wiki.mjs`
+- `scripts/check-knowledge-semantic.mjs`
 - `scripts/check-knowledge-stale.mjs`
+- `scripts/report-knowledge-coverage.mjs`
 
 ## Flows
 
@@ -32,12 +35,14 @@ Without an explicit maintenance workflow, the repo-owned wiki would drift into d
 - optionally seed a wiki page from the ingest command
 - regenerate `knowledge/index.md`
 - lint structure and stale-review dates before trusting the wiki
+- run semantic lint and coverage reporting to detect duplicate topics, uncited raw notes, or pages that rely only on low-priority sources
 
 ## Invariants
 
 - `knowledge/wiki/` stays subordinate to code, `AGENTS.md`, `krukraft-ai-contexts/`, `design-system.md`, and `figma-component-map.md`.
 - `knowledge/index.md` should be generated from the actual wiki tree, not curated by hand.
 - wiki pages must keep sources and `Last Reviewed` current.
+- wiki pages should keep at least one canonical source in `## Sources`, even when they also cite raw evidence notes.
 
 ## Known Risks
 

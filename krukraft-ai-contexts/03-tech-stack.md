@@ -27,6 +27,8 @@
 - `lint`: scoped ESLint run plus `npm run skeleton:check`, which blocks inline `*Skeleton` / `*Fallback` component declarations inside `src/app/**`
 - `wiki:lint`: repo-owned knowledge-layer validation that checks required `knowledge/` roots, schema files, wiki-page section headings, and `knowledge/index.md` coverage
 - `wiki:index`: regenerates `knowledge/index.md` from the current wiki tree
+- `wiki:lint:semantic`: flags duplicate wiki titles, uncited raw notes, and wiki pages that rely only on low-priority knowledge links without canonical source backing
+- `wiki:coverage`: prints raw-note citation coverage and canonical-source coverage for the repo-owned knowledge layer
 - `wiki:stale`: flags wiki pages whose `Last Reviewed` date is older than the configured threshold or whose `Sources` section has no links
 - `wiki:ingest`: creates a raw knowledge note, appends `knowledge/log.md`, and can optionally seed a wiki page in one command
 - `db:deploy`: `prisma migrate deploy`

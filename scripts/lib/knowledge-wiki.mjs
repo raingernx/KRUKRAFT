@@ -79,8 +79,20 @@ export function getWikiFiles() {
     .sort((left, right) => left.localeCompare(right));
 }
 
+export function getRawFiles() {
+  const rawDir = path.join(knowledgeRoot, "raw");
+  return walk(rawDir)
+    .filter((file) => file.endsWith(".md"))
+    .filter((file) => path.basename(file) !== "README.md")
+    .sort((left, right) => left.localeCompare(right));
+}
+
 export function getKnowledgeRelativePath(file) {
   return toPosixPath(path.relative(knowledgeRoot, file));
+}
+
+export function getRepoRelativePath(file) {
+  return toPosixPath(path.relative(repoRoot, file));
 }
 
 export function readPageTitle(file) {
@@ -177,10 +189,55 @@ export function renderKnowledgeIndex() {
 }
 
 export function extractSection(content, heading) {
-  const escapedHeading = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const regex = new RegExp(`${escapedHeading}\\s*\\n([\\s\\S]*?)(?=\\n## |\\n# |$)`, "m");
-  const match = content.match(regex);
-  return match ? match[1].trim() : "";
+  const lines = content.replaceAll("\r\n", "\n").split("\n");
+  const startIndex = lines.findIndex((line) => line.trim() === heading);
+  if (startIndex === -1) {
+    return "";
+  }
+
+  const collected = [];
+  for (let index = startIndex + 1; index < lines.length; index += 1) {
+    const line = lines[index];
+    if (/^##\s+/.test(line) || /^#\s+/.test(line)) {
+      break;
+    }
+    collected.push(line);
+  }
+
+  return collected.join("\n").trim();
+}
+
+export function extractMarkdownLinks(content) {
+  const matches = [...content.matchAll(/\[([^\]]+)\]\(([^)]+)\)/g)];
+  return matches.map((match) => ({
+    label: match[1],
+    target: match[2],
+  }));
+}
+
+export function resolveRepoRelativePath(fromFile, target) {
+  if (/^(https?:)?\/\//.test(target) || target.startsWith("#")) {
+    return null;
+  }
+
+  const resolved = path.resolve(path.dirname(fromFile), target);
+  return toPosixPath(path.relative(repoRoot, resolved));
+}
+
+export function isCanonicalSourceTarget(repoRelativePath) {
+  if (!repoRelativePath) {
+    return true;
+  }
+
+  return !repoRelativePath.startsWith("knowledge/raw/") && !repoRelativePath.startsWith("knowledge/wiki/");
+}
+
+export function normalizeTitleKey(value) {
+  return value
+    .toLowerCase()
+    .replace(/[`*_]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 export function slugify(value) {
