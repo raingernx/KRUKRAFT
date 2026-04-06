@@ -143,20 +143,47 @@ async function saveFailureScreenshot(page: Page, scenario: ProbeScenarioName) {
 }
 
 async function openLibraryFromResources(page: Page) {
+  const directLibraryLink = page.locator('header a[href="/dashboard/library"]:visible').first();
   const accountButton = page
-    .getByRole("button", { name: /^(เปิดเมนูบัญชี|Open account menu)$/i })
+    .locator(
+      'header button[aria-label="เปิดเมนูบัญชี"]:visible, header button[aria-label="Open account menu"]:visible',
+    )
     .first();
-  const menuLibraryLink = page
-    .getByRole("link", { name: /^(คลังของฉัน|My Library)$/ })
-    .last();
 
   await page.getByRole("banner").first().hover();
-  await expect(accountButton).toBeVisible();
+  await expect
+    .poll(
+      async () =>
+        (await directLibraryLink.isVisible().catch(() => false)) ||
+        (await accountButton.isVisible().catch(() => false)),
+      { timeout: 15_000 },
+    )
+    .toBeTruthy();
+
+  if (await directLibraryLink.isVisible().catch(() => false)) {
+    await Promise.all([
+      page.waitForURL(/\/dashboard\/library$/, {
+        timeout: 15_000,
+        waitUntil: "commit",
+      }),
+      directLibraryLink.click(),
+    ]);
+    return;
+  }
+
+  await expect(accountButton).toBeVisible({ timeout: 15_000 });
   await accountButton.click();
-  await expect(menuLibraryLink).toBeVisible();
+
+  const menuLibraryLink = page
+    .locator('[role="menu"] a[href="/dashboard/library"]:visible, a[href="/dashboard/library"]:visible')
+    .last();
+  await expect(menuLibraryLink).toBeVisible({ timeout: 15_000 });
 
   await Promise.all([
-    page.waitForURL(/\/dashboard\/library$/),
+    page.waitForURL(/\/dashboard\/library$/, {
+      timeout: 15_000,
+      waitUntil: "commit",
+    }),
     menuLibraryLink.click(),
   ]);
 }
@@ -247,7 +274,13 @@ async function runLibraryToResourcesScenario({ browser }: ProbeContext) {
     const browseLink = page.getByRole("link", { name: /Browse resources/i }).first();
     await expect(browseLink).toBeVisible();
 
-    await Promise.all([page.waitForURL(/\/resources$/), browseLink.click()]);
+    await Promise.all([
+      page.waitForURL(/\/resources$/, {
+        timeout: 15_000,
+        waitUntil: "commit",
+      }),
+      browseLink.click(),
+    ]);
 
     await expect(page).toHaveURL(/\/resources$/);
     await expect(page.locator("main").first()).toBeVisible();

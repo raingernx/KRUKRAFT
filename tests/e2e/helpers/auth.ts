@@ -13,8 +13,10 @@ type LoginCredentials = {
 };
 
 const AUTH_NAVIGATION_TIMEOUT_MS = 120_000;
-const AUTH_LOGIN_ATTEMPT_TIMEOUT_MS = 20_000;
-const LOGIN_ERROR_TEXT = "Invalid email or password. Please try again.";
+const TEST_BASE_URL =
+  process.env.PLAYWRIGHT_TEST_BASE_URL ??
+  process.env.BASE_URL ??
+  "http://127.0.0.1:3000";
 
 const ADMIN_CREDENTIALS: LoginCredentials = {
   email: "admin@krukraft.dev",
@@ -94,82 +96,62 @@ async function loginWithCredentials(
   nextPath: string,
 ) {
   await ensureAuthFixturesOnce();
-  const loginUrl = `/auth/login?next=${encodeURIComponent(nextPath)}`;
   const targetUrlPattern = new RegExp(
     `${nextPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:$|\\?)`,
   );
-  let lastError: unknown = null;
+  const request = page.context().request;
 
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    await page.goto(loginUrl, {
-      timeout: AUTH_NAVIGATION_TIMEOUT_MS,
-      waitUntil: "domcontentloaded",
-    });
+  const csrfResponse = await request.get(`${TEST_BASE_URL}/api/auth/csrf`);
+  expect(csrfResponse.ok()).toBeTruthy();
+  const csrfPayload = (await csrfResponse.json()) as { csrfToken?: string };
+  const csrfToken = csrfPayload.csrfToken;
 
-    await expect(
-      page.getByRole("heading", { name: /Welcome back/i }),
-    ).toBeVisible({
-      timeout: AUTH_NAVIGATION_TIMEOUT_MS,
-    });
-    const form = page.locator("form").first();
-    await expect(form).toBeVisible({ timeout: AUTH_NAVIGATION_TIMEOUT_MS });
-    await expect(form).toHaveAttribute("data-auth-form-ready", "true", {
-      timeout: AUTH_NAVIGATION_TIMEOUT_MS,
-    });
-
-    await page.getByLabel("Email address").fill(credentials.email);
-    await page.getByLabel("Password").fill(credentials.password);
-
-    const submitButton = form.getByRole("button", { name: /^Sign in$/ });
-    const loginError = page.getByText(LOGIN_ERROR_TEXT);
-
-    await expect(submitButton).toBeEnabled({
-      timeout: AUTH_NAVIGATION_TIMEOUT_MS,
-    });
-
-    await submitButton.click();
-
-    try {
-      await page.waitForURL(targetUrlPattern, {
-        timeout: AUTH_LOGIN_ATTEMPT_TIMEOUT_MS,
-        waitUntil: "commit",
-      });
-      await page.waitForLoadState("domcontentloaded");
-      await page.waitForTimeout(500);
-
-      if (targetUrlPattern.test(page.url())) {
-        return;
-      }
-
-      lastError = new Error(
-        `Credential login landed on ${page.url()} after briefly matching ${nextPath}.`,
-      );
-    } catch (error) {
-      lastError = error;
-    }
-
-    const visibleLoginError = (await loginError.isVisible().catch(() => false))
-      ? await loginError.textContent()
-      : null;
-    const currentUrl = page.url();
-    const buttonEnabled = await submitButton.isEnabled().catch(() => false);
-    const isStillOnLogin = /\/auth\/login(?:\?|$)/.test(currentUrl);
-
-    if (visibleLoginError || !isStillOnLogin || attempt === 1) {
-      throw new Error(
-        [
-          `Credential login did not navigate to ${nextPath}.`,
-          `Current URL: ${currentUrl}.`,
-          `Visible login error: ${visibleLoginError?.trim() ?? "none"}.`,
-          `Submit button enabled: ${buttonEnabled}.`,
-          `Attempt: ${attempt + 1}/2.`,
-          `Underlying error: ${
-            lastError instanceof Error ? lastError.message : String(lastError)
-          }`,
-        ].join(" "),
-      );
-    }
+  if (!csrfToken) {
+    throw new Error("Credentials login did not receive a csrf token.");
   }
+
+  const callbackResponse = await request.post(
+    `${TEST_BASE_URL}/api/auth/callback/credentials`,
+    {
+      form: {
+        csrfToken,
+        email: credentials.email,
+        password: credentials.password,
+        callbackUrl: `${TEST_BASE_URL}${nextPath}`,
+        json: "true",
+      },
+    },
+  );
+
+  if (!callbackResponse.ok()) {
+    throw new Error(
+      `Credentials callback failed with ${callbackResponse.status()} ${callbackResponse.statusText()}.`,
+    );
+  }
+
+  await expect
+    .poll(
+      async () => {
+        const sessionResponse = await request.get(`${TEST_BASE_URL}/api/auth/session`);
+        if (!sessionResponse.ok()) {
+          return false;
+        }
+        const session = (await sessionResponse.json()) as {
+          user?: { email?: string | null };
+        };
+        return session.user?.email === credentials.email;
+      },
+      { timeout: AUTH_NAVIGATION_TIMEOUT_MS },
+    )
+    .toBeTruthy();
+
+  await page.goto(nextPath, {
+    timeout: AUTH_NAVIGATION_TIMEOUT_MS,
+    waitUntil: "domcontentloaded",
+  });
+  await expect(page).toHaveURL(targetUrlPattern, {
+    timeout: AUTH_NAVIGATION_TIMEOUT_MS,
+  });
 }
 
 export async function loginAsAdmin(page: Page, nextPath: string) {

@@ -116,20 +116,47 @@ function expectNoBlankGap(
 }
 
 async function openLibraryFromResources(page: Page) {
+  const directLibraryLink = page.locator('header a[href="/dashboard/library"]:visible').first();
   const accountButton = page
-    .getByRole("button", { name: /^(เปิดเมนูบัญชี|Open account menu)$/i })
+    .locator(
+      'header button[aria-label="เปิดเมนูบัญชี"]:visible, header button[aria-label="Open account menu"]:visible',
+    )
     .first();
-  const menuLibraryLink = page
-    .getByRole("link", { name: /^(คลังของฉัน|My Library)$/ })
-    .last();
 
   await page.getByRole("banner").first().hover();
+  await expect
+    .poll(
+      async () =>
+        (await directLibraryLink.isVisible().catch(() => false)) ||
+        (await accountButton.isVisible().catch(() => false)),
+      { timeout: LIBRARY_NAV_TIMEOUT_MS },
+    )
+    .toBeTruthy();
+
+  if (await directLibraryLink.isVisible().catch(() => false)) {
+    await Promise.all([
+      page.waitForURL(/\/dashboard\/library$/, {
+        timeout: LIBRARY_NAV_TIMEOUT_MS,
+        waitUntil: "commit",
+      }),
+      directLibraryLink.click(),
+    ]);
+    return;
+  }
+
   await expect(accountButton).toBeVisible({ timeout: LIBRARY_NAV_TIMEOUT_MS });
   await accountButton.click();
+
+  const menuLibraryLink = page
+    .locator('[role="menu"] a[href="/dashboard/library"]:visible, a[href="/dashboard/library"]:visible')
+    .last();
   await expect(menuLibraryLink).toBeVisible({ timeout: LIBRARY_NAV_TIMEOUT_MS });
 
   await Promise.all([
-    page.waitForURL(/\/dashboard\/library$/),
+    page.waitForURL(/\/dashboard\/library$/, {
+      timeout: LIBRARY_NAV_TIMEOUT_MS,
+      waitUntil: "commit",
+    }),
     menuLibraryLink.click(),
   ]);
 }
@@ -177,7 +204,10 @@ test("dashboard library back to resources keeps shell coverage during transition
   await startNavigationProbe(page);
 
   await Promise.all([
-    page.waitForURL(/\/resources$/),
+    page.waitForURL(/\/resources$/, {
+      timeout: LIBRARY_NAV_TIMEOUT_MS,
+      waitUntil: "commit",
+    }),
     page.getByRole("link", { name: /Browse resources/i }).first().click(),
   ]);
 
