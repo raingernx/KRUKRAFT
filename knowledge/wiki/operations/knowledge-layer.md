@@ -9,10 +9,10 @@ Krukraft maintains a repo-owned LLM wiki under `knowledge/` with explicit script
 - `knowledge/raw/` stores evidence and source captures.
 - `knowledge/wiki/` stores synthesized topic pages.
 - `knowledge/schema/` stores the maintenance rules.
-- `npm run wiki:ingest`, `npm run wiki:index`, `npm run wiki:lint`, `npm run wiki:stale`, and `npm run wiki:drift` are the operational commands for the layer.
-- `npm run wiki:ingest:dry-run` previews ingest targets, related-page suggestions, and backlink plans without writing files.
+- `npm run wiki:ingest`, `npm run wiki:ingest:batch`, `npm run wiki:index`, `npm run wiki:lint`, `npm run wiki:stale`, and `npm run wiki:drift` are the operational commands for the layer.
+- `npm run wiki:ingest:dry-run` and `npm run wiki:ingest:batch:dry-run` preview ingest targets, related-page suggestions, backlink plans, and batch merge summaries without writing files.
 - `wiki:lint` now includes both structural and semantic checks, and `wiki:coverage` reports raw-note citation coverage plus canonical-source coverage.
-- `wiki:ingest` now suggests related wiki pages from title/source overlap and seeds backlinks when it creates a new wiki page.
+- `wiki:ingest` now suggests related wiki pages from title/source overlap, can suggest links between new wiki pages inside the same batch, seeds backlinks when it creates a new wiki page, appends `knowledge/log.md`, and regenerates `knowledge/index.md` after successful writes.
 - The first raw evidence notes now cover browser smoke, skeleton policy, auth/viewer routing, browser verification split, and the decision to keep the knowledge layer repo-owned.
 
 ## Why It Matters
@@ -36,10 +36,12 @@ Without an explicit maintenance workflow, the repo-owned wiki would drift into d
 
 - ingest a source note into `knowledge/raw/`
 - preview the ingest plan with `wiki:ingest:dry-run` when you want to inspect the write set first
+- preview a multi-source merge plan with `wiki:ingest:batch:dry-run` when several raw captures and wiki stubs should land together
 - optionally seed a wiki page from the ingest command
 - accept related-page suggestions driven by title/source overlap
+- let batch ingest surface related-page suggestions between the new wiki pages before the files exist
 - seed backlinks into suggested wiki pages when a new page is created
-- regenerate `knowledge/index.md`
+- append grouped knowledge-log entries and regenerate `knowledge/index.md`
 - lint structure and stale-review dates before trusting the wiki
 - run semantic lint and coverage reporting to detect duplicate topics, uncited raw notes, or pages that rely only on low-priority sources
 - run drift checks when implementation-linked files or raw evidence notes changed to verify that the corresponding wiki pages were reviewed in the same diff

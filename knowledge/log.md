@@ -2,6 +2,8 @@
 
 ## 2026-04-06
 
+- added `wiki:ingest:batch` and `wiki:ingest:batch:dry-run` so multiple raw captures/wiki stubs can land from one pre-validated merge plan with batch-level suggestion and backlink reporting.
+- upgraded `wiki:ingest` to append `knowledge/log.md` and regenerate `knowledge/index.md` automatically after successful writes instead of relying on manual follow-up.
 - added `wiki:ingest:dry-run` so ingest can preview raw/wiki targets, related-page suggestions, and backlink writes before touching the repo.
 - upgraded `wiki:ingest` to suggest related wiki pages from title/source overlap and seed backlinks into suggested pages when it creates a new wiki page.
 - scoped `wiki:drift` to implementation-linked files and raw evidence notes so change-set review stays high-signal instead of re-flagging every page on broad meta-doc edits.

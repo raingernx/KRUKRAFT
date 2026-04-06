@@ -31,8 +31,9 @@
 - `wiki:coverage`: prints raw-note citation coverage and canonical-source coverage for the repo-owned knowledge layer
 - `wiki:stale`: flags wiki pages whose `Last Reviewed` date is older than the configured threshold or whose `Sources` section has no links
 - `wiki:drift`: flags wiki pages whose implementation-linked files or raw evidence notes changed in the current diff while the page itself was not updated, which helps keep page-level knowledge in sync with code/runtime changes without over-triggering on broad meta-doc edits
-- `wiki:ingest`: creates a raw knowledge note, appends `knowledge/log.md`, can optionally seed a wiki page in one command, and now suggests related wiki pages/backlinks from title/source overlap
+- `wiki:ingest`: creates a raw knowledge note, appends `knowledge/log.md`, regenerates `knowledge/index.md`, can optionally seed a wiki page in one command, and now suggests related wiki pages/backlinks from title/source overlap
 - `wiki:ingest:dry-run`: previews raw/wiki targets, related-page suggestions, and backlink writes without changing files
+- `wiki:ingest:batch` / `wiki:ingest:batch:dry-run`: ingest a JSON batch plan for multiple raw captures/wiki stubs in one pre-validated pass and print a batch merge summary before writing when dry-run is enabled
 - `db:deploy`: `prisma migrate deploy`
 - `perf:post-deploy`: warm cache + smoke perf suite
 - GitHub post-deploy warm workflow supports both `deployment_status` and manual `workflow_dispatch` runs, which covers direct CLI production deploys

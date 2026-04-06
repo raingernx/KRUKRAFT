@@ -3,18 +3,27 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 
 import {
-  getWikiPageMetas,
+  countTokenOverlap,
   knowledgeRoot,
   mergeRelatedPageLinks,
   renderKnowledgeIndex,
   slugify,
   suggestRelatedWikiPages,
   toPosixPath,
+  tokenizeForSimilarity,
   wikiCategoryOrder,
 } from "./lib/knowledge-wiki.mjs";
 
+const availableBuckets = ["repo-docs", "product", "architecture", "design", "operations", "incidents", "research", "decisions"];
+const rawRoot = path.join(knowledgeRoot, "raw");
+const wikiRoot = path.join(knowledgeRoot, "wiki");
+const knowledgeLogFile = path.join(knowledgeRoot, "log.md");
+const knowledgeIndexFile = path.join(knowledgeRoot, "index.md");
+const today = new Date().toISOString().slice(0, 10);
+
 const { values } = parseArgs({
   options: {
+    batch: { type: "string" },
     bucket: { type: "string" },
     slug: { type: "string" },
     title: { type: "string" },
@@ -27,43 +36,10 @@ const { values } = parseArgs({
   },
 });
 
-const rawRoot = path.join(knowledgeRoot, "raw");
-const availableBuckets = ["repo-docs", "product", "architecture", "design", "operations", "incidents", "research", "decisions"];
-
 function fail(message) {
   console.error(`[wiki-ingest] ${message}`);
   process.exit(1);
 }
-
-if (!values.bucket || !availableBuckets.includes(values.bucket)) {
-  fail(`--bucket is required and must be one of: ${availableBuckets.join(", ")}`);
-}
-
-if (!values.title) {
-  fail("--title is required");
-}
-
-const rawSlug = values.slug ? slugify(values.slug) : slugify(values.title);
-if (!rawSlug) {
-  fail("Could not derive a valid slug. Pass --slug explicitly.");
-}
-
-const today = new Date().toISOString().slice(0, 10);
-const rawDir = path.join(rawRoot, values.bucket);
-const rawFile = path.join(rawDir, `${rawSlug}.md`);
-const dryRun = values["dry-run"];
-
-const sourcePath = values.source ? path.resolve(process.cwd(), values.source) : null;
-const sourceRelativeFromRaw =
-  sourcePath && existsSync(sourcePath) ? toPosixPath(path.relative(rawDir, sourcePath)) : null;
-
-const relatedWikiEntries = [];
-let createdWikiRelativePath = null;
-let suggestedWikiPages = suggestRelatedWikiPages({
-  title: values.title,
-  sourcePath: sourcePath && existsSync(sourcePath) ? sourcePath : null,
-  preferredCategory: values["wiki-dir"] ?? null,
-});
 
 function pushUniqueRelatedEntry(targetEntries, entry) {
   if (!targetEntries.some((candidate) => candidate.label === entry.label && candidate.target === entry.target)) {
@@ -71,55 +47,175 @@ function pushUniqueRelatedEntry(targetEntries, entry) {
   }
 }
 
-const rawRelativePath = toPosixPath(path.relative(knowledgeRoot, rawFile));
-const rawAlreadyExists = existsSync(rawFile);
-let wikiFile = null;
-let wikiRelativePath = null;
-let wikiAlreadyExists = false;
-const backlinkPlans = [];
-
-if (!dryRun) {
-  if (rawAlreadyExists) {
-    fail(`Raw note already exists: ${toPosixPath(path.relative(process.cwd(), rawFile))}`);
+function normalizeBatchItem(rawItem, index) {
+  if (!rawItem || typeof rawItem !== "object" || Array.isArray(rawItem)) {
+    fail(`Batch item ${index + 1} must be an object.`);
   }
 
-  mkdirSync(rawDir, { recursive: true });
+  return {
+    bucket: rawItem.bucket,
+    slug: rawItem.slug,
+    title: rawItem.title,
+    summary: rawItem.summary ?? "TODO: summarize this source.",
+    source: rawItem.source,
+    wikiDir: rawItem.wikiDir ?? rawItem["wiki-dir"],
+    wikiSlug: rawItem.wikiSlug ?? rawItem["wiki-slug"],
+    wikiTitle: rawItem.wikiTitle ?? rawItem["wiki-title"],
+  };
 }
 
-if (values["wiki-dir"] || values["wiki-slug"] || values["wiki-title"]) {
-  if (!values["wiki-dir"] || !wikiCategoryOrder.includes(values["wiki-dir"])) {
-    fail(`--wiki-dir is required with wiki options and must be one of: ${wikiCategoryOrder.join(", ")}`);
+function loadInputItems() {
+  const hasBatch = Boolean(values.batch);
+  const hasSingleItemArgs = Boolean(
+    values.bucket ||
+      values.slug ||
+      values.title ||
+      values.source ||
+      values["wiki-dir"] ||
+      values["wiki-slug"] ||
+      values["wiki-title"],
+  );
+
+  if (hasBatch && hasSingleItemArgs) {
+    fail("Use either single ingest flags or --batch <json-file>, not both.");
   }
 
-  const wikiSlug = values["wiki-slug"] ? slugify(values["wiki-slug"]) : rawSlug;
-  const wikiTitle = values["wiki-title"] ?? values.title;
-  const wikiDir = path.join(knowledgeRoot, "wiki", values["wiki-dir"]);
-  wikiFile = path.join(wikiDir, `${wikiSlug}.md`);
-  wikiRelativePath = toPosixPath(path.relative(knowledgeRoot, wikiFile));
-  wikiAlreadyExists = existsSync(wikiFile);
-
-  if (!dryRun) {
-    if (wikiAlreadyExists) {
-      fail(`Wiki page already exists: ${toPosixPath(path.relative(process.cwd(), wikiFile))}`);
+  if (hasBatch) {
+    const batchPath = path.resolve(process.cwd(), values.batch);
+    if (!existsSync(batchPath)) {
+      fail(`Batch file does not exist: ${toPosixPath(path.relative(process.cwd(), batchPath))}`);
     }
 
-    mkdirSync(wikiDir, { recursive: true });
+    let parsed;
+    try {
+      parsed = JSON.parse(readFileSync(batchPath, "utf8"));
+    } catch (error) {
+      fail(`Could not parse batch JSON: ${error instanceof Error ? error.message : String(error)}`);
+    }
+
+    const items = Array.isArray(parsed) ? parsed : parsed?.items;
+    if (!Array.isArray(items) || items.length === 0) {
+      fail("Batch file must contain a non-empty array or an object with an `items` array.");
+    }
+
+    return items.map((item, index) => normalizeBatchItem(item, index));
   }
 
-  createdWikiRelativePath = wikiRelativePath;
-  const rawRelativeFromWiki = toPosixPath(path.relative(wikiDir, rawFile));
-  suggestedWikiPages = suggestedWikiPages.filter((page) => page.relativePath !== createdWikiRelativePath);
+  return [
+    {
+      bucket: values.bucket,
+      slug: values.slug,
+      title: values.title,
+      summary: values.summary,
+      source: values.source,
+      wikiDir: values["wiki-dir"],
+      wikiSlug: values["wiki-slug"],
+      wikiTitle: values["wiki-title"],
+    },
+  ];
+}
 
-  const sourceLines = [`- [${values.title}](${rawRelativeFromWiki})`];
-  if (sourceRelativeFromRaw) {
-    sourceLines.push(`- [Canonical source](${toPosixPath(path.relative(wikiDir, sourcePath))})`);
+function resolveSourcePath(sourceValue) {
+  if (!sourceValue) {
+    return null;
   }
 
-  const relatedPageLines = suggestedWikiPages.length > 0
-    ? suggestedWikiPages.map((page) => `- [${page.title}](${toPosixPath(path.relative(wikiDir, path.join(knowledgeRoot, page.relativePath)))})`)
+  const absolutePath = path.resolve(process.cwd(), sourceValue);
+  return existsSync(absolutePath) ? absolutePath : null;
+}
+
+function normalizePlanItem(inputItem, index) {
+  if (!inputItem.bucket || !availableBuckets.includes(inputItem.bucket)) {
+    fail(`Item ${index + 1}: bucket is required and must be one of: ${availableBuckets.join(", ")}`);
+  }
+
+  if (!inputItem.title) {
+    fail(`Item ${index + 1}: title is required.`);
+  }
+
+  const rawSlug = inputItem.slug ? slugify(inputItem.slug) : slugify(inputItem.title);
+  if (!rawSlug) {
+    fail(`Item ${index + 1}: could not derive a valid slug. Pass slug explicitly.`);
+  }
+
+  const rawDir = path.join(rawRoot, inputItem.bucket);
+  const rawFile = path.join(rawDir, `${rawSlug}.md`);
+  const rawRelativePath = toPosixPath(path.relative(knowledgeRoot, rawFile));
+  const sourcePath = resolveSourcePath(inputItem.source);
+  const sourceRelativeFromRaw = sourcePath ? toPosixPath(path.relative(rawDir, sourcePath)) : null;
+
+  let wikiFile = null;
+  let wikiRelativePath = null;
+  let wikiDir = null;
+  let wikiTitle = null;
+
+  const hasWikiOptions = Boolean(inputItem.wikiDir || inputItem.wikiSlug || inputItem.wikiTitle);
+  if (hasWikiOptions) {
+    if (!inputItem.wikiDir || !wikiCategoryOrder.includes(inputItem.wikiDir)) {
+      fail(`Item ${index + 1}: wikiDir is required with wiki options and must be one of: ${wikiCategoryOrder.join(", ")}`);
+    }
+
+    const wikiSlug = inputItem.wikiSlug ? slugify(inputItem.wikiSlug) : rawSlug;
+    wikiTitle = inputItem.wikiTitle ?? inputItem.title;
+    wikiDir = path.join(wikiRoot, inputItem.wikiDir);
+    wikiFile = path.join(wikiDir, `${wikiSlug}.md`);
+    wikiRelativePath = toPosixPath(path.relative(knowledgeRoot, wikiFile));
+  }
+
+  return {
+    index,
+    bucket: inputItem.bucket,
+    slug: rawSlug,
+    title: inputItem.title,
+    summary: inputItem.summary ?? "TODO: summarize this source.",
+    sourcePath,
+    sourceRelativeFromRaw,
+    rawDir,
+    rawFile,
+    rawRelativePath,
+    rawAlreadyExists: existsSync(rawFile),
+    wikiDir,
+    wikiFile,
+    wikiRelativePath,
+    wikiAlreadyExists: wikiFile ? existsSync(wikiFile) : false,
+    wikiTitle,
+    sourceRepoRelativePath: sourcePath ? toPosixPath(path.relative(process.cwd(), sourcePath)) : null,
+  };
+}
+
+function scoreBatchRelatedness(leftItem, rightItem) {
+  const leftTitleTokens = tokenizeForSimilarity(leftItem.title);
+  const rightTitleTokens = tokenizeForSimilarity(rightItem.title);
+  const leftSourceTokens = leftItem.sourceRepoRelativePath ? tokenizeForSimilarity(leftItem.sourceRepoRelativePath) : [];
+  const rightSourceTokens = rightItem.sourceRepoRelativePath ? tokenizeForSimilarity(rightItem.sourceRepoRelativePath) : [];
+
+  let score = 0;
+  score += countTokenOverlap(leftTitleTokens, rightTitleTokens) * 6;
+  score += countTokenOverlap(leftSourceTokens, rightSourceTokens) * 3;
+
+  if (leftItem.wikiRelativePath && rightItem.wikiRelativePath) {
+    const [, leftCategory] = leftItem.wikiRelativePath.split("/");
+    const [, rightCategory] = rightItem.wikiRelativePath.split("/");
+    if (leftCategory === rightCategory) {
+      score += 1;
+    }
+  }
+
+  return score;
+}
+
+function buildWikiDraft(planItem, relatedPages) {
+  const rawRelativeFromWiki = toPosixPath(path.relative(planItem.wikiDir, planItem.rawFile));
+  const sourceLines = [`- [${planItem.title}](${rawRelativeFromWiki})`];
+  if (planItem.sourcePath) {
+    sourceLines.push(`- [Canonical source](${toPosixPath(path.relative(planItem.wikiDir, planItem.sourcePath))})`);
+  }
+
+  const relatedPageLines = relatedPages.length > 0
+    ? relatedPages.map((page) => `- [${page.label}](${page.target})`)
     : ["- TODO"];
 
-  const wikiDraft = `# ${wikiTitle}
+  return `# ${planItem.wikiTitle}
 
 ## Summary
 
@@ -161,132 +257,322 @@ ${sourceLines.join("\n")}
 
 - ${today}
 `;
+}
 
-  if (!dryRun) {
-    writeFileSync(wikiFile, wikiDraft, "utf8");
+function buildRawDraft(planItem, relatedWikiEntries) {
+  return [
+    `# ${planItem.title}`,
+    "",
+    "## Summary",
+    "",
+    planItem.summary,
+    "",
+    "## Source Reference",
+    "",
+    planItem.sourceRelativeFromRaw ? `- [Canonical source](${planItem.sourceRelativeFromRaw})` : "- Manual capture / no canonical source path supplied yet.",
+    "",
+    "## Notes",
+    "",
+    "- TODO",
+    "",
+    "## Related Wiki Pages",
+    "",
+    ...(relatedWikiEntries.length > 0
+      ? relatedWikiEntries.map((entry) => `- [${entry.label}](${entry.target})`)
+      : ["- TODO"]),
+    "",
+    "## Captured At",
+    "",
+    `- ${today}`,
+    "",
+  ].join("\n");
+}
+
+function formatLogEntry(planItem) {
+  const titleLink = `[${planItem.title}](${planItem.rawRelativePath})`;
+  const details = [`captured ${titleLink} in \`${planItem.bucket}\``];
+
+  if (planItem.sourceRepoRelativePath) {
+    details.push(`from \`${planItem.sourceRepoRelativePath}\``);
   }
 
-  pushUniqueRelatedEntry(relatedWikiEntries, {
-    label: wikiTitle,
-    target: toPosixPath(path.relative(rawDir, wikiFile)),
-  });
+  if (planItem.wikiRelativePath) {
+    details.push(`and seeded [${planItem.wikiTitle}](${planItem.wikiRelativePath})`);
+  }
 
-  for (const page of suggestedWikiPages) {
-    const backlinkTarget = toPosixPath(path.relative(path.dirname(page.file), wikiFile));
-    backlinkPlans.push({
-      wikiPage: page.relativePath,
-      label: wikiTitle,
-      target: backlinkTarget,
-    });
+  if (planItem.totalSuggestionCount > 0) {
+    details.push(`with ${planItem.totalSuggestionCount} related-page suggestion${planItem.totalSuggestionCount === 1 ? "" : "s"}`);
+  }
 
-    if (!dryRun) {
-      const existingContent = readFileSync(page.file, "utf8");
-      const nextContent = mergeRelatedPageLinks(existingContent, [
-        {
-          label: wikiTitle,
-          target: backlinkTarget,
-        },
-      ]);
+  return `- ${details.join(" ")}.`;
+}
 
-      if (nextContent !== existingContent) {
-        writeFileSync(page.file, nextContent, "utf8");
+function appendKnowledgeLog(logEntries) {
+  const current = readFileSync(knowledgeLogFile, "utf8").replaceAll("\r\n", "\n");
+  const lines = current.split("\n");
+  const heading = `## ${today}`;
+  const headingIndex = lines.findIndex((line) => line.trim() === heading);
+
+  if (headingIndex !== -1) {
+    let insertIndex = headingIndex + 1;
+    while (insertIndex < lines.length && lines[insertIndex].trim() === "") {
+      insertIndex += 1;
+    }
+    lines.splice(insertIndex, 0, ...logEntries, "");
+    writeFileSync(knowledgeLogFile, `${lines.join("\n").replace(/\n{3,}/g, "\n\n").trimEnd()}\n`, "utf8");
+    return;
+  }
+
+  const nextContent = [
+    "# Knowledge Log",
+    "",
+    heading,
+    "",
+    ...logEntries,
+    "",
+    current.replace(/^# Knowledge Log\s*/, "").trimStart(),
+  ]
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trimEnd();
+
+  writeFileSync(knowledgeLogFile, `${nextContent}\n`, "utf8");
+}
+
+function buildPlan(items) {
+  const normalizedItems = items.map((item, index) => normalizePlanItem(item, index));
+  const batchRawTargets = new Map();
+  const batchWikiTargets = new Map();
+  const conflicts = [];
+  const batchCreatedWikiItems = normalizedItems.filter((item) => item.wikiRelativePath);
+  const batchCreatedWikiRelativePaths = batchCreatedWikiItems.map((item) => item.wikiRelativePath);
+
+  for (const item of normalizedItems) {
+    if (item.rawAlreadyExists) {
+      conflicts.push(`Raw note already exists for item ${item.index + 1}: ${item.rawRelativePath}`);
+    }
+    if (batchRawTargets.has(item.rawRelativePath)) {
+      conflicts.push(
+        `Duplicate raw note target in batch: ${item.rawRelativePath} (items ${batchRawTargets.get(item.rawRelativePath)} and ${item.index + 1})`,
+      );
+    } else {
+      batchRawTargets.set(item.rawRelativePath, item.index + 1);
+    }
+
+    if (item.wikiRelativePath) {
+      if (item.wikiAlreadyExists) {
+        conflicts.push(`Wiki page already exists for item ${item.index + 1}: ${item.wikiRelativePath}`);
+      }
+      if (batchWikiTargets.has(item.wikiRelativePath)) {
+        conflicts.push(
+          `Duplicate wiki page target in batch: ${item.wikiRelativePath} (items ${batchWikiTargets.get(item.wikiRelativePath)} and ${item.index + 1})`,
+        );
+      } else {
+        batchWikiTargets.set(item.wikiRelativePath, item.index + 1);
       }
     }
   }
+
+  if (conflicts.length > 0) {
+    return {
+      items: normalizedItems,
+      conflicts,
+      backlinkPlans: [],
+      groupedBacklinkPlans: new Map(),
+      logEntries: [],
+    };
+  }
+
+  const backlinkPlans = [];
+  const groupedBacklinkPlans = new Map();
+
+  for (const item of normalizedItems) {
+    const relatedWikiEntries = [];
+    const existingSuggestions = suggestRelatedWikiPages({
+      title: item.title,
+      sourcePath: item.sourcePath,
+      preferredCategory: item.wikiRelativePath ? item.wikiRelativePath.split("/")[1] : null,
+      excludeRelativePaths: batchCreatedWikiRelativePaths,
+    });
+
+    const plannedBatchSuggestions = item.wikiRelativePath
+      ? batchCreatedWikiItems
+          .filter((candidate) => candidate.wikiRelativePath !== item.wikiRelativePath)
+          .map((candidate) => ({
+            ...candidate,
+            score: scoreBatchRelatedness(item, candidate),
+          }))
+          .filter((candidate) => candidate.score > 0)
+          .sort((left, right) => right.score - left.score || left.title.localeCompare(right.title))
+          .slice(0, 3)
+      : [];
+
+    if (item.wikiRelativePath) {
+      pushUniqueRelatedEntry(relatedWikiEntries, {
+        label: item.wikiTitle,
+        target: toPosixPath(path.relative(item.rawDir, item.wikiFile)),
+      });
+    }
+
+    for (const page of existingSuggestions) {
+      pushUniqueRelatedEntry(relatedWikiEntries, {
+        label: page.title,
+        target: toPosixPath(path.relative(item.rawDir, path.join(knowledgeRoot, page.relativePath))),
+      });
+    }
+
+    for (const page of plannedBatchSuggestions) {
+      pushUniqueRelatedEntry(relatedWikiEntries, {
+        label: page.wikiTitle,
+        target: toPosixPath(path.relative(item.rawDir, page.wikiFile)),
+      });
+    }
+
+    let wikiDraft = null;
+    if (item.wikiRelativePath) {
+      const wikiRelatedPages = [];
+
+      for (const page of existingSuggestions) {
+        wikiRelatedPages.push({
+          label: page.title,
+          target: toPosixPath(path.relative(item.wikiDir, path.join(knowledgeRoot, page.relativePath))),
+          relativePath: page.relativePath,
+          type: "existing",
+        });
+      }
+
+      for (const page of plannedBatchSuggestions) {
+        wikiRelatedPages.push({
+          label: page.wikiTitle,
+          target: toPosixPath(path.relative(item.wikiDir, page.wikiFile)),
+          relativePath: page.wikiRelativePath,
+          type: "planned",
+        });
+      }
+
+      wikiDraft = buildWikiDraft(item, wikiRelatedPages);
+
+      for (const page of existingSuggestions) {
+        const backlinkTarget = toPosixPath(path.relative(path.dirname(page.file), item.wikiFile));
+        const backlinkPlan = {
+          wikiPage: page.relativePath,
+          file: page.file,
+          label: item.wikiTitle,
+          target: backlinkTarget,
+        };
+        backlinkPlans.push(backlinkPlan);
+
+        if (!groupedBacklinkPlans.has(page.file)) {
+          groupedBacklinkPlans.set(page.file, []);
+        }
+        groupedBacklinkPlans.get(page.file).push({
+          label: item.wikiTitle,
+          target: backlinkTarget,
+        });
+      }
+    }
+
+    item.existingSuggestions = existingSuggestions;
+    item.plannedBatchSuggestions = plannedBatchSuggestions;
+    item.totalSuggestionCount = existingSuggestions.length + plannedBatchSuggestions.length;
+    item.relatedWikiEntries = relatedWikiEntries;
+    item.rawDraft = buildRawDraft(item, relatedWikiEntries);
+    item.wikiDraft = wikiDraft;
+  }
+
+  return {
+    items: normalizedItems,
+    conflicts: [],
+    backlinkPlans,
+    groupedBacklinkPlans,
+    logEntries: normalizedItems.map((item) => formatLogEntry(item)),
+  };
 }
 
-for (const page of suggestedWikiPages) {
-  pushUniqueRelatedEntry(relatedWikiEntries, {
-    label: page.title,
-    target: toPosixPath(path.relative(rawDir, path.join(knowledgeRoot, page.relativePath))),
-  });
-}
-
-const rawDraft = [
-  `# ${values.title}`,
-  "",
-  "## Summary",
-  "",
-  values.summary,
-  "",
-  "## Source Reference",
-  "",
-  sourceRelativeFromRaw ? `- [Canonical source](${sourceRelativeFromRaw})` : "- Manual capture / no canonical source path supplied yet.",
-  "",
-  "## Notes",
-  "",
-  "- TODO",
-  "",
-  "## Related Wiki Pages",
-  "",
-  ...(relatedWikiEntries.length > 0
-    ? relatedWikiEntries.map((entry) => `- [${entry.label}](${entry.target})`)
-    : ["- TODO"]),
-  "",
-  "## Captured At",
-  "",
-  `- ${today}`,
-  "",
-].join("\n");
-
-if (dryRun) {
+function printDryRun(plan, isBatchMode) {
   console.log("[wiki-ingest] Dry run: no files were written.");
-  console.log(`[wiki-ingest] Raw note target: ${rawRelativePath}${rawAlreadyExists ? " (already exists)" : ""}`);
-  if (wikiRelativePath) {
-    console.log(`[wiki-ingest] Wiki page target: ${wikiRelativePath}${wikiAlreadyExists ? " (already exists)" : ""}`);
-  }
-  if (sourcePath) {
-    console.log(`[wiki-ingest] Canonical source: ${toPosixPath(path.relative(process.cwd(), sourcePath))}`);
-  }
-  if (suggestedWikiPages.length > 0) {
-    console.log(
-      `[wiki-ingest] Related wiki suggestions: ${suggestedWikiPages.map((page) => page.relativePath).join(", ")}`,
-    );
-  } else {
-    console.log("[wiki-ingest] Related wiki suggestions: none");
-  }
-  if (backlinkPlans.length > 0) {
-    console.log("[wiki-ingest] Backlink plan:");
-    for (const plan of backlinkPlans) {
-      console.log(`- ${plan.wikiPage} <= [${plan.label}](${plan.target})`);
+  console.log(`[wiki-ingest] Mode: ${isBatchMode ? "batch" : "single"} (${plan.items.length} item${plan.items.length === 1 ? "" : "s"})`);
+
+  for (const item of plan.items) {
+    console.log(`[wiki-ingest] Item ${item.index + 1}: ${item.title}`);
+    console.log(`  raw: ${item.rawRelativePath}${item.rawAlreadyExists ? " (already exists)" : ""}`);
+    if (item.wikiRelativePath) {
+      console.log(`  wiki: ${item.wikiRelativePath}${item.wikiAlreadyExists ? " (already exists)" : ""}`);
+    }
+    if (item.sourceRepoRelativePath) {
+      console.log(`  source: ${item.sourceRepoRelativePath}`);
+    }
+    if (item.existingSuggestions.length > 0) {
+      console.log(`  existing suggestions: ${item.existingSuggestions.map((page) => page.relativePath).join(", ")}`);
+    } else {
+      console.log("  existing suggestions: none");
+    }
+    if (item.plannedBatchSuggestions.length > 0) {
+      console.log(`  batch suggestions: ${item.plannedBatchSuggestions.map((page) => page.wikiRelativePath).join(", ")}`);
+    } else if (isBatchMode) {
+      console.log("  batch suggestions: none");
     }
   }
-  if (rawAlreadyExists || wikiAlreadyExists) {
-    process.exit(1);
+
+  console.log(
+    `[wiki-ingest] Batch summary: ${plan.items.length} raw note${plan.items.length === 1 ? "" : "s"}, ${
+      plan.items.filter((item) => item.wikiRelativePath).length
+    } wiki page${plan.items.filter((item) => item.wikiRelativePath).length === 1 ? "" : "s"}, ${plan.backlinkPlans.length} backlink write${
+      plan.backlinkPlans.length === 1 ? "" : "s"
+    }, ${plan.logEntries.length} knowledge-log entr${plan.logEntries.length === 1 ? "y" : "ies"}.`,
+  );
+
+  if (plan.backlinkPlans.length > 0) {
+    console.log("[wiki-ingest] Backlink plan:");
+    for (const entry of plan.backlinkPlans) {
+      console.log(`- ${entry.wikiPage} <= [${entry.label}](${entry.target})`);
+    }
   }
+}
+
+function writePlan(plan) {
+  for (const item of plan.items) {
+    mkdirSync(item.rawDir, { recursive: true });
+    writeFileSync(item.rawFile, `${item.rawDraft}\n`, "utf8");
+
+    if (item.wikiFile) {
+      mkdirSync(item.wikiDir, { recursive: true });
+      writeFileSync(item.wikiFile, item.wikiDraft, "utf8");
+    }
+  }
+
+  for (const [wikiFile, linksToAdd] of plan.groupedBacklinkPlans) {
+    const current = readFileSync(wikiFile, "utf8");
+    const next = mergeRelatedPageLinks(current, linksToAdd);
+    if (next !== current) {
+      writeFileSync(wikiFile, next, "utf8");
+    }
+  }
+
+  appendKnowledgeLog(plan.logEntries);
+  writeFileSync(knowledgeIndexFile, renderKnowledgeIndex(), "utf8");
+}
+
+const inputItems = loadInputItems();
+const plan = buildPlan(inputItems);
+const dryRun = values["dry-run"];
+const isBatchMode = Boolean(values.batch);
+
+if (plan.conflicts.length > 0) {
+  for (const conflict of plan.conflicts) {
+    console.error(`[wiki-ingest] ${conflict}`);
+  }
+  process.exit(1);
+}
+
+if (dryRun) {
+  printDryRun(plan, isBatchMode);
   process.exit(0);
 }
 
-writeFileSync(rawFile, `${rawDraft}\n`, "utf8");
-
-const logPath = path.join(knowledgeRoot, "log.md");
-const logContent = readFileSync(logPath, "utf8");
-const logEntryParts = [`captured [${values.title}](${rawRelativePath}) in \`${values.bucket}\``];
-if (createdWikiRelativePath) {
-  logEntryParts.push(`seeded [wiki page](${createdWikiRelativePath})`);
-}
-if (suggestedWikiPages.length > 0) {
-  logEntryParts.push(`linked ${suggestedWikiPages.length} related page suggestion${suggestedWikiPages.length === 1 ? "" : "s"}`);
-}
-const logEntry = `- ${logEntryParts.join(" and ")}.`;
-
-let nextLogContent;
-if (logContent.includes(`## ${today}`)) {
-  nextLogContent = logContent.replace(`## ${today}\n`, `## ${today}\n\n${logEntry}\n`);
-} else {
-  nextLogContent = `${logContent.trimEnd()}\n\n## ${today}\n\n${logEntry}\n`;
-}
-
-writeFileSync(logPath, nextLogContent, "utf8");
-writeFileSync(path.join(knowledgeRoot, "index.md"), renderKnowledgeIndex(), "utf8");
-
-console.log(`[wiki-ingest] Created ${rawRelativePath}`);
-if (createdWikiRelativePath) {
-  console.log(`[wiki-ingest] Created ${createdWikiRelativePath}`);
-}
-if (suggestedWikiPages.length > 0) {
-  console.log(
-    `[wiki-ingest] Related wiki suggestions: ${suggestedWikiPages.map((page) => page.relativePath).join(", ")}`,
-  );
-}
-console.log("[wiki-ingest] Rebuilt knowledge/index.md and updated knowledge/log.md");
+writePlan(plan);
+console.log(
+  `[wiki-ingest] Wrote ${plan.items.length} raw note${plan.items.length === 1 ? "" : "s"} and ${
+    plan.items.filter((item) => item.wikiRelativePath).length
+  } wiki page${plan.items.filter((item) => item.wikiRelativePath).length === 1 ? "" : "s"}.`,
+);

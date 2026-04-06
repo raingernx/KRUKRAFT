@@ -17,9 +17,12 @@ Repo workflow:
 
 - `npm run wiki:ingest -- --bucket <bucket> --title "..." --source <path>` creates the raw note and logs the ingest.
 - `npm run wiki:ingest:dry-run -- --bucket <bucket> --title "..." --source <path>` previews raw/wiki targets, related-page suggestions, and backlink changes without writing files
+- `npm run wiki:ingest:batch -- <json-file>` ingests a batch plan from JSON, pre-validates the whole write set first, appends grouped entries to `knowledge/log.md`, and regenerates `knowledge/index.md` once after the batch lands
+- `npm run wiki:ingest:batch:dry-run -- <json-file>` previews the batch merge plan, including raw/wiki targets, related-page suggestions, backlink writes, and log/index side effects, without touching files
 - use `--wiki-dir <category> --wiki-slug <slug>` only when the source deserves an immediate topic page
-- `wiki:ingest` now suggests related wiki pages from title/source overlap and seeds backlinks when it creates a new wiki page
-- run `npm run wiki:index` after adding/removing wiki pages outside the ingest helper
+- `wiki:ingest` now suggests related wiki pages from title/source overlap, can suggest related pages between newly created wiki pages in the same batch, and seeds backlinks when it creates a new wiki page
+- batch JSON accepts an array or an object with `items`, and each item mirrors the single-ingest fields: `bucket`, `slug`, `title`, `summary`, `source`, `wikiDir`, `wikiSlug`, and `wikiTitle`
+- run `npm run wiki:index` manually only when adding/removing wiki pages outside the ingest helper; the ingest workflow now regenerates the index automatically after successful writes
 
 ## What To Ingest
 
