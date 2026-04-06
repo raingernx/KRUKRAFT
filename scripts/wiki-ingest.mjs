@@ -1306,6 +1306,15 @@ function buildSerializedPlanReport(plan, input, serializedPlan) {
     return serializedPlan;
   }
 
+  const rawNotePaths = plan.items
+    .map((item) => item.rawRelativePath)
+    .filter(Boolean);
+  const wikiTargetPaths = serializedPlan.wikiTargets.map((target) => target.relativePath);
+  const backlinkPagePaths = serializedPlan.backlinkPlan.map((entry) => entry.wikiPage);
+  const reportPath = values["report-file"]
+    ? toPosixPath(path.relative(process.cwd(), path.resolve(process.cwd(), values["report-file"])))
+    : null;
+
   return {
     reportVersion: 1,
     kind: "wiki-ingest-report",
@@ -1319,6 +1328,34 @@ function buildSerializedPlanReport(plan, input, serializedPlan) {
       batchPath: input.batchPath ? toPosixPath(path.relative(process.cwd(), input.batchPath)) : null,
     },
     textSummary: renderPlanTextSummary(plan, input, serializedPlan),
+    artifacts: {
+      reportFile: reportPath,
+      knowledgeLog: toPosixPath(path.relative(process.cwd(), knowledgeLogFile)),
+      knowledgeIndex: toPosixPath(path.relative(process.cwd(), knowledgeIndexFile)),
+      rawNotes: rawNotePaths,
+      wikiTargets: wikiTargetPaths,
+      backlinkPages: backlinkPagePaths,
+    },
+    annotations: {
+      policyStatus: serializedPlan.policySummary.status,
+      blocked: serializedPlan.policySummary.status === "blocked_by_policy",
+      reviewRequiredItems: serializedPlan.items.filter((item) => item.policy.requiresReview).map((item) => ({
+        index: item.index,
+        title: item.title,
+        reasons: item.policy.reasons,
+      })),
+      reviewRequiredTargets: serializedPlan.wikiTargets
+        .filter((target) => target.policy.requiresReview)
+        .map((target) => ({
+          id: target.id,
+          relativePath: target.relativePath,
+          reasons: target.policy.reasons,
+        })),
+      backlinkWrites: serializedPlan.backlinkPlan.map((entry) => ({
+        wikiPage: entry.wikiPage,
+        label: entry.label,
+      })),
+    },
     sections: {
       summary: serializedPlan.summary,
       decisionSummary: serializedPlan.decisionSummary,
