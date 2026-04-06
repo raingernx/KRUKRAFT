@@ -13,6 +13,7 @@ Krukraft maintains a repo-owned LLM wiki under `knowledge/` with explicit script
 - `npm run wiki:ingest:dry-run` and `npm run wiki:ingest:batch:dry-run` preview ingest targets, related-page suggestions, backlink plans, and batch merge summaries without writing files.
 - `wiki:lint` now includes both structural and semantic checks, and `wiki:coverage` reports raw-note citation coverage plus canonical-source coverage.
 - `wiki:ingest` now suggests related wiki pages from title/source overlap, can suggest links between new wiki pages inside the same batch, seeds backlinks when it creates a new wiki page, appends `knowledge/log.md`, and regenerates `knowledge/index.md` after successful writes.
+- `wiki:ingest:batch` now supports explicit shared merge targets through `wikiTargets` + `wikiTargetId`, so several raw captures can merge into one existing or new wiki page in a single pre-validated write plan.
 - The first raw evidence notes now cover browser smoke, skeleton policy, auth/viewer routing, browser verification split, and the decision to keep the knowledge layer repo-owned.
 
 ## Why It Matters
@@ -38,8 +39,10 @@ Without an explicit maintenance workflow, the repo-owned wiki would drift into d
 - preview the ingest plan with `wiki:ingest:dry-run` when you want to inspect the write set first
 - preview a multi-source merge plan with `wiki:ingest:batch:dry-run` when several raw captures and wiki stubs should land together
 - optionally seed a wiki page from the ingest command
+- define explicit `wikiTargets` when several sources should converge on one shared wiki page instead of creating one wiki page per item
 - accept related-page suggestions driven by title/source overlap
 - let batch ingest surface related-page suggestions between the new wiki pages before the files exist
+- let batch ingest merge several raw captures into one existing or new wiki page by `wikiTargetId`
 - seed backlinks into suggested wiki pages when a new page is created
 - append grouped knowledge-log entries and regenerate `knowledge/index.md`
 - lint structure and stale-review dates before trusting the wiki

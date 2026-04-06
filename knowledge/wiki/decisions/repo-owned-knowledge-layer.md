@@ -11,7 +11,7 @@ Krukraft keeps a lightweight repo-owned knowledge layer under `knowledge/` inste
 - `knowledge/schema/` plus repo scripts enforce ingest, index regeneration, stale checks, structural linting, semantic linting, coverage checks, and drift detection.
 - `wiki:ingest` now suggests related pages from title/source overlap, appends `knowledge/log.md`, and regenerates `knowledge/index.md` after successful writes.
 - `wiki:ingest:dry-run` previews raw/wiki targets, related-page suggestions, and backlink plans before any files are written.
-- `wiki:ingest:batch` and `wiki:ingest:batch:dry-run` support multi-source ingest plans and show batch-level merge/backlink summaries before the batch lands.
+- `wiki:ingest:batch` and `wiki:ingest:batch:dry-run` support multi-source ingest plans, explicit shared wiki merge targets, and batch-level merge/backlink summaries before the batch lands.
 - Canonical truth still remains subordinate to code, `AGENTS.md`, `krukraft-ai-contexts/`, `design-system.md`, and `figma-component-map.md`.
 
 ## Why It Matters
@@ -41,6 +41,7 @@ This keeps accumulated repo knowledge versioned, inspectable, and portable. It a
 - accept related-page suggestions and backlink seeding during ingest
 - preview the ingest write set with `wiki:ingest:dry-run` before creating notes/pages when needed
 - use batch ingest when several related source captures and wiki stubs should land together with one pre-validated merge plan
+- use explicit `wikiTargets` when multiple source captures should contribute to the same durable wiki page instead of fragmenting into one page per note
 - rebuild `knowledge/index.md`
 - lint, coverage-check, stale-check, and drift-check the layer before relying on it as agent context
 
