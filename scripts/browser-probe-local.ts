@@ -22,6 +22,8 @@ type ProbeScenarioName =
   | "settings-theme"
   | "public-product-pages"
   | "admin-core-pages"
+  | "admin-analytics-pages"
+  | "creator-management-pages"
   | "dashboard-to-downloads"
   | "dashboard-to-purchases"
   | "dashboard-to-settings";
@@ -38,6 +40,8 @@ const VALID_SCENARIOS: ProbeScenarioName[] = [
   "settings-theme",
   "public-product-pages",
   "admin-core-pages",
+  "admin-analytics-pages",
+  "creator-management-pages",
   "dashboard-to-downloads",
   "dashboard-to-purchases",
   "dashboard-to-settings",
@@ -383,6 +387,78 @@ async function runAdminCorePagesScenario({ browser }: ProbeContext) {
   }
 }
 
+async function runAdminAnalyticsPagesScenario({ browser }: ProbeContext) {
+  const context = await createContext(browser);
+  const page = await context.newPage();
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+  const pages: Array<{ path: string; heading: RegExp }> = [
+    { path: "/admin/analytics", heading: /^Analytics$/i },
+    { path: "/admin/analytics/recommendations", heading: /^Recommendation Experiment$/i },
+  ];
+
+  try {
+    await loginAsAdmin(page, "/admin/analytics");
+    await expect(page).toHaveURL(/\/admin\/analytics$/);
+
+    for (const target of pages) {
+      await page.goto(target.path, { waitUntil: "domcontentloaded" });
+      await expect(page).toHaveURL(
+        new RegExp(`${target.path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`),
+      );
+      await expect(page.getByRole("heading", { name: target.heading }).first()).toBeVisible();
+    }
+
+    expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
+  } catch (error) {
+    const screenshot = await saveFailureScreenshot(page, "admin-analytics-pages");
+    throw new Error(
+      `admin-analytics-pages probe failed. Screenshot: ${screenshot}. ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  } finally {
+    await closeContext(context);
+  }
+}
+
+async function runCreatorManagementPagesScenario({ browser }: ProbeContext) {
+  const context = await createContext(browser);
+  const page = await context.newPage();
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+  const pages: Array<{ path: string; heading: RegExp }> = [
+    { path: "/dashboard/creator/resources", heading: /^Resource management$/i },
+    { path: "/dashboard/creator/resources/new", heading: /^(Create your first resource|New resource)$/i },
+    { path: "/dashboard/creator/profile", heading: /^Creator Profile$/i },
+    { path: "/dashboard/creator/analytics", heading: /^Analytics$/i },
+  ];
+
+  try {
+    await loginAsCreator(page, "/dashboard/creator/resources");
+    await expect(page).toHaveURL(/\/dashboard\/creator\/resources$/);
+
+    for (const target of pages) {
+      await page.goto(target.path, { waitUntil: "domcontentloaded" });
+      await expect(page).toHaveURL(
+        new RegExp(`${target.path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`),
+      );
+      await expect(page.getByRole("heading", { name: target.heading }).first()).toBeVisible();
+    }
+
+    expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
+  } catch (error) {
+    const screenshot = await saveFailureScreenshot(page, "creator-management-pages");
+    throw new Error(
+      `creator-management-pages probe failed. Screenshot: ${screenshot}. ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  } finally {
+    await closeContext(context);
+  }
+}
+
 async function runSettingsThemeScenario({ browser }: ProbeContext) {
   await setUserThemePreference(CREATOR_EMAIL, "dark");
 
@@ -443,6 +519,8 @@ const scenarioHandlers: Record<ProbeScenarioName, (context: ProbeContext) => Pro
     }),
   "public-product-pages": runPublicProductPagesScenario,
   "admin-core-pages": runAdminCorePagesScenario,
+  "admin-analytics-pages": runAdminAnalyticsPagesScenario,
+  "creator-management-pages": runCreatorManagementPagesScenario,
   "settings-theme": runSettingsThemeScenario,
 };
 
