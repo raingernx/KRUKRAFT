@@ -55,6 +55,7 @@ Important: build must stay schema-mutation-free. Migration deploy is a separate 
 - Vercel Speed Insights via `@vercel/speed-insights`
 - Custom server-side performance tracing utilities live under `src/lib/performance/*`
 - Root-layout browser telemetry is production-only; local dev and CI browser verification do not inject the Vercel Analytics / Speed Insights scripts anymore, which keeps smoke suites from depending on outbound telemetry requests.
+- Security headers now use a production-only strict-transport profile: `Strict-Transport-Security` and CSP `upgrade-insecure-requests` stay enabled in production, but local dev / CI browser verification no longer upgrades `http://localhost` asset redirects to broken `https://localhost` requests.
 
 ## File Storage Pattern
 
