@@ -16,18 +16,19 @@ Ingest turns raw material into maintained wiki knowledge without promoting unsou
 Repo workflow:
 
 - `npm run wiki:ingest -- --bucket <bucket> --title "..." --source <path>` creates the raw note and logs the ingest.
+- add `--enforce-policy` to `wiki:ingest` / `wiki:ingest:batch` when write mode itself must stop before touching files if the resolved plan is `blocked_by_policy`
 - `npm run wiki:ingest:dry-run -- --bucket <bucket> --title "..." --source <path>` previews raw/wiki targets, related-page suggestions, and backlink changes without writing files
 - `npm run wiki:ingest:batch -- <json-file>` ingests a batch plan from JSON, pre-validates the whole write set first, appends grouped entries to `knowledge/log.md`, and regenerates `knowledge/index.md` once after the batch lands
 - `npm run wiki:ingest:batch:dry-run -- <json-file>` previews the batch merge plan, including raw/wiki targets, related-page suggestions, backlink writes, and log/index side effects, without touching files
 - add `--format json` to any dry-run command when another agent, CI step, or script needs the ingest plan as machine-readable JSON instead of text
 - add `--enforce-policy` to any dry-run command when CI should fail fast if the preview resolves to `policySummary.status = "blocked_by_policy"`
 - `npm run wiki:ingest:dry-run:json` and `npm run wiki:ingest:batch:dry-run:json -- <json-file>` are the convenience wrappers for that machine-readable preview mode
-- `npm run wiki:ingest:dry-run:enforce`, `npm run wiki:ingest:dry-run:json:enforce`, `npm run wiki:ingest:batch:dry-run:enforce -- <json-file>`, and `npm run wiki:ingest:batch:dry-run:json:enforce -- <json-file>` are the convenience wrappers for policy-enforced preview mode
+- `npm run wiki:ingest:enforce`, `npm run wiki:ingest:batch:enforce -- <json-file>`, `npm run wiki:ingest:dry-run:enforce`, `npm run wiki:ingest:dry-run:json:enforce`, `npm run wiki:ingest:batch:dry-run:enforce -- <json-file>`, and `npm run wiki:ingest:batch:dry-run:json:enforce -- <json-file>` are the convenience wrappers for policy-enforced write/preview mode
 - JSON dry-run preview now includes per-item and per-target `decision` metadata with `actions`, `reasons`, and `severity`, plus a top-level `decisionSummary` for automation that needs to branch on create/update/merge/backlink behavior
 - JSON dry-run preview now also includes `confidence` and `policy` metadata plus a top-level `policySummary`, so CI or another agent can decide whether a plan is safe to auto-apply or should stop for review
 - batch JSON can now include a top-level `policy` object with `allowExistingWikiUpdate`, `allowBacklinkSeeding`, `allowSkipRawCapture`, `maxReviewItems`, and `maxReviewTargets`
 - when a batch `policy` is present, dry-run JSON echoes it as `policyOverrides` and upgrades affected item/target/global policies to `blocked_by_policy` with explicit override violations
-- when `--enforce-policy` is active, dry-run still prints the preview first, then exits non-zero only for `blocked_by_policy`; plain `review_required` remains informational
+- when `--enforce-policy` is active, dry-run still prints the preview first, then exits non-zero only for `blocked_by_policy`; plain `review_required` remains informational. In write mode, the command resolves the same plan first and exits before writing any files when the policy status is `blocked_by_policy`
 - use `--wiki-dir <category> --wiki-slug <slug>` only when the source deserves an immediate topic page
 - `wiki:ingest` now suggests related wiki pages from title/source overlap, can suggest related pages between newly created wiki pages in the same batch, and seeds backlinks when it creates a new wiki page
 - batch JSON accepts an array or an object with `items`; each item mirrors the single-ingest fields: `bucket`, `slug`, `title`, `summary`, `source`, `wikiDir`, `wikiSlug`, and `wikiTitle`

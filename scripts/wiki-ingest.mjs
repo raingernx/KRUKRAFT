@@ -1322,6 +1322,9 @@ if (dryRun) {
   process.exit(0);
 }
 
+const serializedPlan = serializeDryRunPlan(plan, input);
+enforcePolicyIfNeeded(serializedPlan);
+
 writePlan(plan);
 console.log(
   `[wiki-ingest] Wrote ${plan.items.filter((item) => !item.skipRawCapture).length} raw note${
