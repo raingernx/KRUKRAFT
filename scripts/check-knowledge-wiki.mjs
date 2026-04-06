@@ -1,51 +1,17 @@
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-const repoRoot = process.cwd();
-
-const requiredRootFiles = [
-  "knowledge/index.md",
-  "knowledge/log.md",
-  "knowledge/glossary.md",
-  "knowledge/open-questions.md",
-  "knowledge/raw/README.md",
-];
-
-const requiredSchemaFiles = [
-  "knowledge/schema/wiki-rules.md",
-  "knowledge/schema/source-priority.md",
-  "knowledge/schema/ingest-rules.md",
-  "knowledge/schema/query-rules.md",
-  "knowledge/schema/lint-rules.md",
-  "knowledge/schema/page-template.md",
-];
-
-const requiredWikiHeadings = [
-  "## Summary",
-  "## Current Truth",
-  "## Why It Matters",
-  "## Key Files",
-  "## Flows",
-  "## Invariants",
-  "## Known Risks",
-  "## Related Pages",
-  "## Sources",
-  "## Last Reviewed",
-];
-
-function walk(dir) {
-  const entries = [];
-  for (const name of readdirSync(dir)) {
-    const full = path.join(dir, name);
-    const stat = statSync(full);
-    if (stat.isDirectory()) {
-      entries.push(...walk(full));
-      continue;
-    }
-    entries.push(full);
-  }
-  return entries;
-}
+import {
+  getKnowledgeRelativePath,
+  getWikiFiles,
+  knowledgeRoot,
+  normalizeContent,
+  renderKnowledgeIndex,
+  repoRoot,
+  requiredRootFiles,
+  requiredSchemaFiles,
+  requiredWikiHeadings,
+} from "./lib/knowledge-wiki.mjs";
 
 function fail(message) {
   console.error(`[wiki-lint] ${message}`);
@@ -59,19 +25,18 @@ for (const file of [...requiredRootFiles, ...requiredSchemaFiles]) {
 }
 
 const wikiDir = path.join(repoRoot, "knowledge", "wiki");
-const wikiFiles = existsSync(wikiDir)
-  ? walk(wikiDir).filter((file) => file.endsWith(".md"))
-  : [];
+const wikiFiles = existsSync(wikiDir) ? getWikiFiles() : [];
 
 if (wikiFiles.length === 0) {
   fail("No wiki pages found under knowledge/wiki.");
 }
 
-const indexPath = path.join(repoRoot, "knowledge", "index.md");
+const indexPath = path.join(knowledgeRoot, "index.md");
 const indexContent = existsSync(indexPath) ? readFileSync(indexPath, "utf8") : "";
+const expectedIndexContent = renderKnowledgeIndex();
 
 for (const file of wikiFiles) {
-  const relativePath = path.relative(path.join(repoRoot, "knowledge"), file).replaceAll(path.sep, "/");
+  const relativePath = getKnowledgeRelativePath(file);
   const content = readFileSync(file, "utf8");
 
   for (const heading of requiredWikiHeadings) {
@@ -80,9 +45,10 @@ for (const file of wikiFiles) {
     }
   }
 
-  if (!indexContent.includes(`(${relativePath})`)) {
-    fail(`knowledge/index.md does not link to wiki page: ${relativePath}`);
-  }
+}
+
+if (normalizeContent(indexContent) !== normalizeContent(expectedIndexContent)) {
+  fail("knowledge/index.md is out of date. Run `npm run wiki:index`.");
 }
 
 if (process.exitCode) {

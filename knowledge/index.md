@@ -31,20 +31,20 @@ Use this index as the first entry point for queries.
 
 ### Systems
 
-- [Auth](wiki/systems/auth.md)
-- [Payments](wiki/systems/payments.md)
-- [Search](wiki/systems/search.md)
+- [Auth System](wiki/systems/auth.md)
+- [Payments System](wiki/systems/payments.md)
+- [Search System](wiki/systems/search.md)
 - [Storage And Downloads](wiki/systems/storage-downloads.md)
 
 ### Flows
 
-- [Purchase To Library](wiki/flows/purchase-to-library.md)
+- [Purchase To Library Flow](wiki/flows/purchase-to-library.md)
 
 ### Routes
 
-- [Resources Browse](wiki/routes/resources-browse.md)
-- [Resource Detail](wiki/routes/resource-detail.md)
-- [Dashboard Library](wiki/routes/dashboard-library.md)
+- [Dashboard Library Route](wiki/routes/dashboard-library.md)
+- [Resource Detail Route](wiki/routes/resource-detail.md)
+- [Resources Browse Route](wiki/routes/resources-browse.md)
 
 ### Design System
 
@@ -57,6 +57,7 @@ Use this index as the first entry point for queries.
 ### Operations
 
 - [CI Browser Smoke](wiki/operations/ci-browser-smoke.md)
+- [Knowledge Layer Operations](wiki/operations/knowledge-layer.md)
 
 ## Working Files
 

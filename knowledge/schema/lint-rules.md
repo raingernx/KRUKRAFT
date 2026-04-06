@@ -7,7 +7,12 @@ It should check:
 - required root files exist
 - required schema files exist
 - every page under `knowledge/wiki/` contains the standard section headings
-- every wiki page is linked from `knowledge/index.md`
+- `knowledge/index.md` matches the current wiki tree
+
+Phase 2 maintenance adds:
+
+- `npm run wiki:stale` to flag wiki pages with old `Last Reviewed` dates
+- `npm run wiki:stale` to flag `Sources` sections that have no markdown links
 
 Manual review still needs to check:
 

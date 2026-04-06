@@ -13,6 +13,12 @@ Ingest turns raw material into maintained wiki knowledge without promoting unsou
 5. Add or refresh source links and `Last Reviewed`.
 6. Append a short note to `knowledge/log.md`.
 
+Repo workflow:
+
+- `npm run wiki:ingest -- --bucket <bucket> --title "..." --source <path>` creates the raw note and logs the ingest.
+- use `--wiki-dir <category> --wiki-slug <slug>` only when the source deserves an immediate topic page
+- run `npm run wiki:index` after adding/removing wiki pages outside the ingest helper
+
 ## What To Ingest
 
 - repo docs

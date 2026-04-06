@@ -26,6 +26,9 @@
 - `typecheck`: `tsc -p tsconfig.typecheck.json --noEmit`
 - `lint`: scoped ESLint run plus `npm run skeleton:check`, which blocks inline `*Skeleton` / `*Fallback` component declarations inside `src/app/**`
 - `wiki:lint`: repo-owned knowledge-layer validation that checks required `knowledge/` roots, schema files, wiki-page section headings, and `knowledge/index.md` coverage
+- `wiki:index`: regenerates `knowledge/index.md` from the current wiki tree
+- `wiki:stale`: flags wiki pages whose `Last Reviewed` date is older than the configured threshold or whose `Sources` section has no links
+- `wiki:ingest`: creates a raw knowledge note, appends `knowledge/log.md`, and can optionally seed a wiki page in one command
 - `db:deploy`: `prisma migrate deploy`
 - `perf:post-deploy`: warm cache + smoke perf suite
 - GitHub post-deploy warm workflow supports both `deployment_status` and manual `workflow_dispatch` runs, which covers direct CLI production deploys
