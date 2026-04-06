@@ -10,6 +10,7 @@ Krukraft keeps a lightweight repo-owned knowledge layer under `knowledge/` inste
 - `knowledge/wiki/` is the synthesized layer for durable topic pages.
 - `knowledge/schema/` plus repo scripts enforce ingest, index regeneration, stale checks, structural linting, semantic linting, coverage checks, and drift detection.
 - `wiki:ingest` now suggests related pages from title/source overlap and seeds backlinks when it creates a new wiki page.
+- `wiki:ingest:dry-run` previews raw/wiki targets, related-page suggestions, and backlink plans before any files are written.
 - Canonical truth still remains subordinate to code, `AGENTS.md`, `krukraft-ai-contexts/`, `design-system.md`, and `figma-component-map.md`.
 
 ## Why It Matters
@@ -24,6 +25,7 @@ This keeps accumulated repo knowledge versioned, inspectable, and portable. It a
 - `knowledge/wiki/`
 - `knowledge/schema/`
 - `scripts/wiki-ingest.mjs`
+- `scripts/wiki-ingest.mjs --dry-run`
 - `scripts/generate-knowledge-index.mjs`
 - `scripts/check-knowledge-wiki.mjs`
 - `scripts/check-knowledge-semantic.mjs`
@@ -36,6 +38,7 @@ This keeps accumulated repo knowledge versioned, inspectable, and portable. It a
 - capture durable source material into `knowledge/raw/`
 - synthesize or refresh topic pages in `knowledge/wiki/`
 - accept related-page suggestions and backlink seeding during ingest
+- preview the ingest write set with `wiki:ingest:dry-run` before creating notes/pages when needed
 - rebuild `knowledge/index.md`
 - lint, coverage-check, stale-check, and drift-check the layer before relying on it as agent context
 

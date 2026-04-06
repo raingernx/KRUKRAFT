@@ -16,6 +16,7 @@ Ingest turns raw material into maintained wiki knowledge without promoting unsou
 Repo workflow:
 
 - `npm run wiki:ingest -- --bucket <bucket> --title "..." --source <path>` creates the raw note and logs the ingest.
+- `npm run wiki:ingest:dry-run -- --bucket <bucket> --title "..." --source <path>` previews raw/wiki targets, related-page suggestions, and backlink changes without writing files
 - use `--wiki-dir <category> --wiki-slug <slug>` only when the source deserves an immediate topic page
 - `wiki:ingest` now suggests related wiki pages from title/source overlap and seeds backlinks when it creates a new wiki page
 - run `npm run wiki:index` after adding/removing wiki pages outside the ingest helper

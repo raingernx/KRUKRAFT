@@ -2,6 +2,7 @@
 
 ## 2026-04-06
 
+- added `wiki:ingest:dry-run` so ingest can preview raw/wiki targets, related-page suggestions, and backlink writes before touching the repo.
 - upgraded `wiki:ingest` to suggest related wiki pages from title/source overlap and seed backlinks into suggested pages when it creates a new wiki page.
 - scoped `wiki:drift` to implementation-linked files and raw evidence notes so change-set review stays high-signal instead of re-flagging every page on broad meta-doc edits.
 - added semantic knowledge checks for duplicate-topic detection, canonical-source backing, and raw-note citation coverage, plus a repo-owned `wiki:coverage` report.

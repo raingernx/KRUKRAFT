@@ -42,6 +42,7 @@
     "wiki:stale": "node scripts/check-knowledge-stale.mjs",
     "wiki:drift": "node scripts/check-knowledge-drift.mjs",
     "wiki:ingest": "node scripts/wiki-ingest.mjs",
+    "wiki:ingest:dry-run": "node scripts/wiki-ingest.mjs --dry-run",
     "skeleton:boneyard:build": "boneyard-js build http://127.0.0.1:3000/dev/bones",
     "skeleton:boneyard:build:force": "boneyard-js build http://127.0.0.1:3000/dev/bones --force",
     "analyze": "ANALYZE=true npm run build",

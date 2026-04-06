@@ -23,6 +23,7 @@ const { values } = parseArgs({
     "wiki-dir": { type: "string" },
     "wiki-slug": { type: "string" },
     "wiki-title": { type: "string" },
+    "dry-run": { type: "boolean", default: false },
   },
 });
 
@@ -50,12 +51,7 @@ if (!rawSlug) {
 const today = new Date().toISOString().slice(0, 10);
 const rawDir = path.join(rawRoot, values.bucket);
 const rawFile = path.join(rawDir, `${rawSlug}.md`);
-
-if (existsSync(rawFile)) {
-  fail(`Raw note already exists: ${toPosixPath(path.relative(process.cwd(), rawFile))}`);
-}
-
-mkdirSync(rawDir, { recursive: true });
+const dryRun = values["dry-run"];
 
 const sourcePath = values.source ? path.resolve(process.cwd(), values.source) : null;
 const sourceRelativeFromRaw =
@@ -75,6 +71,21 @@ function pushUniqueRelatedEntry(targetEntries, entry) {
   }
 }
 
+const rawRelativePath = toPosixPath(path.relative(knowledgeRoot, rawFile));
+const rawAlreadyExists = existsSync(rawFile);
+let wikiFile = null;
+let wikiRelativePath = null;
+let wikiAlreadyExists = false;
+const backlinkPlans = [];
+
+if (!dryRun) {
+  if (rawAlreadyExists) {
+    fail(`Raw note already exists: ${toPosixPath(path.relative(process.cwd(), rawFile))}`);
+  }
+
+  mkdirSync(rawDir, { recursive: true });
+}
+
 if (values["wiki-dir"] || values["wiki-slug"] || values["wiki-title"]) {
   if (!values["wiki-dir"] || !wikiCategoryOrder.includes(values["wiki-dir"])) {
     fail(`--wiki-dir is required with wiki options and must be one of: ${wikiCategoryOrder.join(", ")}`);
@@ -83,14 +94,19 @@ if (values["wiki-dir"] || values["wiki-slug"] || values["wiki-title"]) {
   const wikiSlug = values["wiki-slug"] ? slugify(values["wiki-slug"]) : rawSlug;
   const wikiTitle = values["wiki-title"] ?? values.title;
   const wikiDir = path.join(knowledgeRoot, "wiki", values["wiki-dir"]);
-  const wikiFile = path.join(wikiDir, `${wikiSlug}.md`);
+  wikiFile = path.join(wikiDir, `${wikiSlug}.md`);
+  wikiRelativePath = toPosixPath(path.relative(knowledgeRoot, wikiFile));
+  wikiAlreadyExists = existsSync(wikiFile);
 
-  if (existsSync(wikiFile)) {
-    fail(`Wiki page already exists: ${toPosixPath(path.relative(process.cwd(), wikiFile))}`);
+  if (!dryRun) {
+    if (wikiAlreadyExists) {
+      fail(`Wiki page already exists: ${toPosixPath(path.relative(process.cwd(), wikiFile))}`);
+    }
+
+    mkdirSync(wikiDir, { recursive: true });
   }
 
-  mkdirSync(wikiDir, { recursive: true });
-  createdWikiRelativePath = toPosixPath(path.relative(knowledgeRoot, wikiFile));
+  createdWikiRelativePath = wikiRelativePath;
   const rawRelativeFromWiki = toPosixPath(path.relative(wikiDir, rawFile));
   suggestedWikiPages = suggestedWikiPages.filter((page) => page.relativePath !== createdWikiRelativePath);
 
@@ -103,9 +119,7 @@ if (values["wiki-dir"] || values["wiki-slug"] || values["wiki-title"]) {
     ? suggestedWikiPages.map((page) => `- [${page.title}](${toPosixPath(path.relative(wikiDir, path.join(knowledgeRoot, page.relativePath)))})`)
     : ["- TODO"];
 
-  writeFileSync(
-    wikiFile,
-    `# ${wikiTitle}
+  const wikiDraft = `# ${wikiTitle}
 
 ## Summary
 
@@ -146,9 +160,11 @@ ${sourceLines.join("\n")}
 ## Last Reviewed
 
 - ${today}
-`,
-    "utf8",
-  );
+`;
+
+  if (!dryRun) {
+    writeFileSync(wikiFile, wikiDraft, "utf8");
+  }
 
   pushUniqueRelatedEntry(relatedWikiEntries, {
     label: wikiTitle,
@@ -156,17 +172,25 @@ ${sourceLines.join("\n")}
   });
 
   for (const page of suggestedWikiPages) {
-    const existingContent = readFileSync(page.file, "utf8");
     const backlinkTarget = toPosixPath(path.relative(path.dirname(page.file), wikiFile));
-    const nextContent = mergeRelatedPageLinks(existingContent, [
-      {
-        label: wikiTitle,
-        target: backlinkTarget,
-      },
-    ]);
+    backlinkPlans.push({
+      wikiPage: page.relativePath,
+      label: wikiTitle,
+      target: backlinkTarget,
+    });
 
-    if (nextContent !== existingContent) {
-      writeFileSync(page.file, nextContent, "utf8");
+    if (!dryRun) {
+      const existingContent = readFileSync(page.file, "utf8");
+      const nextContent = mergeRelatedPageLinks(existingContent, [
+        {
+          label: wikiTitle,
+          target: backlinkTarget,
+        },
+      ]);
+
+      if (nextContent !== existingContent) {
+        writeFileSync(page.file, nextContent, "utf8");
+      }
     }
   }
 }
@@ -178,7 +202,7 @@ for (const page of suggestedWikiPages) {
   });
 }
 
-const rawLines = [
+const rawDraft = [
   `# ${values.title}`,
   "",
   "## Summary",
@@ -203,13 +227,40 @@ const rawLines = [
   "",
   `- ${today}`,
   "",
-];
+].join("\n");
 
-writeFileSync(rawFile, rawLines.join("\n"), "utf8");
+if (dryRun) {
+  console.log("[wiki-ingest] Dry run: no files were written.");
+  console.log(`[wiki-ingest] Raw note target: ${rawRelativePath}${rawAlreadyExists ? " (already exists)" : ""}`);
+  if (wikiRelativePath) {
+    console.log(`[wiki-ingest] Wiki page target: ${wikiRelativePath}${wikiAlreadyExists ? " (already exists)" : ""}`);
+  }
+  if (sourcePath) {
+    console.log(`[wiki-ingest] Canonical source: ${toPosixPath(path.relative(process.cwd(), sourcePath))}`);
+  }
+  if (suggestedWikiPages.length > 0) {
+    console.log(
+      `[wiki-ingest] Related wiki suggestions: ${suggestedWikiPages.map((page) => page.relativePath).join(", ")}`,
+    );
+  } else {
+    console.log("[wiki-ingest] Related wiki suggestions: none");
+  }
+  if (backlinkPlans.length > 0) {
+    console.log("[wiki-ingest] Backlink plan:");
+    for (const plan of backlinkPlans) {
+      console.log(`- ${plan.wikiPage} <= [${plan.label}](${plan.target})`);
+    }
+  }
+  if (rawAlreadyExists || wikiAlreadyExists) {
+    process.exit(1);
+  }
+  process.exit(0);
+}
+
+writeFileSync(rawFile, `${rawDraft}\n`, "utf8");
 
 const logPath = path.join(knowledgeRoot, "log.md");
 const logContent = readFileSync(logPath, "utf8");
-const rawRelativePath = toPosixPath(path.relative(knowledgeRoot, rawFile));
 const logEntryParts = [`captured [${values.title}](${rawRelativePath}) in \`${values.bucket}\``];
 if (createdWikiRelativePath) {
   logEntryParts.push(`seeded [wiki page](${createdWikiRelativePath})`);
