@@ -58,6 +58,7 @@ Use this index as the first entry point for queries.
 
 - [CI Browser Smoke](wiki/operations/ci-browser-smoke.md)
 - [Knowledge Layer Operations](wiki/operations/knowledge-layer.md)
+- [Knowledge Layer Playbook](wiki/operations/knowledge-playbook.md)
 
 ### Decisions
 

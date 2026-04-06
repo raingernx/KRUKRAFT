@@ -82,6 +82,7 @@ Without an explicit maintenance workflow, the repo-owned wiki would drift into d
 
 - [Browser Verification](../testing/browser-verification.md)
 - [CI Browser Smoke](./ci-browser-smoke.md)
+- [Knowledge Layer Playbook](./knowledge-playbook.md)
 - [Repo-Owned Knowledge Layer](../decisions/repo-owned-knowledge-layer.md)
 
 ## Sources
