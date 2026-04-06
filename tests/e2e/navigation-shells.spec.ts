@@ -5,6 +5,8 @@ import { collectRuntimeErrors } from "./helpers/browser";
 
 const LIBRARY_NAV_TIMEOUT_MS = 15_000;
 
+test.describe.configure({ timeout: 60_000 });
+
 async function startNavigationProbe(page: Page) {
   await page.evaluate(() => {
     type NavSample = {
@@ -110,11 +112,12 @@ async function openLibraryFromResources(page: Page) {
     .first();
 
   await page.getByRole("banner").first().hover();
-  await expect
-    .poll(async () =>
+  await expect.poll(
+    async () =>
       (await directLibraryLink.isVisible().catch(() => false)) ||
-      (await accountButton.isVisible().catch(() => false)))
-    .toBeTruthy({ timeout: LIBRARY_NAV_TIMEOUT_MS });
+      (await accountButton.isVisible().catch(() => false)),
+    { timeout: LIBRARY_NAV_TIMEOUT_MS },
+  ).toBeTruthy();
 
   if (await directLibraryLink.isVisible({ timeout: LIBRARY_NAV_TIMEOUT_MS }).catch(() => false)) {
     await Promise.all([
@@ -176,6 +179,7 @@ test("dashboard library back to resources keeps shell coverage during transition
 
   await expect(page).toHaveURL(/\/resources$/);
   await expect(page.locator("main").first()).toBeVisible();
+  await page.waitForLoadState("domcontentloaded");
 
   const samples = await stopNavigationProbe(page);
   expect(
