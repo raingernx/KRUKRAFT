@@ -146,8 +146,16 @@ async function openLibraryFromResources(page: Page) {
   const directLibraryLink = page
     .getByRole("link", { name: /^(คลังของฉัน|My Library)$/ })
     .first();
+  const accountButton = page
+    .getByRole("button", { name: /^(เปิดเมนูบัญชี|Open account menu)$/i })
+    .first();
 
   await page.getByRole("banner").first().hover();
+  await expect
+    .poll(async () =>
+      (await directLibraryLink.isVisible().catch(() => false)) ||
+      (await accountButton.isVisible().catch(() => false)))
+    .toBeTruthy();
 
   if (await directLibraryLink.isVisible().catch(() => false)) {
     await Promise.all([
@@ -157,13 +165,12 @@ async function openLibraryFromResources(page: Page) {
     return;
   }
 
-  const accountButton = page.getByRole("button", { name: "เปิดเมนูบัญชี" });
   await expect(accountButton).toBeVisible();
   await accountButton.click();
 
   await Promise.all([
     page.waitForURL(/\/dashboard\/library$/),
-    page.getByRole("link", { name: /^My Library$/ }).click(),
+    page.getByRole("link", { name: /^(คลังของฉัน|My Library)$/ }).click(),
   ]);
 }
 
