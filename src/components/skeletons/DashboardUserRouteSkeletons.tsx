@@ -124,11 +124,11 @@ function LibraryToolsPreview() {
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-1">
           <LoadingSkeleton className="h-3 w-20" />
-          <LoadingSkeleton className="h-4 w-72" />
+          <LoadingSkeleton className="h-4 w-80 max-w-full" />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <LoadingSkeleton className="h-4 w-6" />
+        <div className="flex flex-wrap items-center gap-2 text-caption">
+          <LoadingSkeleton className="h-4 w-7" />
           <LoadingSkeleton className="h-4 w-12" />
           <LoadingSkeleton className="h-4 w-20" />
         </div>
@@ -137,6 +137,7 @@ function LibraryToolsPreview() {
       <div className="mt-4 flex flex-col gap-3 xl:flex-row xl:items-center">
         <LoadingSkeleton className="h-11 min-w-0 flex-1 rounded-xl" />
         <div className="flex flex-wrap items-center gap-1.5">
+          <LoadingSkeleton className="h-4 w-12 rounded-full" />
           <LoadingSkeleton className="h-8 w-14 rounded-full" />
           <LoadingSkeleton className="h-8 w-12 rounded-full" />
           <LoadingSkeleton className="h-8 w-24 rounded-full" />
@@ -159,7 +160,7 @@ function LibraryGridCardPreview() {
         </div>
 
         <div className="space-y-2 border-t border-border-subtle pt-3">
-          <LoadingSkeleton className="h-3 w-28" />
+          <LoadingSkeleton className="h-3 w-32" />
         </div>
 
         <div className="mt-auto pt-4">
@@ -348,7 +349,7 @@ function DashboardLibraryPreview() {
 
       <LibraryToolsPreview />
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 6 }).map((_, index) => (
           <LibraryGridCardPreview key={index} />
         ))}
