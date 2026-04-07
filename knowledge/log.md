@@ -2,6 +2,7 @@
 
 ## 2026-04-07
 
+- raised the `listing-newest` warm burst to 5 after another post-deploy failure showed that a burst of 3 still left room for fresh instances during the k6 route's 5-VU ramp; the newest/control route now warms to the same fanout shape that perf verification later measures.
 - corrected the new admin refresh probes after CI showed `/admin` finished with `routeReady: ["dashboard", "admin-overview"]`; that combination is valid because admin routes live inside the shared dashboard chrome, so the probe now treats the generic `dashboard` marker as allowed context instead of flagging it as a wrong-family fallback.
 - extended the same refresh-shell verification sweep into the main admin family entry surfaces, so `/admin` and `/admin/analytics` now have explicit hard-refresh probes and route-ready markers instead of depending only on direct-load page smoke.
 - expanded the same dashboard refresh-shell verification sweep again so `/dashboard/downloads`, `/dashboard/purchases`, `/settings`, and `/subscription` now have explicit hard-refresh probes too, closing the remaining gap where those routes had ready markers but still depended on manual repeated-refresh checks.

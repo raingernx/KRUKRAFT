@@ -94,11 +94,12 @@ const routes: WarmRoute[] = [
     label: "listing-newest",
     path: "/resources?category=all&sort=newest",
     headers: { Cookie: "ranking_variant=A" },
-    // The smoke suite ramps the control/newest listing up to 5 VUs. Sequential
-    // repeats only keep one instance hot; a small burst reduces cross-instance
-    // cold tails on fresh deploys where the newest page shell still needs to
-    // materialize around an already-warm Redis listing query.
-    burst: 3,
+    // The smoke suite ramps the control/newest listing to 5 VUs. A burst of 3
+    // still left room for 1-2 fresh instances to take their first hit during
+    // k6 and spike p95 even though the Redis listing query itself was already
+    // warm. Match the warm burst to the later smoke-VU ceiling so the page
+    // shell and query path are both hot across the small fresh-instance fanout.
+    burst: 5,
     repeat: 2,
     required: true,
   },
