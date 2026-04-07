@@ -28,6 +28,7 @@ type ProbeScenarioName =
   | "admin-analytics-pages"
   | "creator-management-pages"
   | "creator-refresh-shell"
+  | "creator-editor-refresh-shell"
   | "dashboard-to-downloads"
   | "dashboard-to-purchases"
   | "dashboard-to-settings";
@@ -77,6 +78,7 @@ const VALID_SCENARIOS: ProbeScenarioName[] = [
   "admin-analytics-pages",
   "creator-management-pages",
   "creator-refresh-shell",
+  "creator-editor-refresh-shell",
   "dashboard-to-downloads",
   "dashboard-to-purchases",
   "dashboard-to-settings",
@@ -846,6 +848,72 @@ async function runCreatorRefreshShellScenario({ browser }: ProbeContext) {
   }
 }
 
+async function runCreatorEditorRefreshShellScenario({ browser }: ProbeContext) {
+  const context = await createContext(browser);
+  const page = await context.newPage();
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+
+  try {
+    await loginAsCreator(page, "/dashboard/creator/resources/new");
+    await expect(page).toHaveURL(/\/dashboard\/creator\/resources\/new$/);
+    await expect(
+      page.getByRole("heading", { name: /Create your first resource|New resource/i }).first(),
+    ).toBeVisible();
+
+    await startRefreshProbe(page);
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/dashboard\/creator\/resources\/new$/);
+    await expect(
+      page.getByRole("heading", { name: /Create your first resource|New resource/i }).first(),
+    ).toBeVisible();
+    await page.waitForTimeout(500);
+
+    const samples = await stopRefreshProbe(page);
+    const editorSamples = samples.filter((sample) =>
+      /\/dashboard\/creator\/resources\/new(?:\?.*)?$/.test(sample.href),
+    );
+
+    expect(
+      editorSamples.length,
+      "creator-editor-refresh-shell probe did not capture editor route samples after reload",
+    ).toBeGreaterThan(0);
+
+    const wrongFamilyRouteSample = editorSamples.find((sample) =>
+      sample.routeReady.some(
+        (marker) =>
+          marker !== "dashboard" &&
+          marker !== "dashboard-creator-resource-editor" &&
+          !marker.startsWith("dashboard-creator"),
+      ),
+    );
+    expect(wrongFamilyRouteSample).toBeUndefined();
+
+    const editorShellSample = editorSamples.find(
+      (sample) =>
+        sample.routeReady.includes("dashboard-creator-resource-editor") ||
+        sample.dashboardShellVisible,
+    );
+    expect(
+      editorShellSample,
+      "creator-editor-refresh-shell probe did not observe editor/dashboard shell readiness after reload",
+    ).toBeDefined();
+
+    expect(editorSamples.at(-1)?.rootLoadingVisible).not.toBe(true);
+
+    expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
+  } catch (error) {
+    const screenshot = await saveFailureScreenshot(page, "creator-editor-refresh-shell");
+    throw new Error(
+      `creator-editor-refresh-shell probe failed. Screenshot: ${screenshot}. ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  } finally {
+    await closeContext(context);
+  }
+}
+
 async function runDarkThemeLogoScenario({ browser }: ProbeContext) {
   const context = await createContext(browser);
   const page = await context.newPage();
@@ -994,6 +1062,7 @@ const scenarioHandlers: Record<ProbeScenarioName, (context: ProbeContext) => Pro
   "admin-analytics-pages": runAdminAnalyticsPagesScenario,
   "creator-management-pages": runCreatorManagementPagesScenario,
   "creator-refresh-shell": runCreatorRefreshShellScenario,
+  "creator-editor-refresh-shell": runCreatorEditorRefreshShellScenario,
   "dark-theme-logo": runDarkThemeLogoScenario,
   "settings-theme": runSettingsThemeScenario,
 };
