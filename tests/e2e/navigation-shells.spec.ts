@@ -10,6 +10,10 @@ test.describe.configure({ timeout: 75_000 });
 
 type LocatorFactory = () => ReturnType<Page["locator"]>;
 
+function matchesTargetUrl(page: Page, targetUrl: RegExp) {
+  return targetUrl.test(new URL(page.url()).pathname + new URL(page.url()).search);
+}
+
 async function startNavigationProbe(page: Page) {
   await page.evaluate(() => {
     type NavSample = {
@@ -166,6 +170,10 @@ async function clickForNavigation(
   targetUrl: RegExp,
 ) {
   for (let attempt = 0; attempt < 3; attempt += 1) {
+    if (matchesTargetUrl(page, targetUrl)) {
+      return;
+    }
+
     const locator = getLocator();
 
     try {
@@ -191,8 +199,29 @@ async function clickForNavigation(
       });
       return;
     } catch {
-      await page.waitForTimeout(250);
+      if (page.isClosed() || matchesTargetUrl(page, targetUrl)) {
+        return;
+      }
+
+      await expect
+        .poll(() => matchesTargetUrl(page, targetUrl), {
+          timeout: 1_000,
+        })
+        .toBeTruthy()
+        .catch(() => undefined);
+
+      if (matchesTargetUrl(page, targetUrl)) {
+        return;
+      }
+
+      if (!page.isClosed()) {
+        await page.waitForTimeout(150);
+      }
     }
+  }
+
+  if (matchesTargetUrl(page, targetUrl)) {
+    return;
   }
 
   await page.waitForURL(targetUrl, {
