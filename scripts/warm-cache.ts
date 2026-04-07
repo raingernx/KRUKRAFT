@@ -110,12 +110,22 @@ const routes: WarmRoute[] = [
   {
     label: "creator-detail-hot",
     path: `/creators/${encodeURIComponent(hotCreator)}`,
+    // The creator detail smoke route ramps to 5 VUs. Sequential warms still
+    // leave room for fresh instances to serve their first creator-page hit
+    // during k6, which shows up as a p95 tail even though the main profile
+    // cache is already hot on one worker. Match the smoke fanout up front.
+    burst: 5,
     repeat: 2,
     required: true,
   },
   {
     label: "category-listing",
     path: `/categories/${encodeURIComponent(categorySlug)}`,
+    // Category listing uses the same 5-VU smoke ramp as creator/newest. Warm
+    // it with the same concurrent fanout so one cold worker does not take its
+    // first category render during k6 and spike p95.
+    burst: 5,
+    repeat: 2,
     required: true,
   },
 ];
