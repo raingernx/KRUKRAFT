@@ -164,7 +164,7 @@ function NavbarFallback({
                 />
               </div>
 
-              <div className="ml-auto hidden items-center gap-2.5 lg:flex">
+              <div className="ml-auto hidden min-w-[176px] items-center justify-end gap-2.5 lg:flex">
                 <NavbarAuthPlaceholder marketplace />
               </div>
 
