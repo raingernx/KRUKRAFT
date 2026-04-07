@@ -8,7 +8,7 @@ The post-deploy warm workflow warms critical public routes, then runs a k6-backe
 
 - The workflow auto-runs on production deployment success and can also be triggered manually with `workflow_dispatch`.
 - `Warm Public Cache` waits for `/resources` to return success, then warms public routes and optional internal cache layers before perf verification starts.
-- The warm script now gives `/resources` a deliberate second pass before the k6 smoke suite starts, because production checks showed first-hit instability on that route immediately after deploy even when its warmed steady-state budget still passed.
+- The warm script now gives `/resources` a deliberate second pass before the k6 smoke suite starts, and each pass sends a small concurrent burst instead of a single request, because production checks showed that sequential warms still left later k6 VUs free to hit fresh instances with a cold discover-home stream.
 - The same warm script now also warms the control-arm newest listing with `ranking_variant=A` plus a repeated pass, and it warms the hot creator detail route explicitly, because the smoke suite measures those exact shapes and they were still alternating between pass/fail when only the generic public warm set ran.
 - `Run Post-Deploy Performance Verification` executes `npm run perf:post-deploy`, which runs the smoke k6 suite and fails the job when any route exceeds its p95 budget or crosses a 1% failure rate.
 - The generated `artifacts/perf-summary.json` now includes a rollup with overall status, pass/fail counts, the worst p95 route, and the route nearest its budget.
@@ -36,6 +36,7 @@ This workflow is the repo-owned production perf truth source after deploy. It ve
 
 - Warm targets and perf targets must stay aligned; otherwise the workflow can report cold-path regressions as if they were warmed-route failures.
 - `/resources` is expected to receive an extra warm pass; removing it without replacing the stabilization strategy reintroduces noisy first-hit perf failures after deploy.
+- `/resources` is also expected to receive a concurrent warm burst; sequential single-request repeats alone are not sufficient evidence that later multi-VU smoke traffic will avoid cold-tail stream variance.
 - `listing_newest_smoke` and `creator_detail_smoke` are expected to be warmed against the same control cookie / creator slug that the k6 suite measures; warming only adjacent routes is not sufficient evidence of stability.
 - The smoke perf suite is a blocking gate: route budgets are not advisory.
 - Artifact JSON and GitHub step summary should tell the same story about which route was worst and which routes failed.

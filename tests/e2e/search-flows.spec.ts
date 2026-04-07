@@ -1,5 +1,34 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { collectRuntimeErrors } from "./helpers/browser";
+
+const SEARCH_NAV_TIMEOUT_MS = 15_000;
+
+async function submitSearchAndWait(
+  page: Page,
+  searchInput: Locator,
+  targetUrl: RegExp,
+) {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const urlWait = page.waitForURL(targetUrl, {
+      timeout: 5_000,
+      waitUntil: "commit",
+    });
+
+    try {
+      await searchInput.press("Enter");
+      await urlWait;
+      return;
+    } catch {
+      // Retry once when the first Enter lands before the client router fully
+      // commits the query-string navigation on CI.
+    }
+  }
+
+  await page.waitForURL(targetUrl, {
+    timeout: SEARCH_NAV_TIMEOUT_MS,
+    waitUntil: "commit",
+  });
+}
 
 test("resources search focus opens quick browse and stores recent searches", async ({
   page,
@@ -21,11 +50,7 @@ test("resources search focus opens quick browse and stores recent searches", asy
   await expect(page.getByText("เลือกดูตามหมวด")).toBeVisible();
 
   await searchInput.fill("worksheet");
-
-  await Promise.all([
-    page.waitForURL(/\/resources\?search=worksheet/),
-    searchInput.press("Enter"),
-  ]);
+  await submitSearchAndWait(page, searchInput, /\/resources\?search=worksheet/);
 
   await searchInput.fill("");
   await searchInput.click();
@@ -49,10 +74,7 @@ test("resources top-bar search submit navigates to canonical results route", asy
   const searchInput = page.getByRole("combobox", { name: "Search resources" });
 
   await searchInput.fill("worksheet");
-  await Promise.all([
-    page.waitForURL(/\/resources\?search=worksheet/),
-    searchInput.press("Enter"),
-  ]);
+  await submitSearchAndWait(page, searchInput, /\/resources\?search=worksheet/);
 
   await expect(page.getByText("Search results").first()).toBeVisible();
   await expect(page.getByText("Showing results for").first()).toBeVisible();

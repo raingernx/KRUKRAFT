@@ -39,6 +39,12 @@ type WarmRoute = {
    * post-deploy cold starts across successive compute instances.
    */
   repeat?: number;
+  /**
+   * Fire multiple warm requests at once for routes that can fan out onto
+   * fresh compute instances during the later k6 ramp. Sequential repeats warm
+   * only one hot instance; a small burst reduces cross-instance cold tails.
+   */
+  burst?: number;
   /** Extra request headers forwarded verbatim. Used to simulate experiment
    *  cookie state so the warm request exercises the same effectiveSort branch
    *  that CI smoke tests use. */
@@ -59,6 +65,10 @@ const routes: WarmRoute[] = [
     // less likely to hand the k6 smoke suite a just-born instance on its
     // first measured request.
     repeat: 2,
+    // k6 ramps `/resources` up to 5 VUs. A small concurrent burst warms more
+    // than one fresh instance so the later ramp is less likely to hit an
+    // unwarmed discover-home stream on a newly scaled worker.
+    burst: 3,
   },
   {
     label: "listing-default",
@@ -312,22 +322,50 @@ async function main() {
 
   for (const route of routes) {
     const attempts = Math.max(1, route.repeat ?? 1);
+    const burst = Math.max(1, route.burst ?? 1);
 
     for (let attempt = 1; attempt <= attempts; attempt += 1) {
-      const suffix = attempts > 1 ? ` (pass ${attempt}/${attempts})` : "";
-      console.log(`[warm-cache] Warming ${route.label}${suffix}: ${route.path}`);
-      const result = await warmRoute(route);
-      results.push(result);
+      const passSuffix = attempts > 1 ? ` (pass ${attempt}/${attempts})` : "";
 
-      if (result.ok) {
-        console.log(
-          `[warm-cache] OK ${result.status} ${result.label}${suffix} ${result.elapsedMs}ms bodyBytes=${result.bodyBytes ?? "n/a"}`,
-        );
-      } else {
-        console.warn(
-          `[warm-cache] FAIL ${result.status ?? "ERR"} ${result.label}${suffix} ${result.elapsedMs}ms${result.error ? ` ${result.error}` : ""}`,
-        );
+      if (burst === 1) {
+        console.log(`[warm-cache] Warming ${route.label}${passSuffix}: ${route.path}`);
+        const result = await warmRoute(route);
+        results.push(result);
+
+        if (result.ok) {
+          console.log(
+            `[warm-cache] OK ${result.status} ${result.label}${passSuffix} ${result.elapsedMs}ms bodyBytes=${result.bodyBytes ?? "n/a"}`,
+          );
+        } else {
+          console.warn(
+            `[warm-cache] FAIL ${result.status ?? "ERR"} ${result.label}${passSuffix} ${result.elapsedMs}ms${result.error ? ` ${result.error}` : ""}`,
+          );
+        }
+        continue;
       }
+
+      console.log(
+        `[warm-cache] Warming ${route.label}${passSuffix}: ${route.path} (burst ${burst})`,
+      );
+      const burstResults = await Promise.all(
+        Array.from({ length: burst }, async (_, index) => {
+          const shardSuffix = `${passSuffix} [burst ${index + 1}/${burst}]`;
+          const result = await warmRoute(route);
+
+          if (result.ok) {
+            console.log(
+              `[warm-cache] OK ${result.status} ${result.label}${shardSuffix} ${result.elapsedMs}ms bodyBytes=${result.bodyBytes ?? "n/a"}`,
+            );
+          } else {
+            console.warn(
+              `[warm-cache] FAIL ${result.status ?? "ERR"} ${result.label}${shardSuffix} ${result.elapsedMs}ms${result.error ? ` ${result.error}` : ""}`,
+            );
+          }
+
+          return result;
+        }),
+      );
+      results.push(...burstResults);
     }
   }
 
