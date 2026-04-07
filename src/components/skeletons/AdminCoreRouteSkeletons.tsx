@@ -1,6 +1,6 @@
 "use client";
 
-import { Navbar } from "@/components/layout/Navbar";
+import { NavbarShell } from "@/components/layout/NavbarShell";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import { PageContainer, PageContentWide } from "@/design-system";
 
@@ -204,7 +204,7 @@ export function AdminUsersLoadingShell() {
 export function AdminTagsLoadingShell() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Navbar />
+      <NavbarShell />
       <main className="flex-1 bg-background">
         <PageContainer className="py-10">
           <PageContentWide className="space-y-8">

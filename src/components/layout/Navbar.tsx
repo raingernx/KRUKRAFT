@@ -17,6 +17,7 @@ import {
 import { Avatar } from "@/design-system";
 import { AccountTrigger } from "@/components/layout/account/AccountTrigger";
 import { NavbarBrand } from "@/components/layout/NavbarBrand";
+import { NavbarShell } from "@/components/layout/NavbarShell";
 import { NavbarItem } from "@/components/layout/navbar/NavbarItem";
 import { Container } from "@/design-system";
 import {
@@ -139,61 +140,6 @@ function marketplaceCategoryItemClassName(
     active
       ? "border-border-strong bg-secondary text-secondary-foreground"
       : "border-transparent bg-background text-muted-foreground hover:bg-accent hover:text-foreground",
-  );
-}
-
-function NavbarFallback({
-  hasMarketplaceShell,
-}: {
-  hasMarketplaceShell: boolean;
-}) {
-  if (hasMarketplaceShell) {
-    return (
-      <header className="sticky top-0 z-40 w-full border-b border-border bg-background">
-        <Container className="py-3 sm:py-4">
-          <div className="flex flex-col gap-3 sm:gap-4">
-            <div className="flex items-center gap-3 lg:grid lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center lg:gap-6">
-              <div className="flex h-11 shrink-0 items-center">
-                <NavbarBrand />
-              </div>
-
-              <div className="hidden min-w-0 lg:block">
-                <div
-                  aria-hidden="true"
-                  className="h-11 w-full rounded-full border border-border bg-background"
-                />
-              </div>
-
-              <div className="ml-auto hidden min-w-[176px] items-center justify-end gap-2.5 lg:flex">
-                <NavbarAuthPlaceholder marketplace />
-              </div>
-
-              <div className={cn("ml-auto flex min-w-0 max-w-[68vw] items-center gap-1.5 lg:hidden", HORIZONTAL_SCROLL_CLASS_NAME)}>
-                <NavbarAuthPlaceholder marketplace mobile />
-              </div>
-            </div>
-
-            <div className={cn("flex items-center gap-2", HORIZONTAL_SCROLL_CLASS_NAME)}>
-              <div aria-hidden="true" className="h-10 w-[136px] shrink-0 rounded-full border border-border bg-secondary" />
-              <div aria-hidden="true" className="h-10 w-[112px] shrink-0 rounded-full bg-background" />
-              <div aria-hidden="true" className="h-10 w-[236px] shrink-0 rounded-full bg-background" />
-              <div aria-hidden="true" className="h-10 w-[108px] shrink-0 rounded-full bg-background" />
-              <div aria-hidden="true" className="h-10 w-[132px] shrink-0 rounded-full bg-background" />
-            </div>
-          </div>
-        </Container>
-      </header>
-    );
-  }
-
-  return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-background">
-      <Container className="h-16">
-        <div className="flex h-10 items-center">
-          <NavbarBrand />
-        </div>
-      </Container>
-    </header>
   );
 }
 
@@ -871,7 +817,7 @@ export function Navbar(props: {
   headerSearch?: ReactNode;
 }) {
   return (
-    <Suspense fallback={<NavbarFallback hasMarketplaceShell={Boolean(props.headerSearch)} />}>
+    <Suspense fallback={<NavbarShell hasMarketplaceShell={Boolean(props.headerSearch)} />}>
       <NavbarInner {...props} />
     </Suspense>
   );

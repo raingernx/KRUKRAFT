@@ -1,6 +1,6 @@
 "use client";
 
-import { Navbar } from "@/components/layout/Navbar";
+import { NavbarShell } from "@/components/layout/NavbarShell";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import {
   Container,
@@ -35,7 +35,7 @@ export function LegalDocumentLoadingShell({
 }) {
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      <NavbarShell />
       <Container className="py-16">
         <div className="mx-auto max-w-2xl">
           <LoadingSkeleton className={`h-10 rounded-2xl ${titleWidth}`} />
@@ -55,7 +55,10 @@ export function LegalDocumentLoadingShell({
 export function SupportPageLoadingShell() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Navbar headerSearch={<ListingHeaderSearchSkeleton />} />
+      <NavbarShell
+        hasMarketplaceShell
+        headerSearch={<ListingHeaderSearchSkeleton />}
+      />
 
       <main className="flex-1">
         <Container className="py-12 sm:py-14 lg:py-16">
@@ -90,7 +93,10 @@ export function SupportPageLoadingShell() {
 export function MembershipPageLoadingShell() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Navbar headerSearch={<ListingHeaderSearchSkeleton />} />
+      <NavbarShell
+        hasMarketplaceShell
+        headerSearch={<ListingHeaderSearchSkeleton />}
+      />
 
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-purple-950 py-20 text-center sm:py-24">
         <PageContainer>
@@ -178,7 +184,7 @@ export function MembershipPageLoadingShell() {
 export function CheckoutStatusPageLoadingShell() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Navbar />
+      <NavbarShell />
 
       <main className="flex flex-1 items-center bg-background">
         <Container className="py-16 sm:py-24">

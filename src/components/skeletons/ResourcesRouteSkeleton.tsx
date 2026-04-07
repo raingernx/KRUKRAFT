@@ -1,7 +1,7 @@
 "use client";
 
 import { Skeleton } from "boneyard-js/react";
-import { Navbar } from "@/components/layout/Navbar";
+import { NavbarShell } from "@/components/layout/NavbarShell";
 import { Container, colorScales } from "@/design-system";
 import { HeroBanner } from "@/components/marketplace/HeroBanner";
 import { HeroBannerFallback } from "@/components/marketplace/HeroBanner";
@@ -33,7 +33,8 @@ function ManualResourcesDiscoverRouteSkeleton() {
       data-loading-scope="resources-browse"
       className="flex min-h-screen flex-col bg-background"
     >
-      <Navbar
+      <NavbarShell
+        hasMarketplaceShell
         headerSearch={<ResourcesCatalogSearchSkeleton />}
         secondaryRow={<ResourcesCatalogControlsSkeleton />}
       />
@@ -62,7 +63,8 @@ function ManualResourcesListingRouteSkeleton() {
       data-loading-scope="resources-browse"
       className="flex min-h-screen flex-col bg-background"
     >
-      <Navbar
+      <NavbarShell
+        hasMarketplaceShell
         headerSearch={<ResourcesCatalogSearchSkeleton />}
         secondaryRow={<ResourcesCatalogControlsSkeleton />}
       />
@@ -83,7 +85,8 @@ function ResourcesRoutePreview() {
       data-loading-scope="resources-browse-preview"
       className="flex min-h-screen flex-col bg-background"
     >
-      <Navbar
+      <NavbarShell
+        hasMarketplaceShell
         headerSearch={<ResourcesCatalogSearchBonesPreview />}
         secondaryRow={<ResourcesCatalogControlsBonesPreview />}
       />
