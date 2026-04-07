@@ -559,6 +559,8 @@ When editing public routes with streaming or personalization:
 - after search, filter, sort, auth, or cache changes, look for regressions and repeated errors in logs, response payloads, or rendered output instead of relying on happy-path reasoning only
 - after changes to search, auth, cache, or other runtime-sensitive flows, scan recent logs after the smoke test to check for repeated errors, hidden runtime failures, and hydration issues
 - when scanning logs, distinguish between historical errors and errors reproduced after the latest change; do not claim success if the latest smoke test still produces matching log failures
+- for browser/perf-sensitive CI flows, do not call a run "passed" or "stable" from workflow status alone; review the latest run logs for hidden `flaky`, `retry #`, timeout, or threshold-failure signals first
+- Browser Smoke or other verification workflows that finish `success` with flaky retries are green but not clean; treat that as unfinished stabilization work, not a closed task
 - after image delivery, `next/image`, or asset-route changes, scan logs for optimizer/runtime image errors such as `next/image`, `valid image`, or `received null`, and verify the changed image path actually renders instead of assuming HTML markup alone proves success
 - after editing `.github/workflows/*.yml`, run the repo-owned workflow syntax check; `npm run lint` now includes `npm run workflow:check` so invalid YAML should fail before push
 
@@ -589,6 +591,8 @@ When implementing features:
 7. Prefer proof over assumption: if a route, API, cache, or search flow was changed, verify that the specific thing works.
 8. If runtime verification disproves an earlier assumption or summary, correct the record explicitly instead of quietly proceeding.
 9. When multiple follow-up improvements are possible, prefer the highest-impact safe pass before deeper or riskier refactors.
+10. Before closing any non-trivial task, decide and report a `knowledge triage` outcome: `no ingest`, `log only`, `update existing wiki`, or `new wiki entry`.
+11. When a recurring error class or verification mistake is discovered, decide before close-out whether it belongs in `knowledge/log.md`, an existing wiki page, or a new wiki page; do not rely on memory alone.
 
 AI agents should avoid large architectural changes unless explicitly requested.
 
@@ -620,6 +624,7 @@ Knowledge layer roles:
 - `knowledge/schema/` stores ingest/query/lint rules for maintaining the wiki
 - `npm run wiki:ingest`, `npm run wiki:ingest:dry-run`, `npm run wiki:ingest:batch`, `npm run wiki:ingest:batch:dry-run`, `npm run wiki:index`, `npm run wiki:lint`, `npm run wiki:stale`, `npm run wiki:coverage`, and `npm run wiki:drift` are the repo-owned operational commands for that layer; `wiki:ingest` now appends `knowledge/log.md`, regenerates `knowledge/index.md`, and seeds related-page suggestions/backlinks when it creates a new wiki page, while batch ingest pre-validates the whole write set, can merge multiple captures into one explicit shared wiki target via `wikiTargets` + `wikiTargetId`, can skip raw-note creation for source-only merge items via `skipRawCapture: true`, and both preview/write paths now support `--format json` decision metadata, batch `policy` overrides, `--enforce-policy` gating that can fail CI or block writes on `blocked_by_policy`, `--report-file` for JSON artifact capture, and `--report-format bundle` when CI needs one artifact containing text summary, artifact path hints, review annotations, GitHub-ready summary/annotation hints, and structured plan sections
 - Default knowledge-layer behavior is `Codex triages first`: the agent should decide whether a change is not worth ingesting, should become a single raw/wiki capture, should merge into an existing wiki page, or should be handled as a batch topic, and then report that decision back to the user in plain language instead of forcing the user to choose ingest shape on every turn
+- non-trivial task close-out now requires an explicit `knowledge triage` decision, even when the result is `no ingest`; do not finish work informally without stating that outcome
 
 Source priority remains:
 
@@ -719,6 +724,9 @@ For non-trivial changes, agents should usually finish by reporting:
 - whether the flow was verified at runtime
 - any remaining uncertainty or blocked verification
 - whether `knowledge/` or `krukraft-ai-contexts/` changed as part of the work
+- `Verification:` a concise summary of what was actually checked
+- `Knowledge triage:` one of `no ingest`, `log only`, `update existing wiki`, or `new wiki entry`
+- `Residual risk:` what is still uncertain, flaky, blocked, or intentionally deferred
 
 For design-system/Figma handoff changes, also report whether `npm run figma-map:check`
 was run and whether the live Figma file needed a corresponding update.
@@ -726,3 +734,4 @@ For DS token or handoff-inventory changes, also report whether `npm run tokens:a
 was run.
 
 Do not report success based only on static analysis when a runtime check was practical and relevant.
+Do not report browser/perf CI as clean unless the latest relevant logs were reviewed for `flaky`, `retry #`, timeout, and threshold-failure signals.

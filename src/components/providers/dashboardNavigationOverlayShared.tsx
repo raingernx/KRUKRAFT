@@ -143,5 +143,32 @@ export function getDashboardReadySelector(pathname: string | null, href: string 
     return '[data-route-shell-ready="dashboard-subscription"]';
   }
 
+  if (targetPathname === routes.creatorApply) {
+    return '[data-route-shell-ready="dashboard-creator-apply"]';
+  }
+
+  if (targetPathname === routes.creatorDashboard) {
+    return '[data-route-shell-ready="dashboard-creator-overview"]';
+  }
+
+  if (targetPathname === routes.creatorAnalytics) {
+    return '[data-route-shell-ready="dashboard-creator-analytics"]';
+  }
+
+  if (targetPathname === routes.creatorResources) {
+    return '[data-route-shell-ready="dashboard-creator-resources"]';
+  }
+
+  if (targetPathname === routes.creatorSales) {
+    return '[data-route-shell-ready="dashboard-creator-sales"]';
+  }
+
+  if (
+    targetPathname === routes.creatorProfile ||
+    targetPathname === "/dashboard/creator/settings"
+  ) {
+    return '[data-route-shell-ready="dashboard-creator-profile"]';
+  }
+
   return DASHBOARD_ROUTE_SHELL_SELECTOR;
 }

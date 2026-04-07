@@ -132,7 +132,7 @@ export default async function CreatorDashboardPage() {
     });
 
     return (
-      <div className="space-y-8">
+      <div data-route-shell-ready="dashboard-creator-overview" className="space-y-8">
         <SectionHeader
           eyebrow="Creator"
           title="Creator Dashboard"
@@ -173,7 +173,7 @@ export default async function CreatorDashboardPage() {
   const qualityFeedback = topPerformer ? buildQualityFeedback(topPerformer) : null;
 
   return (
-    <div className="space-y-8">
+    <div data-route-shell-ready="dashboard-creator-overview" className="space-y-8">
       <SectionHeader
         eyebrow="Creator"
         title="Creator Dashboard"

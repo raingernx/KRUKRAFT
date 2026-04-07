@@ -35,6 +35,7 @@ Performance problems in this repo can come from different layers: client JS, war
 - run the repo-owned browser probe when navigation chrome or brand-theme logic changes; blank-gap shell coverage and dark-logo first paint should fail there before they become production regressions
 - if a change touches `.github/workflows/`, let `workflow:check` parse those files before trusting the deploy/perf automation path
 - after production deploy, read the post-deploy warm/perf summary first
+- treat workflow result and workflow interpretation as separate steps: a green run is not "clean" until the relevant logs/artifacts have been checked for hidden flaky retries, threshold failures, or route-specific instability
 - if the summary fails, use the worst-route and nearest-budget rollup fields to choose the next route to inspect
 - if the warmed perf suite passes but users still report slowness, inspect Vercel Speed Insights for real-user regressions
 - if real-user or browser flows still look unstable, inspect runtime logs for repeated slow requests, cold-path failures, or error spikes on the affected route
@@ -42,6 +43,7 @@ Performance problems in this repo can come from different layers: client JS, war
 ## Invariants
 
 - The post-deploy warm/perf workflow is the first production perf truth source after deploy, not local Lighthouse alone.
+- `Warm Public Cache` passing does not mean the workflow passed; close-out must use the perf-verification result, summary rollup, and relevant logs together.
 - Repo-owned browser probes are expected to catch shell-coverage and theme-fallback regressions before deploy; they are not limited to happy-path page loads anymore.
 - GitHub workflow YAML must parse locally before it is considered a valid performance/deploy change.
 - Speed Insights is a real-user follow-up signal, not a replacement for route-level warmed verification.
@@ -52,7 +54,21 @@ Performance problems in this repo can come from different layers: client JS, war
 
 - A passing LHCI run does not prove production latency is healthy on warmed routes.
 - A passing warmed k6 suite does not prove every long-tail user cohort or browser/device class is healthy.
+- A green warm/perf workflow can still be misread if the operator only looks at job status. Always verify whether the failing step was the warm phase itself, the perf-verification phase, or a workflow/harness issue.
+- Manual operator traffic can perturb shared cache state during a post-deploy run, but if one extra hit can flip pass/fail then the real lesson is still route instability, not that the workflow was fundamentally wrong to fail.
 - Speed Insights trends need enough production traffic to become meaningful; they are weaker right after a low-traffic deploy.
+
+## Close-Out Guardrails
+
+- Performance close-out should include:
+  - `Verification:`
+  - `Knowledge triage:`
+  - `Residual risk:`
+- If a warmed workflow fails, classify it before patching:
+  - warm route failed
+  - perf verification failed after warm
+  - workflow/CI harness failed
+- If the same perf failure class is likely to recur, update this page or `knowledge/log.md` before considering the issue learned.
 
 ## Related Pages
 

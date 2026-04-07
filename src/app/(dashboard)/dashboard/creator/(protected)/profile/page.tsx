@@ -22,7 +22,7 @@ export default async function CreatorProfilePage() {
   }
 
   return (
-    <PageContent className="space-y-8">
+    <PageContent data-route-shell-ready="dashboard-creator-profile" className="space-y-8">
         <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-end lg:justify-between lg:gap-8">
           <div className="min-w-0 flex-1">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-500">

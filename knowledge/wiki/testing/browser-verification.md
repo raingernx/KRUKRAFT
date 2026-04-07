@@ -30,11 +30,14 @@ This split model keeps local debugging practical while giving the repo a stable 
 - local browser probe against a dev server
 - CI browser smoke against cloud Linux runner
 - repo-owned page, dashboard, and management probe passes after Playwright smoke
+- creator workspace refresh verification now also has a repo-owned probe path, so wrong-level app-root fallback on `/dashboard/creator/*` can be caught without depending only on manual repeated refresh checks
+- close-out for browser verification work now requires both a `Verification:` summary and a `Knowledge triage:` decision; "green" workflow status alone is not enough for a stable close-out
 
 ## Invariants
 
 - Local browser probe should remain the preferred macOS debugging path.
 - CI browser smoke should stay green without tolerated flaky retries as a success criterion.
+- A Browser Smoke run is only "clean" after log review confirms there were no hidden `flaky`, `retry #`, or equivalent retry-only failures.
 - Route and transition tests should use stable shell markers when available.
 - Cross-group navigation links that drive shell-coverage tests should not become interactable before hydration if that risks falling back to hard navigation or inconsistent overlay state.
 - Entry overlays that prove transition coverage should stay visible long enough to survive fast route commits; zero-duration handoff overlays are prone to disappearing before CI sampling can observe the intended scope.
@@ -52,7 +55,21 @@ This split model keeps local debugging practical while giving the repo a stable 
 - Local browser runtime issues can still make `playwright test` less stable than direct Playwright API launch.
 - Browser smoke can pass while low-coverage paths still have regressions.
 - A green Browser Smoke run can still hide flaky retries. CI log review should scan for `retry #1`, especially in `navigation-shells.spec.ts` and `settings-theme.spec.ts`, before calling the suite stable.
+- When a Browser Smoke failure turns out to be a brittle assertion, probe bug, or workflow issue instead of a product regression, the close-out should say so explicitly and record the error class in `knowledge/log.md` or this page before the issue is considered learned.
 - Dashboard/public transition flakes often show up as missing `data-loading-scope` samples or a visible link that was rendered before hydration finished, even when the final route eventually loads.
+
+## Close-Out Guardrails
+
+- Treat `success` + `flaky` as unfinished work. The suite is green, but not clean.
+- Separate failure classes before patching:
+  - product/runtime regression
+  - brittle test or probe assertion
+  - workflow/CI harness problem
+- If the same failure class is likely to recur, update this page or `knowledge/log.md` before closing the task.
+- Browser-verification close-out should include:
+  - `Verification:`
+  - `Knowledge triage:`
+  - `Residual risk:`
 
 ## Related Pages
 

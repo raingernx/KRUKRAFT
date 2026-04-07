@@ -60,7 +60,7 @@ export default async function CreatorApplyPage() {
   const applicationStatus = access.applicationStatus;
 
   return (
-    <PageContent className="space-y-8">
+    <PageContent data-route-shell-ready="dashboard-creator-apply" className="space-y-8">
       {/* Header */}
       <div className="rounded-[28px] border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-violet-50 p-8 shadow-card">
         <div className="flex items-center gap-3">

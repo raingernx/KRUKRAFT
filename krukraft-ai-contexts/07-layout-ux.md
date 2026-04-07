@@ -166,6 +166,10 @@
   the root app background. Cross-group jumps into dashboard pages should
   therefore keep the dashboard sidebar/topbar visible from the first loading
   frame, rather than showing library/downloads content under public chrome.
+- If users report "dashboard on dashboard" during entry transitions, treat it
+  as a double-overlay handoff bug first. The usual cause is both the root
+  dashboard entry overlay and the in-dashboard overlay trying to own the same
+  transition window, not a real duplicate route render.
 - Dashboard overlay cleanup is now single-owner as well: the dashboard route
   subtree no longer mounts a second `DashboardNavigationReady` under
   `src/app/(dashboard)/dashboard/template.tsx`, and the thin
@@ -177,6 +181,11 @@
   detects that the app has already crossed into the dashboard subtree. This
   keeps first-entry transitions from `/resources` into `/dashboard/library`
   aligned with the target library shell from the initial frame.
+- The same handoff model now extends further into the creator workspace: the
+  creator overview, analytics, resources, sales, profile, and apply routes
+  now expose route-ready markers so dashboard entry/in-group overlays do not
+  clear purely from generic dashboard-shell readiness when the target route is
+  still mounting.
 - `tests/e2e/navigation-shells.spec.ts` now samples the DOM every animation
   frame during public/dashboard/resources transitions and is part of
   `npm run smoke:local:browser`, so shell-coverage regressions can be caught in
@@ -368,6 +377,10 @@ max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8
   access. First navigation from public routes into dashboard surfaces should
   now show sidebar/topbar/content scaffolding instead of a blank gap while the
   group layout is still loading.
+- Hard refreshes that appear to "jump to another page" before dashboard
+  content resolves should be treated as fallback-hierarchy bugs first. The
+  usual failure class is a wrong-level app/root fallback appearing before the
+  dashboard-family shell, not the router actually leaving `/dashboard/*`.
 - Public `Navbar` links that enter protected dashboard surfaces now also
   trigger a global dashboard entry overlay from the root layout via
   `DashboardEntryNavigationOverlay`, so first entry from public routes does not

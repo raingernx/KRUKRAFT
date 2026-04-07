@@ -30,6 +30,9 @@ This workflow is the repo-owned production perf truth source after deploy. It ve
 - wait for the production `/resources` route to go live
 - warm public and optional internal cache layers
 - run the smoke k6 suite against key public routes
+- interpret the result in two stages:
+  - did `Warm Public Cache` itself fail
+  - or did warm pass and only the later perf-verification step fail
 - upload perf artifacts and append the perf rollup to the GitHub Actions step summary
 
 ## Invariants
@@ -39,6 +42,7 @@ This workflow is the repo-owned production perf truth source after deploy. It ve
 - `/resources` is also expected to receive a concurrent warm burst; sequential single-request repeats alone are not sufficient evidence that later multi-VU smoke traffic will avoid cold-tail stream variance.
 - `listing_newest_smoke` and `creator_detail_smoke` are expected to be warmed against the same control cookie / creator slug that the k6 suite measures; warming only adjacent routes is not sufficient evidence of stability.
 - The smoke perf suite is a blocking gate: route budgets are not advisory.
+- `Warm Public Cache` passing does not mean the workflow passed; when later perf verification fails, the failure class is usually warmed-route instability, target-shape mismatch, or fresh-instance variance, not a generic warm-step failure.
 - Artifact JSON and GitHub step summary should tell the same story about which route was worst and which routes failed.
 
 ## Known Risks
@@ -46,6 +50,7 @@ This workflow is the repo-owned production perf truth source after deploy. It ve
 - LHCI and local lab runs are still useful only for regression detection, not as a substitute for the warmed production perf suite.
 - Preview or protected deployment URLs can block perf verification unless the workflow resolves a public production host.
 - k6 budgets that drift away from real route shape can cause either noisy failures or a false sense of safety.
+- Manual traffic during the workflow can perturb shared production cache state, but if one extra hit is enough to flip pass/fail then the underlying route is still not stable enough to treat as solved.
 
 ## Related Pages
 

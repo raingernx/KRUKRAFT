@@ -126,7 +126,7 @@ export default async function CreatorAnalyticsPage({
   ];
 
   return (
-    <div className="space-y-8">
+    <div data-route-shell-ready="dashboard-creator-analytics" className="space-y-8">
       <SectionHeader
         eyebrow="Creator"
         title="Analytics"

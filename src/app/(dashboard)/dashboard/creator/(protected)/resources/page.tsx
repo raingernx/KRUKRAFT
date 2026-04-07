@@ -64,7 +64,7 @@ export default async function CreatorResourcesPage({
   );
 
   return (
-    <div className="min-w-0 space-y-8">
+    <div data-route-shell-ready="dashboard-creator-resources" className="min-w-0 space-y-8">
       {/* Header */}
       <div className="flex min-w-0 flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
         <div>

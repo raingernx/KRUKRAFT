@@ -2,6 +2,8 @@
 
 ## 2026-04-07
 
+- extended the dashboard route-ready / handoff model into the main creator workspace surfaces (`/dashboard/creator`, analytics, resources, sales, profile, apply) after noticing those routes still cleared overlays from generic dashboard readiness instead of target-route readiness.
+- added repo close-out guardrails: non-trivial tasks now require explicit `Verification`, `Knowledge triage`, and `Residual risk` reporting, and browser/perf workflows must not be called clean from status alone without log review for hidden `flaky`, `retry #`, or threshold-failure signals.
 - fixed the remaining `resources -> dashboard/library` Browser Smoke flake after CI logs showed the root dashboard overlay was intercepting the original navbar click; public-route protected links now arm `beginDashboardNavigation(...)` on the next animation frame so the click commits before the handoff overlay appears.
 - tightened the post-deploy warm path for `/resources` again after perf artifacts showed the route was not slow at TTFB but was dragging response-body completion under k6 ramp load; the warm script now sends a small concurrent burst for that route so later VUs are less likely to land on a fresh instance with a cold discover-home stream.
 - tightened the same `resources -> dashboard/library` test class again after the latest flaky trace showed the page never left `/resources` before the URL waiter armed; `navigation-shells.spec.ts` now starts `waitForURL()` before clicking protected links so fast App Router commits do not masquerade as transition failures.

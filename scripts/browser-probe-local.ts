@@ -27,6 +27,7 @@ type ProbeScenarioName =
   | "admin-core-pages"
   | "admin-analytics-pages"
   | "creator-management-pages"
+  | "creator-refresh-shell"
   | "dashboard-to-downloads"
   | "dashboard-to-purchases"
   | "dashboard-to-settings";
@@ -57,6 +58,14 @@ type ThemeLogoProbeState = {
   dark: ThemeLogoLayerState;
 } | null;
 
+type RefreshSample = {
+  href: string;
+  ts: number;
+  rootLoadingVisible: boolean;
+  dashboardShellVisible: boolean;
+  routeReady: string[];
+};
+
 const VALID_SCENARIOS: ProbeScenarioName[] = [
   "launch",
   "resources-to-library",
@@ -67,6 +76,7 @@ const VALID_SCENARIOS: ProbeScenarioName[] = [
   "admin-core-pages",
   "admin-analytics-pages",
   "creator-management-pages",
+  "creator-refresh-shell",
   "dashboard-to-downloads",
   "dashboard-to-purchases",
   "dashboard-to-settings",
@@ -675,6 +685,109 @@ async function runCreatorManagementPagesScenario({ browser }: ProbeContext) {
   }
 }
 
+async function startRefreshProbe(page: Page) {
+  await page.evaluate(`
+    (() => {
+      const samples = [];
+      let stopped = false;
+      let rafId = 0;
+
+      const sample = () => {
+        samples.push({
+          href: window.location.pathname + window.location.search,
+          ts: performance.now(),
+          rootLoadingVisible: Boolean(document.querySelector("[data-app-root-loading='true']")),
+          dashboardShellVisible: Boolean(document.querySelector("[data-route-shell-ready='dashboard']")),
+          routeReady: Array.from(document.querySelectorAll("[data-route-shell-ready]"))
+            .map((node) => node.getAttribute("data-route-shell-ready"))
+            .filter(Boolean),
+        });
+
+        if (!stopped) {
+          rafId = window.requestAnimationFrame(sample);
+        }
+      };
+
+      window.__krukraftRefreshProbe = {
+        stop: () => {
+          stopped = true;
+          window.cancelAnimationFrame(rafId);
+          return samples;
+        },
+      };
+
+      rafId = window.requestAnimationFrame(sample);
+    })()
+  `);
+}
+
+async function stopRefreshProbe(page: Page) {
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    try {
+      return (await page.evaluate(`
+        (() => {
+          const probe = window.__krukraftRefreshProbe;
+          return probe ? probe.stop() : [];
+        })()
+      `)) as RefreshSample[];
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!message.includes("Execution context was destroyed") || attempt === 3) {
+        throw error;
+      }
+      await page.waitForLoadState("domcontentloaded");
+    }
+  }
+
+  return [];
+}
+
+async function runCreatorRefreshShellScenario({ browser }: ProbeContext) {
+  const context = await createContext(browser);
+  const page = await context.newPage();
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+
+  try {
+    await loginAsCreator(page, "/dashboard/creator/resources");
+    await expect(page).toHaveURL(/\/dashboard\/creator\/resources$/);
+    await expect(
+      page.getByRole("heading", { name: /^Resource management$/i }).first(),
+    ).toBeVisible();
+
+    await startRefreshProbe(page);
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/dashboard\/creator\/resources$/);
+    await expect(
+      page.getByRole("heading", { name: /^Resource management$/i }).first(),
+    ).toBeVisible();
+
+    const samples = await stopRefreshProbe(page);
+    const creatorSamples = samples.filter((sample) =>
+      /\/dashboard\/creator\/resources(?:\?.*)?$/.test(sample.href),
+    );
+
+    expect(
+      creatorSamples.length,
+      "creator-refresh-shell probe did not capture creator route samples after reload",
+    ).toBeGreaterThan(0);
+
+    const rootLoadingSample = creatorSamples.find((sample) => sample.rootLoadingVisible);
+    expect(rootLoadingSample).toBeUndefined();
+
+    expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
+  } catch (error) {
+    const screenshot = await saveFailureScreenshot(page, "creator-refresh-shell");
+    throw new Error(
+      `creator-refresh-shell probe failed. Screenshot: ${screenshot}. ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  } finally {
+    await closeContext(context);
+  }
+}
+
 async function runDarkThemeLogoScenario({ browser }: ProbeContext) {
   const context = await createContext(browser);
   const page = await context.newPage();
@@ -822,6 +935,7 @@ const scenarioHandlers: Record<ProbeScenarioName, (context: ProbeContext) => Pro
   "admin-core-pages": runAdminCorePagesScenario,
   "admin-analytics-pages": runAdminAnalyticsPagesScenario,
   "creator-management-pages": runCreatorManagementPagesScenario,
+  "creator-refresh-shell": runCreatorRefreshShellScenario,
   "dark-theme-logo": runDarkThemeLogoScenario,
   "settings-theme": runSettingsThemeScenario,
 };

@@ -4,7 +4,10 @@ import { Container } from "@/design-system";
 
 function AppRootLoadingShell() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-6 py-16">
+    <div
+      data-app-root-loading="true"
+      className="flex min-h-screen items-center justify-center bg-background px-6 py-16"
+    >
       <Container className="max-w-xl">
         <div className="mx-auto flex max-w-md flex-col items-center text-center">
           <div className="flex h-11 items-center justify-center">

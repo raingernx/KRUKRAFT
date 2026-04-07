@@ -45,7 +45,7 @@ export default async function CreatorSalesPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div data-route-shell-ready="dashboard-creator-sales" className="space-y-8">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-500">
             Creator
