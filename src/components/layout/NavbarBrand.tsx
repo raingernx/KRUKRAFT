@@ -4,17 +4,17 @@ import { Logo } from "@/components/brand/Logo";
 
 export function NavbarBrand() {
   return (
-    <div className="flex items-center">
+    <div className="flex h-10 w-10 shrink-0 items-center sm:w-[220px]">
       <Logo
         variant="full"
         size="md"
-        className="hidden sm:flex"
+        className="hidden h-10 w-[220px] shrink-0 sm:flex"
         preferRepoAsset
       />
       <Logo
         variant="icon"
         size="md"
-        className="flex sm:hidden"
+        className="flex h-10 w-10 shrink-0 sm:hidden"
         preferRepoAsset
       />
     </div>
