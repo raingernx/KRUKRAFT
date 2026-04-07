@@ -89,7 +89,10 @@ export function ResourcesNavigationOverlay() {
   }
 
   return (
-    <div data-loading-scope={overlayScope} className="fixed inset-0 z-[85] bg-background">
+    <div
+      data-loading-scope={overlayScope}
+      className="pointer-events-none fixed inset-0 z-[85] bg-background"
+    >
       {overlayMode === "detail"
         ? <ResourceDetailLoadingShell />
         : <ResourcesRouteSkeleton mode={overlayMode} />}

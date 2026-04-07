@@ -95,7 +95,10 @@ export function ResourcesEntryNavigationOverlay() {
   const overlayScope = overlayMode === "detail" ? "resource-detail" : "resources-browse";
 
   return (
-    <div data-loading-scope={overlayScope} className="fixed inset-0 z-[84] bg-background">
+    <div
+      data-loading-scope={overlayScope}
+      className="pointer-events-none fixed inset-0 z-[84] bg-background"
+    >
       {overlayMode === "detail"
         ? <ResourceDetailLoadingShell />
         : <ResourcesRouteSkeleton mode={overlayMode} />}

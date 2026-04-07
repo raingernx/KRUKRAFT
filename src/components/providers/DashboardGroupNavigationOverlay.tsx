@@ -96,7 +96,7 @@ export function DashboardGroupNavigationOverlay() {
     return (
       <div
         data-loading-scope={resourcesOverlay.scope}
-        className="fixed inset-0 z-[90] bg-background"
+        className="pointer-events-none fixed inset-0 z-[90] bg-background"
       >
         {resourcesOverlay.content}
       </div>
@@ -106,7 +106,10 @@ export function DashboardGroupNavigationOverlay() {
   const shouldWrapInDashboardShell = overlayContent.type !== DashboardGroupLoadingShell;
 
   return (
-    <div data-loading-scope="dashboard-group" className="fixed inset-0 z-[90] bg-background">
+    <div
+      data-loading-scope="dashboard-group"
+      className="pointer-events-none fixed inset-0 z-[90] bg-background"
+    >
       {shouldWrapInDashboardShell
         ? <DashboardGroupLoadingShell>{overlayContent}</DashboardGroupLoadingShell>
         : overlayContent}

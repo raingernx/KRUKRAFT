@@ -68,7 +68,7 @@ export function DashboardEntryNavigationOverlay() {
   return (
     <div
       data-loading-scope="dashboard-group"
-      className="fixed inset-0 z-[85] bg-background"
+      className="pointer-events-none fixed inset-0 z-[85] bg-background"
     >
       {shouldWrapInDashboardShell
         ? <DashboardGroupLoadingShell>{overlayContent}</DashboardGroupLoadingShell>
