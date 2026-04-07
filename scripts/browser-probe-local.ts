@@ -296,6 +296,7 @@ function expectLoadingScope(
 }
 
 async function openLibraryFromResources(page: Page) {
+  const libraryHref = () => new URL("/dashboard/library", page.url()).toString();
   const directLibraryLink = page.locator('header a[href="/dashboard/library"]:visible').first();
   const accountButton = page
     .locator(
@@ -340,9 +341,9 @@ async function openLibraryFromResources(page: Page) {
   }
 
   if (!/\/dashboard\/library$/.test(page.url())) {
-    await page.goto("/dashboard/library", {
+    await page.goto(libraryHref(), {
       timeout: 15_000,
-      waitUntil: "commit",
+      waitUntil: "domcontentloaded",
     });
   }
 

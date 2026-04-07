@@ -152,6 +152,7 @@ function expectNoBlankGap(
 
 async function openLibraryFromResources(page: Page) {
   const libraryUrl = /\/dashboard\/library$/;
+  const libraryHref = () => new URL("/dashboard/library", page.url()).toString();
   const directLibraryLink = () =>
     page
       .locator('header a[href="/dashboard/library"]:visible')
@@ -191,9 +192,9 @@ async function openLibraryFromResources(page: Page) {
   }
 
   if (!matchesTargetUrl(page, libraryUrl)) {
-    await page.goto("/dashboard/library", {
+    await page.goto(libraryHref(), {
       timeout: LIBRARY_NAV_TIMEOUT_MS,
-      waitUntil: "commit",
+      waitUntil: "domcontentloaded",
     });
   }
 
