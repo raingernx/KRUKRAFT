@@ -2,6 +2,7 @@
 
 ## 2026-04-07
 
+- expanded the same dashboard refresh-shell verification sweep again so `/dashboard/downloads`, `/dashboard/purchases`, `/settings`, and `/subscription` now have explicit hard-refresh probes too, closing the remaining gap where those routes had ready markers but still depended on manual repeated-refresh checks.
 - extended the dashboard route-ready / handoff model into the main creator workspace surfaces (`/dashboard/creator`, analytics, resources, sales, profile, apply) after noticing those routes still cleared overlays from generic dashboard readiness instead of target-route readiness.
 - extended the same route-ready / handoff model into creator resource create/edit routes with a dedicated `dashboard-creator-resource-editor` marker so editor transitions do not clear overlays from generic dashboard/creator shell readiness before the form skeleton is actually on screen.
 - extended the management/browser probe sweep to cover creator resource editor refreshes too, so `/dashboard/creator/resources/new` now proves that the dedicated editor route-ready marker survives reload without falling back to a wrong-family shell.
