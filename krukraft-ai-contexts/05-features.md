@@ -44,7 +44,7 @@ The discover page now mixes:
 - lighter-weight fallbacks that match the final section intent
 - a lazy personalized client section so signed-in recommendation UI is not part of the initial `/resources` client payload
 - a route-level loading shell that mirrors the live discover shape:
-  - lavender hero stage with the same split-banner footprint as the live route
+  - neutral hero stage that reserves the live hero footprint without previewing hero-specific banner content
   - section header + resource-card skeletons
   - no extra discover-meta strip above the hero while loading
 - the shared secondary controls row is now mode-agnostic at the component

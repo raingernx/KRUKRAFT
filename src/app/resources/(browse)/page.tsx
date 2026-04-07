@@ -4,11 +4,11 @@ import { Container, colorScales } from "@/design-system";
 import { DEFAULT_SORT, getEffectiveMarketplaceSort } from "@/config/sortOptions";
 import { HeroSearch } from "@/components/marketplace/HeroSearch";
 import { ResourcesContentFallback } from "@/components/skeletons/ResourcesContentFallback";
+import { ResourcesHeroStageSkeleton } from "@/components/skeletons/ResourcesHeroStageSkeleton";
 import {
   ResourcesDiscoverHero,
   ResourcesPageContent,
 } from "../ResourcesPageContent";
-import { HeroBannerFallback } from "@/components/marketplace/HeroBanner";
 import { ResourcesCatalogControls } from "@/components/marketplace/ResourcesCatalogControls";
 import { ResourcesRouteReady } from "@/components/marketplace/ResourcesRouteReady";
 import {
@@ -138,7 +138,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
               >
                 <Container className="space-y-4 py-5 sm:space-y-5 sm:py-6 lg:space-y-6 lg:py-8">
                   {heroPromise ? (
-                    <Suspense fallback={<HeroBannerFallback className="shadow-none" />}>
+                    <Suspense fallback={<ResourcesHeroStageSkeleton />}>
                       <AwaitResolvedNode promise={heroPromise} />
                     </Suspense>
                   ) : null}

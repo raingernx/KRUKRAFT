@@ -3,8 +3,7 @@
 import { Skeleton } from "boneyard-js/react";
 import { NavbarShell } from "@/components/layout/NavbarShell";
 import { Container, colorScales } from "@/design-system";
-import { HeroBanner } from "@/components/marketplace/HeroBanner";
-import { HeroBannerFallback } from "@/components/marketplace/HeroBanner";
+import { ResourcesHeroStageSkeleton } from "@/components/skeletons/ResourcesHeroStageSkeleton";
 import {
   ResourcesCatalogControlsBonesPreview,
   ResourcesCatalogControlsSkeleton,
@@ -24,8 +23,9 @@ const RESOURCES_ROUTE_SKELETON_NAME = "resources-route-shell";
  * Route-level skeleton for /resources.
  *
  * It mirrors the discover shell geometry because that is the primary public
- * entry to /resources and includes the hero/banner footprint that the live
- * page renders above the fold.
+ * entry to /resources and reserves the hero footprint above the fold without
+ * previewing hero-specific content. The top section is intentionally neutral
+ * because the hero itself is a customization surface.
  */
 function ManualResourcesDiscoverRouteSkeleton() {
   return (
@@ -45,7 +45,7 @@ function ManualResourcesDiscoverRouteSkeleton() {
           style={{ backgroundColor: colorScales.brand[300] }}
         >
           <Container className="py-5 sm:py-6 lg:py-8">
-            <HeroBannerFallback className="shadow-none" />
+            <ResourcesHeroStageSkeleton />
           </Container>
         </section>
 
@@ -97,7 +97,7 @@ function ResourcesRoutePreview() {
           style={{ backgroundColor: colorScales.brand[300] }}
         >
           <Container className="py-5 sm:py-6 lg:py-8">
-            <HeroBanner className="shadow-none" />
+            <ResourcesHeroStageSkeleton />
           </Container>
         </section>
 

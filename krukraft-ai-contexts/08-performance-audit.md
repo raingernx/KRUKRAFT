@@ -125,7 +125,7 @@ Primary bottleneck class is now:
 - category smoke route now matches its actual page intent and is warmed explicitly
 - the post-deploy warm script now warms the control-arm newest listing with `ranking_variant=A` plus a concurrent burst sized to the smoke route's 5-VU ceiling, explicitly warms the hot creator public profile route and category listing route with the same burst-aligned strategy, and sends `/resources` through a small concurrent warm burst instead of sequential-only repeats; creator public profiles also gained a Redis-backed cross-instance cache layer on top of `unstable_cache`, reducing post-deploy cold-tail variance on `creator_detail_smoke`
 - `/resources` discover fallback no longer swaps in fake CTA content while data resolves
-- discover hero loading now falls back to the same lavender stage and split-banner geometry as the live route; discover sections fall back to section/card skeletons that match final geometry
+- discover hero loading now falls back to a neutral reserved stage that keeps the live hero footprint without previewing fake banner content; discover sections still fall back to section/card skeletons that match final geometry
 - route-level `/resources/loading` now matches the discover UI more closely instead of showing a stale meta strip or a generic card wall
 - creator activation and ranking debug admin reports now use short-lived service-level caching instead of re-running the same read-heavy queries every request
 - platform metrics, purchase analytics, and recommendation report admin reads now use a Redis-backed cross-instance cache layer in addition to `unstable_cache`

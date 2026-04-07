@@ -114,7 +114,7 @@
 **Loading behavior**
 - discover hero loading uses the same stage geometry as the live hero rather than a generic promo banner
 - the route shell no longer forces a large hero `min-height`; live and loading geometry should stay content-driven so the stage does not drift from Figma
-- discover hero loading should keep the same geometry but use neutral placeholder tones only; no promotional accent blue/purple fills inside the skeleton stage
+- discover hero loading should keep the same geometry but stay intentionally neutral and non-representational; reserve the hero area without previewing fake editorial copy, CTA, or artwork variants that may drift from customized hero content
 - discover sections use section/card skeletons that match the live geometry
 - the browse index loading UI now lives under `src/app/resources/(browse)/loading.tsx`, which keeps the discover/listing skeleton scoped to `/resources` and prevents it from flashing before `/resources/[slug]` loading states on cold detail navigations
 - route-level browse loading and the in-page discover Suspense fallback now share the same discover skeleton source so layout changes do not require maintaining two divergent skeleton implementations
