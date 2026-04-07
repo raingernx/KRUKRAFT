@@ -21,6 +21,7 @@ type ProbeScenarioName =
   | "launch"
   | "resources-to-library"
   | "library-to-resources"
+  | "dashboard-overview-refresh-shell"
   | "dashboard-library-refresh-shell"
   | "dark-theme-logo"
   | "settings-theme"
@@ -72,6 +73,7 @@ const VALID_SCENARIOS: ProbeScenarioName[] = [
   "launch",
   "resources-to-library",
   "library-to-resources",
+  "dashboard-overview-refresh-shell",
   "dashboard-library-refresh-shell",
   "dark-theme-logo",
   "settings-theme",
@@ -913,6 +915,69 @@ async function runDashboardLibraryRefreshShellScenario({ browser }: ProbeContext
   }
 }
 
+async function runDashboardOverviewRefreshShellScenario({ browser }: ProbeContext) {
+  const context = await createContext(browser);
+  const page = await context.newPage();
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+
+  try {
+    await loginAsCreator(page, "/dashboard");
+    await expect(page).toHaveURL(/\/dashboard$/);
+    await expect(
+      page.getByRole("heading", { name: /Welcome back/i }).first(),
+    ).toBeVisible();
+
+    await startRefreshProbe(page);
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/dashboard$/);
+    await expect(
+      page.getByRole("heading", { name: /Welcome back/i }).first(),
+    ).toBeVisible();
+    await page.waitForTimeout(500);
+
+    const samples = await stopRefreshProbe(page);
+    const overviewSamples = samples.filter((sample) =>
+      /\/dashboard(?:\?.*)?$/.test(sample.href),
+    );
+
+    expect(
+      overviewSamples.length,
+      "dashboard-overview-refresh-shell probe did not capture dashboard route samples after reload",
+    ).toBeGreaterThan(0);
+
+    const wrongFamilyRouteSample = overviewSamples.find((sample) =>
+      sample.routeReady.some(
+        (marker) => marker !== "dashboard" && marker !== "dashboard-overview",
+      ),
+    );
+    expect(wrongFamilyRouteSample).toBeUndefined();
+
+    const overviewShellSample = overviewSamples.find(
+      (sample) =>
+        sample.routeReady.includes("dashboard-overview") ||
+        sample.dashboardShellVisible,
+    );
+    expect(
+      overviewShellSample,
+      "dashboard-overview-refresh-shell probe did not observe dashboard-overview readiness after reload",
+    ).toBeDefined();
+
+    expect(overviewSamples.at(-1)?.rootLoadingVisible).not.toBe(true);
+
+    expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
+  } catch (error) {
+    const screenshot = await saveFailureScreenshot(page, "dashboard-overview-refresh-shell");
+    throw new Error(
+      `dashboard-overview-refresh-shell probe failed. Screenshot: ${screenshot}. ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  } finally {
+    await closeContext(context);
+  }
+}
+
 async function runCreatorEditorRefreshShellScenario({ browser }: ProbeContext) {
   const context = await createContext(browser);
   const page = await context.newPage();
@@ -1101,6 +1166,7 @@ const scenarioHandlers: Record<ProbeScenarioName, (context: ProbeContext) => Pro
   launch: runLaunchScenario,
   "resources-to-library": runResourcesToLibraryScenario,
   "library-to-resources": runLibraryToResourcesScenario,
+  "dashboard-overview-refresh-shell": runDashboardOverviewRefreshShellScenario,
   "dashboard-library-refresh-shell": runDashboardLibraryRefreshShellScenario,
   "dashboard-to-downloads": (context) =>
     runDashboardRouteScenario(context, {
