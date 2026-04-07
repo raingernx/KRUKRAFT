@@ -2,6 +2,7 @@
 
 ## 2026-04-07
 
+- tightened dashboard entry overlay timing after Browser Smoke still showed one flaky `resources -> dashboard/library` transition: the root dashboard entry overlay now arms immediately and holds for a short minimum window so CI sampling can reliably observe `dashboard-group` coverage on fast commits.
 - hardened three Browser Smoke flake classes that surfaced even on a passing run: dashboard/public transition links now avoid unsafe pre-hydration clicks, `navigation-shells.spec.ts` uses retry-safe navigation waits instead of assuming the first click always commits, and `settings-theme.spec.ts` now waits for `/settings` navigation at `commit` with a longer timeout so first-compile latency does not masquerade as a theme regression.
 - added a lightweight root-level resources entry overlay so dashboard/public -> `/resources` transitions can reserve `resources-browse` coverage before the resources route group mounts; this closes the blind spot that left `library-to-resources` without a loading scope in CI.
 - strengthened the repo-owned browser probe so it now catches two regression classes that recently slipped through manual review: `resources-to-library` / `library-to-resources` sample `data-loading-scope` frames and fail on blank-gap transitions, while the new `dark-theme-logo` scenario delays dark-logo asset delivery and asserts the dark fallback layer stays visible on first paint.

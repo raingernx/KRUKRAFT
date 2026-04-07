@@ -17,7 +17,6 @@ export function DashboardEntryNavigationOverlay() {
   const pathname = usePathname();
   const navigationState = useDashboardNavigationState();
   const previousPathRef = useRef(pathname);
-  const [armedOverlayId, setArmedOverlayId] = useState(0);
   const [forcedOverlay, setForcedOverlay] = useState(false);
   const targetHref = navigationState.href;
   const isCrossingIntoDashboard =
@@ -39,22 +38,6 @@ export function DashboardEntryNavigationOverlay() {
   }, [crossedIntoDashboard, pathname]);
 
   useEffect(() => {
-    if (!isCrossingIntoDashboard) {
-      setArmedOverlayId(0);
-      return;
-    }
-
-    const currentId = navigationState.id;
-    const frameId = window.requestAnimationFrame(() => {
-      setArmedOverlayId(currentId);
-    });
-
-    return () => {
-      window.cancelAnimationFrame(frameId);
-    };
-  }, [isCrossingIntoDashboard, navigationState.id]);
-
-  useEffect(() => {
     if (!forcedOverlay) {
       return;
     }
@@ -64,12 +47,12 @@ export function DashboardEntryNavigationOverlay() {
       () => {
         setForcedOverlay(false);
       },
-      0,
-      Date.now(),
+      220,
+      navigationState.startedAt || Date.now(),
     );
-  }, [forcedOverlay]);
+  }, [forcedOverlay, navigationState.startedAt]);
 
-  const stateDrivenOverlay = isCrossingIntoDashboard && armedOverlayId === navigationState.id;
+  const stateDrivenOverlay = isCrossingIntoDashboard;
 
   if (!stateDrivenOverlay && !forcedOverlay && !crossedIntoDashboard) {
     return null;

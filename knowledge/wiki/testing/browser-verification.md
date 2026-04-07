@@ -36,6 +36,7 @@ This split model keeps local debugging practical while giving the repo a stable 
 - CI browser smoke should stay green without tolerated flaky retries as a success criterion.
 - Route and transition tests should use stable shell markers when available.
 - Cross-group navigation links that drive shell-coverage tests should not become interactable before hydration if that risks falling back to hard navigation or inconsistent overlay state.
+- Entry overlays that prove transition coverage should stay visible long enough to survive fast route commits; zero-duration handoff overlays are prone to disappearing before CI sampling can observe the intended scope.
 - Theme tests should assert runtime theme stability after navigation commit and explicit page assertions, not rely on slower document lifecycle milestones when the route can compile on first hit.
 
 ## Known Risks
