@@ -12,11 +12,13 @@ import {
 } from "@/components/providers/dashboardNavigationOverlayShared";
 
 const DASHBOARD_ROUTE_SHELL_SELECTOR = '[data-route-shell-ready="dashboard"]';
+const MIN_ENTRY_PENDING_MS = 220;
 
 export function DashboardEntryNavigationOverlay() {
   const pathname = usePathname();
   const navigationState = useDashboardNavigationState();
   const previousPathRef = useRef(pathname);
+  const forcedOverlayStartedAtRef = useRef(0);
   const [forcedOverlay, setForcedOverlay] = useState(false);
   const targetHref = navigationState.href;
   const isCrossingIntoDashboard =
@@ -29,8 +31,10 @@ export function DashboardEntryNavigationOverlay() {
 
   useEffect(() => {
     if (crossedIntoDashboard) {
+      forcedOverlayStartedAtRef.current = Date.now();
       setForcedOverlay(true);
     } else if (!isDashboardGroupPath(pathname)) {
+      forcedOverlayStartedAtRef.current = 0;
       setForcedOverlay(false);
     }
 
@@ -47,8 +51,8 @@ export function DashboardEntryNavigationOverlay() {
       () => {
         setForcedOverlay(false);
       },
-      220,
-      navigationState.startedAt || Date.now(),
+      MIN_ENTRY_PENDING_MS,
+      forcedOverlayStartedAtRef.current || navigationState.startedAt || Date.now(),
     );
   }, [forcedOverlay, navigationState.startedAt]);
 
