@@ -1,0 +1,119 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { ResourceDetailLoadingShell } from "@/components/resources/detail/ResourceDetailLoadingShell";
+import {
+  inferResourcesNavigationMode,
+  isResourcesSubtreePath,
+  useResourcesNavigationState,
+} from "@/components/marketplace/resourcesNavigationState";
+import { ResourcesRouteSkeleton } from "@/components/skeletons/ResourcesRouteSkeleton";
+import { waitForNavigationSurfaceReady } from "@/components/providers/navigationDomReady";
+import { routes } from "@/lib/routes";
+
+const RESOURCE_DETAIL_SHELL_SELECTOR = '[data-route-shell-ready="resource-detail"]';
+const RESOURCES_BROWSE_SHELL_SELECTOR = '[data-route-shell-ready="resources-browse"]';
+
+function resolveResourcesOverlayMode(
+  pathname: string | null,
+  href: string | null,
+): "discover" | "listing" | "detail" {
+  const targetMode = href ? inferResourcesNavigationMode(href) : null;
+
+  if (targetMode === "detail") {
+    return "detail";
+  }
+
+  if (targetMode === "listing") {
+    return "listing";
+  }
+
+  if (targetMode === "discover") {
+    return "discover";
+  }
+
+  if (pathname?.startsWith(`${routes.marketplace}/`)) {
+    return "detail";
+  }
+
+  return "discover";
+}
+
+export function ResourcesEntryNavigationOverlay() {
+  const pathname = usePathname();
+  const navigationState = useResourcesNavigationState();
+  const previousPathRef = useRef(pathname);
+  const [armedOverlayId, setArmedOverlayId] = useState(0);
+  const [forcedOverlay, setForcedOverlay] = useState(false);
+  const targetHref = navigationState.href;
+  const isCrossingIntoResources =
+    Boolean(targetHref) &&
+    Boolean(navigationState.overlay) &&
+    inferResourcesNavigationMode(targetHref ?? "") !== null &&
+    !isResourcesSubtreePath(pathname ?? "");
+  const crossedIntoResources =
+    isResourcesSubtreePath(pathname ?? "") &&
+    !isResourcesSubtreePath(previousPathRef.current ?? "");
+
+  useEffect(() => {
+    if (crossedIntoResources) {
+      setForcedOverlay(true);
+    } else if (!isResourcesSubtreePath(pathname ?? "")) {
+      setForcedOverlay(false);
+    }
+
+    previousPathRef.current = pathname;
+  }, [crossedIntoResources, pathname]);
+
+  useEffect(() => {
+    if (!isCrossingIntoResources) {
+      setArmedOverlayId(0);
+      return;
+    }
+
+    const currentId = navigationState.id;
+    const frameId = window.requestAnimationFrame(() => {
+      setArmedOverlayId(currentId);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [isCrossingIntoResources, navigationState.id]);
+
+  useEffect(() => {
+    if (!forcedOverlay) {
+      return;
+    }
+
+    const routeShellSelector = pathname === routes.marketplace
+      ? RESOURCES_BROWSE_SHELL_SELECTOR
+      : RESOURCE_DETAIL_SHELL_SELECTOR;
+
+    return waitForNavigationSurfaceReady(
+      routeShellSelector,
+      () => {
+        setForcedOverlay(false);
+      },
+      0,
+      Date.now(),
+    );
+  }, [forcedOverlay, pathname]);
+
+  const stateDrivenOverlay = isCrossingIntoResources && armedOverlayId === navigationState.id;
+
+  if (!stateDrivenOverlay && !forcedOverlay && !crossedIntoResources) {
+    return null;
+  }
+
+  const overlayMode = resolveResourcesOverlayMode(pathname, navigationState.href);
+
+  return (
+    <div data-loading-scope="resources-browse" className="fixed inset-0 z-[84] bg-background">
+      {overlayMode === "detail"
+        ? <ResourceDetailLoadingShell />
+        : <ResourcesRouteSkeleton mode={overlayMode} />}
+    </div>
+  );
+}

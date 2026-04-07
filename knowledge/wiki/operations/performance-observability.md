@@ -9,6 +9,7 @@ Krukraft treats performance review as a layered workflow: block obvious regressi
 - Local lab checks use Lighthouse CI against `/resources` routes and now run twice per URL with blocking floor assertions for performance, total blocking time, and cumulative layout shift.
 - Production deploy verification uses the post-deploy warm/perf workflow, which warms public routes, runs the smoke k6 suite, and writes `artifacts/perf-summary.json` plus a GitHub Actions summary rollup.
 - Repo-owned browser probes now go beyond URL/heading checks: `resources-to-library` and `library-to-resources` record loading scopes and fail on blank-gap transitions, while `dark-theme-logo` delays dark-logo delivery and checks the dark fallback layer on first paint.
+- Cross-group marketplace entry now has its own lightweight root overlay (`ResourcesEntryNavigationOverlay`) so `dashboard -> /resources` transitions can expose `resources-browse` coverage before the resources route layout mounts.
 - Browser telemetry comes from production-only Vercel Analytics and Speed Insights in `src/app/layout.tsx`.
 - Runtime investigation for slow or unstable server paths should use Vercel runtime logs after the warmed perf summary and browser smoke outputs have already narrowed the failing route.
 - Workflow edits now have a repo-owned parser gate: `npm run workflow:check` parses all `.github/workflows/*.yml` files, and `npm run lint` includes that gate so broken YAML should fail before push.
