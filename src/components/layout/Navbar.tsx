@@ -225,14 +225,14 @@ function NavbarAuthPlaceholder({
         aria-hidden="true"
         className={cn(
           "animate-pulse rounded-full bg-muted motion-reduce:animate-none",
-          marketplace ? "h-10 w-28" : "h-10 w-24",
+          marketplace ? "h-10 w-[108px]" : "h-10 w-24",
         )}
       />
       <div
         aria-hidden="true"
         className={cn(
           "animate-pulse rounded-full bg-muted motion-reduce:animate-none",
-          marketplace ? "h-10 w-10" : "h-10 w-28",
+          marketplace ? "h-10 w-[52px]" : "h-10 w-28",
         )}
       />
     </div>
@@ -503,7 +503,7 @@ function NavbarInner({
               </div>
 
               <div
-                className="ml-auto hidden items-center gap-2.5 lg:flex"
+                className="ml-auto hidden min-w-[176px] items-center justify-end gap-2.5 lg:flex"
                 onPointerEnter={warmAuthViewer}
                 onFocusCapture={warmAuthViewer}
               >
