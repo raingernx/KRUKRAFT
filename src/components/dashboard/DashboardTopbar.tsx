@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type MouseEvent as ReactMouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -60,6 +60,29 @@ export function DashboardTopbar({ user, onMenuToggle }: DashboardTopbarProps) {
 
   function handleMarketplaceNavigation(href: string) {
     beginResourcesNavigation("discover", href, { overlay: true });
+  }
+
+  function handleMarketplaceLinkClick(
+    event: ReactMouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    handleMarketplaceNavigation(href);
+
+    window.requestAnimationFrame(() => {
+      router.push(href);
+    });
   }
 
   function handleSearch(e: React.FormEvent) {
@@ -129,7 +152,7 @@ export function DashboardTopbar({ user, onMenuToggle }: DashboardTopbarProps) {
         <>
           <Link
             href={routes.marketplace}
-            onClick={() => handleMarketplaceNavigation(routes.marketplace)}
+            onClick={(event) => handleMarketplaceLinkClick(event, routes.marketplace)}
             className="hidden items-center rounded-xl border border-border bg-card px-3 py-2 text-small font-medium text-muted-foreground transition hover:bg-accent hover:text-foreground sm:flex"
           >
             Browse resources
