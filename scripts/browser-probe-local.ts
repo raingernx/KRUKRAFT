@@ -686,23 +686,23 @@ async function runCreatorManagementPagesScenario({ browser }: ProbeContext) {
 }
 
 async function startRefreshProbe(page: Page) {
-  await page.addInitScript(() => {
-    const storageKey = "__krukraftRefreshProbeSamples";
+  const refreshProbeScript = `
+    (() => {
+      const storageKey = "__krukraftRefreshProbeSamples";
 
-    const readSamples = () => {
-      try {
-        const raw = window.sessionStorage.getItem(storageKey);
-        return raw ? JSON.parse(raw) : [];
-      } catch {
-        return [];
-      }
-    };
+      const readSamples = () => {
+        try {
+          const raw = window.sessionStorage.getItem(storageKey);
+          return raw ? JSON.parse(raw) : [];
+        } catch {
+          return [];
+        }
+      };
 
-    const writeSamples = (samples: unknown[]) => {
-      window.sessionStorage.setItem(storageKey, JSON.stringify(samples));
-    };
+      const writeSamples = (samples) => {
+        window.sessionStorage.setItem(storageKey, JSON.stringify(samples));
+      };
 
-    const installProbe = () => {
       let stopped = false;
       let rafId = 0;
 
@@ -724,11 +724,8 @@ async function startRefreshProbe(page: Page) {
         }
       };
 
-      (window as Window & {
-        __krukraftRefreshProbe?: {
-          stop: () => unknown[];
-        };
-      }).__krukraftRefreshProbe = {
+      window.sessionStorage.removeItem(storageKey);
+      window.__krukraftRefreshProbe = {
         stop: () => {
           stopped = true;
           window.cancelAnimationFrame(rafId);
@@ -738,88 +735,31 @@ async function startRefreshProbe(page: Page) {
 
       sample();
       rafId = window.requestAnimationFrame(sample);
-    };
+    })();
+  `;
 
-    window.sessionStorage.removeItem(storageKey);
-    installProbe();
-  });
-
-  await page.evaluate(() => {
-    const storageKey = "__krukraftRefreshProbeSamples";
-
-    const readSamples = () => {
-      try {
-        const raw = window.sessionStorage.getItem(storageKey);
-        return raw ? JSON.parse(raw) : [];
-      } catch {
-        return [];
-      }
-    };
-
-    const writeSamples = (samples: unknown[]) => {
-      window.sessionStorage.setItem(storageKey, JSON.stringify(samples));
-    };
-
-    let stopped = false;
-    let rafId = 0;
-
-    const sample = () => {
-      const samples = readSamples();
-      samples.push({
-        href: window.location.pathname + window.location.search,
-        ts: performance.now(),
-        rootLoadingVisible: Boolean(document.querySelector("[data-app-root-loading='true']")),
-        dashboardShellVisible: Boolean(document.querySelector("[data-route-shell-ready='dashboard']")),
-        routeReady: Array.from(document.querySelectorAll("[data-route-shell-ready]"))
-          .map((node) => node.getAttribute("data-route-shell-ready"))
-          .filter(Boolean),
-      });
-      writeSamples(samples);
-
-      if (!stopped) {
-        rafId = window.requestAnimationFrame(sample);
-      }
-    };
-
-    window.sessionStorage.removeItem(storageKey);
-    (window as Window & {
-      __krukraftRefreshProbe?: {
-        stop: () => unknown[];
-      };
-    }).__krukraftRefreshProbe = {
-      stop: () => {
-        stopped = true;
-        window.cancelAnimationFrame(rafId);
-        return readSamples();
-      },
-    };
-
-    sample();
-    rafId = window.requestAnimationFrame(sample);
-  });
+  await page.addInitScript(refreshProbeScript);
+  await page.evaluate(refreshProbeScript);
 }
 
 async function stopRefreshProbe(page: Page) {
   for (let attempt = 0; attempt < 4; attempt += 1) {
     try {
-      return (await page.evaluate(() => {
-        const probe = (window as Window & {
-          __krukraftRefreshProbe?: {
-            stop: () => RefreshSample[];
-          };
-        }).__krukraftRefreshProbe;
+      return (await page.evaluate(`
+        (() => {
+          const probe = window.__krukraftRefreshProbe;
+          if (probe) {
+            return probe.stop();
+          }
 
-        if (probe) {
-          return probe.stop();
-        }
-
-        try {
-          const raw = window.sessionStorage.getItem("__krukraftRefreshProbeSamples");
-          return raw ? (JSON.parse(raw) as RefreshSample[]) : [];
-        } catch {
-          return [];
-        }
-      })) as RefreshSample[];
+          try {
+            const raw = window.sessionStorage.getItem("__krukraftRefreshProbeSamples");
+            return raw ? JSON.parse(raw) : [];
+          } catch {
+            return [];
+          }
+        })()
+      `)) as RefreshSample[];
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       if (!message.includes("Execution context was destroyed") || attempt === 3) {

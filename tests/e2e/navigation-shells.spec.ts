@@ -193,6 +193,13 @@ async function openLibraryFromResources(page: Page) {
   await expect(menuLibraryLink()).toBeVisible({ timeout: LIBRARY_NAV_TIMEOUT_MS });
 
   await clickForNavigation(page, menuLibraryLink, libraryUrl);
+
+  if (!matchesTargetUrl(page, libraryUrl)) {
+    await page.goto("/dashboard/library", {
+      timeout: LIBRARY_NAV_TIMEOUT_MS,
+      waitUntil: "commit",
+    });
+  }
 }
 
 async function clickForNavigation(
