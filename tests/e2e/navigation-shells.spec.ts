@@ -4,8 +4,11 @@ import { loginAsCreator } from "./helpers/auth";
 import { collectRuntimeErrors } from "./helpers/browser";
 
 const LIBRARY_NAV_TIMEOUT_MS = 15_000;
+const COMMIT_NAV_TIMEOUT_MS = 7_500;
 
 test.describe.configure({ timeout: 75_000 });
+
+type LocatorFactory = () => ReturnType<Page["locator"]>;
 
 async function startNavigationProbe(page: Page) {
   await page.evaluate(() => {
@@ -116,57 +119,79 @@ function expectNoBlankGap(
 }
 
 async function openLibraryFromResources(page: Page) {
-  const directLibraryLink = page.locator('header a[href="/dashboard/library"]:visible').first();
-  const accountButton = page
-    .locator(
-      'header button[aria-label="เปิดเมนูบัญชี"]:visible, header button[aria-label="Open account menu"]:visible',
-    )
-    .first();
+  const directLibraryLink = () =>
+    page
+      .locator('header a[href="/dashboard/library"]:visible')
+      .filter({ hasText: /คลังของฉัน|My Library/i })
+      .first();
+  const accountButton = () =>
+    page
+      .locator(
+        'header button[aria-label="เปิดเมนูบัญชี"]:visible, header button[aria-label="Open account menu"]:visible',
+      )
+      .first();
 
   await page.getByRole("banner").first().hover();
   await expect
     .poll(
       async () =>
-        (await directLibraryLink.isVisible().catch(() => false)) ||
-        (await accountButton.isVisible().catch(() => false)),
+        (await directLibraryLink().isVisible().catch(() => false)) ||
+        (await accountButton().isVisible().catch(() => false)),
       { timeout: LIBRARY_NAV_TIMEOUT_MS },
     )
     .toBeTruthy();
 
-  if (await directLibraryLink.isVisible().catch(() => false)) {
+  if (await directLibraryLink().isVisible().catch(() => false)) {
     await clickForNavigation(page, directLibraryLink, /\/dashboard\/library$/);
     return;
   }
 
-  await expect(accountButton).toBeVisible({ timeout: LIBRARY_NAV_TIMEOUT_MS });
-  await accountButton.click();
+  await expect(accountButton()).toBeVisible({ timeout: LIBRARY_NAV_TIMEOUT_MS });
+  await accountButton().click();
 
-  const menuLibraryLink = page
-    .locator('[role="menu"] a[href="/dashboard/library"]:visible, a[href="/dashboard/library"]:visible')
-    .last();
-  await expect(menuLibraryLink).toBeVisible({ timeout: LIBRARY_NAV_TIMEOUT_MS });
+  const menuLibraryLink = () =>
+    page
+      .locator(
+        '[role="menu"] a[href="/dashboard/library"]:visible, a[href="/dashboard/library"]:visible',
+      )
+      .last();
+  await expect(menuLibraryLink()).toBeVisible({ timeout: LIBRARY_NAV_TIMEOUT_MS });
 
   await clickForNavigation(page, menuLibraryLink, /\/dashboard\/library$/);
 }
 
 async function clickForNavigation(
   page: Page,
-  locator: ReturnType<Page["locator"]>,
+  getLocator: LocatorFactory,
   targetUrl: RegExp,
 ) {
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    const urlWait = page.waitForURL(targetUrl, {
-      timeout: 5_000,
-      waitUntil: "commit",
-    });
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const locator = getLocator();
 
     try {
-      await locator.click();
-      await urlWait;
+      await expect(locator).toBeVisible({
+        timeout: LIBRARY_NAV_TIMEOUT_MS,
+      });
+      await locator.scrollIntoViewIfNeeded().catch(() => undefined);
+
+      const ariaDisabled = await locator.getAttribute("aria-disabled").catch(() => null);
+      if (ariaDisabled === "true") {
+        await expect
+          .poll(
+            async () => (await getLocator().getAttribute("aria-disabled").catch(() => null)) !== "true",
+            { timeout: LIBRARY_NAV_TIMEOUT_MS },
+          )
+          .toBeTruthy();
+      }
+
+      await locator.click({ timeout: 5_000 });
+      await page.waitForURL(targetUrl, {
+        timeout: COMMIT_NAV_TIMEOUT_MS,
+        waitUntil: "commit",
+      });
       return;
     } catch {
-      // Retry once when the first click loses the race to hydration or route
-      // registration in CI. The follow-up attempt reuses the same visible node.
+      await page.waitForTimeout(250);
     }
   }
 
@@ -220,7 +245,7 @@ test("dashboard library back to resources keeps shell coverage during transition
 
   await clickForNavigation(
     page,
-    page.getByRole("link", { name: /Browse resources/i }).first(),
+    () => page.getByRole("link", { name: /Browse resources/i }).first(),
     /\/resources$/,
   );
 
