@@ -325,23 +325,9 @@ function NavbarInner({
     if (shouldIgnoreLinkEvent(event)) {
       return;
     }
-
-    if (isDashboardGroupPath(pathname)) {
-      handleProtectedAreaNavigation(href);
-      afterNavigation?.();
-      return;
-    }
-
-    event.preventDefault();
+    
     afterNavigation?.();
-
-    queueMicrotask(() => {
-      handleProtectedAreaNavigation(href);
-    });
-
-    window.requestAnimationFrame(() => {
-      router.push(href);
-    });
+    handleProtectedAreaNavigation(href);
   }
 
   function handlePrimaryLinkClick(
