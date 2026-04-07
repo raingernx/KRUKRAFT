@@ -19,6 +19,7 @@ type ProbeScenarioName =
   | "launch"
   | "resources-to-library"
   | "library-to-resources"
+  | "dark-theme-logo"
   | "settings-theme"
   | "public-product-pages"
   | "admin-core-pages"
@@ -33,10 +34,20 @@ type ProbeContext = {
   browser: Browser;
 };
 
+type NavSample = {
+  href: string;
+  ts: number;
+  hasMain: boolean;
+  mainChildren: number;
+  mainTextLength: number;
+  loadingScopes: string[];
+};
+
 const VALID_SCENARIOS: ProbeScenarioName[] = [
   "launch",
   "resources-to-library",
   "library-to-resources",
+  "dark-theme-logo",
   "settings-theme",
   "public-product-pages",
   "admin-core-pages",
@@ -142,6 +153,102 @@ async function saveFailureScreenshot(page: Page, scenario: ProbeScenarioName) {
   return targetPath;
 }
 
+async function startNavigationProbe(page: Page) {
+  await page.evaluate(() => {
+    const samples: NavSample[] = [];
+    let stopped = false;
+    let rafId = 0;
+
+    const sample = () => {
+      const main = document.querySelector("main");
+      const loadingScopes = Array.from(document.querySelectorAll("[data-loading-scope]"))
+        .map((node) => node.getAttribute("data-loading-scope"))
+        .filter((value): value is string => Boolean(value));
+
+      samples.push({
+        href: `${window.location.pathname}${window.location.search}`,
+        ts: performance.now(),
+        hasMain: Boolean(main),
+        mainChildren: main?.children.length ?? 0,
+        mainTextLength: main?.textContent?.trim().length ?? 0,
+        loadingScopes,
+      });
+
+      if (!stopped) {
+        rafId = window.requestAnimationFrame(sample);
+      }
+    };
+
+    (
+      window as Window & {
+        __krukraftNavProbe?: {
+          stop: () => NavSample[];
+        };
+      }
+    ).__krukraftNavProbe = {
+      stop: () => {
+        stopped = true;
+        window.cancelAnimationFrame(rafId);
+        return samples;
+      },
+    };
+
+    rafId = window.requestAnimationFrame(sample);
+  });
+}
+
+async function stopNavigationProbe(page: Page) {
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    try {
+      return await page.evaluate(() => {
+        const probe = (
+          window as Window & {
+            __krukraftNavProbe?: {
+              stop: () => NavSample[];
+            };
+          }
+        ).__krukraftNavProbe;
+
+        return probe?.stop() ?? [];
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!message.includes("Execution context was destroyed") || attempt === 3) {
+        throw error;
+      }
+      await page.waitForLoadState("domcontentloaded");
+    }
+  }
+
+  return [];
+}
+
+function expectNoBlankGap(samples: NavSample[], targetPathPattern: RegExp) {
+  const targetSamples = samples.filter((sample) => targetPathPattern.test(sample.href));
+  const blankSample = targetSamples.find(
+    (sample) =>
+      sample.loadingScopes.length === 0 &&
+      (!sample.hasMain || (sample.mainChildren === 0 && sample.mainTextLength === 0)),
+  );
+
+  expect(blankSample).toBeUndefined();
+}
+
+function expectLoadingScope(
+  samples: NavSample[],
+  scopes: readonly string[],
+  scenario: ProbeScenarioName,
+) {
+  const sawExpectedScope = samples.some((sample) =>
+    scopes.some((scope) => sample.loadingScopes.includes(scope)),
+  );
+
+  expect(
+    sawExpectedScope,
+    `${scenario} probe did not capture any of the expected loading scopes: ${scopes.join(", ")}`,
+  ).toBeTruthy();
+}
+
 async function openLibraryFromResources(page: Page) {
   const directLibraryLink = page.locator('header a[href="/dashboard/library"]:visible').first();
   const accountButton = page
@@ -243,11 +350,19 @@ async function runResourcesToLibraryScenario({ browser }: ProbeContext) {
   try {
     await loginAsCreator(page, "/resources");
     await expect(page).toHaveURL(/\/resources$/);
+    await startNavigationProbe(page);
 
     await openLibraryFromResources(page);
 
     await expect(page).toHaveURL(/\/dashboard\/library$/);
     await expect(page.getByRole("heading", { name: /My Library/i })).toBeVisible();
+    await expect(page.locator("main").first()).toBeVisible();
+    await page.waitForLoadState("domcontentloaded");
+
+    const samples = await stopNavigationProbe(page);
+    expectLoadingScope(samples, ["dashboard-group"], "resources-to-library");
+    expectNoBlankGap(samples, /\/dashboard\/library$/);
+
     expect(pageErrors).toEqual([]);
     expect(consoleErrors).toEqual([]);
   } catch (error) {
@@ -270,6 +385,7 @@ async function runLibraryToResourcesScenario({ browser }: ProbeContext) {
   try {
     await loginAsCreator(page, "/dashboard/library");
     await expect(page).toHaveURL(/\/dashboard\/library$/);
+    await startNavigationProbe(page);
 
     const browseLink = page.getByRole("link", { name: /Browse resources/i }).first();
     await expect(browseLink).toBeVisible();
@@ -284,6 +400,12 @@ async function runLibraryToResourcesScenario({ browser }: ProbeContext) {
 
     await expect(page).toHaveURL(/\/resources$/);
     await expect(page.locator("main").first()).toBeVisible();
+    await page.waitForLoadState("domcontentloaded");
+
+    const samples = await stopNavigationProbe(page);
+    expectLoadingScope(samples, ["resources-browse", "resource-detail"], "library-to-resources");
+    expectNoBlankGap(samples, /\/resources$/);
+
     expect(pageErrors).toEqual([]);
     expect(consoleErrors).toEqual([]);
   } catch (error) {
@@ -517,6 +639,84 @@ async function runCreatorManagementPagesScenario({ browser }: ProbeContext) {
   }
 }
 
+async function runDarkThemeLogoScenario({ browser }: ProbeContext) {
+  const context = await createContext(browser);
+  const page = await context.newPage();
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+
+  await page.addInitScript(() => {
+    window.localStorage.setItem("user_theme", "dark");
+  });
+
+  await page.route("**/*", async (route) => {
+    const url = route.request().url();
+    const isDarkLogoRequest =
+      url.includes("/brand-assets/full-logo-dark") ||
+      url.includes("/brand-assets/icon-logo-dark") ||
+      (url.includes("/_next/image") &&
+        (url.includes("krukraft-logo-dark") || url.includes("krukraft-mark-dark")));
+
+    if (isDarkLogoRequest) {
+      await new Promise((resolve) => setTimeout(resolve, 1_200));
+    }
+
+    await route.continue();
+  });
+
+  try {
+    await page.goto("/resources", { waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/resources$/);
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+
+    const logoStack = page.locator("header .theme-logo-stack").first();
+    await expect(logoStack).toBeVisible();
+
+    const state = await logoStack.evaluate((node) => {
+      const readLayer = (selector: string) => {
+        const layer = node.querySelector(selector);
+        const image = layer?.querySelector("img");
+        const style = layer ? window.getComputedStyle(layer) : null;
+
+        return {
+          opacity: style ? Number.parseFloat(style.opacity) : null,
+          src: image?.getAttribute("src") ?? null,
+          currentSrc: image instanceof HTMLImageElement ? image.currentSrc : null,
+        };
+      };
+
+      return {
+        theme: document.documentElement.dataset.theme ?? null,
+        darkLoaded: node.getAttribute("data-dark-loaded"),
+        lightFallback: readLayer(".theme-logo-layer--fallback.theme-logo-layer--light"),
+        darkFallback: readLayer(".theme-logo-layer--fallback.theme-logo-layer--dark"),
+        lightCustom: readLayer(".theme-logo-layer--custom.theme-logo-layer--light"),
+        darkCustom: readLayer(".theme-logo-layer--custom.theme-logo-layer--dark"),
+      };
+    });
+
+    expect(state.theme).toBe("dark");
+    expect(state.darkLoaded).not.toBe("true");
+    expect((state.darkFallback.opacity ?? 0) > 0.5).toBeTruthy();
+    expect((state.lightFallback.opacity ?? 1) < 0.1).toBeTruthy();
+    expect((state.lightCustom.opacity ?? 1) < 0.1).toBeTruthy();
+
+    const fallbackDarkSrc = `${state.darkFallback.src ?? ""} ${state.darkFallback.currentSrc ?? ""}`;
+    expect(/krukraft-(logo|mark)-dark/i.test(fallbackDarkSrc)).toBeTruthy();
+
+    expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
+  } catch (error) {
+    const screenshot = await saveFailureScreenshot(page, "dark-theme-logo");
+    throw new Error(
+      `dark-theme-logo probe failed. Screenshot: ${screenshot}. ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  } finally {
+    await closeContext(context);
+  }
+}
+
 async function runSettingsThemeScenario({ browser }: ProbeContext) {
   await setUserThemePreference(CREATOR_EMAIL, "dark");
 
@@ -579,6 +779,7 @@ const scenarioHandlers: Record<ProbeScenarioName, (context: ProbeContext) => Pro
   "admin-core-pages": runAdminCorePagesScenario,
   "admin-analytics-pages": runAdminAnalyticsPagesScenario,
   "creator-management-pages": runCreatorManagementPagesScenario,
+  "dark-theme-logo": runDarkThemeLogoScenario,
   "settings-theme": runSettingsThemeScenario,
 };
 

@@ -2,6 +2,7 @@
 
 ## 2026-04-07
 
+- strengthened the repo-owned browser probe so it now catches two regression classes that recently slipped through manual review: `resources-to-library` / `library-to-resources` sample `data-loading-scope` frames and fail on blank-gap transitions, while the new `dark-theme-logo` scenario delays dark-logo asset delivery and asserts the dark fallback layer stays visible on first paint.
 - updated the shared performance/route docs for the 2026-04-07 performance initiative baseline: Phase A captured analyzer/Lighthouse signal that client-JS overhead is still a primary bottleneck on `/resources` routes, and Phase B moved dashboard/resources navigation overlays out of `src/app/layout.tsx` into their route-group layouts to trim unrelated public-route hydration work.
 - updated search/performance docs again after the first Phase C pass: secondary public routes now lazy-load `HeroSearch` through `MarketplaceNavbarSearch`, and public loading shells stopped importing the full search bundle directly.
 - trimmed the live marketplace search bundle further by moving bones/preview fixtures out of `HeroSearch.tsx` into `HeroSearchPreviews.tsx`, leaving the runtime module focused on real search UI only.

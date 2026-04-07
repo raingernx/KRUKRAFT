@@ -75,6 +75,22 @@ function DashboardGroupContentSkeleton() {
   );
 }
 
+function DashboardSidebarTopSlotSkeleton() {
+  return (
+    <div className="px-4 pt-4 lg:px-5">
+      <div className="rounded-xl bg-amber-50 px-3 py-2 ring-1 ring-amber-200/80">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <LoadingSkeleton className="h-3.5 w-3.5 rounded-full bg-amber-200/70" />
+            <LoadingSkeleton className="h-3 w-24 bg-amber-200/70" />
+          </div>
+          <LoadingSkeleton className="h-3.5 w-3.5 rounded-full bg-amber-200/70" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function DashboardGroupLoadingShell({
   children,
 }: {
@@ -89,13 +105,15 @@ export function DashboardGroupLoadingShell({
 
         <div className="border-b border-border px-5 py-4">
           <div className="flex items-center gap-3">
-            <LoadingSkeleton className="h-12 w-12 rounded-full" />
-            <div className="space-y-1.5">
-              <LoadingSkeleton className="h-4 w-28" />
-              <LoadingSkeleton className="h-3 w-36" />
+            <LoadingSkeleton className="h-9 w-9 rounded-full ring-1 ring-border" />
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <LoadingSkeleton className="h-4 w-24" />
+              <LoadingSkeleton className="h-3 w-32" />
             </div>
           </div>
         </div>
+
+        <DashboardSidebarTopSlotSkeleton />
 
         <div className="space-y-6 px-5 py-4">
           <SidebarSection
@@ -107,16 +125,23 @@ export function DashboardGroupLoadingShell({
             itemWidths={["w-full", "w-full", "w-full"]}
           />
         </div>
+
+        <div className="mt-auto border-t border-border-subtle px-5 py-4">
+          <div className="flex items-center gap-2 rounded-lg px-3 py-2">
+            <LoadingSkeleton className="h-4 w-4 rounded" />
+            <LoadingSkeleton className="h-3 w-24" />
+          </div>
+        </div>
       </aside>
 
       <div className="flex min-h-screen min-w-0 flex-1 flex-col overflow-hidden">
         <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between gap-4 border-b border-border bg-background/90 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:px-6 lg:px-8">
           <div className="flex min-w-0 flex-1 items-center gap-2.5">
             <LoadingSkeleton className="h-9 w-9 rounded-xl lg:hidden" />
-            <LoadingSkeleton className="h-8 w-40 rounded-xl" />
+            <LoadingSkeleton className="hidden h-10 max-w-lg flex-1 rounded-xl sm:block" />
           </div>
           <div className="ml-3 flex shrink-0 items-center gap-2">
-            <LoadingSkeleton className="h-9 w-24 rounded-full" />
+            <LoadingSkeleton className="hidden h-9 w-32 rounded-xl sm:block" />
             <LoadingSkeleton className="h-9 w-9 rounded-full" />
           </div>
         </header>
