@@ -43,6 +43,21 @@ type NavSample = {
   loadingScopes: string[];
 };
 
+type ThemeLogoLayerState = {
+  opacity: number | null;
+  src: string | null;
+  currentSrc: string | null;
+};
+
+type ThemeLogoProbeState = {
+  theme: string | null;
+  darkLoaded: string | null;
+  lightFallback: ThemeLogoLayerState;
+  darkFallback: ThemeLogoLayerState;
+  lightCustom: ThemeLogoLayerState;
+  darkCustom: ThemeLogoLayerState;
+} | null;
+
 const VALID_SCENARIOS: ProbeScenarioName[] = [
   "launch",
   "resources-to-library",
@@ -154,63 +169,54 @@ async function saveFailureScreenshot(page: Page, scenario: ProbeScenarioName) {
 }
 
 async function startNavigationProbe(page: Page) {
-  await page.evaluate(() => {
-    const samples: NavSample[] = [];
-    let stopped = false;
-    let rafId = 0;
+  await page.evaluate(`
+    (() => {
+      const samples = [];
+      let stopped = false;
+      let rafId = 0;
 
-    const sample = () => {
-      const main = document.querySelector("main");
-      const loadingScopes = Array.from(document.querySelectorAll("[data-loading-scope]"))
-        .map((node) => node.getAttribute("data-loading-scope"))
-        .filter((value): value is string => Boolean(value));
+      const sample = () => {
+        const main = document.querySelector("main");
+        const loadingScopes = Array.from(document.querySelectorAll("[data-loading-scope]"))
+          .map((node) => node.getAttribute("data-loading-scope"))
+          .filter(Boolean);
 
-      samples.push({
-        href: `${window.location.pathname}${window.location.search}`,
-        ts: performance.now(),
-        hasMain: Boolean(main),
-        mainChildren: main?.children.length ?? 0,
-        mainTextLength: main?.textContent?.trim().length ?? 0,
-        loadingScopes,
-      });
+        samples.push({
+          href: window.location.pathname + window.location.search,
+          ts: performance.now(),
+          hasMain: Boolean(main),
+          mainChildren: main ? main.children.length : 0,
+          mainTextLength: main && main.textContent ? main.textContent.trim().length : 0,
+          loadingScopes,
+        });
 
-      if (!stopped) {
-        rafId = window.requestAnimationFrame(sample);
-      }
-    };
+        if (!stopped) {
+          rafId = window.requestAnimationFrame(sample);
+        }
+      };
 
-    (
-      window as Window & {
-        __krukraftNavProbe?: {
-          stop: () => NavSample[];
-        };
-      }
-    ).__krukraftNavProbe = {
-      stop: () => {
-        stopped = true;
-        window.cancelAnimationFrame(rafId);
-        return samples;
-      },
-    };
+      window.__krukraftNavProbe = {
+        stop: () => {
+          stopped = true;
+          window.cancelAnimationFrame(rafId);
+          return samples;
+        },
+      };
 
-    rafId = window.requestAnimationFrame(sample);
-  });
+      rafId = window.requestAnimationFrame(sample);
+    })()
+  `);
 }
 
 async function stopNavigationProbe(page: Page) {
   for (let attempt = 0; attempt < 4; attempt += 1) {
     try {
-      return await page.evaluate(() => {
-        const probe = (
-          window as Window & {
-            __krukraftNavProbe?: {
-              stop: () => NavSample[];
-            };
-          }
-        ).__krukraftNavProbe;
-
-        return probe?.stop() ?? [];
-      });
+      return (await page.evaluate(`
+        (() => {
+          const probe = window.__krukraftNavProbe;
+          return probe ? probe.stop() : [];
+        })()
+      `)) as NavSample[];
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       if (!message.includes("Execution context was destroyed") || attempt === 3) {
@@ -671,28 +677,40 @@ async function runDarkThemeLogoScenario({ browser }: ProbeContext) {
     const logoStack = page.locator("header .theme-logo-stack").first();
     await expect(logoStack).toBeVisible();
 
-    const state = await logoStack.evaluate((node) => {
-      const readLayer = (selector: string) => {
-        const layer = node.querySelector(selector);
-        const image = layer?.querySelector("img");
-        const style = layer ? window.getComputedStyle(layer) : null;
+    const state = (await page.evaluate(`
+      (() => {
+        const node = document.querySelector("header .theme-logo-stack");
+        if (!node) {
+          return null;
+        }
+
+        const readLayer = (selector) => {
+          const layer = node.querySelector(selector);
+          const image = layer ? layer.querySelector("img") : null;
+          const style = layer ? window.getComputedStyle(layer) : null;
+
+          return {
+            opacity: style ? Number.parseFloat(style.opacity) : null,
+            src: image ? image.getAttribute("src") : null,
+            currentSrc: image instanceof HTMLImageElement ? image.currentSrc : null,
+          };
+        };
 
         return {
-          opacity: style ? Number.parseFloat(style.opacity) : null,
-          src: image?.getAttribute("src") ?? null,
-          currentSrc: image instanceof HTMLImageElement ? image.currentSrc : null,
+          theme: document.documentElement.dataset.theme ?? null,
+          darkLoaded: node.getAttribute("data-dark-loaded"),
+          lightFallback: readLayer(".theme-logo-layer--fallback.theme-logo-layer--light"),
+          darkFallback: readLayer(".theme-logo-layer--fallback.theme-logo-layer--dark"),
+          lightCustom: readLayer(".theme-logo-layer--custom.theme-logo-layer--light"),
+          darkCustom: readLayer(".theme-logo-layer--custom.theme-logo-layer--dark"),
         };
-      };
+      })()
+    `)) as ThemeLogoProbeState;
 
-      return {
-        theme: document.documentElement.dataset.theme ?? null,
-        darkLoaded: node.getAttribute("data-dark-loaded"),
-        lightFallback: readLayer(".theme-logo-layer--fallback.theme-logo-layer--light"),
-        darkFallback: readLayer(".theme-logo-layer--fallback.theme-logo-layer--dark"),
-        lightCustom: readLayer(".theme-logo-layer--custom.theme-logo-layer--light"),
-        darkCustom: readLayer(".theme-logo-layer--custom.theme-logo-layer--dark"),
-      };
-    });
+    expect(state).not.toBeNull();
+    if (!state) {
+      throw new Error("theme-logo-stack was not found during dark-theme-logo probe");
+    }
 
     expect(state.theme).toBe("dark");
     expect(state.darkLoaded).not.toBe("true");
