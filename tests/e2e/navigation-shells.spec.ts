@@ -155,13 +155,14 @@ async function clickForNavigation(
   targetUrl: RegExp,
 ) {
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    await locator.click();
+    const urlWait = page.waitForURL(targetUrl, {
+      timeout: 5_000,
+      waitUntil: "commit",
+    });
 
     try {
-      await page.waitForURL(targetUrl, {
-        timeout: 5_000,
-        waitUntil: "commit",
-      });
+      await locator.click();
+      await urlWait;
       return;
     } catch {
       // Retry once when the first click loses the race to hydration or route
