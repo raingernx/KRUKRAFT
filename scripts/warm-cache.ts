@@ -86,9 +86,14 @@ const routes: WarmRoute[] = [
     // Without this cookie the route silently falls back to effectiveSort="newest",
     // warming the wrong cache key and leaving the "recommended" Redis entry cold.
     headers: { Cookie: "ranking_variant=B" },
-    // Keep the treatment path warm for ranking experiments, but do not block
-    // deploy follow-up tasks on the heaviest query path.  The main production
-    // UX should prioritize the default listing route first.
+    // The smoke suite ramps the treatment/recommended listing to 5 VUs too.
+    // A single warm pass left the Redis/data path hot on one worker, but later
+    // smoke VUs could still land on fresh instances and spike p95. Treat this
+    // route the same way as the control/newest path: repeat the warm pass and
+    // match the later smoke fanout up front.
+    burst: 5,
+    repeat: 2,
+    required: true,
   },
   {
     label: "listing-newest",

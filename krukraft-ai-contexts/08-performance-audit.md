@@ -153,6 +153,9 @@ Current perf-hardening baseline for the production UX initiative is:
 - `category_listing_smoke`
   - main class: fresh-instance tail on category listing renders under the 5-VU smoke ramp
   - current mitigation: explicit category warm target with `repeat: 2` and `burst: 5`
+- `listing_recommended_smoke`
+  - main class: the treatment/recommended listing route can still show cold-instance tail latency if warm only touches one worker, even when the control/newest path is already aligned
+  - current mitigation: warm against `ranking_variant=B` and match the smoke route's 5-VU fanout with `repeat: 2` plus `burst: 5`
 - `resources_home_smoke`
   - main class: discover-home stream and page shell were still seeing fresh-instance tails after deploy
   - current mitigation: repeated warm pass plus a small concurrent burst on `/resources`
