@@ -151,6 +151,7 @@ function expectNoBlankGap(
 }
 
 async function openLibraryFromResources(page: Page) {
+  const libraryUrl = /\/dashboard\/library$/;
   const directLibraryLink = () =>
     page
       .locator('header a[href="/dashboard/library"]:visible')
@@ -174,8 +175,10 @@ async function openLibraryFromResources(page: Page) {
     .toBeTruthy();
 
   if (await directLibraryLink().isVisible().catch(() => false)) {
-    await clickForNavigation(page, directLibraryLink, /\/dashboard\/library$/);
-    return;
+    await clickForNavigation(page, directLibraryLink, libraryUrl);
+    if (matchesTargetUrl(page, libraryUrl)) {
+      return;
+    }
   }
 
   await expect(accountButton()).toBeVisible({ timeout: LIBRARY_NAV_TIMEOUT_MS });
@@ -189,7 +192,7 @@ async function openLibraryFromResources(page: Page) {
       .last();
   await expect(menuLibraryLink()).toBeVisible({ timeout: LIBRARY_NAV_TIMEOUT_MS });
 
-  await clickForNavigation(page, menuLibraryLink, /\/dashboard\/library$/);
+  await clickForNavigation(page, menuLibraryLink, libraryUrl);
 }
 
 async function clickForNavigation(
