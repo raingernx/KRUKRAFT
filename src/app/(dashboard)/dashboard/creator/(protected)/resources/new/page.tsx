@@ -51,7 +51,10 @@ export default async function CreatorNewResourcePage() {
   const { categories } = await getCreatorResourceFormData(userId);
 
   return (
-    <div className="space-y-6">
+    <div
+      data-route-shell-ready="dashboard-creator-resource-editor"
+      className="space-y-6"
+    >
       {/* Page header */}
       <div className="border-b border-border pb-5">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-500">Creator</p>

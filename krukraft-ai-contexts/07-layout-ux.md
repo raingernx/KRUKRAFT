@@ -186,6 +186,10 @@
   now expose route-ready markers so dashboard entry/in-group overlays do not
   clear purely from generic dashboard-shell readiness when the target route is
   still mounting.
+- Creator resource create/edit routes now use their own route-ready marker as
+  well, so handoffs into `/dashboard/creator/resources/new` and
+  `/dashboard/creator/resources/[id]` stay on the editor skeleton instead of
+  clearing early on generic creator/dashboard shell readiness.
 - `tests/e2e/navigation-shells.spec.ts` now samples the DOM every animation
   frame during public/dashboard/resources transitions and is part of
   `npm run smoke:local:browser`, so shell-coverage regressions can be caught in

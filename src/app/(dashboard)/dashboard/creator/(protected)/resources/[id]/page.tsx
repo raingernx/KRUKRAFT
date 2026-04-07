@@ -55,7 +55,7 @@ export default async function CreatorEditResourcePage({
     : undefined;
 
   return (
-    <PageContent>
+    <PageContent data-route-shell-ready="dashboard-creator-resource-editor">
       <CreatorResourceForm
         mode="edit"
         focusField={focusField}

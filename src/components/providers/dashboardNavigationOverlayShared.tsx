@@ -159,6 +159,13 @@ export function getDashboardReadySelector(pathname: string | null, href: string 
     return '[data-route-shell-ready="dashboard-creator-resources"]';
   }
 
+  if (
+    targetPathname === routes.creatorNewResource ||
+    targetPathname.startsWith(`${routes.creatorResources}/`)
+  ) {
+    return '[data-route-shell-ready="dashboard-creator-resource-editor"]';
+  }
+
   if (targetPathname === routes.creatorSales) {
     return '[data-route-shell-ready="dashboard-creator-sales"]';
   }
