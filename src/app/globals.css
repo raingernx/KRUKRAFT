@@ -246,8 +246,11 @@
     opacity: 0;
   }
 
-  .theme-logo-stack--auto .theme-logo-layer--light,
   .theme-logo-stack--force-dark .theme-logo-layer--dark {
+    opacity: 1;
+  }
+
+  :root[data-theme="light"] .theme-logo-stack--auto .theme-logo-layer--light {
     opacity: 1;
   }
 
