@@ -16,7 +16,7 @@ export default async function SettingsPage() {
   const { user, preferences } = await getDashboardSettingsPageData(userId);
 
   return (
-    <PageContentNarrow className="space-y-8">
+    <PageContentNarrow data-route-shell-ready="dashboard-settings" className="space-y-8">
       <SectionHeader
         title="Settings"
         description="Manage your account preferences and security."

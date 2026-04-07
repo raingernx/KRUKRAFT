@@ -27,7 +27,7 @@ export default async function DownloadsPage() {
   const downloads = await getUserDownloadHistory(userId);
 
   return (
-    <div>
+    <div data-route-shell-ready="dashboard-downloads">
         {/* Header */}
         <div className="mb-6 flex items-start justify-between">
           <div>

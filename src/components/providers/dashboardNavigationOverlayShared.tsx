@@ -119,8 +119,28 @@ export function getDashboardReadySelector(pathname: string | null, href: string 
     ? new URL(target, "http://dashboard.local").pathname
     : "";
 
+  if (targetPathname === routes.dashboard) {
+    return '[data-route-shell-ready="dashboard-overview"]';
+  }
+
   if (targetPathname === routes.library) {
     return '[data-route-shell-ready="dashboard-library"]';
+  }
+
+  if (targetPathname === routes.downloads) {
+    return '[data-route-shell-ready="dashboard-downloads"]';
+  }
+
+  if (targetPathname === routes.purchases) {
+    return '[data-route-shell-ready="dashboard-purchases"]';
+  }
+
+  if (targetPathname === routes.settings) {
+    return '[data-route-shell-ready="dashboard-settings"]';
+  }
+
+  if (targetPathname === routes.subscription) {
+    return '[data-route-shell-ready="dashboard-subscription"]';
   }
 
   return DASHBOARD_ROUTE_SHELL_SELECTOR;

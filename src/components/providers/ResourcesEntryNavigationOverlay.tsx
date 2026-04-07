@@ -45,6 +45,7 @@ export function ResourcesEntryNavigationOverlay() {
   const pathname = usePathname();
   const navigationState = useResourcesNavigationState();
   const previousPathRef = useRef(pathname);
+  const forcedOverlayStartedAtRef = useRef(0);
   const [forcedOverlay, setForcedOverlay] = useState(false);
   const targetHref = navigationState.href;
   const isCrossingIntoResources =
@@ -58,8 +59,10 @@ export function ResourcesEntryNavigationOverlay() {
 
   useEffect(() => {
     if (crossedIntoResources) {
+      forcedOverlayStartedAtRef.current = Date.now();
       setForcedOverlay(true);
     } else if (!isResourcesSubtreePath(pathname ?? "")) {
+      forcedOverlayStartedAtRef.current = 0;
       setForcedOverlay(false);
     }
 
@@ -81,7 +84,7 @@ export function ResourcesEntryNavigationOverlay() {
         setForcedOverlay(false);
       },
       MIN_ENTRY_PENDING_MS,
-      navigationState.startedAt || Date.now(),
+      forcedOverlayStartedAtRef.current || navigationState.startedAt || Date.now(),
     );
   }, [forcedOverlay, navigationState.startedAt, pathname]);
 

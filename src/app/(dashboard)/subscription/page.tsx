@@ -59,7 +59,7 @@ export default async function SubscriptionPage() {
   const resourcesOwned = user?.purchases.length ?? 0;
 
   return (
-    <PageContentNarrow className="space-y-8">
+    <PageContentNarrow data-route-shell-ready="dashboard-subscription" className="space-y-8">
       {/* Header */}
       <div className="space-y-2">
         <h1 className="font-display text-h2 font-semibold tracking-tight text-foreground">

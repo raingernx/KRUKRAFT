@@ -225,7 +225,7 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div data-route-shell-ready="dashboard-overview" className="space-y-8">
       <section className="space-y-4">
         <div className="space-y-1.5">
           <h1 className="font-display text-h2 font-semibold tracking-tight text-foreground">

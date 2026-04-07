@@ -59,7 +59,7 @@ export default async function PurchasesPage() {
     .reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div>
+    <div data-route-shell-ready="dashboard-purchases">
         {/* Header */}
         <div className="mb-6 flex items-start justify-between">
           <div>
