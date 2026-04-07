@@ -8,6 +8,7 @@ GitHub Actions `Browser Smoke` is the cloud verification workflow for marketplac
 
 - The workflow provisions Postgres, enables `pg_trgm`, seeds the app, runs lint and typecheck, then executes browser smoke.
 - Additional probe jobs cover dashboard, public/admin pages, and management pages.
+- The management/browser-probe lane now also covers hard-refresh shell checks across the main dashboard, creator, and admin entry routes, so repeated-refresh fallback regressions are part of CI instead of relying only on manual reproduction.
 - Recent stabilization work removed flaky auth navigation, invalid admin audit table markup, and detail-shell readiness issues from the main smoke path.
 - Recent route-transition flakes also showed that Browser Smoke can be `success` but still not clean if the log contains `flaky` or `retry #` markers; close-out now requires log review, not workflow status alone.
 
@@ -59,4 +60,4 @@ This workflow is the main browser truth source when local browser environments a
 
 ## Last Reviewed
 
-- 2026-04-07
+- 2026-04-08

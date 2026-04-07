@@ -2,6 +2,7 @@
 
 ## 2026-04-07
 
+- aligned the high-level browser/perf docs with the current verification split: `browser:probe:dashboard` remains the transition-focused dashboard probe, while `browser:probe:management` is the refresh-shell coverage lane for dashboard, creator, and admin family entry routes.
 - matched `creator-detail-hot` and `category-listing` warm bursts to the same 5-VU fanout that their k6 smoke routes use after `creator_detail_smoke` and `category_listing_smoke` still showed post-deploy p95 tails even though the sequential warm step itself succeeded.
 - raised the `listing-newest` warm burst to 5 after another post-deploy failure showed that a burst of 3 still left room for fresh instances during the k6 route's 5-VU ramp; the newest/control route now warms to the same fanout shape that perf verification later measures.
 - corrected the new admin refresh probes after CI showed `/admin` finished with `routeReady: ["dashboard", "admin-overview"]`; that combination is valid because admin routes live inside the shared dashboard chrome, so the probe now treats the generic `dashboard` marker as allowed context instead of flagging it as a wrong-family fallback.
