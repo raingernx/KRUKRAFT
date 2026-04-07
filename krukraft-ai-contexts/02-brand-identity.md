@@ -89,6 +89,7 @@
 - The dark-theme fallback pair is maintained as:
   - `public/brand/krukraft-logo-dark.svg`
   - `public/brand/krukraft-mark-dark.svg`
+- The repo-owned dark full-logo fallback was refreshed to better match the current navbar contrast treatment, but uploaded runtime light/dark logos remain the steady-state brand surface in production.
 - The older `public/logo/*` export tree is no longer the canonical in-repo asset source and has been removed from the active asset set.
 
 ### Font Analysis (Craft word)

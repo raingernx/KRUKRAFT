@@ -242,7 +242,7 @@
   }
 
   .theme-logo-layer {
-    @apply absolute inset-0 flex items-center justify-start transition-opacity duration-150 ease-out;
+    @apply absolute inset-0 flex items-center justify-start;
     opacity: 0;
   }
 
