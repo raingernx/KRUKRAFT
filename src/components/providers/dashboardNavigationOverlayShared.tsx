@@ -19,6 +19,8 @@ import { CreatorResourceNewRouteSkeleton } from "@/components/skeletons/CreatorR
 import { SettingsPageSkeleton } from "@/components/skeletons/SettingsPageSkeleton";
 import { routes } from "@/lib/routes";
 
+const DASHBOARD_ROUTE_SHELL_SELECTOR = '[data-route-shell-ready="dashboard"]';
+
 export function isDashboardGroupHref(href: string) {
   return (
     href === "/dashboard" ||
@@ -109,4 +111,17 @@ export function renderDashboardOverlayContent(
   }
 
   return <DashboardGroupLoadingShell />;
+}
+
+export function getDashboardReadySelector(pathname: string | null, href: string | null) {
+  const target = href ?? pathname ?? "";
+  const targetPathname = target
+    ? new URL(target, "http://dashboard.local").pathname
+    : "";
+
+  if (targetPathname === routes.library) {
+    return '[data-route-shell-ready="dashboard-library"]';
+  }
+
+  return DASHBOARD_ROUTE_SHELL_SELECTOR;
 }

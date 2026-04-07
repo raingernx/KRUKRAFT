@@ -6,12 +6,11 @@ import { DashboardGroupLoadingShell } from "@/components/skeletons/DashboardGrou
 import { useDashboardNavigationState } from "@/components/layout/dashboard/dashboardNavigationState";
 import { waitForNavigationSurfaceReady } from "@/components/providers/navigationDomReady";
 import {
+  getDashboardReadySelector,
   isDashboardGroupHref,
   isDashboardGroupPath,
   renderDashboardOverlayContent,
 } from "@/components/providers/dashboardNavigationOverlayShared";
-
-const DASHBOARD_ROUTE_SHELL_SELECTOR = '[data-route-shell-ready="dashboard"]';
 const MIN_ENTRY_PENDING_MS = 220;
 
 export function DashboardEntryNavigationOverlay() {
@@ -46,8 +45,10 @@ export function DashboardEntryNavigationOverlay() {
       return;
     }
 
+    const readySelector = getDashboardReadySelector(pathname, navigationState.href);
+
     return waitForNavigationSurfaceReady(
-      DASHBOARD_ROUTE_SHELL_SELECTOR,
+      readySelector,
       () => {
         setForcedOverlay(false);
       },

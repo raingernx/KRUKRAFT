@@ -67,7 +67,7 @@ export default async function DashboardLibraryPage({
     resources.length > 0 ? formatDate(resources[0].purchasedAt) : null;
 
   return (
-    <div>
+    <div data-route-shell-ready="dashboard-library">
         <div className="space-y-5">
           <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
             <div className="space-y-2.5">

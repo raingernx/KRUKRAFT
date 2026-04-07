@@ -9,9 +9,9 @@ import {
   useDashboardNavigationState,
 } from "./dashboardNavigationState";
 import { waitForNavigationSurfaceReady } from "@/components/providers/navigationDomReady";
+import { getDashboardReadySelector } from "@/components/providers/dashboardNavigationOverlayShared";
 
 const MIN_PENDING_MS = 220;
-const DASHBOARD_ROUTE_SHELL_SELECTOR = '[data-route-shell-ready="dashboard"]';
 
 export function DashboardOverlayReady() {
   const pathname = usePathname();
@@ -31,8 +31,10 @@ export function DashboardOverlayReady() {
       return;
     }
 
+    const readySelector = getDashboardReadySelector(pathname, navigationState.href);
+
     return waitForNavigationSurfaceReady(
-      DASHBOARD_ROUTE_SHELL_SELECTOR,
+      readySelector,
       () => {
         clearDashboardNavigation(navigationState.id);
       },
