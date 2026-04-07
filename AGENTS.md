@@ -547,6 +547,7 @@ When editing public routes with streaming or personalization:
 
 - verify `typecheck` and `lint`
 - verify the changed route, API, or user flow actually works at runtime when practical, not just at compile time
+- for non-trivial route/UI/runtime changes, do an impact scan before closing the task: check which adjacent shells, loading states, overlays, shared components, probes/tests, and docs/context could be affected by the change instead of verifying only the directly edited file
 - for route and API work, prefer a local smoke check against the real path or endpoint before declaring the task done
 - for local search/auth verification, prefer `npm run smoke:local:search` over ad-hoc `curl` because it runs sequentially, retries through first-compile delays, and avoids shell/sandbox quirks around local URLs
 - the shared search/auth smoke path now expects `/api/internal/ready` to go green first; if that route is not healthy, treat deeper smoke failures as readiness issues before debugging search/auth behavior
@@ -593,6 +594,8 @@ When implementing features:
 9. When multiple follow-up improvements are possible, prefer the highest-impact safe pass before deeper or riskier refactors.
 10. Before closing any non-trivial task, decide and report a `knowledge triage` outcome: `no ingest`, `log only`, `update existing wiki`, or `new wiki entry`.
 11. When a recurring error class or verification mistake is discovered, decide before close-out whether it belongs in `knowledge/log.md`, an existing wiki page, or a new wiki page; do not rely on memory alone.
+12. Before closing any non-trivial task, perform and report an impact review: identify what neighboring routes, loading states, shared components, tests/probes, and docs/context could be affected, what the likely risks are, and what was changed or verified to keep those areas aligned.
+13. Do not treat “the edited file works” as sufficient evidence when the change touches shared behavior. Shared UI shells, route-family loading, navigation handoff, cache warmups, and probe/test helpers must be checked for downstream impact before the task is considered complete.
 
 AI agents should avoid large architectural changes unless explicitly requested.
 
@@ -724,6 +727,7 @@ For non-trivial changes, agents should usually finish by reporting:
 - whether the flow was verified at runtime
 - any remaining uncertainty or blocked verification
 - whether `knowledge/` or `krukraft-ai-contexts/` changed as part of the work
+- `Impact review:` what adjacent surfaces could have been affected, what was checked, and what follow-up adjustments were required (or why none were needed)
 - `Verification:` a concise summary of what was actually checked
 - `Knowledge triage:` one of `no ingest`, `log only`, `update existing wiki`, or `new wiki entry`
 - `Residual risk:` what is still uncertain, flaky, blocked, or intentionally deferred
@@ -735,3 +739,17 @@ was run.
 
 Do not report success based only on static analysis when a runtime check was practical and relevant.
 Do not report browser/perf CI as clean unless the latest relevant logs were reviewed for `flaky`, `retry #`, timeout, and threshold-failure signals.
+
+## Repo Shorthand
+
+The repo now accepts these shorthand commands in user requests:
+
+- `CPD` = commit + push + deploy
+- `CL` = inspect CI/browser-smoke logs, not workflow status alone
+- `WARM` = inspect post-deploy warm/perf logs, not workflow status alone
+- `KT` = perform knowledge triage (`no ingest`, `log only`, `update existing wiki`, or `new wiki entry`)
+
+When a shorthand request is used, agents should follow the same verification and close-out rules as the long-form request. In particular:
+
+- `CL` and `WARM` still require log review for hidden `flaky`, `retry #`, timeout, and threshold-failure signals
+- `CPD` does not bypass verification, impact review, or knowledge triage requirements

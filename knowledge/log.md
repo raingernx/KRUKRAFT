@@ -2,6 +2,8 @@
 
 ## 2026-04-07
 
+- added repo shorthand policy to `AGENTS.md`: `CPD` means commit/push/deploy, `CL` means inspect CI logs, `WARM` means inspect warm/perf logs, and `KT` means perform knowledge triage; shorthand requests do not bypass verification or close-out rules.
+- added a standing impact-review rule to repo agent policy: non-trivial changes must now check adjacent shells, loading states, shared components, probes/tests, and context/wiki for downstream effects before close-out, and final reporting should state what was checked or intentionally ruled out.
 - aligned the high-level browser/perf docs with the current verification split: `browser:probe:dashboard` remains the transition-focused dashboard probe, while `browser:probe:management` is the refresh-shell coverage lane for dashboard, creator, and admin family entry routes.
 - matched `creator-detail-hot` and `category-listing` warm bursts to the same 5-VU fanout that their k6 smoke routes use after `creator_detail_smoke` and `category_listing_smoke` still showed post-deploy p95 tails even though the sequential warm step itself succeeded.
 - raised the `listing-newest` warm burst to 5 after another post-deploy failure showed that a burst of 3 still left room for fresh instances during the k6 route's 5-VU ramp; the newest/control route now warms to the same fanout shape that perf verification later measures.
