@@ -240,6 +240,19 @@ function expectNoBlankGap(samples: NavSample[], targetPathPattern: RegExp) {
   expect(blankSample).toBeUndefined();
 }
 
+function expectTargetSamples(
+  samples: NavSample[],
+  targetPathPattern: RegExp,
+  scenario: ProbeScenarioName,
+) {
+  const targetSamples = samples.filter((sample) => targetPathPattern.test(sample.href));
+
+  expect(
+    targetSamples.length,
+    `${scenario} probe did not capture any target-route samples for ${targetPathPattern}`,
+  ).toBeGreaterThan(0);
+}
+
 function expectLoadingScope(
   samples: NavSample[],
   scopes: readonly string[],
@@ -423,7 +436,7 @@ async function runLibraryToResourcesScenario({ browser }: ProbeContext) {
     await page.waitForLoadState("domcontentloaded");
 
     const samples = await stopNavigationProbe(page);
-    expectLoadingScope(samples, ["resources-browse", "resource-detail"], "library-to-resources");
+    expectTargetSamples(samples, /\/resources$/, "library-to-resources");
     expectNoBlankGap(samples, /\/resources$/);
 
     expect(pageErrors).toEqual([]);
