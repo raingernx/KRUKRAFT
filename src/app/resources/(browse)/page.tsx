@@ -16,7 +16,6 @@ import {
   ResourcesCatalogControlsSkeleton,
 } from "@/components/marketplace/ResourcesCatalogControlsSkeleton";
 import {
-  trackRequestWork,
   withRequestPerformanceTrace,
 } from "@/lib/performance/observability";
 
@@ -91,25 +90,21 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
     },
     async () => {
       const heroPromise = isDiscoverMode
-        ? trackRequestWork(
-            ResourcesDiscoverHero({
-              className: "shadow-none",
-            }),
-          )
+        ? ResourcesDiscoverHero({
+            className: "shadow-none",
+          })
         : null;
-      const contentPromise = trackRequestWork(
-        ResourcesPageContent({
-          isDiscoverMode,
-          search,
-          category,
-          price,
-          featured,
-          tag,
-          sort,
-          effectiveSort: sort,
-          currentPage,
-        }),
-      );
+      const contentPromise = ResourcesPageContent({
+        isDiscoverMode,
+        search,
+        category,
+        price,
+        featured,
+        tag,
+        sort,
+        effectiveSort: sort,
+        currentPage,
+      });
 
       return (
         <div

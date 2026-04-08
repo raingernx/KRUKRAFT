@@ -46,7 +46,6 @@ import {
 import { MARKETPLACE_LISTING_PAGE_SIZE } from "@/config/marketplace";
 import { getMarketplaceResources } from "@/services/resources";
 import {
-  trackRequestWork,
   traceServerStep,
 } from "@/lib/performance/observability";
 import { runWithTimeoutFallback } from "@/lib/async";
@@ -178,12 +177,10 @@ async function ResourcesListingContent({
 
   const isEmptySearchResults = normalizedSearch.length > 0 && total === 0;
   const searchRecoveryPromise = isEmptySearchResults
-    ? trackRequestWork(
-        traceServerStep(
-          "resources.getSearchRecoveryData",
-          () => getSearchRecoveryData(normalizedSearch),
-          { query: normalizedSearch },
-        ),
+    ? traceServerStep(
+        "resources.getSearchRecoveryData",
+        () => getSearchRecoveryData(normalizedSearch),
+        { query: normalizedSearch },
       )
     : null;
 
@@ -428,8 +425,8 @@ async function ResourcesListingContent({
 }
 
 async function ResourcesDiscoverContent() {
-  const discoverLeadPromise = trackRequestWork(loadDiscoverLeadDataSafe());
-  const discoverCollectionsPromise = trackRequestWork(loadDiscoverCollectionsDataSafe());
+  const discoverLeadPromise = loadDiscoverLeadDataSafe();
+  const discoverCollectionsPromise = loadDiscoverCollectionsDataSafe();
 
   return (
     <div className="space-y-16 lg:space-y-20">
