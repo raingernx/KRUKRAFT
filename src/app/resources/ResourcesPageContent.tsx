@@ -78,6 +78,7 @@ const QUICK_BROWSE_TILES = [
     eyebrow: "Budget",
   },
 ] as const;
+const DISCOVER_LEAD_TIMEOUT_MS = 600;
 const DISCOVER_COLLECTIONS_TIMEOUT_MS = 600;
 
 type ResourcesPageContentProps = {
@@ -658,8 +659,16 @@ async function SearchRecoveryPanelDeferred({
 
 async function loadDiscoverLeadDataSafe(): Promise<DiscoverLeadData | null> {
   try {
-    return await traceServerStep("resources.getDiscoverLeadData", () =>
-      getDiscoverLeadData(),
+    return await runWithTimeoutFallback(
+      () =>
+        traceServerStep("resources.getDiscoverLeadData", () =>
+          getDiscoverLeadData(),
+        ),
+      {
+        timeoutMs: DISCOVER_LEAD_TIMEOUT_MS,
+        fallback: null,
+        warningLabel: "[RESOURCES_DISCOVER_LEAD_TIMEOUT]",
+      },
     );
   } catch (error) {
     if (!isMissingTableError(error)) {

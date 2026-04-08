@@ -196,14 +196,14 @@ const _cachedMarketplaceCategories = unstable_cache(
     recordCacheMiss("getMarketplaceCategories");
     return rememberJson(
       CACHE_KEYS.marketplaceCategories,
-      CACHE_TTLS.publicPage,
+      CACHE_TTLS.homepageList,
       () => findCategoriesOrderedByName(),
       { metricName: "marketplace.categories" },
     );
   },
   ["marketplace-categories"],
   {
-    revalidate: CACHE_TTLS.publicPage,
+    revalidate: CACHE_TTLS.homepageList,
     tags: [CACHE_TAGS.discover],
   },
 );
