@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Search } from "lucide-react";
 import { Input, Button, RowActionButton, RowActions } from "@/design-system";
 import { formatNumber, formatDate } from "@/lib/format";
@@ -18,8 +19,7 @@ import {
   traceServerStep,
   withRequestPerformanceTrace,
 } from "@/lib/performance/observability";
-import { routes } from "@/lib/routes";
-import { requireAdminSession } from "@/lib/auth/require-admin-session";
+import { AdminUsersResultsSkeleton } from "@/components/skeletons/AdminCoreRouteSkeletons";
 
 export const metadata = {
   title: "Users – Admin",
@@ -28,6 +28,79 @@ export const metadata = {
 
 interface AdminUsersPageProps {
   searchParams?: Promise<{ q?: string }>;
+}
+
+async function AdminUsersResultsSection({
+  dataPromise,
+}: {
+  dataPromise: ReturnType<typeof getAdminUsersPageData>;
+}) {
+  const users = await dataPromise;
+
+  return (
+    <DataTable minWidth="min-w-[720px]">
+      <DataTableHeader>
+        <tr>
+          <DataTableHeadCell>User</DataTableHeadCell>
+          <DataTableHeadCell>Email</DataTableHeadCell>
+          <DataTableHeadCell>Role</DataTableHeadCell>
+          <DataTableHeadCell>Resources</DataTableHeadCell>
+          <DataTableHeadCell>Joined</DataTableHeadCell>
+          <DataTableHeadCell align="right">Actions</DataTableHeadCell>
+        </tr>
+      </DataTableHeader>
+      <DataTableBody>
+        {users.length === 0 ? (
+          <TableEmptyState message="No users found." />
+        ) : (
+          users.map((user) => (
+            <DataTableRow key={user.id}>
+              <DataTableCell className="font-medium">{user.name ?? "—"}</DataTableCell>
+              <DataTableCell className="text-muted-foreground">
+                {user.email ?? "—"}
+              </DataTableCell>
+              <DataTableCell>
+                <StatusBadge
+                  status={user.role}
+                  label={
+                    user.role === "ADMIN"
+                      ? "Admin"
+                      : user.role === "INSTRUCTOR"
+                        ? "Creator"
+                        : "User"
+                  }
+                  tone={
+                    user.role === "ADMIN"
+                      ? "accent"
+                      : user.role === "INSTRUCTOR"
+                        ? "info"
+                        : "muted"
+                  }
+                />
+              </DataTableCell>
+              <DataTableCell className="tabular-nums text-muted-foreground">
+                {formatNumber(user._count.resources)}
+              </DataTableCell>
+              <DataTableCell className="text-muted-foreground">
+                {formatDate(user.createdAt)}
+              </DataTableCell>
+              <DataTableCell align="right">
+                <RowActions>
+                  <RowActionButton type="button">View</RowActionButton>
+                  <RowActionButton type="button" tone="muted">
+                    Suspend
+                  </RowActionButton>
+                  <RowActionButton type="button" tone="danger">
+                    Delete
+                  </RowActionButton>
+                </RowActions>
+              </DataTableCell>
+            </DataTableRow>
+          ))
+        )}
+      </DataTableBody>
+    </DataTable>
+  );
 }
 
 export default async function AdminUsersPage({ searchParams }: AdminUsersPageProps) {
@@ -40,12 +113,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
       hasQuery: Boolean(query),
     },
     async () => {
-      await traceServerStep(
-        "admin_users.requireAdminSession",
-        () => requireAdminSession(routes.adminUsers),
-      );
-
-      const users = await traceServerStep(
+      const usersPromise = traceServerStep(
         "admin_users.getAdminUsersPageData",
         () => getAdminUsersPageData({ query }),
         { hasQuery: Boolean(query) },
@@ -81,68 +149,9 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
             </TableToolbar>
           </form>
 
-          <DataTable minWidth="min-w-[720px]">
-            <DataTableHeader>
-              <tr>
-                <DataTableHeadCell>User</DataTableHeadCell>
-                <DataTableHeadCell>Email</DataTableHeadCell>
-                <DataTableHeadCell>Role</DataTableHeadCell>
-                <DataTableHeadCell>Resources</DataTableHeadCell>
-                <DataTableHeadCell>Joined</DataTableHeadCell>
-                <DataTableHeadCell align="right">Actions</DataTableHeadCell>
-              </tr>
-            </DataTableHeader>
-            <DataTableBody>
-              {users.length === 0 ? (
-                <TableEmptyState message="No users found." />
-              ) : (
-                users.map((user) => (
-                  <DataTableRow key={user.id}>
-                    <DataTableCell className="font-medium">{user.name ?? "—"}</DataTableCell>
-                    <DataTableCell className="text-muted-foreground">
-                      {user.email ?? "—"}
-                    </DataTableCell>
-                    <DataTableCell>
-                      <StatusBadge
-                        status={user.role}
-                        label={
-                          user.role === "ADMIN"
-                            ? "Admin"
-                            : user.role === "INSTRUCTOR"
-                              ? "Creator"
-                              : "User"
-                        }
-                        tone={
-                          user.role === "ADMIN"
-                            ? "accent"
-                            : user.role === "INSTRUCTOR"
-                              ? "info"
-                              : "muted"
-                        }
-                      />
-                    </DataTableCell>
-                    <DataTableCell className="tabular-nums text-muted-foreground">
-                      {formatNumber(user._count.resources)}
-                    </DataTableCell>
-                    <DataTableCell className="text-muted-foreground">
-                      {formatDate(user.createdAt)}
-                    </DataTableCell>
-                    <DataTableCell align="right">
-                      <RowActions>
-                        <RowActionButton type="button">View</RowActionButton>
-                        <RowActionButton type="button" tone="muted">
-                          Suspend
-                        </RowActionButton>
-                        <RowActionButton type="button" tone="danger">
-                          Delete
-                        </RowActionButton>
-                      </RowActions>
-                    </DataTableCell>
-                  </DataTableRow>
-                ))
-              )}
-            </DataTableBody>
-          </DataTable>
+          <Suspense fallback={<AdminUsersResultsSkeleton />}>
+            <AdminUsersResultsSection dataPromise={usersPromise} />
+          </Suspense>
         </div>
       );
     },

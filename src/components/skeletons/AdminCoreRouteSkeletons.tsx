@@ -216,9 +216,13 @@ export function AdminUsersLoadingShell() {
     <div className="space-y-7">
       <AdminHeaderSkeleton titleWidth="w-28" descriptionWidth="w-52" />
       <AdminToolbarSkeleton inputs={1} trailingAction />
-      <AdminTableShell columns={6} rows={6} />
+      <AdminUsersResultsSkeleton />
     </div>
   );
+}
+
+export function AdminUsersResultsSkeleton() {
+  return <AdminTableShell columns={6} rows={6} />;
 }
 
 export function AdminTagsLoadingShell() {

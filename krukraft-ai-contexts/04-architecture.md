@@ -217,6 +217,7 @@ Admin settings note:
 - `/admin/analytics` now splits platform analytics into summary and reporting surfaces: the page renders all-time/30-day KPI sections from a lighter summary reader first, then streams chart/top-resource reporting cards through a dedicated `Suspense` fallback while preserving the same admin analytics shell and experiment links
 - `/admin/resources` now treats admin auth as a layout concern only and splits category-filter data from listing results: the page renders its header and filter toolbar after the lighter category read, then streams the table/empty-state/pagination section through an in-page `Suspense` fallback instead of blocking the whole route on rows, counts, and purchase-summary joins
 - `/admin/orders` now also treats admin auth as a layout concern only; the page renders its header and filter toolbar first, then streams the stats cards plus orders table behind an in-page `Suspense` fallback instead of blocking the full route on order queries and aggregate totals
+- `/admin/users` now also treats admin auth as a layout concern only; the page renders its header and search toolbar first, then streams the users table through an in-page `Suspense` fallback instead of blocking the full route on the user lookup query
 
 ## Authentication
 
