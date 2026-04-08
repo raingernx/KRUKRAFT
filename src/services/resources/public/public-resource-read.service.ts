@@ -1,7 +1,11 @@
 import {
   MARKETPLACE_DEFAULT_PAGE,
+  getRelatedResources,
   getMarketplaceResources,
-  getPublicResourcePageData,
+  getResourceBySlug,
+  getResourceDetailBodyContent,
+  getResourceDetailFooterContent,
+  getResourceDetailPurchaseMetaBySlug,
   getResourceMetadataBySlug,
   type MarketplaceFilters,
 } from "./marketplace-resource-read.service";
@@ -33,9 +37,13 @@ export {
   getDashboardOverviewRecommendations,
   getMarketplaceResources,
   getNewResourcesInCategories,
-  getPublicResourcePageData,
+  getRelatedResources,
   getRecommendedResources,
   getRecommendedResourcesByLevels,
+  getResourceBySlug,
+  getResourceDetailBodyContent,
+  getResourceDetailFooterContent,
+  getResourceDetailPurchaseMetaBySlug,
   getResourceMetadataBySlug,
   listPublicResources,
 };

@@ -18,11 +18,16 @@ import {
 import {
   MARKETPLACE_DEFAULT_PAGE,
   getMarketplaceResources,
-  getPublicResourcePageData,
+  getRelatedResources,
+  getResourceBySlug,
+  getResourceDetailBodyContent,
+  getResourceDetailFooterContent,
+  getResourceDetailPurchaseMetaBySlug,
   getResourceMetadataBySlug,
   type MarketplaceFilters,
 } from "@/services/resources";
 import { getResourceTrustSummary } from "@/services/reviews";
+import { getResourceReviews } from "@/services/reviews";
 import { DEFAULT_SORT } from "@/config/sortOptions";
 import { MARKETPLACE_LISTING_PAGE_SIZE } from "@/config/marketplace";
 
@@ -234,15 +239,39 @@ async function warmResourceDetails(
   targets: ResourceWarmTarget[],
   includeTrustSummaries: boolean,
 ) {
+  const resourceShells = await Promise.all(
+    targets.map((target) => getResourceBySlug(target.slug)),
+  );
+
+  const warmableTargets = resourceShells.flatMap((resource, index) => {
+    const target = targets[index];
+
+    if (!target || !resource || resource.status !== "PUBLISHED") {
+      return [];
+    }
+
+    return [{ target, resource }] as const;
+  });
+
   await Promise.all(
-    targets.flatMap((target) => [
-      getPublicResourcePageData(target.slug),
+    warmableTargets.flatMap(({ target, resource }) => [
       getResourceMetadataBySlug(target.slug),
+      getResourceDetailPurchaseMetaBySlug(target.slug),
+      getResourceDetailBodyContent(target.slug),
+      getResourceDetailFooterContent(target.slug),
+      getResourceReviews(resource.id, 5),
+      ...(resource.categoryId
+        ? [getRelatedResources(resource.categoryId, resource.id, 4)]
+        : []),
     ]),
   );
 
   const trustSummaryTargets = includeTrustSummaries
-    ? targets
+    ? warmableTargets
+        .map(({ target, resource }) => ({
+          slug: target.slug,
+          id: target.id ?? resource.id,
+        }))
         .filter((target): target is ResourceWarmTarget & { id: string } => typeof target.id === "string")
         .slice(0, PUBLIC_WARM_LIMITS.trustSummaries)
     : [];
@@ -273,13 +302,13 @@ async function resolveRecommendedListingCategorySlugs(
   }
 
   const pages = await Promise.all(
-    targets.map((target) => getPublicResourcePageData(target.slug)),
+    targets.map((target) => getResourceBySlug(target.slug)),
   );
 
   return Array.from(
     new Set(
       pages
-        .map((page) => page.resource?.category?.slug?.trim())
+        .map((resource) => resource?.category?.slug?.trim())
         .filter(
           (categorySlug): categorySlug is string =>
             typeof categorySlug === "string" && categorySlug.length > 0,

@@ -141,6 +141,7 @@ Public creator route note:
 - the creator published-resource grid now renders those cards through a server-led public card shell instead of the generic client `ResourceCard`, so the route avoids hydrating marketplace overlay/prefetch logic for static creator-card lists
 - creator warm coverage now seeds creator metadata, shell, and published-resource caches directly in addition to the compatibility full-profile cache, so the live route and warm path prime the same public cache surfaces
 - this keeps creator detail page and metadata requests on separate lighter cache keys while preserving the shared creator-public revalidation tags
+- resource-detail warm coverage now seeds the same cache surfaces the live `/resources/[slug]` route renders against: shell, metadata, purchase meta, body content, footer content, public review list, and related resources. The warm path no longer relies on the older compatibility `getPublicResourcePageData()` wrapper for hot detail slugs.
 
 Public category route note:
 - `/categories/[slug]` now starts the marketplace listing read once at the route entry and streams the hero count pill plus listing section through separate `Suspense` subtrees instead of awaiting the full category listing before any shell HTML can render
