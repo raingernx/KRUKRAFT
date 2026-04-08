@@ -250,6 +250,7 @@ This separation exists to avoid Prisma build-time warnings and DB dependency in 
 - `/resources` no longer reads session/cookies at the page level; auth-aware discover/listing state hydrates from a client-side viewer-state API that can start before NextAuth client-session readiness settles
 - `/resources` viewer-state is now split so owned badges hydrate ahead of recommendation/discover personalization
 - `/resources` owned-state hydration now reuses a short-lived browser cache keyed by authenticated viewer id, reducing repeat base-state fetches across quick marketplace navigations without sharing owned badges across users
+- the discover-home `Top picks` and `Trending now` rows now use a server-led public card row instead of the generic client `ResourceCard` / `ViewerAwareResourceCardRow`, so the default public `/resources` shell no longer hydrates marketplace overlay/prefetch card logic for those hot-path rows
 - `/resources` and `/resources/[slug]` now defer auth-viewer resolution to idle time instead of eagerly probing auth on first hydration; auth-aware CTA components warm that viewer fetch on hover/focus/click intent
 - `/resources` signed-in discover personalization now uses a short-lived private cache layer to reduce repeat recommendation work across navigations
 - `/resources` learning-profile reads inside signed-in viewer-state now also use Redis + single-flight, so repeat cross-instance discover hydration does not keep rebuilding the same purchase-derived profile

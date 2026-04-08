@@ -4,10 +4,9 @@ import { ArrowRight } from "lucide-react";
 import { isMissingTableError } from "@/lib/prismaErrors";
 import { LazyResourcesDiscoverPersonalizedSection } from "@/components/resources/LazyResourcesDiscoverPersonalizedSection";
 import { ResourcesViewerStateProvider } from "@/components/resources/ResourcesViewerStateProvider";
-import { ResourceCard } from "@/components/resources/ResourceCard";
 import type { ResourceCardData } from "@/components/resources/ResourceCard";
+import { PublicResourceCardRow } from "@/components/resources/PublicResourceCardRow";
 import { ViewerAwareResourceCard } from "@/components/resources/ViewerAwareResourceCard";
-import { ViewerAwareResourceCardRow } from "@/components/resources/ViewerAwareResourceCardRow";
 import { ViewerAwareResourceGrid } from "@/components/resources/ViewerAwareResourceGrid";
 import {
   SearchRecoveryPanel,
@@ -517,7 +516,7 @@ async function ResourcesDiscoverLeadDeferredSection({
             description="Ranked by recent sales momentum, recent revenue, rating quality, and review volume to surface the strongest current picks."
             viewAllHref={routes.marketplaceQuery("sort=trending&category=all")}
           />
-          <ViewerAwareResourceCardRow
+          <PublicResourceCardRow
             resources={trendingResources}
             eagerCardCount={eagerDiscoverCardCount}
             eagerPreviewUrls={[]}
@@ -636,26 +635,11 @@ function ResourcesDiscoverTopPicksSection({
         description="A tighter shortlist of strong marketplace picks when you want a faster place to start."
         viewAllHref={routes.marketplaceQuery("sort=recommended&category=all")}
       />
-      <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-        {resources.map((resource, index) => {
-          const previewUrl = getResourcePreviewUrl(resource);
-          const imageLoading =
-            index < eagerCardCount ||
-            (previewUrl !== null && eagerPreviewUrlSet.has(previewUrl))
-              ? "eager"
-              : undefined;
-
-          return (
-            <ResourceCard
-              key={resource.id}
-              resource={resource}
-              variant="marketplace"
-              linkPrefetchMode="viewport"
-              imageLoading={imageLoading}
-            />
-          );
-        })}
-      </div>
+      <PublicResourceCardRow
+        resources={resources}
+        eagerCardCount={eagerCardCount}
+        eagerPreviewUrls={Array.from(eagerPreviewUrlSet)}
+      />
     </section>
   );
 }
