@@ -136,10 +136,7 @@ const PUBLISHED_CREATOR_RESOURCE_WHERE = {
   deletedAt: null,
 };
 
-const CREATOR_PUBLIC_PROFILE_RESOURCE_SELECT = {
-  ...RESOURCE_CARD_SELECT,
-  description: true,
-} as const;
+const CREATOR_PUBLIC_PROFILE_RESOURCE_SELECT = RESOURCE_CARD_SELECT;
 
 const CREATOR_PUBLIC_SHELL_BASE_SELECT = {
   id: true,
@@ -157,15 +154,6 @@ const CREATOR_PUBLIC_SHELL_BASE_SELECT = {
       last30dDownloads: true,
       last7dRevenue: true,
     },
-  },
-} as const;
-
-const CREATOR_PUBLIC_RESOURCES_SELECT = {
-  resources: {
-    where: PUBLISHED_CREATOR_RESOURCE_WHERE,
-    select: CREATOR_PUBLIC_PROFILE_RESOURCE_SELECT,
-    orderBy: { createdAt: "desc" as const },
-    take: 12,
   },
 } as const;
 
@@ -285,24 +273,34 @@ export async function findCreatorPublicShellById(userId: string) {
 }
 
 export async function findCreatorPublicResourcesBySlug(slug: string) {
-  return prisma.user.findFirst({
+  return prisma.resource.findMany({
     where: {
-      creatorSlug: slug,
-      creatorEnabled: true,
-      creatorStatus: "ACTIVE",
+      ...PUBLISHED_CREATOR_RESOURCE_WHERE,
+      author: {
+        creatorSlug: slug,
+        creatorEnabled: true,
+        creatorStatus: "ACTIVE",
+      },
     },
-    select: CREATOR_PUBLIC_RESOURCES_SELECT,
+    select: CREATOR_PUBLIC_PROFILE_RESOURCE_SELECT,
+    orderBy: { createdAt: "desc" },
+    take: 12,
   });
 }
 
 export async function findCreatorPublicResourcesById(userId: string) {
-  return prisma.user.findFirst({
+  return prisma.resource.findMany({
     where: {
-      id: userId,
-      creatorEnabled: true,
-      creatorStatus: "ACTIVE",
+      ...PUBLISHED_CREATOR_RESOURCE_WHERE,
+      authorId: userId,
+      author: {
+        creatorEnabled: true,
+        creatorStatus: "ACTIVE",
+      },
     },
-    select: CREATOR_PUBLIC_RESOURCES_SELECT,
+    select: CREATOR_PUBLIC_PROFILE_RESOURCE_SELECT,
+    orderBy: { createdAt: "desc" },
+    take: 12,
   });
 }
 

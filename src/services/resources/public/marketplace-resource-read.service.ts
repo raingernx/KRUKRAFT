@@ -33,6 +33,7 @@ import { getEffectiveMarketplaceSort } from "@/config/sortOptions";
 import {
   countMarketplaceResources,
   findActivationRankedResources,
+  findCategoryBySlug,
   findCategoriesOrderedByName,
   findMarketplaceSearchResources,
   findPublicResourceDetailBodyContentBySlug,
@@ -692,6 +693,14 @@ const _marketplaceResourcesCacheMap = new Map<
   string,
   () => Promise<MarketplaceResourcesResult>
 >();
+type CategoryLandingPageResult = {
+  items: Array<Awaited<ReturnType<typeof findMarketplaceResourceCards>>[number] & { previewUrl: string | null }>;
+  total: number;
+};
+const _categoryLandingPageCacheMap = new Map<
+  string,
+  () => Promise<CategoryLandingPageResult>
+>();
 
 export async function getMarketplaceResources(filters: MarketplaceFilters) {
   const normalizedFilters = normalizeMarketplaceFilters(filters);
@@ -766,6 +775,71 @@ export async function getMarketplaceResources(filters: MarketplaceFilters) {
       },
     );
     _marketplaceResourcesCacheMap.set(cacheKey, cachedFn);
+  }
+
+  return cachedFn();
+}
+
+async function loadCategoryLandingPageData(categorySlug: string) {
+  const category = await traceServerStep(
+    "marketplace.findCategoryLandingTarget",
+    () => findCategoryBySlug(categorySlug),
+    { categorySlug },
+  );
+
+  if (!category) {
+    return { items: [], total: 0 };
+  }
+
+  const where = {
+    status: "PUBLISHED" as const,
+    deletedAt: null,
+    categoryId: category.id,
+  };
+
+  const [items, total] = await traceServerStep(
+    "marketplace.findCategoryLandingResources",
+    () =>
+      Promise.all([
+        findMarketplaceResourceCards({
+          where,
+          orderBy: buildOrderBy("newest") as Prisma.ResourceFindManyArgs["orderBy"],
+          skip: 0,
+          take: 12,
+        }),
+        countMarketplaceResources(where),
+      ]),
+    { categorySlug },
+  );
+
+  return {
+    items: items.map(withPreview),
+    total,
+  };
+}
+
+export async function getCategoryLandingPageData(categorySlug: string) {
+  recordCacheCall("getCategoryLandingPageData", { categorySlug });
+
+  let cachedFn = _categoryLandingPageCacheMap.get(categorySlug);
+  if (!cachedFn) {
+    cachedFn = unstable_cache(
+      async function _getCategoryLandingPageData() {
+        recordCacheMiss("getCategoryLandingPageData", { categorySlug });
+        logPerformanceEvent("cache_execute:getCategoryLandingPageData", {
+          categorySlug,
+        });
+        return runSingleFlight(`category-landing:${categorySlug}`, () =>
+          loadCategoryLandingPageData(categorySlug),
+        );
+      },
+      ["category-landing-page", categorySlug],
+      {
+        revalidate: CACHE_TTLS.homepageList,
+        tags: [CACHE_TAGS.discover],
+      },
+    );
+    _categoryLandingPageCacheMap.set(categorySlug, cachedFn);
   }
 
   return cachedFn();

@@ -183,10 +183,10 @@ Current perf-hardening baseline for the production UX initiative is:
   - current mitigation: warm against `ranking_variant=A` and match the later smoke-VU fanout with a burst of `5`
 - `creator_detail_smoke`
   - main class: creator public-profile tails can still appear on fresh instances when the route has to pay both metadata/profile work and the full creator page render under load
-  - current mitigation: Redis-backed shared cache plus a stable `unstable_cache` wrapper per slug, lighter cached metadata reads for `/creators/[slug]`, inlined creator-stat fields inside the main profile query, shell/resources cache separation with streamed published-resource rendering, server-led public resource cards for the static published-resource grid, and burst-aligned warm coverage against the hot creator slug
+  - current mitigation: Redis-backed shared cache plus a stable `unstable_cache` wrapper per slug, lighter cached metadata reads for `/creators/[slug]`, inlined creator-stat fields inside the main profile query, shell/resources cache separation with streamed published-resource rendering, server-led public resource cards for the static published-resource grid, direct `resource.findMany` reads for the published-resource section instead of a nested `user → resources` relation, and burst-aligned warm coverage against the hot creator slug
 - `category_listing_smoke`
   - main class: fresh-instance tail on category listing renders under the 5-VU smoke ramp and the route shell used to wait on the full listing payload before returning HTML
-  - current mitigation: explicit category warm target with `repeat: 2` and `burst: 5`, plus streamed category shell/listing separation with structural in-page fallbacks and a server-led public card shell for the static category grid
+  - current mitigation: explicit category warm target with `repeat: 2` and `burst: 5`, plus streamed category shell/listing separation with structural in-page fallbacks, a server-led public card shell for the static category grid, and a dedicated category landing reader that skips the generic marketplace sidebar/filter data path
 - `listing_recommended_smoke`
   - main class: the treatment/recommended listing route can still show cold-instance tail latency if warm only touches one worker, even when the control/newest path is already aligned
   - current mitigation: match the smoke route's 5-VU fanout with `repeat: 2` plus `burst: 5`

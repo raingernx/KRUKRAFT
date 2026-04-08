@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { routes } from "@/lib/routes";
-import { getMarketplaceResources } from "@/services/resources";
+import { getCategoryLandingPageData } from "@/services/resources";
 
 const CATEGORY_META: Record<
   string,
@@ -49,14 +49,7 @@ interface CategoryPageProps {
 
 async function getCategoryResources(slug: string) {
   try {
-    const data = await getMarketplaceResources({
-      category: slug,
-      page: 1,
-      pageSize: 12,
-      sort: "newest",
-    });
-
-    return { items: data.resources, total: data.total };
+    return await getCategoryLandingPageData(slug);
   } catch {
     return { items: [], total: 0 };
   }

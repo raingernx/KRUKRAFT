@@ -1336,15 +1336,17 @@ async function loadCreatorPublicResources(slug: string) {
     () =>
       runSingleFlight(cacheKey, async () => {
         logPerformanceEvent("cache_execute:getCreatorPublicResources");
-        const creator =
-          (await findCreatorPublicResourcesBySlug(slug)) ??
-          (await findCreatorPublicResourcesById(slug));
+        const resourcesBySlug = await findCreatorPublicResourcesBySlug(slug);
+        const resources =
+          resourcesBySlug.length > 0
+            ? resourcesBySlug
+            : await findCreatorPublicResourcesById(slug);
 
-        if (!creator) {
+        if (!resources) {
           return null;
         }
 
-        return creator.resources.map((resource) => ({
+        return resources.map((resource) => ({
           ...resource,
           previewUrl: resource.previewUrl ?? resource.previews[0]?.imageUrl ?? null,
         }));

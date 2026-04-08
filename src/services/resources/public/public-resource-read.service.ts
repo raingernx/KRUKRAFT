@@ -1,5 +1,6 @@
 import {
   MARKETPLACE_DEFAULT_PAGE,
+  getCategoryLandingPageData,
   getRelatedResources,
   getMarketplaceResources,
   getResourceBySlug,
@@ -34,6 +35,7 @@ export {
   createOwnedResource,
   getCachedNewResourcesInCategories,
   getCachedRecommendedResourcesByLevels,
+  getCategoryLandingPageData,
   getDashboardOverviewRecommendations,
   getMarketplaceResources,
   getNewResourcesInCategories,
