@@ -139,7 +139,7 @@ Current perf-hardening baseline for the production UX initiative is:
 - pricing and buy-button CTA components now reuse idle auth-viewer resolution and explicitly prime on user intent, which removes the remaining eager auth probe from those public CTAs without making first interaction feel dead
 - `PriceLabel` now resolves through theme-aware DS text tokens instead of hardcoded dark text, which removed the dark-detail purchase-rail price contrast regression without needing per-page overrides
 - category smoke route now matches its actual page intent and is warmed explicitly
-- the post-deploy warm script now warms the control-arm newest listing with `ranking_variant=A` plus a concurrent burst sized to the smoke route's 5-VU ceiling, explicitly warms the hot creator public profile route and category listing route with the same burst-aligned strategy, and sends `/resources` through a small concurrent warm burst instead of sequential-only repeats; creator public profiles also gained a Redis-backed cross-instance cache layer on top of `unstable_cache`, reducing post-deploy cold-tail variance on `creator_detail_smoke`
+- the post-deploy warm script now burst-aligns the hot `/resources`, listing-control, hot resource-detail, hot creator-detail, and category-detail routes to the same 5-VU class used by the smoke suite, and it still reheats the listing-control routes as the final warm step before k6; creator public profiles also gained a Redis-backed cross-instance cache layer on top of `unstable_cache`, reducing post-deploy cold-tail variance on `creator_detail_smoke`
 - `/creators/[slug]` metadata now uses its own lighter cached metadata reader instead of reusing the full creator public-profile payload, the full creator-profile cache now inlines creator momentum/status-badge fields from the main profile query rather than issuing a second `creatorStat` lookup inside the cached loader, and the internal creator warm path now seeds both metadata and full-profile caches for the hot creator identifiers
 - `/creators/[slug]` now also splits creator shell data from the published-resource grid on the server path: the route starts both cache-backed promises together, only blocks the page root on the lighter shell read, and streams the published-resource section behind a structural fallback while the creator warm path primes the new shell/resource caches too
 - the post-deploy public warm script now reheats `listing_recommended` and `listing_newest` as the final route-class warm step before k6, after creator/category pages have already been warmed, so the two control-arm listing routes that have shown the most frequent fresh-instance tail spikes finish as the freshest warmed surfaces
@@ -169,7 +169,10 @@ Current perf-hardening baseline for the production UX initiative is:
   - current mitigation: explicit category warm target with `repeat: 2` and `burst: 5`, plus streamed category shell/listing separation with structural in-page fallbacks
 - `listing_recommended_smoke`
   - main class: the treatment/recommended listing route can still show cold-instance tail latency if warm only touches one worker, even when the control/newest path is already aligned
-  - current mitigation: warm against `ranking_variant=B` and match the smoke route's 5-VU fanout with `repeat: 2` plus `burst: 5`
+  - current mitigation: match the smoke route's 5-VU fanout with `repeat: 2` plus `burst: 5`
+- `resource_detail_smoke`
+  - main class: a single hot detail warm hit can still leave one late fresh instance cold during the later 5-VU smoke ramp even when the detail shell/data caches themselves are aligned
+  - current mitigation: keep the detail shell cache narrow, separate metadata from the route-entry shell payload, and warm the hot detail route with `repeat: 2` plus `burst: 5`
 - post-deploy warm endpoint layering
   - when `PERFORMANCE_WARM_SECRET` is available, the warm script should call `/api/internal/performance/warm` before the public HTTP fanout pass
   - intent: prime service-level Redis/precomputed listing caches first, then let route-level warming handle page shells, streamed HTML bodies, and image-optimizer hints

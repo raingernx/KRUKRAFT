@@ -107,6 +107,12 @@ const routes: WarmRoute[] = [
   {
     label: "resource-detail-hot",
     path: `/resources/${encodeURIComponent(hotSlug)}`,
+    // Resource detail smoke also ramps to 5 VUs. A single warm hit can still
+    // leave one late fresh instance cold during k6 even when the shell/data
+    // caches are otherwise aligned, so burst-align the hot detail route too.
+    burst: 5,
+    repeat: 2,
+    required: true,
   },
   {
     label: "creator-detail-hot",

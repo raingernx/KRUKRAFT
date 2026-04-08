@@ -88,6 +88,7 @@ Used heavily in:
 - resource detail shell/body/footer/purchase meta
 - reviews / related content
 - platform settings
+- the post-deploy route warm pass now burst-aligns the hot resource-detail, creator-detail, category, and listing-control routes to the same 5-VU class that the production smoke suite later measures
 
 Database search note:
 - marketplace/admin text search still uses Postgres `ILIKE`/Prisma `contains`
