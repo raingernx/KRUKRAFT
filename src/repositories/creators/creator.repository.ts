@@ -151,12 +151,26 @@ const CREATOR_PUBLIC_PROFILE_BASE_SELECT = {
   creatorBanner: true,
   creatorStatus: true,
   creatorSocialLinks: true,
+  creatorStat: {
+    select: {
+      totalSales: true,
+      last30dDownloads: true,
+      last7dRevenue: true,
+    },
+  },
   resources: {
     where: PUBLISHED_CREATOR_RESOURCE_WHERE,
     select: CREATOR_PUBLIC_PROFILE_RESOURCE_SELECT,
     orderBy: { createdAt: "desc" as const },
     take: 12,
   },
+} as const;
+
+const CREATOR_PUBLIC_METADATA_SELECT = {
+  id: true,
+  name: true,
+  creatorDisplayName: true,
+  creatorBio: true,
 } as const;
 
 const CREATOR_PUBLIC_PROFILE_BY_SLUG_SELECT = {
@@ -242,6 +256,28 @@ export async function findCreatorPublicProfileById(userId: string) {
       creatorStatus: "ACTIVE",
     },
     select: CREATOR_PUBLIC_PROFILE_BY_ID_SELECT,
+  });
+}
+
+export async function findCreatorPublicMetadataBySlug(slug: string) {
+  return prisma.user.findFirst({
+    where: {
+      creatorSlug: slug,
+      creatorEnabled: true,
+      creatorStatus: "ACTIVE",
+    },
+    select: CREATOR_PUBLIC_METADATA_SELECT,
+  });
+}
+
+export async function findCreatorPublicMetadataById(userId: string) {
+  return prisma.user.findFirst({
+    where: {
+      id: userId,
+      creatorEnabled: true,
+      creatorStatus: "ACTIVE",
+    },
+    select: CREATOR_PUBLIC_METADATA_SELECT,
   });
 }
 

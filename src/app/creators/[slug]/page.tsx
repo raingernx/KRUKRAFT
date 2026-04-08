@@ -6,7 +6,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { MarketplaceNavbarSearch } from "@/components/marketplace/MarketplaceNavbarSearch";
 import { Avatar, PageContainer, PageContentWide } from "@/design-system";
 import { ResourceCard } from "@/components/resources/ResourceCard";
-import { getCreatorPublicProfile } from "@/services/creator";
+import { getCreatorPublicMetadata, getCreatorPublicProfile } from "@/services/creator";
 
 type CreatorProfilePageProps = {
   params: Promise<{ slug: string }>;
@@ -14,7 +14,7 @@ type CreatorProfilePageProps = {
 
 export async function generateMetadata({ params }: CreatorProfilePageProps) {
   const { slug } = await params;
-  const creator = await getCreatorPublicProfile(slug);
+  const creator = await getCreatorPublicMetadata(slug);
 
   if (!creator) {
     return {

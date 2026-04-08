@@ -130,6 +130,12 @@ Database search note:
     → selective usable fallbacks where they match final section intent
 ```
 
+Public creator route note:
+- `/creators/[slug]` stays public/request-cacheable at the page level and does not read `cookies()`, `headers()`, or server-session state in the route entry
+- creator page metadata now uses a lighter cached metadata reader instead of reusing the full public-profile payload
+- the full creator public-profile cache now reads the creator momentum/status-badge fields from the main profile query itself instead of issuing a second `creatorStat` repository call inside the cached loader
+- this keeps creator detail page and metadata requests on separate lighter cache keys while preserving the shared creator-public revalidation tags
+
 Root rendering note:
 - the root app layout uses build-safe public platform config only and does not read the authenticated server session
 - the root layout now injects a pre-hydration theme bootstrap script that sets `data-theme` / `color-scheme` before React hydration, preventing the old white-first flash on returning dark sessions

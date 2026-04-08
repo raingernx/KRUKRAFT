@@ -24,6 +24,8 @@ import {
   findCreatorDownloadSeries,
   findCreatorEarningsTotals,
   findCreatorProfileBySlug,
+  findCreatorPublicMetadataById,
+  findCreatorPublicMetadataBySlug,
   findCreatorPublicProfileById,
   findCreatorProfileByUserId,
   findCreatorRecentDownloads,
@@ -157,9 +159,16 @@ export class CreatorServiceError extends Error {
 type CreatorPublicProfileResult = Awaited<
   ReturnType<typeof loadCreatorPublicProfile>
 >;
+type CreatorPublicMetadataResult = Awaited<
+  ReturnType<typeof loadCreatorPublicMetadata>
+>;
 const _creatorPublicProfileCacheMap = new Map<
   string,
   () => Promise<CreatorPublicProfileResult>
+>();
+const _creatorPublicMetadataCacheMap = new Map<
+  string,
+  () => Promise<CreatorPublicMetadataResult>
 >();
 
 export type CreatorAnalyticsRange = "7d" | "30d" | "90d" | "all";
@@ -1228,7 +1237,7 @@ async function loadCreatorPublicProfile(slug: string) {
           return null;
         }
 
-        const creatorStat = await findCreatorStatByCreatorId(creator.id);
+        const creatorStat = creator.creatorStat;
         const statusBadge =
           creatorStat &&
           (creatorStat.last7dRevenue > 0 ||
@@ -1282,6 +1291,34 @@ async function loadCreatorPublicProfile(slug: string) {
   );
 }
 
+async function loadCreatorPublicMetadata(slug: string) {
+  const cacheKey = CACHE_KEYS.creatorPublicMetadata(slug);
+
+  return rememberJson(
+    cacheKey,
+    CACHE_TTLS.publicPage,
+    () =>
+      runSingleFlight(cacheKey, async () => {
+        const creator =
+          (await findCreatorPublicMetadataBySlug(slug)) ??
+          (await findCreatorPublicMetadataById(slug));
+
+        if (!creator) {
+          return null;
+        }
+
+        return {
+          displayName: creator.creatorDisplayName ?? creator.name ?? "Creator",
+          bio: creator.creatorBio,
+        };
+      }),
+    {
+      metricName: "creator.publicMetadata",
+      details: { identifier: slug },
+    },
+  );
+}
+
 export async function getCreatorPublicProfile(slug: string) {
   let cachedFn = _creatorPublicProfileCacheMap.get(slug);
   if (!cachedFn) {
@@ -1296,6 +1333,25 @@ export async function getCreatorPublicProfile(slug: string) {
       },
     );
     _creatorPublicProfileCacheMap.set(slug, cachedFn);
+  }
+
+  return cachedFn();
+}
+
+export async function getCreatorPublicMetadata(slug: string) {
+  let cachedFn = _creatorPublicMetadataCacheMap.get(slug);
+  if (!cachedFn) {
+    cachedFn = unstable_cache(
+      async function _getCreatorPublicMetadata() {
+        return loadCreatorPublicMetadata(slug);
+      },
+      ["creator-public-metadata", slug],
+      {
+        revalidate: CACHE_TTLS.publicPage,
+        tags: [CACHE_TAGS.creatorPublic, getCreatorPublicCacheTag(slug)],
+      },
+    );
+    _creatorPublicMetadataCacheMap.set(slug, cachedFn);
   }
 
   return cachedFn();
