@@ -1,7 +1,12 @@
 import { findResourceById } from "@/repositories/resources/resource.repository";
 import { deleteMarketplaceRecommendedListingRedisKeys } from "@/lib/cache";
 import { logPerformanceEvent, withPerformanceTiming } from "@/lib/performance/observability";
-import { getCreatorPublicMetadata, getCreatorPublicProfile } from "@/services/creator";
+import {
+  getCreatorPublicMetadata,
+  getCreatorPublicProfile,
+  getCreatorPublicResources,
+  getCreatorPublicShell,
+} from "@/services/creator";
 import {
   getDiscoverCategories,
   getDiscoverData,
@@ -251,6 +256,8 @@ async function warmCreatorProfiles(creatorIdentifiers: string[]) {
   await Promise.all(
     creatorIdentifiers.flatMap((identifier) => [
       getCreatorPublicMetadata(identifier),
+      getCreatorPublicShell(identifier),
+      getCreatorPublicResources(identifier),
       getCreatorPublicProfile(identifier),
     ]),
   );

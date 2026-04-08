@@ -143,29 +143,35 @@ export function CreatorPublicProfileLoadingShell() {
               ))}
             </div>
 
-            <section className="mt-8 rounded-[28px] border border-border bg-card p-6 shadow-card">
-              <div className="space-y-2">
-                <LoadingSkeleton className="h-8 w-56 rounded-2xl" />
-                <LoadingSkeleton className="h-4 w-64" />
-              </div>
-              <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                {Array.from({ length: 6 }).map((_, index) => (
-                  <div key={index} className="overflow-hidden rounded-xl border border-border-subtle bg-card">
-                    <LoadingSkeleton className="aspect-[4/3] w-full rounded-none" />
-                    <div className="space-y-2 p-4">
-                      <LoadingSkeleton className="h-4 w-4/5" />
-                      <LoadingSkeleton className="h-4 w-2/3" />
-                      <LoadingSkeleton className="h-3 w-1/2" />
-                      <LoadingSkeleton className="h-5 w-16" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
+            <CreatorPublicResourcesSectionFallback />
           </PageContentWide>
         </PageContainer>
       </main>
     </div>
+  );
+}
+
+export function CreatorPublicResourcesSectionFallback() {
+  return (
+    <section className="mt-8 rounded-[28px] border border-border bg-card p-6 shadow-card">
+      <div className="space-y-2">
+        <LoadingSkeleton className="h-8 w-56 rounded-2xl" />
+        <LoadingSkeleton className="h-4 w-64" />
+      </div>
+      <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div key={index} className="overflow-hidden rounded-xl border border-border-subtle bg-card">
+            <LoadingSkeleton className="aspect-[4/3] w-full rounded-none" />
+            <div className="space-y-2 p-4">
+              <LoadingSkeleton className="h-4 w-4/5" />
+              <LoadingSkeleton className="h-4 w-2/3" />
+              <LoadingSkeleton className="h-3 w-1/2" />
+              <LoadingSkeleton className="h-5 w-16" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 

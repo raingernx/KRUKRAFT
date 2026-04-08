@@ -79,6 +79,10 @@ export const CACHE_KEYS = {
   creatorStats: (creatorId: string) => `creator_stats:${creatorId}`,
   creatorPublicMetadata: (identifier: string) =>
     `creator_public_metadata:${encodeURIComponent(identifier)}`,
+  creatorPublicShell: (identifier: string) =>
+    `creator_public_shell:${encodeURIComponent(identifier)}`,
+  creatorPublicResources: (identifier: string) =>
+    `creator_public_resources:${encodeURIComponent(identifier)}`,
   creatorPublicProfile: (identifier: string) =>
     `creator_public_profile:${encodeURIComponent(identifier)}`,
   behaviorProfile: (userId: string) => `behavior_profile:${userId}`,

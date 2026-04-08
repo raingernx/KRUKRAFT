@@ -141,7 +141,7 @@ const CREATOR_PUBLIC_PROFILE_RESOURCE_SELECT = {
   description: true,
 } as const;
 
-const CREATOR_PUBLIC_PROFILE_BASE_SELECT = {
+const CREATOR_PUBLIC_SHELL_BASE_SELECT = {
   id: true,
   name: true,
   image: true,
@@ -158,6 +158,9 @@ const CREATOR_PUBLIC_PROFILE_BASE_SELECT = {
       last7dRevenue: true,
     },
   },
+} as const;
+
+const CREATOR_PUBLIC_RESOURCES_SELECT = {
   resources: {
     where: PUBLISHED_CREATOR_RESOURCE_WHERE,
     select: CREATOR_PUBLIC_PROFILE_RESOURCE_SELECT,
@@ -174,7 +177,7 @@ const CREATOR_PUBLIC_METADATA_SELECT = {
 } as const;
 
 const CREATOR_PUBLIC_PROFILE_BY_SLUG_SELECT = {
-  ...CREATOR_PUBLIC_PROFILE_BASE_SELECT,
+  ...CREATOR_PUBLIC_SHELL_BASE_SELECT,
   _count: {
     select: {
       resources: {
@@ -185,7 +188,7 @@ const CREATOR_PUBLIC_PROFILE_BY_SLUG_SELECT = {
 } as const;
 
 const CREATOR_PUBLIC_PROFILE_BY_ID_SELECT = {
-  ...CREATOR_PUBLIC_PROFILE_BASE_SELECT,
+  ...CREATOR_PUBLIC_SHELL_BASE_SELECT,
   _count: {
     select: {
       resources: true,
@@ -256,6 +259,50 @@ export async function findCreatorPublicProfileById(userId: string) {
       creatorStatus: "ACTIVE",
     },
     select: CREATOR_PUBLIC_PROFILE_BY_ID_SELECT,
+  });
+}
+
+export async function findCreatorPublicShellBySlug(slug: string) {
+  return prisma.user.findFirst({
+    where: {
+      creatorSlug: slug,
+      creatorEnabled: true,
+      creatorStatus: "ACTIVE",
+    },
+    select: CREATOR_PUBLIC_PROFILE_BY_SLUG_SELECT,
+  });
+}
+
+export async function findCreatorPublicShellById(userId: string) {
+  return prisma.user.findFirst({
+    where: {
+      id: userId,
+      creatorEnabled: true,
+      creatorStatus: "ACTIVE",
+    },
+    select: CREATOR_PUBLIC_PROFILE_BY_ID_SELECT,
+  });
+}
+
+export async function findCreatorPublicResourcesBySlug(slug: string) {
+  return prisma.user.findFirst({
+    where: {
+      creatorSlug: slug,
+      creatorEnabled: true,
+      creatorStatus: "ACTIVE",
+    },
+    select: CREATOR_PUBLIC_RESOURCES_SELECT,
+  });
+}
+
+export async function findCreatorPublicResourcesById(userId: string) {
+  return prisma.user.findFirst({
+    where: {
+      id: userId,
+      creatorEnabled: true,
+      creatorStatus: "ACTIVE",
+    },
+    select: CREATOR_PUBLIC_RESOURCES_SELECT,
   });
 }
 

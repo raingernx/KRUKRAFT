@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -6,7 +7,12 @@ import { Navbar } from "@/components/layout/Navbar";
 import { MarketplaceNavbarSearch } from "@/components/marketplace/MarketplaceNavbarSearch";
 import { Avatar, PageContainer, PageContentWide } from "@/design-system";
 import { ResourceCard } from "@/components/resources/ResourceCard";
-import { getCreatorPublicMetadata, getCreatorPublicProfile } from "@/services/creator";
+import { CreatorPublicResourcesSectionFallback } from "@/components/skeletons/PublicRouteSkeletons";
+import {
+  getCreatorPublicMetadata,
+  getCreatorPublicResources,
+  getCreatorPublicShell,
+} from "@/services/creator";
 
 type CreatorProfilePageProps = {
   params: Promise<{ slug: string }>;
@@ -32,7 +38,9 @@ export default async function CreatorPublicProfilePage({
   params,
 }: CreatorProfilePageProps) {
   const { slug } = await params;
-  const creator = await getCreatorPublicProfile(slug);
+  const creatorPromise = getCreatorPublicShell(slug);
+  const creatorResourcesPromise = getCreatorPublicResources(slug);
+  const creator = await creatorPromise;
 
   if (!creator) {
     notFound();
@@ -187,37 +195,51 @@ export default async function CreatorPublicProfilePage({
           </div>
         </div>
 
-        <section className="mt-8 rounded-[28px] border border-border bg-card p-6 shadow-card">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-display text-2xl font-semibold text-foreground">
-                Published resources
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Browse the latest resources from this creator.
-              </p>
-            </div>
-          </div>
-
-          {creator.resources.length === 0 ? (
-            <div className="py-16 text-center">
-              <p className="text-sm text-muted-foreground">No published resources yet.</p>
-            </div>
-          ) : (
-            <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {creator.resources.map((resource) => (
-                <ResourceCard
-                  key={resource.id}
-                  resource={resource}
-                  variant="marketplace"
-                />
-              ))}
-            </div>
-          )}
-        </section>
+        <Suspense fallback={<CreatorPublicResourcesSectionFallback />}>
+          <CreatorResourcesSection creatorResourcesPromise={creatorResourcesPromise} />
+        </Suspense>
           </PageContentWide>
         </PageContainer>
       </main>
     </div>
+  );
+}
+
+async function CreatorResourcesSection({
+  creatorResourcesPromise,
+}: {
+  creatorResourcesPromise: ReturnType<typeof getCreatorPublicResources>;
+}) {
+  const resources = (await creatorResourcesPromise) ?? [];
+
+  return (
+    <section className="mt-8 rounded-[28px] border border-border bg-card p-6 shadow-card">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-display text-2xl font-semibold text-foreground">
+            Published resources
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Browse the latest resources from this creator.
+          </p>
+        </div>
+      </div>
+
+      {resources.length === 0 ? (
+        <div className="py-16 text-center">
+          <p className="text-sm text-muted-foreground">No published resources yet.</p>
+        </div>
+      ) : (
+        <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {resources.map((resource) => (
+            <ResourceCard
+              key={resource.id}
+              resource={resource}
+              variant="marketplace"
+            />
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
