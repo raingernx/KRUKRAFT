@@ -478,6 +478,42 @@ export function DashboardLibrarySkeleton() {
   return runtimeSkeleton(<DashboardLibraryPreview />, "dashboard-library");
 }
 
+export function DashboardLibraryResultsSkeleton() {
+  return (
+    <div data-loading-scope="dashboard-library-results" className="space-y-5">
+      <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+        <div className="space-y-2.5">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <LoadingSkeleton className="h-4 w-24" />
+            <LoadingSkeleton className="h-4 w-24" />
+            <LoadingSkeleton className="h-4 w-28" />
+          </div>
+        </div>
+        <div className="rounded-xl border border-border bg-card px-5 py-3.5">
+          <LoadingSkeleton className="h-4 w-16" />
+          <LoadingSkeleton className="mt-3 h-5 w-40" />
+          <LoadingSkeleton className="mt-2 h-3 w-24" />
+          <LoadingSkeleton className="mt-4 h-10 w-36 rounded-xl" />
+        </div>
+      </section>
+
+      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4">
+        <LoadingSkeleton className="h-4 w-32" />
+        <LoadingSkeleton className="mt-2 h-3 w-56" />
+        <LoadingSkeleton className="mt-2 h-9 w-24 rounded-lg" />
+      </div>
+
+      <LibraryToolsPreview />
+
+      <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <LibraryGridCardPreview key={index} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function DashboardDownloadsBonesPreview() {
   return previewSkeleton(DASHBOARD_DOWNLOADS_NAME, <DashboardDownloadsPreview />);
 }
@@ -486,12 +522,49 @@ export function DashboardDownloadsSkeleton() {
   return runtimeSkeleton(<DashboardDownloadsPreview />, "dashboard-downloads");
 }
 
+export function DashboardDownloadsResultsSkeleton() {
+  return runtimeSkeleton(
+    <div className="space-y-4">
+      <div className="flex justify-start">
+        <LoadingSkeleton className="h-9 w-28 rounded-full" />
+      </div>
+      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
+        <TableHeaderPreview widths={["2fr", "1fr", "140px", "100px", "100px"]} />
+        <DownloadsTableRowsPreview />
+      </div>
+    </div>,
+    "dashboard-downloads-results",
+  );
+}
+
 export function DashboardPurchasesBonesPreview() {
   return previewSkeleton(DASHBOARD_PURCHASES_NAME, <DashboardPurchasesPreview />);
 }
 
 export function DashboardPurchasesSkeleton() {
   return runtimeSkeleton(<DashboardPurchasesPreview />, "dashboard-purchases");
+}
+
+export function DashboardPurchasesResultsSkeleton() {
+  return runtimeSkeleton(
+    <div className="space-y-4">
+      <div className="hidden justify-end sm:flex">
+        <div className="space-y-2">
+          <LoadingSkeleton className="ml-auto h-3 w-16" />
+          <LoadingSkeleton className="ml-auto h-7 w-24" />
+        </div>
+      </div>
+      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
+        <TableHeaderPreview widths={["2fr", "1fr", "120px", "120px", "100px"]} />
+        <PurchasesTableRowsPreview />
+        <div className="flex items-center justify-between border-t border-border bg-muted/70 px-6 py-3">
+          <LoadingSkeleton className="h-3 w-20" />
+          <LoadingSkeleton className="h-4 w-24" />
+        </div>
+      </div>
+    </div>,
+    "dashboard-purchases-results",
+  );
 }
 
 export function DashboardSubscriptionBonesPreview() {

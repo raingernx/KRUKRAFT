@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { formatDate } from "@/lib/format";
@@ -15,7 +16,7 @@ import {
   DataTableRow,
   TableEmptyState,
 } from "@/components/admin/table";
-import { requireAdminSession } from "@/lib/auth/require-admin-session";
+import { AdminReviewsResultsSkeleton } from "@/components/skeletons/AdminCoreRouteSkeletons";
 
 export const metadata = {
   title: "Reviews – Admin",
@@ -23,12 +24,24 @@ export const metadata = {
 };
 
 export default async function AdminReviewsPage() {
-  const session = await requireAdminSession(routes.adminReviews);
+  return (
+    <div className="min-w-0 space-y-8">
+      <AdminPageHeader
+        title="Reviews"
+        description="Review marketplace feedback and hide public reviews when moderation is needed."
+      />
+      <Suspense fallback={<AdminReviewsResultsSkeleton />}>
+        <AdminReviewsResults />
+      </Suspense>
+    </div>
+  );
+}
 
+async function AdminReviewsResults() {
   let reviews;
 
   try {
-    reviews = await getAdminReviews(session.user.id);
+    reviews = await getAdminReviews();
   } catch (error) {
     if (error instanceof ReviewServiceError) {
       if (error.status === 401) {
@@ -44,94 +57,87 @@ export default async function AdminReviewsPage() {
   }
 
   return (
-    <div className="min-w-0 space-y-8">
-      <AdminPageHeader
-        title="Reviews"
-        description="Review marketplace feedback and hide public reviews when moderation is needed."
-      />
-
-      <DataTable minWidth="min-w-[900px]">
-        <DataTableHeader>
-          <tr>
-            <DataTableHeadCell className="px-2">
-                  Resource
-            </DataTableHeadCell>
-            <DataTableHeadCell className="px-3">
-                  User
-            </DataTableHeadCell>
-            <DataTableHeadCell className="px-3">
-                  Rating
-            </DataTableHeadCell>
-            <DataTableHeadCell className="px-3">
-                  Review
-            </DataTableHeadCell>
-            <DataTableHeadCell className="px-3">
-                  Created
-            </DataTableHeadCell>
-            <DataTableHeadCell className="px-3">
-                  Status
-            </DataTableHeadCell>
-            <DataTableHeadCell className="px-3" align="right">
-                  Actions
-            </DataTableHeadCell>
-          </tr>
-        </DataTableHeader>
-        <DataTableBody>
-          {reviews.length === 0 ? (
-            <TableEmptyState message="No reviews yet" />
-          ) : (
-            reviews.map((review) => (
-              <DataTableRow key={review.id}>
-                <DataTableCell className="px-2 font-medium text-foreground">
-                  <div className="flex flex-col gap-1">
-                    <Link
-                      href={routes.resource(review.resource.slug)}
-                      className="transition hover:text-primary-700"
-                    >
-                      {review.resource.title}
-                    </Link>
-                    <span className="text-caption font-normal text-muted-foreground">
-                      {review.resource.slug}
-                    </span>
-                  </div>
-                </DataTableCell>
-                <DataTableCell className="px-3 text-muted-foreground">
-                  <div className="flex flex-col">
-                    <span>{review.user.name ?? "Anonymous"}</span>
-                    <span className="text-caption text-muted-foreground">
-                      {review.user.email}
-                    </span>
-                  </div>
-                </DataTableCell>
-                <DataTableCell className="px-3 tabular-nums text-muted-foreground">
-                  {review.rating}/5
-                </DataTableCell>
-                <DataTableCell className="px-3 text-muted-foreground">
-                  <p className="line-clamp-2 max-w-md">
-                    {review.body ?? "—"}
-                  </p>
-                </DataTableCell>
-                <DataTableCell className="px-3 text-muted-foreground">
-                  {formatDate(review.createdAt)}
-                </DataTableCell>
-                <DataTableCell className="px-3 text-muted-foreground">
-                  <StatusBadge
-                    status={review.isVisible ? "VISIBLE" : "HIDDEN"}
-                    label={review.isVisible ? "Visible" : "Hidden"}
-                    tone={review.isVisible ? "success" : "muted"}
-                  />
-                </DataTableCell>
-                <DataTableCell className="px-3" align="right">
-                  <ReviewVisibilityAction
-                    reviewId={review.id}
-                    isVisible={review.isVisible}
-                  />
-                </DataTableCell>
-              </DataTableRow>
-            ))
-          )}
-        </DataTableBody>
-      </DataTable>
-    </div>
+    <DataTable minWidth="min-w-[900px]">
+      <DataTableHeader>
+        <tr>
+          <DataTableHeadCell className="px-2">
+                Resource
+          </DataTableHeadCell>
+          <DataTableHeadCell className="px-3">
+                User
+          </DataTableHeadCell>
+          <DataTableHeadCell className="px-3">
+                Rating
+          </DataTableHeadCell>
+          <DataTableHeadCell className="px-3">
+                Review
+          </DataTableHeadCell>
+          <DataTableHeadCell className="px-3">
+                Created
+          </DataTableHeadCell>
+          <DataTableHeadCell className="px-3">
+                Status
+          </DataTableHeadCell>
+          <DataTableHeadCell className="px-3" align="right">
+                Actions
+          </DataTableHeadCell>
+        </tr>
+      </DataTableHeader>
+      <DataTableBody>
+        {reviews.length === 0 ? (
+          <TableEmptyState message="No reviews yet" />
+        ) : (
+          reviews.map((review) => (
+            <DataTableRow key={review.id}>
+              <DataTableCell className="px-2 font-medium text-foreground">
+                <div className="flex flex-col gap-1">
+                  <Link
+                    href={routes.resource(review.resource.slug)}
+                    className="transition hover:text-primary-700"
+                  >
+                    {review.resource.title}
+                  </Link>
+                  <span className="text-caption font-normal text-muted-foreground">
+                    {review.resource.slug}
+                  </span>
+                </div>
+              </DataTableCell>
+              <DataTableCell className="px-3 text-muted-foreground">
+                <div className="flex flex-col">
+                  <span>{review.user.name ?? "Anonymous"}</span>
+                  <span className="text-caption text-muted-foreground">
+                    {review.user.email}
+                  </span>
+                </div>
+              </DataTableCell>
+              <DataTableCell className="px-3 tabular-nums text-muted-foreground">
+                {review.rating}/5
+              </DataTableCell>
+              <DataTableCell className="px-3 text-muted-foreground">
+                <p className="line-clamp-2 max-w-md">
+                  {review.body ?? "—"}
+                </p>
+              </DataTableCell>
+              <DataTableCell className="px-3 text-muted-foreground">
+                {formatDate(review.createdAt)}
+              </DataTableCell>
+              <DataTableCell className="px-3 text-muted-foreground">
+                <StatusBadge
+                  status={review.isVisible ? "VISIBLE" : "HIDDEN"}
+                  label={review.isVisible ? "Visible" : "Hidden"}
+                  tone={review.isVisible ? "success" : "muted"}
+                />
+              </DataTableCell>
+              <DataTableCell className="px-3" align="right">
+                <ReviewVisibilityAction
+                  reviewId={review.id}
+                  isVisible={review.isVisible}
+                />
+              </DataTableCell>
+            </DataTableRow>
+          ))
+        )}
+      </DataTableBody>
+    </DataTable>
   );
 }

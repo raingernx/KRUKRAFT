@@ -228,11 +228,7 @@ export function resolvePlatformConfig(
     logoFullUrl ||
     legacyLogoUrl ||
     PLATFORM_DEFAULTS.logoEmailUrl;
-  const faviconUrl =
-    storedFaviconUrl ||
-    (looksLikeFaviconAsset(logoIconUrl) ? logoIconUrl : "") ||
-    (looksLikeFaviconAsset(legacyLogoUrl) ? legacyLogoUrl : "") ||
-    PLATFORM_DEFAULTS.faviconUrl;
+  const faviconUrl = storedFaviconUrl || PLATFORM_DEFAULTS.faviconUrl;
 
   return {
     platformName,

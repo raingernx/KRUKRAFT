@@ -1,5 +1,5 @@
-import { AdminCreatorsPageSkeleton } from "@/components/skeletons/PublicRouteSkeletons";
+import { AdminCreatorsLoadingShell } from "@/components/skeletons/AdminCoreRouteSkeletons";
 
 export default function Loading() {
-  return <AdminCreatorsPageSkeleton />;
+  return <AdminCreatorsLoadingShell />;
 }

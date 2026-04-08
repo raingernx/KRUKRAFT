@@ -1,10 +1,11 @@
+import { Suspense } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { PageContainer, PageContentWide } from "@/design-system";
 import Link from "next/link";
 import { getAdminTagsPageData } from "@/services/admin";
 import { routes } from "@/lib/routes";
-import { requireAdminSession } from "@/lib/auth/require-admin-session";
 import { TagsClient, type TagRow } from "./TagsClient";
+import { AdminTagsResultsSkeleton } from "@/components/skeletons/AdminCoreRouteSkeletons";
 
 export const metadata = {
   title: "Tag Management – Admin",
@@ -20,10 +21,7 @@ async function getTags(): Promise<TagRow[]> {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default async function AdminTagsPage() {
-  await requireAdminSession(routes.adminTags);
-
-  // ── 2. Data ──────────────────────────────────────────────────────────────────
-  const tags = await getTags();
+  const tagsPromise = getTags();
 
   // ── 3. Render ────────────────────────────────────────────────────────────────
   return (
@@ -56,11 +54,22 @@ export default async function AdminTagsPage() {
             </Link>
           </div>
 
-          {/* ── Interactive section (client component) ── */}
-          <TagsClient tags={tags} />
+          <Suspense fallback={<AdminTagsResultsSkeleton />}>
+            <AdminTagsResults tagsPromise={tagsPromise} />
+          </Suspense>
           </PageContentWide>
         </PageContainer>
       </main>
     </div>
   );
+}
+
+async function AdminTagsResults({
+  tagsPromise,
+}: {
+  tagsPromise: Promise<TagRow[]>;
+}) {
+  const tags = await tagsPromise;
+
+  return <TagsClient tags={tags} />;
 }

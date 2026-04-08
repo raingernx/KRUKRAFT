@@ -281,8 +281,7 @@ export async function updateReview(
   });
 }
 
-export async function getAdminReviews(adminUserId: string) {
-  await requireAdminReviewer(adminUserId);
+export async function getAdminReviews() {
   return findAdminReviews();
 }
 

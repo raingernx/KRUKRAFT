@@ -259,3 +259,49 @@ export function AdminSettingsPageSkeletonBonesPreview() {
 export function AdminSettingsPageSkeleton() {
   return <ManualAdminSettingsPageSkeleton />;
 }
+
+export function AdminSettingsFormSkeleton() {
+  return (
+    <div className="space-y-0 rounded-2xl border border-border bg-card px-6 py-6 shadow-card sm:px-7 sm:py-7">
+      <AdminSectionSkeleton rows={6} />
+      <section className="space-y-5 border-b border-border pb-6">
+        <div className="space-y-2">
+          <LoadingSkeleton className="h-5 w-36 rounded-md" />
+          <LoadingSkeleton className="h-4 w-80 rounded-md" />
+        </div>
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <LoadingSkeleton
+              key={index}
+              className="h-48 rounded-xl border border-border bg-muted"
+            />
+          ))}
+        </div>
+      </section>
+      <section className="space-y-5 border-b border-border pb-6">
+        <div className="space-y-2">
+          <LoadingSkeleton className="h-5 w-32 rounded-md" />
+          <LoadingSkeleton className="h-4 w-72 rounded-md" />
+        </div>
+        <div className="divide-y divide-border">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0"
+            >
+              <div className="space-y-2">
+                <LoadingSkeleton className="h-4 w-44 rounded-md" />
+                <LoadingSkeleton className="h-3.5 w-72 rounded-md" />
+              </div>
+              <LoadingSkeleton className="h-6 w-[46px] rounded-full" />
+            </div>
+          ))}
+        </div>
+      </section>
+      <AdminSectionSkeleton rows={2} />
+      <AdminSectionSkeleton rows={3} columns={1} />
+      <AdminSectionSkeleton rows={3} />
+      <AdminSectionSkeleton rows={5} columns={1} />
+    </div>
+  );
+}

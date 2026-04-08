@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { DollarSign, Receipt, ShoppingBag, Wallet } from "lucide-react";
 import { requireSession } from "@/lib/auth/require-session";
@@ -5,6 +6,7 @@ import { formatDate, formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";
 import { getCreatorSales } from "@/services/creator";
 import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
+import { CreatorDashboardSalesResultsSkeleton } from "@/components/skeletons/CreatorDashboardRouteSkeletons";
 
 export const metadata = {
   title: "Creator Sales",
@@ -15,8 +17,35 @@ export const dynamic = "force-dynamic";
 export default async function CreatorSalesPage() {
   const { userId } = await requireSession(routes.creatorSales);
 
-  const salesData = await getCreatorSales(userId);
+  const salesDataPromise = getCreatorSales(userId);
 
+  return (
+    <div data-route-shell-ready="dashboard-creator-sales" className="space-y-8">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-500">
+          Creator
+        </p>
+        <h1 className="mt-2 font-display text-h2 font-semibold tracking-tight text-foreground">
+          Sales
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Recent transactions and the gross revenue your resources have generated.
+        </p>
+      </div>
+
+      <Suspense fallback={<CreatorDashboardSalesResultsSkeleton />}>
+        <CreatorSalesResults salesDataPromise={salesDataPromise} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function CreatorSalesResults({
+  salesDataPromise,
+}: {
+  salesDataPromise: ReturnType<typeof getCreatorSales>;
+}) {
+  const salesData = await salesDataPromise;
   const stats = [
     {
       label: "Gross revenue",
@@ -45,102 +74,90 @@ export default async function CreatorSalesPage() {
   ];
 
   return (
-    <div data-route-shell-ready="dashboard-creator-sales" className="space-y-8">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-500">
-            Creator
-          </p>
-          <h1 className="mt-2 font-display text-h2 font-semibold tracking-tight text-foreground">
-            Sales
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Recent transactions and the gross revenue your resources have generated.
-          </p>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={stat.label}
-                className="rounded-2xl border border-border bg-card p-5 shadow-card"
+    <div className="space-y-8">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {stats.map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <div
+              key={stat.label}
+              className="rounded-2xl border border-border bg-card p-5 shadow-card"
+            >
+              <span
+                className={`flex h-10 w-10 items-center justify-center rounded-xl ${stat.colorClass}`}
               >
-                <span
-                  className={`flex h-10 w-10 items-center justify-center rounded-xl ${stat.colorClass}`}
-                >
-                  <Icon className="h-4 w-4" />
-                </span>
-                <p className="mt-4 text-2xl font-bold tracking-tight text-foreground">
-                  {stat.value}
-                </p>
-                <p className="mt-1 text-sm font-medium text-muted-foreground">{stat.label}</p>
-              </div>
-            );
-          })}
+                <Icon className="h-4 w-4" />
+              </span>
+              <p className="mt-4 text-2xl font-bold tracking-tight text-foreground">
+                {stat.value}
+              </p>
+              <p className="mt-1 text-sm font-medium text-muted-foreground">{stat.label}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
+        <div className="border-b border-border/70 px-6 py-4">
+          <h2 className="text-sm font-semibold text-foreground">Recent sales</h2>
         </div>
 
-        <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
-          <div className="border-b border-border/70 px-6 py-4">
-            <h2 className="text-sm font-semibold text-foreground">Recent sales</h2>
-          </div>
-
-          {salesData.sales.length === 0 ? (
-            <p className="px-6 py-14 text-sm text-muted-foreground">No sales recorded yet.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border/70 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    <th className="px-6 py-3">Resource</th>
-                    <th className="px-4 py-3">Buyer</th>
-                    <th className="px-4 py-3 text-right">Gross</th>
-                    <th className="px-4 py-3 text-right">Your share</th>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-6 py-3 text-right">Date</th>
+        {salesData.sales.length === 0 ? (
+          <p className="px-6 py-14 text-sm text-muted-foreground">No sales recorded yet.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border/70 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  <th className="px-6 py-3">Resource</th>
+                  <th className="px-4 py-3">Buyer</th>
+                  <th className="px-4 py-3 text-right">Gross</th>
+                  <th className="px-4 py-3 text-right">Your share</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-6 py-3 text-right">Date</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/60">
+                {salesData.sales.map((sale) => (
+                  <tr key={sale.id}>
+                    <td className="px-6 py-4">
+                      <div className="min-w-0">
+                        <ResourceIntentLink
+                          href={routes.resource(sale.resourceSlug)}
+                          className="truncate font-medium text-foreground hover:text-blue-600"
+                        >
+                          {sale.resourceTitle}
+                        </ResourceIntentLink>
+                        <p className="mt-1 text-xs text-muted-foreground">{sale.resourceSlug}</p>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-muted-foreground">
+                      <div>{sale.buyerName}</div>
+                      {sale.buyerEmail && (
+                        <div className="mt-1 text-xs text-muted-foreground">{sale.buyerEmail}</div>
+                      )}
+                    </td>
+                    <td className="px-4 py-4 text-right font-medium text-foreground">
+                      {formatPrice(sale.amount / 100)}
+                    </td>
+                    <td className="px-4 py-4 text-right font-medium text-blue-700">
+                      {formatPrice(sale.creatorShare / 100)}
+                    </td>
+                    <td className="px-4 py-4">
+                      <span className="inline-flex rounded-full bg-muted px-2 py-1 text-xs font-semibold text-muted-foreground">
+                        {sale.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right text-muted-foreground">
+                      {formatDate(sale.createdAt)}
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-border/60">
-                  {salesData.sales.map((sale) => (
-                    <tr key={sale.id}>
-                      <td className="px-6 py-4">
-                        <div className="min-w-0">
-                          <ResourceIntentLink
-                            href={routes.resource(sale.resourceSlug)}
-                            className="truncate font-medium text-foreground hover:text-blue-600"
-                          >
-                            {sale.resourceTitle}
-                          </ResourceIntentLink>
-                          <p className="mt-1 text-xs text-muted-foreground">{sale.resourceSlug}</p>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 text-muted-foreground">
-                        <div>{sale.buyerName}</div>
-                        {sale.buyerEmail && (
-                          <div className="mt-1 text-xs text-muted-foreground">{sale.buyerEmail}</div>
-                        )}
-                      </td>
-                      <td className="px-4 py-4 text-right font-medium text-foreground">
-                        {formatPrice(sale.amount / 100)}
-                      </td>
-                      <td className="px-4 py-4 text-right font-medium text-blue-700">
-                        {formatPrice(sale.creatorShare / 100)}
-                      </td>
-                      <td className="px-4 py-4">
-                        <span className="inline-flex rounded-full bg-muted px-2 py-1 text-xs font-semibold text-muted-foreground">
-                          {sale.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-right text-muted-foreground">
-                        {formatDate(sale.createdAt)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

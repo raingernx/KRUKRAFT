@@ -12,7 +12,7 @@ export const PLATFORM_DEFAULTS: PlatformConfig = {
   logoOgUrl: "/brand/krukraft-logo.svg",
   logoEmailUrl: "/brand/krukraft-logo.svg",
   logoUrl: "/brand/krukraft-logo.svg",
-  faviconUrl: "/logo/72ppi/favicon-32x32.png",
+  faviconUrl: "/brand/favicon.svg",
   supportEmail: "support@krukraft.com",
   siteUrl: "",
   defaultMetaTitle: "Krukraft",

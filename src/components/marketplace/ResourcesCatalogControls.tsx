@@ -12,6 +12,19 @@ import {
 } from "@/components/marketplace/ResourcesCatalogControlsSkeleton";
 import { ScrollableCategoryNav } from "@/components/marketplace/ScrollableCategoryNav";
 import { getDiscoverCategories } from "@/services/discover";
+import { runBestEffortAsync, runWithTimeoutFallback } from "@/lib/async";
+
+const RESOURCES_CATALOG_CATEGORIES_TIMEOUT_MS = 400;
+const FALLBACK_DISCOVER_CATEGORIES = [
+  { id: "category_art_creativity", name: "Art & Creativity", slug: "art-creativity" },
+  { id: "category_early_learning", name: "Early Learning", slug: "early-learning" },
+  { id: "category_humanities", name: "Humanities", slug: "humanities" },
+  { id: "category_language", name: "Language", slug: "language" },
+  { id: "category_mathematics", name: "Mathematics", slug: "mathematics" },
+  { id: "category_science", name: "Science", slug: "science" },
+  { id: "category_study_skills", name: "Study Skills", slug: "study-skills" },
+  { id: "category_test_prep", name: "Test Prep", slug: "test-prep" },
+] satisfies Awaited<ReturnType<typeof getDiscoverCategories>>;
 
 const CONTROLS_BAR_CLASS_NAME = "border-y border-border bg-background";
 const CONTROLS_BAR_MAIN_CLASS_NAME = "flex min-w-0 items-center gap-2.5 overflow-hidden";
@@ -19,10 +32,22 @@ const CONTROLS_BAR_GROUP_CLASS_NAME =
   "flex min-w-0 items-center gap-2.5 overflow-hidden";
 
 export async function ResourcesCatalogControls() {
-  let categoriesWithCount: Awaited<ReturnType<typeof getDiscoverCategories>> = [];
+  let categoriesWithCount: Awaited<ReturnType<typeof getDiscoverCategories>> =
+    FALLBACK_DISCOVER_CATEGORIES;
 
   try {
-    categoriesWithCount = await getDiscoverCategories();
+    categoriesWithCount = await runWithTimeoutFallback(
+      () =>
+        runBestEffortAsync(() => getDiscoverCategories(), {
+          fallback: FALLBACK_DISCOVER_CATEGORIES,
+          warningLabel: "[RESOURCES_CATALOG_CATEGORIES_BEST_EFFORT]",
+        }),
+      {
+        timeoutMs: RESOURCES_CATALOG_CATEGORIES_TIMEOUT_MS,
+        fallback: FALLBACK_DISCOVER_CATEGORIES,
+        warningLabel: "[RESOURCES_CATALOG_CATEGORIES_TIMEOUT]",
+      },
+    );
   } catch (error) {
     if (!isMissingTableError(error)) {
       throw error;

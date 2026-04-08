@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import { getAllCreatorApplications } from "@/services/creator";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { CreatorApplicationActions } from "@/components/admin/CreatorApplicationActions";
+import { AdminCreatorsResultsSkeleton } from "@/components/skeletons/AdminCoreRouteSkeletons";
 
 export const metadata = {
   title: "Creator Applications – Admin",
@@ -16,6 +18,20 @@ const STATUS_BADGE: Record<string, { label: string; className: string }> = {
 };
 
 export default async function AdminCreatorsPage() {
+  return (
+    <div className="min-w-0 space-y-8">
+      <AdminPageHeader
+        title="Creator Applications"
+        description="Review and manage creator access applications."
+      />
+      <Suspense fallback={<AdminCreatorsResultsSkeleton />}>
+        <AdminCreatorApplicationsResults />
+      </Suspense>
+    </div>
+  );
+}
+
+async function AdminCreatorApplicationsResults() {
   const applications = await getAllCreatorApplications();
 
   const pending   = applications.filter((a) => a.creatorApplicationStatus === "PENDING");
@@ -23,11 +39,10 @@ export default async function AdminCreatorsPage() {
   const sorted    = [...pending, ...rest];
 
   return (
-    <div className="min-w-0 space-y-8">
-      <AdminPageHeader
-        title="Creator Applications"
-        description={`${pending.length} pending · ${applications.length} total`}
-      />
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        {pending.length} pending · {applications.length} total
+      </p>
 
       {sorted.length === 0 ? (
         <p className="text-sm text-muted-foreground">No applications yet.</p>

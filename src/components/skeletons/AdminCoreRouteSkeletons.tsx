@@ -206,9 +206,26 @@ export function AdminReviewsLoadingShell() {
   return (
     <div className="space-y-8">
       <AdminHeaderSkeleton titleWidth="w-32" descriptionWidth="w-[34rem]" />
-      <AdminTableShell columns={7} rows={6} />
+      <AdminReviewsResultsSkeleton />
     </div>
   );
+}
+
+export function AdminReviewsResultsSkeleton() {
+  return <AdminTableShell columns={7} rows={6} />;
+}
+
+export function AdminCreatorsLoadingShell() {
+  return (
+    <div className="space-y-8">
+      <AdminHeaderSkeleton titleWidth="w-64" descriptionWidth="w-[28rem]" />
+      <AdminCreatorsResultsSkeleton />
+    </div>
+  );
+}
+
+export function AdminCreatorsResultsSkeleton() {
+  return <AdminTableShell columns={6} rows={5} />;
 }
 
 export function AdminUsersLoadingShell() {
@@ -257,10 +274,45 @@ export function AdminTagsLoadingShell() {
               </div>
             </div>
 
-            <AdminTableShell columns={4} rows={6} />
+            <AdminTagsResultsSkeleton />
           </PageContentWide>
         </PageContainer>
       </main>
+    </div>
+  );
+}
+
+export function AdminTagsResultsSkeleton() {
+  return (
+    <div className="space-y-8">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div
+            key={index}
+            className="rounded-2xl border border-border bg-card p-5 shadow-card"
+          >
+            <LoadingSkeleton className="h-4 w-20" />
+            <LoadingSkeleton className="mt-3 h-8 w-20" />
+            <LoadingSkeleton className="mt-2 h-4 w-28" />
+          </div>
+        ))}
+      </div>
+
+      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
+        <div className="flex items-center gap-2 border-b border-border px-5 py-4">
+          <LoadingSkeleton className="h-4 w-4 rounded-full" />
+          <LoadingSkeleton className="h-4 w-32" />
+        </div>
+        <div className="px-5 py-4">
+          <div className="flex items-start gap-3">
+            <LoadingSkeleton className="h-11 flex-1 rounded-xl" />
+            <LoadingSkeleton className="h-11 w-28 rounded-xl" />
+          </div>
+          <LoadingSkeleton className="mt-3 h-4 w-44" />
+        </div>
+      </div>
+
+      <AdminTableShell columns={4} rows={6} />
     </div>
   );
 }

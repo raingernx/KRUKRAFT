@@ -240,6 +240,50 @@ export function CreatorDashboardAnalyticsLoadingShell() {
   return <RuntimeShell preview={<AnalyticsPreview />} scope="creator-dashboard-analytics" />;
 }
 
+export function CreatorDashboardAnalyticsResultsSkeleton() {
+  return (
+    <div className="space-y-8">
+      <StatCardRow count={4} columns="md:grid-cols-2 xl:grid-cols-4" />
+      <div className="grid gap-4 md:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div key={index} className="rounded-2xl border border-border bg-card p-5 shadow-card">
+            <LoadingSkeleton className="h-10 w-10 rounded-xl" />
+            <LoadingSkeleton className="mt-4 h-8 w-24" />
+            <LoadingSkeleton className="mt-2 h-4 w-32" />
+            <LoadingSkeleton className="mt-2 h-4 w-full max-w-[220px]" />
+          </div>
+        ))}
+      </div>
+      <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+        <TableShell
+          titleWidth="w-40"
+          subtitleWidth="w-64"
+          rows={5}
+          columns="grid-cols-[1.4fr_1fr_1fr_1fr]"
+        />
+        <div className="space-y-6">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={index}
+              className="rounded-2xl border border-border bg-card p-6 shadow-card"
+            >
+              <LoadingSkeleton className="h-5 w-28" />
+              <div className="mt-4 space-y-3">
+                {Array.from({ length: 3 }).map((__, rowIndex) => (
+                  <div key={rowIndex} className="space-y-2">
+                    <LoadingSkeleton className="h-4 w-full" />
+                    <LoadingSkeleton className="h-3 w-24" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function CreatorDashboardAnalyticsBonesPreview() {
   return <BoneyardPreview name={CREATOR_DASHBOARD_ANALYTICS_NAME} preview={<AnalyticsPreview />} />;
 }
@@ -256,12 +300,50 @@ export function CreatorDashboardSalesLoadingShell() {
   return <RuntimeShell preview={<SalesPreview />} scope="creator-dashboard-sales" />;
 }
 
+export function CreatorDashboardSalesResultsSkeleton() {
+  return (
+    <div className="space-y-8">
+      <StatCardRow count={4} columns="md:grid-cols-2 xl:grid-cols-4" />
+      <TableShell titleWidth="w-28" rows={5} columns="grid-cols-[2fr_1.2fr_1fr_1fr]" />
+    </div>
+  );
+}
+
 export function CreatorDashboardSalesBonesPreview() {
   return <BoneyardPreview name={CREATOR_DASHBOARD_SALES_NAME} preview={<SalesPreview />} />;
 }
 
 export function CreatorDashboardProfileLoadingShell() {
   return <RuntimeShell preview={<ProfilePreview />} scope="creator-dashboard-profile" />;
+}
+
+export function CreatorDashboardProfileFormSkeleton() {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
+      <div className="space-y-4">
+        <LoadingSkeleton className="h-5 w-28" />
+        <LoadingSkeleton className="h-24 w-full rounded-2xl" />
+        <div className="grid gap-4 md:grid-cols-2">
+          <LoadingSkeleton className="h-12 w-full rounded-xl" />
+          <LoadingSkeleton className="h-12 w-full rounded-xl" />
+        </div>
+        <LoadingSkeleton className="h-32 w-full rounded-2xl" />
+      </div>
+    </div>
+  );
+}
+
+export function CreatorDashboardProfileLinkFallback() {
+  return (
+    <div className="ml-auto flex shrink-0 flex-col items-end justify-end gap-2 self-end text-right">
+      <span className="inline-flex items-center gap-2 self-end text-sm font-medium text-muted-foreground/60">
+        View public profile
+      </span>
+      <p className="max-w-xs text-xs text-muted-foreground">
+        Loading your public creator link…
+      </p>
+    </div>
+  );
 }
 
 export function CreatorDashboardProfileBonesPreview() {

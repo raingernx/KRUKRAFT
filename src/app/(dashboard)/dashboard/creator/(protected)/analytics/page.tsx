@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { BarChart2, DollarSign, Download, FileText, MessageSquare, ShoppingBag, Star } from "lucide-react";
 import { Badge, Button, Card, CardContent, SectionHeader } from "@/design-system";
@@ -10,6 +11,7 @@ import {
   getCreatorReviewAnalytics,
 } from "@/services/creator";
 import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
+import { CreatorDashboardAnalyticsResultsSkeleton } from "@/components/skeletons/CreatorDashboardRouteSkeletons";
 
 export const metadata = {
   title: "Creator Analytics",
@@ -55,9 +57,50 @@ export default async function CreatorAnalyticsPage({
       ? rangeParam
       : "30d";
 
+  const analyticsPromise = getCreatorAnalytics(userId, range);
+  const reviewAnalyticsPromise = getCreatorReviewAnalytics(userId);
+
+  return (
+    <div data-route-shell-ready="dashboard-creator-analytics" className="space-y-8">
+      <SectionHeader
+        eyebrow="Creator"
+        title="Analytics"
+        description="Revenue, downloads, and top-performing resources for your creator business."
+        actions={
+          <div className="flex flex-wrap gap-2">
+            {(["7d", "30d", "90d", "all"] as const).map((value) => (
+              <Link
+                key={value}
+                href={`${routes.creatorAnalytics}?range=${value}`}
+                className={rangeLink(value, range)}
+              >
+                {value === "all" ? "All time" : value.toUpperCase()}
+              </Link>
+            ))}
+          </div>
+        }
+      />
+
+      <Suspense fallback={<CreatorDashboardAnalyticsResultsSkeleton />}>
+        <CreatorAnalyticsResults
+          analyticsPromise={analyticsPromise}
+          reviewAnalyticsPromise={reviewAnalyticsPromise}
+        />
+      </Suspense>
+    </div>
+  );
+}
+
+async function CreatorAnalyticsResults({
+  analyticsPromise,
+  reviewAnalyticsPromise,
+}: {
+  analyticsPromise: ReturnType<typeof getCreatorAnalytics>;
+  reviewAnalyticsPromise: ReturnType<typeof getCreatorReviewAnalytics>;
+}) {
   const [analytics, reviewAnalytics] = await Promise.all([
-    getCreatorAnalytics(userId, range),
-    getCreatorReviewAnalytics(userId),
+    analyticsPromise,
+    reviewAnalyticsPromise,
   ]);
 
   const seriesRows = Array.from(
@@ -126,26 +169,7 @@ export default async function CreatorAnalyticsPage({
   ];
 
   return (
-    <div data-route-shell-ready="dashboard-creator-analytics" className="space-y-8">
-      <SectionHeader
-        eyebrow="Creator"
-        title="Analytics"
-        description="Revenue, downloads, and top-performing resources for your creator business."
-        actions={
-          <div className="flex flex-wrap gap-2">
-            {(["7d", "30d", "90d", "all"] as const).map((value) => (
-              <Link
-                key={value}
-                href={`${routes.creatorAnalytics}?range=${value}`}
-                className={rangeLink(value, analytics.range)}
-              >
-                {value === "all" ? "All time" : value.toUpperCase()}
-              </Link>
-            ))}
-          </div>
-        }
-      />
-
+    <div className="space-y-8">
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {summaryCards.map((card) => {
           const Icon = card.icon;

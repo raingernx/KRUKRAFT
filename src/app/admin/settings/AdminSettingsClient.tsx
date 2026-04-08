@@ -269,10 +269,10 @@ function resolveBrandAssetPreview(
       };
     case "faviconUrl":
       return {
-        value: settings.faviconUrl || iconLogo || PLATFORM_DEFAULTS.faviconUrl,
+        value: settings.faviconUrl || PLATFORM_DEFAULTS.faviconUrl,
         inheritedLabel: settings.faviconUrl
           ? null
-          : "Using icon logo until a favicon is uploaded.",
+          : "Using the default favicon until a favicon is uploaded.",
       };
   }
 }
@@ -306,11 +306,15 @@ function getPersistedSettingsFromState(
 interface AdminSettingsClientProps {
   initialPlatformSettings: PlatformConfig;
   initialStoredSettings: PlatformStoredSettings;
+  showHeader?: boolean;
+  wrapInPageContent?: boolean;
 }
 
 export function AdminSettingsClient({
   initialPlatformSettings,
   initialStoredSettings,
+  showHeader = true,
+  wrapInPageContent = true,
 }: AdminSettingsClientProps) {
   const initialPersistedState = useMemo(
     () => toPersistedPlatformState(initialPlatformSettings, initialStoredSettings),
@@ -475,12 +479,14 @@ export function AdminSettingsClient({
     }
   }
 
-  return (
-    <PageContent className="max-w-[1180px] space-y-6 lg:space-y-8">
-      <SectionHeader
-        title="Settings"
-        description="Manage global platform branding and metadata. Other sections stay local-only for now."
-      />
+  const content = (
+    <>
+      {showHeader ? (
+        <SectionHeader
+          title="Settings"
+          description="Manage global platform branding and metadata. Other sections stay local-only for now."
+        />
+      ) : null}
 
       <div className="space-y-0 rounded-2xl border border-border bg-card px-6 py-6 shadow-card sm:px-7 sm:py-7">
         <FormSection
@@ -1165,6 +1171,12 @@ export function AdminSettingsClient({
           Save Platform Settings
         </Button>
       </div>
-    </PageContent>
+    </>
   );
+
+  if (!wrapInPageContent) {
+    return content;
+  }
+
+  return <PageContent className="max-w-[1180px] space-y-6 lg:space-y-8">{content}</PageContent>;
 }

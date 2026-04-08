@@ -47,8 +47,7 @@ const DISCOVER_COLLECTIONS_DATA_SINGLE_FLIGHT_KEY = "discover-collections-data:r
 const DISCOVER_FREE_RESOURCES_SINGLE_FLIGHT_KEY = "discover-free-resources:refresh";
 const DISCOVER_SECTION_SOURCE_LIMIT = 6;
 const DISCOVER_SECTION_DISPLAY_LIMIT = 4;
-const DISCOVER_SECTION_SOURCE_CONCURRENCY =
-  process.env.NODE_ENV === "development" ? 1 : 3;
+const DISCOVER_SECTION_SOURCE_CONCURRENCY = 1;
 
 type DiscoverResourceRow = Awaited<ReturnType<typeof findDiscoverResourcesByIds>>[number];
 type DiscoverResource = DiscoverResourceRow & { previewUrl: string | null };
