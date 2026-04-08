@@ -187,10 +187,18 @@ export function AdminOrdersLoadingShell() {
   return (
     <div className="space-y-8">
       <AdminHeaderSkeleton titleWidth="w-28" descriptionWidth="w-64" />
-      <AdminStatsSkeleton count={3} />
       <AdminToolbarSkeleton inputs={3} trailingAction />
-      <AdminTableShell columns={6} rows={6} />
+      <AdminOrdersResultsSkeleton />
     </div>
+  );
+}
+
+export function AdminOrdersResultsSkeleton() {
+  return (
+    <>
+      <AdminStatsSkeleton count={3} />
+      <AdminTableShell columns={6} rows={6} />
+    </>
   );
 }
 

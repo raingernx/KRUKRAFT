@@ -1,6 +1,5 @@
-import { Card } from "@/design-system";
-import { Input } from "@/design-system";
-import { Button } from "@/design-system";
+import { Suspense } from "react";
+import { Card, Input, Button } from "@/design-system";
 import { formatPrice, formatNumber, formatDate } from "@/lib/format";
 import { StatusBadge, type StatusBadgeTone } from "@/components/admin/StatusBadge";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -19,8 +18,7 @@ import {
   traceServerStep,
   withRequestPerformanceTrace,
 } from "@/lib/performance/observability";
-import { routes } from "@/lib/routes";
-import { requireAdminSession } from "@/lib/auth/require-admin-session";
+import { AdminOrdersResultsSkeleton } from "@/components/skeletons/AdminCoreRouteSkeletons";
 
 export const metadata = {
   title: "Orders – Admin",
@@ -37,172 +35,51 @@ interface AdminOrdersPageProps {
 
 const STATUS_BADGE: Record<string, { label: string; tone: StatusBadgeTone }> = {
   COMPLETED: { label: "Completed", tone: "success" },
-  REFUNDED:  { label: "Refunded",  tone: "warning" },
-  FAILED:    { label: "Failed",    tone: "danger"  },
+  REFUNDED: { label: "Refunded", tone: "warning" },
+  FAILED: { label: "Failed", tone: "danger" },
 };
 
-export default async function AdminOrdersPage({
-  searchParams,
-}: AdminOrdersPageProps) {
-  const resolvedSearchParams = searchParams ? await searchParams : {};
-  const statusFilter = resolvedSearchParams.status?.toUpperCase() || "";
-  const from = resolvedSearchParams.from ? new Date(resolvedSearchParams.from) : null;
-  const to = resolvedSearchParams.to ? new Date(resolvedSearchParams.to) : null;
+async function AdminOrdersResultsSection({
+  dataPromise,
+}: {
+  dataPromise: ReturnType<typeof getAdminOrdersPageData>;
+}) {
+  const { orders, totalRevenue, ordersToday, averageOrderValue } = await dataPromise;
 
-  return withRequestPerformanceTrace(
-    "route:/admin/orders",
-    {
-      hasDateFilter: Boolean(from || to),
-      statusFilter: statusFilter || "all",
-    },
-    async () => {
-      await traceServerStep(
-        "admin_orders.requireAdminSession",
-        () => requireAdminSession(routes.adminOrders),
-      );
-
-      const {
-        orders,
-        totalRevenue,
-        ordersToday,
-        averageOrderValue,
-      } = await traceServerStep(
-        "admin_orders.getAdminOrdersPageData",
-        () =>
-          getAdminOrdersPageData({
-            statusFilter,
-            from,
-            to,
-          }),
-        {
-          hasDateFilter: Boolean(from || to),
-          statusFilter: statusFilter || "all",
-        },
-      );
-
-      return (
-        <div className="min-w-0 space-y-8">
-      {/* Header */}
-      <AdminPageHeader
-        title="Orders"
-        description="View marketplace purchases and revenue."
-      />
-
-      {/* Stats */}
+  return (
+    <>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         <Card className="p-4">
-          <p className="font-ui text-caption text-muted-foreground">
-            Total revenue
-          </p>
+          <p className="font-ui text-caption text-muted-foreground">Total revenue</p>
           <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
             {formatPrice(totalRevenue / 100)}
           </p>
         </Card>
 
         <Card className="p-4">
-          <p className="font-ui text-caption text-muted-foreground">
-            Orders today
-          </p>
+          <p className="font-ui text-caption text-muted-foreground">Orders today</p>
           <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
             {formatNumber(ordersToday)}
           </p>
         </Card>
 
         <Card className="p-4">
-          <p className="font-ui text-caption text-muted-foreground">
-            Average order value
-          </p>
+          <p className="font-ui text-caption text-muted-foreground">Average order value</p>
           <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
             {formatPrice(averageOrderValue / 100)}
           </p>
         </Card>
       </div>
 
-      {/* Filters */}
-      <TableToolbar>
-        <form className="flex flex-1 flex-wrap items-end gap-x-3 gap-y-2.5">
-          <div className="flex w-full flex-col gap-1 sm:w-auto">
-            <label
-              htmlFor="status"
-              className="font-ui text-caption text-muted-foreground"
-            >
-              Status
-            </label>
-            <select
-              id="status"
-              name="status"
-              defaultValue={statusFilter}
-              className="input-base w-full sm:w-40"
-            >
-              <option value="">All</option>
-              <option value="COMPLETED">Completed</option>
-              <option value="REFUNDED">Refunded</option>
-              <option value="FAILED">Failed</option>
-            </select>
-          </div>
-
-          <div className="flex w-full flex-col gap-1 sm:w-auto">
-            <label
-              htmlFor="from"
-              className="font-ui text-caption text-muted-foreground"
-            >
-              From
-            </label>
-            <Input
-              id="from"
-              name="from"
-              type="date"
-              defaultValue={resolvedSearchParams.from}
-              className="w-full sm:w-40"
-            />
-          </div>
-
-          <div className="flex w-full flex-col gap-1 sm:w-auto">
-            <label
-              htmlFor="to"
-              className="font-ui text-caption text-muted-foreground"
-            >
-              To
-            </label>
-            <Input
-              id="to"
-              name="to"
-              type="date"
-              defaultValue={resolvedSearchParams.to}
-              className="w-full sm:w-40"
-            />
-          </div>
-
-          <div className="w-full sm:ml-auto sm:w-auto">
-            <Button type="submit" variant="outline" size="sm">
-              Apply filters
-            </Button>
-          </div>
-        </form>
-      </TableToolbar>
-
-      {/* Orders table */}
       <DataTable minWidth="min-w-[900px]">
         <DataTableHeader>
           <tr>
-            <DataTableHeadCell className="px-2">
-                  Order ID
-            </DataTableHeadCell>
-            <DataTableHeadCell className="px-3">
-                  User
-            </DataTableHeadCell>
-            <DataTableHeadCell className="px-3">
-                  Resource
-            </DataTableHeadCell>
-            <DataTableHeadCell className="px-3">
-                  Price
-            </DataTableHeadCell>
-            <DataTableHeadCell className="px-3">
-                  Status
-            </DataTableHeadCell>
-            <DataTableHeadCell className="px-3">
-                  Created
-            </DataTableHeadCell>
+            <DataTableHeadCell className="px-2">Order ID</DataTableHeadCell>
+            <DataTableHeadCell className="px-3">User</DataTableHeadCell>
+            <DataTableHeadCell className="px-3">Resource</DataTableHeadCell>
+            <DataTableHeadCell className="px-3">Price</DataTableHeadCell>
+            <DataTableHeadCell className="px-3">Status</DataTableHeadCell>
+            <DataTableHeadCell className="px-3">Created</DataTableHeadCell>
           </tr>
         </DataTableHeader>
         <DataTableBody>
@@ -226,9 +103,7 @@ export default async function AdminOrdersPage({
                   <DataTableCell className="px-3 text-muted-foreground">
                     <div className="flex flex-col">
                       <span>{order.user.name ?? "Unknown"}</span>
-                      <span className="text-caption text-muted-foreground">
-                        {order.user.email}
-                      </span>
+                      <span className="text-caption text-muted-foreground">{order.user.email}</span>
                     </div>
                   </DataTableCell>
                   <DataTableCell className="px-3 text-muted-foreground">
@@ -238,11 +113,7 @@ export default async function AdminOrdersPage({
                     {formatPrice(order.amount / 100)}
                   </DataTableCell>
                   <DataTableCell className="px-3 text-muted-foreground">
-                    <StatusBadge
-                      status={order.status}
-                      label={badge.label}
-                      tone={badge.tone}
-                    />
+                    <StatusBadge status={order.status} label={badge.label} tone={badge.tone} />
                   </DataTableCell>
                   <DataTableCell className="px-3 text-muted-foreground">
                     {formatDate(order.createdAt)}
@@ -253,6 +124,102 @@ export default async function AdminOrdersPage({
           )}
         </DataTableBody>
       </DataTable>
+    </>
+  );
+}
+
+export default async function AdminOrdersPage({
+  searchParams,
+}: AdminOrdersPageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const statusFilter = resolvedSearchParams.status?.toUpperCase() || "";
+  const from = resolvedSearchParams.from ? new Date(resolvedSearchParams.from) : null;
+  const to = resolvedSearchParams.to ? new Date(resolvedSearchParams.to) : null;
+
+  return withRequestPerformanceTrace(
+    "route:/admin/orders",
+    {
+      hasDateFilter: Boolean(from || to),
+      statusFilter: statusFilter || "all",
+    },
+    async () => {
+      const ordersDataPromise = traceServerStep(
+        "admin_orders.getAdminOrdersPageData",
+        () =>
+          getAdminOrdersPageData({
+            statusFilter,
+            from,
+            to,
+          }),
+        {
+          hasDateFilter: Boolean(from || to),
+          statusFilter: statusFilter || "all",
+        },
+      );
+
+      return (
+        <div className="min-w-0 space-y-8">
+          <AdminPageHeader
+            title="Orders"
+            description="View marketplace purchases and revenue."
+          />
+
+          <TableToolbar>
+            <form className="flex flex-1 flex-wrap items-end gap-x-3 gap-y-2.5">
+              <div className="flex w-full flex-col gap-1 sm:w-auto">
+                <label htmlFor="status" className="font-ui text-caption text-muted-foreground">
+                  Status
+                </label>
+                <select
+                  id="status"
+                  name="status"
+                  defaultValue={statusFilter}
+                  className="input-base w-full sm:w-40"
+                >
+                  <option value="">All</option>
+                  <option value="COMPLETED">Completed</option>
+                  <option value="REFUNDED">Refunded</option>
+                  <option value="FAILED">Failed</option>
+                </select>
+              </div>
+
+              <div className="flex w-full flex-col gap-1 sm:w-auto">
+                <label htmlFor="from" className="font-ui text-caption text-muted-foreground">
+                  From
+                </label>
+                <Input
+                  id="from"
+                  name="from"
+                  type="date"
+                  defaultValue={resolvedSearchParams.from}
+                  className="w-full sm:w-40"
+                />
+              </div>
+
+              <div className="flex w-full flex-col gap-1 sm:w-auto">
+                <label htmlFor="to" className="font-ui text-caption text-muted-foreground">
+                  To
+                </label>
+                <Input
+                  id="to"
+                  name="to"
+                  type="date"
+                  defaultValue={resolvedSearchParams.to}
+                  className="w-full sm:w-40"
+                />
+              </div>
+
+              <div className="w-full sm:ml-auto sm:w-auto">
+                <Button type="submit" variant="outline" size="sm">
+                  Apply filters
+                </Button>
+              </div>
+            </form>
+          </TableToolbar>
+
+          <Suspense fallback={<AdminOrdersResultsSkeleton />}>
+            <AdminOrdersResultsSection dataPromise={ordersDataPromise} />
+          </Suspense>
         </div>
       );
     },
