@@ -3,7 +3,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { MarketplaceNavbarSearch } from "@/components/marketplace/MarketplaceNavbarSearch";
 import { Container } from "@/design-system";
 import { Badge } from "@/design-system";
-import { ResourceGrid } from "@/components/resources/ResourceGrid";
+import { ResourceCard } from "@/components/resources/ResourceCard";
 import {
   CategoryPageResourceCountFallback,
   CategoryPageResourcesSectionFallback,
@@ -178,12 +178,38 @@ async function CategoryResourcesSection({
           {total} resource{total !== 1 ? "s" : ""}
         </p>
       </div>
-      <ResourceGrid
-        resources={items}
-        total={total}
-        page={1}
-        totalPages={1}
-      />
+      {items.length === 0 ? (
+        <div className="rounded-2xl border border-border bg-card px-6 py-14 text-center sm:px-8 sm:py-16">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-muted">
+            <BookOpen className="h-7 w-7 text-muted-foreground" />
+          </div>
+          <p className="mt-5 text-lg font-semibold tracking-tight text-foreground">
+            No resources here yet
+          </p>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+            This collection is still growing. Explore the full library or check back soon for new releases.
+          </p>
+          <Link
+            href={routes.marketplace}
+            className="mt-5 inline-flex items-center rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
+          >
+            Explore all resources
+          </Link>
+        </div>
+      ) : (
+        <div className="grid items-stretch gap-5 lg:gap-6 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]">
+          {items.map((resource, index) => (
+            <ResourceCard
+              key={resource.id}
+              resource={resource}
+              variant="marketplace"
+              imageLoading={index < 4 ? "eager" : "lazy"}
+              linkPrefetchMode="viewport"
+              linkPrefetchScope={`category-grid:${categoryName.toLowerCase()}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
