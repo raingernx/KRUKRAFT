@@ -166,6 +166,17 @@ const routes: WarmRoute[] = [
     required: true,
   },
   {
+    label: "resources-home-tail",
+    path: "/resources",
+    // Discover-home now also gets a final reheat near suite start. Manual
+    // baseline runs showed `/resources` can still become the stalest warmed
+    // public shell because its main warm fanout happens at the top of the
+    // sequence while every other measured route class is reheated later.
+    burst: 5,
+    repeat: 2,
+    required: true,
+  },
+  {
     label: "category-listing-tail",
     path: `/categories/${encodeURIComponent(categorySlug)}`,
     // Mirror the same tail reheat for the category listing route so every
