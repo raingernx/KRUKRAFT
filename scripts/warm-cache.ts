@@ -155,6 +155,16 @@ const routes: WarmRoute[] = [
     repeat: 2,
     required: true,
   },
+  {
+    label: "resource-detail-hot-tail",
+    path: `/resources/${encodeURIComponent(hotSlug)}`,
+    // Reheat the hot detail route immediately before k6 begins so the route
+    // that previously showed the most recent post-listing tail failure is not
+    // relying only on an earlier warm pass in the sequence.
+    burst: 5,
+    repeat: 2,
+    required: true,
+  },
 ];
 
 type WarmResult = {
