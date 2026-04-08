@@ -5,6 +5,7 @@ import { requireAdminApi } from "@/lib/auth/require-admin-api";
 import {
   CACHE_TAGS,
   deleteDiscoverRedisKeys,
+  deleteMarketplaceNewestListingRedisKeys,
   deleteMarketplaceRecommendedListingRedisKeys,
   deleteRelatedResourcesRedisKeys,
   deleteResourceRedisKeys,
@@ -87,6 +88,10 @@ export async function PATCH(req: Request) {
       });
       await Promise.all([
         deleteDiscoverRedisKeys(),
+        deleteMarketplaceNewestListingRedisKeys([
+          ...previousCacheTargets.map((target) => target.categorySlug),
+          ...currentCacheTargets.map((target) => target.categorySlug),
+        ]),
         deleteMarketplaceRecommendedListingRedisKeys([
           ...previousCacheTargets.map((target) => target.categorySlug),
           ...currentCacheTargets.map((target) => target.categorySlug),

@@ -275,6 +275,25 @@ function getPrecomputedRecommendedListingCacheKey(
   return CACHE_KEYS.marketplaceRecommendedListing(filters.category);
 }
 
+function getPrecomputedNewestListingCacheKey(
+  filters: NormalizedMarketplaceFilters,
+) {
+  const isCandidate =
+    filters.search === null &&
+    filters.price === null &&
+    filters.featured === false &&
+    filters.tag === null &&
+    filters.sort === "newest" &&
+    filters.page === MARKETPLACE_DEFAULT_PAGE &&
+    filters.pageSize === MARKETPLACE_LISTING_PAGE_SIZE;
+
+  if (!isCandidate) {
+    return null;
+  }
+
+  return CACHE_KEYS.marketplaceNewestListing(filters.category);
+}
+
 /**
  * Returns a paginated list of published resources matching the supplied
  * filters, together with the full category list for the filter sidebar.
@@ -509,6 +528,8 @@ async function loadMarketplaceResources(filters: NormalizedMarketplaceFilters) {
   // shared Redis so cold instances return in <300 ms instead of 3–7 s. Same
   // rationale as the recommended path.
   if (sort === "newest" && !search) {
+    const precomputedNewestListingCacheKey =
+      getPrecomputedNewestListingCacheKey(filters);
     const newestCacheKey = [
       "marketplace:newest",
       categoryId ?? "all",
@@ -531,6 +552,42 @@ async function loadMarketplaceResources(filters: NormalizedMarketplaceFilters) {
         },
         { page, pageSize, categoryId: categoryId ?? "all" },
       );
+
+    if (precomputedNewestListingCacheKey) {
+      const loadNewestLanding = async () => {
+        const { items, count } = await loadNewestRows();
+        return {
+          resources: items.map(withPreview),
+          total: count,
+        };
+      };
+
+      const [resolvedCategories, { resources, total }] = await Promise.all([
+        loadCategories(),
+        rememberJson(
+          precomputedNewestListingCacheKey,
+          CACHE_TTLS.homepageList,
+          () =>
+            runSingleFlight(precomputedNewestListingCacheKey, loadNewestLanding),
+          {
+            metricName: "marketplace.newestResources.precomputed",
+            details: {
+              page,
+              pageSize,
+              categorySlug: category ?? "all",
+              scope: "listing",
+            },
+          },
+        ),
+      ]);
+
+      return {
+        resources,
+        total,
+        totalPages: Math.max(1, Math.ceil(total / pageSize)),
+        categories: resolvedCategories,
+      };
+    }
 
     const [resolvedCategories, { items: newestItems, count: newestTotal }] =
       await Promise.all([

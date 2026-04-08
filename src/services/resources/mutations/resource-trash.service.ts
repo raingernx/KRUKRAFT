@@ -3,6 +3,7 @@ import { logActivity } from "@/lib/activity";
 import {
   CACHE_TAGS,
   deleteDiscoverRedisKeys,
+  deleteMarketplaceNewestListingRedisKeys,
   deleteMarketplaceRecommendedListingRedisKeys,
   deleteRelatedResourcesRedisKeys,
   deleteResourceRedisKeys,
@@ -53,6 +54,7 @@ export async function restoreTrashedResource(input: ResourceTrashInput) {
   revalidateTag(getResourceCacheTag(existing.slug), "max");
   await Promise.all([
     deleteDiscoverRedisKeys(),
+    deleteMarketplaceNewestListingRedisKeys([existing.category?.slug]),
     deleteMarketplaceRecommendedListingRedisKeys([existing.category?.slug]),
     deleteRelatedResourcesRedisKeys(existing.id, [existing.categoryId]),
     deleteResourceRedisKeys(existing.slug),
@@ -92,6 +94,7 @@ export async function permanentlyDeleteTrashedResource(
   revalidateTag(getResourceCacheTag(existing.slug), "max");
   await Promise.all([
     deleteDiscoverRedisKeys(),
+    deleteMarketplaceNewestListingRedisKeys([existing.category?.slug]),
     deleteMarketplaceRecommendedListingRedisKeys([existing.category?.slug]),
     deleteRelatedResourcesRedisKeys(existing.id, [existing.categoryId]),
     deleteResourceRedisKeys(existing.slug),

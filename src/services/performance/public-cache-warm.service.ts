@@ -1,5 +1,8 @@
 import { findResourceById } from "@/repositories/resources/resource.repository";
-import { deleteMarketplaceRecommendedListingRedisKeys } from "@/lib/cache";
+import {
+  deleteMarketplaceNewestListingRedisKeys,
+  deleteMarketplaceRecommendedListingRedisKeys,
+} from "@/lib/cache";
 import { logPerformanceEvent, withPerformanceTiming } from "@/lib/performance/observability";
 import {
   getCreatorPublicMetadata,
@@ -453,7 +456,10 @@ export async function warmTargetedPublicCaches(
       let warmedMarketplaceVariants: string[] = [];
 
       if (includeListings) {
-        await deleteMarketplaceRecommendedListingRedisKeys(recommendedCategorySlugs);
+        await Promise.all([
+          deleteMarketplaceRecommendedListingRedisKeys(recommendedCategorySlugs),
+          deleteMarketplaceNewestListingRedisKeys(recommendedCategorySlugs),
+        ]);
       }
 
       const listingWarmVariants = includeListings

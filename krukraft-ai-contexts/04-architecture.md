@@ -149,6 +149,7 @@ Public category route note:
 - the category page now renders its resource cards through a static server-led grid instead of mounting the heavier `ResourceGrid` client pagination/filter machinery on a route that does not expose in-page progressive loading
 - the category listing now uses the same server-led public card shell for those cards instead of the generic client `ResourceCard`, keeping the static category grid out of marketplace overlay/prefetch client logic entirely
 - the post-deploy public warm script now reheats `/resources?category=all&sort=recommended` and `/resources?category=all&sort=newest` again as the final warm step before k6, so the highest-risk listing control routes finish as the freshest warmed public pages instead of being cooled behind later creator/category warm passes
+- the control-arm `/resources?category=all&sort=newest` landing route now also has a dedicated fixed-key Redis cache (`marketplaceNewestListing`) like the recommended arm, and targeted mutation/warm invalidation clears that key directly instead of relying only on the generic paginated listing cache path
 
 Root rendering note:
 - the root app layout uses build-safe public platform config only and does not read the authenticated server session
@@ -261,6 +262,7 @@ This separation exists to avoid Prisma build-time warnings and DB dependency in 
 - `/resources` owned-state hydration now reuses a short-lived browser cache keyed by authenticated viewer id, reducing repeat base-state fetches across quick marketplace navigations without sharing owned badges across users
 - the discover-home `Top picks` and `Trending now` rows now use a server-led public card row instead of the generic client `ResourceCard` / `ViewerAwareResourceCardRow`, so the default public `/resources` shell no longer hydrates marketplace overlay/prefetch card logic for those hot-path rows
 - the discover-home default `Top picks` fallback is no longer wrapped by `ResourcesViewerStateProvider`; the viewer-state provider now mounts only inside the lazy signed-in personalized island, so anonymous `/resources` traffic keeps that entire fallback row outside the viewer-state client boundary
+- the below-the-fold discover collections subtree on `/resources` now runs behind a short best-effort timeout guard; if those secondary collections miss their budget the route still returns the quick-browse shell plus lead rows first instead of letting the collections section hold the whole home response open
 - `/resources` and `/resources/[slug]` now defer auth-viewer resolution to idle time instead of eagerly probing auth on first hydration; auth-aware CTA components warm that viewer fetch on hover/focus/click intent
 - `/resources` signed-in discover personalization now uses a short-lived private cache layer to reduce repeat recommendation work across navigations
 - `/resources` learning-profile reads inside signed-in viewer-state now also use Redis + single-flight, so repeat cross-instance discover hydration does not keep rebuilding the same purchase-derived profile

@@ -49,6 +49,7 @@ import {
   trackRequestWork,
   traceServerStep,
 } from "@/lib/performance/observability";
+import { runWithTimeoutFallback } from "@/lib/async";
 
 const BLOG_SECTION_ENABLED = false;
 const QUICK_BROWSE_TILES = [
@@ -77,6 +78,7 @@ const QUICK_BROWSE_TILES = [
     eyebrow: "Budget",
   },
 ] as const;
+const DISCOVER_COLLECTIONS_TIMEOUT_MS = 600;
 
 type ResourcesPageContentProps = {
   isDiscoverMode: boolean;
@@ -670,8 +672,16 @@ async function loadDiscoverLeadDataSafe(): Promise<DiscoverLeadData | null> {
 
 async function loadDiscoverCollectionsDataSafe(): Promise<DiscoverCollectionsData | null> {
   try {
-    return await traceServerStep("resources.getDiscoverCollectionsData", () =>
-      getDiscoverCollectionsData(),
+    return await runWithTimeoutFallback(
+      () =>
+        traceServerStep("resources.getDiscoverCollectionsData", () =>
+          getDiscoverCollectionsData(),
+        ),
+      {
+        timeoutMs: DISCOVER_COLLECTIONS_TIMEOUT_MS,
+        fallback: null,
+        warningLabel: "[RESOURCES_DISCOVER_COLLECTIONS_TIMEOUT]",
+      },
     );
   } catch (error) {
     if (!isMissingTableError(error)) {

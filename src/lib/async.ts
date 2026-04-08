@@ -53,3 +53,31 @@ export async function runBestEffortAsync<T>(
     return options.fallback;
   }
 }
+
+export async function runWithTimeoutFallback<T>(
+  loader: () => Promise<T>,
+  options: {
+    timeoutMs: number;
+    fallback: T;
+    warningLabel?: string;
+  },
+): Promise<T> {
+  let timeoutHandle: ReturnType<typeof setTimeout> | null = null;
+
+  const timeoutPromise = new Promise<T>((resolve) => {
+    timeoutHandle = setTimeout(() => {
+      if (options.warningLabel) {
+        console.warn(options.warningLabel, { timeoutMs: options.timeoutMs });
+      }
+      resolve(options.fallback);
+    }, options.timeoutMs);
+  });
+
+  try {
+    return await Promise.race([loader(), timeoutPromise]);
+  } finally {
+    if (timeoutHandle) {
+      clearTimeout(timeoutHandle);
+    }
+  }
+}
