@@ -21,7 +21,10 @@ import { FilterSidebar, type FilterCategory } from "@/components/marketplace/Fil
 import { CreatorCTA } from "@/components/discover/CreatorCTA";
 import { BlogSection } from "@/components/discover/BlogSection";
 import { EmailSignup } from "@/components/discover/EmailSignup";
-import { ResourcesDiscoverSectionsSkeleton } from "@/components/skeletons/ResourcesDiscoverSectionsSkeleton";
+import {
+  ResourcesDiscoverCollectionsSectionFallback,
+  ResourcesDiscoverLeadSectionFallback,
+} from "@/components/skeletons/ResourcesDiscoverSectionsSkeleton";
 import {
   FilterBarFallback,
   ResourcesContentFallback,
@@ -30,8 +33,10 @@ import {
 import { formatNumber, formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";
 import {
-  getDiscoverData,
-  type DiscoverData,
+  getDiscoverCollectionsData,
+  getDiscoverLeadData,
+  type DiscoverCollectionsData,
+  type DiscoverLeadData,
 } from "@/services/discover";
 import { getSearchRecoveryData } from "@/services/search";
 import {
@@ -47,6 +52,32 @@ import {
 } from "@/lib/performance/observability";
 
 const BLOG_SECTION_ENABLED = false;
+const QUICK_BROWSE_TILES = [
+  {
+    title: "Top picks",
+    description: "A tighter shortlist ranked to surface strong marketplace picks first.",
+    href: routes.marketplaceQuery("sort=recommended&category=all"),
+    eyebrow: "Browse",
+  },
+  {
+    title: "Worksheets",
+    description: "Jump straight into printable practice materials and guided exercises.",
+    href: routes.marketplaceQuery("tag=worksheet&sort=newest"),
+    eyebrow: "Format",
+  },
+  {
+    title: "Flashcards",
+    description: "Review-ready cards for memorisation, recall, and speaking drills.",
+    href: routes.marketplaceQuery("tag=flashcards&sort=trending"),
+    eyebrow: "Format",
+  },
+  {
+    title: "Free to start",
+    description: "Open free resources first, then decide what is worth saving or buying.",
+    href: routes.marketplaceQuery("price=free&category=all"),
+    eyebrow: "Budget",
+  },
+] as const;
 
 type ResourcesPageContentProps = {
   isDiscoverMode: boolean;
@@ -395,97 +426,8 @@ async function ResourcesListingContent({
 }
 
 async function ResourcesDiscoverContent() {
-  const discoverDataPromise = trackRequestWork(loadDiscoverDataSafe());
-
-  return (
-    <Suspense fallback={<ResourcesDiscoverSectionsSkeleton />}>
-      <ResourcesDiscoverDeferredSections discoverDataPromise={discoverDataPromise} />
-    </Suspense>
-  );
-}
-
-function getResourcePreviewUrl(resource: ResourceCardData) {
-  return resource.thumbnailUrl ?? resource.previewImages?.[0] ?? resource.previewUrl ?? null;
-}
-
-async function ResourcesDiscoverDeferredSections({
-  discoverDataPromise,
-}: {
-  discoverDataPromise: Promise<DiscoverData | null>;
-}) {
-  const eagerDiscoverCardCount = 4;
-  const eagerDiscoverPreviewUrls = new Set<string>();
-  const discoverData = await discoverDataPromise;
-
-  if (!discoverData) {
-    return null;
-  }
-
-  const globalFiltered = discoverData.recommended as ResourceCardData[];
-  const discoverFallbackCards = globalFiltered.slice(0, eagerDiscoverCardCount);
-  const trendingResources = (discoverData.trending as ResourceCardData[]).map((resource, index) => ({
-    ...resource,
-    highlightBadge: index < 2 ? "Trending this week" : null,
-    socialProofLabel: index < 2 ? "Trending fast this week" : null,
-  }));
-  const quickBrowseTiles = [
-    {
-      title: "Top picks",
-      description: "A tighter shortlist ranked to surface strong marketplace picks first.",
-      href: routes.marketplaceQuery("sort=recommended&category=all"),
-      eyebrow: "Browse",
-    },
-    {
-      title: "Worksheets",
-      description: "Jump straight into printable practice materials and guided exercises.",
-      href: routes.marketplaceQuery("tag=worksheet&sort=newest"),
-      eyebrow: "Format",
-    },
-    {
-      title: "Flashcards",
-      description: "Review-ready cards for memorisation, recall, and speaking drills.",
-      href: routes.marketplaceQuery("tag=flashcards&sort=trending"),
-      eyebrow: "Format",
-    },
-    {
-      title: "Free to start",
-      description: "Open free resources first, then decide what is worth saving or buying.",
-      href: routes.marketplaceQuery("price=free&category=all"),
-      eyebrow: "Budget",
-    },
-  ] as const;
-  const curatedCollections = [
-    discoverData.newReleases[0]
-      ? {
-          key: "new-releases",
-          title: "New releases",
-          description: "Fresh uploads from creators and educators added most recently.",
-          href: routes.marketplaceQuery("sort=newest&category=all"),
-          badge: "Fresh",
-          resource: discoverData.newReleases[0] as ResourceCardData,
-        }
-      : null,
-    discoverData.featured[0]
-      ? {
-          key: "featured-picks",
-          title: "Featured picks",
-          description: "Editor-shaped highlights for browsing with a little more curation.",
-          href: routes.marketplaceQuery("featured=true&category=all"),
-          badge: "Featured",
-          resource: discoverData.featured[0] as ResourceCardData,
-        }
-      : null,
-    discoverData.mostDownloaded[0]
-      ? {
-          key: "most-downloaded",
-          title: "Most downloaded",
-          description: "Reliable bestsellers with strong learner demand right now.",
-          href: routes.marketplaceQuery("sort=downloads&category=all"),
-          badge: "Popular",
-          resource: discoverData.mostDownloaded[0] as ResourceCardData,
-        }
-      : null,
-  ].filter((tile) => tile !== null);
+  const discoverLeadPromise = trackRequestWork(loadDiscoverLeadDataSafe());
+  const discoverCollectionsPromise = trackRequestWork(loadDiscoverCollectionsDataSafe());
 
   return (
     <div className="space-y-16 lg:space-y-20">
@@ -497,7 +439,7 @@ async function ResourcesDiscoverDeferredSections({
           viewAllLabel="Browse everything"
         />
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {quickBrowseTiles.map((tile) => (
+          {QUICK_BROWSE_TILES.map((tile) => (
             <DiscoverBrowseCard
               key={tile.title}
               title={tile.title}
@@ -509,16 +451,61 @@ async function ResourcesDiscoverDeferredSections({
         </div>
       </section>
 
+      <Suspense fallback={<ResourcesDiscoverLeadSectionFallback />}>
+        <ResourcesDiscoverLeadDeferredSection
+          discoverLeadPromise={discoverLeadPromise}
+        />
+      </Suspense>
+
+      <Suspense fallback={<ResourcesDiscoverCollectionsSectionFallback />}>
+        <ResourcesDiscoverCollectionsDeferredSection
+          discoverCollectionsPromise={discoverCollectionsPromise}
+        />
+      </Suspense>
+
+      <CreatorCTA />
+      {BLOG_SECTION_ENABLED ? <BlogSection /> : null}
+      <EmailSignup />
+    </div>
+  );
+}
+
+function getResourcePreviewUrl(resource: ResourceCardData) {
+  return resource.thumbnailUrl ?? resource.previewImages?.[0] ?? resource.previewUrl ?? null;
+}
+
+async function ResourcesDiscoverLeadDeferredSection({
+  discoverLeadPromise,
+}: {
+  discoverLeadPromise: Promise<DiscoverLeadData | null>;
+}) {
+  const eagerDiscoverCardCount = 4;
+  const discoverLeadData = await discoverLeadPromise;
+
+  if (!discoverLeadData) {
+    return null;
+  }
+
+  const globalFiltered = discoverLeadData.recommended as ResourceCardData[];
+  const discoverFallbackCards = globalFiltered.slice(0, eagerDiscoverCardCount);
+  const trendingResources = (discoverLeadData.trending as ResourceCardData[]).map((resource, index) => ({
+    ...resource,
+    highlightBadge: index < 2 ? "Trending this week" : null,
+    socialProofLabel: index < 2 ? "Trending fast this week" : null,
+  }));
+
+  return (
+    <>
       <ResourcesViewerStateProvider>
         <LazyResourcesDiscoverPersonalizedSection
           fallbackCards={discoverFallbackCards}
           eagerCardCount={eagerDiscoverCardCount}
-          eagerPreviewUrls={[...eagerDiscoverPreviewUrls]}
+          eagerPreviewUrls={[]}
         >
           <ResourcesDiscoverTopPicksSection
             resources={discoverFallbackCards}
             eagerCardCount={eagerDiscoverCardCount}
-            eagerPreviewUrls={[...eagerDiscoverPreviewUrls]}
+            eagerPreviewUrls={[]}
           />
         </LazyResourcesDiscoverPersonalizedSection>
       </ResourcesViewerStateProvider>
@@ -533,12 +520,63 @@ async function ResourcesDiscoverDeferredSections({
           <ViewerAwareResourceCardRow
             resources={trendingResources}
             eagerCardCount={eagerDiscoverCardCount}
-            eagerPreviewUrls={[...eagerDiscoverPreviewUrls]}
+            eagerPreviewUrls={[]}
           />
         </section>
       ) : null}
+    </>
+  );
+}
 
-      {curatedCollections.length > 0 || discoverData.topCreator?.creator.creatorSlug ? (
+async function ResourcesDiscoverCollectionsDeferredSection({
+  discoverCollectionsPromise,
+}: {
+  discoverCollectionsPromise: Promise<DiscoverCollectionsData | null>;
+}) {
+  const discoverCollectionsData = await discoverCollectionsPromise;
+
+  if (!discoverCollectionsData) {
+    return null;
+  }
+
+  const curatedCollections = [
+    discoverCollectionsData.newReleases[0]
+      ? {
+          key: "new-releases",
+          title: "New releases",
+          description: "Fresh uploads from creators and educators added most recently.",
+          href: routes.marketplaceQuery("sort=newest&category=all"),
+          badge: "Fresh",
+          resource: discoverCollectionsData.newReleases[0] as ResourceCardData,
+        }
+      : null,
+    discoverCollectionsData.featured[0]
+      ? {
+          key: "featured-picks",
+          title: "Featured picks",
+          description: "Editor-shaped highlights for browsing with a little more curation.",
+          href: routes.marketplaceQuery("featured=true&category=all"),
+          badge: "Featured",
+          resource: discoverCollectionsData.featured[0] as ResourceCardData,
+        }
+      : null,
+    discoverCollectionsData.mostDownloaded[0]
+      ? {
+          key: "most-downloaded",
+          title: "Most downloaded",
+          description: "Reliable bestsellers with strong learner demand right now.",
+          href: routes.marketplaceQuery("sort=downloads&category=all"),
+          badge: "Popular",
+          resource: discoverCollectionsData.mostDownloaded[0] as ResourceCardData,
+        }
+      : null,
+  ].filter((tile) => tile !== null);
+
+  return (
+    <>
+
+      {curatedCollections.length > 0 ||
+      discoverCollectionsData.topCreator?.creator.creatorSlug ? (
         <section className="space-y-5">
           <SectionHeader
             title="Collections to explore"
@@ -557,30 +595,26 @@ async function ResourcesDiscoverDeferredSections({
                 resource={tile.resource}
               />
             ))}
-            {discoverData.topCreator?.creator.creatorSlug ? (
+            {discoverCollectionsData.topCreator?.creator.creatorSlug ? (
               <TopCreatorSpotlightCard
-                href={routes.creatorPublicProfile(discoverData.topCreator.creator.creatorSlug)}
+                href={routes.creatorPublicProfile(discoverCollectionsData.topCreator.creator.creatorSlug)}
                 name={
-                  discoverData.topCreator.creator.creatorDisplayName ??
-                  discoverData.topCreator.creator.name ??
+                  discoverCollectionsData.topCreator.creator.creatorDisplayName ??
+                  discoverCollectionsData.topCreator.creator.name ??
                   "Top creator"
                 }
                 description={
-                  discoverData.topCreator.last7dRevenue > 0
-                    ? `${formatPrice(discoverData.topCreator.last7dRevenue / 100)} generated this week with ${formatNumber(discoverData.topCreator.last30dDownloads)} recent downloads.`
-                    : `${formatNumber(discoverData.topCreator.last30dDownloads)} recent downloads across ${formatNumber(discoverData.topCreator.resources)} resources.`
+                  discoverCollectionsData.topCreator.last7dRevenue > 0
+                    ? `${formatPrice(discoverCollectionsData.topCreator.last7dRevenue / 100)} generated this week with ${formatNumber(discoverCollectionsData.topCreator.last30dDownloads)} recent downloads.`
+                    : `${formatNumber(discoverCollectionsData.topCreator.last30dDownloads)} recent downloads across ${formatNumber(discoverCollectionsData.topCreator.resources)} resources.`
                 }
-                bio={discoverData.topCreator.creator.creatorBio ?? null}
+                bio={discoverCollectionsData.topCreator.creator.creatorBio ?? null}
               />
             ) : null}
           </div>
         </section>
       ) : null}
-
-      <CreatorCTA />
-      {BLOG_SECTION_ENABLED ? <BlogSection /> : null}
-      <EmailSignup />
-    </div>
+    </>
   );
 }
 
@@ -638,10 +672,24 @@ async function SearchRecoveryPanelDeferred({
   return <SearchRecoveryPanel query={query} recovery={recovery} />;
 }
 
-async function loadDiscoverDataSafe(): Promise<DiscoverData | null> {
+async function loadDiscoverLeadDataSafe(): Promise<DiscoverLeadData | null> {
   try {
-    return await traceServerStep("resources.getDiscoverData", () =>
-      getDiscoverData(),
+    return await traceServerStep("resources.getDiscoverLeadData", () =>
+      getDiscoverLeadData(),
+    );
+  } catch (error) {
+    if (!isMissingTableError(error)) {
+      throw error;
+    }
+
+    return null;
+  }
+}
+
+async function loadDiscoverCollectionsDataSafe(): Promise<DiscoverCollectionsData | null> {
+  try {
+    return await traceServerStep("resources.getDiscoverCollectionsData", () =>
+      getDiscoverCollectionsData(),
     );
   } catch (error) {
     if (!isMissingTableError(error)) {

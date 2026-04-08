@@ -120,6 +120,8 @@ Database search note:
     → signed-in discover personalization now hydrates in a second client fetch after owned-state is ready
     → the discover "Top picks" row now server-renders as the default section for everyone, while the heavier personalized discover client module is only loaded for authenticated viewers and can replace that fallback later
     → the discover `Trending now` row no longer shares the personalized viewer-state provider boundary; it patches owned badges through its own deferred base-state fetch so the provider scope is limited to the personalized module itself
+    → the discover home no longer awaits a monolithic `getDiscoverData()` bundle for every curated section; `/resources` now starts separate cached `lead` (Top picks + Trending) and `collections` (New releases / Featured / Most downloaded / Top creator) readers in parallel, renders the quick-browse shell immediately, and streams those server subtrees behind structural `Suspense` boundaries
+    → the compatibility `getDiscoverData()` reader now composes those split section caches for viewer-state and warm callers, so route entry no longer has to wait on the whole discover payload just to unlock the first curated rows
     → viewer-state can start before any heavier personalized discover work is resolved
     → `/api/resources/viewer-state` serves `scope=base|discover` so ownership and recommendation work stay decoupled
     → signed-in discover payloads use short-lived private caching to smooth repeat navigations

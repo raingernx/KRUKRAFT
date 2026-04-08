@@ -9,8 +9,11 @@ import {
 } from "@/services/creator";
 import {
   getDiscoverCategories,
+  getDiscoverCollectionsData,
   getDiscoverData,
-  type DiscoverData,
+  getDiscoverLeadData,
+  type DiscoverCollectionsData,
+  type DiscoverLeadData,
 } from "@/services/discover";
 import {
   MARKETPLACE_DEFAULT_PAGE,
@@ -182,7 +185,7 @@ async function resolveResourceTargetsFromIds(resourceIds: string[]) {
 }
 
 function collectDiscoverWarmTargets(
-  discoverData: DiscoverData,
+  discoverData: WarmDiscoverData,
   resourceTargets: ResourceWarmTarget[],
   resourceSeen: Set<string>,
   creatorIdentifiers: string[],
@@ -194,7 +197,6 @@ function collectDiscoverWarmTargets(
     discoverData.newReleases,
     discoverData.recommended,
     discoverData.mostDownloaded,
-    discoverData.freeResources,
   ];
 
   sections.forEach((section) => {
@@ -295,37 +297,41 @@ export async function warmPublicCaches(
     "public_cache_warm_full",
     { trigger },
     async () => {
-      let discoverData: DiscoverData | null = null;
       let marketplaceResults: Array<Awaited<ReturnType<typeof getMarketplaceResources>>> = [];
-      let discoverCategories: Awaited<ReturnType<typeof getDiscoverCategories>> = [];
-      let marketplaceWarmVariants: MarketplaceFilters[] = [];
-
-      await Promise.all([
-        getDiscoverCategories().then((categories) => {
-          discoverCategories = categories;
-          marketplaceWarmVariants = buildMarketplaceWarmVariants(
-            categories.map((category) => category.slug),
-          );
-        }),
-        getDiscoverData().then((data) => {
-          discoverData = data;
-        }),
+      const [
+        discoverCategories,
+        discoverLeadData,
+        discoverCollectionsData,
+      ] = await Promise.all([
+        getDiscoverCategories(),
+        getDiscoverLeadData(),
+        getDiscoverCollectionsData(),
       ]);
+      const marketplaceWarmVariants = buildMarketplaceWarmVariants(
+        discoverCategories.map((category) => category.slug),
+      );
 
       const resourceTargets: ResourceWarmTarget[] = [];
       const resourceSeen = new Set<string>();
       const creatorIdentifiers: string[] = [];
       const creatorSeen = new Set<string>();
 
-      if (discoverData) {
-        collectDiscoverWarmTargets(
-          discoverData,
-          resourceTargets,
-          resourceSeen,
-          creatorIdentifiers,
-          creatorSeen,
-        );
-      }
+      const warmDiscoverData: WarmDiscoverData = {
+        trending: discoverLeadData.trending,
+        recommended: discoverLeadData.recommended,
+        newReleases: discoverCollectionsData.newReleases,
+        featured: discoverCollectionsData.featured,
+        mostDownloaded: discoverCollectionsData.mostDownloaded,
+        topCreator: discoverCollectionsData.topCreator,
+      };
+
+      collectDiscoverWarmTargets(
+        warmDiscoverData,
+        resourceTargets,
+        resourceSeen,
+        creatorIdentifiers,
+        creatorSeen,
+      );
 
       marketplaceResults = await Promise.all(
         marketplaceWarmVariants.map((filters) => getMarketplaceResources(filters)),
@@ -427,7 +433,11 @@ export async function warmTargetedPublicCaches(
 
       const [, , , trustSummaryTargets] = await Promise.all([
         includeListings
-          ? getDiscoverData()
+          ? Promise.all([
+              getDiscoverLeadData(),
+              getDiscoverCollectionsData(),
+              getDiscoverData(),
+            ])
           : Promise.resolve(null),
         includeListings
           ? getDiscoverCategories()
@@ -467,3 +477,4 @@ export async function warmTargetedPublicCaches(
     },
   );
 }
+type WarmDiscoverData = DiscoverLeadData & DiscoverCollectionsData;

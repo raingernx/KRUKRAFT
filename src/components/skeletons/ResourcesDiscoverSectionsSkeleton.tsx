@@ -157,13 +157,25 @@ function DiscoverCollectionsFallback() {
   );
 }
 
+export function ResourcesDiscoverLeadSectionFallback() {
+  return (
+    <>
+      <DiscoverDeferredSectionFallback titleWidth="w-52" cardCount={4} />
+      <DiscoverDeferredSectionFallback titleWidth="w-40" cardCount={4} />
+    </>
+  );
+}
+
+export function ResourcesDiscoverCollectionsSectionFallback() {
+  return <DiscoverCollectionsFallback />;
+}
+
 export function ResourcesDiscoverSectionsManualSkeleton() {
   return (
     <div className="space-y-16 lg:space-y-20">
       <DiscoverBrowseTilesFallback />
-      <DiscoverDeferredSectionFallback titleWidth="w-52" cardCount={4} />
-      <DiscoverDeferredSectionFallback titleWidth="w-40" cardCount={4} />
-      <DiscoverCollectionsFallback />
+      <ResourcesDiscoverLeadSectionFallback />
+      <ResourcesDiscoverCollectionsSectionFallback />
     </div>
   );
 }
