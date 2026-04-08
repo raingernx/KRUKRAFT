@@ -7,7 +7,7 @@ The post-deploy warm workflow warms critical public routes, then runs a k6-backe
 ## Current Truth
 
 - The workflow auto-runs on production deployment success and can also be triggered manually with `workflow_dispatch`.
-- `Warm Public Cache` waits for `/resources` to return success, then warms public routes and optional internal cache layers before perf verification starts.
+- `Warm Public Cache` waits for `/resources` to return success, then runs the repo-owned warm script before perf verification starts.
 - The warm script now gives `/resources` a deliberate second pass before the k6 smoke suite starts, and each pass sends a small concurrent burst instead of a single request, because production checks showed that sequential warms still left later k6 VUs free to hit fresh instances with a cold discover-home stream.
 - The same warm script now also warms the control-arm newest listing with `ranking_variant=A`, a repeated pass, and a concurrent burst sized to the smoke route's 5-VU ceiling, and it warms the hot creator detail plus category listing routes with the same repeated burst strategy, because the smoke suite measures those exact shapes and they were still alternating between pass/fail when only the generic public warm set ran.
 - `Run Post-Deploy Performance Verification` executes `npm run perf:post-deploy`, which runs the smoke k6 suite and fails the job when any route exceeds its p95 budget or crosses a 1% failure rate.
@@ -28,7 +28,7 @@ This workflow is the repo-owned production perf truth source after deploy. It ve
 
 - resolve production deployment context
 - wait for the production `/resources` route to go live
-- warm public and optional internal cache layers
+- run the warm script, which primes internal caches first and then warms public route shells
 - run the smoke k6 suite against key public routes
 - interpret the result in two stages:
   - did `Warm Public Cache` itself fail
@@ -43,7 +43,7 @@ This workflow is the repo-owned production perf truth source after deploy. It ve
 - `listing_recommended_smoke`, `listing_newest_smoke`, `creator_detail_smoke`, and `category_listing_smoke` are expected to be warmed against the same treatment/control cookie / creator slug / category slug that the k6 suite measures; warming only adjacent routes is not sufficient evidence of stability.
 - When those smoke routes ramp to 5 VUs, the warm burst should match that fanout. Sequential repeats alone are not enough evidence that later multi-instance smoke traffic will avoid cold tails, and historically noisy routes such as `/resources` and `listing_newest_smoke` may still need an extra third pass to catch late fresh-instance shells.
 - If a hot public route already uses `unstable_cache`, keep the wrapper function itself stable per route key or slug; recreating the wrapper on every call weakens same-instance reuse and can still leave warmed smoke routes vulnerable to cold-tail variance even when the Redis layer is hot.
-- If `PERFORMANCE_WARM_SECRET` is configured, the post-deploy script should trigger `/api/internal/performance/warm` before the route-level HTTP fanout. The internal warm primes service-level/precomputed caches; the route-level pass then warms streamed page shells and image optimizer paths on top.
+- If `PERFORMANCE_WARM_SECRET` is configured, the post-deploy warm script itself should trigger `/api/internal/performance/warm` before the route-level HTTP fanout. Do not run a second standalone internal-warm step after the public-route pass, or the perf suite will no longer start immediately after the route shells were last warmed.
 - The smoke perf suite is a blocking gate: route budgets are not advisory.
 - `Warm Public Cache` passing does not mean the workflow passed; when later perf verification fails, the failure class is usually warmed-route instability, target-shape mismatch, or fresh-instance variance, not a generic warm-step failure.
 - Artifact JSON and GitHub step summary should tell the same story about which route was worst and which routes failed.

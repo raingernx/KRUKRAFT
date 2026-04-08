@@ -159,6 +159,7 @@ Current perf-hardening baseline for the production UX initiative is:
 - post-deploy warm endpoint layering
   - when `PERFORMANCE_WARM_SECRET` is available, the warm script should call `/api/internal/performance/warm` before the public HTTP fanout pass
   - intent: prime service-level Redis/precomputed listing caches first, then let route-level warming handle page shells, streamed HTML bodies, and image-optimizer hints
+  - the workflow should not run a second standalone internal-warm step after route fanout; the final action before the smoke suite should stay the route-level warm pass so `/resources` and listing shells are the freshest warmed surfaces when k6 starts
 - `resources_home_smoke`
   - main class: discover-home stream and page shell were still seeing fresh-instance tails after deploy
   - current mitigation: `/resources` now warms as a required route with `repeat: 3` and `burst: 5` so the discover-home shell sees the same 5-VU fanout shape the smoke suite later measures
