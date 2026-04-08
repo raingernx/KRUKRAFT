@@ -4,8 +4,10 @@ import { ArrowRight } from "lucide-react";
 import { isMissingTableError } from "@/lib/prismaErrors";
 import { LazyResourcesDiscoverPersonalizedSection } from "@/components/resources/LazyResourcesDiscoverPersonalizedSection";
 import { ResourcesViewerStateProvider } from "@/components/resources/ResourcesViewerStateProvider";
+import { ResourceCard } from "@/components/resources/ResourceCard";
 import type { ResourceCardData } from "@/components/resources/ResourceCard";
 import { ViewerAwareResourceCard } from "@/components/resources/ViewerAwareResourceCard";
+import { ViewerAwareResourceCardRow } from "@/components/resources/ViewerAwareResourceCardRow";
 import { ViewerAwareResourceGrid } from "@/components/resources/ViewerAwareResourceGrid";
 import {
   SearchRecoveryPanel,
@@ -307,7 +309,7 @@ async function ResourcesListingContent({
                 ) : null}
               </Suspense>
             ) : (
-              <ResourcesViewerStateProvider>
+              <>
                 {spotlightResource ? (
                   <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/12 via-card to-card p-4 shadow-sm sm:p-5">
                     <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(280px,320px)] lg:items-start">
@@ -351,15 +353,17 @@ async function ResourcesListingContent({
 
                       <div className="w-full max-w-[320px] justify-self-start lg:justify-self-end">
                         <div className="rounded-[1.35rem] border border-border-strong bg-background/85 p-2 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.48)]">
-                          <ViewerAwareResourceCard
-                            resource={{
-                              ...spotlightResource,
-                              highlightBadge: spotlightLabel,
-                            }}
-                            variant="marketplace"
-                            linkPrefetchMode="viewport"
-                            imageLoading="eager"
-                          />
+                          <ResourcesViewerStateProvider>
+                            <ViewerAwareResourceCard
+                              resource={{
+                                ...spotlightResource,
+                                highlightBadge: spotlightLabel,
+                              }}
+                              variant="marketplace"
+                              linkPrefetchMode="viewport"
+                              imageLoading="eager"
+                            />
+                          </ResourcesViewerStateProvider>
                         </div>
                       </div>
                     </div>
@@ -381,7 +385,7 @@ async function ResourcesListingContent({
                     cardPrefetchScope: `resource-card-grid:${resourceGridQueryKey}`,
                   }}
                 />
-              </ResourcesViewerStateProvider>
+              </>
             )}
           </div>
         </div>
@@ -417,22 +421,13 @@ async function ResourcesDiscoverDeferredSections({
     return null;
   }
 
-  const resolveDiscoverImageLoading = (
-    resource: ResourceCardData,
-    index: number,
-  ) => {
-    const previewUrl = getResourcePreviewUrl(resource);
-    const shouldEager =
-      index < eagerDiscoverCardCount ||
-      (previewUrl !== null && eagerDiscoverPreviewUrls.has(previewUrl));
-
-    if (shouldEager && previewUrl) {
-      eagerDiscoverPreviewUrls.add(previewUrl);
-    }
-
-    return shouldEager ? "eager" : undefined;
-  };
   const globalFiltered = discoverData.recommended as ResourceCardData[];
+  const discoverFallbackCards = globalFiltered.slice(0, eagerDiscoverCardCount);
+  const trendingResources = (discoverData.trending as ResourceCardData[]).map((resource, index) => ({
+    ...resource,
+    highlightBadge: index < 2 ? "Trending this week" : null,
+    socialProofLabel: index < 2 ? "Trending fast this week" : null,
+  }));
   const quickBrowseTiles = [
     {
       title: "Top picks",
@@ -516,36 +511,32 @@ async function ResourcesDiscoverDeferredSections({
 
       <ResourcesViewerStateProvider>
         <LazyResourcesDiscoverPersonalizedSection
-          fallbackCards={globalFiltered.slice(0, eagerDiscoverCardCount)}
+          fallbackCards={discoverFallbackCards}
           eagerCardCount={eagerDiscoverCardCount}
           eagerPreviewUrls={[...eagerDiscoverPreviewUrls]}
-        />
-
-        {discoverData.trending.length > 0 ? (
-          <section className="space-y-5">
-            <SectionHeader
-              title="Trending now"
-              description="Ranked by recent sales momentum, recent revenue, rating quality, and review volume to surface the strongest current picks."
-              viewAllHref={routes.marketplaceQuery("sort=trending&category=all")}
-            />
-            <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
-              {(discoverData.trending as ResourceCardData[]).map((resource, index) => (
-                <ViewerAwareResourceCard
-                  key={resource.id}
-                  resource={{
-                    ...resource,
-                    highlightBadge: index < 2 ? "Trending this week" : null,
-                    socialProofLabel: index < 2 ? "Trending fast this week" : null,
-                  }}
-                  variant="marketplace"
-                  linkPrefetchMode="viewport"
-                  imageLoading={resolveDiscoverImageLoading(resource, index)}
-                />
-              ))}
-            </div>
-          </section>
-        ) : null}
+        >
+          <ResourcesDiscoverTopPicksSection
+            resources={discoverFallbackCards}
+            eagerCardCount={eagerDiscoverCardCount}
+            eagerPreviewUrls={[...eagerDiscoverPreviewUrls]}
+          />
+        </LazyResourcesDiscoverPersonalizedSection>
       </ResourcesViewerStateProvider>
+
+      {trendingResources.length > 0 ? (
+        <section className="space-y-5">
+          <SectionHeader
+            title="Trending now"
+            description="Ranked by recent sales momentum, recent revenue, rating quality, and review volume to surface the strongest current picks."
+            viewAllHref={routes.marketplaceQuery("sort=trending&category=all")}
+          />
+          <ViewerAwareResourceCardRow
+            resources={trendingResources}
+            eagerCardCount={eagerDiscoverCardCount}
+            eagerPreviewUrls={[...eagerDiscoverPreviewUrls]}
+          />
+        </section>
+      ) : null}
 
       {curatedCollections.length > 0 || discoverData.topCreator?.creator.creatorSlug ? (
         <section className="space-y-5">
@@ -590,6 +581,48 @@ async function ResourcesDiscoverDeferredSections({
       {BLOG_SECTION_ENABLED ? <BlogSection /> : null}
       <EmailSignup />
     </div>
+  );
+}
+
+function ResourcesDiscoverTopPicksSection({
+  resources,
+  eagerCardCount = 0,
+  eagerPreviewUrls = [],
+}: {
+  resources: ResourceCardData[];
+  eagerCardCount?: number;
+  eagerPreviewUrls?: string[];
+}) {
+  const eagerPreviewUrlSet = new Set(eagerPreviewUrls);
+
+  return (
+    <section className="space-y-5">
+      <SectionHeader
+        title="Top picks"
+        description="A tighter shortlist of strong marketplace picks when you want a faster place to start."
+        viewAllHref={routes.marketplaceQuery("sort=recommended&category=all")}
+      />
+      <div className="grid gap-6 lg:gap-8 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+        {resources.map((resource, index) => {
+          const previewUrl = getResourcePreviewUrl(resource);
+          const imageLoading =
+            index < eagerCardCount ||
+            (previewUrl !== null && eagerPreviewUrlSet.has(previewUrl))
+              ? "eager"
+              : undefined;
+
+          return (
+            <ResourceCard
+              key={resource.id}
+              resource={resource}
+              variant="marketplace"
+              linkPrefetchMode="viewport"
+              imageLoading={imageLoading}
+            />
+          );
+        })}
+      </div>
+    </section>
   );
 }
 

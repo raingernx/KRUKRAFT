@@ -113,9 +113,12 @@ Database search note:
     → marketplace listing reads now only await category cache before the query when category slug resolution is actually needed; unfiltered listing/search paths can load sidebar categories in parallel with the primary listing read
     → client viewer-state hydration restores owned badges first
     → the `/resources` viewer-state provider is now scoped to viewer-aware card and personalization subtrees instead of wrapping the whole browse shell, so headings/filter chrome can stay outside the owned-state hydration boundary
+    → the main listing grid now hydrates owned badges through `ResourceGrid`'s deferred owned-id hydrator instead of sitting under a route-level viewer-state provider, so the grid shell can render with server data first and patch ownership state in later without expanding the provider boundary across the whole listing subtree
     → zero-result search recovery now starts as a deferred nested server subtree behind its own `Suspense` boundary, so the listing shell and search-empty copy no longer wait on taxonomy recovery suggestions before streaming
     → the dedicated no-results search branch now renders the recovery panel without routing through the viewer-state grid/client ownership boundary, trimming hydration work from that empty-search path
     → signed-in discover personalization now hydrates in a second client fetch after owned-state is ready
+    → the discover "Top picks" row now server-renders as the default section for everyone, while the heavier personalized discover client module is only loaded for authenticated viewers and can replace that fallback later
+    → the discover `Trending now` row no longer shares the personalized viewer-state provider boundary; it patches owned badges through its own deferred base-state fetch so the provider scope is limited to the personalized module itself
     → viewer-state can start before any heavier personalized discover work is resolved
     → `/api/resources/viewer-state` serves `scope=base|discover` so ownership and recommendation work stay decoupled
     → signed-in discover payloads use short-lived private caching to smooth repeat navigations

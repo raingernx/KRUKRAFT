@@ -234,18 +234,12 @@ export function ResourcesDiscoverPersonalizedSection({
   eagerPreviewUrls?: string[];
 }) {
   const { isAuthenticated, isReady } = useResourcesViewerState();
-  const { data: discover, isReady: isDiscoverReady } = useFetchJson<ResourcesViewerDiscoverState>({
+  const { data: discover } = useFetchJson<ResourcesViewerDiscoverState>({
     cacheKey: "resources-viewer-discover",
     ttlMs: 15_000,
     url: "/api/resources/viewer-state?scope=discover",
     enabled: isReady && isAuthenticated,
   });
-  const shouldShowPersonalizedLoading =
-    isReady && isAuthenticated && !isDiscoverReady;
-
-  if (shouldShowPersonalizedLoading) {
-    return null;
-  }
 
   const recommendationVariant = discover?.recommendationVariant ?? null;
   const recommendedForYou =
