@@ -292,6 +292,7 @@ Current perf-hardening baseline for the production UX initiative is:
 15. Resource detail is now hardened as a critical-shell route rather than a full shell-first split: `/resources/[slug]` starts slug-based secondary readers in parallel with the primary resource fetch and enforces timeout-based fail-soft on purchase/trust/reviews/related branches, so regressions there should be investigated as section-level timeout/fallback behavior before assuming the critical shell query itself regressed
 16. Reviews and creator moderation now expose lighter summary branches before their full tables; if those pages feel heavy again, inspect whether the shared moderation promise got pulled back into one blocking render path instead of feeding separate summary/results suspense sections
 17. The ranking debug route now splits the category-filter chrome from the report body more aggressively; if the page regresses, check whether the filter-data reader got re-coupled to the full report path before tuning the report query itself
+18. Public account-menu navigation into dashboard-lite routes now depends on explicit client prefetch/warmup instead of relying on hidden dropdown links to prefetch themselves; if `/settings`, `/dashboard/library`, or `/dashboard/purchases` feel stuck on the full dashboard skeleton specifically after a menu click from `/resources`, inspect the navbar/avatar prefetch hooks before blaming the route body
 
 ---
 

@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect, type MouseEvent as ReactMouseEvent } from "react";
+import {
+  startTransition,
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -31,6 +37,11 @@ const AVATAR_MENU = [
   { href: routes.purchases, label: "Purchases",  icon: ShoppingBag },
   { href: routes.settings,  label: "Settings",   icon: Settings },
 ];
+const AVATAR_MENU_PREFETCH_TARGETS = [
+  routes.library,
+  routes.purchases,
+  routes.settings,
+] as const;
 
 export function DashboardTopbar({ user, onMenuToggle }: DashboardTopbarProps) {
   const router = useRouter();
@@ -41,6 +52,7 @@ export function DashboardTopbar({ user, onMenuToggle }: DashboardTopbarProps) {
   const [isHydrated, setIsHydrated] = useState(false);
   const avatarRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const avatarMenuPrefetchedRef = useRef(false);
 
   useEffect(() => {
     function onOutsideClick(e: MouseEvent) {
@@ -58,6 +70,24 @@ export function DashboardTopbar({ user, onMenuToggle }: DashboardTopbarProps) {
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+
+  useEffect(() => {
+    avatarMenuPrefetchedRef.current = false;
+  }, [user.email]);
+
+  function warmAvatarMenuTargets() {
+    if (avatarMenuPrefetchedRef.current) {
+      return;
+    }
+
+    avatarMenuPrefetchedRef.current = true;
+
+    for (const href of AVATAR_MENU_PREFETCH_TARGETS) {
+      startTransition(() => {
+        router.prefetch(href);
+      });
+    }
+  }
 
   function handleDashboardNavigation(href: string) {
     beginDashboardNavigation(href);
@@ -179,7 +209,14 @@ export function DashboardTopbar({ user, onMenuToggle }: DashboardTopbarProps) {
           <div ref={avatarRef} className="relative">
             <button
               type="button"
-              onClick={() => setAvatarOpen((o) => !o)}
+              onClick={() => {
+                if (!avatarOpen) {
+                  warmAvatarMenuTargets();
+                }
+                setAvatarOpen((o) => !o);
+              }}
+              onMouseEnter={warmAvatarMenuTargets}
+              onFocus={warmAvatarMenuTargets}
               className="group transition"
             >
               <AccountTrigger
@@ -216,6 +253,8 @@ export function DashboardTopbar({ user, onMenuToggle }: DashboardTopbarProps) {
                       <Link
                         key={item.href}
                         href={item.href}
+                        onMouseEnter={warmAvatarMenuTargets}
+                        onFocus={warmAvatarMenuTargets}
                         onClick={() => {
                           handleDashboardNavigation(item.href);
                           setAvatarOpen(false);

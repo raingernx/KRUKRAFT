@@ -1,6 +1,12 @@
 "use client";
 
-import { Suspense, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
+import {
+  Suspense,
+  startTransition,
+  useEffect,
+  type MouseEvent as ReactMouseEvent,
+  type ReactNode,
+} from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -96,6 +102,13 @@ const MARKETPLACE_PRIMARY_ACTION_CLASS_NAME =
   "inline-flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-brand-600 px-4 text-[14px] leading-[22px] font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2";
 const MARKETPLACE_CATEGORY_ITEM_CLASS_NAME =
   "inline-flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full border px-4 text-[14px] leading-[22px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2";
+const PROTECTED_AREA_PREFETCH_TARGETS = [
+  routes.dashboard,
+  routes.library,
+  routes.purchases,
+  routes.settings,
+  routes.subscription,
+] as const;
 
 function isMarketplaceCategoryActive(currentCategory: string | null, itemCategory: string | null) {
   if (itemCategory === null) {
@@ -201,6 +214,7 @@ function NavbarInner({
   const currentCategory = searchParams.get("category");
   const userMenuId = useId();
   const mobileMoreRef = useRef<HTMLDetailsElement | null>(null);
+  const protectedAreaPrefetchedRef = useRef(false);
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -208,6 +222,21 @@ function NavbarInner({
   const warmAuthViewer = useCallback(() => {
     void primeAuthViewer();
   }, []);
+  const warmProtectedAreaTargets = useCallback(() => {
+    warmAuthViewer();
+
+    if (protectedAreaPrefetchedRef.current) {
+      return;
+    }
+
+    protectedAreaPrefetchedRef.current = true;
+
+    for (const href of PROTECTED_AREA_PREFETCH_TARGETS) {
+      startTransition(() => {
+        router.prefetch(href);
+      });
+    }
+  }, [router, warmAuthViewer]);
 
   const visibleMobileCategoryItems = MARKETPLACE_CATEGORY_ITEMS.slice(0, MOBILE_VISIBLE_CATEGORY_COUNT);
   const overflowMobileCategoryItems = MARKETPLACE_CATEGORY_ITEMS.slice(MOBILE_VISIBLE_CATEGORY_COUNT);
@@ -218,6 +247,18 @@ function NavbarInner({
   function closeMobileMoreMenu() {
     mobileMoreRef.current?.removeAttribute("open");
   }
+
+  useEffect(() => {
+    if (!userMenuOpen) {
+      return;
+    }
+
+    warmProtectedAreaTargets();
+  }, [userMenuOpen, warmProtectedAreaTargets]);
+
+  useEffect(() => {
+    protectedAreaPrefetchedRef.current = false;
+  }, [authUser?.id]);
 
   function closeAll() {
     setMobileOpen(false);
@@ -348,6 +389,8 @@ function NavbarInner({
             <div className="my-1 border-t border-border-subtle" />
             <Link
               href={routes.dashboard}
+              onMouseEnter={warmProtectedAreaTargets}
+              onFocus={warmProtectedAreaTargets}
               onClick={(event) => {
                 handleProtectedAreaLinkClick(event, routes.dashboard, () => {
                   setUserMenuOpen(false);
@@ -362,6 +405,8 @@ function NavbarInner({
             </Link>
             <Link
               href={routes.library}
+              onMouseEnter={warmProtectedAreaTargets}
+              onFocus={warmProtectedAreaTargets}
               onClick={(event) => {
                 handleProtectedAreaLinkClick(event, routes.library, () => {
                   setUserMenuOpen(false);
@@ -376,6 +421,8 @@ function NavbarInner({
             </Link>
             <Link
               href={routes.purchases}
+              onMouseEnter={warmProtectedAreaTargets}
+              onFocus={warmProtectedAreaTargets}
               onClick={(event) => {
                 handleProtectedAreaLinkClick(event, routes.purchases, () => {
                   setUserMenuOpen(false);
@@ -393,6 +440,8 @@ function NavbarInner({
 
             <Link
               href={routes.settings}
+              onMouseEnter={warmProtectedAreaTargets}
+              onFocus={warmProtectedAreaTargets}
               onClick={(event) => {
                 handleProtectedAreaLinkClick(event, routes.settings, () => {
                   setUserMenuOpen(false);
@@ -436,13 +485,15 @@ function NavbarInner({
 
               <div
                 className="ml-auto hidden min-w-[176px] items-center justify-end gap-2.5 lg:flex"
-                onPointerEnter={warmAuthViewer}
-                onFocusCapture={warmAuthViewer}
+                onPointerEnter={warmProtectedAreaTargets}
+                onFocusCapture={warmProtectedAreaTargets}
               >
                 {authUser ? (
                   <>
                     <Link
                       href={routes.library}
+                      onMouseEnter={warmProtectedAreaTargets}
+                      onFocus={warmProtectedAreaTargets}
                       onClick={(event) => handleProtectedAreaLinkClick(event, routes.library)}
                       className={MARKETPLACE_ACTION_LINK_CLASS_NAME}
                     >
@@ -451,7 +502,14 @@ function NavbarInner({
                     <div className="relative">
                       <button
                         type="button"
-                        onClick={() => setUserMenuOpen((open) => !open)}
+                        onClick={() => {
+                          if (!userMenuOpen) {
+                            warmProtectedAreaTargets();
+                          }
+                          setUserMenuOpen((open) => !open);
+                        }}
+                        onMouseEnter={warmProtectedAreaTargets}
+                        onFocus={warmProtectedAreaTargets}
                         className="group transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
                         aria-label="เปิดเมนูบัญชี"
                         aria-haspopup="menu"
@@ -486,12 +544,14 @@ function NavbarInner({
                   dropdown, so the avatar button lives outside this div. */}
               <div
                 className={cn("ml-auto flex min-w-0 max-w-[68vw] items-center gap-1.5 lg:hidden", HORIZONTAL_SCROLL_CLASS_NAME)}
-                onPointerEnter={warmAuthViewer}
-                onFocusCapture={warmAuthViewer}
+                onPointerEnter={warmProtectedAreaTargets}
+                onFocusCapture={warmProtectedAreaTargets}
               >
                 {authUser ? (
                   <Link
                     href={routes.library}
+                    onMouseEnter={warmProtectedAreaTargets}
+                    onFocus={warmProtectedAreaTargets}
                     onClick={(event) => handleProtectedAreaLinkClick(event, routes.library)}
                     className="inline-flex h-10 shrink-0 items-center rounded-full px-3 text-[14px] leading-[22px] font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
                   >
@@ -516,7 +576,14 @@ function NavbarInner({
                 <div className="relative shrink-0 lg:hidden">
                   <button
                     type="button"
-                    onClick={() => setUserMenuOpen((open) => !open)}
+                    onClick={() => {
+                      if (!userMenuOpen) {
+                        warmProtectedAreaTargets();
+                      }
+                      setUserMenuOpen((open) => !open);
+                    }}
+                    onMouseEnter={warmProtectedAreaTargets}
+                    onFocus={warmProtectedAreaTargets}
                     className="inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
                     aria-label="เปิดเมนูบัญชี"
                     aria-haspopup="menu"
@@ -642,8 +709,8 @@ function NavbarInner({
         <div className={headerSearch ? "order-2 ml-auto lg:order-3 lg:ml-0" : "ml-auto"}>
           <div
             className="hidden shrink-0 items-center gap-3.5 lg:flex"
-            onPointerEnter={warmAuthViewer}
-            onFocusCapture={warmAuthViewer}
+            onPointerEnter={warmProtectedAreaTargets}
+            onFocusCapture={warmProtectedAreaTargets}
           >
             <nav className="hidden items-center gap-2 lg:flex" aria-label="เมนูหลัก">
               {NAV_LINKS.filter(({ href }) => href !== routes.library || Boolean(authUser)).map(({ href, label }) => (
@@ -663,7 +730,14 @@ function NavbarInner({
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => setUserMenuOpen((open) => !open)}
+                  onClick={() => {
+                    if (!userMenuOpen) {
+                      warmProtectedAreaTargets();
+                    }
+                    setUserMenuOpen((open) => !open);
+                  }}
+                  onMouseEnter={warmProtectedAreaTargets}
+                  onFocus={warmProtectedAreaTargets}
                   className="group transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
                   aria-label="เปิดเมนูบัญชี"
                   aria-haspopup="menu"
