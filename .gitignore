@@ -63,6 +63,11 @@ repomix-output*.json
 .vscode/*
 !.vscode/extensions.json
 .idea
+
+# Local design-tool checkouts
+.design-tools/awesome-design-md/
+.design-tools/shadcn-examples/
+
 # Private file uploads (local storage, not for version control)
 /private-uploads/*
 !/private-uploads/.gitkeep
