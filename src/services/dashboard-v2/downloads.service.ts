@@ -1,5 +1,10 @@
 import { formatDate, formatFileSize } from "@/lib/format";
-import { getUserDownloadHistory } from "@/services/purchases/purchase.service";
+import {
+  getUserDownloadHistory,
+  getUserDownloadHistorySurfaceSummary,
+} from "@/services/purchases/purchase.service";
+
+const DASHBOARD_V2_DOWNLOADS_VISIBLE_LIMIT = 25;
 
 export interface DashboardV2DownloadItem {
   id: string;
@@ -37,9 +42,12 @@ export async function getDashboardV2DownloadsData(input: {
   userId: string;
 }): Promise<DashboardV2DownloadsData> {
   try {
-    const downloads = await getUserDownloadHistory(input.userId);
+    const [summary, downloads] = await Promise.all([
+      getUserDownloadHistorySurfaceSummary(input.userId),
+      getUserDownloadHistory(input.userId, DASHBOARD_V2_DOWNLOADS_VISIBLE_LIMIT),
+    ]);
 
-    if (downloads.length === 0) {
+    if (summary.count === 0) {
       return {
         state: "empty",
         count: 0,
@@ -51,9 +59,11 @@ export async function getDashboardV2DownloadsData(input: {
 
     return {
       state: "ready",
-      count: downloads.length,
+      count: summary.count,
       visibleCount: downloads.length,
-      latestDownloadLabel: formatDate(downloads[0].createdAt),
+      latestDownloadLabel: summary.latestDownloadedAt
+        ? formatDate(summary.latestDownloadedAt)
+        : null,
       downloads: downloads.map((download) => ({
         id: download.id,
         downloadedAt: download.createdAt,

@@ -27,6 +27,10 @@ export function NavbarShellAuthPlaceholder() {
     <div className="flex items-center gap-2">
       <div
         aria-hidden="true"
+        className="h-11 w-11 rounded-full bg-muted"
+      />
+      <div
+        aria-hidden="true"
         className="h-10 w-24 rounded-full bg-muted"
       />
       <div
@@ -34,6 +38,15 @@ export function NavbarShellAuthPlaceholder() {
         className="h-10 w-10 rounded-full bg-muted"
       />
     </div>
+  );
+}
+
+function ThemeSwitcherPlaceholder() {
+  return (
+    <div
+      aria-hidden="true"
+      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-muted"
+    />
   );
 }
 
@@ -86,6 +99,7 @@ export function NavbarShell({
               </div>
 
               <div className="ml-auto hidden min-w-[176px] items-center justify-end gap-2.5 lg:flex">
+                <ThemeSwitcherPlaceholder />
                 <MarketplaceLibraryPlaceholder />
                 <MarketplaceAvatarPlaceholder />
               </div>
@@ -97,6 +111,10 @@ export function NavbarShell({
                 )}
               >
                 <MarketplaceLibraryPlaceholder />
+              </div>
+
+              <div className="shrink-0 lg:hidden">
+                <ThemeSwitcherPlaceholder />
               </div>
 
               <div className="shrink-0 lg:hidden">
@@ -144,7 +162,17 @@ export function NavbarShell({
       <Container className="h-16">
         <div className="flex h-10 items-center justify-between gap-3">
           <NavbarBrand />
-          <NavbarShellAuthPlaceholder />
+          <div className="hidden lg:flex">
+            <NavbarShellAuthPlaceholder />
+          </div>
+
+          <div className="ml-auto flex items-center gap-2 lg:hidden">
+            <ThemeSwitcherPlaceholder />
+            <div
+              aria-hidden="true"
+              className="h-8 w-8 rounded-lg bg-muted"
+            />
+          </div>
         </div>
       </Container>
     </header>

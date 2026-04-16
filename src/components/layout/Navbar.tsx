@@ -21,6 +21,7 @@ import { Avatar, Badge, Container, SidebarSectionLabel } from "@/design-system";
 import {
   AuthenticatedAccountDropdown,
   AUTHENTICATED_ACCOUNT_MENU_ACCOUNT_LINKS,
+  AUTHENTICATED_ACCOUNT_MENU_CREATOR_APPLY_LINKS,
   AUTHENTICATED_ACCOUNT_MENU_CREATOR_LINKS,
 } from "@/components/layout/account/AuthenticatedAccountDropdown";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
@@ -30,6 +31,7 @@ import {
   MarketplaceLibraryPlaceholder,
   NavbarShell,
 } from "@/components/layout/NavbarShell";
+import { ThemeSwitcher } from "@/components/layout/ThemeSwitcher";
 import { NavbarItem } from "@/components/layout/navbar/NavbarItem";
 import {
   beginResourcesNavigation,
@@ -239,6 +241,7 @@ function NavbarInner({
   const searchParams = useSearchParams();
   const authViewer = useAuthViewer({ hydrateFromCache: false });
   const authUser = authViewer.user;
+  const creatorMenuMode = authViewer.creatorMenuMode;
   const isMarketplaceNavbar = Boolean(headerSearch);
   const currentCategory = searchParams.get("category");
   const mobileMoreRef = useRef<HTMLDetailsElement | null>(null);
@@ -422,6 +425,7 @@ function NavbarInner({
                 onPointerEnter={warmProtectedAreaTargets}
                 onFocusCapture={warmProtectedAreaTargets}
               >
+                <ThemeSwitcher variant="icon" ariaLabel="เปลี่ยนธีม" />
                 {authUser ? (
                   <>
                     <IntentPrefetchLink
@@ -441,6 +445,7 @@ function NavbarInner({
                         name: authUser.name ?? "Account",
                         email: authUser.email,
                         image: authUser.image,
+                        creatorMenuMode,
                       }}
                       isSigningOut={isSigningOut}
                       onSignOut={() => {
@@ -503,6 +508,10 @@ function NavbarInner({
               </div>
 
               {/* Avatar sits outside overflow-x-auto so its dropdown is not clipped */}
+              <div className="shrink-0 lg:hidden">
+                <ThemeSwitcher variant="icon" ariaLabel="เปลี่ยนธีม" />
+              </div>
+
               {authUser ? (
                 <div className="shrink-0 lg:hidden">
                   <AuthenticatedAccountDropdown
@@ -510,6 +519,7 @@ function NavbarInner({
                       name: authUser.name ?? "Account",
                       email: authUser.email,
                       image: authUser.image,
+                      creatorMenuMode,
                     }}
                     isSigningOut={isSigningOut}
                     onSignOut={() => {
@@ -651,6 +661,8 @@ function NavbarInner({
               ))}
             </nav>
 
+            <ThemeSwitcher variant="icon" ariaLabel="เปลี่ยนธีม" />
+
             {authUser ? (
               <div className="relative">
                 <AuthenticatedAccountDropdown
@@ -658,6 +670,7 @@ function NavbarInner({
                     name: authUser.name ?? "Account",
                     email: authUser.email,
                     image: authUser.image,
+                    creatorMenuMode,
                   }}
                   isSigningOut={isSigningOut}
                   onSignOut={() => {
@@ -680,18 +693,21 @@ function NavbarInner({
             )}
           </div>
 
-          <button
-            type="button"
-            className="ml-auto rounded-lg p-1.5 text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 lg:hidden"
-            onClick={() => {
-              warmAuthViewer();
-              setMobileOpen((open) => !open);
-            }}
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileOpen}
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          <div className="ml-auto flex items-center gap-2 lg:hidden">
+            <ThemeSwitcher variant="icon" ariaLabel="เปลี่ยนธีม" />
+            <button
+              type="button"
+              className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
+              onClick={() => {
+                warmAuthViewer();
+                setMobileOpen((open) => !open);
+              }}
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+            >
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
       </Container>
 
@@ -766,13 +782,23 @@ function NavbarInner({
                   onClose={closeAll}
                 />
 
-                <PublicAccountDrawerSection
-                  label="CREATOR"
-                  items={AUTHENTICATED_ACCOUNT_MENU_CREATOR_LINKS}
-                  onWarmProtectedAreaTargets={warmProtectedAreaTargets}
-                  onProtectedAreaLinkClick={handleProtectedAreaAnchorClick}
-                  onClose={closeAll}
-                />
+                {creatorMenuMode === "apply" ? (
+                  <PublicAccountDrawerSection
+                    label="CREATOR"
+                    items={AUTHENTICATED_ACCOUNT_MENU_CREATOR_APPLY_LINKS}
+                    onWarmProtectedAreaTargets={warmProtectedAreaTargets}
+                    onProtectedAreaLinkClick={handleProtectedAreaAnchorClick}
+                    onClose={closeAll}
+                  />
+                ) : creatorMenuMode === "hidden" ? null : (
+                  <PublicAccountDrawerSection
+                    label="CREATOR"
+                    items={AUTHENTICATED_ACCOUNT_MENU_CREATOR_LINKS}
+                    onWarmProtectedAreaTargets={warmProtectedAreaTargets}
+                    onProtectedAreaLinkClick={handleProtectedAreaAnchorClick}
+                    onClose={closeAll}
+                  />
+                )}
 
                 <button
                   type="button"

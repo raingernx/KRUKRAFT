@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useCallback, useContext, useLayoutEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import type { Theme } from "@/lib/theme";
 import { applyTheme, persistTheme, readStoredTheme, watchSystemTheme } from "@/lib/theme";
 
@@ -17,7 +24,17 @@ type ThemeProviderProps = {
 };
 
 export function ThemeProvider({ children, initialTheme = "system" }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(() => readStoredTheme() ?? initialTheme);
+  const [theme, setThemeState] = useState<Theme>(initialTheme);
+
+  useEffect(() => {
+    const storedTheme = readStoredTheme();
+
+    if (!storedTheme || storedTheme === initialTheme) {
+      return;
+    }
+
+    setThemeState(storedTheme);
+  }, [initialTheme]);
 
   useLayoutEffect(() => {
     applyTheme(theme);

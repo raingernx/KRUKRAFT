@@ -260,7 +260,11 @@
   interaction. The trigger should render real viewer data when a session is
   present, fall back to an honest guest preview message when it is not, keep
   all links/actions real (dashboard home, membership, settings, creator links,
-  sign-out or auth entry points), and avoid generic admin-chip styling.
+  sign-out or auth entry points), and avoid generic admin-chip styling. The
+  topbar search field and bell affordance may stay visible, but they should be
+  live controls: search should route into real dashboard library results, and
+  the bell should open an honest notification/status surface rather than a
+  disabled prototype button.
 - Route-level and Suspense-critical shells now apply that manual-runtime rule
   more broadly as well: the resource-detail purchase rail, auth login shell,
   admin settings shell, admin analytics route shells, and admin/creator
@@ -471,6 +475,10 @@ max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8
 - the fourth top-level creator navigation item still reads `Storefront`, but it
   now opens the live public storefront (`/creators/:slug`) directly instead of
   routing through an internal dashboard summary page first.
+- creator visibility in navigation is now intentionally role/access-bound across
+  both the dashboard shell and the public navbar account surfaces: approved
+  creators get the full creator section, while non-creators should see only the
+  `Become a creator` entry instead of stale creator workspace/resource links.
 - Other Dashboard V2 creator child routes are still in staged rebuild status
   until their remaining Phase 4 route-by-route data/auth integration lands.
 - The route family uses `DashboardV2Shell` as the only visible chrome owner.

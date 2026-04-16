@@ -14,7 +14,7 @@ import { routes } from "@/lib/routes";
 
 export type LogoVariant = "full" | "icon" | "email";
 
-export type LogoSize = "sm" | "md" | "lg" | "xl" | "sidebar";
+export type LogoSize = "sm" | "md" | "lg" | "xl" | "sidebar" | "navbar";
 
 interface LogoProps {
   variant?: LogoVariant;
@@ -27,6 +27,7 @@ interface LogoProps {
 const FULL_IMAGE_CLASS: Record<LogoSize, string> = {
   sm: "h-8 w-[170px]",
   sidebar: "h-8 w-[180px]",
+  navbar: "h-[36px] w-[148px]",
   md: "h-10 w-[220px]",
   lg: "h-10 w-[240px]",
   xl: "h-14 w-[320px]",
@@ -35,6 +36,7 @@ const FULL_IMAGE_CLASS: Record<LogoSize, string> = {
 const ICON_IMAGE_CLASS: Record<LogoSize, string> = {
   sm: "h-8 w-8",
   sidebar: "h-8 w-8",
+  navbar: "h-10 w-10",
   md: "h-10 w-10",
   lg: "h-10 w-10",
   xl: "h-14 w-14",
@@ -43,6 +45,7 @@ const ICON_IMAGE_CLASS: Record<LogoSize, string> = {
 const ICON_FALLBACK_CLASS: Record<LogoSize, string> = {
   sm: "h-8 w-8 text-sm",
   sidebar: "h-8 w-8 text-sm",
+  navbar: "h-10 w-10 text-base",
   md: "h-10 w-10 text-base",
   lg: "h-10 w-10 text-base",
   xl: "h-14 w-14 text-xl",
@@ -51,6 +54,7 @@ const ICON_FALLBACK_CLASS: Record<LogoSize, string> = {
 const TEXT_SIZE_CLASS: Record<LogoSize, string> = {
   sm: "text-xl",
   sidebar: "text-[21px]",
+  navbar: "text-[22px]",
   md: "text-2xl",
   lg: "text-[26px]",
   xl: "text-4xl",

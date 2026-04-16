@@ -1,7 +1,6 @@
 import { unstable_cache } from "next/cache";
 import {
   countDownloadEventsByUser,
-  countPurchaseHistoryByUser,
   findCompletedPurchaseByUserAndResource,
   findCompletedLibraryItemsByUser,
   findDownloadHistorySurfaceSummaryByUser,
@@ -11,6 +10,8 @@ import {
   findCompletedResourceIdsByUser,
   findCompletedResourceIdsByUserFromSet,
   findDownloadHistoryByUser,
+  findPurchaseHistoryByUserWithLimit,
+  findPurchaseHistorySurfaceSummaryByUser,
   findPurchaseByUserAndResource,
   findPurchaseHistoryByUser,
 } from "@/repositories/purchases/purchase.repository";
@@ -262,12 +263,21 @@ export async function getUserPurchaseHistory(userId: string) {
   return findPurchaseHistoryByUser(userId);
 }
 
+export async function getUserPurchaseHistoryRecentWindow(
+  userId: string,
+  take: number,
+) {
+  return findPurchaseHistoryByUserWithLimit(userId, take);
+}
+
 export async function getUserPurchaseHistorySurfaceSummary(userId: string) {
-  const count = await countPurchaseHistoryByUser(userId);
+  const summary = await findPurchaseHistorySurfaceSummaryByUser(userId);
 
   return {
-    count,
-    rowCount: Math.min(Math.max(count, 1), 10),
+    count: summary.orderCount,
+    completedCount: summary.completedCount,
+    totalSpentCents: summary.totalSpentCents,
+    rowCount: Math.min(Math.max(summary.orderCount, 1), 10),
   };
 }
 

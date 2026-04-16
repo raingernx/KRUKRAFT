@@ -89,6 +89,13 @@ Current proxy behavior:
   `creatorPublicHref`, derived from `getCreatorProfile(user.id)`, so creator
   navigation can link straight to the live public storefront without making the
   shell itself request-bound per route
+- dashboard creator-nav visibility is now resolved from one shared access
+  contract across the shell and account surfaces: `DashboardV2Shell` computes
+  `creatorNavMode` with `resolveDashboardNavState(...)`, `/api/auth/viewer`
+  returns the same `creatorMenuMode` for navbar/account UI, approved creators
+  see the full creator nav, non-creators see only `Become a creator`, and the
+  old mixed state where learner routes could still show full creator links in
+  some menus should no longer occur after sign-in / reload
 - `/dashboard-v2/creator/storefront` is no longer a real dashboard destination:
   the route now acts only as a compatibility redirect to the live public
   storefront (`/creators/:slug`) when the creator has a slug, or to

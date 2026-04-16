@@ -30,6 +30,7 @@ export interface AuthenticatedAccountDropdownViewer {
   name: string;
   email: string | null;
   image: string | null;
+  creatorMenuMode?: "hidden" | "apply" | "full";
 }
 
 export type AccountDropdownNavigateHandler = (href: string) => void;
@@ -54,6 +55,14 @@ export const AUTHENTICATED_ACCOUNT_MENU_CREATOR_LINKS = [
     href: routes.dashboardV2CreatorSales,
     label: "Creator earnings",
     icon: CircleDollarSign,
+  },
+] as const;
+
+export const AUTHENTICATED_ACCOUNT_MENU_CREATOR_APPLY_LINKS = [
+  {
+    href: routes.dashboardV2CreatorApply,
+    label: "Become a creator",
+    icon: Sparkles,
   },
 ] as const;
 
@@ -258,6 +267,7 @@ export function AuthenticatedAccountDropdown({
 }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const creatorMenuMode = viewer.creatorMenuMode ?? "hidden";
 
   return (
     <Dropdown
@@ -310,13 +320,23 @@ export function AuthenticatedAccountDropdown({
           />
 
           <div className="mt-3">
-            <MenuSection
-              label="CREATOR"
-              items={AUTHENTICATED_ACCOUNT_MENU_CREATOR_LINKS}
-              onWarmTargets={onWarmTargets}
-              onNavigate={onNavigate}
-              pathname={pathname}
-            />
+            {creatorMenuMode === "apply" ? (
+              <MenuSection
+                label="CREATOR"
+                items={AUTHENTICATED_ACCOUNT_MENU_CREATOR_APPLY_LINKS}
+                onWarmTargets={onWarmTargets}
+                onNavigate={onNavigate}
+                pathname={pathname}
+              />
+            ) : creatorMenuMode === "hidden" ? null : (
+              <MenuSection
+                label="CREATOR"
+                items={AUTHENTICATED_ACCOUNT_MENU_CREATOR_LINKS}
+                onWarmTargets={onWarmTargets}
+                onNavigate={onNavigate}
+                pathname={pathname}
+              />
+            )}
           </div>
 
           <DropdownSeparator />

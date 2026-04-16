@@ -1624,6 +1624,9 @@ function DashboardV2DownloadsSummaryCards({
             {data.count} download{data.count === 1 ? "" : "s"}
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+            {data.count > data.visibleCount ? (
+              <span>Showing latest {data.visibleCount}</span>
+            ) : null}
             <span>Only files you already opened appear here.</span>
             {data.latestDownloadLabel ? (
               <span>Last download {data.latestDownloadLabel}</span>
@@ -2564,6 +2567,11 @@ function DashboardV2PurchasesRouteBody({
 }: {
   data: DashboardV2PurchasesData;
 }) {
+  const ledgerDescription =
+    data.orderCount > data.visibleCount
+      ? `Showing the latest ${data.visibleCount} orders. Older receipts stay available in your account history.`
+      : "Completed, pending, and failed purchases in one protected ledger.";
+
   return (
     <>
       <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
@@ -2573,6 +2581,9 @@ function DashboardV2PurchasesRouteBody({
               {data.orderCount} order{data.orderCount === 1 ? "" : "s"}
             </p>
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+              {data.orderCount > data.visibleCount ? (
+                <span>Showing latest {data.visibleCount}</span>
+              ) : null}
               <span>{data.completedCount} completed</span>
               <span>Total spent {data.totalSpentLabel}</span>
             </div>
@@ -2622,7 +2633,11 @@ function DashboardV2PurchasesRouteBody({
         className="border-border-subtle py-16"
         />
       ) : (
-        <DataPanelTable title="Purchase ledger" bodyClassName="p-0">
+        <DataPanelTable
+          title="Purchase ledger"
+          description={ledgerDescription}
+          bodyClassName="p-0"
+        >
           <>
             <div className="grid grid-cols-[minmax(0,1.9fr)_110px] gap-4 border-b border-border-subtle bg-muted/40 px-4 py-3 text-xs font-semibold uppercase text-muted-foreground md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_110px_110px_120px]">
               <span>Resource</span>

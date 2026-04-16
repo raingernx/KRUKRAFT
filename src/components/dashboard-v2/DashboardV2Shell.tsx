@@ -1,36 +1,48 @@
 import type { ReactNode } from "react";
 
-import { getCachedServerSession } from "@/lib/auth";
+import { getServerAuthTokenSnapshot } from "@/lib/auth/token-snapshot";
 import {
+  type DashboardV2CreatorNavMode,
   DashboardV2Sidebar,
   DashboardV2Topbar,
   type DashboardV2Viewer,
 } from "@/components/dashboard-v2/DashboardV2Navigation";
 import { DashboardNavigationReady } from "@/components/layout/dashboard/DashboardNavigationReady";
 import { DashboardOverlayReady } from "@/components/layout/dashboard/DashboardOverlayReady";
-import { routes } from "@/lib/routes";
-import { getCreatorProfile } from "@/services/creator";
+import { resolveDashboardNavState } from "@/lib/dashboard/dashboard-permissions";
+import {
+  canAccessCreatorWorkspace,
+  getCreatorAccessState,
+} from "@/services/creator";
 
 async function getDashboardV2Viewer(): Promise<DashboardV2Viewer> {
-  const session = await getCachedServerSession();
-  const user = session?.user;
+  const auth = await getServerAuthTokenSnapshot();
   const displayName =
-    user?.name?.trim() ||
-    user?.email?.trim().split("@")[0] ||
+    auth.name?.trim() ||
+    auth.email?.trim().split("@")[0] ||
     "Guest preview";
-  const creatorProfile = user?.id ? await getCreatorProfile(user.id).catch(() => null) : null;
-  const creatorPublicHref = creatorProfile?.creatorSlug
-    ? routes.creatorPublicProfile(creatorProfile.creatorSlug)
-    : null;
+
+  let creatorEnabled = auth.role === "INSTRUCTOR";
+  if (!creatorEnabled && auth.userId && auth.role !== "ADMIN") {
+    const creatorAccess = await getCreatorAccessState(auth.userId).catch(() => null);
+    creatorEnabled = canAccessCreatorWorkspace(creatorAccess);
+  }
+
+  const { creatorNavMode } = resolveDashboardNavState({
+    area: "dashboard",
+    role: auth.role,
+    isCreator: creatorEnabled,
+  }) as { creatorNavMode: DashboardV2CreatorNavMode };
 
   return {
     displayName,
-    email: user?.email?.trim() ?? null,
-    image: user?.image ?? null,
-    creatorPublicHref,
-    role: user?.role ?? null,
-    subscriptionStatus: user?.subscriptionStatus ?? null,
-    isAuthenticated: Boolean(user?.id),
+    email: auth.email?.trim() ?? null,
+    image: auth.image ?? null,
+    creatorPublicHref: null,
+    creatorNavMode,
+    role: auth.role,
+    subscriptionStatus: auth.subscriptionStatus,
+    isAuthenticated: auth.authenticated,
   };
 }
 

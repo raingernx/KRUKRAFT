@@ -10,8 +10,11 @@ type AuthViewerUser = {
   image: string | null;
 };
 
+export type AuthViewerCreatorMenuMode = "hidden" | "apply" | "full";
+
 type AuthViewerPayload = {
   authenticated: boolean;
+  creatorMenuMode: AuthViewerCreatorMenuMode;
   user: AuthViewerUser | null;
 };
 
@@ -27,6 +30,7 @@ type UseAuthViewerOptions = {
 
 const EMPTY_AUTH_VIEWER: AuthViewerPayload = {
   authenticated: false,
+  creatorMenuMode: "hidden",
   user: null,
 };
 const AUTH_VIEWER_STORAGE_KEY = "krukraft.authViewer";

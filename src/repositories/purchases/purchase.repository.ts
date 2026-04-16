@@ -329,6 +329,44 @@ export async function findPurchaseHistoryByUser(userId: string) {
   });
 }
 
+export async function findPurchaseHistoryByUserWithLimit(
+  userId: string,
+  take: number,
+) {
+  return prisma.purchase.findMany({
+    where: { userId },
+    select: PURCHASE_LIST_ITEM_SELECT,
+    orderBy: { createdAt: "desc" },
+    take,
+  });
+}
+
+export async function findPurchaseHistorySurfaceSummaryByUser(userId: string) {
+  const [orderCount, completedSummary] = await prisma.$transaction([
+    prisma.purchase.count({
+      where: { userId },
+    }),
+    prisma.purchase.aggregate({
+      where: {
+        userId,
+        status: "COMPLETED",
+      },
+      _count: {
+        _all: true,
+      },
+      _sum: {
+        amount: true,
+      },
+    }),
+  ]);
+
+  return {
+    orderCount,
+    completedCount: completedSummary._count._all,
+    totalSpentCents: completedSummary._sum.amount ?? 0,
+  };
+}
+
 export async function countPurchaseHistoryByUser(userId: string) {
   return prisma.purchase.count({
     where: { userId },

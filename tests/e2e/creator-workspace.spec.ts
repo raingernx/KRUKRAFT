@@ -609,6 +609,122 @@ test("creator apply clears dashboard overlays without shell stacking for regular
   expect(consoleErrors).toEqual([]);
 });
 
+test("creator nav stays hidden behind real creator access on learner dashboard routes", async ({
+  page,
+}) => {
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+  const accountButton = page
+    .locator(
+      'header button[data-dashboard-account-trigger="true"][data-dashboard-account-ready="true"]:visible',
+    )
+    .first();
+
+  await loginAsUser(page, "/dashboard-v2/library");
+  await expect(page.locator('[data-route-shell-ready="dashboard-library"]').first()).toBeVisible({
+    timeout: 30_000,
+  });
+
+  await expect(page.locator('aside nav a[href="/dashboard-v2/creator/apply"]').first()).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(page.locator('aside nav a[href="/dashboard-v2/creator"]').first()).toHaveCount(0);
+  await expect(
+    page.locator('aside nav a[href="/dashboard-v2/creator/resources"]').first(),
+  ).toHaveCount(0);
+  await expect(page.locator('aside nav a[href="/dashboard-v2/creator/sales"]').first()).toHaveCount(0);
+
+  await expect(accountButton).toBeVisible({ timeout: 20_000 });
+  await accountButton.click();
+
+  await expect(
+    page.locator(
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator/apply"]:visible',
+    ),
+  ).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(
+    page.locator(
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator"]:visible',
+    ),
+  ).toHaveCount(0);
+  await expect(
+    page.locator(
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator/resources"]:visible',
+    ),
+  ).toHaveCount(0);
+  await expect(
+    page.locator(
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator/sales"]:visible',
+    ),
+  ).toHaveCount(0);
+
+  expect(pageErrors).toEqual([]);
+  expect(consoleErrors).toEqual([]);
+});
+
+test("creator nav stays visible across sidebar and account menu for approved creators", async ({
+  page,
+}) => {
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+  const accountButton = page
+    .locator(
+      'header button[data-dashboard-account-trigger="true"][data-dashboard-account-ready="true"]:visible',
+    )
+    .first();
+
+  await loginAsCreator(page, "/dashboard-v2/library");
+  await expect(page.locator('[data-route-shell-ready="dashboard-library"]').first()).toBeVisible({
+    timeout: 30_000,
+  });
+
+  await expect(page.locator('aside nav a[href="/dashboard-v2/creator"]').first()).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(
+    page.locator('aside nav a[href="/dashboard-v2/creator/resources"]').first(),
+  ).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(page.locator('aside nav a[href="/dashboard-v2/creator/sales"]').first()).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(page.locator('aside nav a[href="/dashboard-v2/creator/apply"]').first()).toHaveCount(0);
+
+  await expect(accountButton).toBeVisible({ timeout: 20_000 });
+  await accountButton.click();
+
+  await expect(
+    page.locator(
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator"]:visible',
+    ),
+  ).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(
+    page.locator(
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator/resources"]:visible',
+    ),
+  ).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(
+    page.locator(
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator/sales"]:visible',
+    ),
+  ).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(
+    page.locator(
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator/apply"]:visible',
+    ),
+  ).toHaveCount(0);
+
+  expect(pageErrors).toEqual([]);
+  expect(consoleErrors).toEqual([]);
+});
+
 test("creator cold-entry routes clear neutral creator fallback after route readiness", async ({
   page,
 }) => {

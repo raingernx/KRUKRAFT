@@ -1,8 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type ComponentType } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState, type ComponentType, type FormEvent } from "react";
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+  type ReadonlyURLSearchParams,
+} from "next/navigation";
 import { signOut } from "next-auth/react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import {
@@ -72,10 +77,13 @@ export interface DashboardV2Viewer {
   email: string | null;
   image: string | null;
   creatorPublicHref: string | null;
+  creatorNavMode: DashboardV2CreatorNavMode;
   role: string | null;
   subscriptionStatus: string | null;
   isAuthenticated: boolean;
 }
+
+export type DashboardV2CreatorNavMode = "hidden" | "apply" | "full";
 
 const navGroups: NavGroup[] = [
   {
@@ -99,29 +107,6 @@ const navGroups: NavGroup[] = [
         icon: ReceiptText,
         href: routes.dashboardV2Purchases,
         activeKey: "purchases",
-      },
-    ],
-  },
-  {
-    label: "Creator",
-    items: [
-      {
-        label: "Workspace",
-        icon: Sparkles,
-        href: routes.dashboardV2Creator,
-        activeKey: "creator",
-      },
-      {
-        label: "Resources",
-        icon: FileText,
-        href: routes.dashboardV2CreatorResources,
-        activeKey: "creator-resources",
-      },
-      {
-        label: "Earnings",
-        icon: CircleDollarSign,
-        href: routes.dashboardV2CreatorSales,
-        activeKey: "creator-earnings",
       },
     ],
   },
@@ -164,6 +149,95 @@ function getActiveKey(pathname: string | null): NavKey {
   return "home";
 }
 
+function getDashboardTopbarSearchPlaceholder(pathname: string | null) {
+  switch (getActiveKey(pathname)) {
+    case "downloads":
+      return "Search your library from downloads";
+    case "purchases":
+      return "Search your library from purchases";
+    case "membership":
+      return "Search your library while reviewing plans";
+    case "settings":
+      return "Search your library from settings";
+    case "creator":
+    case "creator-resources":
+    case "creator-earnings":
+      return "Search your library";
+    case "library":
+    case "home":
+    default:
+      return "Search your library";
+  }
+}
+
+function getDashboardTopbarSearchValue(
+  pathname: string | null,
+  searchParams: ReadonlyURLSearchParams,
+) {
+  if (pathname !== routes.dashboardV2Library) {
+    return "";
+  }
+
+  return searchParams.get("q") ?? "";
+}
+
+function getDashboardTopbarSearchHref(input: {
+  pathname: string | null;
+  searchParams: ReadonlyURLSearchParams;
+  query: string;
+}) {
+  const query = input.query.trim();
+
+  if (input.pathname === routes.dashboardV2Library) {
+    const params = new URLSearchParams(input.searchParams.toString());
+
+    if (query) {
+      params.set("q", query);
+    } else {
+      params.delete("q");
+    }
+
+    const nextQuery = params.toString();
+    return nextQuery ? `${routes.dashboardV2Library}?${nextQuery}` : routes.dashboardV2Library;
+  }
+
+  if (!query) {
+    return routes.dashboardV2Library;
+  }
+
+  return `${routes.dashboardV2Library}?q=${encodeURIComponent(query)}`;
+}
+
+function getDashboardNotificationCopy(viewer: DashboardV2Viewer) {
+  if (viewer.creatorNavMode === "apply") {
+    return {
+      title: "Creator setup still needs action",
+      description:
+        "Finish the creator checklist to unlock workspace tools and publishing actions.",
+      ctaHref: routes.dashboardV2CreatorApply,
+      ctaLabel: "Open checklist",
+    };
+  }
+
+  if (viewer.creatorNavMode === "full") {
+    return {
+      title: "No unread alerts",
+      description:
+        "Sales, payout, and storefront updates will surface here once new activity needs attention.",
+      ctaHref: routes.dashboardV2CreatorSales,
+      ctaLabel: "Review sales",
+    };
+  }
+
+  return {
+    title: "No unread alerts",
+    description:
+      "Purchase confirmations and membership changes will appear here when something needs review.",
+    ctaHref: routes.dashboardV2Purchases,
+    ctaLabel: "View purchases",
+  };
+}
+
 function NavigationList({
   viewer,
   closeOnNavigate = false,
@@ -176,19 +250,52 @@ function NavigationList({
   const prefetchScope = closeOnNavigate
     ? "dashboard-v2-sidebar-drawer"
     : "dashboard-v2-sidebar-rail";
-  const storefrontItem: NavItem = {
-    label: "Storefront",
-    icon: Store,
-    href: viewer.creatorPublicHref ?? routes.dashboardV2CreatorProfile,
-  };
-  const groups = navGroups.map((group) =>
-    group.label === "Creator"
-      ? {
-          ...group,
-          items: [...group.items, storefrontItem],
-        }
-      : group,
-  );
+  const creatorGroup =
+    viewer.creatorNavMode === "hidden"
+      ? null
+      : viewer.creatorNavMode === "apply"
+        ? {
+            label: "Creator",
+            items: [
+              {
+                label: "Become a creator",
+                icon: Sparkles,
+                href: routes.dashboardV2CreatorApply,
+                activeKey: "creator",
+              },
+            ],
+          }
+        : {
+            label: "Creator",
+            items: [
+              {
+                label: "Workspace",
+                icon: Sparkles,
+                href: routes.dashboardV2Creator,
+                activeKey: "creator",
+              },
+              {
+                label: "Resources",
+                icon: FileText,
+                href: routes.dashboardV2CreatorResources,
+                activeKey: "creator-resources",
+              },
+              {
+                label: "Earnings",
+                icon: CircleDollarSign,
+                href: routes.dashboardV2CreatorSales,
+                activeKey: "creator-earnings",
+              },
+              {
+                label: "Storefront",
+                icon: Store,
+                href: viewer.creatorPublicHref ?? routes.dashboardV2CreatorProfile,
+              },
+            ],
+          };
+  const groups = creatorGroup
+    ? [navGroups[0], creatorGroup, navGroups[1]]
+    : navGroups;
 
   return (
     <nav className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-3 py-5">
@@ -282,10 +389,16 @@ function SidebarIdentity() {
 }
 
 function SidebarCallout({
+  viewer,
   closeOnNavigate = false,
 }: {
+  viewer: DashboardV2Viewer;
   closeOnNavigate?: boolean;
 }) {
+  if (viewer.creatorNavMode !== "apply") {
+    return null;
+  }
+
   const prefetchMode = closeOnNavigate ? "intent" : "viewport";
   const checklistButton = (
     <Button className="mt-3" size="sm" variant="secondary" fullWidth asChild>
@@ -331,7 +444,7 @@ function SidebarContent({
     <>
       <SidebarIdentity />
       <NavigationList viewer={viewer} closeOnNavigate={closeOnNavigate} />
-      <SidebarCallout closeOnNavigate={closeOnNavigate} />
+      <SidebarCallout viewer={viewer} closeOnNavigate={closeOnNavigate} />
     </>
   );
 }
@@ -354,15 +467,24 @@ function AccountDropdown({
 
   if (viewer.isAuthenticated) {
     const warmTargets = () => {
-      for (const href of [
+      const targets: string[] = [
         routes.dashboardV2,
         routes.dashboardV2Membership,
         routes.dashboardV2Settings,
-        routes.dashboardV2Creator,
-        routes.dashboardV2CreatorResources,
-        routes.dashboardV2CreatorSales,
-        routes.dashboardV2CreatorProfile,
-      ]) {
+      ];
+      if (viewer.creatorNavMode === "apply") {
+        targets.push(routes.dashboardV2CreatorApply);
+      }
+      if (viewer.creatorNavMode === "full") {
+        targets.push(
+          routes.dashboardV2Creator,
+          routes.dashboardV2CreatorResources,
+          routes.dashboardV2CreatorSales,
+          routes.dashboardV2CreatorProfile,
+        );
+      }
+
+      for (const href of targets) {
         router.prefetch(href);
       }
     };
@@ -373,6 +495,7 @@ function AccountDropdown({
           name: viewer.displayName,
           email: viewer.email,
           image: viewer.image,
+          creatorMenuMode: viewer.creatorNavMode,
         }}
         isSigningOut={false}
         onSignOut={() => {
@@ -488,6 +611,129 @@ function AccountDropdown({
   );
 }
 
+function DashboardV2TopbarSearch() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(() =>
+    getDashboardTopbarSearchValue(pathname, searchParams),
+  );
+
+  useEffect(() => {
+    setQuery(getDashboardTopbarSearchValue(pathname, searchParams));
+  }, [pathname, searchParams]);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    router.push(
+      getDashboardTopbarSearchHref({
+        pathname,
+        searchParams,
+        query,
+      }),
+    );
+  };
+
+  const handleClear = () => {
+    setQuery("");
+
+    if (pathname === routes.dashboardV2Library && searchParams.get("q")) {
+      router.push(
+        getDashboardTopbarSearchHref({
+          pathname,
+          searchParams,
+          query: "",
+        }),
+      );
+    }
+  };
+
+  return (
+    <form className="min-w-0 flex-1" onSubmit={handleSubmit}>
+      <SearchInput
+        aria-label="Search your dashboard library"
+        className="h-11"
+        containerClassName="max-w-2xl"
+        id="dashboard-v2-search"
+        name="dashboardSearch"
+        onChange={(event) => setQuery(event.target.value)}
+        onClear={handleClear}
+        placeholder={getDashboardTopbarSearchPlaceholder(pathname)}
+        title="Press Enter to open library search results"
+        value={query}
+      />
+    </form>
+  );
+}
+
+function DashboardV2Notifications({ viewer }: { viewer: DashboardV2Viewer }) {
+  const notificationCopy = getDashboardNotificationCopy(viewer);
+
+  return (
+    <Dropdown>
+      <DropdownTrigger asChild>
+        <Button
+          aria-label="Open dashboard notifications"
+          className="size-11"
+          size="icon"
+          variant="ghost"
+        >
+          <Bell className="size-5" aria-hidden />
+        </Button>
+      </DropdownTrigger>
+
+      <DropdownMenu
+        align="end"
+        className="w-[min(20rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-card p-0 shadow-card-lg"
+        sideOffset={8}
+      >
+        <div className="p-2">
+          <div className="border-b border-border-subtle px-3 py-3">
+            <p className="text-sm font-semibold text-foreground">Notifications</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Stay on top of account and workspace updates.
+            </p>
+          </div>
+
+          <div className="px-3 py-3">
+            <div className="rounded-xl border border-border-subtle bg-muted/40 p-3">
+              <p className="text-sm font-semibold text-foreground">
+                {notificationCopy.title}
+              </p>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                {notificationCopy.description}
+              </p>
+            </div>
+          </div>
+
+          <DropdownSeparator />
+
+          <div className="p-2">
+            <DropdownItem asChild className="rounded-xl px-3 py-2 text-sm font-medium">
+              <IntentPrefetchLink
+                href={notificationCopy.ctaHref}
+                prefetchLimit={4}
+                prefetchScope="dashboard-v2-topbar-notifications"
+              >
+                {notificationCopy.ctaLabel}
+              </IntentPrefetchLink>
+            </DropdownItem>
+            <DropdownItem asChild className="rounded-xl px-3 py-2 text-sm font-medium">
+              <IntentPrefetchLink
+                href={routes.dashboardV2Membership}
+                prefetchLimit={4}
+                prefetchScope="dashboard-v2-topbar-notifications"
+              >
+                Review membership
+              </IntentPrefetchLink>
+            </DropdownItem>
+          </div>
+        </div>
+      </DropdownMenu>
+    </Dropdown>
+  );
+}
+
 export function DashboardV2Topbar({ viewer }: { viewer: DashboardV2Viewer }) {
   return (
     <DialogPrimitive.Root>
@@ -510,29 +756,8 @@ export function DashboardV2Topbar({ viewer }: { viewer: DashboardV2Viewer }) {
             </Button>
           </DialogPrimitive.Trigger>
 
-          <div className="min-w-0 flex-1">
-            <SearchInput
-              aria-label="Search dashboard preview"
-              className="h-11"
-              containerClassName="max-w-2xl"
-              disabled
-              id="dashboard-v2-search-preview"
-              name="dashboardPreviewSearch"
-              placeholder="Search preview disabled in prototype"
-              title="Prototype control: search is not wired yet"
-            />
-          </div>
-
-          <Button
-            aria-label="Notifications preview is disabled"
-            className="size-11"
-            disabled
-            size="icon"
-            title="Prototype control: notifications are not wired yet"
-            variant="ghost"
-          >
-            <Bell className="size-5" aria-hidden />
-          </Button>
+          <DashboardV2TopbarSearch />
+          <DashboardV2Notifications viewer={viewer} />
 
           <AccountDropdown viewer={viewer} />
         </div>

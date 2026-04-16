@@ -1,5 +1,10 @@
 import { formatPrice } from "@/lib/format";
-import { getUserPurchaseHistory } from "@/services/purchases/purchase.service";
+import {
+  getUserPurchaseHistoryRecentWindow,
+  getUserPurchaseHistorySurfaceSummary,
+} from "@/services/purchases/purchase.service";
+
+const DASHBOARD_V2_PURCHASES_VISIBLE_LIMIT = 25;
 
 export interface DashboardV2PurchaseItem {
   id: string;
@@ -18,6 +23,7 @@ export interface DashboardV2PurchaseItem {
 export interface DashboardV2PurchasesData {
   state: "ready" | "empty" | "error";
   orderCount: number;
+  visibleCount: number;
   completedCount: number;
   totalSpentLabel: string;
   purchases: DashboardV2PurchaseItem[];
@@ -33,19 +39,19 @@ export async function getDashboardV2PurchasesData(input: {
   userId: string;
 }): Promise<DashboardV2PurchasesData> {
   try {
-    const purchases = await getUserPurchaseHistory(input.userId);
-    const completedPurchases = purchases.filter(
-      (purchase) => purchase.status === "COMPLETED",
-    );
-    const totalSpentCents = completedPurchases.reduce(
-      (sum, purchase) => sum + purchase.amount,
-      0,
-    );
+    const [summary, purchases] = await Promise.all([
+      getUserPurchaseHistorySurfaceSummary(input.userId),
+      getUserPurchaseHistoryRecentWindow(
+        input.userId,
+        DASHBOARD_V2_PURCHASES_VISIBLE_LIMIT,
+      ),
+    ]);
 
-    if (purchases.length === 0) {
+    if (summary.count === 0) {
       return {
         state: "empty",
         orderCount: 0,
+        visibleCount: 0,
         completedCount: 0,
         totalSpentLabel: formatPrice(0),
         purchases: [],
@@ -54,9 +60,10 @@ export async function getDashboardV2PurchasesData(input: {
 
     return {
       state: "ready",
-      orderCount: purchases.length,
-      completedCount: completedPurchases.length,
-      totalSpentLabel: formatPrice(totalSpentCents / 100),
+      orderCount: summary.count,
+      visibleCount: purchases.length,
+      completedCount: summary.completedCount,
+      totalSpentLabel: formatPrice(summary.totalSpentCents / 100),
       purchases: purchases.map((purchase) => ({
         id: purchase.id,
         amount: purchase.amount,
@@ -75,6 +82,7 @@ export async function getDashboardV2PurchasesData(input: {
     return {
       state: "error",
       orderCount: 0,
+      visibleCount: 0,
       completedCount: 0,
       totalSpentLabel: formatPrice(0),
       purchases: [],
