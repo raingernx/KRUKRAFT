@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
+import { Search, Sparkles } from "lucide-react";
+
 import { Input } from "./Input";
 
 const meta = {
@@ -27,6 +29,23 @@ export const States: Story = {
       <Input
         defaultValue="worksheet"
         error="Try a broader term or choose a category instead."
+      />
+    </div>
+  ),
+};
+
+export const WithAdornments: Story = {
+  render: () => (
+    <div className="w-[360px] space-y-4">
+      <Input
+        placeholder="Search creator resources"
+        leftAdornment={<Search className="size-4" />}
+        rightAdornment={<Sparkles className="size-4" />}
+      />
+      <Input
+        defaultValue="science flashcards"
+        leftAdornment={<Search className="size-4" />}
+        hint="Adornments should still feel like the same control family."
       />
     </div>
   ),
