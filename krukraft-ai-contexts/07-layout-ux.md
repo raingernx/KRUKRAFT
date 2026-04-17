@@ -111,6 +111,33 @@
 - pressing Enter or using the dropdown footer navigates to canonical `/resources?search=...`
 - no-result dropdown and full-page recovery both offer alternate queries plus taxonomy browse links
 
+**Locked discover pilot scope**
+- the current discover pilot plan is intentionally narrower than a full
+  `/resources` redesign
+- the locked pilot slice is `listing-mode shell + fail-soft states` only:
+  - listing intro and results summary
+  - filter sidebar shell and in-content filter bar shell
+  - search-results context line
+  - empty-search recovery panel
+  - temporary listing-unavailable fail-soft state
+  - the matching listing-mode loading shell
+- that pilot slice is now landed:
+  - the listing intro uses a calmer title + results-summary treatment instead of the previous tracking-heavy eyebrow pattern
+  - the desktop filter sidebar and in-content filter bar now sit on the same rounded card-shell family with semantic `ring` focus treatment
+  - the search-results context line, recovery panel, and temporary listing-unavailable state now share the same subdued surface hierarchy instead of route-owned brand/uppercase treatments
+  - the matching listing-mode fallbacks (`ResourcesIntroSectionSkeleton`, `FilterBarFallback`, `SidebarFallback`, and the listing branch of `ResourcesContentFallback`) were updated in the same patch
+- this pilot explicitly does **not** include:
+  - discover hero
+  - quick-browse tiles
+  - personalized discover rails
+  - resource-card redesign
+  - navbar search or shared chrome redesign
+- route-owned states that must stay aligned inside this pilot are:
+  - loading: listing branch of `ResourcesContentFallback`, plus
+    `FilterBarFallback` and `SidebarFallback`
+  - empty: `SearchRecoveryPanel` and `SearchRecoveryPanelFallback`
+  - fail-soft/error: `ResourcesListingUnavailableState`
+
 **Loading behavior**
 - discover hero loading uses the same stage geometry as the live hero rather than a generic promo banner
 - the route shell no longer forces a large hero `min-height`; live and loading geometry should stay content-driven so the stage does not drift from Figma

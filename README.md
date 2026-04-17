@@ -138,67 +138,10 @@ npm run skeleton:boneyard:build:force
 Notes:
 
 - generated bones are bootstrapped by
-  `src/components/providers/BonesRegistryBootstrap.tsx`, which calls the safe
-  helper in `src/bones/index.ts` on the client instead of importing the bones
-  registry as a root layout side effect
-- the current pilot capture route is `http://localhost:3000/dev/bones`
-- the capture page now also exposes preview fixtures for
-  `ResourcesCatalogSearchSkeleton` and `ResourcesCatalogControlsSkeleton`
-  plus `HeroSearch` dropdown states for quick browse, top matches, and
-  empty-result recovery
-  plus the `SearchRecoveryPanel` empty-result surface
-  plus the `ResourcesDiscoverPersonalizedSection` personalized discover block
-  for recommendation/because-you-studied/level-based geometry capture
-  plus settings/admin/creator-apply route shells for account and ops screens
-  plus creator dashboard overview/analytics/resources/sales/profile route shells
-  plus the creator resource form loading shell used on create/edit routes
-  plus the admin resource form shell used on admin create routes
-  plus the creator new-resource route shell used on creator upload flows
-  plus the admin analytics overview/recommendations/ranking/ranking-experiment/
-  purchases/creator-activation route shells
-  plus the auth login shell
-  plus the user dashboard overview/library/downloads/purchases/subscription/
-  resources-redirect route shells
-- the current generated skeleton sets are:
-  `src/bones/admin-analytics-creator-activation.bones.json` and
-  `src/bones/admin-analytics-overview.bones.json` and
-  `src/bones/admin-analytics-purchases.bones.json` and
-  `src/bones/admin-analytics-ranking-experiment.bones.json` and
-  `src/bones/admin-analytics-ranking.bones.json` and
-  `src/bones/admin-analytics-recommendations.bones.json` and
-  `src/bones/admin-settings-page.bones.json` and
-  `src/bones/admin-resource-form.bones.json` and
-  `src/bones/creator-apply-page.bones.json` and
-  `src/bones/creator-dashboard-analytics.bones.json` and
-  `src/bones/creator-dashboard-overview.bones.json` and
-  `src/bones/creator-dashboard-profile.bones.json` and
-  `src/bones/creator-dashboard-resources.bones.json` and
-  `src/bones/creator-dashboard-sales.bones.json` and
-  `src/bones/creator-resource-form.bones.json` and
-  `src/bones/creator-resource-new-route.bones.json` and
-  `src/bones/dashboard-downloads.bones.json` and
-  `src/bones/dashboard-library.bones.json` and
-  `src/bones/dashboard-overview.bones.json` and
-  `src/bones/dashboard-purchases.bones.json` and
-  `src/bones/dashboard-resources-redirect.bones.json` and
-  `src/bones/dashboard-subscription.bones.json` and
-  `src/bones/hero-search-empty.bones.json` and
-  `src/bones/hero-search-quick-browse.bones.json` and
-  `src/bones/hero-search-results.bones.json` and
-  `src/bones/login-form.bones.json` and
-  `src/bones/purchase-card.bones.json` and
-  `src/bones/resource-card.bones.json` and
-  `src/bones/resource-detail-shell.bones.json` and
-  `src/bones/resources-catalog-controls.bones.json` and
-  `src/bones/resources-catalog-search.bones.json` and
-  `src/bones/resources-discover-personalized.bones.json` and
-  `src/bones/resources-discover-sections.bones.json` and
-  `src/bones/resources-intro-discover.bones.json` and
-  `src/bones/resources-intro-listing.bones.json` and
-  `src/bones/resources-listing-shell.bones.json` and
-  `src/bones/resources-route-shell.bones.json` and
-  `src/bones/search-recovery-panel.bones.json` and
-  `src/bones/settings-page.bones.json`
+  `src/components/providers/BonesRegistryBootstrap.tsx`
+- the current capture route is `http://localhost:3000/dev/bones`
+- detailed skeleton/bones ownership and route-shell context now lives in
+  `krukraft-ai-contexts/` and the DS docs instead of this landing page
 
 ## Production Notes
 
@@ -241,3 +184,12 @@ krukraft-ai-contexts/ maintained repo context pack for AI/codebase truth
 
 If the GitHub repository display metadata still shows older copy, update the
 GitHub `About` panel to match the values above.
+
+## Additional Context
+
+For deeper repo-owned docs, use:
+
+- [krukraft-ai-contexts/README.md](krukraft-ai-contexts/README.md)
+- [src/design-system/README.md](src/design-system/README.md)
+- [src/design-system/theme-playbook.md](src/design-system/theme-playbook.md)
+- [design-system.md](design-system.md)

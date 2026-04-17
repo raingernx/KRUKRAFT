@@ -2,8 +2,8 @@
 
 **Scope of this file:** Design decision quality, UX principles, and the "why" behind UI choices.
 
-For implementation specifics, component details, and execution workflow → `.claude/skills/ui-design-system.md`
-For enforcement rules and forbidden practices → `UI_RULES.md`
+For implementation specifics, component details, and execution workflow → `AGENTS.md` and `src/design-system/README.md`
+For theme direction and review language → `src/design-system/theme-playbook.md`
 
 ---
 

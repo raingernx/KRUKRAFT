@@ -21,7 +21,7 @@ track the current codebase state, not just earlier conversation exports.
 | [08-performance-audit.md](08-performance-audit.md) | Current performance status, landed optimizations, remaining hotspots |
 | [09-todos.md](09-todos.md) | Current TODOs and ongoing audit scope |
 | [10-thread-rollup.md](10-thread-rollup.md) | Consolidated Codex thread recovery history, workspace aliases, and rolled-up discussion index |
-| [Krukraft-Documentation.md](Krukraft-Documentation.md) | Compact stitched summary and pointers back to the modular docs |
+| [Krukraft-Documentation.md](Krukraft-Documentation.md) | Archived stitched summary retained as a compatibility pointer |
 
 ---
 
@@ -50,6 +50,7 @@ track the current codebase state, not just earlier conversation exports.
 - Local browser verification uses Playwright via `npm run test:e2e`; the local project still uses the `chromium` name, but on this macOS setup it now defaults to `channel: "chromium"` so verification uses Playwright's bundled Chromium browser instead of the headless shell or installed Chrome stable. Set `PLAYWRIGHT_BROWSER_CHANNEL=chrome` only when you intentionally want installed-Chrome coverage.
 - Storybook is scoped to `src/design-system/primitives/*` and `src/design-system/components/*`; `npm run storybook:smoke` is the stable local verification path.
 - `src/design-system/README.md` is the quick inventory for current DS ownership, while `/design-system.md` is the repo-owned Figma reconstruction and handoff reference.
+- Legacy root doc `CLAUDE.md` is now a frozen compatibility pointer only; use `AGENTS.md`, `krukraft-ai-contexts/*`, and the DS docs as the maintained sources instead.
 - `boneyard-js` is installed as an optional skeleton-capture tool. It writes generated bones to `src/bones`, but it supplements rather than replaces the repo's existing loading/fallback parity rules.
 - `npm run chromatic` is available as an opt-in hosted Storybook review path once a Chromatic project token exists, and `npm run repomix` / `npm run repomix:split` are available for local AI-context export with repo-owned `.repomixignore` safeguards.
 - Historical Codex thread recovery now lives in `10-thread-rollup.md`; older thread metadata may still reference `studyplatform` or `krucraft`, but the canonical workspace path remains `/Users/shanerinen/Projects/krukraft`.
