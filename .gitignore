@@ -53,6 +53,8 @@ repomix-output*.json
 .agents/skills/*
 !.agents/skills/next-best-practices/
 !.agents/skills/next-best-practices/**
+!.agents/skills/krukraft-figma-qa/
+!.agents/skills/krukraft-figma-qa/**
 
 # Vercel
 .vercel

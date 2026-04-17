@@ -1,0 +1,4 @@
+interface:
+  display_name: "Krukraft Figma QA"
+  short_description: "Finish Figma work with strict Krukraft layout and craft checks"
+  default_prompt: "Use $krukraft-figma-qa to audit a Krukraft Figma page, screen, or section for auto layout, Hug/Fill/Fixed sizing, alignment, crop/clipping, and final visual verification before closing."
