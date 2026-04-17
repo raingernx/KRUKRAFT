@@ -13,8 +13,8 @@ const Switch = React.forwardRef<
       disabled={disabled}
       className={cn(
         "inline-flex h-6 w-[46px] items-center rounded-full bg-muted transition-colors duration-200",
-        "data-[state=checked]:bg-primary-500",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40 focus-visible:ring-offset-2",
+        "data-[state=checked]:bg-primary",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         disabled && "cursor-not-allowed opacity-60",
         className,
       )}

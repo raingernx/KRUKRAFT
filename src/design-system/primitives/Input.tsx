@@ -45,7 +45,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
             data-slot="input"
             className={cn(
               "input-base min-w-0",
-              "aria-invalid:border-danger-600 aria-invalid:ring-2 aria-invalid:ring-danger-600/20",
+              "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/18",
               leftAdornment && "pl-11",
               rightAdornment && "pr-11",
               className,
@@ -67,7 +67,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
           data-slot="input"
           className={cn(
             "input-base min-w-0",
-            "aria-invalid:border-danger-600 aria-invalid:ring-2 aria-invalid:ring-danger-600/20",
+            "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/18",
             className,
           )}
           aria-describedby={describedBy}
@@ -76,7 +76,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
         />
       )}
       {error ? (
-        <p id={errorId} className="text-caption text-danger-700">
+        <p id={errorId} className="text-caption text-destructive">
           {error}
         </p>
       ) : hint ? (

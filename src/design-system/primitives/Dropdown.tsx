@@ -61,7 +61,8 @@ function DropdownItem({
         "text-sm text-foreground outline-none transition-colors",
         "focus:bg-muted focus:text-foreground",
         "data-disabled:pointer-events-none data-disabled:opacity-40",
-        destructive && "text-red-600 focus:bg-red-50 focus:text-red-600",
+        destructive &&
+          "text-destructive focus:bg-destructive/10 focus:text-destructive",
         inset && "pl-8",
         "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-muted-foreground",
         className,
@@ -123,7 +124,7 @@ function DropdownCheckboxItem({
     >
       <span className="absolute left-2.5 flex size-4 items-center justify-center">
         <DropdownPrimitive.ItemIndicator>
-          <CheckIcon className="size-4 text-brand-600" />
+          <CheckIcon className="size-4 text-primary" />
         </DropdownPrimitive.ItemIndicator>
       </span>
       {children}
@@ -154,7 +155,7 @@ function DropdownRadioItem({
     >
       <span className="absolute left-2.5 flex size-4 items-center justify-center">
         <DropdownPrimitive.ItemIndicator>
-          <CircleIcon className="size-2 fill-brand-600 text-brand-600" />
+          <CircleIcon className="size-2 fill-primary text-primary" />
         </DropdownPrimitive.ItemIndicator>
       </span>
       {children}

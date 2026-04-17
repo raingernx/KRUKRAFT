@@ -9,9 +9,9 @@ const buttonVariants = cva(
   [
     "group/button inline-flex shrink-0 items-center justify-center gap-1.5",
     "rounded-xl border border-transparent bg-clip-padding",
-    "font-ui text-sm font-semibold whitespace-nowrap",
-    "transition-all outline-none select-none",
-    "focus-visible:ring-2 focus-visible:ring-primary-500/20 focus-visible:ring-offset-1",
+    "font-ui text-sm font-medium whitespace-nowrap",
+    "shadow-none transition-[background-color,border-color,color,box-shadow,transform] outline-none select-none",
+    "focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
     "disabled:pointer-events-none disabled:opacity-50",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   ].join(" "),
@@ -19,31 +19,31 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800",
+          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:translate-y-px active:bg-primary/84",
         default:
-          "bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800",
+          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:translate-y-px active:bg-primary/84",
         dark:
-          "bg-foreground text-background hover:bg-foreground/90 active:bg-foreground",
+          "bg-foreground text-background hover:bg-foreground/92 active:translate-y-px active:bg-foreground",
         secondary:
-          "border-border-strong bg-card text-foreground hover:border-border hover:bg-muted",
+          "border-border bg-card text-foreground hover:border-border-strong hover:bg-muted/70",
         outline:
-          "border-border-strong bg-card text-foreground hover:border-border hover:bg-muted",
+          "border-border bg-card text-foreground hover:border-border-strong hover:bg-muted/70",
         ghost:
-          "bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground",
+          "bg-transparent text-muted-foreground hover:bg-muted/70 hover:text-foreground",
         danger:
-          "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus-visible:ring-red-500/20",
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 active:translate-y-px active:bg-destructive/84 focus-visible:ring-destructive/30",
         destructive:
-          "border-red-200 bg-red-50 text-red-700 hover:border-red-300 hover:bg-red-100 focus-visible:ring-red-500/20",
+          "border-destructive/20 bg-destructive/10 text-destructive hover:border-destructive/30 hover:bg-destructive/15 focus-visible:ring-destructive/22",
         accent:
           "bg-warning-500 text-white hover:bg-warning-600 active:bg-warning-700 focus-visible:ring-warning-500/20",
         link:
-          "text-primary-700 underline-offset-4 hover:underline",
+          "text-primary underline-offset-4 hover:text-foreground hover:underline",
       },
       size: {
-        xs: "h-8 gap-1 rounded-lg px-2.5 text-caption",
-        sm: "h-9 gap-1.5 px-3 text-sm",
+        xs: "h-8 gap-1 rounded-lg px-3 text-caption",
+        sm: "h-10 gap-1.5 px-3.5 text-sm",
         md: "h-11 px-4 text-sm",
-        lg: "h-12 px-5 text-base",
+        lg: "h-12 px-5 text-sm",
         default: "h-11 px-4 text-sm",
         icon: "size-10",
         "icon-xs": "size-8 rounded-lg",
