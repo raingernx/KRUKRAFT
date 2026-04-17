@@ -246,9 +246,11 @@
 - When a cross-group resources overlay is active (`overlay: true` in the
   resources navigation store), the in-route `ResourcesTransitionShell`,
   `ResourcesTransitionFallback`, and `ResourcesNavigationFeedback` now stand
-  down completely. That keeps `/dashboard/library -> /resources` and similar
-  jumps on a single resources shell instead of briefly stacking the root
-  overlay with a second in-route skeleton layer.
+  down completely. Historical example: this keeps old
+  `/dashboard/library -> /resources`-style jumps, and the current canonical
+  `/dashboard-v2/library -> /resources` jump, on a single resources shell
+  instead of briefly stacking the root overlay with a second in-route skeleton
+  layer.
 - Default runtime skeletons should also stay neutral in tone: selected pills,
   recovery banners, success strips, and promotional accent washes belong only
   to condition-specific resolved UI, not the baseline loading shell. This is

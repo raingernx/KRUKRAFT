@@ -20,8 +20,8 @@ src/app
 src/services
 src/repositories
 src/analytics
-src/workers
 src/lib
+scripts
 
 ---
 
@@ -37,8 +37,10 @@ Contains all Next.js App Router pages and API routes.
 
 ## Public Pages
 
-src/app/library
-src/app/resources/[id]
+src/app/resources
+src/app/resources/[slug]
+src/app/categories/[slug]
+src/app/creators/[slug]
 
 Responsibilities:
 
@@ -49,32 +51,36 @@ Responsibilities:
 
 ## Authentication Pages
 
-src/app/(auth)
+src/app/auth
 
 Pages:
 
 login
 register
+reset-password
 
 ---
 
 ## User Dashboard
 
-src/app/(dashboard)
+src/app/(dashboard-v2)/dashboard-v2
 
 Pages:
 
-dashboard
-resources
+dashboard-v2
+library
+downloads
 purchases
-subscription
+membership
 settings
+creator/*
 
 Responsibilities:
 
 - user content access
-- subscription management
+- membership and purchase access
 - account settings
+- creator workspace and publishing surfaces
 
 ---
 
@@ -186,22 +192,15 @@ aggregation.service.ts
 
 ---
 
-# Workers
+# Background Processing
 
-Location
+There is no dedicated `src/workers` directory in the current repo.
 
-src/workers
+Background and aggregation work currently lives across:
 
-Responsibilities:
-
-- analytics aggregation
-- trending score updates
-- background jobs
-
-Examples:
-
-analytics.worker.ts
-trending.worker.ts
+- `src/services/analytics`
+- `src/repositories/analytics`
+- repo-owned scripts under `scripts/`
 
 ---
 

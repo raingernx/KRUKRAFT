@@ -226,7 +226,7 @@ Root rendering note:
 - the compatibility families also no longer carry their own top-level loading fallbacks: `src/app/(dashboard-lite)/loading.tsx` and `src/app/(dashboard)/loading.tsx` were removed once those route groups stopped owning visible shell loading before redirecting into `dashboard-v2`
 - the same cleanup now covers compatibility-only dashboard error/not-found surfaces: `src/app/(dashboard-lite)/dashboard/error.tsx`, `src/app/(dashboard-lite)/dashboard/not-found.tsx`, `src/app/(dashboard)/dashboard/error.tsx`, and `src/app/(dashboard)/dashboard/not-found.tsx` were deleted so old shell fallback UI no longer competes with canonical dashboard-v2 or app-level fallbacks; the unused legacy `creatorResource(id)` alias and later the temporary compatibility helper were removed as part of the same cutover track
 - Historical note: the retired protected creator segment also followed the same single-owner fallback rule before the hard cut, so first-entry creator routes could not keep an extra protected-shell fallback visible after the route-ready marker was already present
-- the creator resource editor routes now keep form-loading ownership in one place: `src/app/(dashboard)/dashboard/creator/(protected)/resources/new/page.tsx` and `src/app/(dashboard)/dashboard/creator/(protected)/resources/[id]/page.tsx` no longer give `next/dynamic` and `Suspense` the same `CreatorResourceFormLoadingShell`. The route-level loading file still owns the outer editor shell, while the page-level `Suspense` fallback owns the form surface itself, which removes the one-time double-form-shell flash on first entry
+- Historical note: the retired creator resource editor routes under `src/app/(dashboard)/dashboard/creator/(protected)/*` were one of the earlier places where form-loading ownership was tightened so `next/dynamic` and `Suspense` did not both reuse `CreatorResourceFormLoadingShell`. The current canonical creator editor family lives under `/dashboard-v2/creator/resources/*`, but the same single-owner loading principle still applies there.
 - the creator workspace phase-3 reset now removes the remaining page-level main-body suspense owners from the protected subtree: `/dashboard-v2/creator/analytics`, `/dashboard-v2/creator/resources`, `/dashboard-v2/creator/sales`, `/dashboard-v2/creator/profile`, `/dashboard-v2/creator/resources/new`, and `/dashboard-v2/creator/resources/[id]` now resolve their main body data before rendering the final page body, so route-level `loading.tsx` is the only visible body-loading owner for those workspace routes
 - Historical note: the retired dashboard-lite account routes were one of the places where the team proved the single-owner body-loading rule before the hard cut. The active canonical account routes are now `/dashboard-v2/settings` and `/dashboard-v2/membership`, and those routes keep route-level loading as the only visible body-loading owner.
 - public account-menu navigation into `/dashboard-v2/settings` and `/dashboard-v2/membership` no longer opts into any legacy full-screen dashboard entry overlay stack; those canonical account routes rely on route-shell readiness and lightweight navigation state inside the dashboard-v2 shell
@@ -282,12 +282,16 @@ Key details:
 ## Dashboard / Admin
 
 ```
-dashboard/* → force-dynamic, per-user
-admin/*     → force-dynamic, role-gated
+dashboard-v2/* → force-dynamic, per-user
+admin/*        → force-dynamic, role-gated
   analytics/report reads
     → `unstable_cache` for per-instance reuse
     → Redis `rememberJson` for cross-instance warm hits on heavy report paths
 ```
+
+Historical note:
+- legacy `/dashboard*`, `/settings`, and `/subscription` URLs are retired and
+  are not part of the active protected route family
 
 Admin settings note:
 - build-safe platform config is only for branding-only build surfaces

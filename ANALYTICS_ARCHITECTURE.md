@@ -138,22 +138,20 @@ Events should be recorded for:
 
 # Aggregation Jobs
 
-Aggregation jobs update resource statistics.
+Aggregation and trend updates do not live in a dedicated `src/workers`
+directory in the current repo.
 
-Location:
+Current ownership is split across:
 
-src/workers
-
-Example workers:
-
-analytics.worker.ts
-trending.worker.ts
+- `src/services/analytics`
+- `src/repositories/analytics`
+- repo-owned scripts under `scripts/`
 
 Responsibilities:
 
 - aggregate events
-- update resource_stats
-- update creator_stats
+- update resource stats
+- update creator stats
 
 ---
 

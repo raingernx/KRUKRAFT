@@ -6,7 +6,8 @@ Krukraft uses NextAuth with JWT sessions and a mix of credentials and Google OAu
 
 ## Current Truth
 
-- Protected routes are handled through request interception for `/dashboard*` and `/admin*`.
+- Protected routes are handled through request interception for the canonical
+  `/dashboard-v2*` family and `/admin*`.
 - Lightweight viewer-state and auth chrome prefer JWT token reads instead of Prisma-backed session reads where possible.
 - Local and CI browser verification uses deterministic seeded credentials for admin and creator users.
 
@@ -23,7 +24,7 @@ Auth behavior affects route protection, viewer-state performance, browser smoke 
 
 ## Flows
 
-- unauthenticated user hits `/dashboard*` or `/admin*`
+- unauthenticated user hits `/dashboard-v2*` or `/admin*`
 - proxy redirects to `/auth/login?next=...`
 - credentials or Google login completes
 - JWT-backed viewer checks hydrate auth-aware UI
@@ -51,6 +52,11 @@ Auth behavior affects route protection, viewer-state performance, browser smoke 
 - [`AGENTS.md`](../../../AGENTS.md)
 - [`krukraft-ai-contexts/04-architecture.md`](../../../krukraft-ai-contexts/04-architecture.md)
 - [`tests/e2e/helpers/auth.ts`](../../../tests/e2e/helpers/auth.ts)
+
+Historical note:
+- older `/dashboard*`, `/settings`, and `/subscription` protected URLs were
+  retired during the dashboard-v2 hard cut and should not be treated as active
+  auth-entry surfaces
 
 ## Last Reviewed
 

@@ -120,7 +120,7 @@ These are owner-page flow exemplars, not one-to-one Code Connect candidates.
 | --- | --- | --- | --- | --- | --- |
 | `Product / Admin` | `41:2` | `Flow / Admin Settings` | `src/components/settings/*`, `src/app/admin/settings/AdminSettingsClient.tsx` | `mapped-manual` | Anti-nesting and flat-section exemplar. |
 | `Product / Marketplace` | `58:2` | `Flow / Hero Banner` | `src/components/marketplace/HeroSurface.tsx`, `src/components/marketplace/HeroBanner.tsx` | `mapped-manual` | Canonical marketplace hero flow. The page contains `HeroBanner / Component Set` and `HeroBanner / Preview` sections for source-first editing and validation. |
-| `Product / Dashboard` | `41:86` | `Flow / Creator Dashboard` | `src/app/(dashboard)/dashboard/creator/(protected)/*` | `mapped-manual` | Metrics row + single table surface. |
+| `Product / Dashboard` | `41:86` | `Flow / Creator Dashboard` | `src/app/(dashboard-v2)/dashboard-v2/creator/*` | `mapped-manual` | Metrics row + single table surface. |
 
 ## First Manual Mapping Set
 

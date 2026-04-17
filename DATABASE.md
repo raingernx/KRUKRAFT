@@ -55,8 +55,9 @@ Roles:
 
 ```
 
-USER
 ADMIN
+INSTRUCTOR
+STUDENT
 
 ```
 
@@ -120,33 +121,29 @@ Purchase
 
 ---
 
-# Subscription
+# Membership State
 
-Represents a recurring subscription for premium access.
+Recurring membership state is stored on `User`, not in a standalone
+`Subscription` model.
 
-Key fields:
+Key fields on `User`:
 
 ```
 
-id
-userId
 stripeCustomerId
 stripeSubscriptionId
-status
+subscriptionStatus
+subscriptionPlan
 currentPeriodEnd
 
 ```
 
-Relationships:
-
-Subscription
-→ User
-
 ---
 
-# Download
+# DownloadEvent
 
-Tracks file downloads for analytics and security.
+Successful file deliveries are tracked in `DownloadEvent` for analytics and
+trend reporting.
 
 Key fields:
 
@@ -155,14 +152,13 @@ Key fields:
 id
 userId
 resourceId
-downloadedAt
+createdAt
 
 ```
 
 Relationships:
 
-Download
-→ User
+DownloadEvent
 → Resource
 
 ---
@@ -173,18 +169,18 @@ Download
 
 User
 ├── Purchases
-├── Subscriptions
-└── Downloads
+├── UserPreference
+└── Download events (soft user reference)
 
 Resource
 ├── Purchases
-└── Downloads
+└── DownloadEvent
 
 ```
 
 Purchases represent ownership of a resource.
 
-Users must have a valid purchase or subscription before downloading content.
+Membership state is stored on `User.subscriptionStatus`.
 
 ---
 
@@ -253,7 +249,7 @@ Purchases
 - resourceId
 - stripePaymentIntentId
 
-Downloads
+DownloadEvent
 
 - resourceId
 - userId

@@ -2,7 +2,7 @@
 
 ## Summary
 
-Auth and viewer-state prefer JWT-backed reads, while protected routes are enforced in request interception for dashboard and admin paths.
+Auth and viewer-state prefer JWT-backed reads, while protected routes are enforced in request interception for canonical dashboard-v2 and admin paths.
 
 ## Source Reference
 
@@ -10,7 +10,7 @@ Auth and viewer-state prefer JWT-backed reads, while protected routes are enforc
 
 ## Notes
 
-- This source captures the repo's current preference for JWT-backed viewer checks and proxy-enforced route protection.
+- This source captures the repo's current preference for JWT-backed viewer checks and proxy-enforced route protection on canonical dashboard-v2 and admin paths.
 
 ## Related Wiki Pages
 

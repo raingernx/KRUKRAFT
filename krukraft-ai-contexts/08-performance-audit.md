@@ -285,7 +285,7 @@ Current perf-hardening baseline for the production UX initiative is:
   - `/dashboard-v2/creator/apply` now keeps the route-level loading shell as the only visible body owner and limits deferred loading to the rejected-feedback subsection, which removes the extra first-entry handoff between a creator-program shell and a second status/form panel skeleton
   - `/admin/reviews` now fails soft for transient Prisma infrastructure issues, and the admin long-tail routes that do not need session data themselves (`/admin/resources/trash`, `/admin/resources/[id]/versions`, `/admin/resources/bulk`) no longer repeat `requireAdminSession()` on top of the admin layout gate
   - `/admin/resources/new` and `/admin/resources/[id]` now render the editor header immediately and stream the heavy create/edit form data behind a form-only fallback, instead of blocking the whole route on admin reference data and a duplicated admin-session read
-  - the previous `/dashboard/resources` compatibility redirect fast-path was retired during the dashboard-v2 hard cut; creator apply/resources routing now enters through canonical dashboard-v2 creator routes directly
+  - historical note: the previous `/dashboard/resources` compatibility redirect fast-path was retired during the dashboard-v2 hard cut; creator apply/resources routing now enters through canonical dashboard-v2 creator routes directly
   - `/admin/analytics/purchases` and `/admin/analytics/ranking-experiment` no longer repeat `requireAdminSession()` at the page level; they now rely on the admin layout gate like the other hardened admin routes, trimming an extra auth hop from those report paths
 
 ### 1. Cold-tail variance on warmed routes
