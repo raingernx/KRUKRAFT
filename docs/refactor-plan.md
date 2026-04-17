@@ -1,3 +1,15 @@
+> Historical refactor plan.
+>
+> This plan was written for an earlier locale-routing direction and should not
+> be treated as current implementation guidance. For current route truth, use
+> `src/lib/routes.ts`, `AGENTS.md`, `README.md`, and
+> `krukraft-ai-contexts/04-architecture.md`.
+>
+> Current routing baseline:
+> - canonical protected dashboard family = `/dashboard-v2/*`
+> - canonical admin family = `/admin/*`
+> - legacy `/dashboard*`, `/settings`, and `/subscription` URLs are retired
+
 ## Refactor Plan – Krukraft
 
 ### Routing Improvements
@@ -45,4 +57,3 @@
 - Apply caching and `revalidate` settings to expensive analytics endpoints and pages where data freshness requirements permit it.
 - Review N+1 query patterns in dashboard and admin analytics queries and refactor them to use batched or aggregate queries via Prisma.
 - Consider lazy-loading heavy admin and analytics components where possible to keep initial load times reasonable.
-

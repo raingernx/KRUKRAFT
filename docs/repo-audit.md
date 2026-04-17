@@ -1,8 +1,24 @@
+> Historical audit snapshot.
+>
+> This document reflects an earlier locale-routing audit and is not the current
+> source of truth for active route ownership. For current repo truth, use
+> `AGENTS.md`, `README.md`, `src/lib/routes.ts`, and
+> `krukraft-ai-contexts/04-architecture.md`.
+>
+> Current routing baseline:
+> - canonical protected dashboard family = `/dashboard-v2/*`
+> - `/dashboard*`, `/settings`, and `/subscription` legacy URLs are retired
+> - the active product no longer treats `[locale]/dashboard` or `[locale]/admin`
+>   as canonical route families
+
 ## Architecture Overview
 
 Krukraft is a SaaS marketplace for downloadable learning resources built on:
 
-- **Next.js 16 App Router** with locale-based routing under `app/[locale]/...` and route groups for marketing, dashboard, and admin flows.
+- **Next.js 16 App Router** with a mixed route history: current product
+  surfaces live on canonical non-localized routes such as `/resources`,
+  `/dashboard-v2/*`, and `/admin/*`, while older locale-routing experiments are
+  kept here only as historical audit context.
 - **TypeScript** and **Tailwind CSS** for strongly-typed, utility-first UI.
 - **Prisma + PostgreSQL** for persistence, with models for users, resources, purchases, reviews, webhooks, activity logs, and audit logs.
 - **NextAuth** for authentication, including email/password and OAuth, with user roles (`ADMIN`, `INSTRUCTOR`, `STUDENT`) and subscription metadata on `User`.
@@ -68,4 +84,3 @@ Overall, the architecture is typical for a modern Next.js SaaS: clear separation
     - Downloads are gated but do not yet use signed URLs with expiry by default.
     - Analytics and admin queries may require further pagination/caching as data grows.
   - These are captured in the separate system status, roadmap, and refactor plan documents as future improvements rather than immediate structural bugs.
-
