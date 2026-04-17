@@ -1,3 +1,10 @@
+> Historical audit report.
+>
+> This report captures a point-in-time audit from March 2026 and should not be
+> treated as the current source of truth for active route ownership or current
+> dashboard canon. For current repo truth, use `AGENTS.md`, `README.md`,
+> `src/lib/routes.ts`, and `krukraft-ai-contexts/04-architecture.md`.
+
 # Production Codebase Audit Report
 
 **Date:** March 18, 2026
