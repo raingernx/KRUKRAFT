@@ -57,12 +57,12 @@ const listingCardFixtures: ResourceCardResource[] = [
 
 export function FilterBarFallback() {
   return (
-    <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-[24px] border border-border-subtle bg-card/95 p-3.5 shadow-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:p-4">
       <LoadingSkeleton className="h-5 w-24 rounded-md" />
       <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:items-center">
-        <LoadingSkeleton className="h-11 w-full rounded-full border border-border bg-card sm:w-28" />
-        <LoadingSkeleton className="h-11 w-full rounded-full border border-border bg-muted sm:w-36" />
-        <LoadingSkeleton className="h-11 w-16 rounded-full sm:w-20" />
+        <LoadingSkeleton className="h-11 w-full rounded-xl border border-border-subtle bg-background sm:w-28" />
+        <LoadingSkeleton className="h-11 w-full rounded-xl border border-border-subtle bg-primary/10 sm:w-36" />
+        <LoadingSkeleton className="h-11 w-20 rounded-xl sm:w-20" />
       </div>
     </div>
   );
@@ -78,7 +78,7 @@ function SidebarFallbackGroup({
   pillWidths?: string[];
 }) {
   return (
-    <div className="border-b border-border pb-4">
+    <div className="border-b border-border-subtle pb-4">
       <div className="mb-3 flex items-center justify-between">
         <LoadingSkeleton className={`h-4 rounded ${titleWidth}`} />
         <LoadingSkeleton className="h-4 w-4 rounded" />
@@ -111,9 +111,9 @@ function SidebarFallbackGroup({
 
 export function SidebarFallback() {
   return (
-    <div className="w-[260px] flex-shrink-0 space-y-5">
-      <div className="flex items-center justify-between border-b border-border pb-2">
-        <LoadingSkeleton className="h-4 w-12 rounded" />
+    <div className="w-[260px] flex-shrink-0 space-y-5 rounded-[26px] border border-border-subtle bg-card/95 p-5 shadow-sm">
+      <div className="flex items-center justify-between border-b border-border-subtle pb-3">
+        <LoadingSkeleton className="h-5 w-14 rounded" />
         <LoadingSkeleton className="h-4 w-14 rounded" />
       </div>
       <SidebarFallbackGroup
@@ -197,9 +197,9 @@ function PreviewSidebarGroup({
   activeRow?: string;
 }) {
   return (
-    <div className="border-b border-border pb-4">
+    <div className="border-b border-border-subtle pb-4">
       <div className="mb-3 flex items-center justify-between">
-        <p className="font-ui text-caption tracking-[0.12em] text-muted-foreground">
+        <p className="text-sm font-medium text-foreground">
           {title}
         </p>
         <span className="text-caption text-muted-foreground">-</span>
@@ -212,8 +212,8 @@ function PreviewSidebarGroup({
               key={`${title}-${row}`}
               className={
                 isActive
-                  ? "w-full rounded-xl border border-border-strong bg-muted/40 px-3 py-2.5 text-left text-small font-medium text-foreground"
-                  : "w-full rounded-xl px-3 py-2.5 text-left text-small text-muted-foreground"
+                  ? "w-full rounded-xl border border-border-strong bg-muted/70 px-3 py-2.5 text-left text-small font-medium text-foreground shadow-sm"
+                  : "w-full rounded-xl border border-transparent px-3 py-2.5 text-left text-small text-muted-foreground"
               }
             >
               {row}
@@ -231,11 +231,11 @@ function ResourcesListingShellPreview() {
 
   return (
     <>
-      <section className="space-y-5 pb-7 sm:space-y-6 sm:pb-8">
-        <div className="flex flex-col gap-4">
+      <section className="border-b border-border-subtle pb-7 sm:pb-8">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl space-y-3">
-            <p className="font-ui text-caption tracking-[0.12em] text-muted-foreground">
-              Browse
+            <p className="text-small font-medium text-muted-foreground">
+              Browse resources
             </p>
             <h1 className="max-w-3xl font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               All resources
@@ -244,19 +244,22 @@ function ResourcesListingShellPreview() {
               Explore printable worksheets, flashcards, and teaching materials across every category.
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-muted-foreground">
-            <span className="font-medium text-foreground">20 results</span>
-            <span aria-hidden>•</span>
-            <span>Sorted by Trending</span>
+          <div className="flex flex-wrap gap-2 text-caption">
+            <span className="inline-flex items-center rounded-full border border-border-subtle bg-muted/45 px-3 py-1.5 font-medium text-foreground">
+              20 results
+            </span>
+            <span className="inline-flex items-center rounded-full border border-border-subtle bg-background px-3 py-1.5 text-muted-foreground">
+              Sorted by Trending
+            </span>
           </div>
         </div>
       </section>
 
       <section className="space-y-6">
         <div className="flex flex-col gap-6 lg:flex-row lg:gap-10">
-          <aside className="hidden w-[260px] flex-shrink-0 space-y-5 lg:block">
-            <div className="flex items-center justify-between border-b border-border/80 pb-2">
-              <p className="font-ui text-caption tracking-[0.12em] text-muted-foreground">
+          <aside className="hidden w-[260px] flex-shrink-0 space-y-5 rounded-[26px] border border-border-subtle bg-card/95 p-5 shadow-sm lg:block">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-3">
+              <p className="text-sm font-semibold text-foreground">
                 Filters
               </p>
               <span className="text-caption text-muted-foreground">Clear all</span>
@@ -292,13 +295,13 @@ function ResourcesListingShellPreview() {
           </aside>
 
           <div className="min-w-0 flex-1 space-y-6">
-            <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-              <p className="shrink-0 text-small text-muted-foreground">20 resources</p>
+            <div className="flex flex-col gap-3 rounded-[24px] border border-border-subtle bg-card/95 p-3.5 shadow-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:p-4">
+              <p className="shrink-0 text-small font-medium text-foreground">20 resources</p>
               <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:items-center">
-                <div className="min-h-11 rounded-full border border-border-strong bg-background px-3.5 py-2.5 text-small text-muted-foreground">
+                <div className="min-h-11 rounded-xl border border-border-subtle bg-background px-3.5 py-2.5 text-small text-muted-foreground">
                   Any price
                 </div>
-                <div className="min-h-11 rounded-full border border-border-strong bg-muted/40 px-3.5 py-2.5 text-small text-muted-foreground">
+                <div className="min-h-11 rounded-xl border border-border-subtle bg-primary/10 px-3.5 py-2.5 text-small text-foreground">
                   Trending
                 </div>
               </div>

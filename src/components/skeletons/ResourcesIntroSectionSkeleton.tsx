@@ -23,18 +23,16 @@ function ManualDiscoverIntroSkeleton() {
 
 function ManualListingIntroSkeleton() {
   return (
-    <section className="border-b border-border pb-7 sm:pb-8">
-      <div className="space-y-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-3xl space-y-3">
-            <LoadingSkeleton className="h-3 w-16" />
-            <LoadingSkeleton className="h-8 w-72 rounded-xl sm:h-10" />
-            <LoadingSkeleton className="h-4 w-72" />
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <LoadingSkeleton className="h-4 w-24" />
-            <LoadingSkeleton className="h-4 w-28" />
-          </div>
+    <section className="border-b border-border-subtle pb-7 sm:pb-8">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div className="max-w-3xl space-y-3">
+          <LoadingSkeleton className="h-4 w-32 rounded" />
+          <LoadingSkeleton className="h-8 w-72 rounded-xl sm:h-10" />
+          <LoadingSkeleton className="h-4 w-72 rounded" />
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <LoadingSkeleton className="h-8 w-24 rounded-full border border-border bg-muted/45" />
+          <LoadingSkeleton className="h-8 w-32 rounded-full border border-border-subtle bg-background" />
         </div>
       </div>
     </section>
@@ -55,25 +53,26 @@ export function ResourcesIntroDiscoverPreview() {
 
 export function ResourcesIntroListingPreview() {
   return (
-    <section className="border-b border-border pb-7 sm:pb-8">
-      <div className="space-y-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-3xl space-y-3">
-            <p className="font-ui text-caption tracking-[0.12em] text-muted-foreground">
-              Browse
-            </p>
-            <h1 className="max-w-3xl font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              All resources
-            </h1>
-            <p className="max-w-2xl text-small leading-6 text-muted-foreground">
-              Explore printable worksheets, flashcards, and teaching materials across every category.
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-muted-foreground">
-            <span className="font-medium text-foreground">20 results</span>
-            <span aria-hidden>•</span>
-            <span>Sorted by Trending</span>
-          </div>
+    <section className="border-b border-border-subtle pb-7 sm:pb-8">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div className="max-w-3xl space-y-3">
+          <p className="text-small font-medium text-muted-foreground">
+            Browse resources
+          </p>
+          <h1 className="max-w-3xl font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            All resources
+          </h1>
+          <p className="max-w-2xl text-small leading-6 text-muted-foreground">
+            Explore printable worksheets, flashcards, and teaching materials across every category.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2 text-caption">
+          <span className="inline-flex items-center rounded-full border border-border-subtle bg-muted/45 px-3 py-1.5 font-medium text-foreground">
+            20 results
+          </span>
+          <span className="inline-flex items-center rounded-full border border-border-subtle bg-background px-3 py-1.5 text-muted-foreground">
+            Sorted by Trending
+          </span>
         </div>
       </div>
     </section>

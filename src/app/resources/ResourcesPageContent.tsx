@@ -33,6 +33,7 @@ import {
   ResourcesContentFallback,
   SidebarFallback,
 } from "@/components/skeletons/ResourcesContentFallback";
+import { Button } from "@/design-system";
 import { formatNumber, formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";
 import {
@@ -319,11 +320,11 @@ async function ResourcesListingContent({
 
   return (
     <>
-      <section className="space-y-5 pb-7 sm:space-y-6 sm:pb-8">
-        <div className="flex flex-col gap-4">
+      <section className="border-b border-border-subtle pb-7 sm:pb-8">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl space-y-3">
-            <p className="font-ui text-caption tracking-[0.12em] text-muted-foreground">
-              Browse
+            <p className="text-small font-medium text-muted-foreground">
+              Browse resources
             </p>
             <h1 className="max-w-3xl font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               {pageTitle}
@@ -334,14 +335,13 @@ async function ResourcesListingContent({
               </p>
             ) : null}
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-muted-foreground">
-            <span className="font-medium text-foreground">
+          <div className="flex flex-wrap items-center gap-2 text-caption">
+            <span className="inline-flex items-center rounded-full border border-border-subtle bg-muted/45 px-3 py-1.5 font-medium text-foreground">
               {formatNumber(total)} results
             </span>
-            <span className="text-muted-foreground" aria-hidden>
-              •
+            <span className="inline-flex items-center rounded-full border border-border-subtle bg-background px-3 py-1.5 text-muted-foreground">
+              {`Sorted by ${sortLabel}`}
             </span>
-            <span>{`Sorted by ${sortLabel}`}</span>
           </div>
         </div>
       </section>
@@ -360,7 +360,7 @@ async function ResourcesListingContent({
             </Suspense>
 
             {isSearchResults ? (
-              <p className="text-small text-muted-foreground">
+              <div className="rounded-2xl border border-border-subtle bg-muted/45 px-4 py-3 text-small text-muted-foreground">
                 {total === 0 ? (
                   <>
                     No results for{" "}
@@ -372,7 +372,7 @@ async function ResourcesListingContent({
                     <strong className="text-foreground">&ldquo;{normalizedSearch}&rdquo;</strong>.
                   </>
                 )}
-              </p>
+              </div>
             ) : null}
 
             {listingUnavailable ? (
@@ -778,10 +778,10 @@ function ResourcesListingUnavailableState({
   retryHref: string;
 }) {
   return (
-    <div className="rounded-[28px] border border-border bg-card px-6 py-10 text-center shadow-card sm:px-8 sm:py-12">
+    <div className="rounded-[28px] border border-border-subtle bg-card px-6 py-10 text-center shadow-sm sm:px-8 sm:py-12">
       <div className="space-y-3">
-        <p className="text-caption font-semibold uppercase tracking-[0.18em] text-primary-700">
-          Library temporarily unavailable
+        <p className="text-small font-medium text-muted-foreground">
+          Temporary service issue
         </p>
         <h2 className="font-display text-3xl font-semibold text-foreground">
           This library view could not refresh right now.
@@ -793,18 +793,12 @@ function ResourcesListingUnavailableState({
       </div>
 
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-        <Link
-          href={retryHref}
-          className="inline-flex items-center justify-center rounded-xl bg-brand-600 px-5 py-3 text-small font-semibold text-white transition hover:bg-brand-700"
-        >
-          Try again
-        </Link>
-        <Link
-          href={routes.marketplace}
-          className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 text-small font-medium text-foreground transition hover:bg-muted"
-        >
-          Open resources
-        </Link>
+        <Button asChild>
+          <Link href={retryHref}>Try again</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href={routes.marketplace}>Open resources</Link>
+        </Button>
       </div>
     </div>
   );

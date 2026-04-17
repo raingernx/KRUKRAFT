@@ -22,10 +22,12 @@ interface FilterSidebarProps {
   onNavigate?: () => void;
 }
 
-const ACTIVE_ROW_CLASS = "bg-primary/12 font-medium text-primary";
-const ACTIVE_PILL_CLASS = "border border-primary/30 bg-primary/12 text-primary";
+const ACTIVE_ROW_CLASS =
+  "border border-border-strong bg-muted/70 font-medium text-foreground shadow-sm";
+const ACTIVE_PILL_CLASS =
+  "border border-primary/20 bg-primary/10 text-primary shadow-sm";
 const INACTIVE_PILL_CLASS =
-  "border border-border-strong bg-card text-muted-foreground hover:border-border hover:bg-muted";
+  "border border-border-subtle bg-background text-muted-foreground hover:border-border hover:bg-muted/60 hover:text-foreground";
 
 // ── Static filter options ─────────────────────────────────────────────────────
 
@@ -143,7 +145,7 @@ export function FilterSidebar({
   return (
     <aside
       className={cn(
-        "w-[260px] flex-shrink-0 space-y-5",
+        "w-[260px] flex-shrink-0 space-y-5 rounded-[26px] border border-border-subtle bg-card/95 p-5 shadow-sm",
         // Subtle opacity while any navigation is in-flight
         isPending && "pointer-events-none opacity-70",
         className
@@ -152,15 +154,15 @@ export function FilterSidebar({
     >
       {/* Header + clear */}
       {showHeader && (
-        <div className="flex items-center justify-between border-b border-border/80 pb-2">
-          <p className="font-ui text-caption tracking-[0.12em] text-muted-foreground">
+        <div className="flex items-center justify-between border-b border-border-subtle pb-3">
+          <p className="text-sm font-semibold text-foreground">
             Filters
           </p>
           {showClearAll && (
             <button
               type="button"
               onClick={clearAll}
-              className="flex items-center gap-1 text-caption text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
+              className="flex items-center gap-1 rounded-lg px-1 text-caption text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <X className="h-3 w-3" />
               Clear all
@@ -185,10 +187,10 @@ export function FilterSidebar({
                     onFocus={() => prefetchHref(buildHref("sort", opt.value))}
                     aria-pressed={active}
                     className={cn(
-                      "w-full rounded-xl px-3 py-2.5 text-left text-small transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
+                      "w-full rounded-xl border border-transparent px-3 py-2.5 text-left text-small transition-[border-color,background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                       active
                         ? ACTIVE_ROW_CLASS
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                        : "text-muted-foreground hover:border-border-subtle hover:bg-muted/60 hover:text-foreground",
                       optimistic && "cursor-wait"
                     )}
                   >
@@ -213,10 +215,10 @@ export function FilterSidebar({
                 onFocus={() => prefetchHref(buildHref("category", "all"))}
                 aria-pressed={isAllCategories || isOptimistic("category", "all")}
                 className={cn(
-                  "w-full rounded-xl px-3 py-2.5 text-left text-small transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
+                  "w-full rounded-xl border border-transparent px-3 py-2.5 text-left text-small transition-[border-color,background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                   isAllCategories || isOptimistic("category", "all")
                     ? ACTIVE_ROW_CLASS
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    : "text-muted-foreground hover:border-border-subtle hover:bg-muted/60 hover:text-foreground",
                   isOptimistic("category", "all") && "cursor-wait"
                 )}
               >
@@ -235,10 +237,10 @@ export function FilterSidebar({
                     onFocus={() => prefetchHref(buildHref("category", cat.slug))}
                     aria-pressed={active}
                     className={cn(
-                      "w-full rounded-xl px-3 py-2.5 text-left text-small transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
+                      "w-full rounded-xl border border-transparent px-3 py-2.5 text-left text-small transition-[border-color,background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                       active
                         ? ACTIVE_ROW_CLASS
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                        : "text-muted-foreground hover:border-border-subtle hover:bg-muted/60 hover:text-foreground",
                       optimistic && "cursor-wait"
                     )}
                   >
@@ -267,10 +269,10 @@ export function FilterSidebar({
                     onFocus={() => prefetchHref(buildHref("price", opt.value))}
                     aria-pressed={active}
                     className={cn(
-                      "w-full rounded-xl px-3 py-2.5 text-left text-small transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
+                      "w-full rounded-xl border border-transparent px-3 py-2.5 text-left text-small transition-[border-color,background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                       active
                         ? ACTIVE_ROW_CLASS
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                        : "text-muted-foreground hover:border-border-subtle hover:bg-muted/60 hover:text-foreground",
                       optimistic && "cursor-wait"
                     )}
                   >
@@ -303,7 +305,7 @@ export function FilterSidebar({
                 }
                 aria-pressed={active}
                 className={cn(
-                  "rounded-full px-3 py-1.5 text-caption transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
+                  "rounded-full px-3 py-1.5 text-caption transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                   active
                     ? ACTIVE_PILL_CLASS
                     : INACTIVE_PILL_CLASS,
@@ -337,7 +339,7 @@ export function FilterSidebar({
                 }
                 aria-pressed={active}
                 className={cn(
-                  "rounded-full px-3 py-1.5 text-caption transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
+                  "rounded-full px-3 py-1.5 text-caption transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                   active
                     ? ACTIVE_PILL_CLASS
                     : INACTIVE_PILL_CLASS,
@@ -366,11 +368,11 @@ function FilterGroup({
   const [open, setOpen] = useState(true);
 
   return (
-    <div className="border-b border-border/80 pb-4">
+    <div className="border-b border-border-subtle pb-4">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="mb-3 flex w-full items-center justify-between text-caption text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
+        className="mb-3 flex w-full items-center justify-between rounded-lg px-1 text-small font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <span>{title}</span>
         <span className="text-caption text-muted-foreground">{open ? "−" : "+"}</span>

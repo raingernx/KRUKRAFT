@@ -68,6 +68,9 @@ Search behavior notes:
 - selecting a suggestion opens the resource detail directly
 - pressing Enter or using the dropdown footer routes to the canonical marketplace results page
 - no-result flows recover on the same marketplace route instead of bouncing to ad-hoc pages
+- listing-mode `/resources` now uses one calmer shell family across the intro,
+  results summary, filter surfaces, empty recovery panel, temporary
+  unavailable state, and matching loading skeletons
 - the full `HeroSearch` client bundle is now treated as critical only on the main marketplace route; secondary public routes such as support, category, creator, membership, and resource-detail pages lazy-load the navbar search and show the structural search shell first
 
 Behavior notes:

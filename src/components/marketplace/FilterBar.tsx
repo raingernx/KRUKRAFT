@@ -69,12 +69,12 @@ export function FilterBar({ total }: Props) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 border-b border-border pb-4 transition-opacity sm:flex-row sm:flex-wrap sm:items-center sm:justify-between",
+        "flex flex-col gap-3 rounded-[24px] border border-border-subtle bg-card/95 p-3.5 shadow-sm transition-opacity sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:p-4",
         isPending && "opacity-60"
       )}
     >
       {/* Result count */}
-      <p className="shrink-0 text-small text-muted-foreground">
+      <p className="shrink-0 text-small font-medium text-foreground">
         {total === 1 ? "1 resource" : `${formatNumber(total)} resources`}
       </p>
 
@@ -100,7 +100,7 @@ export function FilterBar({ total }: Props) {
             onClick={clearFilterControls}
             disabled={isPending}
             aria-label="Clear sort and price filters"
-            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-transparent px-3 py-2 text-caption text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-transparent px-3.5 py-2.5 text-small text-muted-foreground transition hover:bg-muted/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60"
           >
             <X className="h-3.5 w-3.5" />
             Clear
@@ -128,8 +128,8 @@ function FilterSelect({
 }) {
   const isActive = value !== "" && value !== DEFAULT_SORT;
   const selectStateClass = isActive
-    ? "border-primary/30 bg-primary/12 text-primary hover:border-primary/40 hover:bg-primary/16"
-    : "border-border-strong bg-background text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground";
+    ? "border-primary/20 bg-primary/10 text-foreground shadow-sm hover:border-primary/28 hover:bg-primary/12"
+    : "border-border-subtle bg-background text-muted-foreground hover:border-border hover:bg-muted/60 hover:text-foreground";
 
   return (
     <div className="relative min-w-0">
@@ -139,10 +139,10 @@ function FilterSelect({
         disabled={disabled}
         aria-label={ariaLabel}
         className={cn(
-          "min-h-11 w-full appearance-none cursor-pointer rounded-full border py-2.5 pl-3.5 pr-9",
-          "text-small outline-none transition-colors",
-          "focus:border-primary-300 focus:ring-2 focus:ring-primary-500/12",
-          "focus-visible:border-primary-300 focus-visible:ring-2 focus-visible:ring-primary-500/12",
+          "min-h-11 w-full appearance-none cursor-pointer rounded-xl border py-2.5 pl-3.5 pr-9",
+          "text-small outline-none transition-[border-color,background-color,box-shadow,color]",
+          "focus:border-ring focus:ring-2 focus:ring-ring/20",
+          "focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20",
           "disabled:cursor-not-allowed disabled:opacity-60",
           selectStateClass,
         )}

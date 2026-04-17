@@ -19,7 +19,7 @@ export function SearchRecoveryPanel({
   const hasTagMatches = recovery.tagMatches.length > 0;
 
   return (
-    <div className="space-y-5 rounded-[28px] border border-border bg-card p-6 shadow-card sm:p-7">
+    <div className="space-y-5 rounded-[28px] border border-border-subtle bg-card p-6 shadow-sm sm:p-7">
       <div className="flex flex-col items-center justify-center py-1 text-center">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-border-subtle bg-muted">
           <Search className="h-6 w-6 text-muted-foreground" />
@@ -34,7 +34,7 @@ export function SearchRecoveryPanel({
 
       {hasSuggestedQueries ? (
         <section className="space-y-2.5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          <p className="text-sm font-medium text-foreground">
             Try these searches
           </p>
           <div className="flex flex-wrap gap-2">
@@ -42,7 +42,7 @@ export function SearchRecoveryPanel({
               <Link
                 key={suggestion}
                 href={routes.marketplaceSearch(suggestion)}
-                className="inline-flex items-center rounded-full border border-border-strong bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground transition hover:border-border hover:bg-accent hover:text-foreground"
+                className="inline-flex items-center rounded-xl border border-border-subtle bg-background px-3.5 py-2 text-sm font-medium text-foreground transition hover:border-border hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 {suggestion}
               </Link>
@@ -53,7 +53,7 @@ export function SearchRecoveryPanel({
 
       {hasCategoryMatches ? (
         <section className="space-y-2.5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          <p className="text-sm font-medium text-foreground">
             Browse categories instead
           </p>
           <div className="flex flex-wrap gap-2">
@@ -61,7 +61,7 @@ export function SearchRecoveryPanel({
               <Link
                 key={match.slug}
                 href={routes.marketplaceCategory(match.slug)}
-                className="inline-flex items-center rounded-full border border-border-strong bg-background px-3 py-1.5 text-sm font-medium text-foreground transition hover:border-border hover:bg-muted"
+                className="inline-flex items-center rounded-xl border border-border-subtle bg-background px-3.5 py-2 text-sm font-medium text-foreground transition hover:border-border hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 {match.name}
               </Link>
@@ -72,7 +72,7 @@ export function SearchRecoveryPanel({
 
       {hasTagMatches ? (
         <section className="space-y-2.5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          <p className="text-sm font-medium text-foreground">
             Related tags
           </p>
           <div className="flex flex-wrap gap-2">
@@ -80,7 +80,7 @@ export function SearchRecoveryPanel({
               <Link
                 key={match.slug}
                 href={routes.marketplaceTag(match.slug)}
-                className="inline-flex items-center rounded-full border border-border-strong bg-background px-3 py-1.5 text-sm font-medium text-foreground transition hover:border-border hover:bg-muted"
+                className="inline-flex items-center rounded-xl border border-border-subtle bg-background px-3.5 py-2 text-sm font-medium text-foreground transition hover:border-border hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 #{match.name}
               </Link>
@@ -92,23 +92,23 @@ export function SearchRecoveryPanel({
       <section className="grid gap-3 border-t border-border-subtle pt-4 sm:grid-cols-3">
         <Link
           href={routes.marketplaceQuery("sort=trending&category=all")}
-          className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-muted px-4 py-3 transition hover:border-border hover:bg-background"
+          className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-muted/45 px-4 py-3 transition hover:border-border hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          <Sparkles className="h-4 w-4 text-brand-600" />
+          <Sparkles className="h-4 w-4 text-primary" />
           <span className="text-sm font-medium text-foreground">Trending now</span>
         </Link>
         <Link
           href={routes.marketplaceQuery("price=free&category=all")}
-          className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-muted px-4 py-3 transition hover:border-border hover:bg-background"
+          className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-muted/45 px-4 py-3 transition hover:border-border hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          <Compass className="h-4 w-4 text-brand-600" />
+          <Compass className="h-4 w-4 text-primary" />
           <span className="text-sm font-medium text-foreground">Browse free resources</span>
         </Link>
         <Link
           href={routes.marketplace}
-          className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-muted px-4 py-3 transition hover:border-border hover:bg-background"
+          className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-muted/45 px-4 py-3 transition hover:border-border hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          <Search className="h-4 w-4 text-brand-600" />
+          <Search className="h-4 w-4 text-primary" />
           <span className="text-sm font-medium text-foreground">Return to discover</span>
         </Link>
       </section>
@@ -118,7 +118,7 @@ export function SearchRecoveryPanel({
 
 export function SearchRecoveryPanelFallback() {
   return (
-    <div className="space-y-5 rounded-[28px] border border-border bg-card p-6 shadow-card sm:p-7">
+    <div className="space-y-5 rounded-[28px] border border-border-subtle bg-card p-6 shadow-sm sm:p-7">
       <div className="flex flex-col items-center justify-center py-1 text-center">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-border-subtle bg-muted">
           <Search className="h-6 w-6 text-muted-foreground" />
