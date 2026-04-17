@@ -156,8 +156,8 @@ function LoginForm() {
             ) : null}
 
             {shouldCheckEmail ? (
-              <div className="flex items-start gap-2.5 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-700 ring-1 ring-blue-200">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-500" />
+              <div className="flex items-start gap-2.5 rounded-xl bg-primary/10 px-4 py-3 text-sm text-primary ring-1 ring-primary/20">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
                 {emailHint
                   ? `Check ${emailHint} for a verification link before you continue.`
                   : "Check your inbox for a verification link."}
@@ -165,15 +165,15 @@ function LoginForm() {
             ) : null}
 
             {verificationState === "invalid" ? (
-              <div className="flex items-start gap-2.5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-red-200">
-                <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-500" />
+              <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive ring-1 ring-destructive/20">
+                <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" />
                 This verification link is invalid or has expired.
               </div>
             ) : null}
 
             {error && (
-              <div className="flex items-start gap-2.5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-red-200">
-                <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-500" />
+              <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive ring-1 ring-destructive/20">
+                <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" />
                 {error}
               </div>
             )}
@@ -192,7 +192,7 @@ function LoginForm() {
                 placeholder="you@example.com"
                 className="w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-sm text-foreground
                            placeholder:text-muted-foreground shadow-sm outline-none transition
-                           focus:border-primary/60 focus:ring-2 focus:ring-primary/15"
+                           focus:border-ring focus:ring-2 focus:ring-ring/18"
               />
             </div>
 
@@ -202,7 +202,7 @@ function LoginForm() {
                   Password
                 </label>
                 <Link href={routes.resetPassword}
-                  className="text-[12px] text-primary transition-colors hover:text-primary/80">
+                  className="text-[12px] text-primary transition-colors hover:text-foreground">
                   Forgot password?
                 </Link>
               </div>
@@ -216,7 +216,7 @@ function LoginForm() {
                 placeholder="••••••••"
                 className="w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-sm text-foreground
                            placeholder:text-muted-foreground shadow-sm outline-none transition
-                           focus:border-primary/60 focus:ring-2 focus:ring-primary/15"
+                           focus:border-ring focus:ring-2 focus:ring-ring/18"
               />
             </div>
 
@@ -234,7 +234,7 @@ function LoginForm() {
 
         <p className="mt-5 text-center text-[13px] text-muted-foreground">
           Don&apos;t have an account?{" "}
-          <Link href={routes.register} className="font-semibold text-primary transition-colors hover:text-primary/80">
+          <Link href={routes.register} className="font-semibold text-primary transition-colors hover:text-foreground">
             Create one free
           </Link>
         </p>

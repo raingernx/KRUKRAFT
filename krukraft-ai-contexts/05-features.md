@@ -144,6 +144,10 @@ Resource detail page
 - Password reset request + confirm flow
 - Email verification flow (soft verification approach)
 - Credentials + Google login
+- The `/auth/login`, `/auth/register`, `/auth/reset-password`, and
+  `/auth/reset-password/confirm` route family now shares semantic
+  status/focus treatments for info and error messaging without changing the
+  underlying auth or recovery logic
 - Theme selection still supports `light`, `dark`, and `system`, and new/no-preference users now start from `system` by default while newly created `UserPreference` rows seed that same `system` value at the data layer
 - canonical seeded/local admin identity now uses `admin@krukraft.dev`
 

@@ -68,8 +68,8 @@ export default function ResetPasswordPage() {
             data-auth-reset-password-form-ready={isHydrated ? "true" : "false"}
           >
             {error ? (
-              <div className="flex items-start gap-2.5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-red-200">
-                <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-500" />
+              <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive ring-1 ring-destructive/20">
+                <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" />
                 {error}
               </div>
             ) : null}

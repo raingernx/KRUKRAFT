@@ -168,8 +168,8 @@ export default function RegisterPage() {
               data-auth-register-form-ready={isHydrated ? "true" : "false"}
             >
               {error && (
-                <div className="flex items-start gap-2.5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-red-200">
-                  <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-500" />
+                <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive ring-1 ring-destructive/20">
+                  <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" />
                   {error}
                 </div>
               )}
@@ -189,7 +189,7 @@ export default function RegisterPage() {
                   placeholder="Jane Smith"
                   className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground
                              placeholder:text-muted-foreground shadow-sm outline-none transition
-                             focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                             focus:border-ring focus:ring-2 focus:ring-ring/18"
                 />
               </div>
 
@@ -208,7 +208,7 @@ export default function RegisterPage() {
                   placeholder="you@example.com"
                   className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground
                              placeholder:text-muted-foreground shadow-sm outline-none transition
-                             focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                             focus:border-ring focus:ring-2 focus:ring-ring/18"
                 />
               </div>
 
@@ -228,7 +228,7 @@ export default function RegisterPage() {
                   disabled={formDisabled}
                   className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground
                              placeholder:text-muted-foreground shadow-sm outline-none transition
-                             focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                             focus:border-ring focus:ring-2 focus:ring-ring/18"
                 />
               </div>
 
@@ -258,7 +258,7 @@ export default function RegisterPage() {
           <p className="mt-5 text-center text-[13px] text-muted-foreground">
             Already have an account?{" "}
             <Link href={routes.login}
-              className="font-semibold text-primary transition-colors hover:text-primary/80">
+              className="font-semibold text-primary transition-colors hover:text-foreground">
               Sign in
             </Link>
           </p>
