@@ -25,7 +25,7 @@ The system also includes an admin panel for managing resources and users.
 # Tech Stack
 
 Framework  
-Next.js 14 (App Router)
+Next.js 16 (App Router)
 
 Frontend
 
@@ -58,7 +58,7 @@ Payments
 
 Deployment
 
-- Vercel (planned)
+- Vercel
 
 Storage (future)
 
@@ -149,19 +149,15 @@ Responsibilities
 
 ---
 
-### Workers
+### Background Processing
 
-Location
+There is no dedicated `src/workers` directory in the current tree.
 
-```
-src/workers
-```
+Background and aggregation work is currently owned by:
 
-Responsibilities
-
-- analytics aggregation
-- trending calculations
-- background processing
+- `src/services/analytics`
+- `src/repositories/analytics`
+- repo-owned scripts under `scripts/`
 
 ---
 
@@ -181,34 +177,27 @@ Next.js App Router structure:
 
 src/app
 
-(auth)
-login/page.tsx
-register/page.tsx
-
-(dashboard)
-dashboard/page.tsx
-resources/page.tsx
-purchases/page.tsx
-subscription/page.tsx
-settings/page.tsx
-
-admin
-page.tsx
-
-library
-page.tsx
-
-resources
-[id]/page.tsx
-
-api
-auth/
-checkout/
-download/
-resources/
-subscriptions/
+auth/*
+resources/*
+categories/*
+creators/*
+(dashboard-v2)/dashboard-v2/*
+admin/*
+api/*
 
 ```
+
+Canonical protected dashboard routes live under:
+
+```
+src/app/(dashboard-v2)/dashboard-v2/*
+```
+
+Historical note:
+
+- `src/app/(dashboard)` and `src/app/(dashboard-lite)` still exist in the tree
+  as retired compatibility/history surfaces
+- do not treat those older route groups as the active product dashboard family
 
 ---
 
@@ -241,8 +230,9 @@ Roles:
 
 ```
 
-USER
 ADMIN
+INSTRUCTOR
+STUDENT
 
 ```
 
@@ -256,7 +246,7 @@ Protected routes:
 
 ```
 
-/dashboard/*
+/dashboard-v2/*
 /admin/*
 
 ```
@@ -310,11 +300,13 @@ User dashboard routes:
 
 ```
 
-/dashboard
-/dashboard/resources
-/dashboard/purchases
-/dashboard/subscription
-/dashboard/settings
+/dashboard-v2
+/dashboard-v2/library
+/dashboard-v2/downloads
+/dashboard-v2/purchases
+/dashboard-v2/membership
+/dashboard-v2/settings
+/dashboard-v2/creator/*
 
 ```
 
@@ -324,6 +316,7 @@ Features:
 - Download purchased files
 - Manage subscription
 - Update account settings
+- Access creator workspace and publishing tools through the dashboard-v2 family
 
 ---
 

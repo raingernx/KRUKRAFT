@@ -39,12 +39,12 @@ Krukraft is a Next.js App Router application with:
 
 ### User Dashboard
 
-- `/dashboard`
-- `/dashboard/library`
-- `/dashboard/downloads`
-- `/dashboard/purchases`
-- `/subscription`
-- `/settings`
+- `/dashboard-v2`
+- `/dashboard-v2/library`
+- `/dashboard-v2/downloads`
+- `/dashboard-v2/purchases`
+- `/dashboard-v2/membership`
+- `/dashboard-v2/settings`
 
 ### Creator Workspace
 
@@ -169,12 +169,15 @@ src/
   services/           business logic
   repositories/       database access via Prisma
   lib/                shared helpers, routing, theme/bootstrap, metadata
-  workers/            background and aggregation jobs
 
-prisma/               schema, migrations, seed data
 scripts/              audits, warmers, smoke helpers, tooling
+prisma/               schema, migrations, seed data
 krukraft-ai-contexts/ maintained repo context pack for AI/codebase truth
 ```
+
+There is no dedicated `src/workers/` directory in the current repo. Background
+and aggregation work currently lives in service, repository, analytics, and
+repo-owned script layers instead.
 
 ## Current Branding
 
