@@ -82,6 +82,20 @@ const QUICK_BROWSE_TILES = [
     eyebrow: "Budget",
   },
 ] as const;
+const DISCOVER_COLLECTION_FALLBACKS = {
+  curated: {
+    id: "discover-fallback-curated",
+    slug: "middle-school-science-quiz-assessment-set",
+    title: "Middle School Science Quiz & Assessment Set",
+    isFree: false,
+    price: 2000,
+    thumbnailUrl: "/uploads/c8fef7c0a5fecefa.png",
+    previewUrl: "/uploads/c8fef7c0a5fecefa.png",
+    downloadCount: 0,
+    author: { name: "Kru Craft" },
+    category: { name: "Science", slug: "science" },
+  } satisfies ResourceCardData,
+} as const;
 const DISCOVER_LEAD_TIMEOUT_MS = 600;
 const DISCOVER_COLLECTIONS_TIMEOUT_MS = 600;
 
@@ -606,7 +620,14 @@ async function ResourcesDiscoverCollectionsDeferredSection({
           badge: "Featured",
           resource: discoverCollectionsData.featured[0] as ResourceCardData,
         }
-      : null,
+      : {
+          key: "top-picks-fallback",
+          title: "Top picks",
+          description: "A dependable curated shortlist when there is no dedicated featured inventory to open yet.",
+          href: routes.marketplaceQuery("sort=recommended&category=all"),
+          badge: "Curated",
+          resource: DISCOVER_COLLECTION_FALLBACKS.curated,
+        },
     discoverCollectionsData.mostDownloaded[0]
       ? {
           key: "most-downloaded",
@@ -714,7 +735,17 @@ async function SearchRecoveryPanelDeferred({
   }
 
   if (!recovery) {
-    return null;
+    return (
+      <SearchRecoveryPanel
+        query={query}
+        recovery={{
+          suggestedQueries: [],
+          categoryMatches: [],
+          tagMatches: [],
+        }}
+        mode="recovery-unavailable"
+      />
+    );
   }
 
   return <SearchRecoveryPanel query={query} recovery={recovery} />;

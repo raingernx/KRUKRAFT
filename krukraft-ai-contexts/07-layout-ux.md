@@ -87,7 +87,8 @@
   - quick browse tiles for entry intents like top picks, worksheets, flashcards, and free resources
   - personalized recommendations (or a public "Top picks" fallback for anonymous viewers)
   - one high-signal trending rail
-  - a curated collections grid that links deeper into listing modes such as newest, featured, and most-downloaded
+  - a curated collections grid that links deeper into stable listing modes such as newest, featured when featured inventory exists, most-downloaded, or a `Top picks` fallback when the featured slot would otherwise dead-end into an empty listing
+- discover collection cards should stay honest to live inventory: the featured-slot entry only points at `featured=true` when featured inventory exists; otherwise the slot falls back to a stable `sort=recommended` / `Top picks` listing instead of advertising an empty featured filter
 - viewer-aware personalization hydrates after the public shell instead of blocking the initial route render
 - discover-section CTAs should only appear when the target listing matches the section's promise; purely personalized rows can omit `View all` rather than sending users to a generic fallback list
 
@@ -95,6 +96,10 @@
 - no discover hero
 - listing intro with result count and sort summary
 - desktop filter sidebar plus in-content filter bar
+- the live listing filter contract is intentionally narrow: the sidebar/filter bar
+  should only present contract-backed controls for `category`, `price`, and
+  `sort`; `tag` remains a single-axis query used by curated entry links and tag
+  browse jumps rather than separate fake axes like difficulty + resource type
 - optional spotlight card when the listing context supports it
 - canonical results grid
 - no-result recovery panel when a search miss occurs

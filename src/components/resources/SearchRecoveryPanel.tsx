@@ -6,17 +6,33 @@ import { routes } from "@/lib/routes";
 import type { SearchRecoveryData } from "@/services/search";
 
 const SEARCH_RECOVERY_PANEL_NAME = "search-recovery-panel";
+const EMPTY_SEARCH_RECOVERY: SearchRecoveryData = {
+  suggestedQueries: [],
+  categoryMatches: [],
+  tagMatches: [],
+};
 
 export function SearchRecoveryPanel({
   query,
   recovery,
+  mode = "results-empty",
 }: {
   query: string;
   recovery: SearchRecoveryData;
+  mode?: "results-empty" | "recovery-unavailable";
 }) {
-  const hasSuggestedQueries = recovery.suggestedQueries.length > 0;
-  const hasCategoryMatches = recovery.categoryMatches.length > 0;
-  const hasTagMatches = recovery.tagMatches.length > 0;
+  const safeRecovery = recovery ?? EMPTY_SEARCH_RECOVERY;
+  const hasSuggestedQueries = safeRecovery.suggestedQueries.length > 0;
+  const hasCategoryMatches = safeRecovery.categoryMatches.length > 0;
+  const hasTagMatches = safeRecovery.tagMatches.length > 0;
+  const title =
+    mode === "recovery-unavailable"
+      ? `ยังไม่พบผลลัพธ์สำหรับ “${query}”`
+      : `ยังไม่พบผลลัพธ์สำหรับ “${query}”`;
+  const description =
+    mode === "recovery-unavailable"
+      ? "ระบบยังโหลดคำแนะนำเพิ่มเติมไม่ได้ในตอนนี้ แต่คุณยังเปิดดูหมวดหลักหรือกลับไปที่หน้าคลังเพื่อเริ่มใหม่ได้เลย"
+      : "ลองค้นหาด้วยคำที่กว้างขึ้น หรือข้ามไปดูหมวดและแท็กที่เกี่ยวข้องเพื่อกลับเข้าสู่คลังได้เร็วขึ้น";
 
   return (
     <div className="space-y-5 rounded-[28px] border border-border-subtle bg-card p-6 shadow-sm sm:p-7">
@@ -25,20 +41,20 @@ export function SearchRecoveryPanel({
           <Search className="h-6 w-6 text-muted-foreground" />
         </div>
         <p className="mt-4 text-base font-semibold text-foreground">
-          {`ยังไม่พบผลลัพธ์สำหรับ “${query}”`}
+          {title}
         </p>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          ลองค้นหาด้วยคำที่กว้างขึ้น หรือข้ามไปดูหมวดและแท็กที่เกี่ยวข้องเพื่อกลับเข้าสู่คลังได้เร็วขึ้น
+          {description}
         </p>
       </div>
 
       {hasSuggestedQueries ? (
         <section className="space-y-2.5">
           <p className="text-sm font-medium text-foreground">
-            Try these searches
+            ลองคำค้นเหล่านี้
           </p>
           <div className="flex flex-wrap gap-2">
-            {recovery.suggestedQueries.map((suggestion) => (
+            {safeRecovery.suggestedQueries.map((suggestion) => (
               <Link
                 key={suggestion}
                 href={routes.marketplaceSearch(suggestion)}
@@ -54,10 +70,10 @@ export function SearchRecoveryPanel({
       {hasCategoryMatches ? (
         <section className="space-y-2.5">
           <p className="text-sm font-medium text-foreground">
-            Browse categories instead
+            เปิดดูตามหมวดหมู่
           </p>
           <div className="flex flex-wrap gap-2">
-            {recovery.categoryMatches.map((match) => (
+            {safeRecovery.categoryMatches.map((match) => (
               <Link
                 key={match.slug}
                 href={routes.marketplaceCategory(match.slug)}
@@ -73,10 +89,10 @@ export function SearchRecoveryPanel({
       {hasTagMatches ? (
         <section className="space-y-2.5">
           <p className="text-sm font-medium text-foreground">
-            Related tags
+            แท็กที่เกี่ยวข้อง
           </p>
           <div className="flex flex-wrap gap-2">
-            {recovery.tagMatches.slice(0, 6).map((match) => (
+            {safeRecovery.tagMatches.slice(0, 6).map((match) => (
               <Link
                 key={match.slug}
                 href={routes.marketplaceTag(match.slug)}
@@ -95,21 +111,21 @@ export function SearchRecoveryPanel({
           className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-muted/45 px-4 py-3 transition hover:border-border hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <Sparkles className="h-4 w-4 text-primary" />
-          <span className="text-sm font-medium text-foreground">Trending now</span>
+          <span className="text-sm font-medium text-foreground">กำลังมาแรงตอนนี้</span>
         </Link>
         <Link
           href={routes.marketplaceQuery("price=free&category=all")}
           className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-muted/45 px-4 py-3 transition hover:border-border hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <Compass className="h-4 w-4 text-primary" />
-          <span className="text-sm font-medium text-foreground">Browse free resources</span>
+          <span className="text-sm font-medium text-foreground">ดูทรัพยากรฟรี</span>
         </Link>
         <Link
           href={routes.marketplace}
           className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-muted/45 px-4 py-3 transition hover:border-border hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <Search className="h-4 w-4 text-primary" />
-          <span className="text-sm font-medium text-foreground">Return to discover</span>
+          <span className="text-sm font-medium text-foreground">กลับไปหน้าคลัง</span>
         </Link>
       </section>
     </div>

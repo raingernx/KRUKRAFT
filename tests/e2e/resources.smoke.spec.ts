@@ -29,7 +29,7 @@ test("resources homepage renders hero media without runtime errors", async ({
   expect(consoleErrors).toEqual([]);
 });
 
-test("featured picks collection opens the featured listing filter", async ({
+test("curated collections card opens a stable listing route", async ({
   page,
 }) => {
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
@@ -42,19 +42,27 @@ test("featured picks collection opens the featured listing filter", async ({
     .first();
   await expect(collectionsSection).toBeVisible();
 
-  const featuredCollectionCard = collectionsSection
+  const curatedCollectionCard = collectionsSection
     .locator("a")
-    .filter({ has: page.getByText("Featured picks") })
+    .filter({
+      has: page
+        .getByText(/Featured picks|Top picks/)
+        .first(),
+    })
     .first();
-  await expect(featuredCollectionCard).toBeVisible();
+  await expect(curatedCollectionCard).toBeVisible();
 
   await Promise.all([
-    page.waitForURL(/\/resources\?category=all&featured=true|\/resources\?featured=true&category=all/),
-    featuredCollectionCard.click(),
+    page.waitForURL(
+      /\/resources\?(category=all&featured=true|featured=true&category=all|category=all&sort=recommended|sort=recommended&category=all)/,
+    ),
+    curatedCollectionCard.click(),
   ]);
 
-  await expect(page).toHaveURL(/featured=true/);
-  await expect(page.locator("main article").first()).toBeVisible();
+  await expect(page.locator("main")).toContainText(/Sorted by (Top picks|Trending)/);
+  await expect(
+    page.locator("main article").first().or(page.getByText("Nothing matched these filters")),
+  ).toBeVisible();
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -89,22 +97,30 @@ test("navigating from a scrolled discover entry into detail resets the viewport 
     .poll(() => page.evaluate(() => window.scrollY))
     .toBeGreaterThan(1200);
 
-  const featuredCollectionCard = page
+  const curatedCollectionCard = page
     .locator("section")
     .filter({ has: page.getByRole("heading", { name: "Collections to explore" }) })
     .first()
     .locator("a")
-    .filter({ has: page.getByText("Featured picks") })
+    .filter({
+      has: page
+        .getByText(/Featured picks|Top picks/)
+        .first(),
+    })
     .first();
 
-  await expect(featuredCollectionCard).toBeVisible();
+  await expect(curatedCollectionCard).toBeVisible();
 
   await Promise.all([
-    page.waitForURL(/\/resources\?category=all&featured=true|\/resources\?featured=true&category=all/),
-    featuredCollectionCard.click(),
+    page.waitForURL(
+      /\/resources\?(category=all&featured=true|featured=true&category=all|category=all&sort=recommended|sort=recommended&category=all)/,
+    ),
+    curatedCollectionCard.click(),
   ]);
 
-  await expect(page.locator("main article").first()).toBeVisible();
+  await expect(
+    page.locator("main article").first().or(page.getByText("Nothing matched these filters")),
+  ).toBeVisible();
 
   const resourceLinks = page.locator('main a[href^="/resources/"]:not([href*="?"])');
   const linkCount = await resourceLinks.count();

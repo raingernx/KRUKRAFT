@@ -24,8 +24,7 @@ const HERO_CONTENT = {
 const HERO_SKELETON_LIGHT = "bg-muted";
 const HERO_SKELETON_DARK_SOFT = "bg-white/10";
 const HERO_SKELETON_DARK_STRONG = "bg-white/18";
-const HERO_DESKTOP_ARTWORK_SRC =
-  "https://www.figma.com/api/mcp/asset/6c1b723f-0269-42f9-b079-d02fb7766131";
+const HERO_DESKTOP_ARTWORK_SRC = "/uploads/3e268ab454ba5ffe.jpg";
 
 function normalizeOptionalString(value: string | null | undefined) {
   const trimmed = value?.trim();

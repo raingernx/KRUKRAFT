@@ -4,7 +4,11 @@ import { useCallback, useState, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
-import { SORT_OPTIONS, normaliseSortParam } from "@/config/sortOptions";
+import {
+  DEFAULT_SORT,
+  SORT_OPTIONS,
+  normaliseSortParam,
+} from "@/config/sortOptions";
 import { beginResourcesNavigation } from "@/components/marketplace/resourcesNavigationState";
 
 export interface FilterCategory {
@@ -24,30 +28,13 @@ interface FilterSidebarProps {
 
 const ACTIVE_ROW_CLASS =
   "border border-border-strong bg-muted/70 font-medium text-foreground shadow-sm";
-const ACTIVE_PILL_CLASS =
-  "border border-primary/20 bg-primary/10 text-primary shadow-sm";
-const INACTIVE_PILL_CLASS =
-  "border border-border-subtle bg-background text-muted-foreground hover:border-border hover:bg-muted/60 hover:text-foreground";
 
 // ── Static filter options ─────────────────────────────────────────────────────
-
-const RESOURCE_TYPES = [
-  { label: "PDF", value: "pdf" },
-  { label: "Worksheets", value: "worksheet" },
-  { label: "Flashcards", value: "flashcard" },
-  { label: "Templates", value: "template" },
-];
 
 const PRICE_OPTIONS = [
   { label: "All prices", value: "" },
   { label: "Free only", value: "free" },
   { label: "Paid only", value: "paid" },
-];
-
-const DIFFICULTY_OPTIONS = [
-  { label: "Beginner", value: "beginner" },
-  { label: "Intermediate", value: "intermediate" },
-  { label: "Advanced", value: "advanced" },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -72,11 +59,18 @@ export function FilterSidebar({
     category: category ?? "",
     price: searchParams.get("price") ?? "",
     sort: normaliseSortParam(searchParams.get("sort")),
-    search: searchParams.get("search") ?? "",
     tag: searchParams.get("tag") ?? "",
+    featured: searchParams.get("featured") === "true",
   };
 
   const isAllCategories = current.category === "all";
+  const hasActiveSidebarFilters = Boolean(
+    (current.category && current.category !== "all") ||
+    current.price !== "" ||
+    current.sort !== DEFAULT_SORT ||
+    current.tag ||
+    current.featured,
+  );
 
   const buildHref = useCallback(
     (key: string, value: string) => {
@@ -128,19 +122,25 @@ export function FilterSidebar({
     [router, pathname, searchParams, onNavigate]
   );
 
-  const showClearAll = category && category !== "all";
+  const showClearAll = hasActiveSidebarFilters;
 
   const clearAll = useCallback(() => {
-    const params = new URLSearchParams();
-    params.set("category", "all");
-    const href = `${pathname}?${params.toString()}`;
-    setPendingParam({ key: "category", value: "all" });
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("category");
+    params.delete("price");
+    params.delete("sort");
+    params.delete("tag");
+    params.delete("featured");
+    params.delete("page");
+    const query = params.toString();
+    const href = query ? `${pathname}?${query}` : pathname;
+    setPendingParam({ key: "clear", value: "all" });
     beginResourcesNavigation("listing", href);
     startTransition(() => {
       router.push(href, { scroll: false });
     });
     onNavigate?.();
-  }, [onNavigate, pathname, router]);
+  }, [onNavigate, pathname, router, searchParams]);
 
   return (
     <aside
@@ -285,73 +285,6 @@ export function FilterSidebar({
         </FilterGroup>
       )}
 
-      {/* ── Difficulty ────────────────────────────────────────────── */}
-      <FilterGroup title="Difficulty">
-        <div className="flex flex-wrap gap-2">
-          {DIFFICULTY_OPTIONS.map((diff) => {
-            const currentlyActive = current.tag === diff.value;
-            const optimistic = isOptimistic("tag", diff.value);
-            const active = currentlyActive || optimistic;
-            return (
-              <button
-                key={diff.value}
-                type="button"
-                onClick={() => updateParam("tag", currentlyActive ? "" : diff.value)}
-                onMouseEnter={() =>
-                  prefetchHref(buildHref("tag", currentlyActive ? "" : diff.value))
-                }
-                onFocus={() =>
-                  prefetchHref(buildHref("tag", currentlyActive ? "" : diff.value))
-                }
-                aria-pressed={active}
-                className={cn(
-                  "rounded-full px-3 py-1.5 text-caption transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                  active
-                    ? ACTIVE_PILL_CLASS
-                    : INACTIVE_PILL_CLASS,
-                  optimistic && "cursor-wait"
-                )}
-              >
-                {diff.label}
-              </button>
-            );
-          })}
-        </div>
-      </FilterGroup>
-
-      {/* ── Resource type ─────────────────────────────────────────── */}
-      <FilterGroup title="Resource type">
-        <div className="flex flex-wrap gap-2">
-          {RESOURCE_TYPES.map((type) => {
-            const currentlyActive = current.tag === type.value;
-            const optimistic = isOptimistic("tag", type.value);
-            const active = currentlyActive || optimistic;
-            return (
-              <button
-                key={type.value}
-                type="button"
-                onClick={() => updateParam("tag", currentlyActive ? "" : type.value)}
-                onMouseEnter={() =>
-                  prefetchHref(buildHref("tag", currentlyActive ? "" : type.value))
-                }
-                onFocus={() =>
-                  prefetchHref(buildHref("tag", currentlyActive ? "" : type.value))
-                }
-                aria-pressed={active}
-                className={cn(
-                  "rounded-full px-3 py-1.5 text-caption transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                  active
-                    ? ACTIVE_PILL_CLASS
-                    : INACTIVE_PILL_CLASS,
-                  optimistic && "cursor-wait"
-                )}
-              >
-                {type.label}
-              </button>
-            );
-          })}
-        </div>
-      </FilterGroup>
     </aside>
   );
 }
