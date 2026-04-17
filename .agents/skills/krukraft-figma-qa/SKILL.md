@@ -38,6 +38,113 @@ Apply this skill to:
 - screen/layout studies
 - any Figma frame that will be reviewed by humans or used as implementation input
 
+## Krukraft-Specific Surface Rules
+
+### 1. Respect Page Roles Inside `Krukraft Design System`
+
+Do not treat every page in the Figma file as the same kind of surface.
+
+- `Theme Lab` is a training and review surface
+- DS component pages are canonical library/documentation surfaces
+- token and variable pages are foundation surfaces
+
+Keep those roles separate.
+
+Do not:
+
+- move rough studies into canonical DS pages just because they look polished
+- present `Theme Lab` experiments as approved component library outputs
+- mix review boards, loose studies, and reusable component definitions in one frame cluster
+
+### 2. `Theme Lab` Is For Evidence, Not Canonical Components
+
+When working in `Theme Lab`:
+
+- optimize for comparability and review clarity
+- keep variants/studies aligned enough to compare side by side
+- keep labels explicit enough for review
+- do not silently promote a study into “the chosen component” without approval
+
+`Theme Lab` can explore:
+
+- palette posture
+- card studies
+- button studies
+- input/search studies
+- dropdown/popover shell studies
+- section/surface hierarchy
+
+It should not become:
+
+- the final component library page
+- the source of truth for token names
+- a dumping ground of half-finished frames
+
+### 3. Pair Every `Theme Lab` Review With The Canonical Docs
+
+When editing or reviewing `Theme Lab`, pair it with:
+
+- `src/design-system/theme-playbook.md`
+- `src/design-system/foundation-study-checklist.md`
+
+Use the playbook for posture and vocabulary.
+Use the checklist for coverage and exit criteria.
+
+Do not close a `Theme Lab` task by visual instinct alone.
+
+### 4. Review The Five Foundation Areas As One System
+
+For Krukraft, the current required review set is:
+
+1. card studies
+2. button states
+3. input/search states
+4. dropdown/popover shell
+5. section/surface hierarchy
+
+Do not declare the theme foundation “ready” from a strong card alone or a strong palette board alone.
+The five areas must read like one family.
+
+### 5. No Premature Promotion To Code Or Tokens
+
+Even if a `Theme Lab` direction looks strong:
+
+- do not treat it as permission to change runtime tokens
+- do not treat it as permission to recolor the app
+- do not assume a study equals an approved DS primitive
+
+For Krukraft, `Theme Lab` proof is a gate before code, not code permission by itself.
+
+### 6. Keep Review Boards Neat And Comparable
+
+Inside `Theme Lab`:
+
+- use consistent card/frame sizes when studies are meant to be compared
+- align rows and columns cleanly
+- avoid cropped boards or partially off-canvas comparisons
+- keep labels short and unambiguous
+- remove redundant duplicates after direction is clear
+
+Messy comparison boards reduce review quality and create fake disagreements.
+
+### 7. Treat `Paper B` + `#4338CA` + `Rust` / `Sand` As Locked Inputs
+
+During the current Krukraft phase:
+
+- `Paper B` is the approved neutral direction
+- `#4338CA` is the approved primary
+- `Rust` and `Sand` are support accents
+
+Do not reopen those inside normal Figma craft work unless the user explicitly asks to retrain palette posture.
+
+QA should focus on:
+
+- whether the system uses those inputs coherently
+- whether support accents stay support-only
+- whether layouts and shells still feel editorial-minimal
+
+not on sneaking in a new palette vote.
+
 ## Non-Negotiable Rules
 
 ### 1. Auto Layout First
@@ -137,10 +244,12 @@ If any answer is no, the work is not done.
 Before reporting success on Figma work, state:
 
 - what frame/page/section was checked
+- whether the work happened on `Theme Lab`, a DS component page, or another page in `Krukraft Design System`
 - whether auto layout was verified
 - whether sizing modes were verified
 - whether clipping/crop/overflow were checked
 - whether visual verification was done after the last edit
+- whether the result is still a study/review artifact or a canonical DS artifact
 - any intentional exceptions that were kept on purpose
 
 ## Never Do
@@ -150,3 +259,5 @@ Before reporting success on Figma work, state:
 - never trust a visual glance when metadata/layout settings can be checked directly
 - never treat cropped text, cut-off rows, or off-center objects as minor polish
 - never say a screen is complete if the frame is still structurally unstable
+- never blur the line between `Theme Lab` experiments and approved DS library outputs
+- never use a Figma study as implicit permission to change runtime code or tokens
