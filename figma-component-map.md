@@ -3,8 +3,19 @@
 Repo-owned manual mapping registry between the live Figma design-system file and
 the codebase.
 
+What this file owns:
+- the live Figma page/node-to-code registry
+- mapping status per shared component or exemplar
+- registry maintenance rules
+
+What this file does not own:
+- the code-side DS inventory or ownership rules
+- token mirroring guidance
+- Figma reconstruction or fidelity workflow guidance
+
 Use this file when Code Connect is unavailable or when working on `Professional`
-plan handoff workflows.
+plan handoff workflows. For DS ownership and handoff rules, use
+`src/design-system/README.md` and `design-system.md`.
 
 If this file conflicts with code, the code wins. If this file conflicts with the
 live Figma canvas, update this file in the same work session.

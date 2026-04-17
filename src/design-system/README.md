@@ -1,14 +1,30 @@
 # Krukraft Design System
 
-This directory is the canonical UI source of truth for shared Krukraft
-surfaces.
+This file is the canonical code-side reference for the shared design system.
+
+What this file owns:
+- import rules for app code
+- directory roles
+- current inventory
+- ownership notes
+- active implementation rules for code authors
+
+What this file does not own:
+- Figma reconstruction or handoff workflow details
+- live Figma component status or node mapping
+- agent-only recovery context
+
+When this file conflicts with code, the code wins.
 
 ## Import Rules
 
 - App and feature code should import shared UI from `@/design-system`.
+- App and feature code should import product-bound DS exports from
+  `@/design-system/product`.
 - Do not add new primitives to `src/components/ui`.
 - Treat `src/components/ui/*` as transitional implementation details or
   compatibility re-exports.
+- Reach for `src/design-system/*` first when adding or changing shared UI.
 
 ## Directory Roles
 
@@ -18,6 +34,9 @@ surfaces.
   - low-level reusable controls and feedback surfaces
 - `components/`
   - reusable composed components built from primitives
+- `product/`
+  - product-bound or workflow-bound DS exports that stay reusable but are not
+    foundation primitives
 - `layout/`
   - shared page and navigation layout helpers
 
@@ -54,16 +73,19 @@ surfaces.
 - `ConfirmDialog`
 - `DataPanelTable`
 - `EmptyState`
-- `FileUploadWidget`
 - `FormSection`
-- `NotificationButton`
 - `Pagination`
+- `RowActions`
+- `SectionHeader`
+
+### Product-Bound Exports
+
+- `FileUploadWidget`
+- `NotificationButton`
 - `PickerControls`
 - `PriceBadge`
 - `PriceLabel`
 - `ResourceCard`
-- `RowActions`
-- `SectionHeader`
 
 ### Layout
 
@@ -72,7 +94,6 @@ surfaces.
 - `PageContent`
 - `PageContentWide`
 - `PageContentNarrow`
-- `PageSection`
 - `SidebarContainer`
 - `SidebarNav`
 - `SidebarSection`
@@ -86,12 +107,13 @@ surfaces.
 
 ## Ownership Notes
 
-- `ResourceCard` is exported from the DS barrel but its implementation owner is
-  `src/components/resources/ResourceCard.tsx`. Treat it as a marketplace product
-  component, not as a generic foundation.
+- `ResourceCard` now belongs to the product-bound export surface
+  `@/design-system/product`, but its implementation owner is still
+  `src/components/resources/ResourceCard.tsx`. Treat it as a marketplace
+  product component, not as a generic foundation.
 - `FileUploadWidget`, `NotificationButton`, `PriceBadge`, `PriceLabel`, and
-  `PickerControls` are DS-exposed composed components, but they remain more
-  workflow-bound than true primitives.
+  `PickerControls` also belong to `@/design-system/product`; they stay reusable
+  but remain more workflow-bound than true primitives.
 - `DataPanelTable` is the reusable dashboard/admin shell for
   title/description/actions + optional toolbar + table/empty-state content.
   Keep data fetching, column schema, row rendering, and business actions
@@ -100,192 +122,500 @@ surfaces.
   default `flat` variant before introducing nested cards.
 - `LoadingSkeleton` is the canonical skeleton primitive. Placeholders should
   stay neutral and use no more than three tones on a single surface.
-- `boneyard-js` is installed as an optional DOM-capture workflow for
-  pixel-matched skeleton generation. Treat it as a complement to the existing
-  `LoadingSkeleton` + route-level fallback system, not as permission to skip
-  the repo's loading/fallback parity rules. Generated bones should live under
-  `src/bones`, and the current convenience commands are
-  `npm run skeleton:boneyard:build` and
-  `npm run skeleton:boneyard:build:force`.
-  The app now bootstraps generated bones through
-  `src/components/providers/BonesRegistryBootstrap.tsx`, which calls the safe
-  helper in `src/bones/index.ts` on the client instead of importing the
-  registry as a root-layout side effect, and the current pilot capture route
-  is `src/app/dev/bones/page.tsx`, which renders a
-  non-loading preview surface so `boneyard` can snapshot the live DOM into the
-  current catalog chrome pilots (`ResourcesCatalogSearchSkeleton`,
-  `ResourcesCatalogControlsSkeleton`) plus `HeroSearch` dropdown-state pilots
-  (quick browse, top matches, empty-result recovery), the
-  `SearchRecoveryPanel` empty-result surface, the
-  `ResourcesDiscoverPersonalizedSection` recommendation/because-you-studied/
-  level-based discover block, settings/admin/creator-apply route-shell
-  pilots, creator dashboard route shells, the creator resource form loading
-  shell, the admin resource form shell, the creator new-resource route shell,
-  the admin analytics overview/recommendations/ranking/ranking-experiment/
-  purchases/creator-activation route shells,
-  the auth login shell, the user dashboard overview/library/downloads/
-  purchases/subscription/resources-redirect route shells, and the
-  current generated sets:
-  `src/bones/admin-analytics-creator-activation.bones.json` and
-  `src/bones/admin-analytics-overview.bones.json` and
-  `src/bones/admin-analytics-purchases.bones.json` and
-  `src/bones/admin-analytics-ranking-experiment.bones.json` and
-  `src/bones/admin-analytics-ranking.bones.json` and
-  `src/bones/admin-analytics-recommendations.bones.json` and
-  `src/bones/admin-settings-page.bones.json` and
-  `src/bones/admin-resource-form.bones.json` and
-  `src/bones/creator-apply-page.bones.json` and
-  `src/bones/creator-dashboard-analytics.bones.json` and
-  `src/bones/creator-dashboard-overview.bones.json` and
-  `src/bones/creator-dashboard-profile.bones.json` and
-  `src/bones/creator-dashboard-resources.bones.json` and
-  `src/bones/creator-dashboard-sales.bones.json` and
-  `src/bones/creator-resource-form.bones.json` and
-  `src/bones/creator-resource-new-route.bones.json` and
-  `src/bones/dashboard-downloads.bones.json` and
-  `src/bones/dashboard-library.bones.json` and
-  `src/bones/dashboard-overview.bones.json` and
-  `src/bones/dashboard-purchases.bones.json` and
-  `src/bones/dashboard-resources-redirect.bones.json` and
-  `src/bones/dashboard-subscription.bones.json` and
-  `src/bones/hero-search-empty.bones.json` and
-  `src/bones/hero-search-quick-browse.bones.json` and
-  `src/bones/hero-search-results.bones.json` and
-  `src/bones/login-form.bones.json` and
-  `src/bones/purchase-card.bones.json` and
-  `src/bones/resource-card.bones.json` and
-  `src/bones/resource-detail-shell.bones.json` and
-  `src/bones/resources-catalog-controls.bones.json` and
-  `src/bones/resources-catalog-search.bones.json` and
-  `src/bones/resources-discover-personalized.bones.json` and
-  `src/bones/resources-discover-sections.bones.json` and
-  `src/bones/resources-intro-discover.bones.json` and
-  `src/bones/resources-intro-listing.bones.json` and
-  `src/bones/resources-listing-shell.bones.json` and
-  `src/bones/resources-route-shell.bones.json` and
-  `src/bones/search-recovery-panel.bones.json` and
-  `src/bones/settings-page.bones.json`,
-  without depending on a flaky route loading race.
-- Dark-theme borders now use a three-step hierarchy instead of one shared
-  bright stroke:
-  - `border-border-subtle` for passive card shells, dashed placeholders, and soft dividers
-  - `border-border` for structural chrome like navbar/sidebar/purchase rails
-  - `border-border-strong` and `border-input` for interactive controls
-- Dark-shell marketplace listing active states should use theme-aware emphasis
-  surfaces such as `bg-accent` plus `border-primary/20-30` and `text-primary`,
-  rather than reintroducing light-only `primary-50` or white shells for
-  selected filter rows, selected pills, sort/price selects, or spotlight
-  chips/panels.
-- Status chips and feedback badges that need to survive light and dark shells
-  should prefer theme-aware surfaces such as `bg-accent` plus semantic border
-  and text color, instead of fixed `*-50` backgrounds with `*-700` text that
-  only read correctly on light surfaces.
-- The same rule applies to `featured` badges used as route labels or callout
-  chips: keep the shell surface theme-aware (`bg-accent`) and carry the
-  emphasis through semantic border/text color rather than pale yellow panels.
-- Hero surfaces are not treated as generic `card` surfaces. Use the shared
-  semantic color layer for hero-specific outer background/panel/chip roles
-  (`heroBackground`, `heroBackgroundSubtle`, `heroPanel`,
-  `heroPanelForeground`, `heroPanelBorder`, `heroChip`,
-  `heroChipForeground`) instead of rebinding hero UI to `card`.
 
-## Figma Handoff
+## Current Implementation Rules
 
-- Live Figma library file:
-  - `Krukraft Design System`
-  - [https://www.figma.com/design/D3cCyIYFnHDlY34eCqDURf](https://www.figma.com/design/D3cCyIYFnHDlY34eCqDURf)
-  - The library now lives in the shared Team project, not in personal Drafts.
-  - The live variable collections now mirror the repo token families more
-    directly:
-    `Krukraft / Colors / Primitives`, `Krukraft / Colors / Semantic`,
-    `Krukraft / Colors / Theme`, `Krukraft / Spacing`, `Krukraft / Radius`,
-    `Krukraft / Typography`, and `Krukraft / Hero`.
-  - The live `Krukraft / Colors / Semantic` collection now includes a wider
-    alias layer on top of the primitive scales so designers can tune semantics
-    without editing raw ramps directly. Current semantic groups are:
-    `background`, `card`, `surface`, `border`, `text`, `action`, `feedback`,
-    `hero`, and `sidebar`.
-- Manual mapping registry:
-  - `/figma-component-map.md`
-- Registry validation:
-  - `npm run figma-map:check`
-- Token validation:
-  - `npm run tokens:audit`
-- The live `Krukraft / Colors / Primitives` collection now includes the repo
-  scale families for `brand`, `primary`, `accent`, `highlight`, `neutral`,
-  `surface`, `success`, `warning`, `info`, and `danger`.
-- The live `Krukraft / Typography` collection now mirrors repo-authored font
-  family, stack, size, line-height, letter-spacing, and weight token values as
-  variables for reference/editing, while canonical text styles remain the
-  implementation-facing typography surface in Figma.
-- The live `Krukraft / Hero` collection now mirrors the repo hero support layer
-  from `src/design-system/tokens/hero.ts` across spacing, radius, and
-  typography token groups.
-- Repo-wide Figma handoff guidance lives in `/design-system.md`.
-- AI/system-level context lives in
-  `krukraft-ai-contexts/06-design-system.md`.
-- When tokens, DS ownership, or component inventories change materially, update
-  the registry and both docs in the same work session.
-- `npm run figma-map:check` currently enforces registry coverage for every
-  `.tsx` file under `src/design-system/primitives` and
-  `src/design-system/components`.
-- `npm run tokens:audit` currently enforces that token source files,
-  `src/design-system/tokens/index.ts`, and the repo-owned DS docs stay aligned.
-- Reusable Figma component-set property names should mirror code prop names
-  where practical, using lower-case option values for code-backed variants such
-  as `variant=primary`, `size=sm`, and `align=left`.
-- For Figma implementation work, use this fidelity order instead of patching
-  from screenshots alone:
-  - lock one canonical frame / variant
-  - inspect important child nodes individually
-  - inspect the surrounding section shell
-  - patch code
-  - sync skeleton/loading geometry
-  - compare back to the same canonical frame again
-- Do not call a component or section “matched” or “1:1” unless that node-level
-  inspection loop has happened.
-- The live Figma `Primitives` page already has real component sets for:
-  - `Button`
-  - `Badge`
-  - `Input`
-  - `Select`
-  - `Textarea`
-  - `Card`
-  - `Switch`
-  - `Dropdown`
-  - `Avatar`
-  - `Modal`
-  - `LoadingSkeleton`
-- The live Figma `Composed` page already has real component sets for:
-  - `FormSection`
-  - `SectionHeader`
-  - `Pagination`
-  - `EmptyState`
-  - `RowActions`
-  - `ConfirmDialog`
-- The live Figma `Product / Marketplace` page already has real component sets
-  for:
-  - `HeroBanner`
-  - This remains the canonical marketplace exemplar while the rest of the
-    marketplace library continues to be rebuilt incrementally.
-- The live Figma `Product / Admin` page already has real component sets for:
-  - `FileUploadWidget`
-  - `NotificationButton`
-  - `PickerControls`
-- The live Figma file now keeps flow exemplars on owner product pages instead of
-  a generic `Patterns` page:
-  - `Product / Admin`
-    - admin settings
-  - `Product / Marketplace`
-    - hero banner
-  - `Product / Dashboard`
-    - creator dashboard
-- The current hero exemplar lives on `Product / Marketplace` and was rebuilt
-  inside the DS file itself from local component instances instead of a
-  separate exploration file, because that is the only reliable DS-real workflow
-  until shared-library import across files is enabled.
-- The current hero flow is organized into `HeroBanner / Component Set` and
-  `HeroBanner / Preview` sections so source editing and verification stay
-  separate on the canvas.
-- Canonical Figma text styles now exist for the core Krukraft type ramp using
-  `Noto Sans Thai` (`Regular`, `Medium`, `SemiBold`).
+- `SearchInput` is the canonical DS search primitive. Reuse it before creating
+  route-owned search shells.
+- `RevealImage` is the shared image primitive for already-sized containers. Let
+  the surrounding container own placeholder and background treatment.
+- Runtime route-level and Suspense-critical skeletons should stay visually
+  neutral even when the resolved UI uses richer emphasis or recovery states.
+- Dark-shell selected rows and feedback chips should prefer theme-aware
+  emphasis surfaces such as `bg-accent + semantic border/text color` instead of
+  fixed light-only `*-50` fills.
+- `Badge.featured` should follow the same rule when used on dark shells: keep
+  the surface theme-aware and carry emphasis through border/text color.
+- Hero surfaces are not generic `card` surfaces. Use the hero semantic layer
+  (`heroBackground`, `heroPanel`, `heroChip`, and related roles) instead of
+  rebinding hero UI to default card tokens.
+- `boneyard-js` is an optional capture workflow for generated skeletons under
+  `src/bones`. It supplements the repo's loading/fallback parity rules; it does
+  not replace route-owned loading, empty, or error-state design.
+
+## External Reference Alignment
+
+Krukraft now uses this external reference stack for DS decisions:
+
+- `Primer`
+  - primary reference for token taxonomy, naming layers, and the distinction
+    between raw values, semantic roles, and component-specific exceptions
+- `Atlassian Design System`
+  - primary reference for product-app rigor, shared chrome semantics, spacing
+    discipline, and intent-first color usage
+- `Radix Themes`
+  - primary reference for implementation-level theming, runtime theme knobs,
+    contextual radius behavior, and primitive ergonomics
+
+Use these systems to shape Krukraft-specific decisions. Do not copy any one of
+them wholesale.
+
+### Adopt / Adapt / Avoid Matrix
+
+| Area | Primer | Atlassian | Radix Themes | Krukraft decision |
+| --- | --- | --- | --- | --- |
+| Token taxonomy | adopt | adapt | adapt | Keep a three-layer mental model: primitive values, semantic/runtime roles, and component-specific exceptions |
+| Token naming | adopt | adapt | avoid direct copy | Prefer property-first semantic naming and keep current public token/API names stable until a dedicated rename pass exists |
+| Color role usage | adapt | adopt | adapt | Treat roles as intent-first (`neutral`, `success`, `warning`, `danger`, `input`) and stop using colorful accents where meaning is semantic |
+| Accent handling | avoid direct copy | adopt | adapt | Keep `accent` swappable and non-semantic; do not let colorful accent ramps replace semantic success/warning/info/danger roles |
+| Shared chrome | avoid direct copy | adopt | adapt | Use Atlassian-style hierarchy for nav, shells, and focus/emphasis, but apply it through Krukraft tokens and primitives |
+| Layout primitives | adapt | adopt | adapt | Keep Krukraft layout helpers, but clarify them as box/stack/sidebar primitives instead of letting wrapper drift grow |
+| Runtime theming | adapt | adapt | adopt | Keep Krukraft theme tokens, but use Radix-style runtime controls as the model for scaling, radius, panel treatment, and theme consistency |
+| Radius and scaling | avoid direct copy | adapt | adopt | Move toward contextual radius/scaling behavior rather than hard-coded per-component values where practical |
+| Component variants | adapt | adapt | adopt | Prefer a small, consistent variant set (`solid`, `soft`, `outline`, `ghost`) instead of route-owned one-off variants |
+| Product-bound DS exports | avoid | adapt | avoid | Keep workflow/product components exported if useful, but do not treat them as foundation primitives |
+
+### What This Means In Practice
+
+- Use `Primer` to decide how a token should be classified, not what brand
+  styling it should have.
+- Use `Atlassian` to decide whether a color or emphasis carries semantic
+  meaning, and to keep shared chrome and layout hierarchy disciplined.
+- Use `Radix Themes` to decide how theme controls should affect spacing,
+  radius, surfaces, and primitive ergonomics across the app.
+- Keep Krukraft's existing DS barrel, token files, and semantic runtime roles
+  as the implementation source of truth; the external systems are references,
+  not replacements.
+
+## Visual Direction Brief
+
+This is the locked visual foundation brief for the current DS plan. It turns
+the external reference stack into concrete Krukraft direction before the first
+implementation slice is landed.
+
+During the current `Figma foundation first` phase, use
+[theme-playbook.md](./theme-playbook.md) for posture/vocabulary and
+[foundation-study-checklist.md](./foundation-study-checklist.md) for the
+minimum Figma study coverage required before any code theme slice is chosen.
+
+### Feature Summary
+
+Krukraft should feel like a focused learning marketplace and creator tool, not
+like a generic SaaS admin kit. The design system should support public browse,
+resource merchandising, and creator/admin workflows with one visual language
+that feels calm, precise, and premium without becoming ornamental.
+
+### Primary User Action
+
+The system should make the next meaningful action obvious:
+
+- browse and evaluate learning resources confidently
+- act on key dashboard or admin tasks quickly
+- understand state and priority without relying on decorative color or extra
+  wrappers
+
+### Design Direction
+
+- `Primer` influence:
+  - keep the system structurally disciplined
+  - separate primitive values, semantic roles, and component exceptions cleanly
+- `Atlassian` influence:
+  - privilege intent-first color and hierarchy over decorative styling
+  - make shared chrome feel stable, legible, and product-grade
+- `Radix Themes` influence:
+  - keep primitives ergonomic, theme-aware, and consistent under one runtime
+    surface model
+
+Krukraft should express those references as:
+
+- calm and product-focused, not playful or flashy
+- premium through restraint, spacing, and type hierarchy rather than heavy
+  gradients or saturated surfaces
+- editorial enough for marketplace browsing, but still operational enough for
+  dashboard and admin use
+
+### Typography Direction
+
+- headings should feel firm and composed, not oversized for effect
+- body copy should stay highly readable and neutral
+- hierarchy should come from size, weight, and spacing rather than tracking or
+  forced uppercase
+- marketplace/public surfaces may carry slightly more editorial contrast than
+  dashboard/admin surfaces, but both should still share one type system
+
+### Radius And Density Direction
+
+- radius should feel intentional and consistent, not component-by-component
+  arbitrary
+- default surfaces should lean toward moderate rounding:
+  - soft enough to feel contemporary
+  - restrained enough to avoid toy-like UI
+- density should default to comfortable but not airy:
+  - public browse can breathe more
+  - dashboard/admin can tighten slightly without collapsing into cramped forms
+
+### Surface And Elevation Direction
+
+- rely on layered surfaces, border hierarchy, and spacing before adding stronger
+  shadows or colored panels
+- most surfaces should read as:
+  - background
+  - card / popover shell
+  - muted or subordinate inset
+- elevation should be sparse and purposeful; shadows are for separation, not
+  decoration
+- chrome, menus, and panels should feel cohesive across public, dashboard, and
+  admin shells
+
+### Primitive Interaction Direction
+
+- `Button`, `Input`, `Dropdown`, `SearchInput`, and related primitives should
+  look like parts of the same family
+- interaction emphasis should come from semantic roles:
+  - `primary` for main action
+  - `ring` for focus
+  - `destructive` for risk
+- hover, pressed, selected, and focus states should be crisp and visible, but
+  not louder than the layout itself
+- avoid accumulating one-off route-specific button or input treatments
+
+### Anti-Goals
+
+- do not drift into glossy marketing gradients, glassmorphism, or colorful
+  accent-overload
+- do not make dashboard/admin surfaces look like a different product from the
+  marketplace
+- do not use editorial styling as an excuse to weaken operational clarity
+- do not reopen token naming or export-boundary work that is already locked
+
+### Implementation Guardrails For The Next Slice
+
+- first visual implementation work should stay in foundation primitives, not
+  route pilots
+- prefer one narrow slice that can be reviewed in Storybook before touching app
+  routes
+- good candidates are:
+  - `Button + Input/SearchInput`
+  - `Card + Dropdown`
+  - typography/radius calibration if it can stay narrow and system-wide
+- do not start discover or other route pilots until that first foundation slice
+  is landed and reviewed
+
+## Krukraft Theme Direction Brief
+
+Detailed training guidance now lives in
+[theme-playbook.md](./theme-playbook.md). Keep this section as the short
+canonical summary and use the playbook for palette posture, review language,
+and approval rules.
+
+This is the locked theme-direction brief for the current `Krukraft theme
+refresh plan`. It builds on the completed DS baseline, the reference-driven
+alignment plan, the visual-foundation pass, and the landed `/resources` pilot.
+
+### Theme Summary
+
+Krukraft should feel like a modern learning brand with product discipline, not
+like a generic SaaS dashboard and not like a loud consumer template. The theme
+should preserve the calm, precise foundation already landed in the DS while
+shifting it toward an editorial-minimal brand mood that can scale across
+public browse, creator work, and admin operations.
+
+### Emotional Direction
+
+The refreshed theme should read as:
+
+- trustworthy and composed before it reads trendy
+- warm and human without becoming playful or childish
+- premium through clarity, crop, contrast, and restraint rather than heavy
+  visual effects
+- editorial and minimal rather than colorful or campaign-driven
+- simple and clean enough for high-density product tasks, not just public
+  marketing surfaces
+
+### Color Direction
+
+- keep semantic roles authoritative:
+  - `primary` stays the main action role
+  - `destructive` stays the risk role
+  - `ring` stays the focus role
+  - status/intent must not be encoded through decorative accent ramps
+- move the brand mood through:
+  - background tone
+  - surface warmth/coolness
+  - hero/support surfaces
+  - subtle contrast shifts in chrome and cards
+- let stronger brand accents stay supportive and sparse rather than becoming
+  the default product surface language
+- default surfaces should stay quiet:
+  - background
+  - card/popover shell
+  - muted inset
+  should still read as one disciplined hierarchy
+- avoid turning core product surfaces into saturated brand canvases
+
+### Typography Direction
+
+- keep one system across marketplace, dashboard, creator, and admin surfaces
+- express brand character through a firmer hierarchy and better rhythm, not
+  through novelty display typography spread across the app
+- public-facing surfaces may carry slightly more editorial contrast than
+  dashboard/admin surfaces, but typography should still feel related
+- preserve the repo rule that hierarchy comes from size, weight, spacing, and
+  contrast rather than tracking-heavy or all-caps UI labels
+- lean toward confident, clean typography rather than ornamental type moments
+
+### Surface And Material Direction
+
+- surfaces should feel slightly richer than the current neutral baseline, but
+  still restrained
+- emphasize material shifts through:
+  - background tint
+  - border hierarchy
+  - shell separation
+  - selective shadow
+  rather than gradients or glass treatments
+- default surface posture should feel more like warm paper and ink than bright
+  product chrome
+- public browse surfaces can carry a little more atmosphere than internal app
+  shells, but both must still live inside the same family
+- hero and promotional support tokens must remain isolated from the default
+  card/surface layer
+
+### Radius And Density Direction
+
+- preserve the moderate radius posture established in the visual-foundation
+  pass
+- any theme refresh should tune radius and density as a family, not per
+  component
+- public browse may breathe a little more than dashboard/admin, but the delta
+  should feel intentional rather than like two unrelated design systems
+
+### Interaction Direction
+
+- keep interactive emphasis crisp, semantic, and product-grade
+- buttons, inputs, dropdowns, and search controls should continue to read as a
+  shared family
+- theme refresh should not introduce route-owned hover/focus styles or
+  decorative interaction flourishes as substitutes for semantic roles
+- focus visibility must stay reliable under the refreshed theme, especially on
+  warm or tinted surfaces
+
+### Theme Non-Goals
+
+- do not reopen token taxonomy, DS barrel boundaries, or layout-helper
+  boundary work that is already complete
+- do not use this theme plan to silently redesign discover, dashboard, or
+  admin routes in bulk
+- do not let brand mood erase operational clarity
+- do not treat a theme refresh as permission to copy Primer, Atlassian, or
+  Radix aesthetics directly
+- do not turn the app into a colorful poster system; keep accents supporting,
+  not dominant
+
+### Decision Guardrails
+
+- first choose one narrow implementation slice that can express the theme brief
+  without forcing a broad rollout
+- good candidate slices should stay in shared primitives or shared shells
+  before route families
+- a theme slice should prove one of these clearly:
+  - brand mood through surfaces
+  - control-family cohesion under the refreshed theme
+  - shared chrome character under the refreshed theme
+- route-level rollout stays out of scope until a narrow slice is landed and
+  reviewed
+
+### Theme Training Rule
+
+Do not commit new theme colors, HSL ramps, or default runtime surface values
+until the user has explicitly trained and approved the target palette posture.
+
+The detailed approval flow, review vocabulary, and posture rules now live in
+[theme-playbook.md](./theme-playbook.md).
+
+### Locked First Foundation Slice
+
+The first visual-foundation implementation slice is now locked to:
+
+- `Button + Input/SearchInput visual foundation calibration`
+
+Why this slice is first:
+
+- it is the narrowest shared foundation surface that can express the locked
+  brief through typography, radius, density, and interaction at the same time
+- it already has direct Storybook coverage, which keeps review inside the
+  primitive layer before any route pilot work
+- it affects public browse, dashboard/admin, and auth flows through one shared
+  primitive family instead of route-specific overrides
+- it sharpens the product feel of the DS without reopening token naming,
+  export-boundary, or layout-helper work that is already locked
+
+In scope for this slice:
+
+- `Button`
+- `Input`
+- `SearchInput`
+- visual calibration only:
+  - type sizing, weight, and rhythm inside those primitives
+  - radius, padding, and control-height consistency
+  - border, surface, hover, pressed, and focus treatment consistency
+  - keeping `SearchInput` visibly part of the same family as `Input`
+
+Out of scope for this slice:
+
+- `Card` or `Dropdown` redesign
+- route-level or page-level visual restyling
+- token renames or new token slices
+- brand/accent experimentation
+- layout helper or export-boundary changes
+
+This slice is now landed in the DS primitive layer:
+
+- `Button`, `Input`, and `SearchInput` now read as one calmer control family
+- default controls now share a tighter geometry contract around:
+  - moderate radius
+  - comfortable but not airy height/padding
+  - semantic `ring` focus treatment
+  - restrained hover/pressed emphasis instead of louder route-specific styling
+- Storybook review for this slice should happen in the primitive stories before
+  any route pilot or second primitive slice is chosen
+
+### Post-Slice Review Decision
+
+The post-slice review decision is now locked to:
+
+- stop foundation expansion here for this pass
+- do not open a second primitive slice yet
+- move the plan forward to a route-pilot decision from this landed baseline
+
+Why this is the correct stopping point:
+
+- the first slice already expresses the locked brief through the highest-traffic
+  control family without reopening token or route work
+- taking `Card + Dropdown` immediately would broaden the pass before the team
+  has decided whether a route pilot is more valuable than another primitive pass
+- this keeps the visual-foundation plan honest: one narrow slice landed, then
+  reassess before widening scope
+
+### Current Overlap To Avoid Replanning
+
+- `colorScales.primary`, `colorScales.brand`, and parts of `colorScales.accent`
+  still overlap conceptually. The current contract already treats `brand` as
+  the primitive hue family and `primary` as the semantic action role; do not
+  re-open that distinction casually.
+- `themeColors.accent` and the colorful named accent hues are not the same
+  concept. Keep the runtime semantic accent neutral and treat colorful accents
+  as optional/product-level hues only.
+- Layout responsibilities are now tighter, but still need discipline:
+  - `Container` = max-width plus horizontal page inset
+  - `PageContainer` = horizontal page inset only
+  - `PageContent*` = width clamps only, to be composed inside `PageContainer`
+  - `Sidebar*` = dashboard/app-chrome primitives, not general page-width helpers
+  Keep future layout passes inside those boundaries instead of adding more wrappers.
+- Product-bound DS exports (`ResourceCard`, `FileUploadWidget`,
+  `NotificationButton`, `PriceBadge`, `PriceLabel`, `PickerControls`) are
+  intentionally reused but should not be mistaken for generic primitives. They
+  now live on the explicit `@/design-system/product` surface instead of the
+  foundation/composed barrels.
+
+## Token Migration Contract
+
+### Current Token Inventory
+
+- `colors.ts`
+  - `colorScales`: primitive ramps and named accent hues
+  - `semanticColors`: JS-readable semantic roles used directly in a few
+    surfaces such as `HeroSurface`
+  - `themeColors`: light/dark HSL runtime roles mirrored into `globals.css`
+  - `colorAliases`: compatibility aliases layered on top of semantic roles
+- `spacing.ts`
+  - compact spacing scale used by DS docs and future layout mapping
+- `radius.ts`
+  - shared radius scale for component shells and pills
+- `typography.ts`
+  - font families, sizes, line-heights, letter-spacing, font weights, and the
+    `typography.scale` contract used by DS docs
+- `hero.ts`
+  - hero-only spacing, radius, and typography support tokens
+
+### Semantic Roles In Live Use
+
+- `themeColors.light` and `themeColors.dark` are the runtime theme contract.
+  `src/app/globals.css` mirrors these values into `--background`, `--primary`,
+  `--border`, `--sidebar-*`, and related CSS custom properties.
+- `tailwind.config.ts` consumes the token layer to expose the current utility
+  namespaces: `border`, `input`, `background`, `foreground`, `primary`,
+  `secondary`, `muted`, `accent`, `destructive`, `card`, `popover`, `neutral`,
+  `surface`, `brand`, `highlight`, `success`, `warning`, `info`, `danger`,
+  `bg`, and `text`.
+- `semanticColors` is imported directly on marketplace hero surfaces for roles
+  such as `heroBackgroundSubtle`, `heroPanel`, `heroChip`, and `textPrimary`.
+- `colorScales` is still imported directly in a small number of product shells
+  and skeletons for explicit brand fills, most notably the `/resources` route
+  hero/skeleton treatment.
+
+### Duplicate Or Ambiguous Areas
+
+- `colorScales.primary` and `colorScales.brand` are currently the same hue
+  family. The migration contract treats `brand` as the primitive hue scale and
+  `primary` as the semantic action role, not as two independent color systems.
+- `colorScales.accent` is overloaded:
+  - numeric values duplicate the primary/brand family
+  - named hues (`blue`, `orange`, `yellow`) behave more like exploratory
+    product accents than a single semantic role
+  - `themeColors.accent` meanwhile represents a neutral surface role, not the
+    colorful accent scale
+- `semanticColors.primary` and `themeColors.light.primary` do not currently
+  point to the same underlying value. The runtime HSL theme contract is the
+  user-facing truth for utilities like `bg-primary` and `text-primary`.
+- `colorAliases` duplicates several semantic roles for compatibility:
+  `foreground`, `cardForeground`, `secondaryForeground`, and
+  `accentForeground` all collapse to `textPrimary`; `secondary`, `muted`, and
+  `accent` all collapse to the same surface role; `input` collapses to
+  `border`; `ring` collapses to `primary`.
+- `radius.lg` and `radius.xl` currently resolve to the same pixel value. This
+  is allowed for now, but should be treated as a sizing contract that may be
+  tightened later rather than as two intentionally distinct visual sizes.
+- `globals.css` mirrors theme, typography, and radius values manually. The
+  token files remain canonical; `globals.css` is a runtime mirror, not an
+  independent authoring source.
+
+### What The Next Token Pass May Change
+
+- rebalance underlying values for semantic roles while preserving the current
+  exported token file structure
+- reduce direct product usage of `colorScales.*` in favor of semantic roles
+  where the surface is no longer intentionally brand-art-directed
+- document or collapse duplicate alias behavior where the public API can stay
+  stable
+- tighten the distinction between:
+  - primitive hue scales (`brand`, `surface`, `neutral`, status ramps)
+  - semantic runtime roles (`primary`, `border`, `background`, `muted`,
+    `sidebar`, `hero`)
+
+### What The Next Token Pass Must Not Change
+
+- do not rename token files or top-level barrel exports in the first migration
+  pass
+- do not rename runtime CSS custom properties such as `--primary`,
+  `--border-subtle`, `--sidebar-primary`, or the current Tailwind utility
+  namespaces in the first migration pass
+- do not merge hero support tokens into the generic surface token layer; hero
+  remains a separate support family
+- do not treat product-bound component visuals as proof that a primitive token
+  should be renamed; first move product surfaces toward semantic roles, then
+  decide whether a token rename is warranted
+
+## Verification And Adjacent References
+
+- Run `npm run storybook:smoke` when DS primitives or DS components gain new
+  stories, lose stories, or change shared visual contracts that should stay
+  reviewable in isolation.
+- Run `npm run tokens:audit` when token files, token exports, or token inventory
+  wording change.
+- Run `npm run figma-map:check` when shared DS component files or reusable Figma
+  library components are added or renamed.
+- Use `/design-system.md` for Figma handoff and reconstruction guidance.
+- Use `/figma-component-map.md` for the live Figma node-to-code registry.
+- Use `krukraft-ai-contexts/06-design-system.md` only as an agent digest, not
+  as the primary DS reference.

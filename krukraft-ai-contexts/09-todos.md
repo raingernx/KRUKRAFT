@@ -4,68 +4,75 @@ Use this file as the single source of truth for active implementation state.
 
 ## Plan Snapshot
 
-Parent Plan: `Design system first migration and re-skin plan`
+Parent Plan: `Krukraft theme refresh plan`
 
 > [!info] Current Phase
-> `DS audit and migration scope lock`
+> `Foundation study expansion in Figma`
 
 > [!success] Completed
-> Dashboard-v2 stabilization moved to frozen baseline
+> The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
+> The reference-driven DS alignment plan using Primer + Atlassian + Radix Themes is complete and now acts as the foundation-contract baseline
+> The DS visual foundation pass is complete and now acts as the frozen visual baseline for route work
+> The discover `/resources` visual pilot is complete and now acts as the latest public-route baseline
+> Dashboard-v2 stabilization remains frozen
 > Public marketplace perf baseline remains intact
-> Shared theme-switcher groundwork now exists for navbar-level reuse
 
 > [!warning] Active
-> Phase 1: DS audit and migration scope lock
+> Phase 3: foundation study expansion in Figma
 
-> [!todo] Next Decision
-> Choose the first deliberate DS migration pass and keep discover/dashboard out of the active lane meanwhile
+> [!todo] Next Up
+> Review the new Figma foundation studies as one system before choosing any runtime implementation slice
 
 > [!abstract] Partial
-> Phase 2: DS implementation and adoption
+> The editorial-minimal brief, playbook, and Figma training page are locked; palette posture is now approved as `Paper B` + `#4338CA` + support accents `Rust` and `Sand`, and first-pass foundation studies now exist in Figma across all five required areas, but no runtime color slice has landed yet
 
 ## Status Board
 
 | Track            | Status   | Note                                                                                     |
 | ---------------- | -------- | ---------------------------------------------------------------------------------------- |
-| DS Phase 1       | Active   | lock migration scope, blast radius, and first proof surface before changing shared UI   |
-| DS Phase 2       | Pending  | implementation starts only after the first DS pass is chosen intentionally               |
-| Discover         | Deferred | discover/browse work is paused while DS-first reprioritization is active                 |
+| Reference Audit  | Kept     | Primer, Atlassian, and Radix Themes stay as the locked reference stack for the new visual pass |
+| DS Baseline      | Frozen   | the previous DS-first migration baseline is complete and should be reused, not repeated |
+| Foundation Align | Kept     | the completed reference-driven plan already locked token/component/chrome boundaries |
+| Visual Foundation | Frozen   | completed visual baseline stays in force; do not reopen primitive work implicitly |
+| Discover         | Frozen   | `/resources` listing-mode shell + fail-soft states landed and passed close-out audit    |
+| Theme Refresh    | Active   | brief, playbook, and Figma review page are locked; palette posture is approved as `Paper B` + `#4338CA` + `Rust`/`Sand`, and first-pass foundation studies now exist in Figma across all five required areas |
 | Dashboard-v2     | Frozen   | stable enough to pause; continue only after another explicit reprioritization change     |
 | Public perf base | Kept     | existing `/resources` perf and streaming baseline stays in force during DS migration work |
 
 ## Progress
 
-Design system first follow-up
-`[█░░░░░░░░░] 10%`
+Krukraft theme refresh plan
+`[█████████░] 90%`
 
 ```mermaid
 flowchart TB
   subgraph Frozen
-    D1[Dashboard baseline<br/>Frozen]
+    D1[DS baseline + reference alignment<br/>Frozen]
+    D2[DS visual foundation baseline<br/>Frozen]
   end
 
   subgraph Current
-    P1[DS audit and scope lock<br/>Active]
+    T2[Palette posture training<br/>Done]
   end
 
   subgraph Next
-    P2[First DS pass<br/>Not chosen]
-    P3[DS verification and adoption<br/>Pending]
+    T3[Foundation studies in Figma<br/>Active]
   end
 
-  D1 --> P1 --> P2 --> P3
+  D1 --> D2 --> P1[Discover visual pilot<br/>Done] --> T1[Theme direction and scope lock<br/>Done] --> T2 --> T3
 ```
 
 ## Daily Workflow
 
 Before starting:
 - Read `Current Phase`
-- Pick exactly one item from `Next Up`
-- Move it to `In Progress`
+- If `Next Up` has a mandatory item, pick exactly one and move it to `In Progress`
+- If `Next Up` says the current parent plan is complete, stop and wait for an explicit new plan or reprioritization
 
 Before closing:
 - Update `In Progress`
 - Update `Next Up`
+- Update the progress percentage to match the real phase / plan status
 - Fill `Session Close-Out Template`
 
 Rules:
@@ -78,80 +85,167 @@ Rules:
 - If this file has an active parent plan, do not recommend or start `Deferred` work as the next step unless the user explicitly changes priorities
 - When suggesting follow-up work, state whether it is `in-plan` or `out-of-plan` before recommending it
 - If the user says `Next Up`, answer from the active plan's `Next Up` block first and keep the recommendation inside the active plan unless the user explicitly asks to reprioritize
+- If a phase or parent plan is actually complete, update the percentage, phase status, and `Next Up` state to show that it is complete instead of fabricating more required work
+- After a parent plan is complete, move any extra ideas into `Deferred` or clearly optional follow-up notes; do not keep the same plan artificially active
 
 ---
 
 ## Current Phase
 
 ### Name
-DS audit and migration scope lock
+Foundation study expansion in Figma
 
 ### Parent Plan
-Design system first migration and re-skin plan
+Krukraft theme refresh plan
 
 ### Current Status Inside Parent Plan
-- Dashboard-v2 remains intentionally paused at the current stable baseline; it is not the active redesign surface right now
-- Discover is no longer the active plan surface; it is now `deferred unless reprioritized`
-- The shared design system is now the active plan surface, with the next work focused on migration shape instead of route-family polish
-- Existing `/resources` perf, streaming, and viewer-state improvements remain in force and should be preserved during DS migration work
-- Canonical DS starting context lives in `krukraft-ai-contexts/06-design-system.md`, `src/design-system/README.md`, `design-system.md`, and `figma-component-map.md`
-- The first active task is to lock the DS migration scope before implementation: decide whether the first pass targets tokens, primitives, or shared chrome adoption
-- Discover and dashboard work are now `deferred/frozen unless reprioritized`; do not use discover cleanup or dashboard polish as the default next recommendation
+- The previous DS-first migration baseline, reference-driven DS alignment, and DS visual foundation pass are all complete and now act as the frozen starting baseline for theme work instead of being reopened
+- The completed `/resources` visual pilot should be treated as evidence for what the current DS baseline already supports before a broader theme shift
+- This new parent plan is about Krukraft-wide theme direction, not another discover slice and not another DS-boundary migration pass
+- Canonical references for this plan start with:
+  - `src/design-system/README.md` for DS ownership, visual brief, and reference stack
+  - `krukraft-ai-contexts/06-design-system.md` for the current DS digest
+  - `krukraft-ai-contexts/07-layout-ux.md` when a later theme slice touches route-level shells
+  - `design-system.md` only if the theme work needs new Figma/handoff guidance
+- The theme refresh should stay phased:
+  - lock the Krukraft theme direction brief first
+  - choose one narrow implementation slice second
+  - keep route-level rollout decisions explicit instead of folding them into the scope-lock phase
+- This plan should not implicitly reopen:
+  - token taxonomy or DS boundary work already closed in the reference-driven alignment plan
+  - primitive family calibration work already closed in the visual foundation pass
+  - the completed `/resources` discover pilot
+- The expected theme inputs are:
+  - brand feel and emotional direction
+  - type hierarchy and font posture
+  - surface / elevation character
+  - radius / density posture
+  - action emphasis and contrast rules
+- The theme direction brief is now locked in the canonical DS docs:
+  - editorial-minimal: calm, clean, trustworthy, and human before trendy
+  - premium through restraint, surface hierarchy, and atmosphere rather than saturated product shells
+  - semantic roles stay authoritative while brand mood travels through background/surface tone instead of replacing semantic intent
+  - one type/radius/density family should span marketplace and operational surfaces
+  - stronger brand accents should stay supportive and sparse rather than becoming the default product surface language
+- The last attempted color slice was rolled back because palette values were
+  chosen too early and committed as concrete runtime values before user
+  training/approval
+- Theme training is now an explicit guardrail:
+  - do not land new neutral or accent values from references alone
+  - decide the palette vocabulary with the user first
+  - only then choose and land a narrow color/surface slice
+- `src/design-system/theme-playbook.md` is now the canonical training artifact:
+  - it captures the editorial-minimal posture
+  - it defines do/don't rules, review vocabulary, and approval gates
+  - it keeps palette work at the vocabulary/posture level instead of jumping to
+    runtime values
+- `src/design-system/foundation-study-checklist.md` is now the dedicated
+  checklist artifact for deciding whether Figma foundation coverage is broad
+  enough to justify any code slice
+- The `Theme Lab` page inside the live Figma file `Krukraft Design System` now
+  acts as the visual review surface for palette posture training
+- The old `/dev/theme-playbook` route has been removed so review stays outside
+  the Krukraft app shell
+- That Figma page now includes first-pass foundation studies across all five
+  required checklist areas:
+  - card studies
+  - button states
+  - input/search states
+  - dropdown/popover shell
+  - section/surface hierarchy
+- The palette posture is now trained and approved:
+  - `Paper B` is the chosen neutral direction
+  - `#4338CA` is the chosen primary accent
+  - `Rust` and `Sand` are the chosen support accents
+- The active question is no longer whether Krukraft needs a second support
+  accent; it is whether the Figma foundation studies are broad enough to justify
+  any code implementation at all
 
 ### Goal
-Lock the first DS migration initiative deliberately, then execute only one narrow design-system pass with matching proof and adoption checks while keeping discover deferred and dashboard frozen.
+Expand the Figma foundation studies enough to justify a later code implementation slice.
 
 ### Why this is the current phase
-- The repo already has a strong DS spine (`@/design-system`) and low legacy `components/ui` dependency, so DS-first work is now practical
-- Reprioritizing now avoids polishing discover surfaces on top of a DS layer that may immediately change
-- Dashboard is stable enough to stay frozen while shared UI foundations are reconsidered
-- A DS-first pass can improve shared primitives and chrome before feature-level redesign resumes
+- A color slice was attempted too early; rolling it back is the correct move
+- The playbook approach is now locked, so the next safe step is broader
+  foundation studies in Figma, not runtime token work
+- The Figma page makes that review visual without committing runtime values
+- The blank sandbox inside the Figma page keeps component exploration separate
+  from premature token changes
+- The neutral direction is no longer blocked: `Paper B` is approved and does
+  not need another review loop unless the user reopens it
+- The primary accent direction is no longer blocked: `#4338CA` is approved and
+  does not need another review loop unless the user reopens it
+- The support-accent direction is no longer blocked: `Rust` and `Sand` are
+  approved and should stay support-only rather than co-primary
+- The current foundation evidence is no longer just palette-level; the
+  remaining question is whether the first-pass studies are cohesive enough to
+  justify one later code slice safely
+- This keeps the theme plan from drifting into designer-by-assumption behavior
 
 ### Definition of Done
-- [ ] The first DS migration pass is chosen intentionally
-- [ ] That pass stays narrow
-- [ ] Matching proof/adoption surfaces are identified before implementation
-- [ ] Runtime or route-level verification is rerun on at least one affected consumer surface
-- [ ] Relevant context docs are updated in the same work session
+- [x] A new explicit parent plan is opened for Krukraft theme refresh work
+- [x] The completed DS baseline and discover pilot are carried forward as frozen inputs instead of being reopened
+- [x] The Krukraft theme direction brief is locked
+- [x] The theme training/playbook approach is locked
+- [x] A visual training surface exists for palette review
+- [ ] Figma foundation studies are broad enough to justify code implementation safely
+- [ ] One narrow theme implementation slice is chosen from that trained palette direction
+- [x] Relevant context docs are updated if the locked brief changes DS/system-level understanding materially
+- [x] `09-todos.md` reflects the real phase and progress percentage for this new parent plan
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Dashboard baseline freeze | done | dashboard-v2 is stable enough to pause and should stay frozen unless reprioritized |
-| 1 | DS audit and migration scope lock | active | choose the first DS migration pass and lock proof targets |
-| 2 | DS implementation | pending | execute one narrow DS pass only |
-| 3 | DS verification and adoption follow-up | pending | prove the chosen DS pass before picking another |
+| 0 | Frozen baseline carry-forward | done | completed DS/reference/foundation/discover work stays frozen as the starting context |
+| 1 | Theme direction and scope lock | done | the Krukraft theme brief is now locked in the canonical DS docs |
+| 2 | Palette posture training | done | neutral, primary, and support-accent posture are now approved in the playbook/Figma training surface |
+| 3 | Foundation study expansion in Figma | active | first-pass studies now exist across all five required areas; review and gap-fill them before choosing any code slice |
+| 4 | First narrow theme slice | pending | choose and land one small code slice only after the Figma foundation evidence is strong enough |
+| 5 | Review and close-out decision | pending | decide whether to stop, continue with a second slice, or open a separate rollout plan |
 
 ---
 
 ## Current Goal
 
-Choose and scope the first DS migration pass without reopening discover or dashboard as the active workstream.
+Review the first-pass Figma foundation studies before choosing any code implementation slice.
 
 Current recommendation order:
-1. Re-lock the DS surface and proof target
-2. Pick one narrow next pass:
-   - tokens/semantic-layer audit and migration contract
-   - primitive refresh pass for `Button` / `Card` / `Input` / `Dropdown`
-   - shared chrome adoption pass across public navbar and dashboard shell
+1. Use `src/design-system/theme-playbook.md` as the review and approval surface
+2. Use the approved posture `Paper B` + `#4338CA` + `Rust`/`Sand` as the locked palette baseline
+3. Use `src/design-system/foundation-study-checklist.md` as the explicit coverage gate for card, button states, input/search states, dropdown/popover shell, and section/surface hierarchy
+4. Review the new `Theme Lab` studies as one system and gap-fill anything that still feels too thin, too loud, or too default-library
+5. Avoid touching runtime values until those studies are broad enough to review as a system
 
 ---
 
 ## In Progress
 
-- [ ] Freeze dashboard-v2 follow-up work at the current stable baseline
-- [ ] Freeze discover follow-up work while DS-first reprioritization is active
-- [ ] Pick the first DS migration pass deliberately
-- [ ] Lock the proof surface for that DS pass before implementation
+- [x] Carry forward the completed DS baseline as the starting point
+- [x] Carry forward the completed reference-driven alignment plan as the contract baseline
+- [x] Carry forward the completed DS visual foundation pass as the visual baseline
+- [x] Keep dashboard-v2 frozen at the current stable baseline
+- [x] Carry forward the completed `/resources` pilot as the latest public-route baseline
+- [x] Open a new explicit parent plan for Krukraft theme refresh
+- [x] Lock the Krukraft theme direction brief in the canonical DS docs
+- [x] Roll back the premature `shared surface + neutral palette calibration` attempt
+- [x] Create `src/design-system/theme-playbook.md` as the canonical theme-training artifact
+- [x] Create the `Theme Lab` page inside the live Figma file `Krukraft Design System` as the visual palette-training surface
+- [x] Remove the temporary `/dev/theme-playbook` route after moving training into Figma
+- [x] Add a blank component sandbox to the Figma page for pre-token structure,
+  spacing, and radius studies
+- [x] Lock the neutral posture decision to `Paper B`
+- [x] Lock the primary accent decision to `#4338CA`
+- [x] Lock the support-accent decision to `Rust` and `Sand`
+- [x] Add first-pass Figma foundation studies for all five required checklist areas
 
 ---
 
 ## Next Up
 
-- [ ] Choose whether the first DS pass is `tokens`, `primitives`, or `shared chrome adoption`
-- [ ] Read `06-design-system.md`, `src/design-system/README.md`, `design-system.md`, and `figma-component-map.md` for the chosen DS surface before coding
-- [ ] Keep discover deferred and dashboard-v2 frozen unless the user explicitly reprioritizes either back into the active plan
+- [ ] Review the first-pass Figma studies against `src/design-system/foundation-study-checklist.md`
+- [ ] Refine or gap-fill any study area that still feels too thin, too loud, or too default-library
+- [ ] Reassess whether the foundation evidence is strong enough for a code slice only after that review, while keeping route-level rollout and runtime token edits out of scope until the first approved code slice is explicitly chosen
 
 ---
 
@@ -170,8 +264,6 @@ Use this section only for real blockers:
 ## Deferred
 
 ### Discover / Browse
-- [ ] Re-open discover route-family work only after the first DS migration pass settles
-- [ ] Choose the first deliberate discover route-family pass when DS-first reprioritization changes again
 - [ ] Audit discover/search/filter/creator-profile fallbacks for usable-but-consistent loading states after the DS migration direction is stable
 
 ### Dashboard / Perf
@@ -198,18 +290,13 @@ Use this section only for real blockers:
 
 ## Verification Baseline
 
-Run these before claiming dashboard-v2 stabilization work is complete:
+Run these before claiming the active reference-audit or DS alignment slice is complete:
 
+- `npm run storybook:smoke` when the plan touches DS primitives, DS components, or their stories
 - `npm run typecheck`
 - `npm run lint`
-- `npm run context:check`
-- `npm run test:e2e -- --project=chromium tests/e2e/creator-workspace.spec.ts`
-- `npm run test:e2e -- --project=chromium tests/e2e/navigation-shells.spec.ts`
-- `npm run test:e2e -- --project=chromium tests/e2e/navigation-sentinels.spec.ts`
-
-If the task touches creator editor flows, also consider:
-- `npm run test:e2e -- --project=chromium tests/e2e/dashboard-v2-creator-editor-route-family.spec.ts`
-- `npm run test:e2e -- --project=chromium tests/e2e/dashboard-v2-creator-editor-hardening.spec.ts`
+- `npm run tokens:audit` when token docs, token files, or token contracts change
+- `npm run context:check` when the tracker, DS ownership wording, or agent context changes materially
 
 ---
 
@@ -252,6 +339,7 @@ If the task touches creator editor flows, also consider:
 
 Add only short, high-signal entries here.
 
+- 2026-04-17: Lock `Paper B` as the neutral direction, `#4338CA` as the primary accent, and `Rust` + `Sand` as the support accents for the Krukraft theme refresh plan; the next mandatory decision is the first narrow implementation slice.
 - 2026-04-14: Keep dashboard-v2 perf baseline frozen after rollback; do not re-open broad streaming refactors.
 - 2026-04-14: Remove `.design-tools/awesome-design-md` and `.design-tools/shadcn-examples` from repo tracking; keep them local-only.
 - 2026-04-14: Runtime feel recheck shows dashboard-v2 internal route family is stable; next follow-up should target public↔dashboard library handoff/account-menu parity before reopening another perf pass.
@@ -261,6 +349,17 @@ Add only short, high-signal entries here.
 - 2026-04-15: The latest public navbar hydration warning sample points to a recoverable SSR/client mismatch around the auth-viewer boundary in dev, but it is not currently an active repro; treat the remaining public dropdown navigation timeout as the main open proof issue.
 - 2026-04-15: `navigation-sentinels` is green again after tightening the public account-dropdown sentinel helper to use the real dropdown activation contract instead of an over-forced click path.
 - 2026-04-16: Active plan changed from discover-first to DS-first; keep discover deferred and dashboard frozen until the first design-system migration pass is chosen deliberately.
+- 2026-04-17: Active plan changed from the completed DS-first baseline to reference-driven DS alignment using Primer for token taxonomy, Atlassian for product-system rigor, and Radix Themes for implementation-level theming and primitive guidance.
+- 2026-04-17: DS-first baseline is complete; the new active plan is reference-driven DS alignment using Primer for token taxonomy, Atlassian for product-system rigor, and Radix Themes for implementation-level theming/primitive guidance.
+- 2026-04-17: The discover `/resources` listing-mode pilot passed close-out audit with request-level runtime proof and aligned fail-soft/loading shells; do not extend discover further inside the same parent plan.
+- 2026-04-17: Active plan changed from the completed discover visual pilot to `Krukraft theme refresh plan`; start by locking theme direction and scope before any new implementation slice.
+- 2026-04-17: The Krukraft theme direction brief is now locked from the completed DS/discover baseline; the next mandatory step is choosing one narrow implementation slice, not reopening direction work.
+- 2026-04-17: The attempted `shared surface + neutral palette calibration` slice was rolled back because palette values were chosen too early; theme training and user-approved color posture now come before any new runtime theme slice.
+- 2026-04-17: `src/design-system/theme-playbook.md` is now the canonical theme-training artifact; palette posture must be trained and approved there before any new runtime color slice is landed.
+- 2026-04-17: the `Theme Lab` page inside the live Figma file `Krukraft Design System` is now the visual review surface for theme training; it may use temporary candidate colors for discussion, but it must not be treated as shipped DS theme output.
+- 2026-04-17: the temporary `/dev/theme-playbook` route was removed after moving theme training into Figma so palette review is no longer tied to the Krukraft app shell.
+- 2026-04-17: the `Theme Lab` page now includes a blank component sandbox so component studies can happen before palette, spacing, and radius decisions are committed into the DS.
+- 2026-04-17: the neutral posture decision is now locked to `Paper B`; after approving `Rust` and `Sand` as support accents, the next mandatory decision is the first narrow implementation slice.
 
 ---
 
