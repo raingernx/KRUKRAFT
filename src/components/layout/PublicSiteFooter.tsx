@@ -8,13 +8,14 @@ type Props = { children: ReactNode };
 
 /**
  * Renders the website footer only on public routes. Admin pages (/…/admin/…)
- * and dashboard-v2 pages do not show the footer so app shells stay focused on
- * their own navigation chrome.
+ * dashboard-v2 pages, and dev-only review canvases do not show the footer so
+ * app shells stay focused on their own navigation chrome.
  */
 export function PublicSiteFooter({ children }: Props) {
   const pathname = usePathname();
 
   if (
+    pathname?.startsWith("/dev") ||
     pathname?.startsWith(routes.admin) ||
     pathname?.startsWith(routes.dashboardV2)
   ) {

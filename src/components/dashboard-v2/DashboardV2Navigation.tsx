@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState, type ComponentType, type FormEvent } from "react";
 import {
   usePathname,
@@ -40,12 +39,9 @@ import {
   SidebarItem,
   SidebarSectionLabel,
 } from "@/design-system";
+import { Logo } from "@/components/brand/Logo";
 import { AuthenticatedAccountDropdown } from "@/components/layout/account/AuthenticatedAccountDropdown";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
-import {
-  beginResourcesNavigation,
-  isResourcesSubtreePath,
-} from "@/components/marketplace/resourcesNavigationState";
 import { cn } from "@/lib/utils";
 import { routes } from "@/lib/routes";
 
@@ -301,9 +297,9 @@ function NavigationList({
     <nav className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-3 py-5">
       {groups.map((group) => (
         <div key={group.label} className="space-y-2">
-          <p className="px-3 text-xs font-semibold uppercase text-muted-foreground">
+          <SidebarSectionLabel className="px-3">
             {group.label}
-          </p>
+          </SidebarSectionLabel>
           <div className="space-y-1">
             {group.items.map((item) => {
               const isActive = item.activeKey === activeKey;
@@ -342,47 +338,10 @@ function NavigationList({
 }
 
 function SidebarIdentity() {
-  const pathname = usePathname();
-
   return (
     <div className="border-b border-border-subtle px-5 py-4">
       <div className="flex items-center">
-        <Link
-          href={routes.marketplace}
-          scroll
-          onClick={() => {
-            beginResourcesNavigation("discover", routes.marketplace, {
-              overlay: !isResourcesSubtreePath(pathname ?? ""),
-            });
-          }}
-          className="theme-logo-stack theme-logo-stack--auto h-[36px] w-[148px]"
-          aria-label="Go to discover"
-        >
-          <span className="theme-logo-layer theme-logo-layer--light">
-            <img
-              src="/brand/krukraft-logo.svg"
-              alt=""
-              width={121}
-              height={40}
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              className="block h-full w-full object-contain object-left"
-            />
-          </span>
-          <span className="theme-logo-layer theme-logo-layer--dark">
-            <img
-              src="/brand/krukraft-logo-dark.svg"
-              alt="Krukraft logo"
-              width={121}
-              height={40}
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              className="block h-full w-full object-contain object-left"
-            />
-          </span>
-        </Link>
+        <Logo variant="full" size="navbar" preferRepoAsset className="shrink-0" />
       </div>
     </div>
   );
@@ -415,7 +374,7 @@ function SidebarCallout({
 
   return (
     <div className="border-t border-border-subtle p-4">
-      <div className="rounded-xl border border-border-subtle bg-muted/50 p-4">
+      <div className="rounded-xl border border-border-subtle bg-card/95 p-4 shadow-card">
         <Badge variant="featured">Creator-ready</Badge>
         <p className="mt-3 text-sm font-semibold text-foreground">
           Start selling resources
@@ -524,7 +483,7 @@ function AccountDropdown({
             className={cn(
               "inline-flex size-11 items-center justify-center rounded-full border transition-all group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-background",
               open
-                ? "border-border bg-accent shadow-[0_6px_16px_rgba(15,23,42,0.12)]"
+                ? "border-border-strong bg-card shadow-card"
                 : "border-border-subtle bg-card/90 hover:border-border hover:bg-muted/55",
             )}
           >
@@ -537,7 +496,7 @@ function AccountDropdown({
 
       <DropdownMenu
         align="end"
-        className="w-[min(17rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-card p-0 shadow-card-lg"
+        className="w-[min(17rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-card/95 p-0 shadow-card-lg"
         data-dashboard-account-menu="true"
         sideOffset={8}
       >
@@ -684,7 +643,7 @@ function DashboardV2Notifications({ viewer }: { viewer: DashboardV2Viewer }) {
 
       <DropdownMenu
         align="end"
-        className="w-[min(20rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-card p-0 shadow-card-lg"
+        className="w-[min(20rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-card/95 p-0 shadow-card-lg"
         sideOffset={8}
       >
         <div className="p-2">
@@ -696,7 +655,7 @@ function DashboardV2Notifications({ viewer }: { viewer: DashboardV2Viewer }) {
           </div>
 
           <div className="px-3 py-3">
-            <div className="rounded-xl border border-border-subtle bg-muted/40 p-3">
+            <div className="rounded-xl border border-border-subtle bg-muted/60 p-3">
               <p className="text-sm font-semibold text-foreground">
                 {notificationCopy.title}
               </p>
@@ -765,7 +724,7 @@ export function DashboardV2Topbar({ viewer }: { viewer: DashboardV2Viewer }) {
 
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-[hsl(var(--card)/0.78)] backdrop-blur-[2px] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 lg:hidden" />
-        <DialogPrimitive.Content className="fixed inset-y-0 left-0 z-50 flex w-[min(20rem,calc(100vw-2rem))] flex-col border-r border-border-subtle bg-card shadow-2xl outline-none data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left data-[state=open]:animate-in data-[state=open]:slide-in-from-left lg:hidden">
+        <DialogPrimitive.Content className="fixed inset-y-0 left-0 z-50 flex w-[min(20rem,calc(100vw-2rem))] flex-col border-r border-border-subtle bg-card/95 shadow-card-lg outline-none data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left data-[state=open]:animate-in data-[state=open]:slide-in-from-left lg:hidden">
           <DialogPrimitive.Title className="sr-only">
             Dashboard V2 navigation
           </DialogPrimitive.Title>

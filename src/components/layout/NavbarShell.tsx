@@ -81,7 +81,7 @@ export function NavbarShell({
 }) {
   if (hasMarketplaceShell) {
     return (
-      <header className="sticky top-0 z-40 w-full border-b border-border bg-background">
+      <header className="sticky top-0 z-40 w-full border-b border-border-subtle bg-background">
         <Container className="py-3 sm:py-4">
           <div className="flex flex-col gap-3 sm:gap-4">
             <div className="flex items-center gap-3 lg:grid lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center lg:gap-6">
@@ -93,7 +93,7 @@ export function NavbarShell({
                 {headerSearch ?? (
                   <div
                     aria-hidden="true"
-                    className="h-11 w-full rounded-full border border-border bg-background"
+                    className="h-11 w-full rounded-full border border-border-subtle bg-background"
                   />
                 )}
               </div>
@@ -158,7 +158,7 @@ export function NavbarShell({
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-background">
+    <header className="sticky top-0 z-40 w-full border-b border-border-subtle bg-background">
       <Container className="h-16">
         <div className="flex h-10 items-center justify-between gap-3">
           <NavbarBrand />

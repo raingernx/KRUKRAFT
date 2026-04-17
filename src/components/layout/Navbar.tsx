@@ -408,7 +408,7 @@ function NavbarInner({
 
   if (isMarketplaceNavbar) {
     return (
-      <header className="sticky top-0 z-40 w-full border-b border-border bg-background">
+      <header className="sticky top-0 z-40 w-full border-b border-border-subtle bg-background">
         <Container className="py-3 sm:py-4">
           <div className="flex flex-col gap-3 sm:gap-4">
             <div className="flex items-center gap-3 lg:grid lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center lg:gap-6">
@@ -589,7 +589,7 @@ function NavbarInner({
                   More
                 </summary>
 
-                <div className="absolute right-0 top-[calc(100%+0.5rem)] z-20 w-72 rounded-xl border border-border bg-card p-1.5">
+                <div className="absolute right-0 top-[calc(100%+0.5rem)] z-20 w-72 rounded-xl border border-border-subtle bg-card/95 p-1.5 shadow-card">
                   <ul className="flex flex-col gap-1" aria-label="หมวดหมู่เพิ่มเติม">
                     {overflowMobileCategoryItems.map((item) => (
                       <li key={item.label}>
@@ -621,7 +621,7 @@ function NavbarInner({
   return (
     <header
       className={`sticky top-0 z-40 w-full bg-background ${
-        secondaryRow ? "" : "border-b border-border"
+        secondaryRow ? "" : "border-b border-border-subtle"
       }`}
     >
       <Container
@@ -712,7 +712,7 @@ function NavbarInner({
       </Container>
 
       {mobileOpen ? (
-        <div className="border-b border-border bg-background px-4 pb-5 pt-3 lg:hidden">
+        <div className="border-b border-border-subtle bg-background px-4 pb-5 pt-3 lg:hidden">
           <nav className="flex flex-col gap-0.5" aria-label="Mobile navigation">
             {NAV_LINKS.filter(({ href }) => href !== routes.dashboardV2Library || Boolean(authUser)).map(({ href, label }) => (
               <NavbarItem

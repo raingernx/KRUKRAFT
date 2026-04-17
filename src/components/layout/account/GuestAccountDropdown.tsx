@@ -48,7 +48,7 @@ function GuestAccountMenuTrigger({
       className={cn(
         "inline-flex size-11 items-center justify-center rounded-full border transition-all group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-background",
         open
-          ? "border-border bg-accent shadow-[0_6px_16px_rgba(15,23,42,0.12)]"
+          ? "border-border-strong bg-card shadow-card"
           : "border-border-subtle bg-card/90 hover:border-border hover:bg-muted/55",
         className,
       )}
@@ -162,7 +162,7 @@ export function GuestAccountDropdown({
       <DropdownMenu
         align="end"
         className={cn(
-          "w-[min(17rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-card p-0 shadow-card-lg",
+          "w-[min(17rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-card/95 p-0 shadow-card-lg",
           menuClassName,
         )}
         sideOffset={8}

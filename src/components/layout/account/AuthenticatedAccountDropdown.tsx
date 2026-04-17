@@ -115,7 +115,7 @@ function AccountMenuTrigger({
       className={cn(
         "inline-flex size-11 items-center justify-center rounded-full border transition-all group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-background",
         open
-          ? "border-border bg-accent shadow-[0_6px_16px_rgba(15,23,42,0.12)]"
+          ? "border-border-strong bg-card shadow-card"
           : "border-border-subtle bg-card/90 hover:border-border hover:bg-muted/55",
       )}
     >
@@ -169,7 +169,7 @@ function MembershipItem({
         onNavigate(routes.dashboardV2Membership);
       }}
       className={cn(
-        "mb-3 flex w-full items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
+        "mb-3 flex w-full items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         active
           ? "border-highlight-500/35 bg-[radial-gradient(circle_at_top_left,rgba(168,85,247,0.22),transparent_56%),linear-gradient(135deg,rgba(91,33,182,0.14),rgba(15,23,42,0.05))]"
           : "border-highlight-500/20 bg-[radial-gradient(circle_at_top_left,rgba(168,85,247,0.16),transparent_52%),linear-gradient(135deg,rgba(91,33,182,0.08),rgba(15,23,42,0.02))] hover:bg-[radial-gradient(circle_at_top_left,rgba(168,85,247,0.20),transparent_55%),linear-gradient(135deg,rgba(91,33,182,0.12),rgba(15,23,42,0.04))]",
@@ -230,7 +230,7 @@ function MenuSection({
               onNavigate(item.href);
             }}
             className={cn(
-              "flex w-full items-center gap-2.5 rounded-xl border px-2.5 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
+              "flex w-full items-center gap-2.5 rounded-xl border px-2.5 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
               isActive
                 ? "border-transparent bg-muted text-foreground"
                 : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -298,7 +298,7 @@ export function AuthenticatedAccountDropdown({
 
       <DropdownMenu
         align="end"
-        className="w-[min(18rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-card p-0 shadow-card-lg"
+        className="w-[min(18rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-card/95 p-0 shadow-card-lg"
         data-dashboard-account-menu="true"
         sideOffset={8}
       >

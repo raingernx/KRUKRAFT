@@ -33,7 +33,7 @@ function SidebarSkeleton() {
       </div>
 
       <div className="border-t border-border-subtle p-4">
-        <div className="rounded-xl border border-border-subtle bg-muted/50 p-4">
+        <div className="rounded-xl border border-border-subtle bg-card/95 p-4 shadow-card">
           <LoadingSkeleton className="h-5 w-24 rounded-full" />
           <LoadingSkeleton className="mt-4 h-4 w-32" />
           <LoadingSkeleton className="mt-2 h-3 w-full" />
@@ -71,7 +71,7 @@ function TopbarSkeleton() {
           <LoadingSkeleton className="size-5 rounded-md" />
         </div>
 
-        <div className="inline-flex size-11 items-center justify-center rounded-full border border-border-subtle bg-card/90">
+        <div className="inline-flex size-11 items-center justify-center rounded-full border border-border-subtle bg-card/95">
           <LoadingSkeleton className="size-8 rounded-full" />
         </div>
       </div>
