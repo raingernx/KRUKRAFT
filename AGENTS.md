@@ -652,6 +652,13 @@ When implementing features:
 13. Do not treat “the edited file works” as sufficient evidence when the change touches shared behavior. Shared UI shells, route-family loading, navigation handoff, cache warmups, and probe/test helpers must be checked for downstream impact before the task is considered complete.
 14. When an active parent plan exists in `krukraft-ai-contexts/09-todos.md`, do not recommend, start, or prioritize work outside that plan until the current `Next Up` choice is resolved or the user explicitly reprioritizes. Treat `Deferred` items as out-of-plan by default.
 15. If a potentially useful task sits outside the active parent plan, label it explicitly as out-of-plan and do not steer the user there as the next step unless they ask to change plan.
+16. When a tracked phase or parent plan is actually complete, update `krukraft-ai-contexts/09-todos.md` in the same session so the phase status, `Next Up`, and progress percentage reflect the real completion state before closing the task.
+17. Do not keep a parent plan artificially active by inventing more low-signal `Next Up` work after the intended milestone is complete. Say explicitly that the plan or phase is complete when no required in-plan work remains.
+18. After a parent plan is complete, any additional ideas or extensions must be proposed as a separate optional new plan for user approval; do not silently roll them into the completed plan.
+19. When a parent plan reaches `100%` or is otherwise ready to close, run one explicit close-out audit before declaring the plan complete.
+20. The close-out audit must stay inside the finished plan's original scope: check for omissions, shared-surface regressions, docs/tracker drift, and practical verification gaps, but do not expand the plan into new feature work.
+21. Close-out audit remediation is conditional, not automatic: if the audit finds only cosmetic, optional, or low-signal items, close the plan and move those ideas to optional follow-up or `Deferred`; if the audit finds a material issue that violates the plan's Definition of Done, open one narrow remediation slice, reduce the reported completion/progress to match reality, and only return to `100%` after that slice lands.
+22. Never use the required close-out audit as justification to keep a finished plan open indefinitely. The audit is for confirmation and narrow correction, not for re-scoping the plan.
 
 AI agents should avoid large architectural changes unless explicitly requested.
 
@@ -812,3 +819,4 @@ When a shorthand request is used, agents should follow the same verification and
 - `CPD` does not bypass verification, impact review, or knowledge triage requirements
 - `CPD` is not complete from `git push` output alone; before claiming it is done, verify that `origin` points to the canonical GitHub repo (`https://github.com/raingernx/KRUKRAFT.git`), that `HEAD` matches `origin/main`, and that deployment evidence exists for the pushed commit. The repo-owned check is `npm run cpd:verify`.
 - `Next Up` must stay plan-locked: answer from the active plan's `Next Up` block first, label recommendations as `in-plan` or `out-of-plan`, and do not recommend `Deferred` work unless the user explicitly reprioritizes.
+- If the active plan is already complete, `Next Up` should say so plainly instead of manufacturing more required work; only then may the agent suggest a separate optional new plan for the user to approve.
