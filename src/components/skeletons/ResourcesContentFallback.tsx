@@ -128,14 +128,6 @@ export function SidebarFallback() {
         titleWidth="w-12"
         rowWidths={["w-full", "w-4/5", "w-[70%]"]}
       />
-      <SidebarFallbackGroup
-        titleWidth="w-20"
-        pillWidths={["w-24", "w-28", "w-24"]}
-      />
-      <SidebarFallbackGroup
-        titleWidth="w-24"
-        pillWidths={["w-20", "w-28", "w-24"]}
-      />
     </div>
   );
 }
