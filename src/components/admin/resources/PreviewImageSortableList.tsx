@@ -17,7 +17,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Trash2 } from "lucide-react";
-import { MediaPreview, PickerIconButton, PreviewCard } from "@/design-system";
+import { MediaPreview, PickerIconButton, PreviewCard } from "@/design-system/product";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 
 interface PreviewImageSortableListProps {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PriceBadge } from "@/design-system";
+import { PriceBadge } from "@/design-system/product";
 import Image from "next/image";
 import { FileText } from "lucide-react";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";

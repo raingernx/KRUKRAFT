@@ -3,7 +3,8 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ExternalLink, ImagePlus, Link2, Plus, Trash2 } from "lucide-react";
-import { Button, FileUploadWidget, Input, Select, Textarea } from "@/design-system";
+import { Button, Input, Select, Textarea } from "@/design-system";
+import { FileUploadWidget } from "@/design-system/product";
 import {
   CreatorAIDraftGenerator,
   type CreatorAIDraftResourceSeed,

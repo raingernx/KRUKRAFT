@@ -38,9 +38,9 @@ import {
   PaginationInfo,
   PaginationList,
   PaginationNav,
-  ResourceCard,
   SearchInput,
 } from "@/design-system";
+import { ResourceCard } from "@/design-system/product";
 import { CreatorProfileForm } from "@/components/creator/CreatorProfileForm";
 import { CreatorResourceForm } from "@/components/creator/CreatorResourceForm";
 import {

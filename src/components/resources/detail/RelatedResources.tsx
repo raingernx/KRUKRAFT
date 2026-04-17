@@ -1,4 +1,4 @@
-import { ResourceCard, type ResourceCardResource } from "@/design-system";
+import { ResourceCard, type ResourceCardResource } from "@/design-system/product";
 
 interface RelatedResourcesProps {
   resources: ResourceCardResource[];

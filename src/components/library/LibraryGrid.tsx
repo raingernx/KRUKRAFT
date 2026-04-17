@@ -1,6 +1,6 @@
 "use client";
 
-import { ResourceCard, type ResourceCardResource } from "@/design-system";
+import { ResourceCard, type ResourceCardResource } from "@/design-system/product";
 import type { LibraryItemClient } from "./LibraryGridClient";
 
 /** Library grid layout: explicit responsive columns so cards stay wide. */

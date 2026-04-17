@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { NotificationButton } from "@/design-system";
+import { NotificationButton } from "@/design-system/product";
 import { useNotifications } from "./useNotifications";
 
 export function NotificationBell() {

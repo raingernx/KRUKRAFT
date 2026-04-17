@@ -1,9 +1,9 @@
 /**
  * DO NOT USE DIRECTLY
  * This is a transitional compatibility re-export.
- * Use "@/design-system" instead.
+ * Use "@/design-system/product" instead.
  */
 export {
   PriceLabel,
   type PriceLabelProps,
-} from "@/design-system/components/PriceLabel";
+} from "@/design-system/product";

@@ -15,15 +15,17 @@ import {
 } from "lucide-react";
 import {
   Button,
+  Select,
+  Switch,
+  Textarea,
+} from "@/design-system";
+import {
   FileUploadWidget,
   MediaPreview,
   PickerActionButton,
   PickerActions,
   PickerIconButton,
-  Select,
-  Switch,
-  Textarea,
-} from "@/design-system";
+} from "@/design-system/product";
 import { LazyImageDropzone } from "./LazyImageDropzone";
 import { PreviewImageSortableList } from "./PreviewImageSortableList";
 import { TagInput } from "./TagInput";

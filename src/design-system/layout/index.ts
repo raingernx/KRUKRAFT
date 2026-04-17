@@ -5,7 +5,6 @@ export {
   PageContentWide,
   PageContentNarrow,
 } from "./Container";
-export { PageSection } from "./PageSection";
 export {
   SidebarContainer,
   SidebarNav,

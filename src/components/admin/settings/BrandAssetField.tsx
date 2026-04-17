@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef } from "react";
 import { AlertCircle, ImageIcon, Upload } from "lucide-react";
-import { PickerActionButton, PickerActions } from "@/design-system";
+import { PickerActionButton, PickerActions } from "@/design-system/product";
 
 type BrandAssetPreviewVariant = "wide" | "square";
 type BrandAssetPreviewTone = "light" | "dark";

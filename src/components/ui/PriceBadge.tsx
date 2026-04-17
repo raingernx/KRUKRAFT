@@ -1,9 +1,9 @@
 /**
  * DO NOT USE DIRECTLY
  * This is a transitional compatibility re-export.
- * Use "@/design-system" instead.
+ * Use "@/design-system/product" instead.
  */
 export {
   PriceBadge,
   type PriceBadgeProps,
-} from "@/design-system/components/PriceBadge";
+} from "@/design-system/product";

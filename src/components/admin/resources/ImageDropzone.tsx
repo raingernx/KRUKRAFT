@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { ImagePlus, UploadCloud } from "lucide-react";
-import { PickerDropzoneShell } from "@/design-system";
+import { PickerDropzoneShell } from "@/design-system/product";
 
 export interface ImageDropzoneProps {
   onFilesAccepted: (files: File[]) => void;
