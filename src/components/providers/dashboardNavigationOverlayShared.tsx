@@ -18,13 +18,13 @@ export function isDashboardGroupHref(href: string) {
   const pathname = new URL(href, "http://dashboard.local").pathname;
 
   return (
-    pathname === routes.dashboardV2 ||
-    pathname === routes.dashboardV2Library ||
-    pathname === routes.dashboardV2Downloads ||
-    pathname === routes.dashboardV2Purchases ||
-    pathname === routes.dashboardV2Settings ||
-    pathname === routes.dashboardV2Membership ||
-    pathname.startsWith("/dashboard-v2/")
+    pathname === routes.dashboard ||
+    pathname === routes.dashboardLibrary ||
+    pathname === routes.dashboardDownloads ||
+    pathname === routes.dashboardPurchases ||
+    pathname === routes.dashboardSettings ||
+    pathname === routes.dashboardMembership ||
+    pathname.startsWith(`${routes.dashboard}/`)
   );
 }
 
@@ -39,74 +39,74 @@ export function isDashboardGroupPath(pathname: string | null) {
 export function getDashboardReadySelector(pathname: string | null, href: string | null) {
   const targetPathname = getDashboardTargetPathname(pathname, href);
 
-  if (targetPathname === routes.dashboardV2) {
+  if (targetPathname === routes.dashboard) {
     return '[data-route-shell-ready="dashboard-overview"]';
   }
 
-  if (targetPathname === routes.dashboardV2Library) {
+  if (targetPathname === routes.dashboardLibrary) {
     return '[data-route-shell-ready="dashboard-library"]';
   }
 
-  if (targetPathname === routes.dashboardV2Downloads) {
+  if (targetPathname === routes.dashboardDownloads) {
     return '[data-route-shell-ready="dashboard-downloads"]';
   }
 
-  if (targetPathname === routes.dashboardV2Purchases) {
+  if (targetPathname === routes.dashboardPurchases) {
     return '[data-route-shell-ready="dashboard-purchases"]';
   }
 
-  if (targetPathname === routes.dashboardV2Settings) {
+  if (targetPathname === routes.dashboardSettings) {
     return '[data-route-shell-ready="dashboard-settings"]';
   }
 
-  if (targetPathname === routes.dashboardV2Membership) {
+  if (targetPathname === routes.dashboardMembership) {
     return '[data-route-shell-ready="dashboard-subscription"]';
   }
 
-  if (targetPathname === routes.dashboardV2CreatorApply) {
+  if (targetPathname === routes.dashboardCreatorApply) {
     return '[data-route-shell-ready="dashboard-creator-apply"]';
   }
 
-  if (targetPathname === routes.dashboardV2Creator) {
+  if (targetPathname === routes.dashboardCreator) {
     return '[data-route-shell-ready="dashboard-creator-overview"]';
   }
 
-  if (targetPathname === routes.dashboardV2CreatorAnalytics) {
+  if (targetPathname === routes.dashboardCreatorAnalytics) {
     return '[data-route-shell-ready="dashboard-creator-analytics"]';
   }
 
-  if (targetPathname === routes.dashboardV2CreatorResources) {
+  if (targetPathname === routes.dashboardCreatorResources) {
     return '[data-route-shell-ready="dashboard-creator-resources"]';
   }
 
   if (
-    targetPathname === routes.dashboardV2CreatorNewResource ||
-    targetPathname.startsWith(`${routes.dashboardV2CreatorResources}/`)
+    targetPathname === routes.dashboardCreatorNewResource ||
+    targetPathname.startsWith(`${routes.dashboardCreatorResources}/`)
   ) {
     return '[data-route-shell-ready="dashboard-creator-resource-editor"]';
   }
 
-  if (targetPathname === routes.dashboardV2CreatorSales) {
+  if (targetPathname === routes.dashboardCreatorSales) {
     return '[data-route-shell-ready="dashboard-creator-sales"]';
   }
 
-  if (targetPathname === routes.dashboardV2CreatorPayouts) {
+  if (targetPathname === routes.dashboardCreatorPayouts) {
     return '[data-route-shell-ready="dashboard-creator-payouts"]';
   }
 
-  if (targetPathname === routes.dashboardV2CreatorStorefront) {
+  if (targetPathname === routes.dashboardCreatorStorefront) {
     return '[data-route-shell-ready="dashboard-creator-profile"]';
   }
 
-  if (targetPathname === routes.dashboardV2CreatorProfile) {
+  if (targetPathname === routes.dashboardCreatorProfile) {
     return '[data-route-shell-ready="dashboard-creator-profile"]';
   }
 
-  if (targetPathname === routes.dashboardV2CreatorSettings) {
+  if (targetPathname === routes.dashboardCreatorSettings) {
     return '[data-route-shell-ready="dashboard-settings"]';
   }
 
-  if (targetPathname.startsWith("/dashboard-v2/creator")) {
+  if (targetPathname.startsWith(`${routes.dashboardCreator}/`)) {
     return DASHBOARD_CREATOR_ROUTE_SHELL_SELECTOR;
   }
 

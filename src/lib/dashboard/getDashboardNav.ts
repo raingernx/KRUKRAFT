@@ -3,8 +3,8 @@ import type {
 } from "@/components/layout/dashboard/dashboard-nav.types";
 import {
   ADMIN_CREATOR_ENTRYPOINT_SECTION,
-  CREATOR_APPLY_NAV_SECTION,
-  CREATOR_DASHBOARD_NAV_SECTION,
+  getLegacyCreatorNavSection,
+  insertDashboardCreatorSection,
 } from "@/config/dashboard-nav/creator-nav";
 import { ADMIN_DASHBOARD_NAV_SECTIONS } from "@/config/dashboard-nav/admin-nav";
 import { USER_DASHBOARD_NAV_SECTIONS } from "@/config/dashboard-nav/user-nav";
@@ -31,25 +31,18 @@ export function getDashboardNav({
   const baseSections = [...USER_DASHBOARD_NAV_SECTIONS];
 
   if (role === "ADMIN") {
-    return [
-      baseSections[0],
+    return insertDashboardCreatorSection(
+      baseSections,
       ADMIN_CREATOR_ENTRYPOINT_SECTION,
-      ...baseSections.slice(1),
-    ];
+    );
   }
 
   if (creatorNavMode === "hidden") {
     return baseSections;
   }
 
-  const creatorSection =
-    creatorNavMode === "full"
-      ? CREATOR_DASHBOARD_NAV_SECTION
-      : CREATOR_APPLY_NAV_SECTION;
-
-  return [
-    baseSections[0],
-    creatorSection,
-    ...baseSections.slice(1),
-  ];
+  return insertDashboardCreatorSection(
+    baseSections,
+    getLegacyCreatorNavSection(creatorNavMode),
+  );
 }

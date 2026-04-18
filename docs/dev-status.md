@@ -22,6 +22,12 @@
 - Mature subscriptions and billing UX around the existing Stripe/Xendit integration.
 - Grow creator-facing capabilities (dashboards, metrics, future payouts).
 
+### Recent Breaking Changes
+
+- Legacy dashboard URLs under `/dashboard-v2*` were removed.
+- Canonical protected dashboard routes now live only under `/dashboard/*`.
+- Old bookmarks or external links that still point to `/dashboard-v2*` now return `404` and should be updated.
+
 ### Development Checklist
 
 #### Marketplace & Files
@@ -49,4 +55,3 @@
 - [ ] Introduce a dedicated creator dashboard separate from the admin area.
 - [ ] Enhance the resource creation flow with a guided wizard and better draft/publish UX.
 - [ ] Prepare schema and APIs for future creator earnings and payouts (if marketplace revenue sharing is planned).
-

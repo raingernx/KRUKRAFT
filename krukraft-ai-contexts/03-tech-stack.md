@@ -17,8 +17,8 @@
 | File Storage | Cloudflare R2 |
 | Caching | Upstash Redis + `unstable_cache` + `runSingleFlight` |
 | Deployment | Vercel |
-| Analytics | Vercel Analytics + Vercel Speed Insights |
-| Icons | lucide-react |
+| Analytics | Vercel Analytics + Vercel Speed Insights + Sentry |
+| Icons | Phosphor Icons via `@/lib/icons` adapter |
 
 ## Runtime / Tooling Notes
 
@@ -40,6 +40,14 @@
 - `db:deploy`: `prisma migrate deploy`
 - `db:push`: `prisma db push`
 - `db:migrate`: `prisma migrate dev`
+- Sentry Next.js integration is now wired through `instrumentation.ts`,
+  `instrumentation-client.ts`, `sentry.server.config.ts`,
+  `sentry.edge.config.ts`, and the `withSentryConfig(...)` wrapper in
+  `next.config.mjs`
+- Sentry is intentionally configured as a minimal first pass:
+  error capture plus basic tracing are enabled when a DSN exists, while replay,
+  profiling, and Prisma-specific tracing are still intentionally out of scope
+  for now
 - `db:local:start`: starts the clean local Postgres cluster at `.local-db/pgdata` on port `54329`
 - `db:local:stop`: stops that local Postgres cluster
 - `db:local:status`: health-checks the local Postgres cluster on `127.0.0.1:54329`
@@ -51,18 +59,20 @@
 - the post-deploy warm workflow now retries `npm ci` and uploads install logs alongside warm artifacts, so failed warm runs do not die without diagnostics
 - the post-deploy warm/perf workflow now installs on Node 24, matching the current local `npm ci` / lockfile resolver behavior and avoiding the old Node 20/npm 10 mismatch
 - the post-deploy warm/perf workflow now uses `actions/checkout@v6`, `actions/setup-node@v6`, and `actions/upload-artifact@v6`, which all declare `node24` runtimes upstream; `grafana/setup-k6-action@v1` remains unchanged because no newer upstream action line with explicit Node 24 guidance was available
-- `test:e2e`: Playwright browser verification for `/resources`, canonical search flows, no-result recovery, and resource detail image rendering
-- `browser:probe` / `browser:probe:headed`: local repo-owned Playwright API probe path that bypasses `playwright test` and verifies launch, `/resources -> /dashboard-v2/library`, `/dashboard-v2/library -> /resources`, and `settings-theme` against a real local dev server
-- `browser:probe:dashboard`: repo-owned dashboard runtime probe for `/dashboard-v2/downloads`, `/dashboard-v2/purchases`, and `/dashboard-v2/settings` transitions after entering the dashboard shell
+- `test:e2e`: Playwright browser verification entrypoint for the full repo test surface
+- `test:e2e:local` / `test:e2e:local:headed` / `test:e2e:local:ui`: local Chromium aliases pinned to `BASE_URL=http://127.0.0.1:3000` and `--project=chromium`; on this macOS machine these are the preferred human/operator commands to rerun Playwright outside sandbox after a sandboxed agent session hits the known launch restriction
+- `browser:probe` / `browser:probe:headed`: local repo-owned Playwright API probe path that bypasses `playwright test` and verifies launch, `/resources -> /dashboard/library`, `/dashboard/library -> /resources`, and `settings-theme` against a real local dev server
+- `browser:probe:dashboard`: repo-owned dashboard runtime probe for `/dashboard/downloads`, `/dashboard/purchases`, and `/dashboard/settings` transitions after entering the dashboard shell
 - `browser:probe:pages`: repo-owned direct-load probe for public/product informational pages (`/membership`, legal/support, checkout status) plus the remaining admin root/index pages (`/admin`, activity, audit, categories, orders, reviews, tags, users)
-- `browser:probe:management`: repo-owned authenticated management probe for `/admin`, `/admin/analytics`, `/admin/analytics/recommendations`, `/dashboard-v2`, `/dashboard-v2/library`, `/dashboard-v2/downloads`, `/dashboard-v2/purchases`, `/dashboard-v2/settings`, `/dashboard-v2/membership`, `/dashboard-v2/creator/resources`, `/dashboard-v2/creator/resources/new`, `/dashboard-v2/creator/profile`, and `/dashboard-v2/creator/analytics`; it now includes admin-overview and admin-analytics hard-refresh shell verification, dashboard-overview/library/downloads/purchases/settings/membership hard-refresh shell verification, plus both creator hard-refresh shell verification and creator resource-editor hard-refresh verification
-- `browser:probe:sentinel`: repo-owned blind-spot probe lane for routes that were historically under-measured by the core/browser management probes; it currently covers `/resources -> account dropdown -> /dashboard-v2|/dashboard-v2/purchases|/dashboard-v2/settings`, `/dashboard-v2 -> avatar menu -> /dashboard-v2/library|/dashboard-v2/purchases|/dashboard-v2/settings`, filtered/search marketplace listing pages (`/resources?category=art-creativity`, `/resources?category=science`, `/resources?search=worksheet`), and `/admin/resources/new|[id]`
+- `browser:probe:management`: repo-owned authenticated management probe for `/admin`, `/admin/analytics`, `/admin/analytics/recommendations`, `/dashboard`, `/dashboard/library`, `/dashboard/downloads`, `/dashboard/purchases`, `/dashboard/settings`, `/dashboard/membership`, `/dashboard/creator/resources`, `/dashboard/creator/resources/new`, `/dashboard/creator/profile`, and `/dashboard/creator/analytics`; it now includes admin-overview and admin-analytics hard-refresh shell verification, dashboard-overview/library/downloads/purchases/settings/membership hard-refresh shell verification, plus both creator hard-refresh shell verification and creator resource-editor hard-refresh verification
+- `browser:probe:sentinel`: repo-owned blind-spot probe lane for routes that were historically under-measured by the core/browser management probes; it currently covers `/resources -> account dropdown -> /dashboard|/dashboard/purchases|/dashboard/settings`, `/dashboard -> avatar menu -> /dashboard|/dashboard/purchases|/dashboard/settings`, filtered/search marketplace listing pages (`/resources?category=art-creativity`, `/resources?category=science`, `/resources?search=worksheet`), and `/admin/resources/new|[id]`
+- shared learner/account navigation now has explicit config owners: `src/components/layout/account/accountMenuConfig.ts` owns authenticated/public account-menu link sets plus their warm targets, `src/config/dashboard-nav/dashboard-core.ts` owns the canonical learner sidebar/account `/dashboard/*` sections that `DashboardAppNavigation` and the older dashboard user-nav compatibility config both derive from, and `src/config/dashboard-nav/creator-nav.ts` now owns the creator-section builders used by both `DashboardAppNavigation` and `src/lib/dashboard/getDashboardNav.ts`
 - platform branding now includes dedicated `logoFullDarkUrl` / `logoIconDarkUrl` fields end-to-end (Prisma, admin settings, public config, and runtime `/brand-assets/*` aliases), so dark-theme logo swaps no longer need to reuse the light asset
 - `src/components/brand/Logo.tsx` now treats brand images as critical-path UI without cross-fading between repo fallbacks and uploaded runtime assets on success: light/dark logo layers render the active configured asset directly, and only fall back to the repo-owned local asset if that theme-specific upload fails to load
 - dark runtime logo resolution no longer falls back to uploaded light logos; if no dedicated dark asset is stored, the stack now stays on the repo-owned dark fallback instead of settling on a light custom logo after refresh
 - the logo stack still requests the active light/dark runtime logo images at high priority from SSR markup, but repo-owned fallback assets are now a true failure path rather than a first-paint overlay; this avoids position jumps caused by swapping between local fallback artwork and uploaded logo files with different whitespace/artboards
 - the navbar brand itself now opts into repo-owned local light/dark assets on purpose, so the most visible first-paint chrome no longer waits on uploaded remote logo files and refresh-time brand flicker is isolated away from the navbar
-- the root layout no longer mounts a dashboard entry overlay; dashboard navigation now targets canonical `/dashboard-v2/*` routes directly, and legacy `/dashboard*`, `/settings`, and `/subscription` URLs are intentionally unsupported after the Phase 5 hard cut
+- the root layout no longer mounts a dashboard entry overlay; dashboard navigation now targets canonical `/dashboard/*` routes directly while older `/settings` and `/subscription` shortcuts remain unsupported
 - `src/services/resources/index.ts`: top-level import surface intentionally exposes only public marketplace/detail reads plus viewer-state helpers; route handlers and admin/mutation paths must import `resource.service` / `mutations` subpaths directly so browser-facing bundles do not accidentally pull `server-only` or `next/cache` mutation code
 - `src/components/resources/detail/ResourceDetailLoadingShell.tsx`: the client loading shell is intentionally self-contained and must not import `ResourceDetailSections.tsx` or other service-backed section files, because that overlay path mounts in browser navigation flows
 - `knowledge/`: repo-owned LLM wiki split into `knowledge/raw/` evidence captures, `knowledge/wiki/` synthesized topic pages, and `knowledge/schema/` ingest/query/lint rules; the layer is intentionally lighter-weight than a full external RAG stack and is maintained inside the repo
@@ -84,6 +94,19 @@
 - local fallback logo assets now include `/brand/krukraft-logo-dark.svg` and `/brand/krukraft-mark-dark.svg`, which act as the always-available first-paint branding layer whenever a custom uploaded logo has not loaded yet
 - local-only metadata/state folders `.byom/`, `.codex/environments/`, and ad-hoc `.agents/skills/*` copies are intentionally gitignored; only the tracked `.agents/skills/next-best-practices` subtree should remain under version control
 - `lint` now includes `npm run wiki:lint`, so repo-owned knowledge pages must stay structurally valid alongside the code/docs checks
+- Codex plugin workflow policy is now repo-owned too:
+  - `docs/agent-plugin-workflows.md` is the canonical rollout + trigger matrix
+    for external operational plugins
+  - preferred install order is `Sentry`, then `CodeRabbit`, then
+    `Cloudflare`
+  - when those plugins are installed and authenticated, agents should prefer
+    them over broad web search for operational state they can answer directly
+  - Supabase MCP is now connected as a read-only-first operational connector;
+    use the repo-owned guidance in `docs/supabase-db-workflow.md` and keep
+    Prisma as schema-history authority
+  - use `docs/supabase-incident-playbook.md` for migration-fail,
+    wrong-connection, pooler/direct mismatch, staging-drift, and query/runtime
+    incident triage
 
 Important: build must stay schema-mutation-free. Migration deploy is a separate operational step.
 
@@ -92,6 +115,10 @@ Important: build must stay schema-mutation-free. Migration deploy is a separate 
 - `db:push` is draft mode for local schema experimentation. Use it while fields/relations are still changing.
 - `db:migrate` is record-history mode. Use it once the schema change is stable and should be committed as a real migration.
 - `db:deploy` is apply-history mode. Use it only to apply existing migrations to clean or properly baselined databases.
+- Supabase is the hosted Postgres platform in this workflow, but Prisma remains
+  the canonical schema-history authority
+- do not run a second migration authority in parallel just because Supabase
+  supports its own migration/branching workflows
 
 Recommended field-add flow:
 
@@ -108,11 +135,28 @@ Current repo caveat:
 - The current local database has schema state that is not fully tracked by Prisma Migrate history, so `db:deploy` is not the safe default path for that database.
 - For narrowly scoped local DB fixes, prefer a clean dev DB or narrow SQL over forcing `db:deploy` or `db:push --accept-data-loss`.
 - The clean local Postgres path is now verified again: a fresh database can bootstrap through `db:deploy` + `db:seed`, and the repo includes `20260415013823_add_user_provider_image` so `User.providerImage` is no longer a schema drift that breaks fresh seeds.
+- Supabase workflow note:
+  - use local Postgres + Prisma for iteration
+  - use Supabase as the hosted environment target
+  - use `DATABASE_URL` for app runtime and `DIRECT_URL` for Prisma CLI /
+    migration workflows
+  - see `docs/supabase-db-workflow.md` for the canonical repo guidance,
+    including the staging/production env contract, branch policy, and the rule
+    for when Codex should ask the user to inspect Supabase Dashboard
+  - current Supabase RLS remediation is classified as `pre-launch hardening`
+    rather than an immediate blocker during the active product-build phase,
+    unless the app starts using Supabase REST/Realtime/client SDK surfaces
+  - use `docs/supabase-incident-playbook.md` for the preferred DB incident
+    debug order
 
 ## Analytics / Observability
 
 - Vercel Analytics via `@vercel/analytics`
 - Vercel Speed Insights via `@vercel/speed-insights`
+- Sentry is the preferred first external observability plugin for production
+  incidents once installed in Codex; use it for recent runtime errors, traces,
+  webhook failures, and hidden post-deploy regressions that are not fully
+  explained by local smoke checks alone
 - Custom server-side performance tracing utilities live under `src/lib/performance/*`
 - Root-layout browser telemetry is production-only; local dev and CI browser verification do not inject the Vercel Analytics / Speed Insights scripts anymore, which keeps smoke suites from depending on outbound telemetry requests.
 - Security headers now use a production-only strict-transport profile: `Strict-Transport-Security` and CSP `upgrade-insecure-requests` stay enabled in production, but local dev / CI browser verification no longer upgrades `http://localhost` asset redirects to broken `https://localhost` requests.
@@ -126,17 +170,23 @@ Current repo caveat:
 | Paid/private file | protected route: `/api/download/[resourceId]` |
 | Secure file delivery | purchase/ownership check → guarded access / signed URL flow |
 
+Operational plugin note:
+
+- Cloudflare is the preferred external operational plugin for R2 bucket state,
+  presigned URL delivery, object-storage debugging, and related edge/WAF
+  questions once installed in Codex
+
 ## Browser / UI Verification Surfaces
 
 - Playwright is configured in `playwright.config.ts`; the local project name remains `chromium`, and it now defaults to `channel: "chromium"` so local verification uses Playwright's bundled Chromium browser instead of the bundled headless shell or installed Chrome stable. Set `PLAYWRIGHT_BROWSER_CHANNEL=chrome` only when you intentionally want installed-Chrome coverage. The default local base URL resolves to `http://127.0.0.1:3000`.
-- On this current macOS local machine, `playwright test` browser launch is still less stable than direct Playwright API launch. For high-signal local debugging, prefer `npm run browser:probe -- <scenario...>` or `npm run smoke:local:browser`; keep the full Playwright Test suite as the CI/cloud verification surface.
+- On this current macOS local machine, `playwright test` browser launch is still less stable than direct Playwright API launch. In sandboxed agent sessions, Chromium may fail before any test body runs with `MachPortRendezvousServer` / `Permission denied (1100)`; when that happens, rerun Playwright outside the sandbox or with elevated permissions. For high-signal local debugging, prefer `npm run browser:probe -- <scenario...>` or `npm run smoke:local:browser`; keep the full Playwright Test suite as the CI/cloud verification surface.
 - `chrome-devtools-mcp` is now an approved local browser-runtime verification companion for this repo. Use it for authenticated Chrome-session probing, DOM/console/network inspection, layout/overlay debugging, and targeted click-through validation when the goal is to inspect the real browser state rather than record a regression test.
 - Verification policy is now layered: request-level smoke for auth/redirect/ownership, `chrome-devtools-mcp` for local browser/runtime proof, and Playwright for canonical assertions/regression/CI. `chrome-devtools-mcp` should not replace Playwright in GitHub Actions or other durable test-suite contexts.
 - On the current local machine, Chrome for Testing may expose the DevTools endpoint on `::1:9222` while MCP expects `127.0.0.1:9222`; when that happens, keep a local TCP bridge in front of the Chrome debug instance before attaching `chrome-devtools-mcp`.
 - GitHub Actions browser smoke now uses the same Playwright config surface but runs in cloud Linux with a repo-owned Postgres service and seeded demo data, which gives the project a browser verification path that does not depend on the quirks of a specific local macOS browser runtime.
 - Storybook is intentionally scoped to `src/design-system/primitives/**/*.stories.*` and `src/design-system/components/**/*.stories.*`.
 - Chromatic is available on top of that same Storybook surface for hosted visual review, but it is not wired into CI or usable until a project token is provisioned.
-- Theme bootstrap now defaults first paint to `system`; stored `light` and `dark` preferences still override that baseline at runtime, and the Prisma `UserPreference.theme` default now matches that same `system` baseline for newly created rows. The `/dashboard-v2/settings` preference form now materializes the current runtime theme mode into `localStorage` when no stored theme exists yet, so opening settings no longer feels like it auto-switches to a DB-backed theme behind the user's back.
+- Theme bootstrap now defaults first paint to `system`; stored `light` and `dark` preferences still override that baseline at runtime, and the Prisma `UserPreference.theme` default now matches that same `system` baseline for newly created rows. The `/dashboard/settings` preference form now materializes the current runtime theme mode into `localStorage` when no stored theme exists yet, so opening settings no longer feels like it auto-switches to a DB-backed theme behind the user's back.
 - Accessibility checks are available through `@axe-core/playwright`.
 - Lighthouse CI is configured through `.lighthouserc.json`.
 - Bundle inspection is available through `@next/bundle-analyzer`.
@@ -171,6 +221,10 @@ UPSTASH_REDIS_REST_TOKEN
 
 - `DATABASE_URL` is the app runtime DB connection.
 - `DIRECT_URL` is still required operationally for Prisma CLI / migration workflows because `prisma/schema.prisma` declares `directUrl`.
+- `NEXT_PUBLIC_SENTRY_DSN` is the preferred DSN env for browser + server event
+  delivery; `SENTRY_DSN` can act as a server-side fallback if needed
+- `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT` are only required for
+  source-map upload during build
 - `RESEND_API_KEY` + `EMAIL_FROM` are needed for verify-email / reset-password mail delivery.
 - `PERFORMANCE_WARM_SECRET` is used by internal warm routes and post-deploy perf jobs.
 - Current production warning: `XENDIT_SECRET_KEY` is still a test key.

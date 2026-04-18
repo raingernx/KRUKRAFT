@@ -14,7 +14,7 @@ export async function requireCreatorDashboardAccess(route: string) {
     canAccessCreatorWorkspace(access);
 
   if (!canOpenCreatorFamily) {
-    redirect(routes.dashboardV2CreatorApply);
+    redirect(routes.dashboardCreatorApply);
   }
 
   return {

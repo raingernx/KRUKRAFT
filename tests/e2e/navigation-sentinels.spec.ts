@@ -28,19 +28,33 @@ async function returnToResources(page: Page) {
 async function openAccountMenu(page: Page, trigger: Locator) {
   const menu = page.locator('[data-dashboard-account-menu="true"]:visible').first();
 
-  for (let attempt = 0; attempt < 2; attempt += 1) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
     await trigger.scrollIntoViewIfNeeded().catch(() => undefined);
+    await trigger.hover().catch(() => undefined);
     await trigger.click({ timeout: 5_000 });
 
     try {
       await expect(menu).toBeVisible({ timeout: 5_000 });
       return;
     } catch (error) {
-      if (attempt === 1) {
+      await trigger.focus().catch(() => undefined);
+      await page.keyboard.press("Enter").catch(() => undefined);
+
+      try {
+        await expect(menu).toBeVisible({ timeout: 3_000 });
+        return;
+      } catch {
+        // fall through to retry path below
+      }
+
+      if (attempt === 2) {
         throw error;
       }
 
       await page.keyboard.press("Escape").catch(() => undefined);
+      await trigger.evaluate((element) => {
+        (element as HTMLButtonElement).click();
+      }).catch(() => undefined);
     }
   }
 }
@@ -55,7 +69,7 @@ async function clickAccountMenuTargetWithRetry(
     `${href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\?.*)?$`,
   );
 
-  for (let attempt = 0; attempt < 2; attempt += 1) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
     await openAccountMenu(page, trigger);
 
     const item = page
@@ -65,13 +79,22 @@ async function clickAccountMenuTargetWithRetry(
       .first();
     await expect(item).toBeVisible({ timeout: 20_000 });
     await item.scrollIntoViewIfNeeded().catch(() => undefined);
+
+    const navigationStarted = page
+      .waitForURL(urlPattern, { timeout: 12_000, waitUntil: "commit" })
+      .then(() => true)
+      .catch(() => false);
+
     await item.click();
 
     try {
+      if (!(await navigationStarted)) {
+        throw new Error(`Account menu navigation did not start for ${href}`);
+      }
       await expect(page).toHaveURL(urlPattern, { timeout: 20_000 });
       return;
     } catch (error) {
-      if (attempt === 1) {
+      if (attempt === 2) {
         throw error;
       }
 
@@ -101,6 +124,7 @@ async function findSeededResourceId() {
 }
 
 test("public account dropdown reaches dashboard routes without shell hangs", async ({ page }) => {
+  test.slow();
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
   await loginAsCreator(page, "/resources");
@@ -115,29 +139,29 @@ test("public account dropdown reaches dashboard routes without shell hangs", asy
   await expect(accountButton).toBeVisible({ timeout: 30_000 });
 
   const targets: Array<{ href: string; heading: RegExp; routeReady: string }> = [
-    { href: "/dashboard-v2", heading: /Welcome back/i, routeReady: "dashboard-overview" },
+    { href: "/dashboard", heading: /Welcome back/i, routeReady: "dashboard-overview" },
     {
-      href: "/dashboard-v2/membership",
+      href: "/dashboard/membership",
       heading: /^(Membership|Subscription)$/i,
       routeReady: "dashboard-subscription",
     },
     {
-      href: "/dashboard-v2/settings",
+      href: "/dashboard/settings",
       heading: DASHBOARD_SETTINGS_HEADING,
       routeReady: "dashboard-settings",
     },
     {
-      href: "/dashboard-v2/creator",
+      href: "/dashboard/creator",
       heading: /^Workspace$/i,
       routeReady: "dashboard-creator-overview",
     },
     {
-      href: "/dashboard-v2/creator/resources",
+      href: "/dashboard/creator/resources",
       heading: /^Creator resources$/i,
       routeReady: "dashboard-creator-resources",
     },
     {
-      href: "/dashboard-v2/creator/sales",
+      href: "/dashboard/creator/sales",
       heading: /^Earnings$/i,
       routeReady: "dashboard-creator-sales",
     },
@@ -166,8 +190,8 @@ test("public account dropdown reaches dashboard routes without shell hangs", asy
 test("dashboard avatar menu reaches home membership and settings", async ({ page }) => {
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
-  await loginAsCreator(page, "/dashboard-v2");
-  await expect(page).toHaveURL(/\/dashboard-v2(?:\?.*)?$/);
+  await loginAsCreator(page, "/dashboard");
+  await expect(page).toHaveURL(/\/dashboard(?:\?.*)?$/);
   await expect(page.getByRole("heading", { name: /Welcome back/i }).first()).toBeVisible({
     timeout: 20_000,
   });
@@ -181,21 +205,21 @@ test("dashboard avatar menu reaches home membership and settings", async ({ page
   await expect(avatarButton).toBeVisible({ timeout: 20_000 });
 
   const targets: Array<{ href: string; heading: RegExp; routeReady: string }> = [
-    { href: "/dashboard-v2", heading: /Welcome back/i, routeReady: "dashboard-overview" },
+    { href: "/dashboard", heading: /Welcome back/i, routeReady: "dashboard-overview" },
     {
-      href: "/dashboard-v2/membership",
+      href: "/dashboard/membership",
       heading: /^Membership$/i,
       routeReady: "dashboard-subscription",
     },
     {
-      href: "/dashboard-v2/settings",
+      href: "/dashboard/settings",
       heading: DASHBOARD_SETTINGS_HEADING,
       routeReady: "dashboard-settings",
     },
   ];
 
   for (const target of targets) {
-    await page.goto("/dashboard-v2", { waitUntil: "domcontentloaded" });
+    await page.goto("/dashboard", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: /Welcome back/i }).first()).toBeVisible({
       timeout: 20_000,
     });

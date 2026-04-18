@@ -14,7 +14,7 @@ import {
   Tag,
   Tags,
   Users,
-} from "lucide-react";
+} from "@/lib/icons";
 import type { DashboardNavSection } from "@/components/layout/dashboard/dashboard-nav.types";
 import { routes } from "@/lib/routes";
 

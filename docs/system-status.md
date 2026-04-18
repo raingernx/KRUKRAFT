@@ -17,3 +17,8 @@
 | Resource versioning   | Implemented | `ResourceVersion` model and admin version APIs (list, download, rollback) support version snapshots and rollbacks. |
 | Draft/publish workflow| Partial     | `ResourceStatus` (`DRAFT`, `PUBLISHED`, `ARCHIVED`) and draft-related APIs exist; more advanced review/approval flows and scheduled publishing are not present. |
 
+## Recent Breaking Changes
+
+- Legacy dashboard URLs under `/dashboard-v2*` were removed from the active app surface.
+- Canonical protected dashboard routes now live only under `/dashboard/*`.
+- Any saved bookmark, shared link, or external reference still pointing at `/dashboard-v2*` must be updated.

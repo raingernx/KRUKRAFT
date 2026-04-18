@@ -1,13 +1,13 @@
 "use client";
 
-import { Check, CreditCard, Sparkles } from "lucide-react";
+import { Check, CreditCard, Sparkles } from "@/lib/icons";
 
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import {
   DashboardPageHeader,
   DashboardPageHeaderSkeleton,
-} from "@/components/dashboard/DashboardPageHeader";
-import { DashboardPageStack } from "@/components/dashboard/DashboardPageShell";
+} from "@/components/layout/dashboard/DashboardPageHeader";
+import { DashboardPageStack } from "@/components/layout/dashboard/DashboardPageShell";
 import {
   DownloadsEmptyStatePreview,
   DownloadsSummaryPreview,

@@ -2,7 +2,7 @@
 
 Use this file as the single source of truth for active implementation state.
 
-## Plan Snapshot
+ ## Plan Snapshot
 
 Parent Plan: `Krukraft theme refresh plan`
 
@@ -224,7 +224,7 @@ Current recommendation order:
 - [x] Carry forward the completed DS baseline as the starting point
 - [x] Carry forward the completed reference-driven alignment plan as the contract baseline
 - [x] Carry forward the completed DS visual foundation pass as the visual baseline
-- [x] Keep dashboard-v2 frozen at the current stable baseline
+- [x] Keep the dashboard runtime baseline frozen at the current stable baseline
 - [x] Carry forward the completed `/resources` pilot as the latest public-route baseline
 - [x] Open a new explicit parent plan for Krukraft theme refresh
 - [x] Lock the Krukraft theme direction brief in the canonical DS docs
@@ -302,31 +302,31 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 ## Current Baseline Notes
 
-### Dashboard-v2
-- `dashboard-v2` is the only canonical dashboard family.
-- Old `(dashboard)` and `(dashboard-lite)` route families were hard-cut and removed.
+### Dashboard
+- `/dashboard/*` is now the canonical dashboard family.
+- `(dashboard-lite)` stays retired.
 - Active runtime perf baseline keeps the original frozen core at:
   - nav prefetch uplift
   - creator/resources timing cleanup
 - plus one new deliberate learner-account follow-up:
-- `/dashboard-v2/settings` now streams its sections behind an in-page `Suspense` boundary again instead of awaiting the full combined payload before first in-page HTML
-- `/dashboard-v2/settings` now renders a real interactive settings surface inside that streamed shell, and the dashboard-v2 settings route/API no longer accept a page-level language preference
-- `/dashboard-v2/membership` now renders its intro shell before the membership payload resolves and streams the summary cards plus plan-status panel behind a route-matched in-page fallback instead of awaiting the full account payload before any in-page content
+- `/dashboard/settings` now streams its sections behind an in-page `Suspense` boundary again instead of awaiting the full combined payload before first in-page HTML
+- `/dashboard/settings` now renders a real interactive settings surface inside that streamed shell, and the canonical settings route/API no longer accept a page-level language preference
+- `/dashboard/membership` now renders its intro shell before the membership payload resolves and streams the summary cards plus plan-status panel behind a route-matched in-page fallback instead of awaiting the full account payload before any in-page content
 
 ### Verification
 - Warm local `creator-workspace.spec.ts` passed `8/8` after rollback cleanup and short flake stabilization.
-- Treat that suite as the main dashboard-v2 regression gate unless a task clearly needs a narrower surface.
-- Runtime feel recheck on 2026-04-14 still confirms the dashboard-v2 family suite passes, and the public follow-up that remained after that pass is now green too:
-  - `tests/e2e/navigation-shells.spec.ts` passes for `/resources` ↔ `/dashboard-v2/library`
+- Treat that suite as the main dashboard regression gate unless a task clearly needs a narrower surface.
+- Runtime feel recheck on 2026-04-14 still confirms the dashboard family suite passes, and the public follow-up that remained after that pass is now green too:
+  - `tests/e2e/navigation-shells.spec.ts` passes for `/resources` ↔ `/dashboard/library`
   - `tests/e2e/navigation-sentinels.spec.ts` passes for the public account dropdown contract
-- Public account-menu parity pass now mirrors dashboard-v2 IA/UI on the marketplace header, including the redesigned `Membership` entry and creator links, and the follow-up stabilization work closed the remaining public `/resources` auth-viewer and library cold-entry proof failures on the active baseline.
-- The `/dashboard-v2/settings` pass is now also green against:
+- Public account-menu parity pass now mirrors the dashboard IA/UI on the marketplace header, including the redesigned `Membership` entry and creator links, and the follow-up stabilization work closed the remaining public `/resources` auth-viewer and library cold-entry proof failures on the active baseline.
+- The `/dashboard/settings` pass is now also green against:
   - `tests/e2e/settings-theme.spec.ts`
   - `tests/e2e/navigation-sentinels.spec.ts` (`dashboard avatar menu reaches home membership and settings`)
-  - `tests/e2e/creator-workspace.spec.ts` (`dashboard-v2 account surfaces clear the dashboard overlay after shell readiness`)
-- The `/dashboard-v2/membership` pass is green against:
+  - `tests/e2e/creator-workspace.spec.ts` (`dashboard account surfaces clear the dashboard overlay after shell readiness`)
+- The `/dashboard/membership` pass is green against:
   - `tests/e2e/dashboard-membership.spec.ts`
-  - `tests/e2e/creator-workspace.spec.ts` (`dashboard-v2 account surfaces clear the dashboard overlay after shell readiness`)
+  - `tests/e2e/creator-workspace.spec.ts` (`dashboard account surfaces clear the dashboard overlay after shell readiness`)
   - `tests/e2e/navigation-shells.spec.ts`
 - One-pass local reruns still surfaced the older public sentinel and creator cold-entry flake classes during this work session, but those failures happened outside the membership route contract itself
 
@@ -340,12 +340,12 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 Add only short, high-signal entries here.
 
 - 2026-04-17: Lock `Paper B` as the neutral direction, `#4338CA` as the primary accent, and `Rust` + `Sand` as the support accents for the Krukraft theme refresh plan; the next mandatory decision is the first narrow implementation slice.
-- 2026-04-14: Keep dashboard-v2 perf baseline frozen after rollback; do not re-open broad streaming refactors.
+- 2026-04-14: Keep dashboard perf baseline frozen after rollback; do not re-open broad streaming refactors.
 - 2026-04-14: Remove `.design-tools/awesome-design-md` and `.design-tools/shadcn-examples` from repo tracking; keep them local-only.
-- 2026-04-14: Runtime feel recheck shows dashboard-v2 internal route family is stable; next follow-up should target public↔dashboard library handoff/account-menu parity before reopening another perf pass.
-- 2026-04-14: Public navbar account menu now follows the dashboard-v2 account-menu contract for IA/UI, but the next active follow-up remains public↔dashboard library handoff stabilization because `navigation-shells` still catches a blank-gap transition sample at that boundary.
+- 2026-04-14: Runtime feel recheck shows the canonical dashboard route family is stable; next follow-up should target public↔dashboard library handoff/account-menu parity before reopening another perf pass.
+- 2026-04-14: Public navbar account menu now follows the dashboard account-menu contract for IA/UI, but the next active follow-up remains public↔dashboard library handoff stabilization because `navigation-shells` still catches a blank-gap transition sample at that boundary.
 - 2026-04-14: The authenticated account dropdown is now a shared public+dashboard component; keep sentinel coverage green when changing trigger shape, featured membership item, or account/creator menu sections.
-- 2026-04-15: Marketplace navbar skeleton ownership and dashboard-v2 topbar skeleton geometry were both tightened after the shared dropdown refresh; the next public-nav follow-up is proof cleanliness, not another structural menu rewrite.
+- 2026-04-15: Marketplace navbar skeleton ownership and dashboard topbar skeleton geometry were both tightened after the shared dropdown refresh; the next public-nav follow-up is proof cleanliness, not another structural menu rewrite.
 - 2026-04-15: The latest public navbar hydration warning sample points to a recoverable SSR/client mismatch around the auth-viewer boundary in dev, but it is not currently an active repro; treat the remaining public dropdown navigation timeout as the main open proof issue.
 - 2026-04-15: `navigation-sentinels` is green again after tightening the public account-dropdown sentinel helper to use the real dropdown activation contract instead of an over-forced click path.
 - 2026-04-16: Active plan changed from discover-first to DS-first; keep discover deferred and dashboard frozen until the first design-system migration pass is chosen deliberately.
@@ -358,6 +358,7 @@ Add only short, high-signal entries here.
 - 2026-04-17: `src/design-system/theme-playbook.md` is now the canonical theme-training artifact; palette posture must be trained and approved there before any new runtime color slice is landed.
 - 2026-04-17: the `Theme Lab` page inside the live Figma file `Krukraft Design System` is now the visual review surface for theme training; it may use temporary candidate colors for discussion, but it must not be treated as shipped DS theme output.
 - 2026-04-17: the temporary `/dev/theme-playbook` route was removed after moving theme training into Figma so palette review is no longer tied to the Krukraft app shell.
+- 2026-04-18: legacy `/dashboard-v2*` URLs were fully retired; canonical protected dashboard routes now live only under `/dashboard/*`, and old bookmarks/links should be updated because the legacy paths now return `404`.
 - 2026-04-17: the `Theme Lab` page now includes a blank component sandbox so component studies can happen before palette, spacing, and radius decisions are committed into the DS.
 - 2026-04-17: the neutral posture decision is now locked to `Paper B`; after approving `Rust` and `Sand` as support accents, the next mandatory decision is the first narrow implementation slice.
 

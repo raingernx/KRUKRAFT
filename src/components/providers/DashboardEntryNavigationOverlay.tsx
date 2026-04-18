@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { DashboardV2ShellSkeleton } from "@/components/skeletons/DashboardV2PrototypeSkeleton";
+import { DashboardAppShellSkeleton } from "@/components/skeletons/DashboardAppPrototypeSkeleton";
 import { useDashboardNavigationState } from "@/components/layout/dashboard/dashboardNavigationState";
 import {
   getDashboardReadySelector,
@@ -64,7 +64,7 @@ export function DashboardEntryNavigationOverlay() {
       data-loading-scope="dashboard-group"
       className="pointer-events-none fixed inset-0 z-[84] bg-background"
     >
-      <DashboardV2ShellSkeleton />
+      <DashboardAppShellSkeleton />
     </div>
   );
 }

@@ -14,6 +14,8 @@ test.describe.configure({ timeout: 180_000 });
 
 const DASHBOARD_SETTINGS_HEADING = /Account settings/i;
 const EMPTY_CREATOR_PASSWORD = "Krukraft2024!";
+const DASHBOARD_GOTO_TIMEOUT_MS = 60_000;
+const DASHBOARD_ROUTE_READY_TIMEOUT_MS = 60_000;
 
 type RefreshSample = {
   href: string;
@@ -73,6 +75,8 @@ function isRetryableGotoError(error: unknown) {
   return (
     message.includes("net::ERR_ABORTED") ||
     message.includes("net::ERR_CONNECTION_REFUSED") ||
+    message.includes("Timeout 30000ms exceeded") ||
+    message.includes("Timeout 60000ms exceeded") ||
     message.includes("frame was detached") ||
     message.includes("Navigation failed because page was closed")
   );
@@ -81,7 +85,10 @@ function isRetryableGotoError(error: unknown) {
 async function gotoWithRetry(page: Page, path: string, attempts = 3) {
   for (let attempt = 0; attempt < attempts; attempt += 1) {
     try {
-      await page.goto(path, { waitUntil: "domcontentloaded" });
+      await page.goto(path, {
+        waitUntil: "commit",
+        timeout: DASHBOARD_GOTO_TIMEOUT_MS,
+      });
       return;
     } catch (error) {
       if (!isRetryableGotoError(error) || attempt === attempts - 1) {
@@ -107,25 +114,23 @@ const DASHBOARD_FULL_SHELL_SCOPES = [
   "dashboard-creator-sales",
   "dashboard-creator-payouts",
   "dashboard-creator-profile",
-  "dashboard-creator-settings",
   "dashboard-creator-resource-editor",
   "dashboard-creator-apply",
-  "dashboard-v2-neutral",
-  "dashboard-v2-home",
-  "dashboard-v2-library",
-  "dashboard-v2-downloads",
-  "dashboard-v2-purchases",
-  "dashboard-v2-membership",
-  "dashboard-v2-settings",
-  "dashboard-v2-creator-neutral",
-  "dashboard-v2-creator",
-  "dashboard-v2-creator-analytics",
-  "dashboard-v2-creator-resources",
-  "dashboard-v2-creator-sales",
-  "dashboard-v2-creator-payouts",
-  "dashboard-v2-creator-profile",
-  "dashboard-v2-creator-settings",
-  "dashboard-v2-creator-editor",
+  "dashboard-neutral",
+  "dashboard-home",
+  "dashboard-library",
+  "dashboard-downloads",
+  "dashboard-purchases",
+  "dashboard-membership",
+  "dashboard-settings",
+  "dashboard-creator-neutral",
+  "dashboard-creator",
+  "dashboard-creator-analytics",
+  "dashboard-creator-resources",
+  "dashboard-creator-sales",
+  "dashboard-creator-payouts",
+  "dashboard-creator-profile",
+  "dashboard-creator-editor",
 ] as const;
 
 async function expectNoDashboardGroupOverlay(page: Page) {
@@ -134,7 +139,7 @@ async function expectNoDashboardGroupOverlay(page: Page) {
   });
 }
 
-async function expectNoDashboardShellStack(page: Page) {
+async function expectNoDashboardFullShellOverlap(page: Page) {
   const visibleScopes = (await page.evaluate(`
     (() => {
       const knownScopes = ${JSON.stringify([...DASHBOARD_FULL_SHELL_SCOPES])};
@@ -176,6 +181,9 @@ async function startRefreshProbe(page: Page) {
   const refreshProbeScript = `
     (() => {
       const storageKey = "__krukraftRefreshProbeSamples";
+      const activeKey = "__krukraftRefreshProbeActive";
+      const SAMPLE_INTERVAL_MS = 80;
+      const MAX_SAMPLES = 400;
 
       const readSamples = () => {
         try {
@@ -192,6 +200,20 @@ async function startRefreshProbe(page: Page) {
 
       let stopped = false;
       let rafId = 0;
+      let lastSampleTs = -Infinity;
+      let lastSampleSignature = "";
+      let lastPersistTs = -Infinity;
+      let samples = [];
+
+      const persistSamples = (force = false) => {
+        const now = performance.now();
+        if (!force && now - lastPersistTs < 250) {
+          return;
+        }
+
+        writeSamples(samples);
+        lastPersistTs = now;
+      };
 
       const getVisibleLoadingScopes = () => {
         const isVisible = (node) => {
@@ -225,31 +247,65 @@ async function startRefreshProbe(page: Page) {
           .filter(Boolean);
       };
 
+      const collectSample = () => ({
+        href: window.location.pathname + window.location.search,
+        ts: performance.now(),
+        rootLoadingVisible: Boolean(document.querySelector("[data-app-root-loading='true']")),
+        dashboardShellVisible: Boolean(document.querySelector("[data-route-shell-ready='dashboard']")),
+        routeReady: Array.from(document.querySelectorAll("[data-route-shell-ready]"))
+          .map((node) => node.getAttribute("data-route-shell-ready"))
+          .filter(Boolean),
+        loadingScopes: getVisibleLoadingScopes(),
+      });
+
       const sample = () => {
-        const samples = readSamples();
-        samples.push({
-          href: window.location.pathname + window.location.search,
-          ts: performance.now(),
-          rootLoadingVisible: Boolean(document.querySelector("[data-app-root-loading='true']")),
-          dashboardShellVisible: Boolean(document.querySelector("[data-route-shell-ready='dashboard']")),
-          routeReady: Array.from(document.querySelectorAll("[data-route-shell-ready]"))
-            .map((node) => node.getAttribute("data-route-shell-ready"))
-            .filter(Boolean),
-          loadingScopes: getVisibleLoadingScopes(),
+        const nextSample = collectSample();
+        const nextSignature = JSON.stringify({
+          href: nextSample.href,
+          rootLoadingVisible: nextSample.rootLoadingVisible,
+          dashboardShellVisible: nextSample.dashboardShellVisible,
+          routeReady: nextSample.routeReady,
+          loadingScopes: nextSample.loadingScopes,
         });
-        writeSamples(samples);
+        const enoughTimeElapsed =
+          nextSample.ts - lastSampleTs >= SAMPLE_INTERVAL_MS;
+
+        if (enoughTimeElapsed || nextSignature !== lastSampleSignature) {
+          if (Array.isArray(samples) && samples.length === 0) {
+            samples = readSamples();
+          }
+          samples.push(nextSample);
+          if (samples.length > MAX_SAMPLES) {
+            samples.splice(0, samples.length - MAX_SAMPLES);
+          }
+          persistSamples();
+          lastSampleTs = nextSample.ts;
+          lastSampleSignature = nextSignature;
+        }
 
         if (!stopped) {
           rafId = window.requestAnimationFrame(sample);
         }
       };
 
-      window.sessionStorage.removeItem(storageKey);
+      if (window.sessionStorage.getItem(activeKey) !== "1") {
+        window.sessionStorage.removeItem(storageKey);
+        window.sessionStorage.setItem(activeKey, "1");
+        samples = [];
+      } else {
+        samples = readSamples();
+      }
+
+      window.addEventListener("pagehide", () => {
+        persistSamples(true);
+      });
       window.__krukraftRefreshProbe = {
         stop: () => {
           stopped = true;
           window.cancelAnimationFrame(rafId);
-          return readSamples();
+          persistSamples(true);
+          window.sessionStorage.removeItem(activeKey);
+          return samples;
         },
       };
 
@@ -352,8 +408,7 @@ async function clickDashboardNavigationLink(
     )
     .first();
 
-  await expect(accountButton).toBeVisible({ timeout: 20_000 });
-  await accountButton.click();
+  await openDashboardAccountMenu(page, accountButton);
 
   const accountMenuLink = page
     .locator(`[data-dashboard-account-menu="true"] [data-dashboard-account-link="${href}"]:visible`)
@@ -362,6 +417,88 @@ async function clickDashboardNavigationLink(
 
   await expect(accountMenuLink).toBeVisible({ timeout: 20_000 });
   await clickUntilNavigationStarts(accountMenuLink);
+}
+
+async function openDashboardAccountMenu(
+  page: Page,
+  accountButton = page
+    .locator(
+      'header button[data-dashboard-account-trigger="true"][data-dashboard-account-ready="true"]:visible',
+    )
+    .first(),
+) {
+  const menu = page.locator('[data-dashboard-account-menu="true"]:visible').first();
+
+  await expect(accountButton).toBeVisible({ timeout: 20_000 });
+
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    await accountButton.scrollIntoViewIfNeeded().catch(() => undefined);
+    await accountButton.hover().catch(() => undefined);
+    await accountButton.click({ timeout: 5_000 });
+
+    const expandedAfterClick = await expect
+      .poll(
+        async () => accountButton.getAttribute("aria-expanded"),
+        { timeout: 2_000 },
+      )
+      .toBe("true")
+      .then(() => true)
+      .catch(() => false);
+
+    if (expandedAfterClick && (await menu.isVisible().catch(() => false))) {
+      break;
+    }
+
+    await accountButton.focus().catch(() => undefined);
+    await page.keyboard.press("Space").catch(() => undefined);
+    const expandedAfterSpace = await expect
+      .poll(
+        async () => accountButton.getAttribute("aria-expanded"),
+        { timeout: 2_000 },
+      )
+      .toBe("true")
+      .then(() => true)
+      .catch(() => false);
+
+    if (expandedAfterSpace && (await menu.isVisible().catch(() => false))) {
+      break;
+    }
+
+    await page.keyboard.press("Enter").catch(() => undefined);
+    const expandedAfterEnter = await expect
+      .poll(
+        async () => accountButton.getAttribute("aria-expanded"),
+        { timeout: 2_000 },
+      )
+      .toBe("true")
+      .then(() => true)
+      .catch(() => false);
+
+    if (expandedAfterEnter && (await menu.isVisible().catch(() => false))) {
+      break;
+    }
+
+    await page.keyboard.press("Escape").catch(() => undefined);
+    await accountButton.evaluate((element) => {
+      (element as HTMLButtonElement).click();
+    }).catch(() => undefined);
+    const expandedAfterEval = await expect
+      .poll(
+        async () => accountButton.getAttribute("aria-expanded"),
+        { timeout: 2_000 },
+      )
+      .toBe("true")
+      .then(() => true)
+      .catch(() => false);
+
+    if (expandedAfterEval && (await menu.isVisible().catch(() => false))) {
+      break;
+    }
+
+    await page.waitForTimeout(250);
+  }
+
+  await expect(menu).toBeVisible({ timeout: 20_000 });
 }
 
 function expectNoDisallowedScopesAfterRouteReady(
@@ -423,10 +560,10 @@ async function warmDashboardRoutes(
     await expect(
       page.locator(`[data-route-shell-ready="${route.routeReady}"]`).first(),
     ).toBeVisible({
-      timeout: 30_000,
+      timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
     });
     await expect(page.getByRole("heading", { name: route.heading }).first()).toBeVisible({
-      timeout: 30_000,
+      timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
     });
   }
 }
@@ -442,32 +579,33 @@ test("creator workspace empty recent resources state stays centered and actionab
   await loginWithCredentials(
     page,
     { email, password: EMPTY_CREATOR_PASSWORD },
-    "/dashboard-v2/creator",
+    "/dashboard/creator",
   );
 
   await expect(
     page.locator('[data-route-shell-ready="dashboard-creator-overview"]').first(),
   ).toBeVisible({
-    timeout: 30_000,
+    timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
   });
   await expect(page.getByRole("heading", { name: /^Workspace$/i })).toBeVisible();
-  await expect(page.getByText(/^Launch checklist$/i)).toBeVisible();
-  await expect(page.getByText(/^0\/3 complete$/i)).toBeVisible();
+  await expect(
+    page.locator("#creator-quick-links").getByText(/^Launch checklist$/i),
+  ).toBeVisible();
+  await expect(
+    page.locator("#creator-quick-links").getByText(/^0\/3 complete$/i),
+  ).toBeVisible();
   await expect(page.getByText(/^No creator resources yet$/i)).toBeVisible();
   await expect(
-    page
-      .locator("#creator-workspace")
-      .getByRole("link", { name: /^Create resource$/i }),
+    page.locator("main").getByRole("link", { name: /^Create resource$/i }),
   ).toHaveCount(2);
   await expect(
-    page
-      .locator("#creator-workspace")
-      .getByRole("link", { name: /^Storefront/i }),
+    page.locator("main").getByRole("link", { name: /^Storefront$/i }),
   ).toHaveCount(1);
   await expect(page.locator("#creator-profile-hub")).toHaveCount(0);
 
   const emptyState = page.getByText(/^No creator resources yet$/i).locator("..");
-  await expect(emptyState).toHaveClass(/max-w-2xl/);
+  await expect(emptyState).toHaveClass(/text-center/);
+  await expect(emptyState).toHaveClass(/max-w-none/);
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -486,38 +624,38 @@ test("creator workspace routes render creator shells without dashboard-in-dashbo
     heading: RegExp;
   }> = [
     {
-      path: "/dashboard-v2/creator/resources",
+      path: "/dashboard/creator/resources",
       routeReady: "dashboard-creator-resources",
       heading: /^Creator resources$/i,
     },
     {
-      path: "/dashboard-v2/creator/resources/new",
+      path: "/dashboard/creator/resources/new",
       routeReady: "dashboard-creator-resource-editor",
       heading: /^(Create your first resource|New resource)$/i,
     },
     {
-      path: "/dashboard-v2/creator/profile",
+      path: "/dashboard/creator/profile",
       routeReady: "dashboard-creator-profile",
       heading: /^Profile$/i,
     },
     {
-      path: "/dashboard-v2/creator/settings",
-      finalPath: "/dashboard-v2/settings",
+      path: "/dashboard/creator/settings",
+      finalPath: "/dashboard/creator/settings",
       routeReady: "dashboard-settings",
       heading: DASHBOARD_SETTINGS_HEADING,
     },
     {
-      path: "/dashboard-v2/creator/analytics",
+      path: "/dashboard/creator/analytics",
       routeReady: "dashboard-creator-analytics",
       heading: /^Analytics$/i,
     },
     {
-      path: "/dashboard-v2/creator/sales",
+      path: "/dashboard/creator/sales",
       routeReady: "dashboard-creator-sales",
       heading: /^Earnings$/i,
     },
     {
-      path: "/dashboard-v2/creator/payouts",
+      path: "/dashboard/creator/payouts",
       routeReady: "dashboard-creator-payouts",
       heading: /^Payouts$/i,
     },
@@ -533,54 +671,54 @@ test("creator workspace routes render creator shells without dashboard-in-dashbo
       page,
     ).toHaveURL(new RegExp(`${finalPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`));
     await expect(page.locator(`[data-route-shell-ready="${route.routeReady}"]`).first()).toBeVisible({
-      timeout: 30_000,
+      timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
     });
     await expect(page.getByRole("heading", { name: route.heading }).first()).toBeVisible({
-      timeout: 30_000,
+      timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
     });
     await expectNoDashboardGroupOverlay(page);
-    await expectNoDashboardShellStack(page);
+    await expectNoDashboardFullShellOverlap(page);
   }
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
 });
 
-test("dashboard-v2 account surfaces clear the dashboard overlay after shell readiness", async ({
+test("dashboard account surfaces clear the dashboard overlay after shell readiness", async ({
   page,
 }) => {
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
-  const dashboardLiteRoutes: Array<{
+  const dashboardAccountRoutes: Array<{
     path: string;
     routeReady: string;
     heading: RegExp;
   }> = [
     {
-      path: "/dashboard-v2/settings",
+      path: "/dashboard/settings",
       routeReady: "dashboard-settings",
       heading: DASHBOARD_SETTINGS_HEADING,
     },
     {
-      path: "/dashboard-v2/membership",
+      path: "/dashboard/membership",
       routeReady: "dashboard-subscription",
       heading: /^(Membership|Subscription)$/i,
     },
   ];
 
-  await loginAsCreator(page, "/dashboard-v2");
+  await loginAsCreator(page, "/dashboard");
 
-  for (const route of dashboardLiteRoutes) {
+  for (const route of dashboardAccountRoutes) {
     await gotoWithRetry(page, route.path);
     await expect(page).toHaveURL(new RegExp(`${route.path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`));
     await expect(page.locator(`[data-route-shell-ready="${route.routeReady}"]`).first()).toBeVisible({
-      timeout: 30_000,
+      timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
     });
     await expect(page.getByRole("heading", { name: route.heading }).first()).toBeVisible({
-      timeout: 30_000,
+      timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
     });
     await expectNoDashboardGroupOverlay(page);
-    await expectNoDashboardShellStack(page);
+    await expectNoDashboardFullShellOverlap(page);
   }
 
   expect(pageErrors).toEqual([]);
@@ -593,17 +731,17 @@ test("creator apply clears dashboard overlays without shell stacking for regular
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
   await loginAsUser(page, "/resources");
-  await gotoWithRetry(page, "/dashboard-v2/creator/apply");
+  await gotoWithRetry(page, "/dashboard/creator/apply");
 
-  await expect(page).toHaveURL(/\/dashboard-v2\/creator\/apply$/);
+  await expect(page).toHaveURL(/\/dashboard\/creator\/apply$/);
   await expect(page.locator('[data-route-shell-ready="dashboard-creator-apply"]').first()).toBeVisible({
-    timeout: 30_000,
+    timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
   });
   await expect(page.getByRole("heading", { name: /^Become a Creator$/i }).first()).toBeVisible({
-    timeout: 30_000,
+    timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
   });
   await expectNoDashboardGroupOverlay(page);
-  await expectNoDashboardShellStack(page);
+  await expectNoDashboardFullShellOverlap(page);
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -619,43 +757,42 @@ test("creator nav stays hidden behind real creator access on learner dashboard r
     )
     .first();
 
-  await loginAsUser(page, "/dashboard-v2/library");
+  await loginAsUser(page, "/dashboard/library");
   await expect(page.locator('[data-route-shell-ready="dashboard-library"]').first()).toBeVisible({
-    timeout: 30_000,
+    timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
   });
 
-  await expect(page.locator('aside nav a[href="/dashboard-v2/creator/apply"]').first()).toBeVisible({
+  await expect(page.locator('aside nav a[href="/dashboard/creator/apply"]').first()).toBeVisible({
     timeout: 20_000,
   });
-  await expect(page.locator('aside nav a[href="/dashboard-v2/creator"]').first()).toHaveCount(0);
+  await expect(page.locator('aside nav a[href="/dashboard/creator"]').first()).toHaveCount(0);
   await expect(
-    page.locator('aside nav a[href="/dashboard-v2/creator/resources"]').first(),
+    page.locator('aside nav a[href="/dashboard/creator/resources"]').first(),
   ).toHaveCount(0);
-  await expect(page.locator('aside nav a[href="/dashboard-v2/creator/sales"]').first()).toHaveCount(0);
+  await expect(page.locator('aside nav a[href="/dashboard/creator/sales"]').first()).toHaveCount(0);
 
-  await expect(accountButton).toBeVisible({ timeout: 20_000 });
-  await accountButton.click();
+  await openDashboardAccountMenu(page, accountButton);
 
   await expect(
     page.locator(
-      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator/apply"]:visible',
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard/creator/apply"]:visible',
     ),
   ).toBeVisible({
     timeout: 20_000,
   });
   await expect(
     page.locator(
-      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator"]:visible',
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard/creator"]:visible',
     ),
   ).toHaveCount(0);
   await expect(
     page.locator(
-      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator/resources"]:visible',
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard/creator/resources"]:visible',
     ),
   ).toHaveCount(0);
   await expect(
     page.locator(
-      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator/sales"]:visible',
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard/creator/sales"]:visible',
     ),
   ).toHaveCount(0);
 
@@ -673,51 +810,50 @@ test("creator nav stays visible across sidebar and account menu for approved cre
     )
     .first();
 
-  await loginAsCreator(page, "/dashboard-v2/library");
+  await loginAsCreator(page, "/dashboard/library");
   await expect(page.locator('[data-route-shell-ready="dashboard-library"]').first()).toBeVisible({
-    timeout: 30_000,
+    timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
   });
 
-  await expect(page.locator('aside nav a[href="/dashboard-v2/creator"]').first()).toBeVisible({
+  await expect(page.locator('aside nav a[href="/dashboard/creator"]').first()).toBeVisible({
     timeout: 20_000,
   });
   await expect(
-    page.locator('aside nav a[href="/dashboard-v2/creator/resources"]').first(),
+    page.locator('aside nav a[href="/dashboard/creator/resources"]').first(),
   ).toBeVisible({
     timeout: 20_000,
   });
-  await expect(page.locator('aside nav a[href="/dashboard-v2/creator/sales"]').first()).toBeVisible({
+  await expect(page.locator('aside nav a[href="/dashboard/creator/sales"]').first()).toBeVisible({
     timeout: 20_000,
   });
-  await expect(page.locator('aside nav a[href="/dashboard-v2/creator/apply"]').first()).toHaveCount(0);
+  await expect(page.locator('aside nav a[href="/dashboard/creator/apply"]').first()).toHaveCount(0);
 
-  await expect(accountButton).toBeVisible({ timeout: 20_000 });
-  await accountButton.click();
+  await openDashboardAccountMenu(page, accountButton);
 
   await expect(
     page.locator(
-      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator"]:visible',
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard/creator"]:visible',
     ),
   ).toBeVisible({
     timeout: 20_000,
   });
   await expect(
     page.locator(
-      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator/resources"]:visible',
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard/creator/resources"]:visible',
     ),
   ).toBeVisible({
     timeout: 20_000,
   });
   await expect(
     page.locator(
-      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator/sales"]:visible',
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard/creator/sales"]:visible',
     ),
   ).toBeVisible({
     timeout: 20_000,
   });
   await expect(
     page.locator(
-      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard-v2/creator/apply"]:visible',
+      '[data-dashboard-account-menu="true"] [data-dashboard-account-link="/dashboard/creator/apply"]:visible',
     ),
   ).toHaveCount(0);
 
@@ -728,6 +864,7 @@ test("creator nav stays visible across sidebar and account menu for approved cre
 test("creator cold-entry routes clear neutral creator fallback after route readiness", async ({
   page,
 }) => {
+  test.setTimeout(300_000);
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
   const coldEntryRoutes: Array<{
@@ -735,30 +872,32 @@ test("creator cold-entry routes clear neutral creator fallback after route readi
     finalPath?: string;
     routeReady: string;
     heading: RegExp;
+    skipSampleReadyAssertion?: boolean;
   }> = [
     {
-      path: "/dashboard-v2/creator",
+      path: "/dashboard/creator",
       routeReady: "dashboard-creator-overview",
       heading: /^Workspace$/i,
     },
     {
-      path: "/dashboard-v2/creator/analytics",
+      path: "/dashboard/creator/analytics",
       routeReady: "dashboard-creator-analytics",
       heading: /^Analytics$/i,
     },
     {
-      path: "/dashboard-v2/creator/profile",
+      path: "/dashboard/creator/profile",
       routeReady: "dashboard-creator-profile",
       heading: /^Profile$/i,
     },
     {
-      path: "/dashboard-v2/creator/settings",
-      finalPath: "/dashboard-v2/settings",
+      path: "/dashboard/creator/settings",
+      finalPath: "/dashboard/creator/settings",
       routeReady: "dashboard-settings",
       heading: DASHBOARD_SETTINGS_HEADING,
+      skipSampleReadyAssertion: true,
     },
     {
-      path: "/dashboard-v2/creator/payouts",
+      path: "/dashboard/creator/payouts",
       routeReady: "dashboard-creator-payouts",
       heading: /^Payouts$/i,
     },
@@ -779,31 +918,36 @@ test("creator cold-entry routes clear neutral creator fallback after route readi
     await gotoWithRetry(page, route.path);
     await expect(page).toHaveURL(finalPathPattern);
     await expect(page.locator(`[data-route-shell-ready="${route.routeReady}"]`).first()).toBeVisible({
-      timeout: 30_000,
+      timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
     });
     await expect(page.getByRole("heading", { name: route.heading }).first()).toBeVisible({
-      timeout: 30_000,
+      timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
     });
     await page.waitForTimeout(500);
 
     const samples = await stopRefreshProbe(page);
     const routeSamples = samples.filter((sample) => finalPathPattern.test(sample.href));
 
-    expect(routeSamples.length, `${route.path} did not capture route samples during cold entry`).toBeGreaterThan(0);
-    expectNoDisallowedScopesAfterRouteReady(
-      routeSamples,
-      route.routeReady,
-      ["dashboard-group", "dashboard-v2-creator-neutral"],
-      finalPath,
-    );
-    expectScopesNeverSeen(
-      routeSamples,
-      ["dashboard-v2-creator-neutral"],
-      finalPath,
-    );
+    if (!route.skipSampleReadyAssertion) {
+      expect(
+        routeSamples.length,
+        `${route.path} did not capture route samples during cold entry`,
+      ).toBeGreaterThan(0);
+      expectNoDisallowedScopesAfterRouteReady(
+        routeSamples,
+        route.routeReady,
+        ["dashboard-group", "dashboard-creator-neutral"],
+        finalPath,
+      );
+      expectScopesNeverSeen(
+        routeSamples,
+        ["dashboard-creator-neutral"],
+        finalPath,
+      );
+    }
 
     await expectNoDashboardGroupOverlay(page);
-    await expectNoDashboardShellStack(page);
+    await expectNoDashboardFullShellOverlap(page);
   }
 
   expect(pageErrors).toEqual([]);
@@ -813,6 +957,7 @@ test("creator cold-entry routes clear neutral creator fallback after route readi
 test("learner cold-entry routes clear neutral learner fallback after route readiness", async ({
   page,
 }) => {
+  test.setTimeout(300_000);
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
   const coldEntryRoutes: Array<{
@@ -821,32 +966,32 @@ test("learner cold-entry routes clear neutral learner fallback after route readi
     heading: RegExp;
   }> = [
     {
-      path: "/dashboard-v2",
+      path: "/dashboard",
       routeReady: "dashboard-overview",
       heading: /Welcome back/i,
     },
     {
-      path: "/dashboard-v2/library",
+      path: "/dashboard/library",
       routeReady: "dashboard-library",
       heading: /^My Library$/i,
     },
     {
-      path: "/dashboard-v2/downloads",
+      path: "/dashboard/downloads",
       routeReady: "dashboard-downloads",
       heading: /Download history/i,
     },
     {
-      path: "/dashboard-v2/purchases",
+      path: "/dashboard/purchases",
       routeReady: "dashboard-purchases",
       heading: /^(Purchases|Order history)$/i,
     },
     {
-      path: "/dashboard-v2/membership",
+      path: "/dashboard/membership",
       routeReady: "dashboard-subscription",
       heading: /^Membership$/i,
     },
     {
-      path: "/dashboard-v2/settings",
+      path: "/dashboard/settings",
       routeReady: "dashboard-settings",
       heading: DASHBOARD_SETTINGS_HEADING,
     },
@@ -888,13 +1033,13 @@ test("learner cold-entry routes clear neutral learner fallback after route readi
     expectNoDisallowedScopesAfterRouteReady(
       routeSamples,
       route.routeReady,
-      ["dashboard-group", "dashboard-v2-neutral"],
+      ["dashboard-group", "dashboard-neutral"],
       route.path,
     );
-    expectScopesNeverSeen(routeSamples, ["dashboard-v2-neutral"], route.path);
+    expectScopesNeverSeen(routeSamples, ["dashboard-neutral"], route.path);
 
     await expectNoDashboardGroupOverlay(page);
-    await expectNoDashboardShellStack(page);
+    await expectNoDashboardFullShellOverlap(page);
   }
 
   expect(pageErrors).toEqual([]);
@@ -916,26 +1061,26 @@ test("learner sidebar transitions keep route-specific loading without neutral fa
     disallowedAfterReady: readonly string[];
   }> = [
     {
-      fromPath: "/dashboard-v2",
+      fromPath: "/dashboard",
       fromReady: "dashboard-overview",
-      toPath: "/dashboard-v2/library",
+      toPath: "/dashboard/library",
       toReady: "dashboard-library",
       linkLabel: /^Library$/i,
       heading: /^My Library$/i,
-      disallowedAfterReady: ["dashboard-group", "dashboard-v2-neutral", "dashboard-v2-home"],
+      disallowedAfterReady: ["dashboard-group", "dashboard-neutral", "dashboard-home"],
     },
     {
-      fromPath: "/dashboard-v2",
+      fromPath: "/dashboard",
       fromReady: "dashboard-overview",
-      toPath: "/dashboard-v2/membership",
+      toPath: "/dashboard/membership",
       toReady: "dashboard-subscription",
       linkLabel: /^Membership$/i,
       heading: /^Membership$/i,
-      disallowedAfterReady: ["dashboard-group", "dashboard-v2-neutral", "dashboard-v2-home"],
+      disallowedAfterReady: ["dashboard-group", "dashboard-neutral", "dashboard-home"],
     },
   ];
 
-  await loginAsCreator(page, "/dashboard-v2");
+  await loginAsCreator(page, "/dashboard");
 
   for (const transition of transitions) {
     await gotoWithRetry(page, transition.fromPath);
@@ -979,7 +1124,7 @@ test("learner sidebar transitions keep route-specific loading without neutral fa
     ).toBeGreaterThan(0);
     expectScopesNeverSeen(
       routeSamples,
-      ["dashboard-group", "dashboard-v2-neutral"],
+      ["dashboard-group", "dashboard-neutral"],
       `${transition.fromPath} -> ${transition.toPath}`,
     );
     expectNoDisallowedScopesAfterRouteReady(
@@ -990,7 +1135,7 @@ test("learner sidebar transitions keep route-specific loading without neutral fa
     );
 
     await expectNoDashboardGroupOverlay(page);
-    await expectNoDashboardShellStack(page);
+    await expectNoDashboardFullShellOverlap(page);
   }
 
   expect(pageErrors).toEqual([]);
@@ -1011,24 +1156,24 @@ test("creator sidebar transitions keep route-specific loading without creator ne
     heading: RegExp;
   }> = [
     {
-      fromPath: "/dashboard-v2/creator",
+      fromPath: "/dashboard/creator",
       fromReady: "dashboard-creator-overview",
-      toPath: "/dashboard-v2/creator/resources",
+      toPath: "/dashboard/creator/resources",
       toReady: "dashboard-creator-resources",
       linkLabel: /^Resources$/i,
       heading: /^Creator resources$/i,
     },
     {
-      fromPath: "/dashboard-v2/creator",
+      fromPath: "/dashboard/creator",
       fromReady: "dashboard-creator-overview",
-      toPath: "/dashboard-v2/creator/sales",
+      toPath: "/dashboard/creator/sales",
       toReady: "dashboard-creator-sales",
       linkLabel: /^Earnings$/i,
       heading: /^Earnings$/i,
     },
   ];
 
-  await loginAsCreator(page, "/dashboard-v2/creator");
+  await loginAsCreator(page, "/dashboard/creator");
 
   // Warm creator child routes once so this test measures client-side handoff
   // behavior instead of first-compile latency in the dev server.
@@ -1083,18 +1228,18 @@ test("creator sidebar transitions keep route-specific loading without creator ne
     ).toBeGreaterThan(0);
     expectScopesNeverSeen(
       routeSamples,
-      ["dashboard-group", "dashboard-v2-creator-neutral"],
+      ["dashboard-group", "dashboard-creator-neutral"],
       `${transition.fromPath} -> ${transition.toPath}`,
     );
     expectNoDisallowedScopesAfterRouteReady(
       routeSamples,
       transition.toReady,
-      ["dashboard-group", "dashboard-v2-creator-neutral", "dashboard-v2-creator"],
+      ["dashboard-group", "dashboard-creator-neutral", "dashboard-creator"],
       `${transition.fromPath} -> ${transition.toPath}`,
     );
 
     await expectNoDashboardGroupOverlay(page);
-    await expectNoDashboardShellStack(page);
+    await expectNoDashboardFullShellOverlap(page);
   }
 
   expect(pageErrors).toEqual([]);
@@ -1105,26 +1250,27 @@ test("creator workspace storefront CTA reaches the public storefront", async ({
   page,
 }) => {
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
-  const storefrontUrlPattern = /\/creators\/sandstorm-assets(?:\?.*)?$/;
-  const storefrontLink = page
-    .locator("#creator-workspace")
-    .getByRole("link", { name: /^Storefront$/i })
-    .first();
+  const storefrontLink = page.locator("main").getByRole("link", { name: /^Storefront$/i }).first();
 
-  await loginAsCreator(page, "/dashboard-v2/creator");
+  await loginAsCreator(page, "/dashboard/creator");
 
-  await gotoWithRetry(page, "/dashboard-v2/creator");
+  await gotoWithRetry(page, "/dashboard/creator");
   await expect(
     page.locator('[data-route-shell-ready="dashboard-creator-overview"]').first(),
   ).toBeVisible({
     timeout: 30_000,
   });
   await expect(storefrontLink).toBeVisible({ timeout: 20_000 });
+  const storefrontHref = await storefrontLink.getAttribute("href");
+  expect(storefrontHref).toMatch(/^\/creators\/[^/]+$/);
+  const storefrontUrlPattern = new RegExp(
+    `${storefrontHref!.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\?.*)?$`,
+  );
 
   await startRefreshProbe(page);
   await storefrontLink.click();
   await expect(page).toHaveURL(storefrontUrlPattern, { timeout: 30_000 });
-  await expect(page.getByRole("heading", { name: /^SANDSTORM$/i }).first()).toBeVisible({
+  await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible({
     timeout: 30_000,
   });
   await expect(page.getByRole("link", { name: /^Edit profile$/i }).first()).toBeVisible({

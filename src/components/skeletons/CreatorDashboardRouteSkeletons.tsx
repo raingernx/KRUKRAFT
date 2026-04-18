@@ -4,8 +4,8 @@ import { LoadingSkeleton } from "@/design-system";
 import {
   DashboardPageHeader,
   DashboardPageHeaderSkeleton,
-} from "@/components/dashboard/DashboardPageHeader";
-import { DashboardPageStack } from "@/components/dashboard/DashboardPageShell";
+} from "@/components/layout/dashboard/DashboardPageHeader";
+import { DashboardPageStack } from "@/components/layout/dashboard/DashboardPageShell";
 import { CreatorQuickTipsCard } from "@/components/creator/CreatorQuickTipsCard";
 import { CreatorSetupChecklist } from "@/components/creator/CreatorSetupChecklist";
 import { CreatorWelcomeCard } from "@/components/creator/CreatorWelcomeCard";

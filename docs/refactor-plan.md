@@ -6,9 +6,8 @@
 > `krukraft-ai-contexts/04-architecture.md`.
 >
 > Current routing baseline:
-> - canonical protected dashboard family = `/dashboard-v2/*`
+> - canonical protected dashboard family = `/dashboard/*`
 > - canonical admin family = `/admin/*`
-> - legacy `/dashboard*`, `/settings`, and `/subscription` URLs are retired
 
 ## Refactor Plan – Krukraft
 

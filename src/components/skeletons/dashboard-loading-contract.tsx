@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import { Skeleton } from "boneyard-js/react";
 
-import { DashboardPageSkeletonShell } from "@/components/dashboard/DashboardPageShell";
+import { DashboardPageSkeletonShell } from "@/components/layout/dashboard/DashboardPageShell";
 
 export type DashboardLoadingWidth = "default" | "narrow";
 

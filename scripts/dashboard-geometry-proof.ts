@@ -36,70 +36,70 @@ const SURFACES: Surface[] = [
     name: "dashboard-subscription",
     previewPath: "/dev/dashboard-geometry?subscriptionVariant=free&libraryVariant=empty",
     previewSelector: '[data-bones-preview="dashboard-subscription"]',
-    finalPath: "/dashboard-v2/membership",
+    finalPath: "/dashboard/membership",
     finalSelector: '[data-route-shell-ready="dashboard-subscription"]',
   },
   {
     name: "dashboard-library",
     previewPath: "/dev/dashboard-geometry?subscriptionVariant=free&libraryVariant=empty",
     previewSelector: '[data-bones-preview="dashboard-library"]',
-    finalPath: "/dashboard-v2/library",
+    finalPath: "/dashboard/library",
     finalSelector: '[data-route-shell-ready="dashboard-library"]',
   },
   {
     name: "dashboard-downloads",
     previewPath: "/dev/dashboard-geometry?subscriptionVariant=free&libraryVariant=empty",
     previewSelector: '[data-bones-preview="dashboard-downloads"]',
-    finalPath: "/dashboard-v2/downloads",
+    finalPath: "/dashboard/downloads",
     finalSelector: '[data-route-shell-ready="dashboard-downloads"]',
   },
   {
     name: "dashboard-purchases",
     previewPath: "/dev/dashboard-geometry?subscriptionVariant=free&libraryVariant=empty",
     previewSelector: '[data-bones-preview="dashboard-purchases"]',
-    finalPath: "/dashboard-v2/purchases",
+    finalPath: "/dashboard/purchases",
     finalSelector: '[data-route-shell-ready="dashboard-purchases"]',
   },
   {
     name: "dashboard-settings",
     previewPath: "/dev/dashboard-geometry?subscriptionVariant=free&libraryVariant=empty",
     previewSelector: '[data-bones-preview="settings-page"]',
-    finalPath: "/dashboard-v2/settings",
+    finalPath: "/dashboard/settings",
     finalSelector: '[data-route-shell-ready="dashboard-settings"]',
   },
   {
     name: "creator-dashboard-overview",
     previewPath: "/dev/dashboard-geometry?subscriptionVariant=free&libraryVariant=empty",
     previewSelector: '[data-bones-preview="creator-dashboard-overview"]',
-    finalPath: "/dashboard-v2/creator",
+    finalPath: "/dashboard/creator",
     finalSelector: '[data-route-shell-ready="dashboard-creator-overview"]',
   },
   {
     name: "creator-dashboard-analytics",
     previewPath: "/dev/dashboard-geometry?subscriptionVariant=free&libraryVariant=empty",
     previewSelector: '[data-bones-preview="creator-dashboard-analytics"]',
-    finalPath: "/dashboard-v2/creator/analytics",
+    finalPath: "/dashboard/creator/analytics",
     finalSelector: '[data-route-shell-ready="dashboard-creator-analytics"]',
   },
   {
     name: "creator-dashboard-resources",
     previewPath: "/dev/dashboard-geometry?subscriptionVariant=free&libraryVariant=empty",
     previewSelector: '[data-bones-preview="creator-dashboard-resources"]',
-    finalPath: "/dashboard-v2/creator/resources",
+    finalPath: "/dashboard/creator/resources",
     finalSelector: '[data-route-shell-ready="dashboard-creator-resources"]',
   },
   {
     name: "creator-dashboard-sales",
     previewPath: "/dev/dashboard-geometry?subscriptionVariant=free&libraryVariant=empty",
     previewSelector: '[data-bones-preview="creator-dashboard-sales"]',
-    finalPath: "/dashboard-v2/creator/sales",
+    finalPath: "/dashboard/creator/sales",
     finalSelector: '[data-route-shell-ready="dashboard-creator-sales"]',
   },
   {
     name: "creator-dashboard-profile",
     previewPath: "/dev/dashboard-geometry?subscriptionVariant=free&libraryVariant=empty",
     previewSelector: '[data-bones-preview="creator-dashboard-profile"]',
-    finalPath: "/dashboard-v2/creator/profile",
+    finalPath: "/dashboard/creator/profile",
     finalSelector: '[data-route-shell-ready="dashboard-creator-profile"]',
   },
 ];
@@ -357,8 +357,8 @@ async function main() {
 
   try {
     console.log("[dashboard-geometry-proof] Logging in as creator...");
-    await loginAsCreator(previewPage, "/dashboard-v2/creator");
-    await loginAsCreator(finalPage, "/dashboard-v2/creator");
+    await loginAsCreator(previewPage, "/dashboard/creator");
+    await loginAsCreator(finalPage, "/dashboard/creator");
 
     const results: Array<{
       name: string;

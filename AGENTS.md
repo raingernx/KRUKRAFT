@@ -181,7 +181,7 @@ auth/*
 resources/*
 categories/*
 creators/*
-(dashboard-v2)/dashboard-v2/*
+(dashboard)/dashboard/*
 admin/*
 api/*
 
@@ -190,14 +190,13 @@ api/*
 Canonical protected dashboard routes live under:
 
 ```
-src/app/(dashboard-v2)/dashboard-v2/*
+src/app/(dashboard)/dashboard/*
 ```
 
 Historical note:
 
-- `src/app/(dashboard)` and `src/app/(dashboard-lite)` still exist in the tree
-  as retired compatibility/history surfaces
-- do not treat those older route groups as the active product dashboard family
+- `(dashboard-lite)` is retired history only; it no longer owns any live route
+  files in the active dashboard family
 
 ---
 
@@ -246,7 +245,7 @@ Protected routes:
 
 ```
 
-/dashboard-v2/*
+/dashboard/*
 /admin/*
 
 ```
@@ -300,13 +299,13 @@ User dashboard routes:
 
 ```
 
-/dashboard-v2
-/dashboard-v2/library
-/dashboard-v2/downloads
-/dashboard-v2/purchases
-/dashboard-v2/membership
-/dashboard-v2/settings
-/dashboard-v2/creator/*
+/dashboard
+/dashboard/library
+/dashboard/downloads
+/dashboard/purchases
+/dashboard/membership
+/dashboard/settings
+/dashboard/creator/*
 
 ```
 
@@ -316,7 +315,7 @@ Features:
 - Download purchased files
 - Manage subscription
 - Update account settings
-- Access creator workspace and publishing tools through the dashboard-v2 family
+- Access creator workspace and publishing tools through the `/dashboard` family
 
 ---
 
@@ -572,9 +571,55 @@ When choosing browser verification tooling, treat `Playwright` and
 - use `Playwright` for canonical regression coverage, assertions, CI / GitHub Actions workflows, retries, artifacts, and cross-browser validation
 - use `chrome-devtools-mcp` for local browser-level probes against a real authenticated Chrome session when the goal is rapid runtime inspection, DOM/console/network debugging, overlay/layout verification, or click-through validation
 - if local `playwright test` browser launch is unstable, fall back to `chrome-devtools-mcp` plus request-level smoke checks instead of blocking all runtime verification
+- on this current macOS machine, sandboxed agent sessions can block Chromium launch before any test body runs, typically with `MachPortRendezvousServer` / `Permission denied (1100)`; treat that as an environment launch restriction, not a product/test failure, and rerun Playwright outside the sandbox or with elevated permissions instead of trying to "fix" the app or spec first
 - do not treat `chrome-devtools-mcp` as a replacement for the repo's Playwright test suite; it is a local debug/verification companion, not the canonical CI surface
 - do not claim CI-grade or regression-grade confidence from a DevTools-only pass; if the change needs durable automated coverage, add or update Playwright coverage once the flow is stable
 - when using `chrome-devtools-mcp`, verify the real route in browser, then still prefer request-smoke or Playwright evidence for auth/ownership/redirect assertions that should remain machine-checkable
+
+## Plugin Operations Policy
+
+When Codex marketplace plugins are installed and authenticated for this repo,
+agents should use them intentionally instead of treating them as optional
+ornaments.
+
+- prefer installed plugins over broad web search when the plugin exposes direct
+  operational state for the system in question
+- if the needed plugin is not installed or not authenticated in the current
+  session, say so explicitly and use the next-best fallback
+- do not claim confidence from plugin health or status alone when the task also
+  requires repo-owned runtime verification
+
+Current preferred plugin triggers:
+
+- `Sentry`
+  use for production incidents, recent runtime failures, hidden 500s after
+  deploy, Stripe checkout/webhook failures, protected download failures, and
+  requests for concrete stack traces or trace evidence
+- `Cloudflare`
+  use for R2 buckets, presigned URL flows, private file delivery, object
+  storage state, CORS, edge-cache, or WAF questions
+- `CodeRabbit`
+  use for PR review augmentation, regression triage, and machine-review feedback
+  on risky diffs, but still pair it with repo-owned verification
+
+Database platform note:
+
+- Supabase MCP is now available in this repo workflow as the preferred live
+  operational connector for project URL, tables, migrations, logs, and advisors
+- keep Supabase under the repo-owned DB workflow and Prisma rules instead of
+  inventing a schema-authority shift
+- `docs/supabase-db-workflow.md` is the canonical guidance for that path
+- when a DB answer depends on live Supabase platform state that is not present
+  in the repo, use Supabase MCP first and ask the user to inspect the specific
+  Supabase Dashboard surface only if MCP does not expose the needed state
+
+Primary rollout order for Krukraft:
+
+1. `Sentry`
+2. `CodeRabbit`
+3. `Cloudflare`
+
+Repo-owned workflow details live in `docs/agent-plugin-workflows.md`.
 
 ---
 

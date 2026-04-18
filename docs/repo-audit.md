@@ -6,8 +6,7 @@
 > `krukraft-ai-contexts/04-architecture.md`.
 >
 > Current routing baseline:
-> - canonical protected dashboard family = `/dashboard-v2/*`
-> - `/dashboard*`, `/settings`, and `/subscription` legacy URLs are retired
+> - canonical protected dashboard family = `/dashboard/*`
 > - the active product no longer treats `[locale]/dashboard` or `[locale]/admin`
 >   as canonical route families
 
@@ -17,7 +16,7 @@ Krukraft is a SaaS marketplace for downloadable learning resources built on:
 
 - **Next.js 16 App Router** with a mixed route history: current product
   surfaces live on canonical non-localized routes such as `/resources`,
-  `/dashboard-v2/*`, and `/admin/*`, while older locale-routing experiments are
+  `/dashboard/*`, and `/admin/*`, while older locale-routing experiments are
   kept here only as historical audit context.
 - **TypeScript** and **Tailwind CSS** for strongly-typed, utility-first UI.
 - **Prisma + PostgreSQL** for persistence, with models for users, resources, purchases, reviews, webhooks, activity logs, and audit logs.
@@ -35,7 +34,7 @@ High-level structure:
   - Legacy non-localized route groups such as `app/(dashboard)` and `app/admin`, which still contain implementations reused by the localized wrappers.
   - API routes under `app/api/**` for auth, resources, uploads, downloads, purchases, subscriptions, Stripe/Xendit webhooks, and admin operations.
 - `src/components` provides:
-  - Layout shells (`Navbar`, `Footer`, `AppLayout`, `DashboardLayout`, `AdminLayout`, sidebars/topbars).
+  - Layout shells (`Navbar`, `Footer`, `AppLayout`, `AdminLayout`, dashboard shell/layout helpers, sidebars/topbars).
   - Marketplace components (`ResourceCard`, `ResourceGrid`, filters, search, category chips).
   - Dashboard and admin UI (tables, filters, stats cards, upload widgets, preview galleries).
   - Shared primitives (buttons, cards, sections, containers, modals, toasts, etc.).

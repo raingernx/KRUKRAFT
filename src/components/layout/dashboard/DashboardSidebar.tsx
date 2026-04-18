@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { X } from "lucide-react";
+import { X } from "@/lib/icons";
 import { Logo } from "@/components/brand/Logo";
 import {
   SidebarContainer,

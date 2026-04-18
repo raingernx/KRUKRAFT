@@ -1,11 +1,11 @@
-import type { LucideIcon } from "lucide-react";
+import type { AppIcon } from "@/lib/icons";
 
 export type DashboardShellVariant = "user" | "creator" | "admin";
 
 export interface DashboardNavItem {
   href: string;
   label: string;
-  icon?: LucideIcon;
+  icon?: AppIcon;
   exact?: boolean;
   badge?: string | number;
 }
@@ -15,4 +15,3 @@ export interface DashboardNavSection {
   label: string;
   items: DashboardNavItem[];
 }
-

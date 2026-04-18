@@ -10,7 +10,11 @@ import {
 import { locales } from "@/i18n/config";
 
 const LOGIN_PATH = "/auth/login";
-const DASHBOARD_V2_PATH = "/dashboard-v2";
+const DASHBOARD_PATH = "/dashboard";
+
+function isDashboardPath(pathname: string) {
+  return pathname === DASHBOARD_PATH || pathname.startsWith(`${DASHBOARD_PATH}/`);
+}
 
 function assignRankingVariantIfAbsent(
   req: NextRequest,
@@ -29,9 +33,15 @@ function assignRankingVariantIfAbsent(
   });
 }
 
-function buildProtectedRedirect(req: NextRequest): NextResponse {
+function buildProtectedRedirect(
+  req: NextRequest,
+  options?: {
+    nextPathname?: string;
+  },
+): NextResponse {
   const url = req.nextUrl.clone();
-  const next = `${req.nextUrl.pathname}${req.nextUrl.search}`;
+  const nextPathname = options?.nextPathname ?? req.nextUrl.pathname;
+  const next = `${nextPathname}${req.nextUrl.search}`;
   url.pathname = LOGIN_PATH;
   url.search = "";
   url.searchParams.set("next", next);
@@ -40,15 +50,14 @@ function buildProtectedRedirect(req: NextRequest): NextResponse {
 
 async function handleProtectedRoute(req: NextRequest): Promise<NextResponse> {
   const token = await getToken({ req });
-  const { pathname } = req.nextUrl;
 
   if (!token) {
     return buildProtectedRedirect(req);
   }
 
-  if (pathname.startsWith("/admin") && token.role !== "ADMIN") {
+  if (req.nextUrl.pathname.startsWith("/admin") && token.role !== "ADMIN") {
     const url = req.nextUrl.clone();
-    url.pathname = DASHBOARD_V2_PATH;
+    url.pathname = DASHBOARD_PATH;
     url.search = "";
     return NextResponse.redirect(url);
   }
@@ -74,10 +83,7 @@ export async function proxy(req: NextRequest) {
     return response;
   }
 
-  if (
-    pathname.startsWith(DASHBOARD_V2_PATH) ||
-    pathname.startsWith("/admin")
-  ) {
+  if (isDashboardPath(pathname) || pathname.startsWith("/admin")) {
     const response = await handleProtectedRoute(req);
     assignRankingVariantIfAbsent(req, response);
     return response;

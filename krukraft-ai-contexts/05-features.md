@@ -156,23 +156,23 @@ Resource detail page
 
 ## Creator Dashboard Surface
 
-- Dashboard V2 creator navigation now exposes four top-level surfaces:
+- Canonical dashboard creator navigation now exposes four top-level surfaces:
   `Workspace`, `Resources`, `Earnings`, and `Storefront`
-- `/dashboard-v2/creator` remains the overview / launch workspace rather than
+- `/dashboard/creator` remains the overview / launch workspace rather than
   the place for full storefront configuration
 - the `Storefront` creator nav item now opens the live public storefront at
   `/creators/:slug` directly instead of sending creators through an internal
   dashboard summary page first
-- `/dashboard-v2/creator/profile` is now the single editing surface for
+- `/dashboard/creator/profile` is now the single editing surface for
   storefront identity and media, while creator readiness/shared-account
   settings summaries live back on the creator workspace instead of a distinct
   `storefront` or `settings` destination
-- `/dashboard-v2/creator/storefront` remains only as a compatibility redirect:
+- `/dashboard/creator/storefront` remains only as a compatibility redirect:
   it forwards to the live public storefront when a creator slug exists, and
-  otherwise falls back to `/dashboard-v2/creator/profile`
-- `/dashboard-v2/creator/settings` now redirects back into the creator
+  otherwise falls back to `/dashboard/creator/profile`
+- `/dashboard/creator/settings` now redirects back into the creator
   workspace for compatibility instead of rendering its own destination
-- `/dashboard-v2/creator/profile` now supports storefront-specific media uploads:
+- `/dashboard/creator/profile` now supports storefront-specific media uploads:
   - a dedicated store avatar (`creatorAvatar`) that overrides the account photo
     on creator-facing/public storefront surfaces
   - a storefront banner (`creatorBanner`) upload path for the public creator

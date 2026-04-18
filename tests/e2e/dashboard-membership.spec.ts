@@ -8,9 +8,9 @@ test("dashboard membership renders live route actions for free-plan users", asyn
 }) => {
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
-  await loginAsCreator(page, "/dashboard-v2/membership");
+  await loginAsCreator(page, "/dashboard/membership");
 
-  await expect(page).toHaveURL(/\/dashboard-v2\/membership$/);
+  await expect(page).toHaveURL(/\/dashboard\/membership$/);
   await expect(
     page.locator('[data-route-shell-ready="dashboard-subscription"]').first(),
   ).toBeVisible({

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Menu } from "lucide-react";
+import { Menu } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import type { DashboardShellVariant } from "./dashboard-nav.types";
 

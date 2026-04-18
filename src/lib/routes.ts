@@ -7,8 +7,8 @@
  *
  * Usage:
  *   import { routes } from "@/lib/routes";
- *   <Link href={routes.dashboardV2}>Dashboard</Link>
- *   router.push(routes.dashboardV2Library);
+ *   <Link href={routes.dashboard}>Dashboard</Link>
+ *   router.push(routes.dashboardLibrary);
  *
  * Notes:
  *   - API routes are intentionally excluded — they are always non-localized
@@ -18,25 +18,25 @@
 // ── User dashboard ────────────────────────────────────────────────────────────
 
 const canonicalDashboardRoutes = {
-  dashboardV2: "/dashboard-v2",
-  dashboardV2Library: "/dashboard-v2/library",
-  dashboardV2Downloads: "/dashboard-v2/downloads",
-  dashboardV2Purchases: "/dashboard-v2/purchases",
-  dashboardV2Membership: "/dashboard-v2/membership",
-  dashboardV2Settings: "/dashboard-v2/settings",
-  dashboardV2Creator: "/dashboard-v2/creator",
-  dashboardV2CreatorApply: "/dashboard-v2/creator/apply",
-  dashboardV2CreatorResources: "/dashboard-v2/creator/resources",
-  dashboardV2CreatorNewResource: "/dashboard-v2/creator/resources/new",
-  dashboardV2CreatorResource: (id: string) =>
-    `/dashboard-v2/creator/resources/${id}`,
-  dashboardV2CreatorAnalytics: "/dashboard-v2/creator/analytics",
-  dashboardV2CreatorSales: "/dashboard-v2/creator/sales",
-  dashboardV2CreatorPayouts: "/dashboard-v2/creator/payouts",
-  dashboardV2CreatorStorefront: "/dashboard-v2/creator/storefront",
-  dashboardV2CreatorProfile: "/dashboard-v2/creator/profile",
-  dashboardV2CreatorSettings: "/dashboard-v2/creator/settings",
-  dashboardV2LibraryPaymentSuccess: () => "/dashboard-v2/library?payment=success",
+  dashboard: "/dashboard",
+  dashboardLibrary: "/dashboard/library",
+  dashboardDownloads: "/dashboard/downloads",
+  dashboardPurchases: "/dashboard/purchases",
+  dashboardMembership: "/dashboard/membership",
+  dashboardSettings: "/dashboard/settings",
+  dashboardCreator: "/dashboard/creator",
+  dashboardCreatorApply: "/dashboard/creator/apply",
+  dashboardCreatorResources: "/dashboard/creator/resources",
+  dashboardCreatorNewResource: "/dashboard/creator/resources/new",
+  dashboardCreatorResource: (id: string) =>
+    `/dashboard/creator/resources/${id}`,
+  dashboardCreatorAnalytics: "/dashboard/creator/analytics",
+  dashboardCreatorSales: "/dashboard/creator/sales",
+  dashboardCreatorPayouts: "/dashboard/creator/payouts",
+  dashboardCreatorStorefront: "/dashboard/creator/storefront",
+  dashboardCreatorProfile: "/dashboard/creator/profile",
+  dashboardCreatorSettings: "/dashboard/creator/settings",
+  dashboardLibraryPaymentSuccess: () => "/dashboard/library?payment=success",
 } as const;
 
 export const routes = {
