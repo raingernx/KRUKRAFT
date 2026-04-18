@@ -155,6 +155,9 @@ Resource detail page
   `/auth/reset-password/confirm` route family now shares semantic
   status/focus treatments for info and error messaging without changing the
   underlying auth or recovery logic
+- that auth recovery surface now also uses the repo-owned `@/lib/icons`
+  adapter, matching the active creator/settings/dashboard icon ownership
+  contract instead of importing `lucide-react` directly inside the route files
 - canonical post-auth routing now lands only inside `/dashboard/*`: invalid or
   missing `next` values on `/auth/login` fall back to `/dashboard`, and the
   default Google completion path for both login and register resolves to
@@ -187,6 +190,10 @@ Resource detail page
     header
   - both uploads reuse `/api/creator/upload/image` and persist through
     `/api/creator/profile`
+- creator cards/forms, dashboard settings panels, and the shared resources
+  fallback shells now also consume icons via `@/lib/icons` so these related
+  account-facing surfaces no longer mix direct `lucide-react` imports into
+  feature files
 
 ## Secure Download Endpoint
 

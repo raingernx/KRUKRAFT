@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { PriceBadge } from "@/design-system/product";
 import Image from "next/image";
-import { FileText } from "lucide-react";
+import { FileText } from "@/lib/icons";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 
 export type CreatorResourcePreviewProps = {

@@ -2,7 +2,7 @@
 
 import type { CreatorStatus } from "@prisma/client";
 import Link from "next/link";
-import { Camera, CheckCircle2, ExternalLink, Loader2, Trash2 } from "lucide-react";
+import { Camera, CheckCircle2, ExternalLink, Loader2, Trash2 } from "@/lib/icons";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Avatar, Badge, Button, Input, Select, Textarea } from "@/design-system";
 import { routes } from "@/lib/routes";

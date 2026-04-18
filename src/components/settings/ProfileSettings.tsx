@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Camera, Loader2, Mail, Trash2, User } from "lucide-react";
+import { Camera, Loader2, Mail, Trash2, User } from "@/lib/icons";
 import { Avatar, Badge, Button, FormSection, Input } from "@/design-system";
 
 type ProfileSettingsProps = {

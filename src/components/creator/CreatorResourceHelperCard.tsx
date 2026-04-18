@@ -1,4 +1,4 @@
-import { Lightbulb } from "lucide-react";
+import { Lightbulb } from "@/lib/icons";
 
 interface Tip {
   heading: string;

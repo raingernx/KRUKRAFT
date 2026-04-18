@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, ListChecks } from "lucide-react";
+import { CheckCircle2, ListChecks } from "@/lib/icons";
 
 export type FieldName = "title" | "description" | "price" | "file";
 

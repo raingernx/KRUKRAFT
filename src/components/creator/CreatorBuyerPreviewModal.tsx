@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { X } from "lucide-react";
+import { X } from "@/lib/icons";
 import { Badge, Button } from "@/design-system";
 import { ResourceHeader } from "@/components/resources/detail/ResourceHeader";
 import { ResourceGallery } from "@/components/resources/detail/ResourceGallery";

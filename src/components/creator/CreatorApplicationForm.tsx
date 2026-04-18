@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle } from "@/lib/icons";
 import { Button, Input, Textarea } from "@/design-system";
 import { toSlug } from "@/lib/slug";
 

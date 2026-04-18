@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
-import { KeyRound, Loader2, LogOut, Mail, ShieldCheck } from "lucide-react";
+import { KeyRound, Loader2, LogOut, Mail, ShieldCheck } from "@/lib/icons";
 import { Button } from "@/design-system";
 import { routes } from "@/lib/routes";
 

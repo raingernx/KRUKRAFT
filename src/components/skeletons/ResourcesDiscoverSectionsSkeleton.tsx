@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/lib/icons";
 import { Skeleton } from "boneyard-js/react";
 import { ResourceCardSkeleton } from "@/components/resources/ResourceCardSkeleton";
 import { ResourceCard, type ResourceCardResource } from "@/components/resources/ResourceCard";

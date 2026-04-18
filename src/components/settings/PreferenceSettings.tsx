@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sun } from "lucide-react";
+import { Sun } from "@/lib/icons";
 import { Button, FormSection, Select } from "@/design-system";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { usePlatformConfig } from "@/components/providers/PlatformConfigProvider";

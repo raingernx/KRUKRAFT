@@ -1,6 +1,6 @@
 "use client";
 
-import { Save, Rocket, X, Eye } from "lucide-react";
+import { Save, Rocket, X, Eye } from "@/lib/icons";
 import { Button } from "@/design-system";
 
 interface CreatorPublishActionsProps {

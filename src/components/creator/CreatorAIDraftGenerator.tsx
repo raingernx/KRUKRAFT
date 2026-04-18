@@ -196,7 +196,7 @@ export function CreatorAIDraftGenerator({
 
       if (data.createdDraftResource && mode === "create") {
         toast.success("สร้างฉบับร่างด้วย AI แล้ว สามารถแก้ไขต่อในหน้าทรัพยากรฉบับร่างได้");
-        router.push(routes.dashboardV2CreatorResource(data.resourceId));
+        router.push(routes.dashboardCreatorResource(data.resourceId));
         router.refresh();
         return;
       }

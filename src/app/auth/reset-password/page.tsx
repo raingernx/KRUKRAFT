@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2 } from "@/lib/icons";
 import { Button } from "@/design-system";
 import { Logo } from "@/components/brand/Logo";
 import { routes } from "@/lib/routes";

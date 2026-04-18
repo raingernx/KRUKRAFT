@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bell } from "lucide-react";
+import { Bell } from "@/lib/icons";
 import { FormSection, Switch } from "@/design-system";
 
 type ToggleRowProps = {

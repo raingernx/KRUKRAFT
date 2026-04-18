@@ -1,4 +1,4 @@
-import { Lightbulb } from "lucide-react";
+import { Lightbulb } from "@/lib/icons";
 
 const TIPS = [
   "Use a clear, descriptive title — buyers search for specific terms.",

@@ -1,4 +1,4 @@
-import { PartyPopper, TrendingUp } from "lucide-react";
+import { PartyPopper, TrendingUp } from "@/lib/icons";
 
 interface CreatorFirstSaleBannerProps {
   totalSales: number;

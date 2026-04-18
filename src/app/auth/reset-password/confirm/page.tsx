@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "@/lib/icons";
 import { Button } from "@/design-system";
 import { Logo } from "@/components/brand/Logo";
 import { routes } from "@/lib/routes";
