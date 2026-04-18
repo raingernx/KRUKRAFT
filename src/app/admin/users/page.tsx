@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Search } from "lucide-react";
+import { Search } from "@/lib/icons";
 import { Input, Button, RowActionButton, RowActions } from "@/design-system";
 import { formatNumber, formatDate } from "@/lib/format";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";

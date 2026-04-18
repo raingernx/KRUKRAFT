@@ -99,6 +99,9 @@ search, filters, pagination, or a non-default sort are active.
 - Platform settings including brand assets
 - Admin audit/history tables now keep pagination outside the table element itself so browser verification does not hit hydration mismatches from invalid `<table>` descendants
 - Admin hard refreshes now keep their auth/session wait inside the admin loading shell instead of dropping back to the app-root fallback while `requireAdminSession()` resolves
+- admin pages and shared admin controls now use the repo-owned `@/lib/icons`
+  adapter as their icon import surface instead of mixing direct `lucide-react`
+  imports into route and feature files
 
 Marketplace hero note:
 - `/resources` discover hero is currently a fixed repo-owned design surface

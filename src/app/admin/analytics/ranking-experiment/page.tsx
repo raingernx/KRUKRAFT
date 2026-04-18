@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getRankingExperimentReport } from "@/services/analytics";
 import { type RankingVariantRow } from "@/services/analytics";
-import { SlidersHorizontal, Info } from "lucide-react";
+import { SlidersHorizontal, Info } from "@/lib/icons";
 import { Button, Input } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { TableToolbar } from "@/components/admin/table";

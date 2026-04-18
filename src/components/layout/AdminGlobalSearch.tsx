@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
+import { Search } from "@/lib/icons";
 
 import { Input } from "@/design-system";
 import { routes } from "@/lib/routes";

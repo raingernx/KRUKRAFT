@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { BookOpen, Plus, Upload } from "lucide-react";
+import { BookOpen, Plus, Upload } from "@/lib/icons";
 import dynamic from "next/dynamic";
 
 import { Button, EmptyState } from "@/design-system";

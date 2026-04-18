@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ImagePlus, UploadCloud } from "lucide-react";
+import { ImagePlus, UploadCloud } from "@/lib/icons";
 import { PickerDropzoneShell } from "@/design-system/product";
 
 export interface ImageDropzoneProps {

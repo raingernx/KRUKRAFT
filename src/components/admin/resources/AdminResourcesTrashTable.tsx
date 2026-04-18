@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2, RotateCcw } from "lucide-react";
+import { Trash2, RotateCcw } from "@/lib/icons";
 
 import { RowActions, RowActionButton } from "@/design-system";
 import { formatDate } from "@/lib/format";

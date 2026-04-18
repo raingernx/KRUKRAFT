@@ -21,7 +21,7 @@ import {
   ShoppingCart,
   SlidersHorizontal,
   ArrowRight,
-} from "lucide-react";
+} from "@/lib/icons";
 import {
   traceServerStep,
   withRequestPerformanceTrace,

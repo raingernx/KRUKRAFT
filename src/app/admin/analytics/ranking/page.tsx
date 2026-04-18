@@ -4,7 +4,7 @@ import {
   getRankingDebugFilterData,
   getRankingDebugReport,
 } from "@/services/analytics";
-import { SlidersHorizontal, ExternalLink } from "lucide-react";
+import { SlidersHorizontal, ExternalLink } from "@/lib/icons";
 import { Button, Input, Select } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { TableToolbar } from "@/components/admin/table";

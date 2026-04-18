@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Search, X } from "lucide-react";
+import { Search, X } from "@/lib/icons";
 
 export interface TagInputOption {
   id: string;

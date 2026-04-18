@@ -11,7 +11,7 @@ import {
   AlertTriangle,
   Hash,
   Tag,
-} from "lucide-react";
+} from "@/lib/icons";
 import { Button, Input, RowActions, RowActionButton } from "@/design-system";
 import { toSlug } from "@/lib/slug";
 import { formatNumber } from "@/lib/format";

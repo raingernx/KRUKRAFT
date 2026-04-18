@@ -10,7 +10,7 @@ import {
   RotateCcw,
   FileJson,
   Info,
-} from "lucide-react";
+} from "@/lib/icons";
 import { Button, Badge, Textarea } from "@/design-system";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 

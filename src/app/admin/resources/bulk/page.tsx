@@ -2,7 +2,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Button, PageContainer, PageContent } from "@/design-system";
 import { BulkUploadClient } from "./BulkUploadClient";
 import Link from "next/link";
-import { Layers } from "lucide-react";
+import { Layers } from "@/lib/icons";
 import { routes } from "@/lib/routes";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 

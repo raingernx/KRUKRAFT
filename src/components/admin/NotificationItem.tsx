@@ -1,5 +1,5 @@
 "use client";
-import { CheckCircle2, Info, AlertCircle } from "lucide-react";
+import { CheckCircle2, Info, AlertCircle } from "@/lib/icons";
 
 import type { Notification } from "@/features/admin-ux/types";
 

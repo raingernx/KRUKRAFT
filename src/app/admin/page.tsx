@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Users, Package, CreditCard, Download } from "lucide-react";
+import { Users, Package, CreditCard, Download } from "@/lib/icons";
 import { Card } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { formatNumber, formatDate, formatPrice } from "@/lib/format";

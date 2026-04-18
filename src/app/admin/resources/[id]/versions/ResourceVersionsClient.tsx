@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { format } from "date-fns";
-import { ArrowLeft, Download, RotateCcw } from "lucide-react";
+import { ArrowLeft, Download, RotateCcw } from "@/lib/icons";
 import Link from "next/link";
 
 import { Badge, Button, RowActions, RowActionButton } from "@/design-system";

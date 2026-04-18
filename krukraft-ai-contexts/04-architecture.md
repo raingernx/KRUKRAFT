@@ -311,6 +311,10 @@ Admin settings note:
 - `/admin/settings` must read live DB-backed platform settings
 - admin brand-asset editing must distinguish stored values from inherited preview fallbacks
 - `/admin/settings` now also persists dedicated dark-surface logo fields (`logoFullDarkUrl`, `logoIconDarkUrl`) instead of overloading the light navigation logos
+- admin routes and shared admin controls now resolve iconography through the
+  repo-owned `@/lib/icons` adapter instead of importing `lucide-react`
+  directly, keeping admin chrome aligned with the same icon ownership surface
+  used elsewhere in the app
 - the `src/app/admin/layout.tsx` subtree is now explicitly `force-dynamic`, so admin overview/resources/orders/users/activity pages cannot be statically prerendered during `next build` and accidentally spend Prisma pool connections on build-time admin reads
 - `src/app/(dashboard)/dashboard/layout.tsx` and `src/app/admin/layout.tsx` own their active family shell boundaries; the retired `(dashboard)` / `(dashboard-lite)` groups no longer own live dashboard chrome or shell loading
 - this route-family boundary rule exists to keep hard refreshes inside the correct dashboard/admin loading family rather than falling back to the global app-level loading UI while layout-level auth/viewer state resolves

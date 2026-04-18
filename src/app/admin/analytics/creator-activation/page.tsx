@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { getCreatorActivationFunnel } from "@/services/analytics";
-import { ArrowRight, Users, MousePointerClick, FilePlus, Rocket } from "lucide-react";
+import { ArrowRight, Users, MousePointerClick, FilePlus, Rocket } from "@/lib/icons";
 import { AdminAnalyticsCreatorActivationResultsSkeleton } from "@/components/skeletons/AdminAnalyticsRouteSkeletons";
 import { routes } from "@/lib/routes";
 

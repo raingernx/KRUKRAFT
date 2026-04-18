@@ -15,7 +15,7 @@ import {
   Download,
   CreditCard,
   ArrowDown,
-} from "lucide-react";
+} from "@/lib/icons";
 import { Button, Input } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { TableToolbar } from "@/components/admin/table";

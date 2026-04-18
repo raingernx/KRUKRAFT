@@ -16,7 +16,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Trash2 } from "lucide-react";
+import { GripVertical, Trash2 } from "@/lib/icons";
 import { MediaPreview, PickerIconButton, PreviewCard } from "@/design-system/product";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 

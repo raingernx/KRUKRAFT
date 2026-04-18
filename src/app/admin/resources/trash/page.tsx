@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "@/lib/icons";
 
 import { Button } from "@/design-system";
 import { AdminResourcesTrashTable } from "@/components/admin/resources";

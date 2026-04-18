@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
-import { Plus } from "lucide-react";
+import { Plus } from "@/lib/icons";
 
 import { Button, Input, Modal, RowActionButton, RowActions } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";

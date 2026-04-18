@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { ImagePlus } from "lucide-react";
+import { ImagePlus } from "@/lib/icons";
 
 import { PickerDropzoneShell } from "@/design-system/product";
 import { cn } from "@/lib/utils";

@@ -2,7 +2,7 @@
 
 import { FormEvent, KeyboardEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Filter, Search } from "lucide-react";
+import { Filter, Search } from "@/lib/icons";
 
 import { Button, Input, Select } from "@/design-system";
 import { useDebounce } from "@/hooks/useDebounce";
