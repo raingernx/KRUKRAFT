@@ -1,6 +1,6 @@
 import { Skeleton } from "boneyard-js/react";
 import Link from "next/link";
-import { Compass, Search, Sparkles } from "lucide-react";
+import { Compass, Search, Sparkles } from "@/lib/icons";
 import { LoadingSkeleton } from "@/design-system";
 import { routes } from "@/lib/routes";
 import type { SearchRecoveryData } from "@/services/search";

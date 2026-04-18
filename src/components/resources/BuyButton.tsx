@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/design-system";
-import { AlertCircle, CreditCard, QrCode, Download, Lock, CheckCircle } from "lucide-react";
+import { AlertCircle, CreditCard, QrCode, Download, Lock, CheckCircle } from "@/lib/icons";
 import { primeAuthViewer, useAuthViewer } from "@/lib/auth/use-auth-viewer";
 import { formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";

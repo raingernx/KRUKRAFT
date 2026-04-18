@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { XCircle, BookOpen, ArrowLeft, RotateCcw } from "lucide-react";
+import { XCircle, BookOpen, ArrowLeft, RotateCcw } from "@/lib/icons";
 import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/design-system";
 import { routes } from "@/lib/routes";

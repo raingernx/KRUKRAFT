@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal } from "@/lib/icons";
 import { SearchInput } from "@/design-system";
 import { ResourceCard, type ResourceCardResource } from "@/components/resources/ResourceCard";
 import { LIBRARY_GRID_CLASSES } from "./LibraryGrid";

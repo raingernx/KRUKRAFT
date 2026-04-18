@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Star } from "@/lib/icons";
 import { formatNumber } from "@/lib/format";
 
 export interface ResourceHeaderBreadcrumb {

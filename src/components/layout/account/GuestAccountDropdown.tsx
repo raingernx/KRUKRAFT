@@ -110,8 +110,8 @@ function GuestAccountMenuItems({
               prefetchScope={itemPrefetchScope}
               onMouseEnter={onWarmTargets}
               onFocus={onWarmTargets}
-              onClick={() => {
-                onNavigate?.(item.href);
+              onClick={(event) => {
+                onNavigate?.(item.href, event);
               }}
             >
               <Icon

@@ -1,6 +1,6 @@
 "use client";
 
-import { Monitor, Moon, Sun, type LucideIcon } from "lucide-react";
+import { Monitor, Moon, Sun, type AppIcon } from "@/lib/icons";
 
 import {
   Button,
@@ -19,7 +19,7 @@ export type ThemeSwitcherVariant = "icon" | "compact";
 export interface ThemeSwitcherOption {
   value: Theme;
   label: string;
-  icon: LucideIcon;
+  icon: AppIcon;
 }
 
 export interface ThemeSwitcherProps {
@@ -43,7 +43,7 @@ export const DEFAULT_THEME_SWITCHER_OPTIONS: readonly ThemeSwitcherOption[] = [
 function getThemeIcon(
   theme: Theme,
   options: readonly ThemeSwitcherOption[],
-): LucideIcon {
+): AppIcon {
   return options.find((option) => option.value === theme)?.icon ?? Monitor;
 }
 

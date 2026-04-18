@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FileText } from "lucide-react";
+import { FileText } from "@/lib/icons";
 import { formatPrice } from "@/lib/format";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 import { routes } from "@/lib/routes";

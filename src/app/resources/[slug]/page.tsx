@@ -4,7 +4,7 @@ import {
   isMissingTableError,
   isTransientPrismaInfrastructureError,
 } from "@/lib/prismaErrors";
-import { AlertCircle, BookOpen } from "lucide-react";
+import { AlertCircle, BookOpen } from "@/lib/icons";
 import { ResourceHeader } from "@/components/resources/detail/ResourceHeader";
 import { ResourceGallery } from "@/components/resources/detail/ResourceGallery";
 import { PurchaseCardSkeleton } from "@/components/resources/detail/PurchaseCardSkeleton";

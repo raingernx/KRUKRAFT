@@ -15,6 +15,7 @@ export type LoginCredentials = {
 const AUTH_NAVIGATION_TIMEOUT_MS = 120_000;
 const AUTH_CALLBACK_RETRY_LIMIT = 3;
 const AUTH_GOTO_RETRY_LIMIT = 3;
+const AUTH_REQUEST_RETRY_LIMIT = 3;
 const TEST_BASE_URL =
   process.env.PLAYWRIGHT_TEST_BASE_URL ??
   process.env.BASE_URL ??
@@ -44,12 +45,44 @@ function isRetryableAuthGotoError(error: unknown) {
   );
 }
 
+function isRetryableAuthRequestError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return /ECONNRESET|socket hang up|fetch failed|network|ERR_CONNECTION_REFUSED/i.test(
+    message,
+  );
+}
+
+async function authRequestWithRetry<T>(
+  page: Page,
+  requestFactory: () => Promise<T>,
+  retryLimit = AUTH_REQUEST_RETRY_LIMIT,
+) {
+  let lastError: unknown = null;
+
+  for (let attempt = 0; attempt < retryLimit; attempt += 1) {
+    try {
+      return await requestFactory();
+    } catch (error) {
+      lastError = error;
+      if (!isRetryableAuthRequestError(error) || attempt === retryLimit - 1) {
+        throw error;
+      }
+
+      await page.waitForTimeout(250 * (attempt + 1));
+    }
+  }
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("Auth request failed before a response was returned.");
+}
+
 async function ensureAuthFixtures() {
   const prisma = new PrismaClient();
   const hashedAdminPassword = await bcrypt.hash(ADMIN_CREDENTIALS.password, 12);
   const hashedCreatorPassword = await bcrypt.hash(CREATOR_CREDENTIALS.password, 12);
   const hashedUserPassword = await bcrypt.hash(USER_CREDENTIALS.password, 12);
-  const generatedCreatorSlug = `demo-instructor-smoke-${Date.now().toString(36)}`;
+  const creatorSlug = "kru-mint";
 
   try {
     await prisma.user.upsert({
@@ -75,6 +108,7 @@ async function ensureAuthFixtures() {
         role: UserRole.INSTRUCTOR,
         emailVerified: new Date(),
         creatorDisplayName: "Kru Mint",
+        creatorSlug,
         creatorEnabled: true,
         creatorStatus: CreatorStatus.ACTIVE,
         creatorApplicationStatus: CreatorApplicationStatus.APPROVED,
@@ -86,7 +120,7 @@ async function ensureAuthFixtures() {
         role: UserRole.INSTRUCTOR,
         emailVerified: new Date(),
         creatorDisplayName: "Kru Mint",
-        creatorSlug: generatedCreatorSlug,
+        creatorSlug,
         creatorEnabled: true,
         creatorStatus: CreatorStatus.ACTIVE,
         creatorApplicationStatus: CreatorApplicationStatus.APPROVED,
@@ -138,7 +172,9 @@ export async function loginWithCredentials(
   );
   const request = page.context().request;
 
-  const csrfResponse = await request.get(`${TEST_BASE_URL}/api/auth/csrf`);
+  const csrfResponse = await authRequestWithRetry(page, () =>
+    request.get(`${TEST_BASE_URL}/api/auth/csrf`),
+  );
   expect(csrfResponse.ok()).toBeTruthy();
   const csrfPayload = (await csrfResponse.json()) as { csrfToken?: string };
   const csrfToken = csrfPayload.csrfToken;

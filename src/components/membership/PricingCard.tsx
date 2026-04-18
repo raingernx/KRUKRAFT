@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check } from "lucide-react";
+import { Check } from "@/lib/icons";
 
 import { Button, useToast } from "@/design-system";
 import { primeAuthViewer, useAuthViewer } from "@/lib/auth/use-auth-viewer";

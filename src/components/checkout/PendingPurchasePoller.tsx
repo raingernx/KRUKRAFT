@@ -23,7 +23,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Library } from "lucide-react";
+import { Loader2, Library } from "@/lib/icons";
 import Link from "next/link";
 import { routes } from "@/lib/routes";
 
@@ -139,7 +139,7 @@ export function PendingPurchasePoller({
           {/* Actions */}
           <div className="space-y-2">
             <Link
-              href={routes.dashboardV2Library}
+              href={routes.dashboardLibrary}
               className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-foreground px-5 py-3 text-[14px] font-semibold text-background transition hover:opacity-90"
             >
               <Library className="h-4 w-4" />

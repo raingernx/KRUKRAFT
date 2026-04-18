@@ -17,7 +17,17 @@ import { ScrollableCategoryNav } from "@/components/marketplace/ScrollableCatego
 import { getDiscoverCategories } from "@/services/discover";
 import { runBestEffortAsync, runWithTimeoutFallback } from "@/lib/async";
 
-const RESOURCES_CATALOG_CATEGORIES_TIMEOUT_MS = 400;
+const RESOURCES_CATALOG_CATEGORIES_TIMEOUT_MS = 1000;
+const SHOULD_LOG_CATEGORY_TIMEOUT_WARNINGS =
+  process.env.NODE_ENV === "production";
+const RESOURCES_CATALOG_CATEGORIES_BEST_EFFORT_WARNING_LABEL =
+  SHOULD_LOG_CATEGORY_TIMEOUT_WARNINGS
+    ? "[RESOURCES_CATALOG_CATEGORIES_BEST_EFFORT]"
+    : undefined;
+const RESOURCES_CATALOG_CATEGORIES_TIMEOUT_WARNING_LABEL =
+  SHOULD_LOG_CATEGORY_TIMEOUT_WARNINGS
+    ? "[RESOURCES_CATALOG_CATEGORIES_TIMEOUT]"
+    : undefined;
 const FALLBACK_DISCOVER_CATEGORIES = [
   { id: "category_art_creativity", name: "Art & Creativity", slug: "art-creativity" },
   { id: "category_early_learning", name: "Early Learning", slug: "early-learning" },
@@ -43,12 +53,12 @@ export async function ResourcesCatalogControls() {
       () =>
         runBestEffortAsync(() => getDiscoverCategories(), {
           fallback: FALLBACK_DISCOVER_CATEGORIES,
-          warningLabel: "[RESOURCES_CATALOG_CATEGORIES_BEST_EFFORT]",
+          warningLabel: RESOURCES_CATALOG_CATEGORIES_BEST_EFFORT_WARNING_LABEL,
         }),
       {
         timeoutMs: RESOURCES_CATALOG_CATEGORIES_TIMEOUT_MS,
         fallback: FALLBACK_DISCOVER_CATEGORIES,
-        warningLabel: "[RESOURCES_CATALOG_CATEGORIES_TIMEOUT]",
+        warningLabel: RESOURCES_CATALOG_CATEGORIES_TIMEOUT_WARNING_LABEL,
       },
     );
   } catch (error) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ChevronDown } from "@/lib/icons";
 import { Avatar } from "@/design-system";
 import { cn } from "@/lib/utils";
 

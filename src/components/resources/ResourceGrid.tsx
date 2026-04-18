@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
-import { BookOpen, Search } from "lucide-react";
+import { BookOpen, Search } from "@/lib/icons";
 import { Button } from "@/design-system";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";

@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle, Download } from "lucide-react";
+import { CheckCircle, Download } from "@/lib/icons";
 import { AutoScrollOnSuccess } from "./AutoScrollOnSuccess";
 import { PendingPurchasePoller } from "@/components/checkout/PendingPurchasePoller";
 import { useResourceDetailViewerState } from "./ResourceDetailViewerStateProvider";

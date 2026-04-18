@@ -15,7 +15,7 @@
 - **Thumbnails:** `resource.previewUrl` or `/placeholder-resource.png` with icon fallback; 16:10 aspect, no layout shift.
 - **When no filters:** `MarketplaceHome` also renders (trending + new releases sections).
 
-### 2. `/dashboard-v2/library`
+### 2. `/dashboard/library`
 
 - **Rendering:** `LibraryGridClient` with `LIBRARY_GRID_CLASSES` (grid-cols-2, lg:grid-cols-3, gap-6, items-stretch).
 - **Data:** Library items with `id`, `slug`, `title`, `authorName`, `previewUrl`, `downloadedAt` (from `purchasedAt`).

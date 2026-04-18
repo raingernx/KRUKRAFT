@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { Check } from "@/lib/icons";
 import { Button } from "@/design-system";
 import { routes } from "@/lib/routes";
 import { getBuildSafePlatformConfig } from "@/services/platform";
@@ -55,13 +55,14 @@ export async function CreatorCTA() {
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <div className="relative aspect-[4/3] w-full max-w-md overflow-hidden rounded-[28px] border border-border bg-gradient-to-br from-card to-muted p-6 shadow-card">
+          <div className="flex aspect-[4/3] w-full max-w-md items-center justify-center overflow-hidden rounded-[28px] border border-border bg-gradient-to-br from-card to-muted p-6 shadow-card">
             <Image
               src="/brand/krukraft-mark.svg"
               alt={`Creators sharing study resources on ${platform.platformShortName}`}
-              fill
-              sizes="(max-width: 1024px) calc(100vw - 48px), 448px"
-              className="object-contain p-8"
+              width={256}
+              height={256}
+              sizes="256px"
+              className="h-auto w-full max-w-64 object-contain"
             />
           </div>
         </div>

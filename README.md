@@ -26,6 +26,7 @@ Krukraft is a Next.js App Router application with:
 - NextAuth
 - Stripe
 - Xendit
+- Sentry
 - Vercel
 
 ## Key Product Areas
@@ -39,12 +40,12 @@ Krukraft is a Next.js App Router application with:
 
 ### User Dashboard
 
-- `/dashboard-v2`
-- `/dashboard-v2/library`
-- `/dashboard-v2/downloads`
-- `/dashboard-v2/purchases`
-- `/dashboard-v2/membership`
-- `/dashboard-v2/settings`
+- `/dashboard`
+- `/dashboard/library`
+- `/dashboard/downloads`
+- `/dashboard/purchases`
+- `/dashboard/membership`
+- `/dashboard/settings`
 
 ### Creator Workspace
 
@@ -118,6 +119,7 @@ npm run lint
 npm run context:check
 npm run context:check:staged:strict
 npm run smoke:local:browser
+npm run test:e2e:local -- tests/e2e/resources.smoke.spec.ts
 ```
 
 Design-system specific checks:
@@ -142,6 +144,15 @@ Notes:
 - the current capture route is `http://localhost:3000/dev/bones`
 - detailed skeleton/bones ownership and route-shell context now lives in
   `krukraft-ai-contexts/` and the DS docs instead of this landing page
+- on this current macOS machine, sandboxed agent sessions can block Playwright
+  Chromium launch before any test body runs with
+  `MachPortRendezvousServer` / `Permission denied (1100)`; treat that as a
+  local execution restriction, not an app/spec bug
+- when that happens, rerun outside the sandbox or with elevated permissions and
+  use `npm run test:e2e:local -- <spec-or-flags>` as the default local
+  Chromium path
+- `npm run smoke:local:browser` remains the repo-owned Playwright API probe
+  path for quick local runtime checks; it is not the full Playwright Test suite
 
 ## Production Notes
 
@@ -193,6 +204,9 @@ GitHub `About` panel to match the values above.
 For deeper repo-owned docs, use:
 
 - [krukraft-ai-contexts/README.md](krukraft-ai-contexts/README.md)
+- [docs/agent-plugin-workflows.md](docs/agent-plugin-workflows.md)
+- [docs/supabase-db-workflow.md](docs/supabase-db-workflow.md)
+- [docs/supabase-incident-playbook.md](docs/supabase-incident-playbook.md)
 - [src/design-system/README.md](src/design-system/README.md)
 - [src/design-system/theme-playbook.md](src/design-system/theme-playbook.md)
 - [design-system.md](design-system.md)

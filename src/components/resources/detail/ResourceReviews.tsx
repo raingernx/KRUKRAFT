@@ -1,4 +1,4 @@
-import { BadgeCheck, Star } from "lucide-react";
+import { BadgeCheck, Star } from "@/lib/icons";
 import { formatDate } from "@/lib/format";
 
 export interface ResourceReviewItem {

@@ -1,16 +1,8 @@
 "use client";
 
-import { useState, type ComponentType } from "react";
+import { useState, type MouseEvent as ReactMouseEvent } from "react";
 import { usePathname } from "next/navigation";
-import {
-  CircleDollarSign,
-  CreditCard,
-  FileText,
-  Home,
-  LogOut,
-  Settings,
-  Sparkles,
-} from "lucide-react";
+import { CreditCard, LogOut } from "@/lib/icons";
 
 import {
   Avatar,
@@ -23,6 +15,13 @@ import {
   SidebarSectionLabel,
 } from "@/design-system";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
+import {
+  AUTHENTICATED_ACCOUNT_MENU_ACCOUNT_LINKS,
+  AUTHENTICATED_ACCOUNT_MENU_CREATOR_APPLY_LINKS,
+  AUTHENTICATED_ACCOUNT_MENU_CREATOR_LINKS,
+  type DashboardAccountCreatorMenuMode,
+  type DashboardAccountMenuItem,
+} from "@/components/layout/account/accountMenuConfig";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
@@ -30,74 +29,46 @@ export interface AuthenticatedAccountDropdownViewer {
   name: string;
   email: string | null;
   image: string | null;
-  creatorMenuMode?: "hidden" | "apply" | "full";
+  creatorMenuMode?: DashboardAccountCreatorMenuMode;
 }
 
-export type AccountDropdownNavigateHandler = (href: string) => void;
-
-export const AUTHENTICATED_ACCOUNT_MENU_ACCOUNT_LINKS = [
-  { href: routes.dashboardV2, label: "Dashboard home", icon: Home },
-  { href: routes.dashboardV2Settings, label: "Settings", icon: Settings },
-] as const;
-
-export const AUTHENTICATED_ACCOUNT_MENU_CREATOR_LINKS = [
-  {
-    href: routes.dashboardV2Creator,
-    label: "Creator workspace",
-    icon: Sparkles,
-  },
-  {
-    href: routes.dashboardV2CreatorResources,
-    label: "Creator resources",
-    icon: FileText,
-  },
-  {
-    href: routes.dashboardV2CreatorSales,
-    label: "Creator earnings",
-    icon: CircleDollarSign,
-  },
-] as const;
-
-export const AUTHENTICATED_ACCOUNT_MENU_CREATOR_APPLY_LINKS = [
-  {
-    href: routes.dashboardV2CreatorApply,
-    label: "Become a creator",
-    icon: Sparkles,
-  },
-] as const;
+export type AccountDropdownNavigateHandler = (
+  href: string,
+  event?: ReactMouseEvent<HTMLAnchorElement>,
+) => void;
 
 function isMenuLinkActive(pathname: string | null, href: string) {
-  if (href === routes.dashboardV2) {
-    return pathname === routes.dashboardV2;
+  if (href === routes.dashboard) {
+    return pathname === routes.dashboard;
   }
 
-  if (href === routes.dashboardV2Membership) {
-    return pathname === routes.dashboardV2Membership;
+  if (href === routes.dashboardMembership) {
+    return pathname === routes.dashboardMembership;
   }
 
-  if (href === routes.dashboardV2Settings) {
-    return pathname === routes.dashboardV2Settings;
+  if (href === routes.dashboardSettings) {
+    return pathname === routes.dashboardSettings;
   }
 
-  if (href === routes.dashboardV2Creator) {
+  if (href === routes.dashboardCreator) {
     return (
-      pathname === routes.dashboardV2Creator ||
-      pathname === routes.dashboardV2CreatorAnalytics ||
-      pathname === routes.dashboardV2CreatorApply
+      pathname === routes.dashboardCreator ||
+      pathname === routes.dashboardCreatorAnalytics ||
+      pathname === routes.dashboardCreatorApply
     );
   }
 
-  if (href === routes.dashboardV2CreatorResources) {
+  if (href === routes.dashboardCreatorResources) {
     return (
-      pathname === routes.dashboardV2CreatorResources ||
-      pathname?.startsWith(`${routes.dashboardV2CreatorResources}/`) === true
+      pathname === routes.dashboardCreatorResources ||
+      pathname?.startsWith(`${routes.dashboardCreatorResources}/`) === true
     );
   }
 
-  if (href === routes.dashboardV2CreatorSales) {
+  if (href === routes.dashboardCreatorSales) {
     return (
-      pathname === routes.dashboardV2CreatorSales ||
-      pathname === routes.dashboardV2CreatorPayouts
+      pathname === routes.dashboardCreatorSales ||
+      pathname === routes.dashboardCreatorPayouts
     );
   }
   return pathname === href;
@@ -161,12 +132,12 @@ function MembershipItem({
 }) {
   return (
     <IntentPrefetchLink
-      href={routes.dashboardV2Membership}
-      data-dashboard-account-link={routes.dashboardV2Membership}
+      href={routes.dashboardMembership}
+      data-dashboard-account-link={routes.dashboardMembership}
       onMouseEnter={onWarmTargets}
       onFocus={onWarmTargets}
-      onClick={() => {
-        onNavigate(routes.dashboardV2Membership);
+      onClick={(event) => {
+        onNavigate(routes.dashboardMembership, event);
       }}
       className={cn(
         "mb-3 flex w-full items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
@@ -201,11 +172,7 @@ function MenuSection({
   pathname,
 }: {
   label: string;
-  items: readonly {
-    href: string;
-    label: string;
-    icon: ComponentType<{ className?: string }>;
-  }[];
+  items: readonly DashboardAccountMenuItem[];
   onWarmTargets?: () => void;
   onNavigate: AccountDropdownNavigateHandler;
   pathname: string | null;
@@ -226,8 +193,8 @@ function MenuSection({
             data-dashboard-account-link={item.href}
             onMouseEnter={onWarmTargets}
             onFocus={onWarmTargets}
-            onClick={() => {
-              onNavigate(item.href);
+            onClick={(event) => {
+              onNavigate(item.href, event);
             }}
             className={cn(
               "flex w-full items-center gap-2.5 rounded-xl border px-2.5 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
@@ -306,7 +273,7 @@ export function AuthenticatedAccountDropdown({
           <AccountDropdownContext viewer={viewer} />
 
           <MembershipItem
-            active={isMenuLinkActive(pathname, routes.dashboardV2Membership)}
+            active={isMenuLinkActive(pathname, routes.dashboardMembership)}
             onWarmTargets={onWarmTargets}
             onNavigate={onNavigate}
           />

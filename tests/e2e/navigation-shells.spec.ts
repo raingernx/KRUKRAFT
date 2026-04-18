@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { loginAsCreator } from "./helpers/auth";
 import { collectRuntimeErrors } from "./helpers/browser";
 
-// This suite runs against `next dev` in CI, so the first hit to `/dashboard-v2/library`
+// This suite runs against `next dev` in CI, so the first hit to `/dashboard/library`
 // can include route compile latency after a code change. These transitions are meant
 // to prove shell coverage / no blank gap, not to enforce a 15s compile budget.
 const LIBRARY_NAV_TIMEOUT_MS = 45_000;
@@ -163,11 +163,11 @@ function expectNoBlankGap(
 }
 
 async function openLibraryFromResources(page: Page) {
-  const libraryUrl = /\/dashboard-v2\/library$/;
-  const libraryHref = () => new URL("/dashboard-v2/library", page.url()).toString();
+  const libraryUrl = /\/dashboard\/library$/;
+  const libraryHref = () => new URL("/dashboard/library", page.url()).toString();
   const directLibraryLink = () =>
     page
-      .locator('header [data-public-library-link="true"], header a[href="/dashboard-v2/library"]')
+      .locator('header [data-public-library-link="true"], header a[href="/dashboard/library"]')
       .filter({ hasText: /คลังของฉัน|My Library/i })
       .first();
   const accountButton = () =>
@@ -311,7 +311,7 @@ test("resources to dashboard library does not expose a blank gap during transiti
 
   await openLibraryFromResources(page);
 
-  await expect(page).toHaveURL(/\/dashboard-v2\/library$/, {
+  await expect(page).toHaveURL(/\/dashboard\/library$/, {
     timeout: LIBRARY_NAV_TIMEOUT_MS,
   });
   await expect(page.locator("main").first()).toBeVisible({
@@ -319,7 +319,7 @@ test("resources to dashboard library does not expose a blank gap during transiti
   });
 
   const samples = await stopNavigationProbe(page);
-  expectNoBlankGap(samples, /\/dashboard-v2\/library$/);
+  expectNoBlankGap(samples, /\/dashboard\/library$/);
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -328,10 +328,10 @@ test("resources to dashboard library does not expose a blank gap during transiti
 test("dashboard library back to resources keeps shell coverage during transition", async ({
   page,
 }) => {
-  await loginAsCreator(page, "/dashboard-v2/library");
+  await loginAsCreator(page, "/dashboard/library");
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
-  await expect(page).toHaveURL(/\/dashboard-v2\/library$/, {
+  await expect(page).toHaveURL(/\/dashboard\/library$/, {
     timeout: LIBRARY_NAV_TIMEOUT_MS,
   });
   await expect(

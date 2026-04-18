@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/lib/icons";
 import { Card } from "@/design-system";
 import { routes } from "@/lib/routes";
 

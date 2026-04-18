@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/lib/icons";
 import { Skeleton } from "boneyard-js/react";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { RecommendationSection } from "@/components/recommendations/RecommendationSection";

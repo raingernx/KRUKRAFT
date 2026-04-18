@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Mail, LifeBuoy, ArrowLeft } from "lucide-react";
+import { Mail, LifeBuoy, ArrowLeft } from "@/lib/icons";
 import { Container } from "@/design-system";
 import { Navbar } from "@/components/layout/Navbar";
 import { MarketplaceNavbarSearch } from "@/components/marketplace/MarketplaceNavbarSearch";

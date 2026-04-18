@@ -2,7 +2,7 @@
 
 import { memo, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { FileText } from "lucide-react";
+import { FileText } from "@/lib/icons";
 import { RevealImage } from "@/design-system";
 import {
   beginResourcesNavigation,

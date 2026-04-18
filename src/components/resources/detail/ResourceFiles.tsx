@@ -1,4 +1,4 @@
-import { FileText, Archive } from "lucide-react";
+import { FileText, Archive } from "@/lib/icons";
 
 export interface ResourceFileItem {
   /** Display name, e.g. "worksheet.pdf" */

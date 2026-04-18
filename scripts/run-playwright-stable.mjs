@@ -115,6 +115,22 @@ function looksLikeLaunchCrash(output) {
   return hasLaunchFailure && (hasCrashSignal || hasMacLaunchFatal);
 }
 
+function isSandboxBlockedChromiumLaunch(output) {
+  return (
+    /MachPortRendezvousServer/i.test(output) ||
+    /bootstrap_check_in/i.test(output) ||
+    /Permission denied \(1100\)/i.test(output)
+  );
+}
+
+function emitSandboxLaunchGuidance() {
+  process.stderr.write(
+    "\n[playwright-stable] Chromium launch is being blocked by the current macOS/sandbox environment " +
+      "(MachPortRendezvousServer / Permission denied 1100). Re-run this Playwright command outside the sandbox " +
+      "or with elevated permissions. This is an environment launch restriction, not a test assertion failure.\n",
+  );
+}
+
 function buildEnv(attempt) {
   const headlessShellExecutable = resolveHeadlessShellExecutable();
 
@@ -176,15 +192,21 @@ let lastExitCode = 1;
 for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
   const result = await runAttempt(attempt);
   lastExitCode = result.code;
+  const isLaunchCrash = looksLikeLaunchCrash(result.combinedOutput);
+  const isSandboxLaunchBlock = isSandboxBlockedChromiumLaunch(
+    result.combinedOutput,
+  );
 
   if (result.code === 0) {
     process.exit(0);
   }
 
-  const canRetry =
-    attempt < MAX_ATTEMPTS && looksLikeLaunchCrash(result.combinedOutput);
+  const canRetry = attempt < MAX_ATTEMPTS && isLaunchCrash;
 
   if (!canRetry) {
+    if (isLaunchCrash && isSandboxLaunchBlock) {
+      emitSandboxLaunchGuidance();
+    }
     process.exit(lastExitCode);
   }
 
@@ -195,6 +217,9 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
     process.stderr.write(
       `\n[playwright-stable] Launch crash detected, but webkit fallback is unavailable. ${missingReason}\n`,
     );
+    if (isSandboxLaunchBlock) {
+      emitSandboxLaunchGuidance();
+    }
     process.exit(lastExitCode);
   }
 

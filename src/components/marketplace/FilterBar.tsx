@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, X } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/lib/format";
 import { DEFAULT_SORT, SORT_OPTIONS, normaliseSortParam } from "@/config/sortOptions";

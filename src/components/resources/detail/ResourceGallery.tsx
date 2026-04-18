@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronUp, ChevronDown, FileText, X, ZoomIn } from "lucide-react";
+import { ChevronUp, ChevronDown, FileText, X, ZoomIn } from "@/lib/icons";
 import { RevealImage } from "@/design-system";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 

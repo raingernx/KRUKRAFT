@@ -10,7 +10,7 @@ import {
   useTransition,
 } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Compass, FileText, Search, Sparkles } from "lucide-react";
+import { Compass, FileText, Search, Sparkles } from "@/lib/icons";
 import { RevealImage, SearchInput } from "@/design-system";
 import { cn } from "@/lib/utils";
 import {

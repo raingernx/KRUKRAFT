@@ -27,7 +27,7 @@ export default function ResourceDetailNotFound() {
             Browse resources
           </Link>
           <Link
-            href={routes.dashboardV2Library}
+            href={routes.dashboardLibrary}
             className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 text-small font-medium text-foreground transition hover:bg-muted"
           >
             Open your library

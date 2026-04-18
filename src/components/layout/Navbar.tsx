@@ -16,14 +16,17 @@ import {
   LogOut,
   Menu,
   X,
-} from "lucide-react";
+} from "@/lib/icons";
 import { Avatar, Badge, Container, SidebarSectionLabel } from "@/design-system";
 import {
   AuthenticatedAccountDropdown,
+} from "@/components/layout/account/AuthenticatedAccountDropdown";
+import {
   AUTHENTICATED_ACCOUNT_MENU_ACCOUNT_LINKS,
   AUTHENTICATED_ACCOUNT_MENU_CREATOR_APPLY_LINKS,
   AUTHENTICATED_ACCOUNT_MENU_CREATOR_LINKS,
-} from "@/components/layout/account/AuthenticatedAccountDropdown";
+  PUBLIC_PROTECTED_AREA_PREFETCH_TARGETS,
+} from "@/components/layout/account/accountMenuConfig";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { NavbarBrand } from "@/components/layout/NavbarBrand";
 import {
@@ -49,7 +52,7 @@ import { cn } from "@/lib/utils";
 
 const NAV_LINKS: { href: string; label: string }[] = [
   { href: routes.marketplace, label: "มาร์เก็ตเพลส" },
-  { href: routes.dashboardV2Library, label: "คลังของฉัน" },
+  { href: routes.dashboardLibrary, label: "คลังของฉัน" },
 ];
 
 const MARKETPLACE_CATEGORY_ITEMS = [
@@ -109,14 +112,6 @@ const MARKETPLACE_PRIMARY_ACTION_CLASS_NAME =
   "inline-flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-brand-600 px-4 text-[14px] leading-[22px] font-semibold text-white transition-colors hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2";
 const MARKETPLACE_CATEGORY_ITEM_CLASS_NAME =
   "inline-flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full border px-4 text-[14px] leading-[22px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2";
-const PROTECTED_AREA_PREFETCH_TARGETS = [
-  routes.dashboardV2,
-  routes.dashboardV2Library,
-  routes.dashboardV2Purchases,
-  routes.dashboardV2Settings,
-  routes.dashboardV2Membership,
-] as const;
-
 type ProtectedAreaLinkHandler = (
   event: ReactMouseEvent<HTMLAnchorElement>,
   href: string,
@@ -177,13 +172,13 @@ function isMarketplaceCategoryActive(currentCategory: string | null, itemCategor
 
 function handleProtectedAreaNavigation(href: string) {
   if (
-    href === routes.dashboardV2 ||
-    href === routes.dashboardV2Library ||
-    href === routes.dashboardV2Downloads ||
-    href === routes.dashboardV2Purchases ||
-    href === routes.dashboardV2Settings ||
-    href === routes.dashboardV2Membership ||
-    href.startsWith("/dashboard-v2/")
+    href === routes.dashboard ||
+    href === routes.dashboardLibrary ||
+    href === routes.dashboardDownloads ||
+    href === routes.dashboardPurchases ||
+    href === routes.dashboardSettings ||
+    href === routes.dashboardMembership ||
+    href.startsWith(`${routes.dashboard}/`)
   ) {
     beginDashboardNavigation(href, { overlay: true });
   }
@@ -261,7 +256,7 @@ function NavbarInner({
 
     protectedAreaPrefetchedRef.current = true;
 
-    for (const href of PROTECTED_AREA_PREFETCH_TARGETS) {
+    for (const href of PUBLIC_PROTECTED_AREA_PREFETCH_TARGETS) {
       startTransition(() => {
         router.prefetch(href);
       });
@@ -331,17 +326,17 @@ function NavbarInner({
   ) {
     const useDashboardEntryOverlay =
       !isDashboardGroupPath(pathname) &&
-      href !== routes.dashboardV2Settings &&
-      href !== routes.dashboardV2Membership;
+      href !== routes.dashboardSettings &&
+      href !== routes.dashboardMembership;
 
     if (
-      href === routes.dashboardV2 ||
-      href === routes.dashboardV2Library ||
-      href === routes.dashboardV2Downloads ||
-      href === routes.dashboardV2Purchases ||
-      href === routes.dashboardV2Settings ||
-      href === routes.dashboardV2Membership ||
-      href.startsWith("/dashboard-v2/")
+      href === routes.dashboard ||
+      href === routes.dashboardLibrary ||
+      href === routes.dashboardDownloads ||
+      href === routes.dashboardPurchases ||
+      href === routes.dashboardSettings ||
+      href === routes.dashboardMembership ||
+      href.startsWith(`${routes.dashboard}/`)
     ) {
       beginDashboardNavigation(href, { overlay: useDashboardEntryOverlay });
     }
@@ -429,13 +424,13 @@ function NavbarInner({
                 {authUser ? (
                   <>
                     <IntentPrefetchLink
-                      href={routes.dashboardV2Library}
+                      href={routes.dashboardLibrary}
                       data-public-library-link="true"
                       prefetchLimit={6}
                       prefetchScope="public-navbar"
                       onMouseEnter={warmProtectedAreaTargets}
                       onFocus={warmProtectedAreaTargets}
-                      onClick={(event) => handleProtectedAreaAnchorClick(event, routes.dashboardV2Library)}
+                      onClick={(event) => handleProtectedAreaAnchorClick(event, routes.dashboardLibrary)}
                       className={MARKETPLACE_ACTION_LINK_CLASS_NAME}
                     >
                       คลังของฉัน
@@ -452,7 +447,10 @@ function NavbarInner({
                         void handleSignOut();
                       }}
                       onWarmTargets={warmProtectedAreaTargets}
-                      onNavigate={handleProtectedAreaLinkClick}
+                      onNavigate={(href, event) => {
+                        event?.preventDefault();
+                        commitProtectedAreaNavigation(href);
+                      }}
                       ariaLabel="เปิดเมนูบัญชี"
                     />
                   </>
@@ -482,13 +480,13 @@ function NavbarInner({
               >
                 {authUser ? (
                   <IntentPrefetchLink
-                    href={routes.dashboardV2Library}
+                    href={routes.dashboardLibrary}
                     data-public-library-link="true"
                     prefetchLimit={6}
                     prefetchScope="public-navbar"
                     onMouseEnter={warmProtectedAreaTargets}
                     onFocus={warmProtectedAreaTargets}
-                    onClick={(event) => handleProtectedAreaAnchorClick(event, routes.dashboardV2Library)}
+                    onClick={(event) => handleProtectedAreaAnchorClick(event, routes.dashboardLibrary)}
                     className="inline-flex h-10 shrink-0 items-center rounded-full px-3 text-[14px] leading-[22px] font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
                   >
                     คลังของฉัน
@@ -526,7 +524,10 @@ function NavbarInner({
                       void handleSignOut();
                     }}
                     onWarmTargets={warmProtectedAreaTargets}
-                    onNavigate={handleProtectedAreaLinkClick}
+                    onNavigate={(href, event) => {
+                      event?.preventDefault();
+                      commitProtectedAreaNavigation(href);
+                    }}
                     ariaLabel="เปิดเมนูบัญชี"
                   />
                 </div>
@@ -648,7 +649,7 @@ function NavbarInner({
             onFocusCapture={warmProtectedAreaTargets}
           >
             <nav className="hidden items-center gap-2 lg:flex" aria-label="เมนูหลัก">
-              {NAV_LINKS.filter(({ href }) => href !== routes.dashboardV2Library || Boolean(authUser)).map(({ href, label }) => (
+              {NAV_LINKS.filter(({ href }) => href !== routes.dashboardLibrary || Boolean(authUser)).map(({ href, label }) => (
                 <NavbarItem
                   key={href}
                   href={href}
@@ -677,7 +678,10 @@ function NavbarInner({
                     void handleSignOut();
                   }}
                   onWarmTargets={warmProtectedAreaTargets}
-                  onNavigate={handleProtectedAreaLinkClick}
+                  onNavigate={(href, event) => {
+                    event?.preventDefault();
+                    commitProtectedAreaNavigation(href);
+                  }}
                   ariaLabel="เปิดเมนูบัญชี"
                 />
               </div>
@@ -714,7 +718,7 @@ function NavbarInner({
       {mobileOpen ? (
         <div className="border-b border-border-subtle bg-background px-4 pb-5 pt-3 lg:hidden">
           <nav className="flex flex-col gap-0.5" aria-label="Mobile navigation">
-            {NAV_LINKS.filter(({ href }) => href !== routes.dashboardV2Library || Boolean(authUser)).map(({ href, label }) => (
+            {NAV_LINKS.filter(({ href }) => href !== routes.dashboardLibrary || Boolean(authUser)).map(({ href, label }) => (
               <NavbarItem
                 key={href}
                 href={href}
@@ -748,13 +752,13 @@ function NavbarInner({
                 </div>
 
                 <IntentPrefetchLink
-                  href={routes.dashboardV2Membership}
+                  href={routes.dashboardMembership}
                   prefetchLimit={6}
                   prefetchScope="public-account-menu"
                   onMouseEnter={warmProtectedAreaTargets}
                   onFocus={warmProtectedAreaTargets}
                   onClick={(event) => {
-                    handleProtectedAreaAnchorClick(event, routes.dashboardV2Membership, closeAll);
+                    handleProtectedAreaAnchorClick(event, routes.dashboardMembership, closeAll);
                   }}
                   className="group flex items-center gap-3 rounded-2xl border border-highlight-500/20 bg-[radial-gradient(circle_at_top_left,rgba(168,85,247,0.20),transparent_55%),linear-gradient(135deg,rgba(91,33,182,0.10),rgba(15,23,42,0.02))] px-3.5 py-3 text-left transition-all hover:border-highlight-500/35 hover:bg-[radial-gradient(circle_at_top_left,rgba(168,85,247,0.24),transparent_58%),linear-gradient(135deg,rgba(91,33,182,0.14),rgba(15,23,42,0.04))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2"
                 >

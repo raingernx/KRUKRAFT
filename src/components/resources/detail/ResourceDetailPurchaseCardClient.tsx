@@ -10,7 +10,7 @@ import {
   ShieldCheck,
   Sparkles,
   Star,
-} from "lucide-react";
+} from "@/lib/icons";
 import { PriceLabel } from "@/design-system/product";
 import { BuyButton } from "@/components/resources/BuyButton";
 import { PendingPurchasePoller } from "@/components/checkout/PendingPurchasePoller";

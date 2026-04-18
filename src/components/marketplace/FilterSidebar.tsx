@@ -3,7 +3,7 @@
 import { useCallback, useState, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { X } from "lucide-react";
+import { Minus, Plus, X } from "@/lib/icons";
 import {
   DEFAULT_SORT,
   SORT_OPTIONS,
@@ -89,9 +89,7 @@ export function FilterSidebar({
 
   const prefetchHref = useCallback(
     (href: string) => {
-      startTransition(() => {
-        router.prefetch(href);
-      });
+      router.prefetch(href);
     },
     [router],
   );
@@ -308,7 +306,13 @@ function FilterGroup({
         className="mb-3 flex w-full items-center justify-between rounded-lg px-1 text-small font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <span>{title}</span>
-        <span className="text-caption text-muted-foreground">{open ? "−" : "+"}</span>
+        <span className="inline-flex h-5 w-5 items-center justify-center text-muted-foreground">
+          {open ? (
+            <Minus className="h-4 w-4 stroke-[1.9]" aria-hidden />
+          ) : (
+            <Plus className="h-4 w-4 stroke-[1.9]" aria-hidden />
+          )}
+        </span>
       </button>
       {open && children}
     </div>

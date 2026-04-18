@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { Download, Eye, ExternalLink } from "lucide-react";
+import { Download, Eye, ExternalLink } from "@/lib/icons";
 import { Button } from "@/design-system";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { isPreviewSupported } from "@/lib/preview/previewPolicy";

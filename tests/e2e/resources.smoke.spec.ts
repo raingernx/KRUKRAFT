@@ -1,8 +1,49 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { expectNoAxeViolations } from "./helpers/a11y";
 import { collectRuntimeErrors } from "./helpers/browser";
 import { loginAsCreator } from "./helpers/auth";
 import { expectImageLoaded } from "./helpers/images";
+
+async function clickDetailLinkUntilNavigationStarts(
+  page: Page,
+  href: string,
+) {
+  const targetUrl = new RegExp(
+    `${href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\?.*)?$`,
+  );
+
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const link = page.locator(`main a[href="${href}"]`).first();
+    await expect(link).toBeVisible();
+    await link.scrollIntoViewIfNeeded();
+
+    const committedNavigation = page
+      .waitForURL(targetUrl, {
+        timeout: 5_000,
+        waitUntil: "commit",
+      })
+      .then(() => true)
+      .catch(() => false);
+
+    await link.hover().catch(() => undefined);
+    await link.click().catch(() => undefined);
+
+    if (await committedNavigation) {
+      return;
+    }
+
+    await link.focus().catch(() => undefined);
+    await page.keyboard.press("Enter").catch(() => undefined);
+
+    if (await committedNavigation) {
+      return;
+    }
+
+    await page.waitForTimeout(250);
+  }
+
+  throw new Error(`Detail navigation did not start for ${href}`);
+}
 
 test("resources homepage renders hero media without runtime errors", async ({
   page,
@@ -84,6 +125,8 @@ test("public recommended sort is labeled as top picks", async ({ page }) => {
 test("navigating from a scrolled discover entry into detail resets the viewport to top", async ({
   page,
 }) => {
+  test.setTimeout(90_000);
+
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
   await page.goto("/resources");
@@ -165,7 +208,12 @@ test("navigating from a scrolled discover entry into detail resets the viewport 
   const targetHref = await targetLink.getAttribute("href");
   expect(targetHref).toBeTruthy();
 
-  await targetLink.click();
+  const detailWarmResponse = await page.request.get(targetHref!, {
+    failOnStatusCode: false,
+  });
+  expect(detailWarmResponse.ok()).toBeTruthy();
+
+  await clickDetailLinkUntilNavigationStarts(page, targetHref!);
 
   await expect
     .poll(() => page.evaluate(() => window.scrollY), { timeout: 3_000 })

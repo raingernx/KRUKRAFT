@@ -1,4 +1,4 @@
-import { Download, ExternalLink, Loader2 } from "lucide-react";
+import { Download, ExternalLink, Loader2 } from "@/lib/icons";
 import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
 import { routes } from "@/lib/routes";
 
@@ -61,7 +61,7 @@ export function LastPurchaseRecovery({
             doesn&apos;t show up shortly.
           </p>
           <a
-            href={routes.dashboardV2LibraryPaymentSuccess()}
+            href={routes.dashboardLibraryPaymentSuccess()}
             className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-amber-100 px-3 py-1.5 text-[12px] font-semibold text-amber-800 transition hover:bg-amber-200"
           >
             Refresh

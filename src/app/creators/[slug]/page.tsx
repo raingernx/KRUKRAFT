@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BadgeCheck, Globe, Instagram, Linkedin, Sparkles, Youtube } from "lucide-react";
+import { BadgeCheck, Globe, Instagram, Linkedin, Sparkles, Youtube } from "@/lib/icons";
 import { isTransientPrismaInfrastructureError } from "@/lib/prismaErrors";
 import { Navbar } from "@/components/layout/Navbar";
 import { MarketplaceNavbarSearch } from "@/components/marketplace/MarketplaceNavbarSearch";
@@ -194,7 +194,7 @@ export default async function CreatorPublicProfilePage({
                         })}
                         <CreatorPublicOwnerActions
                           creatorUserId={creator.id}
-                          editHref={routes.dashboardV2CreatorProfile}
+                          editHref={routes.dashboardCreatorProfile}
                         />
                       </div>
                     </div>

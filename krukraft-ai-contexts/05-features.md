@@ -71,6 +71,7 @@ Search behavior notes:
 - listing-mode `/resources` now uses one calmer shell family across the intro,
   results summary, filter surfaces, empty recovery panel, temporary
   unavailable state, and matching loading skeletons
+- the public navbar account menu now follows the same authenticated menu contract as the dashboard shell, including canonical learner links (`/dashboard`, `/dashboard/library`, `/dashboard/membership`, `/dashboard/purchases`, `/dashboard/settings`) plus creator-aware entries when applicable
 - the full `HeroSearch` client bundle is now treated as critical only on the main marketplace route; secondary public routes such as support, category, creator, membership, and resource-detail pages lazy-load the navbar search and show the structural search shell first
 
 Behavior notes:

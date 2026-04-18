@@ -9,7 +9,7 @@ import {
   CategoryPageResourcesSectionFallback,
 } from "@/components/skeletons/PublicRouteSkeletons";
 import Link from "next/link";
-import { ArrowLeft, BookOpen } from "lucide-react";
+import { ArrowLeft, BookOpen } from "@/lib/icons";
 import { routes } from "@/lib/routes";
 import { getCategoryLandingPageData } from "@/services/resources";
 

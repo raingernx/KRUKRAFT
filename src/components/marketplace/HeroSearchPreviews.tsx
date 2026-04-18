@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Compass, Search, Sparkles } from "lucide-react";
+import { Compass, Search, Sparkles } from "@/lib/icons";
 import { Skeleton } from "boneyard-js/react";
 import { RevealImage, SearchInput } from "@/design-system";
 import { cn } from "@/lib/utils";

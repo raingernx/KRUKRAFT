@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@/lib/icons";
 import {
   isMissingTableError,
   isTransientPrismaInfrastructureError,
@@ -983,7 +983,7 @@ function DiscoverCollectionCard({
       className="group overflow-hidden rounded-[24px] border border-border-subtle bg-card shadow-sm transition hover:border-primary/25 hover:shadow-card"
     >
       <div className="flex h-full flex-col">
-        <div className="relative aspect-[5/3] overflow-hidden border-b border-border bg-muted">
+        <div className="relative aspect-[5/3] w-full overflow-hidden border-b border-border bg-muted">
           {previewUrl ? (
             <Image
               src={previewUrl}

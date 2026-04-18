@@ -1,5 +1,6 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
 import { defaultLocale } from "@/i18n/config";
 
@@ -18,6 +19,7 @@ export default function GlobalError({
       : defaultLocale;
 
   useEffect(() => {
+    Sentry.captureException(error);
     console.error("[GLOBAL_ERROR]", error);
   }, [error]);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { Search } from "@/lib/icons";
 import { Skeleton } from "boneyard-js/react";
 import { Container, LoadingSkeleton } from "@/design-system";
 import { ScrollableCategoryNav } from "@/components/marketplace/ScrollableCategoryNav";

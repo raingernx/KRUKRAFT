@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle, BookOpen, Download, Library } from "lucide-react";
+import { CheckCircle, BookOpen, Download, Library } from "@/lib/icons";
 import { Navbar } from "@/components/layout/Navbar";
 import { Container } from "@/design-system";
 import { CheckoutSuccessTracker } from "@/components/checkout/CheckoutSuccessTracker";
@@ -80,7 +80,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
                       Go back &amp; download
                     </Link>
                     <Link
-                      href={routes.dashboardV2Library}
+                      href={routes.dashboardLibrary}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-background px-5 py-2.5 text-sm font-medium text-foreground transition hover:bg-muted"
                     >
                       <Library className="h-4 w-4" />
@@ -93,7 +93,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
                         ?payment=success activates the recovery block on the
                         library page so the buyer can find their purchase. */}
                     <Link
-                      href={routes.dashboardV2LibraryPaymentSuccess()}
+                      href={routes.dashboardLibraryPaymentSuccess()}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
                     >
                       <Library className="h-4 w-4" />
