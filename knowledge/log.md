@@ -2,7 +2,7 @@
 
 ## 2026-04-13
 
-- tightened dashboard-v2 entry handoff after visual review showed a synthetic sidebar/topbar skeleton was worse than the real shell: canonical `/dashboard-v2/*` navigations now bypass `DashboardEntryNavigationOverlay`, letting `DashboardV2Shell` and route-owned content loading states handle the transition; legacy dashboard URLs remain the only intended users of the compatibility entry overlay.
+- tightened dashboard-v2 entry handoff after visual review showed a synthetic sidebar/topbar skeleton was worse than the real shell: canonical `/dashboard-v2/*` navigations now bypass `DashboardEntryNavigationOverlay`, letting `DashboardAppShell` and route-owned content loading states handle the transition; legacy dashboard URLs remain the only intended users of the compatibility entry overlay.
 
 ## 2026-04-08
 
