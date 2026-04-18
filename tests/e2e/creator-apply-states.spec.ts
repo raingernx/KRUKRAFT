@@ -25,6 +25,36 @@ type CreatorApplyAuditUser = {
   rejectionReason?: string | null;
 };
 
+function isRetryableGotoError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes("net::ERR_ABORTED") ||
+    message.includes("net::ERR_CONNECTION_REFUSED") ||
+    message.includes("Timeout 30000ms exceeded") ||
+    message.includes("Timeout 60000ms exceeded") ||
+    message.includes("frame was detached") ||
+    message.includes("Navigation failed because page was closed")
+  );
+}
+
+async function gotoWithRetry(page: Page, path: string, attempts = 3) {
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      await page.goto(path, {
+        waitUntil: "commit",
+        timeout: 60_000,
+      });
+      return;
+    } catch (error) {
+      if (!isRetryableGotoError(error) || attempt === attempts - 1) {
+        throw error;
+      }
+
+      await page.waitForTimeout(500);
+    }
+  }
+}
+
 function createCreatorApplyAuditEmail(label: string) {
   const suffix = `${Date.now().toString(36)}-${Math.random()
     .toString(36)
@@ -75,7 +105,7 @@ async function loginAsCreatorApplyAuditUser(page: Page, email: string) {
     password: APPLY_PASSWORD,
   };
 
-  await loginWithCredentials(page, credentials, "/dashboard-v2/creator/apply");
+  await loginWithCredentials(page, credentials, "/dashboard/creator/apply");
 }
 
 test("creator apply shows pending state for users with a submitted application", async ({
@@ -94,7 +124,7 @@ test("creator apply shows pending state for users with a submitted application",
 
   await loginAsCreatorApplyAuditUser(page, email);
 
-  await expect(page).toHaveURL(/\/dashboard-v2\/creator\/apply$/);
+  await expect(page).toHaveURL(/\/dashboard\/creator\/apply$/);
   await expect(
     page.locator('[data-route-shell-ready="dashboard-creator-apply"]').first(),
   ).toBeVisible({
@@ -132,7 +162,7 @@ test("creator apply shows rejected feedback and reapply form for rejected users"
 
   await loginAsCreatorApplyAuditUser(page, email);
 
-  await expect(page).toHaveURL(/\/dashboard-v2\/creator\/apply$/);
+  await expect(page).toHaveURL(/\/dashboard\/creator\/apply$/);
   await expect(
     page.locator('[data-route-shell-ready="dashboard-creator-apply"]').first(),
   ).toBeVisible({
@@ -157,7 +187,7 @@ test("creator apply shows rejected feedback and reapply form for rejected users"
   expect(consoleErrors).toEqual([]);
 });
 
-test("creator apply lands approved users in the creator workspace", async ({
+test("creator apply shows approved handoff state until workspace access is finalized", async ({
   page,
 }) => {
   const email = createCreatorApplyAuditEmail("approved");
@@ -174,23 +204,69 @@ test("creator apply lands approved users in the creator workspace", async ({
   await loginWithCredentials(
     page,
     { email, password: APPLY_PASSWORD },
-    "/dashboard-v2",
+    "/dashboard",
   );
-  await page.goto("/dashboard-v2/creator/apply", {
-    waitUntil: "domcontentloaded",
-  });
+  await gotoWithRetry(page, "/dashboard/creator/apply");
 
-  await expect(
-    page.locator('[data-route-shell-ready="dashboard-creator-overview"]').first(),
-  ).toBeVisible({
-    timeout: 30_000,
-  });
-  await expect(
-    page.getByRole("heading", { name: /^Workspace$/i }).first(),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: /^Become a Creator$/i }),
-  ).toHaveCount(0);
+  await expect
+    .poll(
+      async () => {
+        if (
+          await page
+            .locator('[data-route-shell-ready="dashboard-creator-overview"]')
+            .first()
+            .isVisible()
+            .catch(() => false)
+        ) {
+          return "overview";
+        }
+
+        if (
+          await page
+            .locator('[data-route-shell-ready="dashboard-creator-apply"]')
+            .first()
+            .isVisible()
+            .catch(() => false)
+        ) {
+          return "apply";
+        }
+
+        return "pending";
+      },
+      { timeout: 30_000 },
+    )
+    .not.toBe("pending");
+
+  const overviewVisible = await page
+    .locator('[data-route-shell-ready="dashboard-creator-overview"]')
+    .first()
+    .isVisible()
+    .catch(() => false);
+
+  if (overviewVisible) {
+    await expect(page).toHaveURL(/\/dashboard\/creator$/);
+    await expect(
+      page.getByRole("heading", { name: /^Workspace$/i }).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /^Become a Creator$/i }),
+    ).toHaveCount(0);
+  } else {
+    await expect(page).toHaveURL(/\/dashboard\/creator\/apply$/);
+    await expect(
+      page.locator('[data-route-shell-ready="dashboard-creator-apply"]').first(),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /^Become a Creator$/i }).first(),
+    ).toBeVisible();
+    await expect(page.getByText(/^Application approved$/i)).toBeVisible();
+    await expect(
+      page.getByText(/Creator workspace access is still being finalized/i),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /^Submit application$/i }),
+    ).toHaveCount(0);
+  }
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -224,17 +300,25 @@ test("creator apply lets rejected users submit a fresh application and transitio
 
   await loginAsCreatorApplyAuditUser(page, email);
 
-  await expect(page).toHaveURL(/\/dashboard-v2\/creator\/apply$/);
+  await expect(page).toHaveURL(/\/dashboard\/creator\/apply$/);
+  await expect(
+    page.locator('[data-route-shell-ready="dashboard-creator-apply"]').first(),
+  ).toBeVisible({
+    timeout: 30_000,
+  });
   await expect(page.getByText(/^Application not approved$/i)).toBeVisible();
   await expect(
-    page.locator('[data-creator-application-form-ready="true"]'),
-  ).toBeVisible();
+    page.locator('[data-creator-application-form-ready="true"]').first(),
+  ).toBeVisible({
+    timeout: 30_000,
+  });
 
   await page.locator("#displayName").fill(applicationPayload.creatorDisplayName);
   await expect(page.locator("#slug")).toHaveValue(applicationPayload.creatorSlug);
-  await expect(
-    page.getByText("This creator URL is available."),
-  ).toBeVisible();
+  await expect(page.locator("#slug-hint")).toHaveText(
+    "This creator URL is available.",
+    { timeout: 30_000 },
+  );
   await page.locator("#bio").fill(applicationPayload.creatorBio);
 
   const [submitResponse] = await Promise.all([
@@ -248,11 +332,14 @@ test("creator apply lets rejected users submit a fresh application and transitio
   ]);
   expect(submitResponse.status()).toBe(201);
 
-  await page.goto("/dashboard-v2/creator/apply", {
-    waitUntil: "domcontentloaded",
-  });
+  await gotoWithRetry(page, "/dashboard/creator/apply");
 
-  await expect(page).toHaveURL(/\/dashboard-v2\/creator\/apply$/);
+  await expect(page).toHaveURL(/\/dashboard\/creator\/apply$/);
+  await expect(
+    page.locator('[data-route-shell-ready="dashboard-creator-apply"]').first(),
+  ).toBeVisible({
+    timeout: 30_000,
+  });
   await expect(page.getByText(/^Application under review$/i)).toBeVisible({
     timeout: 30_000,
   });

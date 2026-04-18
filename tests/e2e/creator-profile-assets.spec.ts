@@ -15,12 +15,23 @@ function assetKey(value: string) {
   }
 }
 
+function pickUploadedAssetUrl(payload: unknown) {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const record = payload as Record<string, unknown>;
+  const candidates = [record.url, record.imageUrl, record.fileUrl, record.location];
+
+  return candidates.find((value): value is string => typeof value === "string" && value.length > 0) ?? null;
+}
+
 test("creator profile uploads store avatar and banner assets that reach the public page", async ({
   page,
 }) => {
   test.setTimeout(300_000);
 
-  await loginAsCreator(page, "/dashboard-v2/creator/profile");
+  await loginAsCreator(page, "/dashboard/creator/profile");
 
   await expect(page.locator('[data-route-shell-ready="dashboard-creator-profile"]').first()).toBeVisible({
     timeout: 30_000,
@@ -35,23 +46,64 @@ test("creator profile uploads store avatar and banner assets that reach the publ
   });
   await expect(page.getByRole("button", { name: /save creator profile/i })).toBeVisible();
 
+  const avatarUrlInput = page.getByRole("textbox", { name: /store avatar url/i });
+  const bannerUrlInput = page.getByRole("textbox", { name: /banner url/i });
+
   const avatarBuffer = Buffer.from(TINY_PNG_BASE64, "base64");
   const bannerBuffer = Buffer.from(TINY_PNG_BASE64, "base64");
 
+  const avatarUploadResponsePromise = page.waitForResponse((response) => {
+    return (
+      response.url().includes("/api/creator/upload/image") &&
+      response.request().method() === "POST"
+    );
+  });
   await page.getByTestId("creator-avatar-upload-input").setInputFiles({
     name: "creator-avatar-test.png",
     mimeType: "image/png",
     buffer: avatarBuffer,
   });
+  const avatarUploadResponse = await avatarUploadResponsePromise;
+  expect(avatarUploadResponse.ok()).toBeTruthy();
+  const uploadedAvatarUrl = pickUploadedAssetUrl(
+    await avatarUploadResponse.json().catch(() => null),
+  );
+  if (uploadedAvatarUrl) {
+    await expect(avatarUrlInput).toHaveValue(uploadedAvatarUrl, {
+      timeout: 30_000,
+    });
+  } else {
+    await expect(avatarUrlInput).not.toHaveValue("", { timeout: 30_000 });
+  }
+  await expect(avatarUrlInput).not.toBeDisabled({ timeout: 30_000 });
   await expect(page.getByText(/Store avatar ready to save\./i)).toBeVisible({
     timeout: 30_000,
   });
 
+  const bannerUploadResponsePromise = page.waitForResponse((response) => {
+    return (
+      response.url().includes("/api/creator/upload/image") &&
+      response.request().method() === "POST"
+    );
+  });
   await page.getByTestId("creator-banner-upload-input").setInputFiles({
     name: "creator-banner-test.png",
     mimeType: "image/png",
     buffer: bannerBuffer,
   });
+  const bannerUploadResponse = await bannerUploadResponsePromise;
+  expect(bannerUploadResponse.ok()).toBeTruthy();
+  const uploadedBannerUrl = pickUploadedAssetUrl(
+    await bannerUploadResponse.json().catch(() => null),
+  );
+  if (uploadedBannerUrl) {
+    await expect(bannerUrlInput).toHaveValue(uploadedBannerUrl, {
+      timeout: 30_000,
+    });
+  } else {
+    await expect(bannerUrlInput).not.toHaveValue("", { timeout: 30_000 });
+  }
+  await expect(bannerUrlInput).not.toBeDisabled({ timeout: 30_000 });
   await expect(page.getByText(/Banner ready to save\./i)).toBeVisible({
     timeout: 30_000,
   });
