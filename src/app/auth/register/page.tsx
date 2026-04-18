@@ -7,7 +7,7 @@ import { signIn } from "next-auth/react";
 import { Button } from "@/design-system";
 import { Logo } from "@/components/brand/Logo";
 import { usePlatformConfig } from "@/components/providers/PlatformConfigProvider";
-import { Check, AlertCircle, Loader2 } from "lucide-react";
+import { Check, AlertCircle, Loader2 } from "@/lib/icons";
 import { routes } from "@/lib/routes";
 
 const PERKS = [
@@ -16,7 +16,7 @@ const PERKS = [
   "Cancel subscription any time",
 ];
 
-const GOOGLE_SIGN_IN_CALLBACK_URL = routes.dashboardV2Library;
+const GOOGLE_SIGN_IN_CALLBACK_URL = routes.dashboardLibrary;
 
 function GoogleIcon() {
   return (

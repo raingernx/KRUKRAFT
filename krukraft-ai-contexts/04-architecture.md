@@ -108,6 +108,10 @@ Current proxy behavior:
 - creator compatibility routing at the proxy layer was removed during the hard cut; canonical `/dashboard/creator/*` routes now own live creator dashboard behavior directly.
 - unauthenticated `/dashboard*` and `/admin*` requests redirect to `/auth/login?next=...`
 - authenticated non-admin `/admin*` requests redirect to `/dashboard`
+- auth entrypoints now also treat `/dashboard/*` as the only protected return
+  family: `/auth/login` sanitizes missing or invalid `next` values back to
+  `/dashboard`, and the default Google completion path for both login and
+  register resolves to `/dashboard/library`
 - public branches still avoid auth work entirely apart from ranking-cookie assignment and locale cleanup
 - `/brand-assets/*` runtime alias routes are now excluded from the proxy matcher, so logo/favicon asset redirects do not pay the ranking-cookie/proxy hop
 
@@ -208,6 +212,10 @@ Root rendering note:
 - dashboard route readiness is now more target-specific than before: overview, library, downloads, purchases, settings, membership, the main creator surfaces, and the creator resource editor routes now expose route-ready markers so handoff overlays can wait for the destination route family instead of clearing on generic dashboard-shell readiness alone
 - the dashboard avatar account menu now exposes an explicit probe contract (`data-dashboard-account-trigger`, `data-dashboard-account-ready`, `data-dashboard-account-menu`, `data-dashboard-account-link`) so browser verification can wait for client hydration before opening the menu instead of racing a server-rendered trigger that is visible but not interactive yet
 - dashboard user pages and creator workspace pages now share a repo-owned page-shell contract in `src/components/layout/dashboard/DashboardPageShell.tsx`; the contract owns the route-ready marker, `min-w-0 space-y-8` rhythm, and narrow-vs-default width policy so route pages, loading shells, and probes stop drifting apart one file at a time
+- dashboard route skeletons now import page-shell/header primitives directly
+  from `src/components/layout/dashboard/*`; the older
+  `src/components/dashboard/*` compatibility surface is no longer an active
+  owner for dashboard page-shell or header behavior
 - the dashboard skeleton layer now mirrors that same page-shell contract instead of hand-rolling per-file outer wrappers; settings, membership, learner pages, creator overview/analytics/resources/sales/profile, and creator resource editor fallbacks all render through the same shell primitive before their route-specific sections take over
 - the dashboard loading contract now lives in `src/components/skeletons/dashboard-loading-contract.tsx`, and the learner dashboard skeleton family is split into route modules under `src/components/skeletons/dashboard-user/*` with `src/components/skeletons/DashboardUserRouteSkeletons.tsx` as the explicit barrel. This keeps shell-vs-results ownership auditable per route family instead of re-editing one oversized file for every dashboard regression
 - the active dashboard loading contract is now canonical-dashboard-only: `src/app/(dashboard)/dashboard/layout.tsx` owns the real dashboard chrome, while each canonical route `loading.tsx` renders only content skeletons inside that shell. The learner-family parent fallback at `src/app/(dashboard)/dashboard/loading.tsx` is now intentionally invisible (`null`), and `/dashboard` overview keeps its home-shaped loading ownership in `src/app/(dashboard)/dashboard/(overview)/loading.tsx` so sibling learner routes can jump directly to their own route fallback without a visible family-level neutral skeleton. The creator-family parent fallback at `src/app/(dashboard)/dashboard/creator/loading.tsx` is now also intentionally invisible (`null`), and `/dashboard/creator` workspace keeps its workspace-shaped loading ownership in `src/app/(dashboard)/dashboard/creator/(workspace)/loading.tsx` so creator children such as resources/sales/payouts can jump directly to their own route fallback without a visible creator-family neutral skeleton. The older compatibility surfaces and `DashboardGroupLoadingShell` were retired during the Phase 5 hard cut.
@@ -218,6 +226,10 @@ Root rendering note:
 - Phase 5 cutover hard-cut the learner-facing app route family to canonical `/dashboard/*`: active user dashboard nav, auth callbacks, purchase CTAs, and shared menus point directly at `/dashboard/*` destinations instead of old `/dashboard*`, `/settings`, or `/subscription` surfaces.
 - Older non-canonical bookmark paths such as `/settings` and `/subscription` are no longer supported dashboard entrypoints.
 - Shared learner navigation now treats `/dashboard/*` as canonical: the marketplace navbar account menu, dashboard topbar avatar menu, dashboard overlay loading/ready selectors, and auth login/register default callbacks resolve into canonical learner destinations directly.
+- the last repo-owned `dashboard-v2` shell/component filenames were retired
+  from the active dashboard implementation too: the old `DashboardV2Shell`,
+  `DashboardV2Navigation`, `DashboardV2Sections`, and prototype skeleton file
+  are no longer live code paths after the canonical `/dashboard/*` cutover
 - the public navbar account menu now shares one repo-owned link/config contract with the authenticated dashboard dropdown, and protected dashboard destinations are committed explicitly from the menu surface instead of relying on anchor default behavior inside a transient dropdown mount
 - Canonical `/dashboard/*` entry navigations still use a root-level dashboard entry bridge when they originate outside the dashboard group, but that bridge is shell-only. The visible content skeleton for the destination route should still come from the route-owned `loading.tsx` inside the mounted `DashboardAppShell`, not from the root overlay.
 - The legacy `(dashboard)` and `(dashboard-lite)` route-group layouts/templates were removed after the hard cut. They are not live shell owners and should not be used for new route behavior.

@@ -2,8 +2,8 @@
 
 import { Skeleton } from "boneyard-js/react";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
-import { DashboardPageHeaderSkeleton } from "@/components/dashboard/DashboardPageHeader";
-import { DashboardPageStack } from "@/components/dashboard/DashboardPageShell";
+import { DashboardPageHeaderSkeleton } from "@/components/layout/dashboard/DashboardPageHeader";
+import { DashboardPageStack } from "@/components/layout/dashboard/DashboardPageShell";
 import {
   CreatorResourceFormLoadingShell,
   CreatorResourceFormLoadingShellPreview,

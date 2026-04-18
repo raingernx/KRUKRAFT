@@ -345,7 +345,7 @@ export async function createStripeCheckout(body: unknown, userId: string) {
               quantity: 1,
             },
       ],
-      success_url: `${baseUrl}${routes.dashboardV2Membership}?subscription=success`,
+      success_url: `${baseUrl}${routes.dashboardMembership}?subscription=success`,
       cancel_url: `${baseUrl}${routes.membership}?subscription=cancelled`,
       subscription_data: { metadata: { userId: user.id, plan } },
     },

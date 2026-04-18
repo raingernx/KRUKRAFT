@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, FileEdit } from "lucide-react";
+import { ArrowRight, FileEdit } from "@/lib/icons";
 import { routes } from "@/lib/routes";
 import { formatRelativeDate } from "@/lib/format";
 import type { CreatorDraft } from "@/services/creator";
@@ -29,8 +29,8 @@ export function CreatorDraftBanner({ draft, totalDrafts }: CreatorDraftBannerPro
   const extraDrafts = totalDrafts - 1;
   const focusField = deriveFocusField(draft);
   const continueHref = focusField
-    ? `${routes.dashboardV2CreatorResource(draft.id)}?focus=${focusField}`
-    : routes.dashboardV2CreatorResource(draft.id);
+    ? `${routes.dashboardCreatorResource(draft.id)}?focus=${focusField}`
+    : routes.dashboardCreatorResource(draft.id);
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-amber-100 bg-amber-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
@@ -53,7 +53,7 @@ export function CreatorDraftBanner({ draft, totalDrafts }: CreatorDraftBannerPro
             <p className="mt-0.5 text-xs text-amber-600">
               +{extraDrafts} more draft{extraDrafts > 1 ? "s" : ""} in your{" "}
               <Link
-                href={routes.dashboardV2CreatorResources}
+                href={routes.dashboardCreatorResources}
                 className="font-medium underline underline-offset-2 hover:text-amber-800"
               >
                 resource manager

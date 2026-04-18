@@ -5,11 +5,11 @@ import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 import {
   DashboardPageHeader,
   DashboardPageHeaderSkeleton,
-} from "@/components/dashboard/DashboardPageHeader";
+} from "@/components/layout/dashboard/DashboardPageHeader";
 import {
   DashboardPageSkeletonShell,
   DashboardPageStack,
-} from "@/components/dashboard/DashboardPageShell";
+} from "@/components/layout/dashboard/DashboardPageShell";
 import { dashboardRuntimeShell } from "@/components/skeletons/dashboard-loading-contract";
 
 const SETTINGS_PAGE_SKELETON_NAME = "settings-page";

@@ -152,6 +152,10 @@ Resource detail page
   `/auth/reset-password/confirm` route family now shares semantic
   status/focus treatments for info and error messaging without changing the
   underlying auth or recovery logic
+- canonical post-auth routing now lands only inside `/dashboard/*`: invalid or
+  missing `next` values on `/auth/login` fall back to `/dashboard`, and the
+  default Google completion path for both login and register resolves to
+  `/dashboard/library`
 - Theme selection still supports `light`, `dark`, and `system`, and new/no-preference users now start from `system` by default while newly created `UserPreference` rows seed that same `system` value at the data layer
 - canonical seeded/local admin identity now uses `admin@krukraft.dev`
 
@@ -188,6 +192,12 @@ Resource detail page
 - Generates protected access to the file
 - Includes logging and guarded error handling
 - Does not expose private storage directly without verification
+
+## Membership Billing Return
+
+- Stripe membership checkout now returns to
+  `/dashboard/membership?subscription=success` instead of an older legacy
+  dashboard destination
 - Branded allowlist examples now assume `files.krukraft.com` for custom R2/public delivery hosts
 
 ---

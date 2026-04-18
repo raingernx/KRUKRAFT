@@ -7,7 +7,7 @@ import { signIn } from "next-auth/react";
 import { Button } from "@/design-system";
 import { Logo } from "@/components/brand/Logo";
 import { LoginFormSkeleton } from "@/components/skeletons/LoginFormSkeleton";
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2 } from "@/lib/icons";
 import { routes } from "@/lib/routes";
 
 // Google icon — inline so we don't need an extra dep
@@ -23,16 +23,16 @@ function GoogleIcon() {
 }
 
 function sanitizeNext(next: string | null): string {
-  if (!next) return routes.dashboardV2;
-  if (!next.startsWith("/")) return routes.dashboardV2;
-  if (next.startsWith("//")) return routes.dashboardV2;
+  if (!next) return routes.dashboard;
+  if (!next.startsWith("/")) return routes.dashboard;
+  if (next.startsWith("//")) return routes.dashboard;
   return next;
 }
 
 function getGoogleCallbackUrl(next: string) {
   // Keep explicit protected-route redirects intact, but avoid sending the
   // default OAuth completion path through the heavier dashboard overview.
-  return next === routes.dashboardV2 ? routes.dashboardV2Library : next;
+  return next === routes.dashboard ? routes.dashboardLibrary : next;
 }
 
 function LoginForm() {

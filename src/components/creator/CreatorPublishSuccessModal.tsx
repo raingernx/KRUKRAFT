@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Copy, Check, ArrowRight, Plus, X } from "lucide-react";
+import { CheckCircle2, Copy, Check, ArrowRight, Plus, X } from "@/lib/icons";
 import { Badge, Button } from "@/design-system";
 import { CreatorResourcePreview } from "@/components/creator/CreatorResourcePreview";
 import { routes } from "@/lib/routes";
@@ -80,7 +80,7 @@ export function CreatorPublishSuccessModal({
   }
 
   function handleCreateAnother() {
-    router.push(routes.dashboardV2CreatorNewResource);
+    router.push(routes.dashboardCreatorNewResource);
   }
 
   return (

@@ -256,7 +256,7 @@ export function CreatorApplyRouteLoadingContent() {
     <PageContent className="space-y-6">
       <section
         className="space-y-6"
-        data-loading-scope="dashboard-v2-creator-apply"
+        data-loading-scope="dashboard-creator-apply"
       >
         <CreatorApplyHeaderSkeleton />
 

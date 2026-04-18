@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ExternalLink, ImagePlus, Link2, Plus, Trash2 } from "lucide-react";
+import { ExternalLink, ImagePlus, Link2, Plus, Trash2 } from "@/lib/icons";
 import { Button, Input, Select, Textarea } from "@/design-system";
 import { FileUploadWidget } from "@/design-system/product";
 import {
@@ -653,7 +653,7 @@ export function CreatorResourceForm({
         setPublishedSlug((json.data?.slug as string) ?? null);
         setPublishSuccess(true);
       } else {
-        router.push(routes.dashboardV2CreatorResources);
+        router.push(routes.dashboardCreatorResources);
         router.refresh();
       }
     } catch (submitError) {
@@ -1428,7 +1428,7 @@ export function CreatorResourceForm({
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => router.push(routes.dashboardV2CreatorResources)}
+                onClick={() => router.push(routes.dashboardCreatorResources)}
               >
                 Cancel
               </Button>
@@ -1448,7 +1448,7 @@ export function CreatorResourceForm({
           error={error}
           onSaveDraft={() => submitWithStatus("DRAFT")}
           onPublish={() => submitWithStatus("PUBLISHED")}
-          onCancel={() => router.push(routes.dashboardV2CreatorResources)}
+          onCancel={() => router.push(routes.dashboardCreatorResources)}
           onPreview={() => setPreviewOpen(true)}
         />
       )}

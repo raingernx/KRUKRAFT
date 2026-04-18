@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle2, Circle } from "lucide-react";
+import { CheckCircle2, Circle } from "@/lib/icons";
 import { routes } from "@/lib/routes";
 
 interface SetupStep {
@@ -27,7 +27,7 @@ export function CreatorSetupChecklist({ steps, canCreate }: CreatorSetupChecklis
       label: "Complete your creator profile",
       description:
         "Add a display name and public slug so buyers can find and trust your listings.",
-      href: routes.dashboardV2CreatorProfile,
+      href: routes.dashboardCreatorProfile,
       cta: "Go to profile",
     },
     {
@@ -35,7 +35,7 @@ export function CreatorSetupChecklist({ steps, canCreate }: CreatorSetupChecklis
       label: "Create your first resource",
       description:
         "Upload a PDF or document, set a price, and write a compelling description.",
-      href: routes.dashboardV2CreatorNewResource,
+      href: routes.dashboardCreatorNewResource,
       cta: "Create resource",
       requiresCanCreate: true,
     },
@@ -44,7 +44,7 @@ export function CreatorSetupChecklist({ steps, canCreate }: CreatorSetupChecklis
       label: "Publish to the marketplace",
       description:
         "When your listing looks good, publish it so buyers can discover and purchase it.",
-      href: routes.dashboardV2CreatorResources,
+      href: routes.dashboardCreatorResources,
       cta: "Open resource manager",
     },
   ];

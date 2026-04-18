@@ -10,7 +10,7 @@ export async function requireAdminSession(nextPath: string) {
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect(routes.dashboardV2);
+    redirect(routes.dashboard);
   }
 
   return session;
