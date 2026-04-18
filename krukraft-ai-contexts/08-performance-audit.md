@@ -12,6 +12,10 @@ The public paths now have deliberate performance engineering in place:
 - `UserPreference.theme` now defaults to `system` at the Prisma/database layer too, so runtime bootstrap and newly created stored preferences no longer disagree about the baseline theme
 - the settings preference form now locks the currently rendered runtime theme into `localStorage` the first time a user opens `/dashboard/settings` without an existing stored theme, so the page no longer appears to auto-flip to an older DB-backed theme preference on entry
 - local browser debugging now has a repo-owned Playwright API probe path (`npm run browser:probe`) for launch, discover/library transitions, and settings-theme verification; this exists because the current macOS environment can still abort during `playwright test` browser launch even when direct Playwright API launch succeeds
+- the same local/browser verification policy now has explicit operator aliases in
+  `package.json`: `test:e2e:local`, `test:e2e:local:headed`, and
+  `test:e2e:local:ui` keep Chromium pinned to `BASE_URL=http://127.0.0.1:3000`
+  so reruns do not depend on ad-hoc shell env wiring
 - dashboard/browser verification is now split into two repo-owned probe surfaces: `npm run browser:probe:dashboard` still covers the main cross-route dashboard transitions (downloads, purchases, settings) after entering the dashboard shell, while `npm run browser:probe:management` now adds hard-refresh shell checks for the main dashboard, creator, and admin entry routes so wrong-level app-root fallback regressions are not limited to manual repeated-refresh testing
 - the GitHub Actions browser-smoke workflow now treats cloud CI as Chromium-only on purpose: it caches the Playwright browser bundle at `${{ github.workspace }}/.cache/ms-playwright`, installs only Chromium, and disables the local-only WebKit fallback path so `Install Playwright Browsers` does not keep re-downloading or provisioning an unused browser on every run
 - the repo-owned browser probe now also samples public ↔ dashboard navigation coverage directly: the `resources-to-library` and `library-to-resources` scenarios record `data-loading-scope` frames and fail on blank-gap transitions, so dashboard-shell regressions are no longer limited to the heavier Playwright spec path
@@ -32,6 +36,11 @@ The public paths now have deliberate performance engineering in place:
 - historical note from the pre-hard-cut creator dashboard family: the same management probe surfaced a real creator-analytics runtime bug on 2026-04-06 when `/dashboard/creator/analytics` was still in CI coverage; one creator repository raw query still joined `"ResourceStat"` instead of Prisma's mapped `"resource_stats"` table
 - the GitHub Actions browser-smoke workflow now explicitly enables the Postgres `pg_trgm` extension before `prisma db push`; CI does not replay raw migration SQL during `db push`, so the extension must be provisioned directly or the search/recommendation smoke routes fail on `similarity(...)`
 - verification policy is now stricter at close-out time: Browser Smoke and post-deploy warm/perf runs are not considered "clean" from workflow status alone; operators are expected to review logs for hidden `flaky`, `retry #`, timeout, and threshold-failure signals before calling a run stable
+- Sentry is now part of the repo-owned first-pass observability baseline too:
+  Next.js build/runtime wiring lives in `instrumentation*.ts`,
+  `sentry.*.config.ts`, and `withSentryConfig(...)`, but current scope remains
+  error capture plus basic tracing rather than replay/profiling-heavy
+  observability
 - CPD close-out now also has an explicit deployment-evidence guardrail: do not call `commit + push + deploy` complete from `git push` output alone; the canonical check is `npm run cpd:verify`, which requires the canonical GitHub remote, `HEAD == origin/main`, and a GitHub deployment record for the pushed commit
 - Post-deploy warm-cache + smoke perf workflow, with a manual `workflow_dispatch` fallback for CLI-driven deploys
 - Warm workflow installs now retry `npm ci` and preserve install logs as artifacts, which makes failed warm runs debuggable even when the job dies before `warm-cache.log` exists

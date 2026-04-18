@@ -363,6 +363,11 @@ Add only short, high-signal entries here.
 - 2026-04-18: public `/resources` shell stabilization is green again on the active baseline: `tests/e2e/resources.smoke.spec.ts` and `tests/e2e/navigation-shells.spec.ts` now pass together against canonical dashboard destinations after the shared account-menu/auth-helper cleanup; creator profile media upload proof remains a separate creator-surface follow-up, not part of the public-shell batch.
 - 2026-04-19: admin routes and shared admin controls now normalize on the repo-owned `@/lib/icons` adapter too; direct `lucide-react` imports were retired from the active admin route/component surface.
 - 2026-04-19: auth recovery routes, creator/settings account surfaces, and shared resources fallback shells now normalize on the same `@/lib/icons` adapter too; those account-facing feature files no longer import `lucide-react` directly.
+- 2026-04-19: the repo-owned ops baseline now includes first-pass Sentry wiring
+  (`instrumentation*.ts`, `sentry.*.config.ts`, `withSentryConfig(...)`,
+  `.env.example` keys), plus canonical docs for plugin rollout and Supabase DB
+  incident workflow under `docs/agent-plugin-workflows.md`,
+  `docs/supabase-db-workflow.md`, and `docs/supabase-incident-playbook.md`.
 - 2026-04-17: the `Theme Lab` page now includes a blank component sandbox so component studies can happen before palette, spacing, and radius decisions are committed into the DS.
 - 2026-04-17: the neutral posture decision is now locked to `Paper B`; after approving `Rust` and `Sand` as support accents, the next mandatory decision is the first narrow implementation slice.
 

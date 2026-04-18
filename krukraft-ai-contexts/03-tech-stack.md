@@ -48,6 +48,10 @@
   error capture plus basic tracing are enabled when a DSN exists, while replay,
   profiling, and Prisma-specific tracing are still intentionally out of scope
   for now
+- `.env.example` now carries the repo-owned first-pass Sentry contract too:
+  `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_DSN`, `SENTRY_ENVIRONMENT`,
+  `SENTRY_RELEASE`, `SENTRY_TRACES_SAMPLE_RATE`, `SENTRY_DEBUG`,
+  `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT`
 - `db:local:start`: starts the clean local Postgres cluster at `.local-db/pgdata` on port `54329`
 - `db:local:stop`: stops that local Postgres cluster
 - `db:local:status`: health-checks the local Postgres cluster on `127.0.0.1:54329`
@@ -107,6 +111,11 @@
   - use `docs/supabase-incident-playbook.md` for migration-fail,
     wrong-connection, pooler/direct mismatch, staging-drift, and query/runtime
     incident triage
+- the local Playwright operator aliases also remain repo-owned in `package.json`:
+  `test:e2e:local`, `test:e2e:local:headed`, and `test:e2e:local:ui` pin
+  `BASE_URL=http://127.0.0.1:3000` plus Chromium so this macOS machine has one
+  canonical rerun path after sandboxed agent sessions hit the known launch
+  restriction
 
 Important: build must stay schema-mutation-free. Migration deploy is a separate operational step.
 
