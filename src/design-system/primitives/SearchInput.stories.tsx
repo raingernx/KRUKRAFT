@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import * as React from "react";
-import { SlidersHorizontal, Sparkles } from "lucide-react";
+import { SlidersHorizontal, Sparkles } from "@/lib/icons";
 
 import { Button } from "./Button";
 import { Input } from "./Input";

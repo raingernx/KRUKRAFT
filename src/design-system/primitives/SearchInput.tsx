@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Loader2, Search, X } from "lucide-react";
+import { Loader2, Search, X } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 

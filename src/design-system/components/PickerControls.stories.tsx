@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { ImageIcon, MoreHorizontal, Trash2, Upload } from "lucide-react";
+import { ImageIcon, MoreHorizontal, Trash2, Upload } from "@/lib/icons";
 
 import {
   MediaPreview,

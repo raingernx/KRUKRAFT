@@ -9,7 +9,7 @@ import {
   Upload,
   X,
   XCircle,
-} from "lucide-react";
+} from "@/lib/icons";
 
 import {
   PickerActionButton,

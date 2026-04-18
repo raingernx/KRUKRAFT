@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Eye, MoreHorizontal, Pencil, Trash2 } from "@/lib/icons";
 
 import { RowActionButton, RowActionMenuTrigger, RowActions } from "./RowActions";
 

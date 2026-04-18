@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { Search, Sparkles } from "lucide-react";
+import { Search, Sparkles } from "@/lib/icons";
 
 import { Input } from "./Input";
 

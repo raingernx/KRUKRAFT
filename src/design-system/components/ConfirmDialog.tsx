@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { AlertCircle, AlertTriangle, Info } from "lucide-react";
+import { AlertCircle, AlertTriangle, Info } from "@/lib/icons";
 
 import { Button } from "@/design-system/primitives/Button";
 import { cn } from "@/lib/utils";

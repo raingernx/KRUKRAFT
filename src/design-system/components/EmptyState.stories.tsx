@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
-import { BookOpen } from "lucide-react";
+import { BookOpen } from "@/lib/icons";
 import { Button } from "@/design-system/primitives/Button";
 import { EmptyState } from "./EmptyState";
 
