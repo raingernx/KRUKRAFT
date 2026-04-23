@@ -53,25 +53,6 @@ export const States: Story = {
   },
 };
 
-export const HeroVariant: Story = {
-  render: () => {
-    const [query, setQuery] = React.useState("middle school science");
-
-    return (
-      <div className="w-[720px] rounded-[28px] bg-foreground/95 p-6">
-        <SearchInput
-          variant="hero"
-          value={query}
-          onChange={(event) => setQuery(event.currentTarget.value)}
-          onClear={() => setQuery("")}
-          placeholder="Search curriculum-aligned resources"
-          submitButton={<Button>Search</Button>}
-        />
-      </div>
-    );
-  },
-};
-
 export const FoundationFamily: Story = {
   render: () => {
     const [query, setQuery] = React.useState("ecosystem worksheet");

@@ -33,10 +33,7 @@ import {
 } from "@/lib/search/search-suggestions";
 import { routes } from "@/lib/routes";
 
-type HeroSearchVariant = "hero" | "listing";
-
 interface HeroSearchProps {
-  variant?: HeroSearchVariant;
   className?: string;
   placeholder?: string;
 }
@@ -146,7 +143,6 @@ function writeRecentSearches(next: string[]) {
  * - Arrow keys / click can open a resource detail directly from suggestions.
  */
 export function HeroSearch({
-  variant = "hero",
   className,
   placeholder = "ค้นหาใบงาน แฟลชการ์ด โน้ต...",
 }: HeroSearchProps) {
@@ -757,7 +753,7 @@ export function HeroSearch({
       >
         <SearchInput
           ref={inputRef}
-          variant={variant === "hero" ? "hero" : "default"}
+          variant="default"
           type="text"
           role="combobox"
           aria-controls={
@@ -797,15 +793,12 @@ export function HeroSearch({
           disabled={isPending}
           loading={isPending || isLoadingResults}
           startAdornment={
-            variant === "listing" ? (
-              <span className="pointer-events-none absolute inset-y-0 left-0 flex w-[44px] items-center justify-center text-muted-foreground">
-                <Search className="h-[14px] w-[14px] stroke-[1.75]" aria-hidden />
-              </span>
-            ) : undefined
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex w-[44px] items-center justify-center text-muted-foreground">
+              <Search className="h-[14px] w-[14px] stroke-[1.75]" aria-hidden />
+            </span>
           }
           className={cn(
-            variant === "listing" &&
-              "h-[40px] rounded-[999px] border-border bg-background py-[8px] pl-[45px] pr-[45px] text-[16px] font-normal leading-normal tracking-[0px] text-foreground shadow-none placeholder:text-muted-foreground focus:border-primary-500 focus:ring-2 focus:ring-primary-500/15 focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500/15",
+            "h-[40px] rounded-[999px] border-border bg-background py-[8px] pl-[45px] pr-[45px] text-[16px] font-normal leading-normal tracking-[0px] text-foreground shadow-none placeholder:text-muted-foreground focus:border-primary-500 focus:ring-2 focus:ring-primary-500/15 focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500/15",
             className,
           )}
         />

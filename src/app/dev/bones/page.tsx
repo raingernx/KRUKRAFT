@@ -16,11 +16,6 @@ import {
 import { AdminResourceFormLoadingShellBonesPreview } from "@/components/admin/resources/AdminResourceFormLoadingShell";
 import { notFound } from "next/navigation";
 import {
-  HeroSearchEmptyBonesPreview,
-  HeroSearchQuickBrowseBonesPreview,
-  HeroSearchResultsBonesPreview,
-} from "@/components/marketplace/HeroSearchPreviews";
-import {
   ResourcesCatalogControlsBonesPreview,
   ResourcesCatalogSearchBonesPreview,
 } from "@/components/marketplace/ResourcesCatalogControlsSkeleton";
@@ -81,14 +76,6 @@ export default function BonesCapturePage() {
           <div className="space-y-4">
             <ResourcesCatalogSearchBonesPreview />
             <ResourcesCatalogControlsBonesPreview />
-          </div>
-        </section>
-        <section className="space-y-3">
-          <p className="text-sm font-medium text-muted-foreground">Search dropdowns</p>
-          <div className="space-y-6">
-            <HeroSearchQuickBrowseBonesPreview />
-            <HeroSearchResultsBonesPreview />
-            <HeroSearchEmptyBonesPreview />
           </div>
         </section>
         <section className="space-y-3">

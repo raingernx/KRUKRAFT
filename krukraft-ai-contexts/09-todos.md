@@ -4,7 +4,7 @@ Use this file as the single source of truth for active implementation state.
 
  ## Plan Snapshot
 
-Parent Plan: `Marketplace search shell audit`
+Parent Plan: `Marketplace hero search deprecation cleanup`
 
 > [!info] Current Phase
 > `Plan complete`
@@ -18,13 +18,13 @@ Parent Plan: `Marketplace search shell audit`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> Marketplace listing and reused public navbar search shells passed runtime proof against the approved baseline
+> Marketplace hero-search-only surfaces were removed without changing the live discover, listing, or navbar search shells
 
 > [!todo] Next Up
 > The current optional plan is complete. Wait for an explicit new plan or reprioritization before broadening marketplace rollout work.
 
 > [!abstract] Partial
-> The previous theme refresh, first proof-route audit, and legacy DS cleanup are complete. This new optional plan checks whether admin/settings-heavy routes still fit the approved baseline in runtime.
+> The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and this narrow hero-search cleanup plan are complete.
 
 ## Status Board
 
@@ -40,12 +40,14 @@ Parent Plan: `Marketplace search shell audit`
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
 | Marketplace Search Shell Audit | Complete | `/resources`, resource detail, category, and support shells passed; preview shells remain intentional dev-only exceptions |
+| Marketplace Hero Search Audit | Complete | discover mode proved `HeroSurface` is live while `HeroSearch variant="hero"` has no runtime mount |
+| Marketplace Hero Search Deprecation Cleanup | Complete | hero-only search branch, preview file, bones captures, and story references were removed while live discover/listing/navbar search proofs stayed intact |
 | Dashboard-v2     | Frozen   | stable enough to pause; continue only after another explicit reprioritization change     |
 | Public perf base | Kept     | existing `/resources` perf and streaming baseline stays in force during DS migration work |
 
 ## Progress
 
-Marketplace search shell audit
+Marketplace hero search deprecation cleanup
 `[██████████] 100%`
 
 ```mermaid
@@ -80,13 +82,25 @@ flowchart TB
     A3[Rollout decision<br/>Done]
   end
 
-  subgraph Current
-    M1[Marketplace route inventory<br/>Done]
-    M2[First proof-route audit<br/>Done]
-    M3[Rollout decision<br/>Done]
+  subgraph Previous4
+    M1[Marketplace search route inventory<br/>Done]
+    M2[Marketplace search proof audit<br/>Done]
+    M3[Marketplace search rollout decision<br/>Done]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3
+  subgraph Previous5
+    H1[Hero route inventory<br/>Done]
+    H2[Discover-mode proof audit<br/>Done]
+    H3[Hero ownership decision<br/>Done]
+  end
+
+  subgraph Current
+    HC1[Cleanup boundary lock<br/>Done]
+    HC2[Hero-only deprecation slice<br/>Done]
+    HC3[Marketplace proof rerun and close-out<br/>Done]
+  end
+
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> HC1 --> HC2 --> HC3
 ```
 
 ## Daily Workflow
@@ -123,11 +137,11 @@ Rules:
 Plan complete
 
 ### Parent Plan
-Marketplace search shell audit
+Marketplace hero search deprecation cleanup
 
 ### Current Status Inside Parent Plan
-- The previous `Krukraft theme refresh plan`, `Theme route-level rollout audit`, `Legacy DS usage cleanup`, and `Admin / Settings rollout audit` are complete and act as frozen inputs
-- This new plan must not reopen DS foundations, token naming, or Figma decisions; it only proves marketplace search shells against the approved baseline
+- The previous `Krukraft theme refresh plan`, `Theme route-level rollout audit`, `Legacy DS usage cleanup`, `Admin / Settings rollout audit`, and `Marketplace search shell audit` are complete and act as frozen inputs
+- This new plan must not reopen DS foundations, token naming, or Figma decisions; it only decides what `HeroSearch variant="hero"` means now that discover mode has a repo-owned hero surface
 - Approved baseline carried into this plan:
   - neutral posture: `Paper B`
   - primary accent: `#4338CA`
@@ -136,96 +150,76 @@ Marketplace search shell audit
 - Runtime slices already landed before this route audit opened:
   - `Button family`
   - `Input / Search family`
-- Known marketplace search pressure entering this plan:
-  - `HeroSearch variant="listing"` still carries its own shell/adornment recipe on `/resources`
-  - `MarketplaceNavbarSearch` lazy-loads the same listing variant across secondary public routes and resource detail shells
-  - `HeroSearchPreviews` and dev bones still show older popover/posture patterns, but they are preview surfaces rather than user-facing runtime routes
-- Route inventory result:
-  - `primary marketplace listing shell`
-    - `/resources` listing mode via `HeroSearch variant="listing"`
-    - exercises the canonical public listing search shell, catalogue intent, and active query posture
-  - `reused public navbar shell`
-    - `/resources/[slug]`
-    - `/categories/[slug]`
-    - `/creators/[slug]`
-    - `/membership`
-    - `/support`
-    - `/resources/not-found`
-    - exercises the same listing variant when mounted inside secondary public shells
-  - `preview / dev-only shell`
-    - `src/components/marketplace/HeroSearchPreviews.tsx`
-    - `/app/dev/bones`
-    - preview-only evidence for quick browse / results / empty popovers; not a required runtime proof route
-- Chosen proof-route order:
-  1. `/resources` listing + `/resources/[slug]`
-  2. one secondary public-shell cluster using `MarketplaceNavbarSearch`
-  3. rollout decision on whether previews stay intentional compatibility or need a follow-up plan
-- Why this order:
-  - `/resources` listing is the highest-signal route because it mounts `HeroSearch variant="listing"` directly in the main marketplace shell
-  - `/resources/[slug]` proves the same search shell survives reuse in a quieter public route without discover/listing noise
-  - secondary public routes stay behind them because they reuse the same navbar search but add less search-specific signal
-- First proof-route result:
-  - `/resources?search=worksheet` passed direct browser proof for the listing shell, combobox search input, and overall marketplace listing posture
-  - `/resources/middle-school-science-quiz-assessment-set` passed direct browser proof for the reused navbar search shell on resource detail
-  - no console or page errors were reproduced during either proof
-- Secondary public-shell result:
-  - `/categories/science` passed warmed direct browser proof for the reused navbar search shell
-  - `/support` passed warmed direct browser proof for the reused navbar search shell
-  - first failures in this cluster came from timeout / strict-locator issues in the probe, not reproduced runtime shell drift
-- Rollout decision:
-  - runtime marketplace routes that reuse `MarketplaceNavbarSearch` stayed within the approved baseline
-  - `HeroSearchPreviews` remains a dev-only preview surface and is treated as intentional compatibility, not required remediation for this plan
-  - no narrow remediation slice is required to close this optional plan
+- The completed marketplace hero-search audit established:
+  - `/resources` discover mode renders `ResourcesDiscoverHero -> HeroBanner -> HeroSurface`
+  - live runtime routes still use `HeroSearch variant="listing"` and `MarketplaceNavbarSearch`
+  - no runtime route mounts `HeroSearch variant="hero"`
+- Ownership decision is now locked:
+  - `HeroSearch variant="hero"` is a cleanup candidate, not a live runtime surface
+  - preview/story/dev usage alone is not enough to keep the hero variant as active runtime contract
+- Cleanup slice landed:
+  - removed the hero-only branch and prop handling from `src/components/marketplace/HeroSearch.tsx`
+  - removed `src/components/marketplace/HeroSearchPreviews.tsx`
+  - removed dev bones captures that existed only to exercise hero-search-only UI
+  - removed the `SearchInput` hero story that existed only as hero-search-era support
+- Proof rerun result:
+  - discover shell proof still passes via `/resources` and `[data-hero-surface="discover"]`
+  - listing/public request proofs still pass for `/resources?search=worksheet`, resource detail, category, and support routes
+  - the deprecated hero-search branch no longer has repo-owned preview/dev/story coverage pretending to be runtime ownership
+- Explicitly out of scope:
+  - `HeroSurface` discover shell
+  - `HeroSearch variant="listing"`
+  - `MarketplaceNavbarSearch`
+  - `ResourceCard variant="hero"` because it is unrelated to marketplace search-shell ownership
 
 ### Goal
-Confirm whether marketplace search shells fit the approved DS baseline without reopening foundations.
+Remove or deprecate hero-search-only surfaces that no longer have live runtime ownership, without disturbing approved marketplace listing/navbar search behavior.
 
 ### Why this is the current phase
-- The DS baseline was stable enough to audit the one intentional search-shell exception left after legacy cleanup
-- Marketplace search was the last public shell family still carrying route-owned chrome beyond the shared `SearchInput` recipe
-- Listing, detail, category, and support proofs passed, so the optional plan can close without remediation
+- The live marketplace listing/navbar search shells were already proven in the previous plan
+- The cleanup-only ownership decision was executed without needing a broader marketplace rollout change
+- The required proof reruns passed, so no remediation slice remains inside this plan
 
 ### Definition of Done
-- [x] A separate optional follow-up plan is opened after the completed admin/settings rollout audit
+- [x] A separate optional follow-up plan is opened after the completed marketplace hero-search audit
 - [x] The approved theme baseline is carried forward as a frozen input instead of being reopened
-- [x] Marketplace search routes are inventoried and grouped into a proof-route order
-- [x] The first proof-route cluster (`/resources` listing + resource detail shell) is verified against the approved baseline
-- [x] Remaining marketplace search reuse is categorized as required remediation vs. intentional compatibility
-- [x] `09-todos.md` reflects the real phase and progress percentage for this route-audit plan
+- [x] The completed audit result is converted into a cleanup-only ownership decision
+- [x] The hero-search cleanup boundary is locked without pulling unrelated marketplace surfaces into scope
+- [x] The narrow deprecation/cleanup slice lands for hero-search-only runtime, preview, and story surfaces
+- [x] Marketplace proof routes are rerun to confirm listing/navbar search behavior stays intact
+- [x] `09-todos.md` reflects the real phase and progress percentage for this cleanup plan
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Route inventory and proof order | done | proof order is now `/resources` listing + detail, then one secondary public-shell cluster, then rollout decision |
-| 1 | First proof-route audit | done | `/resources` listing, resource detail, category, and support shells passed direct browser proof |
-| 2 | Rollout decision | done | preview shells stay as intentional dev-only compatibility; no remediation slice opened |
+| 0 | Ownership carry-forward | done | completed audit proved `HeroSurface` is live and `HeroSearch variant="hero"` has no runtime mount |
+| 1 | Deprecation scope lock | done | cleanup stayed limited to hero-only branch, preview file, bones captures, and story support |
+| 2 | Hero-only cleanup slice | done | hero-search-only code was removed without touching listing/navbar search |
+| 3 | Marketplace proof rerun | done | discover + listing/public proofs stayed green after the cleanup |
 
 ---
 
 ## Current Goal
 
-The optional marketplace search-shell audit is complete; no required in-plan work remains.
+The optional marketplace hero-search cleanup plan is complete; no required in-plan work remains.
 
 Current recommendation order:
 1. Keep `src/design-system/theme-playbook.md` and the Figma review page as the locked approval baseline
 2. Treat `Paper B` + `#4338CA` + `Rust`/`Sand` and `inset-led shell + quiet border + radius 8` as fixed inputs
-3. Treat `/resources`, resource detail, category, and support as passed marketplace search-shell proofs
-4. Treat `HeroSearchPreviews` as an intentional preview/dev exception unless a future marketplace-specific plan reprioritizes it
-5. Open a separate optional plan before broadening rollout or changing marketplace search behavior again
+3. Treat `HeroSurface`, `HeroSearch`, and `MarketplaceNavbarSearch` as the surviving live marketplace search shell contract
+4. Treat removed hero-only preview/dev/story surfaces as intentional deprecation, not a live runtime regression
+5. Wait for an explicit new plan before broadening marketplace rollout work again
 
 ---
 
 ## In Progress
 
-- [x] Open a separate optional follow-up plan for marketplace search shell audit
+- [x] Convert the completed audit result into a cleanup-only ownership decision
 - [x] Carry forward the completed theme/route rollout baseline as a frozen input
-- [x] Inventory marketplace search routes and reused navbar-shell surfaces
-- [x] Pick the first proof-route cluster and define the rollout order
-- [x] Audit `/resources` listing mode
-- [x] Audit resource detail navbar search shell
-- [x] Audit one secondary public-shell cluster that reuses `MarketplaceNavbarSearch`
-- [x] Decide whether preview shells stay as intentional compatibility or need a follow-up plan
+- [x] Lock the exact hero-only cleanup boundary
+- [x] Land the narrow deprecation/cleanup slice
+- [x] Rerun marketplace proofs and close the plan
 
 ---
 

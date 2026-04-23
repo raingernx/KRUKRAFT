@@ -115,7 +115,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
           <Navbar
             headerSearch={
               <Suspense fallback={<ResourcesCatalogSearchSkeleton />}>
-                <HeroSearch variant="listing" />
+                <HeroSearch />
               </Suspense>
             }
             secondaryRow={

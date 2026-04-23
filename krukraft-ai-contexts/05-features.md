@@ -105,6 +105,7 @@ search, filters, pagination, or a non-default sort are active.
 
 Marketplace hero note:
 - `/resources` discover hero is currently a fixed repo-owned design surface
+- `HeroSearch variant="hero"` is retired from live/runtime ownership; the surviving marketplace search contract is `HeroSurface` for discover mode plus `HeroSearch`/`MarketplaceNavbarSearch` for listing and secondary public routes
 - legacy admin hero management, hero analytics, and hero impression/click endpoints are no longer part of the active app surface
 - the older `HomepageHero` table is now treated as a legacy cleanup target rather than an active feature surface
 

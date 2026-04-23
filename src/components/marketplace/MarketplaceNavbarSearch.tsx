@@ -20,5 +20,5 @@ const HeroSearch = dynamic(
  * first paint.
  */
 export function MarketplaceNavbarSearch() {
-  return <HeroSearch variant="listing" />;
+  return <HeroSearch />;
 }
