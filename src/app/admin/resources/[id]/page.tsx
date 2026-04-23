@@ -5,7 +5,7 @@ import {
   getAdminResourceEditTitle,
 } from "@/services/admin";
 import { EditResourceForm } from "./EditResourceForm";
-import type { ResourceCardData } from "@/components/resources/ResourceCard";
+import type { ResourceCardData } from "@/design-system/product";
 import { AdminResourcesEditFormSkeleton } from "@/components/skeletons/AdminResourcesRouteSkeletons";
 
 // ── Types ─────────────────────────────────────────────────────────────────────

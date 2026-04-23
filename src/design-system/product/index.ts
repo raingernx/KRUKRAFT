@@ -35,7 +35,7 @@ export {
 } from "../components/ResourceCard";
 export {
   ResourceCardSkeleton,
-} from "@/components/resources/ResourceCardSkeleton";
+} from "../components/ResourceCard";
 export type {
   ResourceCardData,
   ResourceCardResource,

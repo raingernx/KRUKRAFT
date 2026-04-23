@@ -1,6 +1,6 @@
 "use client";
 
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 
 export function SmallCardPreview() {
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { Skeleton } from "boneyard-js/react";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 
 const CREATOR_RESOURCE_FORM_NAME = "creator-resource-form";
 

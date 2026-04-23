@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 import type { ResourceDetailViewerReview } from "@/lib/resources/resource-detail-viewer-state";
 import { useFetchJson } from "@/lib/use-fetch-json";
 import { useResourceDetailViewerState } from "./ResourceDetailViewerStateProvider";

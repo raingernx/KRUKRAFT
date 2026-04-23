@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal } from "@/lib/icons";
 import { SearchInput } from "@/design-system";
-import { ResourceCard, type ResourceCardResource } from "@/components/resources/ResourceCard";
+import { ResourceCard, type ResourceCardResource } from "@/design-system/product";
 import { LIBRARY_GRID_CLASSES } from "./LibraryGrid";
 
 type FilterKey = "all" | "pdf" | "worksheets" | "templates";

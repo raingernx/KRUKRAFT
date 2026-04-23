@@ -1,7 +1,7 @@
 "use client";
 
 import { Skeleton } from "boneyard-js/react";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 import { ResourceDetailPurchaseCardClient } from "./ResourceDetailPurchaseCardClient";
 
 const PURCHASE_CARD_SKELETON_NAME = "purchase-card";

@@ -8,7 +8,7 @@ import {
 } from "@/lib/prismaErrors";
 import { LazyResourcesDiscoverPersonalizedSection } from "@/components/resources/LazyResourcesDiscoverPersonalizedSection";
 import { ResourcesViewerStateProvider } from "@/components/resources/ResourcesViewerStateProvider";
-import type { ResourceCardData } from "@/components/resources/ResourceCard";
+import type { ResourceCardData } from "@/design-system/product";
 import { PublicResourceCardRow } from "@/components/resources/PublicResourceCardRow";
 import { ViewerAwareResourceCard } from "@/components/resources/ViewerAwareResourceCard";
 import { ViewerAwareResourceGrid } from "@/components/resources/ViewerAwareResourceGrid";

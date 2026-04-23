@@ -2,8 +2,8 @@
 
 import { ArrowRight } from "@/lib/icons";
 import { Skeleton } from "boneyard-js/react";
-import { ResourceCardSkeleton } from "@/components/resources/ResourceCardSkeleton";
-import { ResourceCard, type ResourceCardResource } from "@/components/resources/ResourceCard";
+import { ResourceCardSkeleton } from "@/design-system/product";
+import { ResourceCard, type ResourceCardResource } from "@/design-system/product";
 import { LoadingSkeleton } from "@/design-system";
 import { ResourcesIntroSectionSkeleton } from "@/components/skeletons/ResourcesIntroSectionSkeleton";
 import { ResourcesDiscoverSectionsSkeleton } from "@/components/skeletons/ResourcesDiscoverSectionsSkeleton";

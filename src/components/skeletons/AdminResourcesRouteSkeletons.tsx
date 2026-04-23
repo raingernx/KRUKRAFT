@@ -2,7 +2,7 @@
 
 import { AdminResourceFormLoadingShell } from "@/components/admin/resources";
 import { Navbar } from "@/components/layout/Navbar";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 import { PageContainer, PageContent } from "@/design-system";
 
 function HeaderBlock({

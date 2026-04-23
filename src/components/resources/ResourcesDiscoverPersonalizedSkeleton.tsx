@@ -1,5 +1,5 @@
 import { ResourceCardSkeleton } from "@/components/resources/ResourceCardSkeleton";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 
 function ResourcesSectionHeaderSkeleton({
   titleWidth,

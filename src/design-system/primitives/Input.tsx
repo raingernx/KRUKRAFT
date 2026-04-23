@@ -1,6 +1,11 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import {
+  fieldEndAdornmentClassName,
+  fieldInputBaseClassName,
+  fieldStartAdornmentClassName,
+} from "./fieldRecipe"
 
 export interface InputProps extends Omit<React.ComponentProps<"input">, "prefix"> {
   leftAdornment?: React.ReactNode
@@ -35,7 +40,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
       {leftAdornment || rightAdornment ? (
         <div className="relative">
           {leftAdornment ? (
-            <span className="pointer-events-none absolute inset-y-0 left-0 flex w-11 items-center justify-center text-muted-foreground">
+            <span className={cn(fieldStartAdornmentClassName, "pointer-events-none text-muted-foreground")}>
               {leftAdornment}
             </span>
           ) : null}
@@ -44,7 +49,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
             id={inputId}
             data-slot="input"
             className={cn(
-              "input-base min-w-0",
+              fieldInputBaseClassName,
               "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/18",
               leftAdornment && "pl-11",
               rightAdornment && "pr-11",
@@ -55,7 +60,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
             {...props}
           />
           {rightAdornment ? (
-            <span className="pointer-events-none absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted-foreground">
+            <span className={cn(fieldEndAdornmentClassName, "pointer-events-none text-muted-foreground")}>
               {rightAdornment}
             </span>
           ) : null}
@@ -66,7 +71,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
           id={inputId}
           data-slot="input"
           className={cn(
-            "input-base min-w-0",
+            fieldInputBaseClassName,
             "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/18",
             className,
           )}

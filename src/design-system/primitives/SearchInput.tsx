@@ -4,6 +4,11 @@ import * as React from "react";
 import { Loader2, Search, X } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
+import {
+  fieldEndAdornmentClassName,
+  fieldInputBaseClassName,
+  fieldStartAdornmentClassName,
+} from "./fieldRecipe";
 
 export type SearchInputVariant = "default" | "hero";
 
@@ -47,10 +52,11 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
     const searchIcon = startAdornment ?? (
       <Search
         className={cn(
-          "pointer-events-none absolute inset-y-0 left-0 text-muted-foreground",
+          fieldStartAdornmentClassName,
+          "pointer-events-none text-muted-foreground",
           variant === "hero"
             ? "h-full w-12 p-4 sm:w-14 sm:p-[18px]"
-            : "h-full w-11 p-3.5",
+            : "h-full p-3.5",
         )}
         aria-hidden
       />
@@ -63,10 +69,11 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
           onClick={onClear}
           aria-label={clearLabel}
           className={cn(
-            "absolute inset-y-0 right-0 rounded-xl text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            fieldEndAdornmentClassName,
+            "justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             variant === "hero"
-              ? "w-12 rounded-2xl p-4 sm:w-14 sm:p-[18px]"
-              : "w-11 p-3.5",
+              ? "w-12 rounded-xl p-4 sm:w-14 sm:p-[18px]"
+              : "p-3.5",
           )}
         >
           <X className="h-4 w-4" />
@@ -76,10 +83,11 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
     const loadingIndicator = loading ? (
       <Loader2
         className={cn(
-          "absolute inset-y-0 right-0 animate-spin text-muted-foreground",
+          fieldEndAdornmentClassName,
+          "animate-spin text-muted-foreground",
           variant === "hero"
             ? "h-full w-12 p-4 sm:w-14 sm:p-[18px]"
-            : "h-full w-11 p-3.5",
+            : "h-full p-3.5",
         )}
       />
     ) : null;
@@ -106,7 +114,8 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
                   "disabled:cursor-not-allowed disabled:border-border-subtle disabled:bg-muted/60 disabled:text-muted-foreground",
                 ]
               : [
-                  "input-base pl-11 pr-11",
+                  fieldInputBaseClassName,
+                  "pl-11 pr-11",
                 ],
             className,
           )}

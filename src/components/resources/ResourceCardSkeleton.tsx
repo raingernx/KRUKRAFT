@@ -2,7 +2,7 @@
 
 import { Skeleton } from "boneyard-js/react";
 import { ResourceCard, type ResourceCardResource } from "./ResourceCard";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 
 const RESOURCE_CARD_SKELETON_NAME = "resource-card";
 const BONES_PREVIEW_IMAGE = "/uploads/c8fef7c0a5fecefa.png";

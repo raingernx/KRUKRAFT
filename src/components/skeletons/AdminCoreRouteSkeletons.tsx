@@ -1,7 +1,7 @@
 "use client";
 
 import { NavbarShell } from "@/components/layout/NavbarShell";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 import { PageContainer, PageContentWide } from "@/design-system";
 
 function AdminHeaderSkeleton({

@@ -1,4 +1,4 @@
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 import { NavbarBrand } from "@/components/layout/NavbarBrand";
 import { Container } from "@/design-system";
 

@@ -11,7 +11,7 @@ import { useSearchParams, usePathname } from "next/navigation";
 import { BookOpen, Search } from "@/lib/icons";
 import { Button } from "@/design-system";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 import { routes } from "@/lib/routes";
 import { ResourceCard, type ResourceCardData } from "./ResourceCard";
 import { ResourceCardSkeleton } from "./ResourceCardSkeleton";

@@ -30,7 +30,7 @@ import { LazyImageDropzone } from "./LazyImageDropzone";
 import { PreviewImageSortableList } from "./PreviewImageSortableList";
 import { TagInput } from "./TagInput";
 import { UserSearchSelect } from "./UserSearchSelect";
-import type { ResourceCardData } from "@/components/resources/ResourceCard";
+import type { ResourceCardData } from "@/design-system/product";
 import { routes } from "@/lib/routes";
 
 // ── Types ─────────────────────────────────────────────────────────────────────

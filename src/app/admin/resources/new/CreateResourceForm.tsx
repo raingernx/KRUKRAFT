@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Card } from "@/design-system";
-import { ResourceCard } from "@/components/resources/ResourceCard";
+import { ResourceCard } from "@/design-system/product";
 import {
   AdminFormLayout,
   AdminResourceFormLoadingShell,
 } from "@/components/admin/resources";
-import type { ResourceCardData } from "@/components/resources/ResourceCard";
+import type { ResourceCardData } from "@/design-system/product";
 import type {
   ResourceFormCategory,
   ResourceFormTag,

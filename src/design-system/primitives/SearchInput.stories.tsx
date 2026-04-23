@@ -59,7 +59,7 @@ export const HeroVariant: Story = {
           onChange={(event) => setQuery(event.currentTarget.value)}
           onClear={() => setQuery("")}
           placeholder="Search curriculum-aligned resources"
-          submitButton={<Button variant="accent">Search</Button>}
+          submitButton={<Button>Search</Button>}
         />
       </div>
     );
@@ -80,7 +80,7 @@ export const FoundationFamily: Story = {
         />
         <div className="flex flex-wrap items-center gap-3">
           <Button>Continue</Button>
-          <Button variant="outline">Secondary action</Button>
+          <Button variant="quiet">Secondary action</Button>
         </div>
       </div>
     );
@@ -107,7 +107,7 @@ export const WithAdornments: Story = {
       />
       <SearchInput
         placeholder="Search public library"
-        submitButton={<Button variant="outline">Browse</Button>}
+        submitButton={<Button variant="quiet">Browse</Button>}
       />
     </div>
   ),

@@ -1,4 +1,4 @@
-import type { ResourceCardData } from "@/components/resources/ResourceCard";
+import type { ResourceCardData } from "@/design-system/product";
 import type { RecommendationVariant } from "@/lib/recommendations/experiment";
 
 export type ResourcesViewerScope = "base" | "discover";

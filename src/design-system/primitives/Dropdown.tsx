@@ -29,7 +29,7 @@ function DropdownMenu({
         data-slot="dropdown-menu"
         sideOffset={sideOffset}
         className={cn(
-          "z-50 min-w-40 rounded-xl border border-border bg-popover p-1 shadow-card-lg",
+          "z-50 min-w-40 rounded-lg border border-border-subtle bg-popover p-1 shadow-card",
           "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
           "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2",
@@ -81,7 +81,7 @@ function DropdownLabel({
     <DropdownPrimitive.Label
       data-slot="dropdown-label"
       className={cn(
-        "px-3 py-1.5 font-ui text-caption tracking-[0.12em] text-muted-foreground",
+        "px-3 py-1.5 font-ui text-caption text-muted-foreground",
         inset && "pl-8",
         className,
       )}
@@ -201,7 +201,7 @@ function DropdownSubMenu({
       <DropdownPrimitive.SubContent
         data-slot="dropdown-sub-menu"
         className={cn(
-          "z-50 min-w-32 rounded-xl border border-border bg-popover p-1 shadow-card-lg",
+          "z-50 min-w-32 rounded-lg border border-border-subtle bg-popover p-1 shadow-card",
           "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
           "data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2",

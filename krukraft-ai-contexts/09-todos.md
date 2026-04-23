@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Krukraft theme refresh plan`
 
 > [!info] Current Phase
-> `Foundation study expansion in Figma`
+> `First narrow theme slice`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,13 +18,13 @@ Parent Plan: `Krukraft theme refresh plan`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> Phase 3: foundation study expansion in Figma
+> Phase 4: first narrow theme slice
 
 > [!todo] Next Up
-> Review the new Figma foundation studies as one system before choosing any runtime implementation slice
+> Choose the first component-family code slice that should adopt the approved theme baseline after the cleanup pass
 
 > [!abstract] Partial
-> The editorial-minimal brief, playbook, and Figma training page are locked; palette posture is now approved as `Paper B` + `#4338CA` + support accents `Rust` and `Sand`, and first-pass foundation studies now exist in Figma across all five required areas, but no runtime color slice has landed yet
+> The editorial-minimal brief, playbook, and Figma review page are locked; palette posture is approved as `Paper B` + `#4338CA` + support accents `Rust` and `Sand`, the first-pass foundation studies have been reviewed as one system, the surface baseline is now `inset-led shell + quiet border + radius 8`, and the first runtime cleanup slice has landed, but no themed component-family rollout has landed yet
 
 ## Status Board
 
@@ -42,7 +42,7 @@ Parent Plan: `Krukraft theme refresh plan`
 ## Progress
 
 Krukraft theme refresh plan
-`[█████████░] 90%`
+`[█████████▓] 97%`
 
 ```mermaid
 flowchart TB
@@ -56,10 +56,11 @@ flowchart TB
   end
 
   subgraph Next
-    T3[Foundation studies in Figma<br/>Active]
+    T3[Foundation studies in Figma<br/>Done]
+    T4[First narrow theme slice<br/>Active]
   end
 
-  D1 --> D2 --> P1[Discover visual pilot<br/>Done] --> T1[Theme direction and scope lock<br/>Done] --> T2 --> T3
+  D1 --> D2 --> P1[Discover visual pilot<br/>Done] --> T1[Theme direction and scope lock<br/>Done] --> T2 --> T3 --> T4
 ```
 
 ## Daily Workflow
@@ -93,7 +94,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Foundation study expansion in Figma
+First narrow theme slice
 
 ### Parent Plan
 Krukraft theme refresh plan
@@ -157,30 +158,30 @@ Krukraft theme refresh plan
   - `Paper B` is the chosen neutral direction
   - `#4338CA` is the chosen primary accent
   - `Rust` and `Sand` are the chosen support accents
-- The active question is no longer whether Krukraft needs a second support
-  accent; it is whether the Figma foundation studies are broad enough to justify
-  any code implementation at all
+- The foundation review page now answers that question for this round:
+  - the studies are broad enough to justify a narrow code slice
+  - the chosen surface baseline is `inset-led shell + quiet border + radius 8`
+- The first narrow cleanup slice has now landed in the repo:
+  - shared UI import surfaces were tightened toward `@/design-system`
+  - product-bound `ResourceCard` ownership/export boundaries were clarified
+  - `Button` now has a canonical `primary | quiet | ghost` tone set for new work
+    while compatibility variants remain in place
+  - `Input` and `SearchInput` now share the same base field recipe direction
+  - `Dropdown` shell posture now reads closer to the approved surface baseline
+- The active question is now which component family should be the first true
+  themed runtime slice without reopening broad token churn
 
 ### Goal
-Expand the Figma foundation studies enough to justify a later code implementation slice.
+Choose and land one narrow runtime slice using the approved Figma foundation baseline.
 
 ### Why this is the current phase
-- A color slice was attempted too early; rolling it back is the correct move
-- The playbook approach is now locked, so the next safe step is broader
-  foundation studies in Figma, not runtime token work
-- The Figma page makes that review visual without committing runtime values
-- The blank sandbox inside the Figma page keeps component exploration separate
-  from premature token changes
-- The neutral direction is no longer blocked: `Paper B` is approved and does
-  not need another review loop unless the user reopens it
-- The primary accent direction is no longer blocked: `#4338CA` is approved and
-  does not need another review loop unless the user reopens it
-- The support-accent direction is no longer blocked: `Rust` and `Sand` are
-  approved and should stay support-only rather than co-primary
-- The current foundation evidence is no longer just palette-level; the
-  remaining question is whether the first-pass studies are cohesive enough to
-  justify one later code slice safely
-- This keeps the theme plan from drifting into designer-by-assumption behavior
+- The Figma foundation round is no longer blocked on palette or surface
+  uncertainty
+- The review page now locks the system baseline to `inset-led shell + quiet
+  border + radius 8`
+- The next safe move is a narrow runtime slice that prepares or lands the new DS
+  without broad token churn
+- This keeps the theme plan disciplined: one slice, one proof, then reassess
 
 ### Definition of Done
 - [x] A new explicit parent plan is opened for Krukraft theme refresh work
@@ -188,8 +189,8 @@ Expand the Figma foundation studies enough to justify a later code implementatio
 - [x] The Krukraft theme direction brief is locked
 - [x] The theme training/playbook approach is locked
 - [x] A visual training surface exists for palette review
-- [ ] Figma foundation studies are broad enough to justify code implementation safely
-- [ ] One narrow theme implementation slice is chosen from that trained palette direction
+- [x] Figma foundation studies are broad enough to justify code implementation safely
+- [x] One narrow theme implementation slice is chosen from that trained palette direction
 - [x] Relevant context docs are updated if the locked brief changes DS/system-level understanding materially
 - [x] `09-todos.md` reflects the real phase and progress percentage for this new parent plan
 
@@ -200,22 +201,22 @@ Expand the Figma foundation studies enough to justify a later code implementatio
 | 0 | Frozen baseline carry-forward | done | completed DS/reference/foundation/discover work stays frozen as the starting context |
 | 1 | Theme direction and scope lock | done | the Krukraft theme brief is now locked in the canonical DS docs |
 | 2 | Palette posture training | done | neutral, primary, and support-accent posture are now approved in the playbook/Figma training surface |
-| 3 | Foundation study expansion in Figma | active | first-pass studies now exist across all five required areas; review and gap-fill them before choosing any code slice |
-| 4 | First narrow theme slice | pending | choose and land one small code slice only after the Figma foundation evidence is strong enough |
+| 3 | Foundation study expansion in Figma | done | first-pass studies were reviewed as one system and the surface baseline is locked |
+| 4 | First narrow theme slice | active | choose and land one small code slice using the approved baseline |
 | 5 | Review and close-out decision | pending | decide whether to stop, continue with a second slice, or open a separate rollout plan |
 
 ---
 
 ## Current Goal
 
-Review the first-pass Figma foundation studies before choosing any code implementation slice.
+Choose one narrow implementation slice using the approved Figma foundation baseline.
 
 Current recommendation order:
-1. Use `src/design-system/theme-playbook.md` as the review and approval surface
-2. Use the approved posture `Paper B` + `#4338CA` + `Rust`/`Sand` as the locked palette baseline
-3. Use `src/design-system/foundation-study-checklist.md` as the explicit coverage gate for card, button states, input/search states, dropdown/popover shell, and section/surface hierarchy
-4. Review the new `Theme Lab` studies as one system and gap-fill anything that still feels too thin, too loud, or too default-library
-5. Avoid touching runtime values until those studies are broad enough to review as a system
+1. Keep `src/design-system/theme-playbook.md` and the Figma review page as the locked approval baseline
+2. Treat `Paper B` + `#4338CA` + `Rust`/`Sand` and `inset-led shell + quiet border + radius 8` as fixed inputs for the first slice
+3. Choose one slice that is narrow enough to prove the baseline without broad token churn
+4. Prefer DS cleanup and ownership normalization before large runtime recolor work
+5. Avoid route redesign or dashboard-wide rollout inside this slice
 
 ---
 
@@ -238,14 +239,17 @@ Current recommendation order:
 - [x] Lock the primary accent decision to `#4338CA`
 - [x] Lock the support-accent decision to `Rust` and `Sand`
 - [x] Add first-pass Figma foundation studies for all five required checklist areas
+- [x] Review the Figma foundation studies as one system against `src/design-system/foundation-study-checklist.md`
+- [x] Lock the surface baseline to `inset-led shell + quiet border + radius 8`
+- [x] Land the first cleanup slice in repo code before broad theme rollout
 
 ---
 
 ## Next Up
 
-- [ ] Review the first-pass Figma studies against `src/design-system/foundation-study-checklist.md`
-- [ ] Refine or gap-fill any study area that still feels too thin, too loud, or too default-library
-- [ ] Reassess whether the foundation evidence is strong enough for a code slice only after that review, while keeping route-level rollout and runtime token edits out of scope until the first approved code slice is explicitly chosen
+- [ ] Choose the first component-family rollout slice against the approved baseline
+- [ ] Keep that slice narrow enough to avoid broad token churn or route redesign
+- [ ] Prefer `Button family` first, with `Input / Search family` as the fallback option
 
 ---
 
@@ -370,6 +374,7 @@ Add only short, high-signal entries here.
   `docs/supabase-db-workflow.md`, and `docs/supabase-incident-playbook.md`.
 - 2026-04-17: the `Theme Lab` page now includes a blank component sandbox so component studies can happen before palette, spacing, and radius decisions are committed into the DS.
 - 2026-04-17: the neutral posture decision is now locked to `Paper B`; after approving `Rust` and `Sand` as support accents, the next mandatory decision is the first narrow implementation slice.
+- 2026-04-23: the first cleanup slice landed in repo code; shared DS import surfaces were tightened, `ResourceCard` ownership/export boundaries were clarified, `Button` gained a canonical `primary | quiet | ghost` tone set for new work, `Input` and `SearchInput` now share a base field recipe direction, and `Dropdown` shell posture was normalized toward the approved surface baseline.
 
 ---
 

@@ -1,4 +1,4 @@
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 
 function BonesSectionLoading({ rows = 1 }: { rows?: number }) {
   return (

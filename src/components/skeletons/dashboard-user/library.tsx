@@ -1,6 +1,6 @@
 "use client";
 
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 import { DashboardPageHeaderSkeleton } from "@/components/layout/dashboard/DashboardPageHeader";
 import { DashboardPageStack } from "@/components/layout/dashboard/DashboardPageShell";
 import {

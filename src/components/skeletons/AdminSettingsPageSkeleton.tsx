@@ -2,7 +2,7 @@
 
 import { Skeleton } from "boneyard-js/react";
 import { PageContent } from "@/design-system";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 
 const ADMIN_SETTINGS_PAGE_SKELETON_NAME = "admin-settings-page";
 

@@ -2,7 +2,7 @@
 
 import { NavbarShell } from "@/components/layout/NavbarShell";
 import { ResourcesCatalogSearchSkeleton } from "@/components/marketplace/ResourcesCatalogControlsSkeleton";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 import { Container, PageContainer, PageContentWide } from "@/design-system";
 
 export function CategoryPageLoadingShell() {

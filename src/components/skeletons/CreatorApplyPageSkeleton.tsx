@@ -2,7 +2,7 @@
 
 import { Skeleton } from "boneyard-js/react";
 import { Badge, PageContent } from "@/design-system";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 
 const CREATOR_APPLY_PAGE_SKELETON_NAME = "creator-apply-page";
 

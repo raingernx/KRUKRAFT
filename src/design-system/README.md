@@ -111,6 +111,10 @@ When this file conflicts with code, the code wins.
   `@/design-system/product`, but its implementation owner is still
   `src/components/resources/ResourceCard.tsx`. Treat it as a marketplace
   product component, not as a generic foundation.
+- `ResourceCardSkeleton` follows the same ownership rule and should be imported
+  from `@/design-system/product` outside the resource implementation subtree.
+- `LoadingSkeleton` should be imported from `@/design-system`; keep
+  `src/components/shared/LoadingSkeleton.tsx` as compatibility history only.
 - `FileUploadWidget`, `NotificationButton`, `PriceBadge`, `PriceLabel`, and
   `PickerControls` also belong to `@/design-system/product`; they stay reusable
   but remain more workflow-bound than true primitives.
@@ -125,8 +129,15 @@ When this file conflicts with code, the code wins.
 
 ## Current Implementation Rules
 
+- `Button` now treats `primary`, `quiet`, and `ghost` as the canonical tone
+  set for new work. `secondary` remains a compatibility alias for quiet-style
+  usage, and `outline` remains available for legacy surfaces that still depend
+  on explicit borders.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
+- `Input` and `SearchInput` should stay on the same field recipe. Search may
+  add search-specific affordances, but it should not drift into a separate
+  shell language for default, hover, focus, or filled states.
 - `RevealImage` is the shared image primitive for already-sized containers. Let
   the surrounding container own placeholder and background treatment.
 - Runtime route-level and Suspense-critical skeletons should stay visually

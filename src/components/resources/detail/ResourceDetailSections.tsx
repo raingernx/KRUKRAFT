@@ -5,7 +5,7 @@ import { TagList } from "./TagList";
 import { CreatorCard } from "./CreatorCard";
 import { RelatedResources } from "./RelatedResources";
 import { ResourceReviews } from "./ResourceReviews";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 import { getBuildSafePlatformConfig } from "@/services/platform";
 import {
   getResourceDetailPageBodyContent,

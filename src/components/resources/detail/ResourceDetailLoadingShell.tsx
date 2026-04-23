@@ -3,7 +3,7 @@
 import { Skeleton } from "boneyard-js/react";
 import { PurchaseCardSkeleton, PurchaseCardBonesPreview } from "./PurchaseCardSkeleton";
 import { ResourceDetailOwnerReviewSlotSkeleton } from "./ResourceDetailOwnerReviewClient";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 import { ResourceDetailShell } from "./ResourceDetailShell";
 import { ResourceHeader } from "./ResourceHeader";
 import { ResourceGallery } from "./ResourceGallery";

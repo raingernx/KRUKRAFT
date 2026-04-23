@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 import { cn } from "@/lib/utils";
 
 interface DashboardPageHeaderProps {

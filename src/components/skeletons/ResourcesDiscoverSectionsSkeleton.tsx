@@ -2,8 +2,8 @@
 
 import { ArrowRight } from "@/lib/icons";
 import { Skeleton } from "boneyard-js/react";
-import { ResourceCardSkeleton } from "@/components/resources/ResourceCardSkeleton";
-import { ResourceCard, type ResourceCardResource } from "@/components/resources/ResourceCard";
+import { ResourceCardSkeleton } from "@/design-system/product";
+import { ResourceCard, type ResourceCardResource } from "@/design-system/product";
 import { LoadingSkeleton } from "@/design-system";
 
 const RESOURCES_DISCOVER_SECTIONS_NAME = "resources-discover-sections";

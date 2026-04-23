@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { Prisma } from "@prisma/client";
-import type { ResourceCardData } from "@/components/resources/ResourceCard";
+import type { ResourceCardData } from "@/design-system/product";
 import { rememberJson, runSingleFlight } from "@/lib/cache";
 import { recordCacheCall, recordCacheMiss } from "@/lib/performance/observability";
 import { isMissingTableError } from "@/lib/prismaErrors";

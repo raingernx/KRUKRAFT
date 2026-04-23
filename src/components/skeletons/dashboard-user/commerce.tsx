@@ -2,7 +2,7 @@
 
 import { Check, CreditCard, Sparkles } from "@/lib/icons";
 
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 import {
   DashboardPageHeader,
   DashboardPageHeaderSkeleton,

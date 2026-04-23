@@ -1,7 +1,7 @@
 "use client";
 
 import { Skeleton } from "boneyard-js/react";
-import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
+import { LoadingSkeleton } from "@/design-system";
 
 const ADMIN_ANALYTICS_OVERVIEW_NAME = "admin-analytics-overview";
 const ADMIN_ANALYTICS_RECOMMENDATIONS_NAME = "admin-analytics-recommendations";
