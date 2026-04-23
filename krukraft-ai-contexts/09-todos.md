@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
  ## Plan Snapshot
 
-Parent Plan: `Krukraft theme refresh plan`
+Parent Plan: `Marketplace search shell audit`
 
 > [!info] Current Phase
-> `First narrow theme slice`
+> `Plan complete`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,13 +18,13 @@ Parent Plan: `Krukraft theme refresh plan`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> Phase 4: first narrow theme slice
+> Marketplace listing and reused public navbar search shells passed runtime proof against the approved baseline
 
 > [!todo] Next Up
-> Choose the first component-family code slice that should adopt the approved theme baseline after the cleanup pass
+> The current optional plan is complete. Wait for an explicit new plan or reprioritization before broadening marketplace rollout work.
 
 > [!abstract] Partial
-> The editorial-minimal brief, playbook, and Figma review page are locked; palette posture is approved as `Paper B` + `#4338CA` + support accents `Rust` and `Sand`, the first-pass foundation studies have been reviewed as one system, the surface baseline is now `inset-led shell + quiet border + radius 8`, and the first runtime cleanup slice has landed, but no themed component-family rollout has landed yet
+> The previous theme refresh, first proof-route audit, and legacy DS cleanup are complete. This new optional plan checks whether admin/settings-heavy routes still fit the approved baseline in runtime.
 
 ## Status Board
 
@@ -35,14 +35,18 @@ Parent Plan: `Krukraft theme refresh plan`
 | Foundation Align | Kept     | the completed reference-driven plan already locked token/component/chrome boundaries |
 | Visual Foundation | Frozen   | completed visual baseline stays in force; do not reopen primitive work implicitly |
 | Discover         | Frozen   | `/resources` listing-mode shell + fail-soft states landed and passed close-out audit    |
-| Theme Refresh    | Active   | brief, playbook, and Figma review page are locked; palette posture is approved as `Paper B` + `#4338CA` + `Rust`/`Sand`, and first-pass foundation studies now exist in Figma across all five required areas |
+| Theme Refresh    | Complete | brief, playbook, Figma review page, approved surface baseline, cleanup slice, and first runtime slices all passed close-out audit |
+| Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
+| Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
+| Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
+| Marketplace Search Shell Audit | Complete | `/resources`, resource detail, category, and support shells passed; preview shells remain intentional dev-only exceptions |
 | Dashboard-v2     | Frozen   | stable enough to pause; continue only after another explicit reprioritization change     |
 | Public perf base | Kept     | existing `/resources` perf and streaming baseline stays in force during DS migration work |
 
 ## Progress
 
-Krukraft theme refresh plan
-`[█████████▓] 97%`
+Marketplace search shell audit
+`[██████████] 100%`
 
 ```mermaid
 flowchart TB
@@ -51,16 +55,38 @@ flowchart TB
     D2[DS visual foundation baseline<br/>Frozen]
   end
 
+  subgraph Baseline
+    T0[Theme refresh plan<br/>Complete]
+  end
+
+  subgraph Previous
+    R1[Route inventory and rollout order<br/>Done]
+    R2[First route proof audit<br/>Done]
+    R3[Dashboard avatar menu remediation<br/>Done]
+    R4[Route rollout decision<br/>Done]
+  end
+
+  subgraph Previous2
+    L1[Legacy DS inventory<br/>Done]
+    L2[Secondary to quiet normalization<br/>Done]
+    L3[Outline inventory<br/>Done]
+    L4[Search shell review<br/>Done]
+    L5[Cleanup decision<br/>Done]
+  end
+
+  subgraph Previous3
+    A1[Admin/settings route inventory<br/>Done]
+    A2[First proof-route audit<br/>Done]
+    A3[Rollout decision<br/>Done]
+  end
+
   subgraph Current
-    T2[Palette posture training<br/>Done]
+    M1[Marketplace route inventory<br/>Done]
+    M2[First proof-route audit<br/>Done]
+    M3[Rollout decision<br/>Done]
   end
 
-  subgraph Next
-    T3[Foundation studies in Figma<br/>Done]
-    T4[First narrow theme slice<br/>Active]
-  end
-
-  D1 --> D2 --> P1[Discover visual pilot<br/>Done] --> T1[Theme direction and scope lock<br/>Done] --> T2 --> T3 --> T4
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3
 ```
 
 ## Daily Workflow
@@ -94,162 +120,118 @@ Rules:
 ## Current Phase
 
 ### Name
-First narrow theme slice
+Plan complete
 
 ### Parent Plan
-Krukraft theme refresh plan
+Marketplace search shell audit
 
 ### Current Status Inside Parent Plan
-- The previous DS-first migration baseline, reference-driven DS alignment, and DS visual foundation pass are all complete and now act as the frozen starting baseline for theme work instead of being reopened
-- The completed `/resources` visual pilot should be treated as evidence for what the current DS baseline already supports before a broader theme shift
-- This new parent plan is about Krukraft-wide theme direction, not another discover slice and not another DS-boundary migration pass
-- Canonical references for this plan start with:
-  - `src/design-system/README.md` for DS ownership, visual brief, and reference stack
-  - `krukraft-ai-contexts/06-design-system.md` for the current DS digest
-  - `krukraft-ai-contexts/07-layout-ux.md` when a later theme slice touches route-level shells
-  - `design-system.md` only if the theme work needs new Figma/handoff guidance
-- The theme refresh should stay phased:
-  - lock the Krukraft theme direction brief first
-  - choose one narrow implementation slice second
-  - keep route-level rollout decisions explicit instead of folding them into the scope-lock phase
-- This plan should not implicitly reopen:
-  - token taxonomy or DS boundary work already closed in the reference-driven alignment plan
-  - primitive family calibration work already closed in the visual foundation pass
-  - the completed `/resources` discover pilot
-- The expected theme inputs are:
-  - brand feel and emotional direction
-  - type hierarchy and font posture
-  - surface / elevation character
-  - radius / density posture
-  - action emphasis and contrast rules
-- The theme direction brief is now locked in the canonical DS docs:
-  - editorial-minimal: calm, clean, trustworthy, and human before trendy
-  - premium through restraint, surface hierarchy, and atmosphere rather than saturated product shells
-  - semantic roles stay authoritative while brand mood travels through background/surface tone instead of replacing semantic intent
-  - one type/radius/density family should span marketplace and operational surfaces
-  - stronger brand accents should stay supportive and sparse rather than becoming the default product surface language
-- The last attempted color slice was rolled back because palette values were
-  chosen too early and committed as concrete runtime values before user
-  training/approval
-- Theme training is now an explicit guardrail:
-  - do not land new neutral or accent values from references alone
-  - decide the palette vocabulary with the user first
-  - only then choose and land a narrow color/surface slice
-- `src/design-system/theme-playbook.md` is now the canonical training artifact:
-  - it captures the editorial-minimal posture
-  - it defines do/don't rules, review vocabulary, and approval gates
-  - it keeps palette work at the vocabulary/posture level instead of jumping to
-    runtime values
-- `src/design-system/foundation-study-checklist.md` is now the dedicated
-  checklist artifact for deciding whether Figma foundation coverage is broad
-  enough to justify any code slice
-- The `Theme Lab` page inside the live Figma file `Krukraft Design System` now
-  acts as the visual review surface for palette posture training
-- The old `/dev/theme-playbook` route has been removed so review stays outside
-  the Krukraft app shell
-- That Figma page now includes first-pass foundation studies across all five
-  required checklist areas:
-  - card studies
-  - button states
-  - input/search states
-  - dropdown/popover shell
-  - section/surface hierarchy
-- The palette posture is now trained and approved:
-  - `Paper B` is the chosen neutral direction
-  - `#4338CA` is the chosen primary accent
-  - `Rust` and `Sand` are the chosen support accents
-- The foundation review page now answers that question for this round:
-  - the studies are broad enough to justify a narrow code slice
-  - the chosen surface baseline is `inset-led shell + quiet border + radius 8`
-- The first narrow cleanup slice has now landed in the repo:
-  - shared UI import surfaces were tightened toward `@/design-system`
-  - product-bound `ResourceCard` ownership/export boundaries were clarified
-  - `Button` now has a canonical `primary | quiet | ghost` tone set for new work
-    while compatibility variants remain in place
-  - `Input` and `SearchInput` now share the same base field recipe direction
-  - `Dropdown` shell posture now reads closer to the approved surface baseline
-- The active question is now which component family should be the first true
-  themed runtime slice without reopening broad token churn
+- The previous `Krukraft theme refresh plan`, `Theme route-level rollout audit`, `Legacy DS usage cleanup`, and `Admin / Settings rollout audit` are complete and act as frozen inputs
+- This new plan must not reopen DS foundations, token naming, or Figma decisions; it only proves marketplace search shells against the approved baseline
+- Approved baseline carried into this plan:
+  - neutral posture: `Paper B`
+  - primary accent: `#4338CA`
+  - support accents: `Rust` and `Sand`
+  - surface baseline: `inset-led shell + quiet border + radius 8`
+- Runtime slices already landed before this route audit opened:
+  - `Button family`
+  - `Input / Search family`
+- Known marketplace search pressure entering this plan:
+  - `HeroSearch variant="listing"` still carries its own shell/adornment recipe on `/resources`
+  - `MarketplaceNavbarSearch` lazy-loads the same listing variant across secondary public routes and resource detail shells
+  - `HeroSearchPreviews` and dev bones still show older popover/posture patterns, but they are preview surfaces rather than user-facing runtime routes
+- Route inventory result:
+  - `primary marketplace listing shell`
+    - `/resources` listing mode via `HeroSearch variant="listing"`
+    - exercises the canonical public listing search shell, catalogue intent, and active query posture
+  - `reused public navbar shell`
+    - `/resources/[slug]`
+    - `/categories/[slug]`
+    - `/creators/[slug]`
+    - `/membership`
+    - `/support`
+    - `/resources/not-found`
+    - exercises the same listing variant when mounted inside secondary public shells
+  - `preview / dev-only shell`
+    - `src/components/marketplace/HeroSearchPreviews.tsx`
+    - `/app/dev/bones`
+    - preview-only evidence for quick browse / results / empty popovers; not a required runtime proof route
+- Chosen proof-route order:
+  1. `/resources` listing + `/resources/[slug]`
+  2. one secondary public-shell cluster using `MarketplaceNavbarSearch`
+  3. rollout decision on whether previews stay intentional compatibility or need a follow-up plan
+- Why this order:
+  - `/resources` listing is the highest-signal route because it mounts `HeroSearch variant="listing"` directly in the main marketplace shell
+  - `/resources/[slug]` proves the same search shell survives reuse in a quieter public route without discover/listing noise
+  - secondary public routes stay behind them because they reuse the same navbar search but add less search-specific signal
+- First proof-route result:
+  - `/resources?search=worksheet` passed direct browser proof for the listing shell, combobox search input, and overall marketplace listing posture
+  - `/resources/middle-school-science-quiz-assessment-set` passed direct browser proof for the reused navbar search shell on resource detail
+  - no console or page errors were reproduced during either proof
+- Secondary public-shell result:
+  - `/categories/science` passed warmed direct browser proof for the reused navbar search shell
+  - `/support` passed warmed direct browser proof for the reused navbar search shell
+  - first failures in this cluster came from timeout / strict-locator issues in the probe, not reproduced runtime shell drift
+- Rollout decision:
+  - runtime marketplace routes that reuse `MarketplaceNavbarSearch` stayed within the approved baseline
+  - `HeroSearchPreviews` remains a dev-only preview surface and is treated as intentional compatibility, not required remediation for this plan
+  - no narrow remediation slice is required to close this optional plan
 
 ### Goal
-Choose and land one narrow runtime slice using the approved Figma foundation baseline.
+Confirm whether marketplace search shells fit the approved DS baseline without reopening foundations.
 
 ### Why this is the current phase
-- The Figma foundation round is no longer blocked on palette or surface
-  uncertainty
-- The review page now locks the system baseline to `inset-led shell + quiet
-  border + radius 8`
-- The next safe move is a narrow runtime slice that prepares or lands the new DS
-  without broad token churn
-- This keeps the theme plan disciplined: one slice, one proof, then reassess
+- The DS baseline was stable enough to audit the one intentional search-shell exception left after legacy cleanup
+- Marketplace search was the last public shell family still carrying route-owned chrome beyond the shared `SearchInput` recipe
+- Listing, detail, category, and support proofs passed, so the optional plan can close without remediation
 
 ### Definition of Done
-- [x] A new explicit parent plan is opened for Krukraft theme refresh work
-- [x] The completed DS baseline and discover pilot are carried forward as frozen inputs instead of being reopened
-- [x] The Krukraft theme direction brief is locked
-- [x] The theme training/playbook approach is locked
-- [x] A visual training surface exists for palette review
-- [x] Figma foundation studies are broad enough to justify code implementation safely
-- [x] One narrow theme implementation slice is chosen from that trained palette direction
-- [x] Relevant context docs are updated if the locked brief changes DS/system-level understanding materially
-- [x] `09-todos.md` reflects the real phase and progress percentage for this new parent plan
+- [x] A separate optional follow-up plan is opened after the completed admin/settings rollout audit
+- [x] The approved theme baseline is carried forward as a frozen input instead of being reopened
+- [x] Marketplace search routes are inventoried and grouped into a proof-route order
+- [x] The first proof-route cluster (`/resources` listing + resource detail shell) is verified against the approved baseline
+- [x] Remaining marketplace search reuse is categorized as required remediation vs. intentional compatibility
+- [x] `09-todos.md` reflects the real phase and progress percentage for this route-audit plan
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Frozen baseline carry-forward | done | completed DS/reference/foundation/discover work stays frozen as the starting context |
-| 1 | Theme direction and scope lock | done | the Krukraft theme brief is now locked in the canonical DS docs |
-| 2 | Palette posture training | done | neutral, primary, and support-accent posture are now approved in the playbook/Figma training surface |
-| 3 | Foundation study expansion in Figma | done | first-pass studies were reviewed as one system and the surface baseline is locked |
-| 4 | First narrow theme slice | active | choose and land one small code slice using the approved baseline |
-| 5 | Review and close-out decision | pending | decide whether to stop, continue with a second slice, or open a separate rollout plan |
+| 0 | Route inventory and proof order | done | proof order is now `/resources` listing + detail, then one secondary public-shell cluster, then rollout decision |
+| 1 | First proof-route audit | done | `/resources` listing, resource detail, category, and support shells passed direct browser proof |
+| 2 | Rollout decision | done | preview shells stay as intentional dev-only compatibility; no remediation slice opened |
 
 ---
 
 ## Current Goal
 
-Choose one narrow implementation slice using the approved Figma foundation baseline.
+The optional marketplace search-shell audit is complete; no required in-plan work remains.
 
 Current recommendation order:
 1. Keep `src/design-system/theme-playbook.md` and the Figma review page as the locked approval baseline
-2. Treat `Paper B` + `#4338CA` + `Rust`/`Sand` and `inset-led shell + quiet border + radius 8` as fixed inputs for the first slice
-3. Choose one slice that is narrow enough to prove the baseline without broad token churn
-4. Prefer DS cleanup and ownership normalization before large runtime recolor work
-5. Avoid route redesign or dashboard-wide rollout inside this slice
+2. Treat `Paper B` + `#4338CA` + `Rust`/`Sand` and `inset-led shell + quiet border + radius 8` as fixed inputs
+3. Treat `/resources`, resource detail, category, and support as passed marketplace search-shell proofs
+4. Treat `HeroSearchPreviews` as an intentional preview/dev exception unless a future marketplace-specific plan reprioritizes it
+5. Open a separate optional plan before broadening rollout or changing marketplace search behavior again
 
 ---
 
 ## In Progress
 
-- [x] Carry forward the completed DS baseline as the starting point
-- [x] Carry forward the completed reference-driven alignment plan as the contract baseline
-- [x] Carry forward the completed DS visual foundation pass as the visual baseline
-- [x] Keep the dashboard runtime baseline frozen at the current stable baseline
-- [x] Carry forward the completed `/resources` pilot as the latest public-route baseline
-- [x] Open a new explicit parent plan for Krukraft theme refresh
-- [x] Lock the Krukraft theme direction brief in the canonical DS docs
-- [x] Roll back the premature `shared surface + neutral palette calibration` attempt
-- [x] Create `src/design-system/theme-playbook.md` as the canonical theme-training artifact
-- [x] Create the `Theme Lab` page inside the live Figma file `Krukraft Design System` as the visual palette-training surface
-- [x] Remove the temporary `/dev/theme-playbook` route after moving training into Figma
-- [x] Add a blank component sandbox to the Figma page for pre-token structure,
-  spacing, and radius studies
-- [x] Lock the neutral posture decision to `Paper B`
-- [x] Lock the primary accent decision to `#4338CA`
-- [x] Lock the support-accent decision to `Rust` and `Sand`
-- [x] Add first-pass Figma foundation studies for all five required checklist areas
-- [x] Review the Figma foundation studies as one system against `src/design-system/foundation-study-checklist.md`
-- [x] Lock the surface baseline to `inset-led shell + quiet border + radius 8`
-- [x] Land the first cleanup slice in repo code before broad theme rollout
+- [x] Open a separate optional follow-up plan for marketplace search shell audit
+- [x] Carry forward the completed theme/route rollout baseline as a frozen input
+- [x] Inventory marketplace search routes and reused navbar-shell surfaces
+- [x] Pick the first proof-route cluster and define the rollout order
+- [x] Audit `/resources` listing mode
+- [x] Audit resource detail navbar search shell
+- [x] Audit one secondary public-shell cluster that reuses `MarketplaceNavbarSearch`
+- [x] Decide whether preview shells stay as intentional compatibility or need a follow-up plan
 
 ---
 
 ## Next Up
 
-- [ ] Choose the first component-family rollout slice against the approved baseline
-- [ ] Keep that slice narrow enough to avoid broad token churn or route redesign
-- [ ] Prefer `Button family` first, with `Input / Search family` as the fallback option
+- [ ] Current parent plan is complete; wait for an explicit new plan or reprioritization before broadening marketplace rollout work
 
 ---
 

@@ -97,7 +97,7 @@ export function SecuritySettings({
               <Button
                 type="button"
                 size="sm"
-                variant="secondary"
+                variant="quiet"
                 leftIcon={
                   isSendingReset ? (
                     <Loader2 className="size-4 animate-spin" />
@@ -134,7 +134,7 @@ export function SecuritySettings({
           <Button
             type="button"
             size="sm"
-            variant="secondary"
+            variant="quiet"
             leftIcon={<LogOut className="size-4" />}
             onClick={() => {
               void signOut({ callbackUrl: routes.home });

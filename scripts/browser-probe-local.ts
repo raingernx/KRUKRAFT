@@ -427,6 +427,30 @@ async function openPublicAccountMenu(page: Page) {
   await expect(page.locator('a[href="/dashboard/settings"]:visible')).toBeVisible({ timeout: 15_000 });
 }
 
+async function clickUntilUrlChanges(
+  page: Page,
+  locator: ReturnType<Page["locator"]>,
+  urlPattern: RegExp,
+) {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    await expect(locator).toBeVisible({ timeout: 10_000 });
+    await locator.scrollIntoViewIfNeeded().catch(() => undefined);
+
+    const navigationStarted = page
+      .waitForURL(urlPattern, { timeout: 2_000 })
+      .then(() => true)
+      .catch(() => false);
+
+    await locator.click();
+
+    if (await navigationStarted) {
+      return;
+    }
+
+    await page.waitForTimeout(150);
+  }
+}
+
 async function navigateViaPublicAccountMenu(
   page: Page,
   target: { href: string; heading: RegExp },
@@ -441,13 +465,11 @@ async function navigateViaPublicAccountMenu(
 
   await expect(link).toBeVisible({ timeout: 15_000 });
 
-  await Promise.all([
-    page.waitForURL(new RegExp(`${target.href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\?.*)?$`), {
-      timeout: 20_000,
-      waitUntil: "commit",
-    }),
-    link.click(),
-  ]);
+  await clickUntilUrlChanges(
+    page,
+    link,
+    new RegExp(`${target.href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\?.*)?$`),
+  );
 
   await expect(page).toHaveURL(new RegExp(`${target.href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\?.*)?$`));
   await expect(page.getByRole("heading", { name: target.heading }).first()).toBeVisible({
@@ -463,28 +485,80 @@ async function navigateViaPublicAccountMenu(
 }
 
 async function openDashboardAvatarMenu(page: Page) {
+  const menu = page.locator('[data-dashboard-account-menu="true"]:visible').first();
+
+  if (await menu.isVisible().catch(() => false)) {
+    return;
+  }
+
   const avatarButton = page
     .locator(
-      '[data-dashboard-account-trigger="true"][data-dashboard-account-ready="true"]:visible',
+      'header button[data-dashboard-account-trigger="true"][data-dashboard-account-ready="true"]:visible',
     )
     .first();
-  const menu = page.locator('[data-dashboard-account-menu="true"]');
 
   await expect(avatarButton).toBeVisible({ timeout: 15_000 });
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
-    await avatarButton.scrollIntoViewIfNeeded();
-    await avatarButton.hover();
-    await avatarButton.click();
+    await avatarButton.scrollIntoViewIfNeeded().catch(() => undefined);
+    await avatarButton.hover().catch(() => undefined);
+    await avatarButton.click({ timeout: 5_000 });
 
-    const menuVisible = await menu.isVisible().catch(() => false);
+    const expandedAfterClick = await expect
+      .poll(async () => avatarButton.getAttribute("aria-expanded"), {
+        timeout: 2_000,
+      })
+      .toBe("true")
+      .then(() => true)
+      .catch(() => false);
 
-    if (menuVisible) {
+    if (expandedAfterClick && (await menu.isVisible().catch(() => false))) {
       break;
     }
 
-    await avatarButton.press("Enter").catch(() => null);
-    if (await menu.isVisible().catch(() => false)) {
+    await avatarButton.focus().catch(() => undefined);
+    await page.keyboard.press("Space").catch(() => undefined);
+    const expandedAfterSpace = await expect
+      .poll(async () => avatarButton.getAttribute("aria-expanded"), {
+        timeout: 2_000,
+      })
+      .toBe("true")
+      .then(() => true)
+      .catch(() => false);
+
+    if (expandedAfterSpace && (await menu.isVisible().catch(() => false))) {
+      break;
+    }
+
+    await page.keyboard.press("Enter").catch(() => undefined);
+    const expandedAfterEnter = await expect
+      .poll(async () => avatarButton.getAttribute("aria-expanded"), {
+        timeout: 2_000,
+      })
+      .toBe("true")
+      .then(() => true)
+      .catch(() => false);
+
+    if (expandedAfterEnter && (await menu.isVisible().catch(() => false))) {
+      break;
+    }
+
+    await page.keyboard.press("Escape").catch(() => undefined);
+    await avatarButton
+      .evaluate((element) => {
+        (element as HTMLButtonElement).click();
+      })
+      .catch(() => undefined);
+
+    const expandedAfterEval = await expect
+      .poll(async () => avatarButton.getAttribute("aria-expanded"), {
+        timeout: 2_000,
+      })
+      .toBe("true")
+      .then(() => true)
+      .catch(() => false);
+
+    if (expandedAfterEval && (await menu.isVisible().catch(() => false))) {
       break;
     }
 
@@ -514,13 +588,11 @@ async function navigateViaDashboardAvatarMenu(
   await link.scrollIntoViewIfNeeded();
   await expect(link).toBeVisible({ timeout: 15_000 });
 
-  await Promise.all([
-    page.waitForURL(new RegExp(`${target.href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\?.*)?$`), {
-      timeout: 20_000,
-      waitUntil: "commit",
-    }),
-    link.click(),
-  ]);
+  await clickUntilUrlChanges(
+    page,
+    link,
+    new RegExp(`${target.href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\?.*)?$`),
+  );
 
   await expect(page).toHaveURL(new RegExp(`${target.href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\?.*)?$`));
   await expect(page.getByRole("heading", { name: target.heading }).first()).toBeVisible({

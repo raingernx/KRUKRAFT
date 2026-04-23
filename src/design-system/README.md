@@ -129,10 +129,16 @@ When this file conflicts with code, the code wins.
 
 ## Current Implementation Rules
 
-- `Button` now treats `primary`, `quiet`, and `ghost` as the canonical tone
-  set for new work. `secondary` remains a compatibility alias for quiet-style
-  usage, and `outline` remains available for legacy surfaces that still depend
-  on explicit borders.
+- `Button` is now the first themed runtime slice. Treat `primary`, `quiet`,
+  and `ghost` as the canonical family for new work.
+- `Button` should read as one pill-shaped family across sizes, icons, and
+  disabled/loading states rather than separate button recipes per surface.
+- `secondary` remains a compatibility alias for quiet-style usage, and
+  `outline` remains available for legacy surfaces that still depend on
+  explicit borders.
+- `Input` and `SearchInput` are now the second themed runtime slice. Keep
+  both on the same quiet field shell, placeholder/value hierarchy, and focus
+  ring language for new work.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may

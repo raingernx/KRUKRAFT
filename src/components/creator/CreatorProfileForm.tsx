@@ -442,7 +442,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                           <Button
                             type="button"
                             size="sm"
-                            variant="secondary"
+                            variant="quiet"
                             leftIcon={
                               uploadingAsset === "avatar" ? (
                                 <Loader2 className="size-4 animate-spin" />
@@ -512,7 +512,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                           <Button
                             type="button"
                             size="sm"
-                            variant="secondary"
+                            variant="quiet"
                             leftIcon={
                               uploadingAsset === "banner" ? (
                                 <Loader2 className="size-4 animate-spin" />

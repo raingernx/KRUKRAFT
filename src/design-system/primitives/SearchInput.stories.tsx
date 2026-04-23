@@ -33,6 +33,12 @@ export const States: Story = {
           onChange={() => {}}
         />
         <SearchInput
+          placeholder="Search resources"
+          value=""
+          onChange={() => {}}
+          className="bg-muted/40"
+        />
+        <SearchInput
           value={value}
           onChange={(event) => setValue(event.currentTarget.value)}
           onClear={() => setValue("")}
@@ -71,7 +77,7 @@ export const FoundationFamily: Story = {
     const [query, setQuery] = React.useState("ecosystem worksheet");
 
     return (
-      <div className="w-[560px] space-y-4 rounded-2xl border border-border-subtle bg-card p-5">
+      <div className="w-[560px] space-y-4 rounded-lg border border-border bg-card p-5">
         <Input placeholder="Resource title" />
         <SearchInput
           value={query}

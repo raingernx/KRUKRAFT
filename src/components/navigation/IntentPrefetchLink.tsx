@@ -1,7 +1,9 @@
 "use client";
 
 import {
+  forwardRef,
   startTransition,
+  useCallback,
   useEffect,
   useRef,
   type ComponentProps,
@@ -62,18 +64,22 @@ function logPrefetchEvent(event: string, details: Record<string, unknown>) {
   console.info(`[PREFETCH] ${event}`, details);
 }
 
-function IntentPrefetchLinkBase({
-  prefetchMode = "intent",
-  href,
-  onMouseEnter,
-  onFocus,
-  onTouchStart,
-  prefetchScope = "default",
-  prefetchLimit,
-  resourcesNavigationMode,
-  isPendingTarget = false,
-  ...props
-}: IntentPrefetchLinkBaseProps) {
+const IntentPrefetchLinkBase = forwardRef<HTMLAnchorElement, IntentPrefetchLinkBaseProps>(
+  function IntentPrefetchLinkBase(
+    {
+      prefetchMode = "intent",
+      href,
+      onMouseEnter,
+      onFocus,
+      onTouchStart,
+      prefetchScope = "default",
+      prefetchLimit,
+      resourcesNavigationMode,
+      isPendingTarget = false,
+      ...props
+    },
+    forwardedRef,
+  ) {
   const router = useRouter();
   const pathname = usePathname();
   const linkRef = useRef<HTMLAnchorElement | null>(null);
@@ -84,6 +90,22 @@ function IntentPrefetchLinkBase({
       ? DEFAULT_VIEWPORT_PREFETCH_LIMIT
       : DEFAULT_INTENT_PREFETCH_LIMIT);
   const scopeKey = `${pathname ?? "unknown"}:${prefetchScope}`;
+
+  const setLinkRef = useCallback(
+    (node: HTMLAnchorElement | null) => {
+      linkRef.current = node;
+
+      if (typeof forwardedRef === "function") {
+        forwardedRef(node);
+        return;
+      }
+
+      if (forwardedRef) {
+        forwardedRef.current = node;
+      }
+    },
+    [forwardedRef],
+  );
 
   function handleResourcesNavigation(event: Parameters<NonNullable<ComponentProps<typeof Link>["onClick"]>>[0]) {
     if (
@@ -185,7 +207,7 @@ function IntentPrefetchLinkBase({
   return (
     <Link
       {...props}
-      ref={linkRef}
+      ref={setLinkRef}
       href={href}
       prefetch={false}
       aria-busy={props["aria-busy"] ?? (isPendingTarget || undefined)}
@@ -218,9 +240,13 @@ function IntentPrefetchLinkBase({
       }}
     />
   );
-}
+  },
+);
 
-function NavigationAwareIntentPrefetchLink(props: IntentPrefetchLinkProps) {
+const NavigationAwareIntentPrefetchLink = forwardRef<
+  HTMLAnchorElement,
+  IntentPrefetchLinkProps
+>(function NavigationAwareIntentPrefetchLink(props, forwardedRef) {
   const navigationState = useResourcesNavigationState();
   const canonicalHref = canonicalizeResourcesHref(props.href);
   const isPendingTarget =
@@ -231,14 +257,23 @@ function NavigationAwareIntentPrefetchLink(props: IntentPrefetchLinkProps) {
     <IntentPrefetchLinkBase
       {...props}
       isPendingTarget={isPendingTarget}
+      ref={forwardedRef}
     />
   );
-}
+});
 
-export function IntentPrefetchLink(props: IntentPrefetchLinkProps) {
+export const IntentPrefetchLink = forwardRef<
+  HTMLAnchorElement,
+  IntentPrefetchLinkProps
+>(function IntentPrefetchLink(props, forwardedRef) {
   if (props.resourcesNavigationMode) {
-    return <NavigationAwareIntentPrefetchLink {...props} />;
+    return <NavigationAwareIntentPrefetchLink {...props} ref={forwardedRef} />;
   }
 
-  return <IntentPrefetchLinkBase {...props} />;
-}
+  return <IntentPrefetchLinkBase {...props} ref={forwardedRef} />;
+});
+
+IntentPrefetchLinkBase.displayName = "IntentPrefetchLinkBase";
+NavigationAwareIntentPrefetchLink.displayName =
+  "NavigationAwareIntentPrefetchLink";
+IntentPrefetchLink.displayName = "IntentPrefetchLink";

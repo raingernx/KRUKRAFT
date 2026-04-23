@@ -7,48 +7,48 @@ import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
   [
-    "group/button inline-flex shrink-0 items-center justify-center gap-1.5",
-    "rounded-xl border border-transparent bg-clip-padding",
-    "font-ui text-sm font-medium whitespace-nowrap",
-    "shadow-none transition-[background-color,border-color,color,box-shadow,transform] outline-none select-none",
-    "focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-    "disabled:pointer-events-none disabled:opacity-50",
+    "group/button inline-flex shrink-0 items-center justify-center gap-2",
+    "rounded-full border border-transparent bg-clip-padding",
+    "font-ui text-sm font-semibold whitespace-nowrap",
+    "shadow-none transition-[background-color,border-color,color,box-shadow] outline-none select-none",
+    "focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    "disabled:pointer-events-none disabled:shadow-none",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   ].join(" "),
   {
     variants: {
       variant: {
         primary:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:translate-y-px active:bg-primary/84",
+          "bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/84 disabled:bg-muted disabled:text-muted-foreground",
         default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:translate-y-px active:bg-primary/84",
+          "bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/84 disabled:bg-muted disabled:text-muted-foreground",
         quiet:
-          "border-border bg-card text-foreground hover:border-border-strong hover:bg-muted/70",
+          "bg-primary/20 text-foreground hover:bg-primary/24 active:bg-primary/28 disabled:bg-muted disabled:text-muted-foreground",
         dark:
-          "bg-foreground text-background hover:bg-foreground/92 active:translate-y-px active:bg-foreground",
+          "bg-foreground text-background hover:bg-foreground/92 active:bg-foreground disabled:bg-muted disabled:text-muted-foreground",
         secondary:
-          "border-border bg-card text-foreground hover:border-border-strong hover:bg-muted/70",
+          "bg-primary/20 text-foreground hover:bg-primary/24 active:bg-primary/28 disabled:bg-muted disabled:text-muted-foreground",
         outline:
-          "border-border bg-card text-foreground hover:border-border-strong hover:bg-muted/70",
+          "border-border bg-card text-foreground hover:border-border-strong hover:bg-muted/40 active:bg-muted/55 disabled:border-border disabled:bg-muted disabled:text-muted-foreground",
         ghost:
-          "bg-transparent text-muted-foreground hover:bg-muted/70 hover:text-foreground",
+          "bg-warning-100 text-foreground hover:bg-warning-100/88 active:bg-warning-100/76 disabled:bg-muted disabled:text-muted-foreground dark:bg-warning-700/32 dark:text-foreground dark:hover:bg-warning-700/42 dark:active:bg-warning-700/50",
         danger:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 active:translate-y-px active:bg-destructive/84 focus-visible:ring-destructive/30",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/92 active:bg-destructive/84 focus-visible:ring-destructive/30 disabled:bg-muted disabled:text-muted-foreground",
         destructive:
-          "border-destructive/20 bg-destructive/10 text-destructive hover:border-destructive/30 hover:bg-destructive/15 focus-visible:ring-destructive/22",
+          "border-destructive/20 bg-destructive/10 text-destructive hover:border-destructive/30 hover:bg-destructive/15 focus-visible:ring-destructive/22 disabled:border-border disabled:bg-muted disabled:text-muted-foreground",
         accent:
-          "bg-warning-500 text-white hover:bg-warning-600 active:bg-warning-700 focus-visible:ring-warning-500/20",
+          "bg-warning-500 text-white hover:bg-warning-600 active:bg-warning-700 focus-visible:ring-warning-500/20 disabled:bg-muted disabled:text-muted-foreground",
         link:
-          "text-primary underline-offset-4 hover:text-foreground hover:underline",
+          "rounded-none px-0 text-primary underline-offset-4 hover:text-foreground hover:underline disabled:text-muted-foreground",
       },
       size: {
-        xs: "h-8 gap-1 rounded-lg px-3 text-caption",
-        sm: "h-10 gap-1.5 px-3.5 text-sm",
-        md: "h-11 px-4 text-sm",
-        lg: "h-12 px-5 text-sm",
-        default: "h-11 px-4 text-sm",
+        xs: "h-8 px-3 text-caption",
+        sm: "h-10 px-4 text-sm",
+        md: "h-11 px-5 text-sm",
+        lg: "h-12 px-6 text-sm",
+        default: "h-11 px-5 text-sm",
         icon: "size-10",
-        "icon-xs": "size-8 rounded-lg",
+        "icon-xs": "size-8",
         "icon-sm": "size-9",
         "icon-lg": "size-11",
       },

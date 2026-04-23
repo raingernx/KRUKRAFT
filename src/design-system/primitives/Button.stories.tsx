@@ -21,16 +21,26 @@ export const Playground: Story = {};
 
 export const Variants: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button variant="primary">Primary</Button>
-      <Button variant="quiet">Quiet</Button>
-      <Button variant="ghost">Ghost</Button>
-      <Button variant="secondary">Secondary (alias)</Button>
-      <Button variant="outline">Outline (legacy)</Button>
-      <Button variant="destructive">Destructive</Button>
-      <Button variant="accent">Accent</Button>
-      <Button variant="danger">Danger</Button>
-      <Button variant="link">Link</Button>
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <p className="text-sm font-semibold text-foreground">Canonical family</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button variant="primary">Primary</Button>
+          <Button variant="quiet">Quiet</Button>
+          <Button variant="ghost">Ghost</Button>
+        </div>
+      </div>
+      <div className="space-y-2">
+        <p className="text-sm font-semibold text-muted-foreground">Compatibility variants</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button variant="secondary">Secondary (quiet alias)</Button>
+          <Button variant="outline">Outline (legacy)</Button>
+          <Button variant="destructive">Destructive</Button>
+          <Button variant="accent">Accent</Button>
+          <Button variant="danger">Danger</Button>
+          <Button variant="link">Link</Button>
+        </div>
+      </div>
     </div>
   ),
 };
@@ -55,6 +65,18 @@ export const Density: Story = {
       <Button size="lg" variant="ghost">
         Ghost action
       </Button>
+    </div>
+  ),
+};
+
+export const States: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-3">
+      <Button variant="primary">Primary</Button>
+      <Button variant="quiet">Quiet</Button>
+      <Button variant="ghost">Ghost</Button>
+      <Button disabled>Disabled</Button>
+      <Button loading>Loading</Button>
     </div>
   ),
 };

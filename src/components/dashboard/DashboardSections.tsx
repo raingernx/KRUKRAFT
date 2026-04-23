@@ -400,7 +400,7 @@ export function DashboardPageIntro({
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           {showContractLink ? (
-            <Button asChild variant="secondary">
+            <Button asChild variant="quiet">
               <Link href="#dashboard-contract">
                 <Grid2X2 className="size-4" aria-hidden />
                 Review contract
@@ -631,7 +631,7 @@ export function DashboardDownloadsPreview() {
                       aria-label={`${resource.title} download is unavailable in the prototype`}
                       disabled
                       size="sm"
-                      variant="secondary"
+                      variant="quiet"
                     >
                       Prototype
                     </Button>
@@ -679,7 +679,7 @@ export function DashboardAccountPreview() {
                 className="mt-4"
                 disabled
                 size="sm"
-                variant="secondary"
+                variant="quiet"
               >
                 Prototype only
               </Button>
@@ -750,7 +750,7 @@ function DashboardCreatorWorkspaceRouteIntro({
                 Create resource
               </Link>
             </Button>
-            <Button asChild size="sm" variant="secondary">
+            <Button asChild size="sm" variant="quiet">
               <Link className="whitespace-nowrap" href={storefrontHref}>
                 Storefront
               </Link>
@@ -763,7 +763,7 @@ function DashboardCreatorWorkspaceRouteIntro({
                 Resources
               </Link>
             </Button>
-            <Button asChild size="sm" variant="secondary">
+            <Button asChild size="sm" variant="quiet">
               <Link className="whitespace-nowrap" href={storefrontHref}>
                 Storefront
               </Link>
@@ -1195,7 +1195,7 @@ function DashboardHomeHeader({ firstName }: { firstName: string }) {
         <Button asChild>
           <Link href={routes.dashboardLibrary}>Open library</Link>
         </Button>
-        <Button asChild size="sm" variant="secondary">
+        <Button asChild size="sm" variant="quiet">
           <Link href={routes.dashboardDownloads}>View downloads</Link>
         </Button>
       </div>
@@ -1246,7 +1246,7 @@ function DashboardHomeSurfaceStateCard({
         description={state.description}
         action={
           state.status === "empty" && state.ctaHref && state.ctaLabel ? (
-            <Button asChild size="sm" variant="secondary">
+            <Button asChild size="sm" variant="quiet">
               <Link href={state.ctaHref}>{state.ctaLabel}</Link>
             </Button>
           ) : undefined
@@ -1417,7 +1417,7 @@ function DashboardHomeMembershipSnapshot({
               <p className="mt-3 text-xs text-muted-foreground">
                 {state.data.support}
               </p>
-              <Button asChild className="mt-4" size="sm" variant="secondary">
+              <Button asChild className="mt-4" size="sm" variant="quiet">
                 <Link href={state.data.ctaHref}>{state.data.ctaLabel}</Link>
               </Button>
             </div>
@@ -1470,7 +1470,7 @@ export function DashboardHomeLoadingContent() {
             <Button asChild>
               <Link href={routes.dashboardLibrary}>Open library</Link>
             </Button>
-            <Button asChild size="sm" variant="secondary">
+            <Button asChild size="sm" variant="quiet">
               <Link href={routes.dashboardDownloads}>View downloads</Link>
             </Button>
           </div>
@@ -1604,7 +1604,7 @@ export function DashboardDownloadsRouteIntro() {
           access stays gated behind your purchase record.
         </p>
       </div>
-      <Button asChild size="sm" variant="secondary">
+      <Button asChild size="sm" variant="quiet">
         <Link href={routes.dashboardLibrary}>Open library</Link>
       </Button>
     </section>
@@ -1726,7 +1726,7 @@ function DashboardDownloadsRouteBody({
           title={data.errorTitle ?? "Could not load downloads"}
           description={data.errorDescription}
           action={
-            <Button asChild size="sm" variant="secondary">
+            <Button asChild size="sm" variant="quiet">
               <Link href={routes.dashboardDownloads}>Retry</Link>
             </Button>
           }
@@ -1809,7 +1809,7 @@ function DashboardDownloadsRouteBody({
                     {formatDashboardDownloadFileSize(download.resource.fileSize)}
                   </span>
                   <div className="flex justify-end">
-                    <Button asChild size="sm" variant="secondary">
+                    <Button asChild size="sm" variant="quiet">
                       <a href={`/api/download/${download.resource.id}`}>Download</a>
                     </Button>
                   </div>
@@ -2084,7 +2084,7 @@ function DashboardLibraryRecovery({
               has not appeared yet.
             </p>
           </div>
-          <Button asChild size="sm" variant="secondary">
+          <Button asChild size="sm" variant="quiet">
             <Link href={getDashboardLibraryHref({ payment: "success" })}>
               Refresh
             </Link>
@@ -2115,7 +2115,7 @@ function DashboardLibraryRecovery({
           <Button asChild size="sm">
             <a href={`/api/download/${data.recovery.item.id}`}>Download now</a>
           </Button>
-          <Button asChild size="sm" variant="secondary">
+          <Button asChild size="sm" variant="quiet">
             <ResourceIntentLink href={routes.resource(data.recovery.item.slug)}>
               View resource
             </ResourceIntentLink>
@@ -2219,7 +2219,7 @@ function DashboardLibraryResults({ data }: { data: DashboardLibraryData }) {
         title={data.errorTitle ?? "Could not load your library"}
         description={data.errorDescription}
         action={
-          <Button asChild size="sm" variant="secondary">
+          <Button asChild size="sm" variant="quiet">
             <Link
               href={getDashboardLibraryHref({
                 q: data.query,
@@ -2266,7 +2266,7 @@ function DashboardLibraryResults({ data }: { data: DashboardLibraryData }) {
         title="No matching resources"
         description="Try another keyword or clear the current filter."
         action={
-          <Button asChild size="sm" variant="secondary">
+          <Button asChild size="sm" variant="quiet">
             <Link href={getDashboardLibraryHref({ payment })}>Clear filters</Link>
           </Button>
         }
@@ -2359,7 +2359,7 @@ function DashboardLibrarySummaryCards({
             {data.continueItem?.authorName ??
               "Open what you already own or find something new."}
           </p>
-          <Button asChild className="mt-4" size="sm" variant="secondary">
+          <Button asChild className="mt-4" size="sm" variant="quiet">
             <Link href={continueHref}>
               {data.continueItem ? "Open resource" : "Browse resources"}
             </Link>
@@ -2496,7 +2496,7 @@ export function DashboardPurchasesRouteFrame({
             Review completed, pending, and failed purchases in one ledger.
           </p>
         </div>
-        <Button asChild size="sm" variant="secondary">
+        <Button asChild size="sm" variant="quiet">
           <Link href={routes.marketplace}>Browse marketplace</Link>
         </Button>
       </section>
@@ -2607,7 +2607,7 @@ function DashboardPurchasesRouteBody({
           title={data.errorTitle ?? "Could not load purchases"}
           description={data.errorDescription}
           action={
-            <Button asChild size="sm" variant="secondary">
+            <Button asChild size="sm" variant="quiet">
               <Link href={routes.dashboardPurchases}>Retry</Link>
             </Button>
           }
@@ -2807,7 +2807,7 @@ function DashboardMembershipResolvedContent({
       title={data.errorTitle ?? "Could not load membership"}
       description={data.errorDescription}
       action={
-        <Button asChild size="sm" variant="secondary">
+        <Button asChild size="sm" variant="quiet">
           <Link href={routes.dashboardMembership}>Retry</Link>
         </Button>
       }
@@ -3012,7 +3012,7 @@ function DashboardSettingsResolvedContent({
           title={data.errorTitle ?? "Could not load settings"}
           description={data.errorDescription}
           action={
-            <Button asChild size="sm" variant="secondary">
+            <Button asChild size="sm" variant="quiet">
               <Link href={routes.dashboardSettings}>Retry</Link>
             </Button>
           }
@@ -3355,7 +3355,7 @@ export function DashboardCreatorResourcesContent({
                 <Link href={routes.dashboardCreatorApply}>Apply for creator access</Link>
               </Button>
             ) : (
-              <Button asChild size="sm" variant="secondary">
+              <Button asChild size="sm" variant="quiet">
                 <Link href={getDashboardCreatorResourcesHref()}>Retry</Link>
               </Button>
             )
@@ -3464,7 +3464,7 @@ export function DashboardCreatorResourcesContent({
                   title="No matching resources"
                   description="Try another status, pricing, or sort option."
                   action={
-                    <Button asChild size="sm" variant="secondary">
+                    <Button asChild size="sm" variant="quiet">
                       <Link href={getDashboardCreatorResourcesHref()}>
                         Clear filters
                       </Link>
@@ -3543,7 +3543,7 @@ export function DashboardCreatorResourcesContent({
                             {resource.updatedLabel}
                           </td>
                           <td className="px-5 py-4">
-                            <Button asChild size="sm" variant="secondary">
+                            <Button asChild size="sm" variant="quiet">
                               <Link href={resource.href}>Edit</Link>
                             </Button>
                           </td>
@@ -3563,7 +3563,7 @@ export function DashboardCreatorResourcesContent({
                         <Button
                           asChild
                           size="xs"
-                          variant="secondary"
+                          variant="quiet"
                           className="rounded-lg"
                         >
                           <Link
@@ -3589,7 +3589,7 @@ export function DashboardCreatorResourcesContent({
                               key={item}
                               asChild
                               size="xs"
-                              variant={item === data.page ? "primary" : "secondary"}
+                              variant={item === data.page ? "primary" : "quiet"}
                               className="min-w-9 rounded-lg px-3"
                             >
                               <Link
@@ -3610,7 +3610,7 @@ export function DashboardCreatorResourcesContent({
                         <Button
                           asChild
                           size="xs"
-                          variant="secondary"
+                          variant="quiet"
                           className="rounded-lg"
                         >
                           <Link
@@ -3774,7 +3774,7 @@ export function DashboardCreatorResourceEditorContent({
           description={data.description}
           tone={data.state === "forbidden" ? "warning" : "featured"}
           action={
-            <Button asChild variant="secondary">
+            <Button asChild variant="quiet">
               <Link href={routes.dashboardCreatorResources}>
                 Back to resources
               </Link>
@@ -3814,7 +3814,7 @@ export function DashboardCreatorResourceEditorContent({
           tone="featured"
           action={
             isEdit ? (
-              <Button asChild variant="secondary">
+              <Button asChild variant="quiet">
                 <Link href={routes.dashboardCreatorResources}>
                   Back to resources
                 </Link>
@@ -3869,7 +3869,7 @@ export function DashboardCreatorResourceEditorContent({
                 </p>
               </div>
             ))}
-            <Button disabled variant="secondary">
+            <Button disabled variant="quiet">
               Editor prototype only
             </Button>
           </CardContent>
@@ -3916,7 +3916,7 @@ export function DashboardCreatorResourceEditorLoadingContent({
         tone="featured"
         action={
           isEdit ? (
-            <Button asChild variant="secondary">
+            <Button asChild variant="quiet">
               <Link href={routes.dashboardCreatorResources}>
                 Back to resources
               </Link>
@@ -4048,7 +4048,7 @@ function DashboardProtectedRouteEmptyState({
             <Link href={state.ctaHref}>{state.ctaLabel}</Link>
           </Button>
         ) : (
-          <Button asChild size="sm" variant="secondary">
+          <Button asChild size="sm" variant="quiet">
             <Link href={retryHref}>Retry</Link>
           </Button>
         )
@@ -4086,7 +4086,7 @@ export function DashboardCreatorAnalyticsContent({
             title="Top resources"
             description="Best performers by creator share in the current analytics window."
             actions={
-              <Button asChild size="sm" variant="secondary">
+              <Button asChild size="sm" variant="quiet">
                 <Link href={routes.dashboardCreatorResources}>Open resources</Link>
               </Button>
             }

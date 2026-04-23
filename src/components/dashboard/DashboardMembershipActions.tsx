@@ -76,14 +76,14 @@ export function DashboardMembershipActions({
       <Button asChild size="sm">
         <Link href={primaryHref}>{primaryLabel}</Link>
       </Button>
-      <Button asChild size="sm" variant="secondary">
+      <Button asChild size="sm" variant="quiet">
         <Link href={secondaryHref}>{secondaryLabel}</Link>
       </Button>
       {canCancelSubscription ? (
         <Button
           type="button"
           size="sm"
-          variant="secondary"
+          variant="quiet"
           leftIcon={isCancelling ? <Loader2 className="size-4 animate-spin" /> : null}
           loading={isCancelling}
           onClick={() => {

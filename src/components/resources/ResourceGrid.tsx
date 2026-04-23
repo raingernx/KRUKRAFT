@@ -295,7 +295,7 @@ function ResourceGridBody({
             {hasMore ? (
               <Button
                 type="button"
-                variant="secondary"
+                variant="quiet"
                 size="md"
                 onClick={() => void handleLoadMore()}
                 disabled={isLoadingMore}

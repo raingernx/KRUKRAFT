@@ -131,36 +131,40 @@ function MembershipItem({
   active: boolean;
 }) {
   return (
-    <IntentPrefetchLink
-      href={routes.dashboardMembership}
-      data-dashboard-account-link={routes.dashboardMembership}
-      onMouseEnter={onWarmTargets}
-      onFocus={onWarmTargets}
-      onClick={(event) => {
-        onNavigate(routes.dashboardMembership, event);
-      }}
+    <DropdownItem
+      asChild
       className={cn(
-        "mb-3 flex w-full items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "mb-3 flex w-full items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         active
-          ? "border-highlight-500/35 bg-[radial-gradient(circle_at_top_left,rgba(168,85,247,0.22),transparent_56%),linear-gradient(135deg,rgba(91,33,182,0.14),rgba(15,23,42,0.05))]"
-          : "border-highlight-500/20 bg-[radial-gradient(circle_at_top_left,rgba(168,85,247,0.16),transparent_52%),linear-gradient(135deg,rgba(91,33,182,0.08),rgba(15,23,42,0.02))] hover:bg-[radial-gradient(circle_at_top_left,rgba(168,85,247,0.20),transparent_55%),linear-gradient(135deg,rgba(91,33,182,0.12),rgba(15,23,42,0.04))]",
+          ? "border-border bg-muted/75"
+          : "border-border-subtle bg-muted/45 hover:border-border hover:bg-muted/65",
       )}
     >
-      <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-highlight-500/15 text-highlight-600">
-        <CreditCard aria-hidden className="h-4 w-4" />
-      </span>
-      <span className="flex min-w-0 flex-1 items-center gap-2">
-        <span className="truncate text-sm font-semibold text-foreground">
-          Membership
+      <IntentPrefetchLink
+        href={routes.dashboardMembership}
+        data-dashboard-account-link={routes.dashboardMembership}
+        onMouseEnter={onWarmTargets}
+        onFocus={onWarmTargets}
+        onClick={(event) => {
+          onNavigate(routes.dashboardMembership, event);
+        }}
+      >
+        <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <CreditCard aria-hidden className="h-4 w-4" />
         </span>
-        <Badge
-          variant="featured"
-          className="shrink-0 px-1.5 py-0 text-[10px] leading-4"
-        >
-          Plans
-        </Badge>
-      </span>
-    </IntentPrefetchLink>
+        <span className="flex min-w-0 flex-1 items-center gap-2">
+          <span className="truncate text-sm font-semibold text-foreground">
+            Membership
+          </span>
+          <Badge
+            variant="featured"
+            className="shrink-0 px-1.5 py-0 text-[10px] leading-4"
+          >
+            Plans
+          </Badge>
+        </span>
+      </IntentPrefetchLink>
+    </DropdownItem>
   );
 }
 
@@ -187,30 +191,34 @@ function MenuSection({
         const isActive = isMenuLinkActive(pathname, item.href);
 
         return (
-          <IntentPrefetchLink
+          <DropdownItem
+            asChild
             key={item.href}
-            href={item.href}
-            data-dashboard-account-link={item.href}
-            onMouseEnter={onWarmTargets}
-            onFocus={onWarmTargets}
-            onClick={(event) => {
-              onNavigate(item.href, event);
-            }}
             className={cn(
-              "flex w-full items-center gap-2.5 rounded-xl border px-2.5 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              "flex w-full items-center gap-2.5 rounded-lg border px-2.5 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
               isActive
                 ? "border-transparent bg-muted text-foreground"
                 : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
-            <Icon
-              aria-hidden
-              className="h-[18px] w-[18px] shrink-0 opacity-80"
-            />
-            <span className="whitespace-nowrap text-[15px] leading-6">
-              {item.label}
-            </span>
-          </IntentPrefetchLink>
+            <IntentPrefetchLink
+              href={item.href}
+              data-dashboard-account-link={item.href}
+              onMouseEnter={onWarmTargets}
+              onFocus={onWarmTargets}
+              onClick={(event) => {
+                onNavigate(item.href, event);
+              }}
+            >
+              <Icon
+                aria-hidden
+                className="h-[18px] w-[18px] shrink-0 opacity-80"
+              />
+              <span className="whitespace-nowrap text-[15px] leading-6">
+                {item.label}
+              </span>
+            </IntentPrefetchLink>
+          </DropdownItem>
         );
       })}
     </div>
@@ -252,6 +260,13 @@ export function AuthenticatedAccountDropdown({
           type="button"
           onMouseEnter={onWarmTargets}
           onFocus={onWarmTargets}
+          onPointerDown={(event) => {
+            event.preventDefault();
+            if (!open) {
+              onWarmTargets?.();
+            }
+            setOpen((current) => !current);
+          }}
           aria-label={ariaLabel}
           data-dashboard-account-trigger="true"
           data-dashboard-account-ready="true"
@@ -265,7 +280,7 @@ export function AuthenticatedAccountDropdown({
 
       <DropdownMenu
         align="end"
-        className="w-[min(18rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-card/95 p-0 shadow-card-lg"
+        className="w-[min(18rem,calc(100vw-1rem))] rounded-lg border-border-subtle bg-card/95 p-0 shadow-card-lg"
         data-dashboard-account-menu="true"
         sideOffset={8}
       >
@@ -309,7 +324,7 @@ export function AuthenticatedAccountDropdown({
           <DropdownSeparator />
 
           <DropdownItem
-            className="rounded-xl px-2.5 py-2 text-sm font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
+            className="rounded-lg px-2.5 py-2 text-sm font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
             onSelect={(event) => {
               event.preventDefault();
               setOpen(false);

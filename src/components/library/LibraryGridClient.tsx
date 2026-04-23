@@ -108,7 +108,7 @@ export function LibraryGridClient({ items }: LibraryGridClientProps) {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
+      <div className="rounded-lg border border-border bg-card p-4 sm:p-5">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-1">
             <p className="text-caption font-semibold text-muted-foreground">Library tools</p>
@@ -145,7 +145,6 @@ export function LibraryGridClient({ items }: LibraryGridClientProps) {
             onChange={(e) => setSearch(e.target.value)}
             onClear={() => setSearch("")}
             containerClassName="min-w-0 flex-1"
-            className="bg-muted"
           />
 
           <div className="flex flex-wrap items-center gap-1.5">
@@ -196,8 +195,8 @@ export function LibraryGridClient({ items }: LibraryGridClientProps) {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card py-14 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted">
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card py-14 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
             <Search className="h-5 w-5 text-muted-foreground/50" />
           </div>
           <p className="mt-3 text-small font-medium text-foreground">

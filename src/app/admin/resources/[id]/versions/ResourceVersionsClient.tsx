@@ -195,7 +195,7 @@ export function ResourceVersionsClient({
                       <RowActions>
                         <RowActionButton
                           type="button"
-                          variant="secondary"
+                          variant="quiet"
                           onClick={() => handleDownload(v.id)}
                         >
                           <Download className="h-3.5 w-3.5" />

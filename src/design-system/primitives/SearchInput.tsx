@@ -70,7 +70,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
           aria-label={clearLabel}
           className={cn(
             fieldEndAdornmentClassName,
-            "justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            "justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             variant === "hero"
               ? "w-12 rounded-xl p-4 sm:w-14 sm:p-[18px]"
               : "p-3.5",

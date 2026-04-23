@@ -177,7 +177,7 @@ export default async function CreatorPublicProfilePage({
                               key={link.key}
                               asChild
                               size="icon"
-                              variant="secondary"
+                              variant="quiet"
                               className="rounded-full"
                             >
                               <Link
@@ -346,7 +346,7 @@ async function CreatorResourcesSection({
               Check back soon for worksheets, assessments, and downloadable study resources.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button asChild variant="secondary" size="sm">
+              <Button asChild variant="quiet" size="sm">
                 <Link href={routes.marketplace}>Browse marketplace</Link>
               </Button>
             </div>

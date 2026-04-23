@@ -42,7 +42,7 @@ export default function DashboardCreatorResourcesRouteError({
             <Button type="button" size="sm" onClick={reset}>
               Try again
             </Button>
-            <Button asChild size="sm" variant="secondary">
+            <Button asChild size="sm" variant="quiet">
               <Link href={routes.dashboardCreatorResources}>
                 Back to resources
               </Link>

@@ -190,7 +190,7 @@ export function ProfileSettings({
             <Button
               type="button"
               size="sm"
-              variant="secondary"
+              variant="quiet"
               leftIcon={
                 isUploadingAvatar ? (
                   <Loader2 className="size-4 animate-spin" />

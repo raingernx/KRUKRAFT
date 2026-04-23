@@ -1004,7 +1004,7 @@ export function CreatorResourceForm({
                     </Button>
                     <Button
                       type="button"
-                      variant="secondary"
+                      variant="quiet"
                       size="sm"
                       leftIcon={<Plus className="h-4 w-4" />}
                       onClick={addPreviewUrlDraftRow}
@@ -1100,7 +1100,7 @@ export function CreatorResourceForm({
                         </div>
                         <Button
                           type="button"
-                          variant="secondary"
+                          variant="quiet"
                           size="sm"
                           onClick={applyBulkPreviewUrls}
                           disabled={!bulkPreviewInput.trim()}
@@ -1279,7 +1279,7 @@ export function CreatorResourceForm({
                             </div>
                             <Button
                               type="button"
-                              variant="secondary"
+                              variant="quiet"
                               size="sm"
                               onClick={async () => {
                                 try {
@@ -1372,7 +1372,7 @@ export function CreatorResourceForm({
                                   >
                                     Edit
                                   </Button>
-                                  <Button type="button" variant="secondary" size="sm" asChild>
+                                  <Button type="button" variant="quiet" size="sm" asChild>
                                     <a href={form.fileUrl} target="_blank" rel="noreferrer">
                                       Open link
                                       <ExternalLink className="h-4 w-4" />

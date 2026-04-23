@@ -46,7 +46,7 @@ export function ResourceCardLibraryFooter({
             </a>
           </Button>
           {isPreviewSupported(resource.mimeType) ? (
-            <Button asChild variant="outline" size="sm" className="h-9 flex-1 gap-1.5">
+            <Button asChild variant="quiet" size="sm" className="h-9 flex-1 gap-1.5">
               <a
                 href={`/api/preview/${resource.id}`}
                 target="_blank"
@@ -59,7 +59,7 @@ export function ResourceCardLibraryFooter({
               </a>
             </Button>
           ) : null}
-          <Button asChild variant="outline" size="sm" className="h-9 flex-1 gap-1.5">
+          <Button asChild variant="ghost" size="sm" className="h-9 flex-1 gap-1.5">
             <IntentPrefetchLink
               href={resourceHref}
               prefetchScope="resource-card-library"

@@ -21,15 +21,17 @@ export const Playground: Story = {};
 export const States: Story = {
   render: () => (
     <div className="w-[360px] space-y-4">
-      <Input placeholder="Search resources" hint="Use topic, grade, or format" />
+      <Input placeholder="name@example.com" hint="Default and hover keep placeholder tone quiet." />
       <Input
         defaultValue="Flashcards"
-        hint="Visible helper text is part of the component contract"
+        hint="Typed values should use the same shell recipe."
       />
       <Input
         defaultValue="worksheet"
         error="Try a broader term or choose a category instead."
       />
+      <Input defaultValue="Unavailable in this state" readOnly />
+      <Input disabled placeholder="Disabled field" />
     </div>
   ),
 };
@@ -45,7 +47,7 @@ export const WithAdornments: Story = {
       <Input
         defaultValue="science flashcards"
         leftAdornment={<Search className="size-4" />}
-        hint="Adornments should still feel like the same control family."
+        hint="Adornments should stay inside the same field family."
       />
     </div>
   ),

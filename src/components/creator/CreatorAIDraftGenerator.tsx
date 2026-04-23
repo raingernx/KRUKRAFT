@@ -410,7 +410,7 @@ export function CreatorAIDraftGenerator({
               <div className="flex flex-wrap gap-3">
                 <Button
                   type="button"
-                  variant="secondary"
+                  variant="quiet"
                   size="sm"
                   onClick={() => onApplySummary(draftState.summary)}
                   disabled={!draftState.summary.trim()}

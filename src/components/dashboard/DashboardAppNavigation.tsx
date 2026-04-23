@@ -319,7 +319,7 @@ function SidebarCallout({
 
   const prefetchMode = closeOnNavigate ? "intent" : "viewport";
   const checklistButton = (
-    <Button className="mt-3" size="sm" variant="secondary" fullWidth asChild>
+    <Button className="mt-3" size="sm" variant="quiet" fullWidth asChild>
       <IntentPrefetchLink
         href={routes.dashboardCreator}
         prefetchLimit={4}
@@ -333,7 +333,7 @@ function SidebarCallout({
 
   return (
     <div className="border-t border-border-subtle p-4">
-      <div className="rounded-xl border border-border-subtle bg-card/95 p-4 shadow-card">
+      <div className="rounded-lg border border-border-subtle bg-card/95 p-4 shadow-card">
         <Badge variant="featured">Creator-ready</Badge>
         <p className="mt-3 text-sm font-semibold text-foreground">
           Start selling resources
@@ -403,8 +403,9 @@ function AccountDropdown({
           void signOut({ callbackUrl: routes.home });
         }}
         onWarmTargets={warmTargets}
-        onNavigate={(href) => {
-          router.prefetch(href);
+        onNavigate={(href, event) => {
+          event?.preventDefault();
+          router.push(href);
         }}
         ariaLabel="Open dashboard account menu"
       />
@@ -419,6 +420,10 @@ function AccountDropdown({
           aria-label="Open dashboard account menu"
           data-dashboard-account-trigger="true"
           data-dashboard-account-ready="true"
+          onPointerDown={(event) => {
+            event.preventDefault();
+            setOpen((current) => !current);
+          }}
           className="group inline-flex size-11 items-center justify-center rounded-full outline-none"
         >
           <span
@@ -438,7 +443,7 @@ function AccountDropdown({
 
       <DropdownMenu
         align="end"
-        className="w-[min(17rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-card/95 p-0 shadow-card-lg"
+        className="w-[min(17rem,calc(100vw-1rem))] rounded-lg border-border-subtle bg-card/95 p-0 shadow-card-lg"
         data-dashboard-account-menu="true"
         sideOffset={8}
       >
@@ -456,7 +461,7 @@ function AccountDropdown({
             </SidebarSectionLabel>
             <DropdownItem
               asChild
-              className="rounded-xl border border-transparent px-2.5 py-2 text-sm font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
+              className="rounded-lg border border-transparent px-2.5 py-2 text-sm font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
             >
               <IntentPrefetchLink
                 href={routes.loginWithNext(routes.dashboard)}
@@ -473,7 +478,7 @@ function AccountDropdown({
             </DropdownItem>
             <DropdownItem
               asChild
-              className="rounded-xl border border-transparent px-2.5 py-2 text-sm font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
+              className="rounded-lg border border-transparent px-2.5 py-2 text-sm font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
             >
               <IntentPrefetchLink
                 href={routes.register}
@@ -490,7 +495,7 @@ function AccountDropdown({
             </DropdownItem>
             <DropdownItem
               asChild
-              className="rounded-xl border border-transparent px-2.5 py-2 text-sm font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
+              className="rounded-lg border border-transparent px-2.5 py-2 text-sm font-medium text-muted-foreground focus:bg-muted focus:text-foreground"
             >
               <IntentPrefetchLink
                 href={routes.dashboardMembership}
@@ -585,7 +590,7 @@ function DashboardAppNotifications({ viewer }: { viewer: DashboardAppViewer }) {
 
       <DropdownMenu
         align="end"
-        className="w-[min(20rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-card/95 p-0 shadow-card-lg"
+        className="w-[min(20rem,calc(100vw-1rem))] rounded-lg border-border-subtle bg-card/95 p-0 shadow-card-lg"
         sideOffset={8}
       >
         <div className="p-2">
@@ -597,7 +602,7 @@ function DashboardAppNotifications({ viewer }: { viewer: DashboardAppViewer }) {
           </div>
 
           <div className="px-3 py-3">
-            <div className="rounded-xl border border-border-subtle bg-muted/60 p-3">
+            <div className="rounded-lg border border-border-subtle bg-muted/60 p-3">
               <p className="text-sm font-semibold text-foreground">
                 {notificationCopy.title}
               </p>
@@ -610,7 +615,7 @@ function DashboardAppNotifications({ viewer }: { viewer: DashboardAppViewer }) {
           <DropdownSeparator />
 
           <div className="p-2">
-            <DropdownItem asChild className="rounded-xl px-3 py-2 text-sm font-medium">
+            <DropdownItem asChild className="rounded-lg px-3 py-2 text-sm font-medium">
               <IntentPrefetchLink
                 href={notificationCopy.ctaHref}
                 prefetchLimit={4}
@@ -619,7 +624,7 @@ function DashboardAppNotifications({ viewer }: { viewer: DashboardAppViewer }) {
                 {notificationCopy.ctaLabel}
               </IntentPrefetchLink>
             </DropdownItem>
-            <DropdownItem asChild className="rounded-xl px-3 py-2 text-sm font-medium">
+            <DropdownItem asChild className="rounded-lg px-3 py-2 text-sm font-medium">
               <IntentPrefetchLink
                 href={routes.dashboardMembership}
                 prefetchLimit={4}
