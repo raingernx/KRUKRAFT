@@ -467,55 +467,45 @@ duplicate `FormSection` / `PageContainer` aliases, and if a needed primitive is
 missing, add it to `src/design-system` first. Treat remaining legacy backbone
 files as implementation details only.
 
-## Figma Fidelity Rules
+## Figma Work Rules
 
-When implementing or patching UI from Figma, agents must treat fidelity work as
-a structured verification task, not as a visual guess.
+Treat Figma work as structured system work, not as ad-hoc drawing.
 
 - do not claim or assume 1:1 fidelity from screenshots alone
-- before editing code, lock a single canonical Figma frame or variant and cite
-  its node id in working notes or the final summary
-- inspect the exact node tree that matters, not just the root frame; verify
-  leaf nodes such as badges, chips, buttons, titles, artwork fills, and panel
-  shells individually
-- use a Dev Mode mindset for every important node: check fill, stroke, radius,
-  padding, gap, width, height, text style, and variant/property names before
-  mapping them into code
-- if a reusable component and a preview/example both exist in Figma, decide
-  explicitly which one is the implementation source before patching code
-- do not infer token intent from appearance alone; verify whether a node is
-  using semantic tokens, primitive tokens, or local overrides before choosing a
-  code token
-- if a design uses local overrides in Figma, preserve the visual output first
-  and only promote those values into DS tokens when the pattern is proven to be
-  reusable
-- check the page or section shell around the component, not just the component
-  itself; background washes, container widths, outer padding, and section
-  spacing are part of visual fidelity
-- if the Figma design includes fill-container or stretch behavior, map it to
-  the correct CSS layout mechanism for the parent context (`items-stretch`,
-  `self-stretch`, `flex-1`, `h-full`, grid stretch, or min-height) instead of
-  defaulting to content-driven height
-- when Figma uses imagery, do not silently substitute or omit the asset; verify
-  whether the design expects a real image fill, a placeholder, or no media at
-  all
-- after patching, re-check the implemented UI against the same canonical Figma
-  frame instead of trusting the first patch
-- if any important value is still ambiguous after inspection, say so explicitly
-  and resolve the ambiguity before declaring the implementation “matched”
+- use `Frame` for layout containers and `Rectangle` or other shapes only for
+  visual objects such as swatches, dividers, fills, or artwork
+- one Figma write should change one block or section only; verify that block
+  before touching the next one
+- no Figma task is complete until the edited node passes screenshot
+  verification; if metadata and screenshot disagree, trust the screenshot
+- if a Figma screenshot fails, stop patching by instinct; inspect metadata plus
+  screenshot and then decide whether to fix incrementally or rebuild the block
+- in source-of-truth files, keep approved work, trials, and archived studies
+  clearly separated and labeled
+- inspect the important child nodes, not just the root frame
+- do not infer token intent from appearance alone
+- once primitives or variables exist, prefer variable bindings over local fills
+  unless a node is explicitly labeled as a trial
+- preserve local overrides until the pattern is proven reusable
+- map Figma fill/stretch behavior to the correct CSS layout mechanism instead
+  of defaulting to content-driven sizing
+- when Figma uses imagery, do not silently substitute or omit it without
+  verifying whether the design expects a real asset, a placeholder, or no media
 
 ### Required Figma-to-Code Order
 
-For non-trivial Figma implementation work, agents should follow this order:
+For non-trivial Figma-to-code work, follow this order:
 
-1. lock canonical frame / variant
-2. inspect key child nodes individually
-3. inspect section shell around the component
+1. lock one canonical frame or variant
+2. inspect the important child nodes and the surrounding section shell
+3. verify whether the design is using semantic tokens, primitive tokens, or
+   local overrides
 4. map tokens and layout into code
-5. update loading / skeleton UI to the same geometry
+5. update loading or skeleton UI to the same geometry when needed
 6. run static checks
 7. verify the route or component at runtime when practical
-8. compare back to the same Figma frame again before closing
+8. compare back to the same canonical Figma frame before closing, without
+   treating screenshot similarity alone as proof of a correct implementation
 
 ## UI Hierarchy And Anti-Nesting Rules
 

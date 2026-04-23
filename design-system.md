@@ -232,6 +232,10 @@ At a high level:
 - Use product or workflow pages for product-bound exports and flow exemplars.
 - Prefer proving DS-backed composition on the owning page inside the DS file
   rather than drawing detached exploration mocks.
+- Treat overflow, clipping, and frame escape as failures during Figma work:
+  verify one block at a time with metadata and screenshot before moving to the
+  next block, and do not close the task while any child unintentionally exceeds
+  its parent content box.
 - Do not use light-theme-only fills to represent dark-shell selected or
   feedback states.
 - Keep loading examples neutral; do not encode success/recovery/marketing
