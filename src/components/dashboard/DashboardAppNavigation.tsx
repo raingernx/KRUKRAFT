@@ -420,10 +420,6 @@ function AccountDropdown({
           aria-label="Open dashboard account menu"
           data-dashboard-account-trigger="true"
           data-dashboard-account-ready="true"
-          onPointerDown={(event) => {
-            event.preventDefault();
-            setOpen((current) => !current);
-          }}
           className="group inline-flex size-11 items-center justify-center rounded-full outline-none"
         >
           <span

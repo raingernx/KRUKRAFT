@@ -36,10 +36,23 @@ const VISUAL_NORMALIZE_STYLE = `
     color: transparent !important;
     text-shadow: none !important;
   }
+
+  nextjs-portal {
+    display: none !important;
+  }
 `;
 
 async function normalizeVisualNoise(page: Page) {
-  await page.addStyleTag({ content: VISUAL_NORMALIZE_STYLE });
+  await page.locator("body").waitFor({ state: "attached", timeout: 30_000 });
+  await page.evaluate((content) => {
+    const existing = document.querySelector(
+      'style[data-test-visual-normalize="true"]',
+    );
+    const style = existing ?? document.createElement("style");
+    style.setAttribute("data-test-visual-normalize", "true");
+    style.textContent = content;
+    (document.head ?? document.documentElement).appendChild(style);
+  }, VISUAL_NORMALIZE_STYLE);
 }
 
 async function expectNoDashboardOverlay(page: Page) {
@@ -51,9 +64,16 @@ async function expectNoDashboardOverlay(page: Page) {
 }
 
 async function expectVisualSnapshot(locator: Locator, name: string) {
+  const page = locator.page();
+  await page.evaluate(() => {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement) {
+      active.blur();
+    }
+  });
+
   await expect(locator).toHaveScreenshot(name, {
     animations: "disabled",
-    caret: "hide",
     scale: "css",
   });
 }

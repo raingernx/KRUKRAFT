@@ -260,13 +260,6 @@ export function AuthenticatedAccountDropdown({
           type="button"
           onMouseEnter={onWarmTargets}
           onFocus={onWarmTargets}
-          onPointerDown={(event) => {
-            event.preventDefault();
-            if (!open) {
-              onWarmTargets?.();
-            }
-            setOpen((current) => !current);
-          }}
           aria-label={ariaLabel}
           data-dashboard-account-trigger="true"
           data-dashboard-account-ready="true"
