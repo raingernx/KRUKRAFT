@@ -3,8 +3,8 @@
 This file is the canonical checklist for the `Figma foundation first` phase of
 the `Krukraft theme refresh plan`.
 
-Use it to decide whether the current `Theme Lab` work in Figma is broad enough
-to justify any runtime theme implementation.
+Use it to decide whether the current canonical Figma foundation work is broad
+enough to justify any runtime theme implementation.
 
 This is a study checklist, not a token file.
 
@@ -12,9 +12,14 @@ This is a study checklist, not a token file.
 
 Use these as the fixed inputs for the current study round:
 
-- neutral: `Paper B`
-- primary: `#4338CA`
-- support accents: `Rust` and `Sand`
+- neutral: `Paper B`-derived cool-paper light set
+  - `shell #FCFCFC`
+  - `surface #F8F7F8`
+  - `canvas #FFFFFF`
+  - `inset #F3F1F3`
+  - `line #E5E2E4`
+- primary: `#5144ED`
+- support accents: `Rust #E77661` and `Sand #E1C9A9`
 
 Do not reopen these choices while the goal is still building foundation
 evidence.
@@ -30,14 +35,15 @@ The first code slice should stay blocked until these five areas exist in Figma.
 
 Current Figma coverage status:
 
-- [x] Card studies exist in `Theme Lab`
-- [x] Button states exist in `Theme Lab`
-- [x] Input and search states exist in `Theme Lab`
-- [x] Dropdown / popover shell studies exist in `Theme Lab`
-- [x] Section / surface hierarchy board exists in `Theme Lab`
+- [x] Card studies exist in the canonical file
+- [x] Button states exist in `DS Foundations`
+- [x] Input and search states exist in `DS Foundations`
+- [x] Dropdown / popover shell studies exist in the canonical file
+- [ ] Section / surface hierarchy board exists in the canonical file
 
-These are now present as a first-pass study set. They still need review as one
-system before code is allowed.
+The canonical file was reset to a narrower foundation-first scope. Expand it
+again before treating the study pass as complete enough for a broader runtime
+theme slice.
 
 ### 1. Card Studies
 

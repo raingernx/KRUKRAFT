@@ -77,6 +77,7 @@ When this file conflicts with code, the code wins.
 - `Pagination`
 - `RowActions`
 - `SectionHeader`
+- `Surface`
 
 ### Product-Bound Exports
 
@@ -153,6 +154,11 @@ When this file conflicts with code, the code wins.
   fixed light-only `*-50` fills.
 - `Badge.featured` should follow the same rule when used on dark shells: keep
   the surface theme-aware and carry emphasis through border/text color.
+- `Badge` is the non-interactive semantic label primitive. Use it for status,
+  metadata, or read-only emphasis.
+- `Chip` is now reserved for interactive token-like controls only, such as
+  filter chips, pressed/selected chips, removable chips, or navigation chips.
+  Do not expand `Badge` to cover those interactive contracts once `Chip` lands.
 - Hero surfaces are not generic `card` surfaces. Use the hero semantic layer
   (`heroBackground`, `heroPanel`, `heroChip`, and related roles) instead of
   rebinding hero UI to default card tokens.

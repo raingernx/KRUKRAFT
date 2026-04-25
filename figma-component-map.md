@@ -32,10 +32,15 @@ Validation:
 
 ## Live File
 
-- Figma file: [Krukraft Design System](https://www.figma.com/design/D3cCyIYFnHDlY34eCqDURf)
-- File key: `D3cCyIYFnHDlY34eCqDURf`
+- Figma file: [Krukraft Theme Lab Source-of-Truth](https://www.figma.com/design/koZEgVUfQhNEQmXISNQx56)
+- File key: `koZEgVUfQhNEQmXISNQx56`
 - Workspace status: moved into the shared Team project, not kept in personal
   Drafts.
+- Canonical scope today: `DS Foundations` + `Foundation Review`
+- Migration note: the canonical file is now foundation-first. Until the
+  inventory-diff pass remaps every row, some page names/node IDs below should be
+  treated as legacy placeholders rather than verified live-node mappings in the
+  new canonical file.
 
 ## Registry Rules
 
@@ -69,22 +74,50 @@ Validation:
   chosen yet.
 - `legacy`: do not use for new work.
 
+## Canonical File Inventory Snapshot
+
+First-pass repo-vs-Figma diff against the canonical file
+`koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`) as of
+`2026-04-25`.
+
+This snapshot is the working migration ledger for the current
+`Inventory diff + docs drift` phase. Use it to distinguish current canonical
+coverage from older row/node claims that still need to be re-established in the
+new file.
+
+| Area | DS items | Classification | Canonical Figma evidence | Action |
+| --- | --- | --- | --- | --- |
+| Tokens | `colors.ts`, `spacing.ts`, `radius.ts`, `typography.ts` | `mapped and current` | `DS Foundations` contains color, spacing/radius, and typography boards plus matching variable collections | carry forward as the current foundation baseline |
+| Tokens | `hero.ts` | `code exists, figma missing` | no hero-token board or hero-specific variable collection in the canonical file | leave out of the foundation pass; revisit with product exemplars |
+| Foundations | `Button` | `mapped and current` | canonical file contains reusable `Button / State`, `Button / Size`, and `Button / Icon` component sets in light/dark coverage | keep as the best-aligned foundation slice and remap node references intentionally later |
+| Foundations | `Input`, `SearchInput` | `mapped and current` | canonical file now contains `Input / State`, `SearchInput / State`, `Input / State / Dark`, and `SearchInput / State / Dark` component sets under the `Input / Search` foundation boards | carry forward as the current field-shell foundation mapping; treat hero/loading/submit-button coverage as follow-up scope, not a blocker for the base shell set |
+| Primitives | `Card` | `mapped and current` | canonical file now contains `Card / Size` and `Card / Size / Dark` component sets under dedicated `Card / Foundations` light/dark boards | carry forward as the first shared-library shell proof point and reuse it when remapping generic surface posture |
+| Primitives | `Badge`, `Select`, `Switch`, `Textarea`, `Avatar`, `Modal`, `LoadingSkeleton` | `doc drift` | current canonical file does not yet expose verified reusable nodes for these items, even though older rows still claim mapped status | re-audit and remap each item before keeping `mapped-manual` claims |
+| Primitives | `Dropdown` | `doc drift` | canonical file now contains verified light/dark dropdown-popover shell study boards, but it still does not expose a reusable component set or final mapping node | keep the primitive status `pending-figma` until the study boards are promoted into a reusable dropdown mapping |
+| Primitives | `RevealImage`, `ToastProvider` | `code exists, figma missing` | no canonical pattern or component for either item in the current file | keep intentionally pending until a real pattern exists |
+| Composed | `FormSection`, `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`, `ConfirmDialog` | `doc drift` | older rows still point at pages/nodes from the previous file, but the current canonical file is still foundation-first and does not verify these components yet | re-audit and remap in the shared-library pass |
+| Composed | `DataPanelTable`, `Surface` | `code exists, figma missing` | no canonical component in the current file yet | add during the shared-library pass |
+| Product-bound | `ResourceCard`, `PriceBadge`, `PriceLabel` | `code exists, figma missing` | no canonical marketplace pricing/card exemplar in the current file | defer to the product exemplar pass |
+| Product-bound | `FileUploadWidget`, `NotificationButton`, `PickerControls` | `doc drift` | older rows still claim canonical admin mappings, but the current file does not yet contain verified `Product / Admin` coverage | re-audit after the foundation/library passes |
+| Layout | `Container`, `PageContainer`, `PageContent`, `PageContentWide`, `PageContentNarrow`, `SidebarContainer`, `SidebarNav`, `SidebarSection`, `SidebarSectionLabel`, `IconWrapper`, `SidebarBadge`, `SidebarItem`, `SidebarFooter`, `Divider`, `NavGroup` | `code exists, figma missing` | no layout-helper page or verified layout primitive board exists in the current canonical file | decide later whether these should gain Figma coverage or remain code-owned/documented only |
+| Review-only Figma surface | `Foundation Review / Light` | `figma exists, code missing` | review board exists in the canonical file but is not a code component | keep as a review surface, not a DS mapping target |
+
 ## Primitives
 
 | Figma page | Figma node | Figma component | Code path | Owner | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| `Primitives` | `20:10` | `Button` | `src/design-system/primitives/Button.tsx` | DS primitive | `mapped-manual` | Primary and outline variants are in Figma. |
-| `Primitives` | `21:10` | `Badge` | `src/design-system/primitives/Badge.tsx` | DS primitive | `mapped-manual` | Neutral, success, warning, info variants in Figma. |
-| `Primitives` | `22:13` | `Input` | `src/design-system/primitives/Input.tsx` | DS primitive | `mapped-manual` | Figma shows default, hint, and error states. |
-| `Primitives` | `22:28` | `Select` | `src/design-system/primitives/Select.tsx` | DS primitive | `mapped-manual` | Figma mirrors input shell plus caret. |
-| `Primitives` | `22:41` | `Textarea` | `src/design-system/primitives/Textarea.tsx` | DS primitive | `mapped-manual` | Figma mirrors input shell plus multiline body. |
-| `Primitives` | `23:20` | `Card` | `src/design-system/primitives/Card.tsx` | DS primitive | `mapped-manual` | Default and small size variants in Figma. |
-| `Primitives` | `23:27` | `Switch` | `src/design-system/primitives/Switch.tsx` | DS primitive | `mapped-manual` | Includes unchecked, checked, disabled. |
-| `Primitives` | `25:42` | `Dropdown` | `src/design-system/primitives/Dropdown.tsx` | DS primitive | `mapped-manual` | Static menu-state representation only. |
-| `Primitives` | `24:9` | `Avatar` | `src/design-system/primitives/Avatar.tsx` | DS primitive | `mapped-manual` | Includes initials and generic photo variants. |
-| `Primitives` | `24:46` | `Modal` | `src/design-system/primitives/Modal.tsx` | DS primitive | `mapped-manual` | Small, medium, large shell variants. |
-| `Primitives` | `23:31` | `LoadingSkeleton` | `src/design-system/primitives/LoadingSkeleton.tsx` | DS primitive | `mapped-manual` | Neutral-only placeholder variants. |
-| `Primitives` | `not-built` | `SearchInput` | `src/design-system/primitives/SearchInput.tsx` | DS primitive | `pending-figma` | Removed from `Product / Marketplace` during the hero-only marketplace reset and should be rebuilt later if it returns to the live library. |
+| `DS Foundations` | `260:486` | `Button` | `src/design-system/primitives/Button.tsx` | DS primitive | `mapped-manual` | Canonical file now verifies `Button / State`; related size/icon component sets also exist in light/dark coverage. |
+| `not-built` | `not-built` | `Badge` | `src/design-system/primitives/Badge.tsx` | DS primitive | `pending-figma` | Older mapping came from the previous file; the canonical foundation-first file does not yet verify a current badge component. |
+| `DS Foundations` | `432:218`, `432:409` | `Input` | `src/design-system/primitives/Input.tsx` | DS primitive | `mapped-manual` | Canonical file now provides first-pass light/dark `Input / State` component sets covering default, focus, filled, error, read-only, and disabled shell states. |
+| `not-built` | `not-built` | `Select` | `src/design-system/primitives/Select.tsx` | DS primitive | `pending-figma` | Current canonical file does not yet verify a reusable select component. |
+| `not-built` | `not-built` | `Textarea` | `src/design-system/primitives/Textarea.tsx` | DS primitive | `pending-figma` | Current canonical file does not yet verify a reusable textarea component. |
+| `DS Foundations` | `439:303`, `439:497` | `Card` | `src/design-system/primitives/Card.tsx` | DS primitive | `mapped-manual` | Canonical file now provides first-pass light/dark `Card / Size` component sets with `size=default` and `size=sm`, plus dedicated `Card / Foundations` study boards for shell posture reference. |
+| `not-built` | `not-built` | `Switch` | `src/design-system/primitives/Switch.tsx` | DS primitive | `pending-figma` | Current canonical file does not yet verify a reusable switch component. |
+| `DS Foundations` | `499:110`, `499:181` | `Dropdown` | `src/design-system/primitives/Dropdown.tsx` | DS primitive | `pending-figma` | Canonical file now contains verified `Dropdown / Foundations / Light` and `Dropdown / Foundations / Dark` study boards covering trigger context, open shell, selected row, submenu edge, and destructive row. Reusable component mapping is still pending a true component-set promotion. |
+| `not-built` | `not-built` | `Avatar` | `src/design-system/primitives/Avatar.tsx` | DS primitive | `pending-figma` | Current canonical file does not yet verify a reusable avatar component. |
+| `not-built` | `not-built` | `Modal` | `src/design-system/primitives/Modal.tsx` | DS primitive | `pending-figma` | Current canonical file does not yet verify a reusable modal shell. |
+| `not-built` | `not-built` | `LoadingSkeleton` | `src/design-system/primitives/LoadingSkeleton.tsx` | DS primitive | `pending-figma` | Current canonical file does not yet verify a reusable loading-skeleton component. |
+| `DS Foundations` | `432:276`, `432:467` | `SearchInput` | `src/design-system/primitives/SearchInput.tsx` | DS primitive | `mapped-manual` | Canonical file now provides first-pass light/dark `SearchInput / State` component sets for default, focus, filled, and clear states. `hero`, `loading`, and `submitButton` remain outside this foundation-first mapping. |
 | `Primitives` | `not-built` | `RevealImage` | `src/design-system/primitives/RevealImage.tsx` | DS primitive | `pending-figma` | Needs a Figma documentation pattern, not just a static frame. |
 | `Primitives` | `not-built` | `ToastProvider` | `src/design-system/primitives/ToastProvider.tsx` | DS primitive | `pending-figma` | Better documented as a behavior pattern than a static component set. |
 
@@ -92,13 +125,13 @@ Validation:
 
 | Figma page | Figma node | Figma component | Code path | Owner | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| `Composed` | `33:33` | `FormSection` | `src/design-system/components/FormSection.tsx` | DS composed | `mapped-manual` | Flat and card variants. |
-| `Composed` | `33:49` | `SectionHeader` | `src/design-system/components/SectionHeader.tsx` | DS composed | `mapped-manual` | Left and center align variants. |
+| `not-built` | `not-built` | `FormSection` | `src/design-system/components/FormSection.tsx` | DS composed | `pending-figma` | Previous mapping came from the older DS file; rebuild and remap after the foundation pass. |
+| `not-built` | `not-built` | `SectionHeader` | `src/design-system/components/SectionHeader.tsx` | DS composed | `pending-figma` | Previous mapping came from the older DS file; rebuild and remap after the foundation pass. |
 | `Composed` | `not-built` | `DataPanelTable` | `src/design-system/components/DataPanelTable.tsx` | DS composed | `pending-figma` | Dashboard/admin table shell with title, actions, optional toolbar, and table body slot. |
-| `Composed` | `33:76` | `Pagination` | `src/design-system/components/Pagination.tsx` | DS composed | `mapped-manual` | Default and compact pagination. |
-| `Composed` | `33:84` | `EmptyState` | `src/design-system/components/EmptyState.tsx` | DS composed | `mapped-manual` | Dashed-shell empty state exemplar. |
-| `Composed` | `34:16` | `RowActions` | `src/design-system/components/RowActions.tsx` | DS composed | `mapped-manual` | Default and review action clusters. |
-| `Composed` | `34:56` | `ConfirmDialog` | `src/design-system/components/ConfirmDialog.tsx` | DS composed | `mapped-manual` | Danger, warning, and info variants. |
+| `not-built` | `not-built` | `Pagination` | `src/design-system/components/Pagination.tsx` | DS composed | `pending-figma` | Previous mapping came from the older DS file; rebuild and remap after the foundation pass. |
+| `not-built` | `not-built` | `EmptyState` | `src/design-system/components/EmptyState.tsx` | DS composed | `pending-figma` | Previous mapping came from the older DS file; rebuild and remap after the foundation pass. |
+| `not-built` | `not-built` | `RowActions` | `src/design-system/components/RowActions.tsx` | DS composed | `pending-figma` | Previous mapping came from the older DS file; rebuild and remap after the foundation pass. |
+| `not-built` | `not-built` | `ConfirmDialog` | `src/design-system/components/ConfirmDialog.tsx` | DS composed | `pending-figma` | Previous mapping came from the older DS file; rebuild and remap after the foundation pass. |
 | `Composed` | `not-built` | `Surface` | `src/design-system/components/Surface.tsx` | DS composed | `pending-figma` | Canonical generic shell for toolbars, table wrappers, inspector panels, and muted inset bars. |
 
 ## Product-Bound DS Exports
@@ -108,10 +141,10 @@ Validation:
 | `Product / Marketplace` | `not-built` | `ResourceCard` | `src/components/resources/ResourceCard.tsx` | Product DS export | `pending-figma` | Marketplace card mappings still need a refreshed canonical Figma surface; the hero banner is currently the stable marketplace exemplar. |
 | `Product / Marketplace` | `not-built` | `PriceBadge` | `src/design-system/components/PriceBadge.tsx` | Product DS export | `pending-figma` | Still pending a refreshed canonical marketplace pricing surface in Figma. |
 | `Product / Marketplace` | `not-built` | `PriceLabel` | `src/design-system/components/PriceLabel.tsx` | Product DS export | `pending-figma` | Still pending a refreshed canonical marketplace pricing surface in Figma. |
-| `Product / Marketplace` | `53:62` | `HeroBanner` | `src/components/marketplace/HeroBanner.tsx`, `src/components/marketplace/HeroSurface.tsx` | Product DS export | `mapped-manual` | Component set with `viewport=desktop|mobile` variants and a dedicated `HeroBanner / Preview` block. |
-| `Product / Admin` | `39:35` | `FileUploadWidget` | `src/design-system/components/FileUploadWidget.tsx` | Product DS export | `mapped-manual` | Empty, selected, uploaded states. |
-| `Product / Admin` | `38:12` | `NotificationButton` | `src/design-system/components/NotificationButton.tsx` | Product DS export | `mapped-manual` | 0, 3, 9+ count variants. |
-| `Product / Admin` | `38:31` | `PickerControls` | `src/design-system/components/PickerControls.tsx` | Product DS export | `mapped-manual` | Actions, icons, dropzone representations. |
+| `not-built` | `not-built` | `HeroBanner` | `src/components/marketplace/HeroBanner.tsx`, `src/components/marketplace/HeroSurface.tsx` | Product DS export | `pending-figma` | Current canonical file does not yet carry the previous marketplace hero exemplar; reintroduce it intentionally in the product-exemplar pass. |
+| `not-built` | `not-built` | `FileUploadWidget` | `src/design-system/components/FileUploadWidget.tsx` | Product DS export | `pending-figma` | Previous mapping came from the older file; current canonical file does not yet verify an admin upload exemplar. |
+| `not-built` | `not-built` | `NotificationButton` | `src/design-system/components/NotificationButton.tsx` | Product DS export | `pending-figma` | Previous mapping came from the older file; current canonical file does not yet verify an admin notification exemplar. |
+| `not-built` | `not-built` | `PickerControls` | `src/design-system/components/PickerControls.tsx` | Product DS export | `pending-figma` | Previous mapping came from the older file; current canonical file does not yet verify picker/dropzone exemplars. |
 
 ## Product Flow Exemplars
 
@@ -119,9 +152,9 @@ These are owner-page flow exemplars, not one-to-one Code Connect candidates.
 
 | Figma page | Figma node | Pattern | Backing source | Status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `Product / Admin` | `41:2` | `Flow / Admin Settings` | `src/components/settings/*`, `src/app/admin/settings/AdminSettingsClient.tsx` | `mapped-manual` | Anti-nesting and flat-section exemplar. |
-| `Product / Marketplace` | `58:2` | `Flow / Hero Banner` | `src/components/marketplace/HeroSurface.tsx`, `src/components/marketplace/HeroBanner.tsx` | `mapped-manual` | Canonical marketplace hero flow. The page contains `HeroBanner / Component Set` and `HeroBanner / Preview` sections for source-first editing and validation. |
-| `Product / Dashboard` | `41:86` | `Flow / Creator Dashboard` | `src/app/(dashboard-v2)/dashboard-v2/creator/*` | `mapped-manual` | Metrics row + single table surface. |
+| `not-built` | `not-built` | `Flow / Admin Settings` | `src/components/settings/*`, `src/app/admin/settings/AdminSettingsClient.tsx` | `pending-figma` | Previous flow exemplar came from the older file; re-establish only if this pattern becomes part of the new canonical file. |
+| `not-built` | `not-built` | `Flow / Hero Banner` | `src/components/marketplace/HeroSurface.tsx`, `src/components/marketplace/HeroBanner.tsx` | `pending-figma` | Previous flow exemplar came from the older file; re-establish during the product-exemplar pass if marketplace hero remains in scope. |
+| `not-built` | `not-built` | `Flow / Creator Dashboard` | `src/app/(dashboard-v2)/dashboard-v2/creator/*` | `legacy` | Historical row from the retired dashboard-v2 route family; do not treat it as a current canonical Figma mapping target. |
 
 ## First Manual Mapping Set
 

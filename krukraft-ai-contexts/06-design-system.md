@@ -54,6 +54,9 @@ Use this order when DS docs disagree:
   shells should stay neutral and structurally close to the resolved UI.
 - `RevealImage` is the shared image primitive for already-sized containers; the
   surrounding container should own placeholder/background treatment.
+- `Badge` and `Chip` are now separate DS contracts:
+  - `Badge` stays non-interactive and semantic/status-oriented
+  - `Chip` is reserved for interactive filter/removable/token behavior
 - Dark-shell selected rows, chips, and feedback states should use theme-aware
   emphasis surfaces rather than fixed light-only `*-50` fills.
 - Hero surfaces are not generic `card` surfaces; they should use the hero
@@ -219,13 +222,16 @@ Use this order when DS docs disagree:
     slice is landed
   - `src/design-system/theme-playbook.md` is now the canonical training artifact
     for that posture
-  - the `Theme Lab` page inside the live Figma file `Krukraft Design System`
-    is now the visual review surface for that training loop
-  - the current approved neutral direction is `Paper B`: cleaner and more
-    restrained than `Paper A`, quieter and safer than `Paper C`
-  - the current approved primary accent is `#4338CA`
-  - the current approved support accents are `Rust` and `Sand`; they stay
-    support-only and do not replace the primary/action role
+  - the canonical Figma training surface is now the `DS Foundations` page
+    inside `Krukraft Theme Lab Source-of-Truth`
+  - the current approved neutral direction is a `Paper B`-derived cool-paper
+    light set promoted into the canonical variables:
+    `shell #FCFCFC`, `surface #F8F7F8`, `canvas #FFFFFF`, `inset #F3F1F3`,
+    `line #E5E2E4`
+  - the current approved primary accent is `#5144ED`
+  - the current approved support accents are `Rust #E77661` and
+    `Sand #E1C9A9`; they stay support-only and do not replace the
+    primary/action role
   - `src/design-system/foundation-study-checklist.md` is now the dedicated
     checklist artifact for the `Figma foundation first` phase
   - the old `/dev/theme-playbook` route was removed so the review surface is no
@@ -233,9 +239,24 @@ Use this order when DS docs disagree:
   - that Figma page includes both palette studies and first-pass foundation
     studies for card, button states, input/search states, dropdown/popover
     shell, and section/surface hierarchy
+  - `Dropdown / Foundations / Light` and `Dropdown / Foundations / Dark` are
+    now landed as verified study boards in the canonical file; they are
+    foundation evidence for popover shell posture, not a final reusable
+    component mapping yet
   - palette posture is now approved at the training level
-  - the next mandatory step in the theme plan is reviewing those studies as one
-    system and deciding whether the evidence is strong enough for a code slice
+  - the canonical Figma file now also carries a distinct `neutral/surface`
+    primitive and a remapped `bg/surface` semantic alias; runtime token files
+    still need a separate repo-side pass if code should adopt that new neutral
+    value too
+  - the tested light palette from `Theme Lab` frame `464:545` is now promoted
+    into the live Figma primitive variables for `primary`, `Rust`, `Sand`,
+    `neutral/*`, and `neutral/ink*`; dark-mode values remain unchanged
+  - the tested dark palette from `Theme Lab` frame `477:479` is now promoted
+    into the live Figma primitive variables for `primary`, `Rust`, `Sand`,
+    `neutral/*`, and `neutral/ink*`; the canonical dark primitives board now
+    mirrors those promoted values in both fills and displayed hex labels
+  - the next mandatory shared-library step after `Dropdown` is `Surface`, then
+    `Badge`, before reopening `FormSection` / `DataPanelTable`
 
 ## Verification Pointers
 

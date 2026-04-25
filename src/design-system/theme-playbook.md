@@ -148,8 +148,9 @@ Do not use brand accents as substitutes for:
     support colors
   - the next step is expanding foundation studies in Figma, not reopening
     palette posture or touching runtime tokens yet
-  - the `Theme Lab` page now includes a first-pass study set for card,
-    button, input/search, dropdown/popover, and section/surface hierarchy
+  - the canonical Figma file is now `Krukraft Theme Lab Source-of-Truth`, and
+    its current `DS Foundations` page should be expanded deliberately instead of
+    assuming the older broad `Theme Lab` study board still exists
 
 ### Semantic Roles Stay Authoritative
 
@@ -347,10 +348,10 @@ Use this loop for future theme work:
 
 ## Visual Training Surface
 
-Use the `Theme Lab` page inside the live Figma file `Krukraft Design System`
-as the visual training canvas:
+Use the canonical Figma file `Krukraft Theme Lab Source-of-Truth` as the visual
+training canvas, starting from the `DS Foundations` page:
 
-- https://www.figma.com/design/D3cCyIYFnHDlY34eCqDURf
+- https://www.figma.com/design/koZEgVUfQhNEQmXISNQx56
 
 The old `/dev/theme-playbook` route has been removed on purpose so theme
 training stays isolated from the Krukraft app shell.

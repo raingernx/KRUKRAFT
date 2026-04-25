@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
  ## Plan Snapshot
 
-Parent Plan: `Marketplace hero search deprecation cleanup`
+Parent Plan: `Figma DS alignment`
 
 > [!info] Current Phase
-> `Plan complete`
+> `Shared-library mapping kickoff`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,13 +18,13 @@ Parent Plan: `Marketplace hero search deprecation cleanup`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> Marketplace hero-search-only surfaces were removed without changing the live discover, listing, or navbar search shells
+> The canonical Figma source file is now locked, the first repo-side doc drift pass is closed, `Input` / `SearchInput` now have first-pass reusable component sets, `Card` is landed as the first shared-library shell proof point, and `Dropdown` now has verified light/dark foundation study boards; the `Badge vs Chip` contract decision is now locked too, so the next mandatory step is continuing shared-library coverage in impact order with both `Badge` and `Chip` treated as explicit but separate DS surfaces
 
 > [!todo] Next Up
-> The current optional plan is complete. Wait for an explicit new plan or reprioritization before broadening marketplace rollout work.
+> Reopen shared-library coverage in impact order: `Surface`, `Badge`, then `FormSection` / `DataPanelTable`
 
 > [!abstract] Partial
-> The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and this narrow hero-search cleanup plan are complete.
+> The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and hero-search cleanup plan are complete; this new plan is a documentation/alignment pass that should not silently reopen runtime route work.
 
 ## Status Board
 
@@ -36,6 +36,7 @@ Parent Plan: `Marketplace hero search deprecation cleanup`
 | Visual Foundation | Frozen   | completed visual baseline stays in force; do not reopen primitive work implicitly |
 | Discover         | Frozen   | `/resources` listing-mode shell + fail-soft states landed and passed close-out audit    |
 | Theme Refresh    | Complete | brief, playbook, Figma review page, approved surface baseline, cleanup slice, and first runtime slices all passed close-out audit |
+| Figma DS Alignment | Active | canonical Figma source, repo registry, and DS inventory need to be realigned before claiming Figma parity |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -47,8 +48,8 @@ Parent Plan: `Marketplace hero search deprecation cleanup`
 
 ## Progress
 
-Marketplace hero search deprecation cleanup
-`[██████████] 100%`
+Figma DS alignment
+`[████████░░] 76%`
 
 ```mermaid
 flowchart TB
@@ -95,12 +96,14 @@ flowchart TB
   end
 
   subgraph Current
-    HC1[Cleanup boundary lock<br/>Done]
-    HC2[Hero-only deprecation slice<br/>Done]
-    HC3[Marketplace proof rerun and close-out<br/>Done]
+    F1[Canonical Figma source lock<br/>In progress]
+    F2[Inventory diff and docs drift audit<br/>Planned]
+    F3[Foundation parity closure<br/>Planned]
+    F4[Shared DS library mapping pass<br/>In progress]
+    F5[Product exemplar + verification close-out<br/>Planned]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> HC1 --> HC2 --> HC3
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> F1 --> F2 --> F3 --> F4 --> F5
 ```
 
 ## Daily Workflow
@@ -128,104 +131,122 @@ Rules:
 - If the user says `Next Up`, answer from the active plan's `Next Up` block first and keep the recommendation inside the active plan unless the user explicitly asks to reprioritize
 - If a phase or parent plan is actually complete, update the percentage, phase status, and `Next Up` state to show that it is complete instead of fabricating more required work
 - After a parent plan is complete, move any extra ideas into `Deferred` or clearly optional follow-up notes; do not keep the same plan artificially active
+- When a parent plan or remediation slice is complete and verification passed, stage and commit that finished slice in the same session by default
+- Do not close a completed plan or remediation slice while related tracked changes are still uncommitted, unless the user explicitly says not to commit yet
 
 ---
 
 ## Current Phase
 
 ### Name
-Plan complete
+Shared-library mapping kickoff
 
 ### Parent Plan
-Marketplace hero search deprecation cleanup
+Figma DS alignment
 
 ### Current Status Inside Parent Plan
-- The previous `Krukraft theme refresh plan`, `Theme route-level rollout audit`, `Legacy DS usage cleanup`, `Admin / Settings rollout audit`, and `Marketplace search shell audit` are complete and act as frozen inputs
-- This new plan must not reopen DS foundations, token naming, or Figma decisions; it only decides what `HeroSearch variant="hero"` means now that discover mode has a repo-owned hero surface
+- The previous `Krukraft theme refresh plan`, `Theme route-level rollout audit`, `Legacy DS usage cleanup`, `Admin / Settings rollout audit`, `Marketplace search shell audit`, and `Marketplace hero search deprecation cleanup` are complete and act as frozen inputs
+- This new plan exists because the current repo references and the Figma file currently under review no longer describe the same DS surface area
 - Approved baseline carried into this plan:
-  - neutral posture: `Paper B`
-  - primary accent: `#4338CA`
-  - support accents: `Rust` and `Sand`
+  - neutral posture: `Paper B`-derived cool-paper light set
+  - primary accent: `#5144ED`
+  - support accents: `Rust #E77661` and `Sand #E1C9A9`
   - surface baseline: `inset-led shell + quiet border + radius 8`
-- Runtime slices already landed before this route audit opened:
+- Runtime slices already landed before this alignment plan opened:
   - `Button family`
   - `Input / Search family`
-- The completed marketplace hero-search audit established:
-  - `/resources` discover mode renders `ResourcesDiscoverHero -> HeroBanner -> HeroSurface`
-  - live runtime routes still use `HeroSearch variant="listing"` and `MarketplaceNavbarSearch`
-  - no runtime route mounts `HeroSearch variant="hero"`
-- Ownership decision is now locked:
-  - `HeroSearch variant="hero"` is a cleanup candidate, not a live runtime surface
-  - preview/story/dev usage alone is not enough to keep the hero variant as active runtime contract
-- Cleanup slice landed:
-  - removed the hero-only branch and prop handling from `src/components/marketplace/HeroSearch.tsx`
-  - removed `src/components/marketplace/HeroSearchPreviews.tsx`
-  - removed dev bones captures that existed only to exercise hero-search-only UI
-  - removed the `SearchInput` hero story that existed only as hero-search-era support
-- Proof rerun result:
-  - discover shell proof still passes via `/resources` and `[data-hero-surface="discover"]`
-  - listing/public request proofs still pass for `/resources?search=worksheet`, resource detail, category, and support routes
-  - the deprecated hero-search branch no longer has repo-owned preview/dev/story coverage pretending to be runtime ownership
-- Explicitly out of scope:
-  - `HeroSurface` discover shell
-  - `HeroSearch variant="listing"`
-  - `MarketplaceNavbarSearch`
-  - `ResourceCard variant="hero"` because it is unrelated to marketplace search-shell ownership
+- Current audit evidence established:
+  - the canonical Figma source-of-truth file is now explicitly locked to `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`)
+  - the reviewed Figma file currently contains foundations for typography, color, spacing/radius, `Button`, and `Input / Search`, not the full DS library footprint represented in code
+  - repo inventory drift already exists: `Surface` is live in code but not listed in `src/design-system/README.md`, and remains `pending-figma` in `figma-component-map.md`
+  - a first-pass inventory diff snapshot now lives in `figma-component-map.md` and classifies the current canonical coverage into `mapped and current`, `code exists, figma missing`, `figma exists, code missing`, and `doc drift`
+  - the first repo-side doc drift pass is now closed enough to trust the registry again: stale `mapped-manual` claims from the older file were demoted to truthful `pending-figma` / `legacy` rows, and `Surface` now appears in the code inventory doc
+  - the `Input` / `SearchInput` foundation parity pass is now landed in the canonical file via reusable light/dark component sets for the base field shell family
+  - `Card` is now landed as the first shared-library shell block in the canonical file via `Card / Size` and `Card / Size / Dark`
+  - `Dropdown` now has verified `Dropdown / Foundations / Light` and `Dropdown / Foundations / Dark` study boards in the canonical file for trigger context, open shell, selected rows, submenu edges, and destructive rows
+  - the canonical Figma file now contains a distinct `neutral/surface` primitive and `bg/surface` semantic alias, so `Surface` is no longer just a panel label inside the neutrals study board
+  - the tested light palette in `Theme Lab` frame `464:545` is now promoted into the live Figma primitive variables for `primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`; dark-mode values were intentionally left unchanged
+  - the tested dark palette in `Theme Lab` frame `477:479` is now promoted into the live Figma primitive variables for `primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`; the canonical dark primitives board mirrors those values too
+- This plan must separate four classes of status cleanly:
+  - `mapped and current`
+  - `code exists, figma missing`
+  - `figma exists, code missing`
+  - `doc drift`
+- Explicitly out of scope for the first phase:
+  - route-level runtime redesign
+  - reopening completed marketplace/dashboard rollout plans
+  - treating product-bound exemplars as foundation-library work before the foundation slice is locked
 
 ### Goal
-Remove or deprecate hero-search-only surfaces that no longer have live runtime ownership, without disturbing approved marketplace listing/navbar search behavior.
+Lock one canonical Figma source of truth, align repo-side DS references with reality, and then close the gap between Figma foundations/library coverage and the code inventory in a deliberate order.
 
 ### Why this is the current phase
-- The live marketplace listing/navbar search shells were already proven in the previous plan
-- The cleanup-only ownership decision was executed without needing a broader marketplace rollout change
-- The required proof reruns passed, so no remediation slice remains inside this plan
+- The Figma file now being used for review does not match the file recorded in repo-side DS mapping docs
+- The reviewed Figma file appears to be a foundation-first lab rather than the full DS library implied by repo inventory docs
+- The canonical file and first repo-side doc drift pass are now locked enough to move forward without pretending the broader library is already mapped
+- The `Input` / `SearchInput` parity slice is now complete enough to use as the second reusable foundation block after `Button`
+- `Card` is now the first shared-library proof point, and `Dropdown` now has verified study-board coverage, so the next highest-signal gaps are `Surface` and the non-interactive `Badge` surface before reopening composed shared chrome
+- `Badge vs Chip` decision is now locked from repo usage evidence:
+  - `Badge` = non-interactive semantic/status label
+  - `Chip` = interactive filter/removable/navigation token surface
+  - `Badge` belongs inside the shared-library pass as its own remapping target
+  - route-owned interactive chip patterns should migrate toward `Chip`, not continue expanding `Badge`
 
 ### Definition of Done
-- [x] A separate optional follow-up plan is opened after the completed marketplace hero-search audit
-- [x] The approved theme baseline is carried forward as a frozen input instead of being reopened
-- [x] The completed audit result is converted into a cleanup-only ownership decision
-- [x] The hero-search cleanup boundary is locked without pulling unrelated marketplace surfaces into scope
-- [x] The narrow deprecation/cleanup slice lands for hero-search-only runtime, preview, and story surfaces
-- [x] Marketplace proof routes are rerun to confirm listing/navbar search behavior stays intact
-- [x] `09-todos.md` reflects the real phase and progress percentage for this cleanup plan
+- [ ] Repo references point to the same canonical Figma file
+- [ ] `src/design-system/README.md` inventory matches code reality
+- [ ] Repo-vs-Figma inventory diff exists and every DS item is classified as `mapped and current`, `code exists, figma missing`, `figma exists, code missing`, or `doc drift`
+- [ ] Foundation variables and component families (`Button`, `Input`, `SearchInput`, color, typography, spacing, radius) are aligned between Figma and runtime contracts
+- [ ] Shared DS components have an explicit current status in `figma-component-map.md` instead of silent gaps
+- [ ] Product-bound DS exports are handled in a separate exemplar pass rather than mixed into the foundation/library pass
+- [ ] `09-todos.md` reflects the real phase and progress percentage for this alignment plan
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Ownership carry-forward | done | completed audit proved `HeroSurface` is live and `HeroSearch variant="hero"` has no runtime mount |
-| 1 | Deprecation scope lock | done | cleanup stayed limited to hero-only branch, preview file, bones captures, and story support |
-| 2 | Hero-only cleanup slice | done | hero-search-only code was removed without touching listing/navbar search |
-| 3 | Marketplace proof rerun | done | discover + listing/public proofs stayed green after the cleanup |
+| 0 | Canonical source lock | done | `koZEgVUfQhNEQmXISNQx56` is now the canonical DS source-of-truth file and repo references must follow it |
+| 1 | Inventory diff + docs drift pass | done | canonical-file snapshot landed, stale mapping claims were downgraded, and obvious inventory drift was corrected |
+| 2 | Foundation parity pass | done | `Input / State` and `SearchInput / State` light/dark component sets now exist in the canonical file as first-pass reusable foundations |
+| 3 | Shared DS library mapping pass | in progress | `Card` is landed as the first shell proof point; continue aligning reusable DS primitives/composed surfaces in impact order, with `Badge` as the non-interactive label surface and `Chip` as the interactive token surface after the locked `Badge vs Chip` decision |
+| 4 | Product exemplar + verification close-out | pending | treat product-bound exports separately, then close the alignment plan with updated references/checks |
 
 ---
 
 ## Current Goal
 
-The optional marketplace hero-search cleanup plan is complete; no required in-plan work remains.
+Open and execute a new `Figma DS alignment` parent plan without reopening completed runtime rollout work. Start by locking the canonical Figma file and producing a code-vs-Figma inventory diff the repo can trust.
 
 Current recommendation order:
-1. Keep `src/design-system/theme-playbook.md` and the Figma review page as the locked approval baseline
-2. Treat `Paper B` + `#4338CA` + `Rust`/`Sand` and `inset-led shell + quiet border + radius 8` as fixed inputs
-3. Treat `HeroSurface`, `HeroSearch`, and `MarketplaceNavbarSearch` as the surviving live marketplace search shell contract
-4. Treat removed hero-only preview/dev/story surfaces as intentional deprecation, not a live runtime regression
-5. Wait for an explicit new plan before broadening marketplace rollout work again
+1. Lock the canonical Figma file and update repo references if the source-of-truth file changed
+2. Produce the DS inventory diff and mark all current `doc drift`
+3. Close the foundation slice (`Button`, `Input`, `SearchInput`, tokens) before broadening to the rest of the library
+4. Tackle shared DS library surfaces in impact order
+5. Keep product-bound exemplars in a separate final pass
 
 ---
 
 ## In Progress
 
-- [x] Convert the completed audit result into a cleanup-only ownership decision
-- [x] Carry forward the completed theme/route rollout baseline as a frozen input
-- [x] Lock the exact hero-only cleanup boundary
-- [x] Land the narrow deprecation/cleanup slice
-- [x] Rerun marketplace proofs and close the plan
+- [x] Open a new parent plan for `Figma DS alignment`
+- [x] Lock the canonical Figma source file in repo references
+- [x] Produce the repo-vs-Figma inventory diff and classify `doc drift`
+- [x] Close repo-side `doc drift` from the first diff snapshot
+- [x] Turn `Input` and `SearchInput` study coverage into canonical reusable foundation component sets
+- [x] Start the shared-library mapping pass with the first high-impact holdouts
+- [x] Land `Card` as the first shared-library shell block in the canonical file
+- [x] Land `Dropdown` / popover shell study boards in the canonical file with verified light/dark shell posture
+- [ ] Start `Badge` as an explicit shared-library remapping target after the foundation pass
+- [x] Add `Chip` to the shared-library plan through an explicit `Badge vs Chip` contract decision
+- [ ] Start `Chip` as a shared-library surface candidate after `Card`, `Dropdown`, and `Surface`
 
 ---
 
 ## Next Up
 
-- [ ] Current parent plan is complete; wait for an explicit new plan or reprioritization before broadening marketplace rollout work
+- [ ] Add `Surface`, then reopen `FormSection` and `DataPanelTable` on top of that shared shell
+- [ ] Start `Badge` studies/components as the non-interactive semantic label surface after `Surface` establishes the broader shared-library chrome
+- [ ] Decide whether `Dropdown` stays a study-board reference or is promoted into a reusable component-set mapping during shared-library close-out
 
 ---
 
@@ -319,6 +340,17 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-25: Active plan changed from the completed marketplace hero-search cleanup to `Figma DS alignment`; start by locking the canonical Figma source file and producing a repo-vs-Figma inventory diff before any new parity claim.
+- 2026-04-25: `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`) is now the permanent canonical Figma DS source file; repo references and coverage docs must be migrated to that foundation-first source.
+- 2026-04-25: The first repo-side doc drift pass is complete; stale mapping claims from the previous Figma file were downgraded, so the next active slice is `Input` / `SearchInput` foundation parity.
+- 2026-04-25: The `Input` / `SearchInput` foundation parity pass is now landed in the canonical file through first-pass light/dark component sets; the next active slice is shared-library mapping starting with `Card`, `Dropdown`, and `Surface`.
+- 2026-04-25: `Badge vs Chip` is now a locked DS contract decision from repo usage evidence: `Badge` stays non-interactive and semantic, while `Chip` is the interactive/removable/filter token surface that should absorb route-owned chip patterns over time.
+- 2026-04-25: `Badge` is now explicitly part of the shared-library mapping pass too; it should be remapped in Figma as the non-interactive label primitive before the new `Chip` surface expands.
+- 2026-04-25: `Card` is now landed in the canonical file through `Card / Size` and `Card / Size / Dark`; it becomes the first shared-library shell proof point, so the next active slice is `Dropdown`, `Surface`, then `Badge`.
+- 2026-04-25: `Dropdown / Foundations / Light` (`499:110`) and `Dropdown / Foundations / Dark` (`499:181`) are now landed as verified study boards in the canonical file; reusable dropdown mapping remains pending, so the next active slice is `Surface`, then `Badge`.
+- 2026-04-25: The reviewed light palette from `Theme Lab` frame `464:545` is now promoted into the canonical Figma primitive variables (`primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`) while dark-mode values and semantic alias chains stay unchanged.
+- 2026-04-25: The reviewed dark palette from `Theme Lab` frame `477:479` is now promoted into the canonical Figma primitive variables (`primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`); the canonical `Color Primitives / Dark` board was updated so its displayed hex labels match the promoted values.
+- 2026-04-25: `Surface` now exists as a distinct primitive in the canonical Figma variable system too; `neutral/surface` was added under `Color / Primitives` and `bg/surface` now aliases to it instead of piggybacking on older shell/inset values.
 - 2026-04-17: Lock `Paper B` as the neutral direction, `#4338CA` as the primary accent, and `Rust` + `Sand` as the support accents for the Krukraft theme refresh plan; the next mandatory decision is the first narrow implementation slice.
 - 2026-04-14: Keep dashboard perf baseline frozen after rollback; do not re-open broad streaming refactors.
 - 2026-04-14: Remove `.design-tools/awesome-design-md` and `.design-tools/shadcn-examples` from repo tracking; keep them local-only.

@@ -687,6 +687,8 @@ When implementing features:
 20. The close-out audit must stay inside the finished plan's original scope: check for omissions, shared-surface regressions, docs/tracker drift, and practical verification gaps, but do not expand the plan into new feature work.
 21. Close-out audit remediation is conditional, not automatic: if the audit finds only cosmetic, optional, or low-signal items, close the plan and move those ideas to optional follow-up or `Deferred`; if the audit finds a material issue that violates the plan's Definition of Done, open one narrow remediation slice, reduce the reported completion/progress to match reality, and only return to `100%` after that slice lands.
 22. Never use the required close-out audit as justification to keep a finished plan open indefinitely. The audit is for confirmation and narrow correction, not for re-scoping the plan.
+23. When a parent plan or a narrow remediation slice is complete and the required verification passed, stage and commit that work in the same session by default instead of leaving the finished plan as an uncommitted worktree.
+24. Do not close a completed parent plan or remediation slice while related tracked file changes remain uncommitted, unless the user explicitly says not to commit yet.
 
 AI agents should avoid large architectural changes unless explicitly requested.
 

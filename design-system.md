@@ -30,10 +30,10 @@ Priority order:
 6. `krukraft-ai-contexts/06-design-system.md`
 7. this file
 
-Live Figma library file:
+Live Figma source-of-truth file:
 
-- `Krukraft Design System`
-- [https://www.figma.com/design/D3cCyIYFnHDlY34eCqDURf](https://www.figma.com/design/D3cCyIYFnHDlY34eCqDURf)
+- `Krukraft Theme Lab Source-of-Truth`
+- [https://www.figma.com/design/koZEgVUfQhNEQmXISNQx56](https://www.figma.com/design/koZEgVUfQhNEQmXISNQx56)
 - The live library now sits in the shared Team project, not in personal Drafts.
 
 Validation:
@@ -194,6 +194,11 @@ For reusable Figma component sets:
   from `@/design-system`.
 - Product flow exemplars can live in the DS Figma file, but they are not the
   registry itself.
+- Keep `Badge` and `Chip` as separate DS contracts:
+  - `Badge` = non-interactive semantic/status label
+  - `Chip` = interactive/removable/filter/navigation token surface
+- Do not solve interactive chip needs by adding more `Badge` variants just
+  because the silhouette is similar.
 
 ## Figma Implementation Fidelity Workflow
 
@@ -215,17 +220,18 @@ Use `figma-component-map.md` for the live registry status.
 
 At a high level:
 
-- core primitives such as `Button`, `Badge`, `Input`, `Select`, `Textarea`,
-  `Card`, `Switch`, `Dropdown`, `Avatar`, `Modal`, and `LoadingSkeleton` have
-  canonical Figma component sets
-- several DS-composed surfaces such as `FormSection`, `SectionHeader`,
-  `Pagination`, `EmptyState`, `RowActions`, and `ConfirmDialog` are mapped
+- the canonical Figma file is now `Krukraft Theme Lab Source-of-Truth`, not the
+  older `Krukraft Design System` file previously referenced in repo docs
+- the current canonical file is foundation-first: it contains typography, color,
+  spacing/radius, `Button`, and `Input / Search` study coverage under
+  `DS Foundations`, plus a `Foundation Review` page
+- reusable-library coverage beyond that foundation slice is still in migration;
+  treat `figma-component-map.md` as the status ledger for what is mapped,
+  pending, or drifting rather than as proof that every older node ID has
+  already been re-established in the new canonical file
 - product-bound DS exports such as `ResourceCard`, `PriceBadge`, and
   `PriceLabel` still depend on refreshed product exemplars instead of a fully
   closed library mapping
-- the live DS file now also contains a `Theme Lab` page used only for palette
-  posture and component-shape training; it is a review surface, not a shipped
-  design source
 
 ## Layout And Pattern Rules For Figma
 
