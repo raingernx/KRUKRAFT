@@ -42,3 +42,9 @@ export {
 export type {
   SectionHeaderProps,
 } from "./SectionHeader";
+export {
+  Surface,
+} from "./Surface";
+export type {
+  SurfaceProps,
+} from "./Surface";

@@ -99,6 +99,7 @@ Validation:
 | `Composed` | `33:84` | `EmptyState` | `src/design-system/components/EmptyState.tsx` | DS composed | `mapped-manual` | Dashed-shell empty state exemplar. |
 | `Composed` | `34:16` | `RowActions` | `src/design-system/components/RowActions.tsx` | DS composed | `mapped-manual` | Default and review action clusters. |
 | `Composed` | `34:56` | `ConfirmDialog` | `src/design-system/components/ConfirmDialog.tsx` | DS composed | `mapped-manual` | Danger, warning, and info variants. |
+| `Composed` | `not-built` | `Surface` | `src/design-system/components/Surface.tsx` | DS composed | `pending-figma` | Canonical generic shell for toolbars, table wrappers, inspector panels, and muted inset bars. |
 
 ## Product-Bound DS Exports
 
@@ -137,6 +138,7 @@ of Code Connect, the minimum set to keep accurate is:
 - `SectionHeader`
 - `Pagination`
 - `EmptyState`
+- `Surface`
 
 ## Change Checklist
 
