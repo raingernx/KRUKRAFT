@@ -269,18 +269,12 @@ function CreatorUnavailableState({ slug }: { slug: string }) {
               </div>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                <Link
-                  href={`/creators/${slug}`}
-                  className="inline-flex items-center justify-center rounded-xl bg-brand-600 px-5 py-3 text-small font-semibold text-white transition hover:bg-brand-700"
-                >
-                  Try again
-                </Link>
-                <Link
-                  href={routes.marketplace}
-                  className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 text-small font-medium text-foreground transition hover:bg-muted"
-                >
-                  Open resources
-                </Link>
+                <Button asChild>
+                  <Link href={`/creators/${slug}`}>Try again</Link>
+                </Button>
+                <Button asChild variant="outline">
+                  <Link href={routes.marketplace}>Open resources</Link>
+                </Button>
               </div>
             </div>
           </PageContentWide>
@@ -346,7 +340,7 @@ async function CreatorResourcesSection({
               Check back soon for worksheets, assessments, and downloadable study resources.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button asChild variant="quiet" size="sm">
+              <Button asChild variant="quiet" density="compact">
                 <Link href={routes.marketplace}>Browse marketplace</Link>
               </Button>
             </div>

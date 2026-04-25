@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 
 import { Button } from "@/design-system";
+import { useAuthViewer } from "@/lib/auth/use-auth-viewer";
 
 export function CreatorPublicOwnerActions({
   creatorUserId,
@@ -12,20 +12,14 @@ export function CreatorPublicOwnerActions({
   creatorUserId: string;
   editHref: string;
 }) {
-  const { data: session, status } = useSession();
+  const viewer = useAuthViewer();
 
-  if (status !== "authenticated") {
+  if (!viewer.isReady || !viewer.authenticated || !viewer.user) {
     return null;
   }
 
-  const sessionUser = session.user as
-    | {
-        id?: string | null;
-        role?: string | null;
-      }
-    | undefined;
   const canEdit =
-    sessionUser?.id === creatorUserId || sessionUser?.role === "ADMIN";
+    viewer.user.id === creatorUserId || viewer.user.role === "ADMIN";
 
   if (!canEdit) {
     return null;

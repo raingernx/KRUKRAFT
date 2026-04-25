@@ -34,7 +34,7 @@ export function ResourceCardLibraryFooter({
 
       <div className="mt-auto pt-4">
         <div className="flex flex-wrap items-center gap-2">
-          <Button asChild size="sm" className="h-9 flex-1 gap-1.5">
+          <Button asChild density="compact" className="flex-1 gap-1.5">
             <a
               href={`/api/download/${resource.id}`}
               onClick={() => setDownloadClicked(true)}
@@ -46,7 +46,7 @@ export function ResourceCardLibraryFooter({
             </a>
           </Button>
           {isPreviewSupported(resource.mimeType) ? (
-            <Button asChild variant="quiet" size="sm" className="h-9 flex-1 gap-1.5">
+            <Button asChild variant="quiet" density="compact" className="flex-1 gap-1.5">
               <a
                 href={`/api/preview/${resource.id}`}
                 target="_blank"
@@ -59,7 +59,7 @@ export function ResourceCardLibraryFooter({
               </a>
             </Button>
           ) : null}
-          <Button asChild variant="ghost" size="sm" className="h-9 flex-1 gap-1.5">
+          <Button asChild variant="ghost" density="compact" className="flex-1 gap-1.5">
             <IntentPrefetchLink
               href={resourceHref}
               prefetchScope="resource-card-library"
