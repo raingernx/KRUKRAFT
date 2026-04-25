@@ -243,6 +243,10 @@ Use this order when DS docs disagree:
     now landed as verified study boards in the canonical file; they are
     foundation evidence for popover shell posture, not a final reusable
     component mapping yet
+  - new canonical Figma work should now bind available tokens immediately by
+    default; if a new node still needs a local override, that should be treated
+    as an explicit token gap or trial condition, not as silent final-state
+    styling
   - palette posture is now approved at the training level
   - the canonical Figma file now also carries a distinct `neutral/surface`
     primitive and a remapped `bg/surface` semantic alias; runtime token files

@@ -486,6 +486,12 @@ Treat Figma work as structured system work, not as ad-hoc drawing.
 - do not infer token intent from appearance alone
 - once primitives or variables exist, prefer variable bindings over local fills
   unless a node is explicitly labeled as a trial
+- when creating new nodes in a canonical or source-of-truth Figma file, bind
+  available color, type, spacing, radius, and effect tokens immediately instead
+  of leaving new work on local values by default
+- if a new Figma node cannot be fully token-bound because the needed token does
+  not exist yet, call that out explicitly as a token gap and keep any remaining
+  local override narrow and intentional instead of leaving silent manual values
 - preserve local overrides until the pattern is proven reusable
 - map Figma fill/stretch behavior to the correct CSS layout mechanism instead
   of defaulting to content-driven sizing
