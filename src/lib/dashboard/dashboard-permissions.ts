@@ -30,7 +30,7 @@ export function resolveDashboardNavState({
   if (role === "ADMIN") {
     return {
       shellVariant: "user",
-      creatorNavMode: "hidden",
+      creatorNavMode: isCreator ? "full" : "hidden",
     };
   }
 

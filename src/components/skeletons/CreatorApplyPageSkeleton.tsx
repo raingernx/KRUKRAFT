@@ -66,29 +66,36 @@ function CreatorApplyStatusPanelSkeleton({
 
 function CreatorApplyFormCardSkeleton() {
   return (
-    <div className="rounded-2xl border border-border-subtle bg-card p-6">
-      <LoadingSkeleton className="h-6 w-44" />
-      <div className="mt-3 space-y-2">
-        <LoadingSkeleton className="h-4 w-full max-w-2xl" />
-        <LoadingSkeleton className="h-4 w-4/5 max-w-xl" />
+    <div className="rounded-2xl border border-border-subtle bg-card">
+      <div className="border-b border-border-subtle px-6 pb-4 pt-6">
+        <LoadingSkeleton className="h-6 w-44" />
+        <div className="mt-3 space-y-2">
+          <LoadingSkeleton className="h-4 w-full max-w-2xl" />
+          <LoadingSkeleton className="h-4 w-4/5 max-w-xl" />
+        </div>
       </div>
-
-      <div className="mt-6 space-y-4">
-        <div className="space-y-2">
-          <LoadingSkeleton className="h-4 w-36" />
+      <div className="px-6 py-6">
+        <div className="space-y-5">
+          <div className="space-y-2">
+            <LoadingSkeleton className="h-4 w-36" />
+            <LoadingSkeleton className="h-10 w-full rounded-xl" />
+          </div>
+          <div className="space-y-2">
+            <LoadingSkeleton className="h-4 w-32" />
+            <div className="flex h-10 w-full overflow-hidden rounded-xl border border-border-subtle bg-background">
+              <LoadingSkeleton className="h-full w-28 rounded-none border-r border-border-subtle" />
+              <LoadingSkeleton className="h-full flex-1 rounded-none" />
+            </div>
+            <LoadingSkeleton className="h-3.5 w-72" />
+          </div>
+          <div className="space-y-2">
+            <LoadingSkeleton className="h-4 w-24" />
+            <LoadingSkeleton className="h-24 w-full rounded-2xl" />
+            <LoadingSkeleton className="ml-auto h-3.5 w-16" />
+          </div>
           <LoadingSkeleton className="h-12 w-full rounded-xl" />
+          <LoadingSkeleton className="mx-auto h-3.5 w-56" />
         </div>
-        <div className="space-y-2">
-          <LoadingSkeleton className="h-4 w-32" />
-          <LoadingSkeleton className="h-12 w-full rounded-xl" />
-          <LoadingSkeleton className="h-3.5 w-72" />
-        </div>
-        <div className="space-y-2">
-          <LoadingSkeleton className="h-4 w-24" />
-          <LoadingSkeleton className="h-24 w-full rounded-2xl" />
-          <LoadingSkeleton className="ml-auto h-3.5 w-16" />
-        </div>
-        <LoadingSkeleton className="h-12 w-full rounded-xl" />
       </div>
     </div>
   );
@@ -166,8 +173,8 @@ function CreatorApplyPagePreview() {
 
         <div className="mt-4 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div className="max-w-2xl">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Apply to sell on Krukraft
+            <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+              Become a Creator
             </h1>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
               Apply once to publish resources, manage your profile, and track sales from one workspace.
@@ -191,35 +198,53 @@ function CreatorApplyPagePreview() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
-        <h2 className="text-xl font-semibold text-foreground">Application details</h2>
-        <div className="mt-3 space-y-2 text-sm text-muted-foreground">
-          <p>Provide contact details, portfolio context, and a short teaching bio.</p>
-          <p>We will use this to decide whether to open creator publishing access.</p>
+      <div className="rounded-2xl border border-border-subtle bg-card shadow-card">
+        <div className="border-b border-border-subtle px-6 pb-4 pt-6">
+          <h2 className="text-xl font-semibold text-foreground">Apply for creator access</h2>
+          <div className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <p>Fill in the details below to submit your application.</p>
+            <p>Our team reviews applications manually and will get back to you within 1–3 business days.</p>
+          </div>
         </div>
-        <div className="mt-6 space-y-4">
-          {[
-            "Full name",
-            "Email address",
-            "Teaching focus",
-            "Application notes",
-          ].map((label, index) => (
-            <div
-              key={label}
-              className={index === 3 ? "rounded-2xl border border-input bg-background p-4" : "flex h-12 items-center rounded-xl border border-input bg-background px-4 text-sm text-foreground"}
-            >
-              {index === 3 ? (
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-foreground">{label}</p>
-                  <p className="text-sm text-muted-foreground">
-                    Add sample context, publishing goals, and why your materials are useful.
-                  </p>
-                </div>
-              ) : (
-                <span>{label}</span>
-              )}
+        <div className="px-6 py-6">
+          <div className="space-y-5">
+            <div className="space-y-1.5">
+              <p className="text-sm font-medium text-foreground">Creator display name</p>
+              <div className="flex h-10 items-center rounded-xl border border-input bg-background px-4 text-sm text-muted-foreground">
+                e.g. Jane Smith
+              </div>
             </div>
-          ))}
+
+            <div className="space-y-1.5">
+              <p className="text-sm font-medium text-foreground">Creator URL slug</p>
+              <div className="flex h-10 overflow-hidden rounded-xl border border-input bg-background text-sm text-foreground">
+                <span className="inline-flex items-center border-r border-input bg-muted px-3.5 text-muted-foreground">
+                  /creators/
+                </span>
+                <span className="inline-flex min-w-0 flex-1 items-center px-3.5 text-muted-foreground">
+                  jane-smith
+                </span>
+              </div>
+              <p className="text-caption text-muted-foreground">
+                Lowercase letters, numbers, and hyphens only. This will be your public profile URL.
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <p className="text-sm font-medium text-foreground">Short bio</p>
+              <div className="rounded-2xl border border-input bg-background p-4 text-sm text-muted-foreground">
+                Tell us a bit about yourself and the content you plan to create.
+              </div>
+              <p className="text-right text-caption text-muted-foreground">0/500</p>
+            </div>
+
+            <div className="flex h-12 items-center justify-center rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground">
+              Submit application
+            </div>
+            <p className="text-center text-caption text-muted-foreground">
+              Review time: 1–3 business days after submission.
+            </p>
+          </div>
         </div>
       </div>
     </PageContent>

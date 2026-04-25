@@ -311,6 +311,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                         <Input
                           id="creator-display-name"
                           name="creatorDisplayName"
+                          size="md"
                           value={form.creatorDisplayName}
                           onChange={handleChange}
                           disabled={formDisabled}
@@ -326,6 +327,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                         <Input
                           id="creator-slug"
                           name="creatorSlug"
+                          size="md"
                           value={form.creatorSlug}
                           onChange={handleChange}
                           disabled={formDisabled}
@@ -382,6 +384,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                           <Select
                             id="creator-status"
                             name="creatorStatus"
+                            size="md"
                             value={form.creatorStatus}
                             onChange={handleChange}
                             disabled={formDisabled}
@@ -422,6 +425,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                         <Input
                           id="creator-avatar"
                           name="creatorAvatar"
+                          size="md"
                           value={form.creatorAvatar}
                           onChange={handleChange}
                           disabled={formDisabled}
@@ -441,7 +445,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                           />
                           <Button
                             type="button"
-                            size="sm"
+                            size="md"
                             variant="quiet"
                             leftIcon={
                               uploadingAsset === "avatar" ? (
@@ -458,7 +462,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                           {form.creatorAvatar.trim() ? (
                             <Button
                               type="button"
-                              size="sm"
+                              size="md"
                               variant="ghost"
                               leftIcon={<Trash2 className="size-4" />}
                               disabled={assetControlsDisabled}
@@ -492,6 +496,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                         <Input
                           id="creator-banner"
                           name="creatorBanner"
+                          size="md"
                           value={form.creatorBanner}
                           onChange={handleChange}
                           disabled={formDisabled}
@@ -511,7 +516,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                           />
                           <Button
                             type="button"
-                            size="sm"
+                            size="md"
                             variant="quiet"
                             leftIcon={
                               uploadingAsset === "banner" ? (
@@ -528,7 +533,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                           {form.creatorBanner.trim() ? (
                             <Button
                               type="button"
-                              size="sm"
+                              size="md"
                               variant="ghost"
                               leftIcon={<Trash2 className="size-4" />}
                               disabled={assetControlsDisabled}
@@ -638,6 +643,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                     <Input
                       id={`creator-${key}`}
                       name={key}
+                      size="md"
                       value={form[key as keyof typeof form] as string}
                       onChange={handleChange}
                       disabled={formDisabled}
@@ -663,7 +669,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
               )}
               <Button
                 type="submit"
-                size="sm"
+                size="lg"
                 loading={saving}
                 disabled={!isHydrated || !hasChanges}
                 className="w-full"

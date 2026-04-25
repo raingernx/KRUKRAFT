@@ -50,7 +50,7 @@ export function CreatorPublishActions({
             onClick={onCancel}
             disabled={saving}
             variant="ghost"
-            size="sm"
+            size="lg"
             leftIcon={<X className="h-4 w-4" />}
           >
             <span className="hidden sm:inline">Cancel</span>
@@ -61,7 +61,7 @@ export function CreatorPublishActions({
             onClick={onSaveDraft}
             disabled={saving}
             variant="outline"
-            size="sm"
+            size="lg"
             leftIcon={<Save className="h-4 w-4" />}
           >
             {saving ? "Saving..." : "Save draft"}
@@ -73,7 +73,7 @@ export function CreatorPublishActions({
               onClick={onPreview}
               disabled={saving}
               variant="outline"
-              size="sm"
+              size="lg"
               leftIcon={<Eye className="h-4 w-4" />}
             >
               <span className="hidden sm:inline">Preview as buyer</span>
@@ -89,7 +89,7 @@ export function CreatorPublishActions({
                 ? "Add a title and description before publishing"
                 : "Publish this resource to the marketplace"
             }
-            size="sm"
+            size="lg"
             leftIcon={<Rocket className="h-4 w-4" />}
           >
             {saving ? "Publishing..." : "Publish"}

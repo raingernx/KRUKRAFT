@@ -1,10 +1,17 @@
-export const radius = {
+export const radiusPrimitives = {
   sm: "8px",
-  md: "12px",
-  lg: "16px",
-  xl: "16px",
-  "3xl": "20px",
-  "4xl": "24px",
+  md: "16px",
+  lg: "24px",
+  xl: "32px",
+  pill: "999px",
+} as const;
+
+export const radius = {
+  ...radiusPrimitives,
+  input: radiusPrimitives.lg,
+  surface: radiusPrimitives.lg,
+  "3xl": radiusPrimitives.lg,
+  "4xl": radiusPrimitives.xl,
   full: "9999px",
 } as const;
 

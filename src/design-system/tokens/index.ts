@@ -6,8 +6,8 @@ import {
   semanticColors,
   themeColors,
 } from "./colors";
-import { radius } from "./radius";
-import { spacing } from "./spacing";
+import { radius, radiusPrimitives } from "./radius";
+import { spacing, spacingPrimitives } from "./spacing";
 import {
   fontFamilies,
   fontFamilyScale,
@@ -33,8 +33,10 @@ export {
   letterSpacingScale,
   lineHeights,
   radius,
+  radiusPrimitives,
   semanticColors,
   spacing,
+  spacingPrimitives,
   themeColors,
   typography,
 };

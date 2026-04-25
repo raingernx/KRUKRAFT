@@ -1,12 +1,19 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import {
+  getFieldControlSizeClassName,
+  type FieldControlDensity,
+  type FieldControlSize,
+} from "./fieldRecipe"
 
 export interface SelectProps
-  extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "size"> {
   error?: string
   hint?: string
   hintClassName?: string
+  size?: FieldControlSize
+  density?: FieldControlDensity
 }
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function Select({
@@ -15,6 +22,8 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function Select(
   hintClassName,
   id,
   className,
+  size,
+  density = "comfortable",
   "aria-describedby": ariaDescribedBy,
   "aria-invalid": ariaInvalid,
   ...props
@@ -34,9 +43,11 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function Select(
         ref={ref}
         id={selectId}
         data-slot="select"
+        data-density={density}
         className={cn(
           "select-base",
           "aria-invalid:border-danger-600 aria-invalid:ring-2 aria-invalid:ring-danger-600/20",
+          getFieldControlSizeClassName(size, density),
           className,
         )}
         aria-describedby={describedBy}

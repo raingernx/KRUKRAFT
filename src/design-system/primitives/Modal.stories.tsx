@@ -123,7 +123,7 @@ export const LongContent: Story = {
       footer={
         <>
           <Button variant="ghost">Not now</Button>
-          <Button variant="accent">Upgrade plan</Button>
+          <Button>Upgrade plan</Button>
         </>
       }
     />

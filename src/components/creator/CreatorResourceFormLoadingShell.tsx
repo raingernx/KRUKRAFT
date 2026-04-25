@@ -18,11 +18,11 @@ export function CreatorResourceFormLoadingShellPreview() {
           <div className="space-y-5">
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-20" />
-              <LoadingSkeleton className="h-11 w-full rounded-2xl" />
+              <LoadingSkeleton className="h-10 w-full rounded-xl" />
             </div>
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-24" />
-              <LoadingSkeleton className="h-11 w-full rounded-2xl" />
+              <LoadingSkeleton className="h-10 w-full rounded-xl" />
             </div>
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-28" />
@@ -40,19 +40,19 @@ export function CreatorResourceFormLoadingShellPreview() {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-20" />
-              <LoadingSkeleton className="h-11 w-full rounded-2xl" />
+              <LoadingSkeleton className="h-10 w-full rounded-xl" />
             </div>
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-24" />
-              <LoadingSkeleton className="h-11 w-full rounded-2xl" />
+              <LoadingSkeleton className="h-10 w-full rounded-xl" />
             </div>
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-24" />
-              <LoadingSkeleton className="h-11 w-full rounded-2xl" />
+              <LoadingSkeleton className="h-10 w-full rounded-xl" />
             </div>
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-28" />
-              <LoadingSkeleton className="h-11 w-full rounded-2xl" />
+              <LoadingSkeleton className="h-10 w-full rounded-xl" />
             </div>
           </div>
 
@@ -76,7 +76,7 @@ export function CreatorResourceFormLoadingShellPreview() {
               <LoadingSkeleton className="h-4 w-32" />
               <LoadingSkeleton className="h-10 w-52 rounded-xl" />
               <LoadingSkeleton className="h-28 w-full rounded-3xl" />
-              <LoadingSkeleton className="h-11 w-full rounded-2xl" />
+              <LoadingSkeleton className="h-10 w-full rounded-xl" />
             </div>
           </div>
         </section>
@@ -95,9 +95,9 @@ export function CreatorResourceFormLoadingShellPreview() {
 
         <section className="rounded-2xl border border-border bg-card px-4 py-3 shadow-sm">
           <div className="flex flex-wrap justify-end gap-3">
-            <LoadingSkeleton className="h-10 w-24 rounded-xl" />
-            <LoadingSkeleton className="h-10 w-32 rounded-xl" />
-            <LoadingSkeleton className="h-10 w-32 rounded-xl" />
+            <LoadingSkeleton className="h-12 w-32 rounded-xl" />
+            <LoadingSkeleton className="h-12 w-40 rounded-xl" />
+            <LoadingSkeleton className="h-12 w-40 rounded-xl" />
           </div>
         </section>
       </div>

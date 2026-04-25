@@ -776,6 +776,7 @@ export function CreatorResourceForm({
             <Input
               id={titleInputId}
               name="title"
+              size="md"
               value={form.title}
               onChange={handleChange}
               placeholder={
@@ -800,6 +801,7 @@ export function CreatorResourceForm({
             <Input
               id={slugInputId}
               name="slug"
+              size="md"
               value={form.slug}
               onChange={handleChange}
               placeholder="grade-5-fractions-worksheet"
@@ -852,13 +854,14 @@ export function CreatorResourceForm({
           {!isCreateMode && (
             <div className="space-y-1.5">
               <label htmlFor={statusSelectId} className="text-sm font-medium text-foreground">Status</label>
-              <Select
-                id={statusSelectId}
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-                className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-              >
+            <Select
+              size="md"
+              id={statusSelectId}
+              name="status"
+              value={form.status}
+              onChange={handleChange}
+              className="w-full"
+            >
                 <option value="DRAFT">Draft</option>
                 <option value="PUBLISHED">Published</option>
                 <option value="ARCHIVED">Archived</option>
@@ -869,11 +872,12 @@ export function CreatorResourceForm({
           <div className="space-y-1.5">
             <label htmlFor={typeSelectId} className="text-sm font-medium text-foreground">Type</label>
             <Select
+              size="md"
               id={typeSelectId}
               name="type"
               value={form.type}
               onChange={handleChange}
-              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              className="w-full"
             >
               <option value="PDF">PDF</option>
               <option value="DOCUMENT">Document</option>
@@ -883,11 +887,12 @@ export function CreatorResourceForm({
           <div className="space-y-1.5">
             <label htmlFor={categorySelectId} className="text-sm font-medium text-foreground">Category</label>
             <Select
+              size="md"
               id={categorySelectId}
               name="categoryId"
               value={form.categoryId}
               onChange={handleChange}
-              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              className="w-full"
             >
               <option value="">No category</option>
               {categories.map((category) => (
@@ -907,6 +912,7 @@ export function CreatorResourceForm({
               id={priceInputId}
               name="price"
               type="number"
+              size="md"
               min="0"
               value={form.price}
               onChange={handleChange}
@@ -997,7 +1003,7 @@ export function CreatorResourceForm({
                     <Button
                       type="button"
                       variant="ghost"
-                      size="sm"
+                      size="md"
                       onClick={() => setBulkPreviewOpen((prev) => !prev)}
                     >
                       {bulkPreviewOpen ? "Hide list" : "Paste list"}
@@ -1005,7 +1011,7 @@ export function CreatorResourceForm({
                     <Button
                       type="button"
                       variant="quiet"
-                      size="sm"
+                      size="md"
                       leftIcon={<Plus className="h-4 w-4" />}
                       onClick={addPreviewUrlDraftRow}
                     >
@@ -1046,6 +1052,7 @@ export function CreatorResourceForm({
                         <div className="mt-3">
                           <Input
                             id={`${previewUrlDraftPrefix}-${index}`}
+                            size="md"
                             value={url}
                             onChange={(event) => updatePreviewUrlDraft(index, event.target.value)}
                             onBlur={() => commitPreviewUrlDraft(index)}
@@ -1101,7 +1108,7 @@ export function CreatorResourceForm({
                         <Button
                           type="button"
                           variant="quiet"
-                          size="sm"
+                          size="md"
                           onClick={applyBulkPreviewUrls}
                           disabled={!bulkPreviewInput.trim()}
                         >
@@ -1256,7 +1263,7 @@ export function CreatorResourceForm({
                         <Button
                           type="button"
                           variant="ghost"
-                          size="sm"
+                          size="md"
                           leftIcon={<Trash2 className="h-4 w-4" />}
                           onClick={() => {
                             void clearExternalFileUrl();
@@ -1280,7 +1287,7 @@ export function CreatorResourceForm({
                             <Button
                               type="button"
                               variant="quiet"
-                              size="sm"
+                              size="md"
                               onClick={async () => {
                                 try {
                                   await handleRemoveUploadedFile();
@@ -1311,6 +1318,7 @@ export function CreatorResourceForm({
                                 <Input
                                   id={externalFileUrlInputId}
                                   name="externalFileUrl"
+                                  size="md"
                                   value={externalFileUrlDraft}
                                   onChange={(event) => {
                                     const nextValue = event.target.value;
@@ -1363,7 +1371,7 @@ export function CreatorResourceForm({
                                   <Button
                                     type="button"
                                     variant="ghost"
-                                    size="sm"
+                                    size="md"
                                     onClick={() => {
                                       setExternalFileUrlDraft(form.fileUrl);
                                       setExternalFileUrlIssue(null);
@@ -1372,7 +1380,7 @@ export function CreatorResourceForm({
                                   >
                                     Edit
                                   </Button>
-                                  <Button type="button" variant="quiet" size="sm" asChild>
+                                  <Button type="button" variant="quiet" size="md" asChild>
                                     <a href={form.fileUrl} target="_blank" rel="noreferrer">
                                       Open link
                                       <ExternalLink className="h-4 w-4" />
@@ -1427,12 +1435,12 @@ export function CreatorResourceForm({
               <Button
                 type="button"
                 variant="ghost"
-                size="sm"
+                size="lg"
                 onClick={() => router.push(routes.dashboardCreatorResources)}
               >
                 Cancel
               </Button>
-              <Button type="submit" size="sm" loading={saving}>
+              <Button type="submit" size="lg" loading={saving}>
                 Save changes
               </Button>
             </div>

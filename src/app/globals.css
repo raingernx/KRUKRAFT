@@ -5,18 +5,18 @@
 /* Runtime semantic/theme layer derived from src/design-system/tokens. */
 :root {
   /* Primary */
-  --color-primary: #2D28BB;
-  --color-primary-foreground: #FFFFFF;
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
 
   /* Core surfaces */
-  --color-background: #FFFFFF;
-  --color-surface: #F8FAFC;
-  --color-border: #E2E8F0;
+  --color-background: hsl(var(--background));
+  --color-surface: hsl(var(--card));
+  --color-border: hsl(var(--border));
 
   /* Text */
-  --color-text-primary: #0F172A;
-  --color-text-secondary: #475569;
-  --color-text-muted: #94A3B8;
+  --color-text-primary: hsl(var(--foreground));
+  --color-text-secondary: hsl(var(--muted-foreground));
+  --color-text-muted: hsl(var(--ink-subtle));
 
   /* Support */
   --color-success: #10B981;
@@ -33,8 +33,10 @@
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --radius-sm: 0.5rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  --radius-pill: 999px;
 
   --container-max-width: 1600px;
   --container-narrow-max-width: 1200px;
@@ -43,30 +45,31 @@
   --page-content-narrow-max-width: 800px;
 
   --font-size-base: 16px;
-  --font-size-display: clamp(2.75rem, 5vw, 4.5rem);
-  --font-size-h1: 2.5rem;
+  --font-size-display: 3rem;
+  --font-size-h1: 2rem;
   --font-size-h2: 2rem;
-  --font-size-h3: 1.5rem;
-  --font-size-body: 1rem;
+  --font-size-h3: 1.125rem;
+  --font-size-body: 1.125rem;
   --font-size-small: 0.875rem;
-  --font-size-caption: 0.75rem;
+  --font-size-caption: 0.875rem;
 
-  --line-height-body: 1.65;
-  --line-height-heading: 1.1;
-  --line-height-display: 1.05;
-  --line-height-h2: 1.2;
-  --line-height-h3: 1.3;
-  --line-height-small: 1.5;
-  --line-height-caption: 1.45;
+  --line-height-body: 1.875rem;
+  --line-height-heading: 2.5rem;
+  --line-height-display: 3.5rem;
+  --line-height-h2: 2.5rem;
+  --line-height-h3: 1.875rem;
+  --line-height-small: 1.25rem;
+  --line-height-caption: 1.25rem;
 
-  --letter-spacing-heading: -0.02em;
+  --letter-spacing-heading: 0;
   --letter-spacing-body: 0;
-  --letter-spacing-label: 0.12em;
+  --letter-spacing-label: 0;
 
   --font-weight-heading: 600;
   --font-weight-body: 400;
   --font-weight-small: 400;
-  --font-weight-caption: 500;
+  --font-weight-caption: 400;
+  --font-weight-label: 600;
 }
 
 @layer base {
@@ -74,35 +77,52 @@
     /* Theme values mirror `themeColors.light` in src/design-system/tokens/colors.ts. */
     /* ── shadcn/ui v3 design tokens aligned to Krukraft surface system ── */
     color-scheme: light;
-    --background:            0 0% 100%;
-    --foreground:            222 47.4% 11.2%;
+    --canvas:                0 0% 97.6%;
+    --shell:                 0 9.1% 95.7%;
+    --inset:                 12 13.5% 92.7%;
+    --line:                  20 10.3% 88.6%;
+    --ink:                   8.6 7.1% 19.4%;
+    --ink-muted:             16 6.0% 49.2%;
+    --ink-subtle:            20 8.2% 64.1%;
 
-    --card:                  0 0% 100%;
-    --card-foreground:       222 47.4% 11.2%;
+    --background:            var(--canvas);
+    --foreground:            var(--ink);
 
-    --popover:               0 0% 100%;
-    --popover-foreground:    222 47.4% 11.2%;
+    --card:                  var(--shell);
+    --card-foreground:       var(--ink);
 
-    --primary:               242 64.8% 44.5%;
-    --primary-foreground:    0 0% 100%;
+    --popover:               var(--shell);
+    --popover-foreground:    var(--ink);
 
-    --secondary:             210 40% 98%;
-    --secondary-foreground:  222 47.4% 11.2%;
+    --primary:               244.5 57.9% 50.6%;
+    --primary-hover:         244.1 63.3% 59.4%;
+    --primary-pressed:       241.6 54.9% 40.0%;
+    --primary-quiet:         243.9 67.6% 86.7%;
+    --action-ghost:          35.6 50.0% 87.5%;
+    --primary-foreground:    0 0% 97.6%;
+    --primary-quiet-foreground: 8.6 7.1% 19.4%;
+    --action-ghost-foreground: 8.6 7.1% 19.4%;
+    --on-fill-dark:          0 0% 97.6%;
+    --on-fill-light:         8.6 7.1% 19.4%;
+    --danger-text:           0 73.7% 49.0%;
 
-    --muted:                 210 40% 98%;
-    --muted-foreground:      215 19.3% 34.5%;
+    --secondary:             var(--inset);
+    --secondary-foreground:  var(--ink);
 
-    --accent:                210 40% 98%;
-    --accent-foreground:     222 47.4% 11.2%;
+    --muted:                 var(--inset);
+    --muted-foreground:      var(--ink-muted);
+
+    --accent:                var(--inset);
+    --accent-foreground:     var(--ink);
 
     --destructive:           0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border-subtle:         210 28% 94%;
-    --border:                214 31.8% 91.4%;
-    --border-strong:         212 27% 84%;
-    --input:                 212 27% 84%;
-    --ring:                  242 64.8% 44.5%;
+    --border-subtle:         var(--line);
+    --border:                var(--line);
+    --border-strong:         var(--line);
+    --input:                 var(--line);
+    --ring:                  var(--primary);
 
     --chart-1:               221 83% 53%;
     --chart-2:               212 95% 68%;
@@ -112,48 +132,65 @@
 
     --radius:                var(--radius-md);
 
-    --sidebar:               0 0% 98%;
-    --sidebar-foreground:    222 47.4% 11.2%;
-    --sidebar-primary:       242 64.8% 44.5%;
+    --sidebar:               var(--shell);
+    --sidebar-foreground:    var(--ink);
+    --sidebar-primary:       var(--primary);
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent:        210 40% 98%;
-    --sidebar-accent-foreground: 222 47.4% 11.2%;
-    --sidebar-border:        214 31.8% 91.4%;
-    --sidebar-ring:          242 64.8% 44.5%;
+    --sidebar-accent:        var(--inset);
+    --sidebar-accent-foreground: var(--ink);
+    --sidebar-border:        var(--line);
+    --sidebar-ring:          var(--primary);
   }
 
   :root[data-theme="dark"] {
     /* Theme values mirror `themeColors.dark` in src/design-system/tokens/colors.ts. */
     color-scheme: dark;
-    --background:            222 47.4% 11.2%;
-    --foreground:            0 0% 98%;
+    --canvas:                260 15.8% 7.5%;
+    --shell:                 261.8 18.0% 12.0%;
+    --inset:                 260 17.0% 10.4%;
+    --line:                  264 11.1% 17.6%;
+    --ink:                   40 44.7% 90.8%;
+    --ink-muted:             37.1 12.9% 68.0%;
+    --ink-subtle:            36.7 7.4% 52.2%;
 
-    --card:                  222 47.4% 11.2%;
-    --card-foreground:       0 0% 98%;
+    --background:            var(--canvas);
+    --foreground:            var(--ink);
 
-    --popover:               222 47.4% 11.2%;
-    --popover-foreground:    0 0% 98%;
+    --card:                  var(--inset);
+    --card-foreground:       var(--ink);
 
-    --primary:               242 64.8% 64%;
-    --primary-foreground:    222 47.4% 11.2%;
+    --popover:               var(--inset);
+    --popover-foreground:    var(--ink);
 
-    --secondary:             217 32.6% 17.5%;
-    --secondary-foreground:  0 0% 98%;
+    --primary:               244.5 57.9% 50.6%;
+    --primary-hover:         244.1 63.3% 59.4%;
+    --primary-pressed:       241.6 54.9% 40.0%;
+    --primary-quiet:         264 11.1% 17.6%;
+    --action-ghost:          40.3 76.1% 18.0%;
+    --primary-foreground:    40 44.7% 90.8%;
+    --primary-quiet-foreground: 40 44.7% 90.8%;
+    --action-ghost-foreground: 40 44.7% 90.8%;
+    --on-fill-dark:          40 44.7% 90.8%;
+    --on-fill-light:         260 15.8% 7.5%;
+    --danger-text:           0 83.2% 67.8%;
 
-    --muted:                 217 32.6% 17.5%;
-    --muted-foreground:      215 20.2% 65.1%;
+    --secondary:             var(--line);
+    --secondary-foreground:  var(--ink);
 
-    --accent:                217 32.6% 17.5%;
-    --accent-foreground:     0 0% 98%;
+    --muted:                 var(--line);
+    --muted-foreground:      var(--ink-muted);
+
+    --accent:                var(--line);
+    --accent-foreground:     var(--ink);
 
     --destructive:           0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border-subtle:         217 28% 22%;
-    --border:                215 25% 27%;
-    --border-strong:         215 20% 39%;
-    --input:                 215 20% 39%;
-    --ring:                  242 64.8% 64%;
+    --border-subtle:         var(--line);
+    --border:                var(--line);
+    --border-strong:         var(--line);
+    --input:                 var(--line);
+    --ring:                  var(--primary-hover);
 
     --chart-1:               221 83% 53%;
     --chart-2:               212 95% 68%;
@@ -161,14 +198,14 @@
     --chart-4:               210 98% 78%;
     --chart-5:               196 94% 67%;
 
-    --sidebar:               222 47.4% 11.2%;
-    --sidebar-foreground:    0 0% 98%;
-    --sidebar-primary:       242 64.8% 64%;
-    --sidebar-primary-foreground: 222 47.4% 11.2%;
-    --sidebar-accent:        217 32.6% 17.5%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border:        215 25% 27%;
-    --sidebar-ring:          242 64.8% 64%;
+    --sidebar:               var(--shell);
+    --sidebar-foreground:    var(--ink);
+    --sidebar-primary:       var(--primary);
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent:        var(--line);
+    --sidebar-accent-foreground: var(--ink);
+    --sidebar-border:        var(--line);
+    --sidebar-ring:          var(--primary-hover);
   }
 
   html {
@@ -264,11 +301,12 @@
 
   /* Input */
   .input-base {
-    @apply h-11 w-full rounded-xl border border-input bg-background px-3.5
+    @apply h-14 w-full rounded-[var(--radius-lg)] border border-input bg-shell px-4
            font-ui text-sm text-foreground placeholder:text-muted-foreground outline-none
            transition-colors duration-150
-           focus:border-primary-500 focus:ring-2 focus:ring-primary-500/15 focus:ring-offset-0
-           disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground;
+           hover:bg-inset
+           focus:border-ring focus:bg-inset focus:ring-2 focus:ring-ring focus:ring-offset-0
+           disabled:cursor-not-allowed disabled:bg-inset disabled:text-muted-foreground;
   }
 
   /* Select (dropdown) with custom arrow */
@@ -354,6 +392,13 @@
     line-height: var(--line-height-caption);
     letter-spacing: var(--letter-spacing-body);
     font-weight: var(--font-weight-caption);
+  }
+
+  .text-label {
+    font-size: var(--font-size-caption);
+    line-height: var(--line-height-caption);
+    letter-spacing: var(--letter-spacing-label);
+    font-weight: var(--font-weight-label);
   }
 
   .font-display {

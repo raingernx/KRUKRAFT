@@ -300,6 +300,7 @@ export function CreatorAIDraftGenerator({
               <Input
                 id={subjectInputId}
                 name="subject"
+                size="md"
                 value={draftState.subject}
                 onChange={handleTextChange}
                 placeholder="เช่น เศษส่วน หรือ การจับใจความ"
@@ -316,6 +317,7 @@ export function CreatorAIDraftGenerator({
               <Input
                 id={gradeInputId}
                 name="grade"
+                size="md"
                 value={draftState.grade}
                 onChange={handleTextChange}
                 placeholder="เช่น ป.5 หรือ ม.1"
@@ -333,6 +335,7 @@ export function CreatorAIDraftGenerator({
                 id={quizCountInputId}
                 name="quizCount"
                 type="number"
+                size="md"
                 min="3"
                 max="10"
                 value={String(draftState.quizCount)}
@@ -411,7 +414,7 @@ export function CreatorAIDraftGenerator({
                 <Button
                   type="button"
                   variant="quiet"
-                  size="sm"
+                  size="md"
                   onClick={() => onApplySummary(draftState.summary)}
                   disabled={!draftState.summary.trim()}
                 >
@@ -420,7 +423,7 @@ export function CreatorAIDraftGenerator({
                 {resourceId && (
                   <Button
                     type="button"
-                    size="sm"
+                    size="md"
                     onClick={handleSaveDraft}
                     loading={saving}
                   >

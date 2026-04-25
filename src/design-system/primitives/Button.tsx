@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 const buttonVariants = cva(
   [
     "group/button inline-flex shrink-0 items-center justify-center gap-2",
-    "rounded-full border border-transparent bg-clip-padding",
+    "rounded-[var(--radius-pill)] border border-transparent bg-clip-padding",
     "font-ui text-sm font-semibold whitespace-nowrap",
     "shadow-none transition-[background-color,border-color,color,box-shadow] outline-none select-none",
     "focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
@@ -19,38 +19,34 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/84 disabled:bg-muted disabled:text-muted-foreground",
+          "bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-pressed disabled:bg-muted disabled:text-muted-foreground",
         default:
-          "bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/84 disabled:bg-muted disabled:text-muted-foreground",
+          "bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-pressed disabled:bg-muted disabled:text-muted-foreground",
         quiet:
-          "bg-primary/20 text-foreground hover:bg-primary/24 active:bg-primary/28 disabled:bg-muted disabled:text-muted-foreground",
-        dark:
-          "bg-foreground text-background hover:bg-foreground/92 active:bg-foreground disabled:bg-muted disabled:text-muted-foreground",
+          "bg-primary-quiet text-primary-quiet-foreground hover:bg-primary-quiet active:bg-primary-quiet disabled:bg-muted disabled:text-muted-foreground",
         secondary:
-          "bg-primary/20 text-foreground hover:bg-primary/24 active:bg-primary/28 disabled:bg-muted disabled:text-muted-foreground",
+          "bg-primary-quiet text-primary-quiet-foreground hover:bg-primary-quiet active:bg-primary-quiet disabled:bg-muted disabled:text-muted-foreground",
         outline:
           "border-border bg-card text-foreground hover:border-border-strong hover:bg-muted/40 active:bg-muted/55 disabled:border-border disabled:bg-muted disabled:text-muted-foreground",
         ghost:
-          "bg-warning-100 text-foreground hover:bg-warning-100/88 active:bg-warning-100/76 disabled:bg-muted disabled:text-muted-foreground dark:bg-warning-700/32 dark:text-foreground dark:hover:bg-warning-700/42 dark:active:bg-warning-700/50",
+          "bg-action-ghost text-action-ghost-foreground hover:bg-action-ghost active:bg-action-ghost disabled:bg-muted disabled:text-muted-foreground",
         danger:
           "bg-destructive text-destructive-foreground hover:bg-destructive/92 active:bg-destructive/84 focus-visible:ring-destructive/30 disabled:bg-muted disabled:text-muted-foreground",
         destructive:
           "border-destructive/20 bg-destructive/10 text-destructive hover:border-destructive/30 hover:bg-destructive/15 focus-visible:ring-destructive/22 disabled:border-border disabled:bg-muted disabled:text-muted-foreground",
-        accent:
-          "bg-warning-500 text-white hover:bg-warning-600 active:bg-warning-700 focus-visible:ring-warning-500/20 disabled:bg-muted disabled:text-muted-foreground",
         link:
           "rounded-none px-0 text-primary underline-offset-4 hover:text-foreground hover:underline disabled:text-muted-foreground",
       },
       size: {
         xs: "h-8 px-3 text-caption",
-        sm: "h-10 px-4 text-sm",
-        md: "h-11 px-5 text-sm",
-        lg: "h-12 px-6 text-sm",
-        default: "h-11 px-5 text-sm",
+        sm: "h-8 px-4 text-sm",
+        md: "h-10 px-6 text-sm",
+        lg: "h-12 px-8 text-sm",
+        default: "h-10 px-6 text-sm",
         icon: "size-10",
         "icon-xs": "size-8",
-        "icon-sm": "size-9",
-        "icon-lg": "size-11",
+        "icon-sm": "size-8",
+        "icon-lg": "size-12",
       },
     },
     defaultVariants: {
@@ -65,6 +61,7 @@ type PrimitiveButtonProps = React.ComponentProps<"button"> &
     asChild?: boolean
     loading?: boolean
     fullWidth?: boolean
+    density?: "comfortable" | "compact"
   }
 
 export type ButtonVariant =
@@ -75,7 +72,6 @@ export type ButtonVariant =
   | "ghost"
   | "danger"
   | "destructive"
-  | "accent"
   | "link"
 
 export type ButtonSize = "xs" | "sm" | "md" | "lg" | "icon"
@@ -84,6 +80,7 @@ export interface ButtonProps
   extends Omit<PrimitiveButtonProps, "variant" | "size" | "children"> {
   variant?: ButtonVariant
   size?: ButtonSize
+  density?: "comfortable" | "compact"
   loading?: boolean
   fullWidth?: boolean
   leftIcon?: React.ReactNode
@@ -93,7 +90,8 @@ export interface ButtonProps
 
 function Button({
   variant = "primary",
-  size = "md",
+  size,
+  density = "comfortable",
   loading = false,
   fullWidth = false,
   leftIcon,
@@ -105,15 +103,18 @@ function Button({
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot : "button"
+  const resolvedSize = size ?? (density === "compact" ? "sm" : "md")
 
   return (
     <Comp
       data-slot="button"
       data-variant={variant}
-      data-size={size}
+      data-size={resolvedSize}
+      data-density={density}
       disabled={disabled || loading}
       className={cn(
-        buttonVariants({ variant, size }),
+        buttonVariants({ variant, size: resolvedSize }),
+        density === "compact" && variant !== "link" && "rounded-[var(--radius-sm)]",
         fullWidth && "w-full",
         className,
       )}

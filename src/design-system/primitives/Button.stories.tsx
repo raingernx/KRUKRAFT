@@ -36,7 +36,6 @@ export const Variants: Story = {
           <Button variant="secondary">Secondary (quiet alias)</Button>
           <Button variant="outline">Outline (legacy)</Button>
           <Button variant="destructive">Destructive</Button>
-          <Button variant="accent">Accent</Button>
           <Button variant="danger">Danger</Button>
           <Button variant="link">Link</Button>
         </div>

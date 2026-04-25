@@ -32,7 +32,7 @@ export function CreatorPublicOwnerActions({
   }
 
   return (
-    <Button asChild size="sm" variant="quiet">
+    <Button asChild size="md" variant="quiet">
       <Link href={editHref}>Edit profile</Link>
     </Button>
   );

@@ -2,17 +2,25 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 import {
+  fieldEndAdornmentWidthClassNames,
+  fieldStartAdornmentWidthClassNames,
   fieldEndAdornmentClassName,
   fieldInputBaseClassName,
   fieldStartAdornmentClassName,
+  getFieldControlSizeClassName,
+  resolveFieldControlSize,
+  type FieldControlDensity,
+  type FieldControlSize,
 } from "./fieldRecipe"
 
-export interface InputProps extends Omit<React.ComponentProps<"input">, "prefix"> {
+export interface InputProps extends Omit<React.ComponentProps<"input">, "prefix" | "size"> {
   leftAdornment?: React.ReactNode
   rightAdornment?: React.ReactNode
   error?: string
   hint?: string
   hintClassName?: string
+  size?: FieldControlSize
+  density?: FieldControlDensity
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
@@ -23,6 +31,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
   className,
   leftAdornment,
   rightAdornment,
+  size,
+  density = "comfortable",
   "aria-describedby": ariaDescribedBy,
   "aria-invalid": ariaInvalid,
   ...props
@@ -35,12 +45,23 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
     .filter(Boolean)
     .join(" ") || undefined
 
+  const resolvedSize = resolveFieldControlSize(size, density)
+  const inputSizeClassName = getFieldControlSizeClassName(size, density)
+  const startAdornmentSizeClassName = fieldStartAdornmentWidthClassNames[resolvedSize]
+  const endAdornmentSizeClassName = fieldEndAdornmentWidthClassNames[resolvedSize]
+
   return (
     <div className="w-full space-y-1">
       {leftAdornment || rightAdornment ? (
         <div className="relative">
           {leftAdornment ? (
-            <span className={cn(fieldStartAdornmentClassName, "pointer-events-none text-muted-foreground")}>
+            <span
+              className={cn(
+                fieldStartAdornmentClassName,
+                startAdornmentSizeClassName,
+                "pointer-events-none text-muted-foreground",
+              )}
+            >
               {leftAdornment}
             </span>
           ) : null}
@@ -48,11 +69,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
             ref={ref}
             id={inputId}
             data-slot="input"
+            data-density={density}
             className={cn(
               fieldInputBaseClassName,
               "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/18",
-              leftAdornment && "pl-11",
-              rightAdornment && "pr-11",
+              inputSizeClassName,
+              leftAdornment &&
+                (resolvedSize === "sm" ? "pl-9" : resolvedSize === "md" ? "pl-10" : "pl-11"),
+              rightAdornment &&
+                (resolvedSize === "sm" ? "pr-9" : resolvedSize === "md" ? "pr-10" : "pr-11"),
               className,
             )}
             aria-describedby={describedBy}
@@ -60,7 +85,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
             {...props}
           />
           {rightAdornment ? (
-            <span className={cn(fieldEndAdornmentClassName, "pointer-events-none text-muted-foreground")}>
+            <span
+              className={cn(
+                fieldEndAdornmentClassName,
+                endAdornmentSizeClassName,
+                "pointer-events-none text-muted-foreground",
+              )}
+            >
               {rightAdornment}
             </span>
           ) : null}
@@ -70,9 +101,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
           ref={ref}
           id={inputId}
           data-slot="input"
+          data-density={density}
           className={cn(
             fieldInputBaseClassName,
             "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/18",
+            inputSizeClassName,
             className,
           )}
           aria-describedby={describedBy}

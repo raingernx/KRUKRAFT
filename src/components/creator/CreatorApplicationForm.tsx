@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle } from "@/lib/icons";
 import { Button, Input, Textarea } from "@/design-system";
+import { getFieldControlSizeClassName } from "@/design-system/primitives/fieldRecipe";
 import { toSlug } from "@/lib/slug";
+import { cn } from "@/lib/utils";
 
 interface Props {
   defaultSlug?: string;
@@ -30,6 +32,15 @@ export function CreatorApplicationForm({ defaultSlug = "" }: Props) {
       "Lowercase letters, numbers, and hyphens only. This will be your public profile URL.",
   });
   const formDisabled = !hydrated || loading;
+  const slugFieldClassName = cn(
+    "group flex items-stretch overflow-hidden border border-input bg-shell font-ui text-foreground shadow-none transition-[background-color,border-color,color,box-shadow] duration-150",
+    "hover:border-border hover:bg-inset",
+    "focus-within:border-ring focus-within:bg-inset focus-within:ring-2 focus-within:ring-ring/18 focus-within:ring-offset-0",
+    getFieldControlSizeClassName("md"),
+    "px-0",
+    formDisabled && "cursor-not-allowed border-border bg-inset text-muted-foreground",
+    fieldErrors.creatorSlug && "border-danger-600 ring-2 ring-danger-600/20",
+  );
 
   useEffect(() => {
     setHydrated(true);
@@ -226,6 +237,7 @@ export function CreatorApplicationForm({ defaultSlug = "" }: Props) {
         <Input
           id="displayName"
           type="text"
+          size="md"
           value={displayName}
           onChange={(e) => handleNameChange(e.target.value)}
           required
@@ -244,28 +256,31 @@ export function CreatorApplicationForm({ defaultSlug = "" }: Props) {
         >
           Creator URL slug <span className="text-danger-600">*</span>
         </label>
-        <div className="overflow-hidden rounded-xl border border-input bg-background transition-colors focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/15">
-          <div className="flex min-h-11 items-stretch">
-            <span className="inline-flex select-none items-center border-r border-input bg-muted px-3.5 text-sm text-muted-foreground">
-              /creators/
-            </span>
-            <input
-              id="slug"
-              type="text"
-              value={slug}
-              onChange={(e) => handleSlugChange(e.target.value)}
-              required
-              maxLength={48}
-              placeholder="jane-smith"
-              autoCapitalize="off"
-              autoCorrect="off"
-              spellCheck={false}
-              disabled={formDisabled}
-              aria-invalid={Boolean(fieldErrors.creatorSlug)}
-              aria-describedby="slug-hint"
-              className="min-h-11 min-w-0 flex-1 bg-transparent px-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none"
-            />
-          </div>
+        <div className={slugFieldClassName}>
+          <span
+            className={cn(
+              "inline-flex select-none items-center border-r border-input px-3.5 text-sm text-muted-foreground",
+              formDisabled ? "bg-inset" : "bg-muted",
+            )}
+          >
+            /creators/
+          </span>
+          <input
+            id="slug"
+            type="text"
+            value={slug}
+            onChange={(e) => handleSlugChange(e.target.value)}
+            required
+            maxLength={48}
+            placeholder="jane-smith"
+            autoCapitalize="off"
+            autoCorrect="off"
+            spellCheck={false}
+            disabled={formDisabled}
+            aria-invalid={Boolean(fieldErrors.creatorSlug)}
+            aria-describedby="slug-hint"
+            className="min-w-0 flex-1 bg-transparent px-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none disabled:cursor-not-allowed disabled:text-muted-foreground"
+          />
         </div>
         {fieldErrors.creatorSlug ? (
           <p id="slug-hint" className="mt-1 text-caption text-danger-700">

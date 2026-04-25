@@ -24,7 +24,7 @@ async function getDashboardAppViewer(): Promise<DashboardAppViewer> {
     "Guest preview";
 
   let creatorEnabled = auth.role === "INSTRUCTOR";
-  if (!creatorEnabled && auth.userId && auth.role !== "ADMIN") {
+  if (!creatorEnabled && auth.userId) {
     const creatorAccess = await getCreatorAccessState(auth.userId).catch(() => null);
     creatorEnabled = canAccessCreatorWorkspace(creatorAccess);
   }
