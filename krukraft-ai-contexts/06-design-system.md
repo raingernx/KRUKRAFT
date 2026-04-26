@@ -243,6 +243,14 @@ Use this order when DS docs disagree:
     now landed as verified study boards in the canonical file; they are
     foundation evidence for popover shell posture, not a final reusable
     component mapping yet
+  - text across `DS Foundations` now binds to the `font/family/base` variable
+    by default; four glyph-only nodes remain intentional exceptions on the page
+    because they still rely on symbol-font characters such as carets and
+    chevrons
+  - `font/family/base` is now set to `IBM Plex Sans Thai` in the canonical
+    Figma typography primitives; representative `DS Foundations` screenshots
+    were rechecked after the family switch and the current typography/dropdown
+    boards stayed stable without obvious line-wrap or layout regressions
   - new canonical Figma work should now bind available tokens immediately by
     default; if a new node still needs a local override, that should be treated
     as an explicit token gap or trial condition, not as silent final-state
