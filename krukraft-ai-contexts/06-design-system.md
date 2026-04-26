@@ -294,8 +294,15 @@ Use this order when DS docs disagree:
     into the live Figma primitive variables for `primary`, `Rust`, `Sand`,
     `neutral/*`, and `neutral/ink*`; the canonical dark primitives board now
     mirrors those promoted values in both fills and displayed hex labels
-  - the next mandatory shared-library step after `Dropdown` is `Surface`, then
-    `Badge`, before reopening `FormSection` / `DataPanelTable`
+  - `Surface` is now landed in the canonical file through `Surface /
+    Foundations / Light` (`573:143`) and `Surface / Foundations / Dark`
+    (`573:182`), each with a `Surface / Variant / Source` block plus a paired
+    hierarchy card for shell/subtle/muted posture
+  - `Surface` is not full token parity yet; the current Figma-first token gaps
+    are explicit and narrow: no semantic `border/subtle`, no semantic
+    `bg-muted`, no `radius/12` token, and no `space/20` token
+  - the next mandatory shared-library step after `Surface` is `Badge`, then
+    `FormSection` / `DataPanelTable`
 
 ## Verification Pointers
 

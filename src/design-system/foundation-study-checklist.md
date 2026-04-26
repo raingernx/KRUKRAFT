@@ -39,7 +39,7 @@ Current Figma coverage status:
 - [x] Button states exist in `DS Foundations`
 - [x] Input and search state + size coverage exist in `DS Foundations`
 - [x] Dropdown / popover shell studies exist in the canonical file
-- [ ] Section / surface hierarchy board exists in the canonical file
+- [x] Section / surface hierarchy board exists in the canonical file
 
 The canonical file was reset to a narrower foundation-first scope. Expand it
 again before treating the study pass as complete enough for a broader runtime
@@ -120,6 +120,12 @@ Create one composition board that shows:
 - muted inset
 - popover shell
 - one support surface that can carry `Rust` or `Sand`
+
+Current canonical status:
+
+- `Surface / Foundations / Light` and `Surface / Foundations / Dark` now exist in `DS Foundations`
+- both boards include a `Surface / Variant / Source` block plus a dedicated hierarchy card
+- remaining gaps are explicit token gaps, not silent local styling: `border/subtle`, `bg-muted`, `radius/12`, and `space/20`
 
 Approval questions:
 

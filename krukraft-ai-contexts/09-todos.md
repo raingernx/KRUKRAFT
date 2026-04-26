@@ -18,10 +18,10 @@ Parent Plan: `Figma DS alignment`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> The canonical Figma source file is now locked, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, `Card` is landed as the first shared-library shell proof point, and `Dropdown` now has verified light/dark foundation study boards; the `Badge vs Chip` contract decision is now locked too, so the next mandatory step is continuing shared-library coverage in impact order with both `Badge` and `Chip` treated as explicit but separate DS surfaces
+> The canonical Figma source file is now locked, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, `Card` and `Surface` are landed as the current shared-library shell proof points, and `Dropdown` now has verified light/dark foundation study boards; the `Badge vs Chip` contract decision is now locked too, so the next mandatory step is continuing shared-library coverage with `Badge` first, then reopening composed shared chrome on top of the landed shell family
 
 > [!todo] Next Up
-> Reopen shared-library coverage in impact order: `Surface`, `Badge`, then `FormSection` / `DataPanelTable`
+> Reopen shared-library coverage in impact order: `Badge`, `FormSection` / `DataPanelTable`, then the optional `Dropdown` component-set promotion decision
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and hero-search cleanup plan are complete; this new plan is a documentation/alignment pass that should not silently reopen runtime route work.
@@ -49,7 +49,7 @@ Parent Plan: `Figma DS alignment`
 ## Progress
 
 Figma DS alignment
-`[████████░░] 81%`
+`[█████████░] 88%`
 
 ```mermaid
 flowchart TB
@@ -158,13 +158,15 @@ Figma DS alignment
 - Current audit evidence established:
   - the canonical Figma source-of-truth file is now explicitly locked to `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`)
   - the reviewed Figma file currently contains foundations for typography, color, spacing/radius, `Button`, and `Input / Search`, not the full DS library footprint represented in code
-  - repo inventory drift already exists: `Surface` is live in code but not listed in `src/design-system/README.md`, and remains `pending-figma` in `figma-component-map.md`
+  - repo inventory drift already existed at plan start: `Surface` was live in code before it had canonical Figma coverage or truthful mapping rows
   - a first-pass inventory diff snapshot now lives in `figma-component-map.md` and classifies the current canonical coverage into `mapped and current`, `code exists, figma missing`, `figma exists, code missing`, and `doc drift`
   - the first repo-side doc drift pass is now closed enough to trust the registry again: stale `mapped-manual` claims from the older file were demoted to truthful `pending-figma` / `legacy` rows, and `Surface` now appears in the code inventory doc
   - the `Input` / `SearchInput` foundation parity pass is now landed in the canonical file via reusable light/dark component sets for the base field shell family
   - `Card` is now landed as the first shared-library shell block in the canonical file via `Card / Size` and `Card / Size / Dark`
   - `Dropdown` now has verified `Dropdown / Foundations / Light` and `Dropdown / Foundations / Dark` study boards in the canonical file for trigger context, open shell, selected rows, submenu edges, and destructive rows
   - the canonical Figma file now contains a distinct `neutral/surface` primitive and `bg/surface` semantic alias, so `Surface` is no longer just a panel label inside the neutrals study board
+  - `Surface` now has verified `Surface / Foundations / Light` and `Surface / Foundations / Dark` boards in the canonical file, each with a `Surface / Variant / Source` block and a dedicated hierarchy study card
+  - the current `Surface` block is intentionally not full token parity yet; the remaining narrow token gaps are explicit: no semantic `border/subtle`, no semantic `bg-muted`, no `radius/12` token, and no `space/20` token
   - the tested light palette in `Theme Lab` frame `464:545` is now promoted into the live Figma primitive variables for `primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`; dark-mode values were intentionally left unchanged
   - the tested dark palette in `Theme Lab` frame `477:479` is now promoted into the live Figma primitive variables for `primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`; the canonical dark primitives board mirrors those values too
 - This plan must separate four classes of status cleanly:
@@ -185,7 +187,7 @@ Lock one canonical Figma source of truth, align repo-side DS references with rea
 - The reviewed Figma file appears to be a foundation-first lab rather than the full DS library implied by repo inventory docs
 - The canonical file and first repo-side doc drift pass are now locked enough to move forward without pretending the broader library is already mapped
 - The `Input` / `SearchInput` parity slice is now complete enough to use as the second reusable foundation block after `Button`
-- `Card` is now the first shared-library proof point, and `Dropdown` now has verified study-board coverage, so the next highest-signal gaps are `Surface` and the non-interactive `Badge` surface before reopening composed shared chrome
+- `Card`, `Dropdown`, and `Surface` now establish the current shared shell family, so the next highest-signal gap is the non-interactive `Badge` surface before reopening composed shared chrome
 - `Badge vs Chip` decision is now locked from repo usage evidence:
   - `Badge` = non-interactive semantic/status label
   - `Chip` = interactive filter/removable/navigation token surface
@@ -237,6 +239,7 @@ Current recommendation order:
 - [x] Land `Card` as the first shared-library shell block in the canonical file
 - [x] Land `Dropdown` / popover shell study boards in the canonical file with verified light/dark shell posture
 - [x] Normalize canonical `Button`, `Input`, and `SearchInput` foundation component sets to the locked runtime size contract
+- [x] Land `Surface` as the shared-library shell bridge before reopening `FormSection` and `DataPanelTable`
 - [ ] Start `Badge` as an explicit shared-library remapping target after the foundation pass
 - [x] Add `Chip` to the shared-library plan through an explicit `Badge vs Chip` contract decision
 - [ ] Start `Chip` as a shared-library surface candidate after `Card`, `Dropdown`, and `Surface`
@@ -245,8 +248,8 @@ Current recommendation order:
 
 ## Next Up
 
-- [ ] Add `Surface`, then reopen `FormSection` and `DataPanelTable` on top of that shared shell
 - [ ] Start `Badge` studies/components as the non-interactive semantic label surface after `Surface` establishes the broader shared-library chrome
+- [ ] Reopen `FormSection` and `DataPanelTable` on top of the landed `Surface` shell
 - [ ] Decide whether `Dropdown` stays a study-board reference or is promoted into a reusable component-set mapping during shared-library close-out
 
 ---
@@ -355,6 +358,7 @@ Add only short, high-signal entries here.
 - 2026-04-26: The `Button` / `Input` size contract is now explicitly locked for Figma handoff: typography scale stays in variables, while control size stays in component variants (`Button`: `xs|sm|md|lg|icon`; fields: `sm|md|lg|field`) with the current density defaults carried forward from code.
 - 2026-04-26: The canonical Figma foundations now reflect that control-size contract more directly: `Button / Size` light/dark were rebuilt to include `xs|sm|md|lg`, while `Input` / `SearchInput` state shells were normalized to the comfortable runtime default and both gained explicit light/dark `... / Size` component sets for the shared field ladder.
 - 2026-04-26: Runtime adoption has started on the shared search field too: the default `SearchInput` branch now resolves `size` / `density` through the same field recipe as `Input`, while `hero` remains the one intentional exception branch.
+- 2026-04-26: `Surface / Foundations / Light` (`573:143`) and `Surface / Foundations / Dark` (`573:182`) are now landed and screenshot-verified in the canonical file; each board now carries a `Surface / Variant / Source` block plus a hierarchy card, and the remaining gaps are explicit token gaps (`border/subtle`, `bg-muted`, `radius/12`, `space/20`) rather than silent local styling.
 - 2026-04-25: The reviewed light palette from `Theme Lab` frame `464:545` is now promoted into the canonical Figma primitive variables (`primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`) while dark-mode values and semantic alias chains stay unchanged.
 - 2026-04-25: The reviewed dark palette from `Theme Lab` frame `477:479` is now promoted into the canonical Figma primitive variables (`primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`); the canonical `Color Primitives / Dark` board was updated so its displayed hex labels match the promoted values.
 - 2026-04-25: `Surface` now exists as a distinct primitive in the canonical Figma variable system too; `neutral/surface` was added under `Color / Primitives` and `bg/surface` now aliases to it instead of piggybacking on older shell/inset values.
