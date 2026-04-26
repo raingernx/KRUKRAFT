@@ -18,7 +18,7 @@ Parent Plan: `Figma DS alignment`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> The canonical Figma source file is now locked, the first repo-side doc drift pass is closed, `Input` / `SearchInput` now have first-pass reusable component sets, `Card` is landed as the first shared-library shell proof point, and `Dropdown` now has verified light/dark foundation study boards; the `Badge vs Chip` contract decision is now locked too, so the next mandatory step is continuing shared-library coverage in impact order with both `Badge` and `Chip` treated as explicit but separate DS surfaces
+> The canonical Figma source file is now locked, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, `Card` is landed as the first shared-library shell proof point, and `Dropdown` now has verified light/dark foundation study boards; the `Badge vs Chip` contract decision is now locked too, so the next mandatory step is continuing shared-library coverage in impact order with both `Badge` and `Chip` treated as explicit but separate DS surfaces
 
 > [!todo] Next Up
 > Reopen shared-library coverage in impact order: `Surface`, `Badge`, then `FormSection` / `DataPanelTable`
@@ -49,7 +49,7 @@ Parent Plan: `Figma DS alignment`
 ## Progress
 
 Figma DS alignment
-`[████████░░] 76%`
+`[████████░░] 81%`
 
 ```mermaid
 flowchart TB
@@ -236,6 +236,7 @@ Current recommendation order:
 - [x] Start the shared-library mapping pass with the first high-impact holdouts
 - [x] Land `Card` as the first shared-library shell block in the canonical file
 - [x] Land `Dropdown` / popover shell study boards in the canonical file with verified light/dark shell posture
+- [x] Normalize canonical `Button`, `Input`, and `SearchInput` foundation component sets to the locked runtime size contract
 - [ ] Start `Badge` as an explicit shared-library remapping target after the foundation pass
 - [x] Add `Chip` to the shared-library plan through an explicit `Badge vs Chip` contract decision
 - [ ] Start `Chip` as a shared-library surface candidate after `Card`, `Dropdown`, and `Surface`
@@ -352,6 +353,7 @@ Add only short, high-signal entries here.
 - 2026-04-26: Text across `DS Foundations` now binds `font/family/base` by default; four glyph-only nodes were intentionally left on symbol-font rendering so carets/chevrons do not break during the typography-variable pass.
 - 2026-04-26: `font/family/base` in the canonical Figma file now points to `IBM Plex Sans Thai`; representative `DS Foundations` screenshots were rerun and the current typography plus dropdown boards remained visually stable after the family switch.
 - 2026-04-26: The `Button` / `Input` size contract is now explicitly locked for Figma handoff: typography scale stays in variables, while control size stays in component variants (`Button`: `xs|sm|md|lg|icon`; fields: `sm|md|lg|field`) with the current density defaults carried forward from code.
+- 2026-04-26: The canonical Figma foundations now reflect that control-size contract more directly: `Button / Size` light/dark were rebuilt to include `xs|sm|md|lg`, while `Input` / `SearchInput` state shells were normalized to the comfortable runtime default and both gained explicit light/dark `... / Size` component sets for the shared field ladder.
 - 2026-04-25: The reviewed light palette from `Theme Lab` frame `464:545` is now promoted into the canonical Figma primitive variables (`primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`) while dark-mode values and semantic alias chains stay unchanged.
 - 2026-04-25: The reviewed dark palette from `Theme Lab` frame `477:479` is now promoted into the canonical Figma primitive variables (`primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`); the canonical `Color Primitives / Dark` board was updated so its displayed hex labels match the promoted values.
 - 2026-04-25: `Surface` now exists as a distinct primitive in the canonical Figma variable system too; `neutral/surface` was added under `Color / Primitives` and `bg/surface` now aliases to it instead of piggybacking on older shell/inset values.

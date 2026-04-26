@@ -37,7 +37,7 @@ Current Figma coverage status:
 
 - [x] Card studies exist in the canonical file
 - [x] Button states exist in `DS Foundations`
-- [x] Input and search states exist in `DS Foundations`
+- [x] Input and search state + size coverage exist in `DS Foundations`
 - [x] Dropdown / popover shell studies exist in the canonical file
 - [ ] Section / surface hierarchy board exists in the canonical file
 
@@ -86,12 +86,14 @@ Create one shared control family that covers:
 - invalid input
 - search input
 - optional leading/trailing affordance state
+- the comfortable field-size ladder (`sm`, `md`, `lg`, `field`) used by code
 
 Approval questions:
 
 - Do input and search read as one family?
 - Is the field chrome quiet enough against `Paper B`?
 - Does focus feel clear without feeling neon or generic?
+- Does the component-set size ladder stay aligned with the runtime field contract?
 
 ### 4. Dropdown / Popover Shell
 

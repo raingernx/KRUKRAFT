@@ -259,6 +259,15 @@ Use this order when DS docs disagree:
       `field`) with `comfortable -> field` and `compact -> sm`
     - `SearchInput variant=\"default\"` should follow the same field-size
       contract as `Input`; only the hero variant may diverge
+  - the canonical Figma foundations now match that control-size contract more
+    closely too:
+    - `Button / Size` light/dark were rebuilt to include explicit
+      `xs|sm|md|lg` coverage
+    - `Input / State` and `SearchInput / State` light/dark now use the
+      comfortable default shell posture from code (`field` height, `radius/lg`,
+      `space/16`, caption-scale text)
+    - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
+      component sets for the shared field ladder
   - new canonical Figma work should now bind available tokens immediately by
     default; if a new node still needs a local override, that should be treated
     as an explicit token gap or trial condition, not as silent final-state
