@@ -145,6 +145,30 @@ When this file conflicts with code, the code wins.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may
   add search-specific affordances, but it should not drift into a separate
   shell language for default, hover, focus, or filled states.
+- Control sizing should be expressed as component contract, not as one-off size
+  variables:
+  - typography sizes and line heights belong in typography variables
+  - `Button`, `Input`, and `SearchInput` sizes belong in component variants
+    that bind back to spacing, radius, and typography tokens
+- `Button` size contract for Figma and code should stay:
+  - `xs`: `h-8`, `px-3`, caption text
+  - `sm`: `h-8`, `px-4`, body/sm text
+  - `md`: `h-10`, `px-6`, body/sm text
+  - `lg`: `h-12`, `px-8`, body/sm text
+  - `icon`: square icon affordance only, not a text-button recipe
+  - default resolution: `comfortable -> md`, `compact -> sm`
+- `Input` / default-field size contract for Figma and code should stay:
+  - `sm`: `h-8`, `px-3`
+  - `md`: `h-10`, `px-4`
+  - `lg`: `h-12`, `px-4`
+  - `field`: `h-14`, `px-4`
+  - comfortable density uses the calmer larger radius posture
+  - compact density keeps the same height ladder but drops to the tighter
+    radius posture
+  - default resolution: `comfortable -> field`, `compact -> sm`
+- `SearchInput variant=\"default\"` should inherit the same field-size ladder as
+  `Input`; only the hero variant is allowed to diverge into its own larger
+  search-shell geometry.
 - `RevealImage` is the shared image primitive for already-sized containers. Let
   the surrounding container own placeholder and background treatment.
 - Runtime route-level and Suspense-critical skeletons should stay visually

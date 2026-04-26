@@ -85,6 +85,34 @@ layer itself is being maintained.
 - `LoadingSkeleton`
 - layout helpers under `src/design-system/layout/*`
 
+### Control Size Contract
+
+When mapping control sizes into Figma:
+
+- keep typography size and line-height in typography variables
+- keep control sizing in component variants, not standalone `button/*` or
+  `input/*` size variables
+- bind those variants back to spacing, radius, and typography tokens
+
+Current runtime contract to mirror:
+
+- `Button`
+  - `xs`: `h-8`, `px-3`, caption text
+  - `sm`: `h-8`, `px-4`, body/sm text
+  - `md`: `h-10`, `px-6`, body/sm text
+  - `lg`: `h-12`, `px-8`, body/sm text
+  - `icon`: square icon-only affordance
+  - default density resolution: `comfortable -> md`, `compact -> sm`
+- `Input` / field family
+  - `sm`: `h-8`, `px-3`
+  - `md`: `h-10`, `px-4`
+  - `lg`: `h-12`, `px-4`
+  - `field`: `h-14`, `px-4`
+  - default density resolution: `comfortable -> field`, `compact -> sm`
+- `SearchInput`
+  - `variant=\"default\"` should ride the same field-size contract as `Input`
+  - `variant=\"hero\"` is the only allowed search-shell exception
+
 ### Treat as product-bound components, not generic library foundations
 
 - `ResourceCard`

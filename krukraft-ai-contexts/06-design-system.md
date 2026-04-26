@@ -251,6 +251,14 @@ Use this order when DS docs disagree:
     Figma typography primitives; representative `DS Foundations` screenshots
     were rechecked after the family switch and the current typography/dropdown
     boards stayed stable without obvious line-wrap or layout regressions
+  - the control-size contract is now explicit too:
+    - typography size/line-height stays in typography variables
+    - `Button` size stays a component variant ladder (`xs`, `sm`, `md`, `lg`,
+      `icon`) with `comfortable -> md` and `compact -> sm`
+    - `Input` / field size stays a component variant ladder (`sm`, `md`, `lg`,
+      `field`) with `comfortable -> field` and `compact -> sm`
+    - `SearchInput variant=\"default\"` should follow the same field-size
+      contract as `Input`; only the hero variant may diverge
   - new canonical Figma work should now bind available tokens immediately by
     default; if a new node still needs a local override, that should be treated
     as an explicit token gap or trial condition, not as silent final-state
