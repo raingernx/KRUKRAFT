@@ -252,6 +252,10 @@ Use this order when DS docs disagree:
     primitive and a remapped `bg/surface` semantic alias; runtime token files
     still need a separate repo-side pass if code should adopt that new neutral
     value too
+  - the canonical Figma radius collection now also includes `radius/xs = 4px`
+    and the `Spacing + Radius / Primitives` board mirrors that addition; repo
+    runtime token files still do not expose `radius/xs`, so this is currently a
+    Figma-first token addition rather than a fully adopted code/runtime token
   - the tested light palette from `Theme Lab` frame `464:545` is now promoted
     into the live Figma primitive variables for `primary`, `Rust`, `Sand`,
     `neutral/*`, and `neutral/ink*`; dark-mode values remain unchanged
