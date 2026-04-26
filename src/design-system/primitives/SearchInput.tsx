@@ -5,9 +5,15 @@ import { Loader2, Search, X } from "@/lib/icons";
 
 import { cn } from "@/lib/utils";
 import {
+  fieldEndAdornmentWidthClassNames,
   fieldEndAdornmentClassName,
   fieldInputBaseClassName,
+  fieldStartAdornmentWidthClassNames,
   fieldStartAdornmentClassName,
+  getFieldControlSizeClassName,
+  resolveFieldControlSize,
+  type FieldControlDensity,
+  type FieldControlSize,
 } from "./fieldRecipe";
 
 export type SearchInputVariant = "default" | "hero";
@@ -15,6 +21,8 @@ export type SearchInputVariant = "default" | "hero";
 export interface SearchInputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
   variant?: SearchInputVariant;
+  size?: FieldControlSize;
+  density?: FieldControlDensity;
   loading?: boolean;
   onClear?: () => void;
   clearLabel?: string;
@@ -28,6 +36,8 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
   (
     {
       variant = "default",
+      size,
+      density = "comfortable",
       type = "search",
       loading = false,
       onClear,
@@ -48,6 +58,10 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
         : typeof value === "number"
           ? true
           : false;
+    const resolvedSize = resolveFieldControlSize(size, density);
+    const inputSizeClassName = getFieldControlSizeClassName(size, density);
+    const startAdornmentSizeClassName = fieldStartAdornmentWidthClassNames[resolvedSize];
+    const endAdornmentSizeClassName = fieldEndAdornmentWidthClassNames[resolvedSize];
 
     const searchIcon = startAdornment ?? (
       <Search
@@ -56,7 +70,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
           "pointer-events-none text-muted-foreground",
           variant === "hero"
             ? "h-full w-12 p-4 sm:w-14 sm:p-[18px]"
-            : "h-full p-3.5",
+            : cn(startAdornmentSizeClassName, "size-4"),
         )}
         aria-hidden
       />
@@ -73,7 +87,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
             "justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             variant === "hero"
               ? "w-12 rounded-xl p-4 sm:w-14 sm:p-[18px]"
-              : "p-3.5",
+              : endAdornmentSizeClassName,
           )}
         >
           <X className="h-4 w-4" />
@@ -87,7 +101,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
           "animate-spin text-muted-foreground",
           variant === "hero"
             ? "h-full w-12 p-4 sm:w-14 sm:p-[18px]"
-            : "h-full p-3.5",
+            : cn(endAdornmentSizeClassName, "size-4"),
         )}
       />
     ) : null;
@@ -115,7 +129,12 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
                 ]
               : [
                   fieldInputBaseClassName,
-                  "pl-11 pr-11",
+                  inputSizeClassName,
+                  resolvedSize === "sm"
+                    ? "pl-9 pr-9"
+                    : resolvedSize === "md"
+                      ? "pl-10 pr-10"
+                      : "pl-11 pr-11",
                 ],
             className,
           )}

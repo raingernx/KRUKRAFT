@@ -74,6 +74,18 @@ export const FoundationFamily: Story = {
   },
 };
 
+export const Sizes: Story = {
+  render: () => (
+    <div className="w-[560px] space-y-4 rounded-lg border border-border bg-card p-5">
+      <SearchInput placeholder="Search compact tools" density="compact" />
+      <SearchInput placeholder="Search resources" size="sm" />
+      <SearchInput placeholder="Search resources" size="md" />
+      <SearchInput placeholder="Search resources" size="lg" />
+      <SearchInput placeholder="Search resources" size="field" />
+    </div>
+  ),
+};
+
 export const WithAdornments: Story = {
   render: () => (
     <div className="w-[520px] space-y-4">

@@ -268,6 +268,12 @@ Use this order when DS docs disagree:
       `space/16`, caption-scale text)
     - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
       component sets for the shared field ladder
+  - runtime adoption has started too:
+    - the default `SearchInput` branch now resolves `size` / `density` through
+      the same field recipe as `Input`
+    - `SearchInput variant=\"hero\"` remains the one intentional exception
+      branch, while `loading`, `clear`, and `submitButton` now sit on top of
+      the shared default-field shell instead of a separate hardcoded search box
   - new canonical Figma work should now bind available tokens immediately by
     default; if a new node still needs a local override, that should be treated
     as an explicit token gap or trial condition, not as silent final-state
