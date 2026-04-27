@@ -263,6 +263,15 @@ Use this order when DS docs disagree:
     closely too:
     - `Button / Size` light/dark were rebuilt to include explicit
       `xs|sm|md|lg` coverage
+    - a 2026-04-27 re-audit of `Button / Foundations` confirmed that the
+      header, usage, states, size, and icon cards are all semantic-token-bound
+      at the section-shell level; the only local radius debt still visible
+      there is wrapper-only on the `Button / State` and `Button / Size`
+      component-set containers, and the dark board still has one subtitle line
+      that says `light recipe`
+    - that same button re-audit also confirmed a live adoption gap: canonical
+      Figma now changes `quiet` / `ghost` foreground emphasis by state more
+      explicitly than the current runtime `Button.tsx` recipe does
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared

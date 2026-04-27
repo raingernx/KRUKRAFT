@@ -169,6 +169,15 @@ Figma DS alignment
   - the current `Surface` block is intentionally not full token parity yet; the remaining narrow token gaps are explicit: no semantic `border/subtle`, no semantic `bg-muted`, no `radius/12` token, and no `space/20` token
   - the tested light palette in `Theme Lab` frame `464:545` is now promoted into the live Figma primitive variables for `primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`; dark-mode values were intentionally left unchanged
   - the tested dark palette in `Theme Lab` frame `477:479` is now promoted into the live Figma primitive variables for `primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`; the canonical dark primitives board mirrors those values too
+  - a detailed 2026-04-27 `Button / Foundations` re-audit now confirms that
+    the light/dark button boards are clean at the section-shell level, with
+    explicit semantic token usage across header, usage, state, size, and icon
+    cards; the remaining debt is narrow wrapper-only local radius on the
+    `Button / State` and `Button / Size` component-set containers plus one
+    dark-board subtitle line that still says `light recipe`
+  - that same button re-audit also records a live Figma-vs-runtime drift:
+    canonical `quiet` / `ghost` button states now express foreground changes by
+    state more explicitly than the current runtime `Button.tsx` contract does
   - a full-canvas audit now confirms the file has exactly two pages:
     `DS Foundations` and `Foundation Review`
   - `DS Foundations` is the actual token-bound base page with 15 top-level
@@ -369,6 +378,7 @@ Add only short, high-signal entries here.
 - 2026-04-26: The `Button` / `Input` size contract is now explicitly locked for Figma handoff: typography scale stays in variables, while control size stays in component variants (`Button`: `xs|sm|md|lg|icon`; fields: `sm|md|lg|field`) with the current density defaults carried forward from code.
 - 2026-04-26: The canonical Figma foundations now reflect that control-size contract more directly: `Button / Size` light/dark were rebuilt to include `xs|sm|md|lg`, while `Input` / `SearchInput` gained explicit light/dark `... / Size` component sets for the shared field ladder.
 - 2026-04-27: A detailed re-audit of the canonical `Input / Search` boards confirmed that `Input / State`, `SearchInput / State`, `Input / Size`, and `SearchInput / Size` now use `radius/sm (8px)` consistently across light and dark. Repo context is synced to that Figma truth; runtime code still carries the older larger comfortable-radius branch and should be treated as drift until adoption.
+- 2026-04-27: A detailed `Button / Foundations` re-audit confirmed that the light/dark boards stay semantically token-bound at the section-shell level; the remaining narrow debt is wrapper-only local radius on `Button / State` and `Button / Size`, plus one dark-board subtitle that still says `light recipe`. The same audit also logged a real design-vs-runtime gap: canonical Figma now uses more explicit `quiet` / `ghost` foreground shifts by state than the current runtime `Button.tsx` recipe exposes.
 - 2026-04-26: Runtime adoption has started on the shared search field too: the default `SearchInput` branch now resolves `size` / `density` through the same field recipe as `Input`, while `hero` remains the one intentional exception branch.
 - 2026-04-26: `Surface / Foundations / Light` (`573:143`) and `Surface / Foundations / Dark` (`573:182`) are now landed and screenshot-verified in the canonical file; each board now carries a `Surface / Variant / Source` block plus a hierarchy card, and the remaining gaps are explicit token gaps (`border/subtle`, `bg-muted`, `radius/12`, `space/20`) rather than silent local styling.
 - 2026-04-25: The reviewed light palette from `Theme Lab` frame `464:545` is now promoted into the canonical Figma primitive variables (`primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`) while dark-mode values and semantic alias chains stay unchanged.

@@ -134,6 +134,11 @@ When this file conflicts with code, the code wins.
   and `ghost` as the canonical family for new work.
 - `Button` should read as one pill-shaped family across sizes, icons, and
   disabled/loading states rather than separate button recipes per surface.
+- The canonical Figma `Button / Foundations` boards now go further than the
+  current runtime contract: light/dark state matrices explicitly choreograph
+  `quiet` / `ghost` foreground changes by state while keeping semantic shell
+  tokens clean. Until runtime adopts that behavior, treat the Figma board as
+  the source base and `Button.tsx` as the adoption gap.
 - `secondary` remains a compatibility alias for quiet-style usage, and
   `outline` remains available for legacy surfaces that still depend on
   explicit borders.
