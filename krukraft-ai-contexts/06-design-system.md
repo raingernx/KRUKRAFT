@@ -307,6 +307,26 @@ Use this order when DS docs disagree:
     (`primary/mist`, `primary/lift`, `primary/base`) so selected rows/chips can
     share a stable selected-surface contract without rebinding directly to raw
     primitives
+  - a full-canvas audit of the canonical Figma file was rerun on `2026-04-27`
+    and the repo context is now synced to that file as the base:
+    - the file currently has exactly two pages: `DS Foundations` and
+      `Foundation Review`
+    - `DS Foundations` is the true source page with 15 top-level section frames
+      for typography, colors, spacing/radius, `Button`, `Input / Search`,
+      `Card`, `Dropdown`, and `Surface`
+    - `Foundation Review` is review-only and should not be treated as a
+      reusable library source
+    - `DS Foundations` currently audits clean on paint bindings:
+      `633/633` text nodes have font-family binding, `633/633` text nodes have
+      text-fill binding, fills have no local drift, and strokes have no local
+      drift
+    - the remaining local styling debt is now narrow and explicit:
+      wrapper/study-scene radius values inside `Button`, `Input / Search`,
+      `Card`, `Dropdown`, and `Surface`, plus the already-known token gaps for
+      `Dropdown` and `Surface`
+    - `Foundation Review` still has text-fill binding but not font-family
+      binding on its current text nodes, so it should be treated as a review
+      artifact rather than a token-parity proof page
   - the next mandatory shared-library step after `Surface` is `Badge`, then
     `FormSection` / `DataPanelTable`
 

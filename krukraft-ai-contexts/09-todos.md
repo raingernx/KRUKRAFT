@@ -18,7 +18,7 @@ Parent Plan: `Figma DS alignment`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> The canonical Figma source file is now locked, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, `Card` and `Surface` are landed as the current shared-library shell proof points, `Dropdown` now has verified light/dark foundation study boards, and the supporting `state/selected-*` semantic trio is now present in the canonical file; the `Badge vs Chip` contract decision is now locked too, so the next mandatory step is continuing shared-library coverage with `Badge` first, then reopening composed shared chrome on top of the landed shell family
+> The canonical Figma source file is now locked and re-audited as the repo base, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, `Card` and `Surface` are landed as the current shared-library shell proof points, `Dropdown` now has verified light/dark foundation study boards, and the supporting `state/selected-*` semantic trio is now present in the canonical file; the `Badge vs Chip` contract decision is now locked too, so the next mandatory step is continuing shared-library coverage with `Badge` first, then reopening composed shared chrome on top of the landed shell family
 
 > [!todo] Next Up
 > Reopen shared-library coverage in impact order: `Badge`, `FormSection` / `DataPanelTable`, then the optional `Dropdown` component-set promotion decision
@@ -49,7 +49,7 @@ Parent Plan: `Figma DS alignment`
 ## Progress
 
 Figma DS alignment
-`[█████████░] 89%`
+`[█████████░] 90%`
 
 ```mermaid
 flowchart TB
@@ -169,6 +169,15 @@ Figma DS alignment
   - the current `Surface` block is intentionally not full token parity yet; the remaining narrow token gaps are explicit: no semantic `border/subtle`, no semantic `bg-muted`, no `radius/12` token, and no `space/20` token
   - the tested light palette in `Theme Lab` frame `464:545` is now promoted into the live Figma primitive variables for `primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`; dark-mode values were intentionally left unchanged
   - the tested dark palette in `Theme Lab` frame `477:479` is now promoted into the live Figma primitive variables for `primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`; the canonical dark primitives board mirrors those values too
+  - a full-canvas audit now confirms the file has exactly two pages:
+    `DS Foundations` and `Foundation Review`
+  - `DS Foundations` is the actual token-bound base page with 15 top-level
+    light/dark section frames and clean paint-binding posture
+  - `Foundation Review` is review-only: it mirrors text-fill bindings but its
+    current text nodes are not yet bound to the font-family variable, so it is
+    not the same kind of source page as `DS Foundations`
+  - registry drift was still present before the audit; the repo map now points
+    at the current live `Button` and `Card` component-set ids again
 - This plan must separate four classes of status cleanly:
   - `mapped and current`
   - `code exists, figma missing`
@@ -353,6 +362,7 @@ Add only short, high-signal entries here.
 - 2026-04-25: `Card` is now landed in the canonical file through `Card / Size` and `Card / Size / Dark`; it becomes the first shared-library shell proof point, so the next active slice is `Dropdown`, `Surface`, then `Badge`.
 - 2026-04-25: `Dropdown / Foundations / Light` (`499:110`) and `Dropdown / Foundations / Dark` (`499:181`) are now landed as verified study boards in the canonical file; reusable dropdown mapping remains pending, so the next active slice is `Surface`, then `Badge`.
 - 2026-04-27: The canonical Figma semantic layer now includes `state/selected-fill`, `state/selected-stroke`, and `state/selected-text`, aliased to `primary/mist`, `primary/lift`, and `primary/base` so selected rows, selected chips, and other selected surfaces can share a stable theme-aware state contract before `Badge` remapping resumes.
+- 2026-04-27: A full-canvas repo-sync audit of `koZEgVUfQhNEQmXISNQx56` is now landed; repo docs now reflect the actual two-page file (`DS Foundations` + `Foundation Review`), the live section inventory, the clean paint-binding posture of `DS Foundations`, the review-only status of `Foundation Review`, and the current live `Button` / `Card` component-set ids after earlier Figma rebuilds.
 - 2026-04-26: The canonical Figma radius collection now includes `radius/xs = 4px`, and the `Spacing + Radius / Primitives` board was expanded to six rows to keep the visual audit surface aligned with the variable truth; repo runtime tokens still do not expose `radius/xs` yet.
 - 2026-04-26: Text across `DS Foundations` now binds `font/family/base` by default; four glyph-only nodes were intentionally left on symbol-font rendering so carets/chevrons do not break during the typography-variable pass.
 - 2026-04-26: `font/family/base` in the canonical Figma file now points to `IBM Plex Sans Thai`; representative `DS Foundations` screenshots were rerun and the current typography plus dropdown boards remained visually stable after the family switch.

@@ -36,11 +36,57 @@ Validation:
 - File key: `koZEgVUfQhNEQmXISNQx56`
 - Workspace status: moved into the shared Team project, not kept in personal
   Drafts.
-- Canonical scope today: `DS Foundations` + `Foundation Review`
+- Canonical scope today: `DS Foundations` + `Foundation Review` (re-audited on
+  `2026-04-27`)
 - Migration note: the canonical file is now foundation-first. Until the
   inventory-diff pass remaps every row, some page names/node IDs below should be
   treated as legacy placeholders rather than verified live-node mappings in the
   new canonical file.
+
+## Canonical Page Audit
+
+Detailed file audit against the live canonical file `koZEgVUfQhNEQmXISNQx56`
+was rerun on `2026-04-27`. Use this section as the current page/section
+baseline when repo docs and older node claims disagree.
+
+### Page Inventory
+
+| Page | Page node | Top-level coverage | Binding posture | Notes |
+| --- | --- | --- | --- | --- |
+| `DS Foundations` | `13:20` | 15 top-level frames covering `Typography`, `Color Primitives`, `Spacing + Radius`, `Button`, `Input / Search`, `Card`, `Dropdown`, and `Surface` in light/dark pairs | page audit currently reports `633/633` text nodes with `font/family/base` binding, `633/633` text nodes with text-fill binding, `1057` bound fills with `0` local fills, and `261` bound strokes with `0` local strokes | this is the canonical build surface; remaining local styling debt is now mostly narrow radius gaps inside section study boards rather than broad token-binding drift |
+| `Foundation Review` | `371:29` | 1 top-level review frame: `Foundation Review / Light` (`371:30`) | page audit reports `47/47` text nodes with text-fill binding, but `0/47` text nodes bound to the font-family variable | keep this page as a review surface, not a reusable library source; it mirrors the visual system but is not yet fully typography-tokenized like `DS Foundations` |
+
+### Section Inventory
+
+| Page | Section node | Section | Audit status | Notes |
+| --- | --- | --- | --- | --- |
+| `DS Foundations` | `47:2` | `Typography / Light` | verified | fully token-bound for text, fill, stroke, and radius in the current audit |
+| `DS Foundations` | `2:1176` | `Typography / Dark` | verified | fully token-bound for text, fill, stroke, and radius in the current audit |
+| `DS Foundations` | `2:1269` | `Color Primitives / Light` | verified | fills, strokes, and displayed hex labels align with promoted light primitives |
+| `DS Foundations` | `158:177` | `Color Primitives / Dark` | verified | fills, strokes, and displayed hex labels align with promoted dark primitives |
+| `DS Foundations` | `147:2` | `Spacing + Radius / Primitives` | verified | includes `radius/xs` and remains fully token-bound in the current audit |
+| `DS Foundations` | `191:2` | `Button / Foundations / Light` | verified with narrow local radius debt | current audit still sees local radius on wrapper component-set containers such as `Button / State` and `Button / Size` |
+| `DS Foundations` | `294:29` | `Button / Foundations / Dark` | verified with narrow local radius debt | same wrapper-radius caveat as the light board |
+| `DS Foundations` | `315:56` | `Input / Search / Light` | verified with narrow local radius debt | current audit still sees local radius on the component-set wrapper containers |
+| `DS Foundations` | `360:2` | `Input / Search / Dark` | verified with narrow local radius debt | same wrapper-radius caveat as the light board |
+| `DS Foundations` | `439:110` | `Card / Foundations / Light` | verified with narrow local radius debt | current audit still sees local radius on the `Card / Size / Source` wrapper |
+| `DS Foundations` | `439:304` | `Card / Foundations / Dark` | verified with narrow local radius debt | same wrapper-radius caveat as the light board |
+| `DS Foundations` | `499:110` | `Dropdown / Foundations / Light` | verified with explicit token gaps | current audit still sees local radius on `context scene` (`20`), `menu row` (`12`), and `row calibration scene` (`20`) |
+| `DS Foundations` | `499:181` | `Dropdown / Foundations / Dark` | verified with explicit token gaps | same local-radius caveat as the light board |
+| `DS Foundations` | `573:143` | `Surface / Foundations / Light` | verified with explicit token gaps | current audit still sees local radius on `shell zone` (`20`) |
+| `DS Foundations` | `573:182` | `Surface / Foundations / Dark` | verified with explicit token gaps | same local-radius caveat as the light board |
+| `Foundation Review` | `371:30` | `Foundation Review / Light` | review-only | keep as a comparison board; it should not be treated as a reusable library source or a proof that every review text node already mirrors the canonical font-family variable |
+
+### Variable Collection Audit
+
+| Collection | Modes | Variable count | Current prefix groups |
+| --- | --- | --- | --- |
+| `Color / Primitives` | `Light`, `Dark` | 20 | `neutral` (8), `primary` (4), `accent` (8) |
+| `Color / Semantic` | `Light`, `Dark` | 22 | `bg` (4), `border` (1), `fg` (5), `action` (5), `focus` (1), `state` (6) |
+| `Typography / Primitives` | `Base` | 11 | `font` (3), `type` (8) |
+| `Typography / Semantic` | `Base` | 15 | `type` (15) |
+| `Spacing / Primitives` | `Base` | 9 | `space` (9) |
+| `Radius / Primitives` | `Mode 1` | 6 | `radius` (6) |
 
 ## Registry Rules
 
@@ -78,7 +124,7 @@ Validation:
 
 First-pass repo-vs-Figma diff against the canonical file
 `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`) as of
-`2026-04-25`.
+`2026-04-27`.
 
 This snapshot is the working migration ledger for the current
 `Inventory diff + docs drift` phase. Use it to distinguish current canonical
@@ -107,12 +153,12 @@ new file.
 
 | Figma page | Figma node | Figma component | Code path | Owner | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| `DS Foundations` | `260:486`, `553:167`, `553:192` | `Button` | `src/design-system/primitives/Button.tsx` | DS primitive | `mapped-manual` | Canonical file now verifies `Button / State` plus normalized light/dark `Button / Size` sets with `xs`, `sm`, `md`, and `lg`; `Button / Icon` remains the icon-only derivative companion. |
+| `DS Foundations` | `610:227`, `553:167`, `259:92`, `627:263`, `627:392`, `627:421` | `Button` | `src/design-system/primitives/Button.tsx` | DS primitive | `mapped-manual` | Canonical file now verifies light/dark `Button / State`, `Button / Size`, and `Button / Icon` sets; the 2026-04-27 audit replaced stale registry references to earlier `Button / State` ids and confirmed the current state/size/icon family is the live base. |
 | `not-built` | `not-built` | `Badge` | `src/design-system/primitives/Badge.tsx` | DS primitive | `pending-figma` | Older mapping came from the previous file; the canonical foundation-first file does not yet verify a current badge component. |
 | `DS Foundations` | `432:218`, `426:150`, `548:134`, `548:182` | `Input` | `src/design-system/primitives/Input.tsx` | DS primitive | `mapped-manual` | Canonical file now provides normalized light/dark `Input / State` and `Input / Size` sets; the state shells now match the comfortable runtime default (`field` height, `radius/lg`, `space/16`, caption-scale text), while the size ladder covers `sm`, `md`, `lg`, and `field`. |
 | `not-built` | `not-built` | `Select` | `src/design-system/primitives/Select.tsx` | DS primitive | `pending-figma` | Current canonical file does not yet verify a reusable select component. |
 | `not-built` | `not-built` | `Textarea` | `src/design-system/primitives/Textarea.tsx` | DS primitive | `pending-figma` | Current canonical file does not yet verify a reusable textarea component. |
-| `DS Foundations` | `439:303`, `439:497` | `Card` | `src/design-system/primitives/Card.tsx` | DS primitive | `mapped-manual` | Canonical file now provides first-pass light/dark `Card / Size` component sets with `size=default` and `size=sm`, plus dedicated `Card / Foundations` study boards for shell posture reference. |
+| `DS Foundations` | `439:303`, `426:444` | `Card` | `src/design-system/primitives/Card.tsx` | DS primitive | `mapped-manual` | Canonical file now provides first-pass light/dark `Card / Size / Source` component sets with `size=default` and `size=sm`, plus dedicated `Card / Foundations` study boards for shell posture reference. |
 | `not-built` | `not-built` | `Switch` | `src/design-system/primitives/Switch.tsx` | DS primitive | `pending-figma` | Current canonical file does not yet verify a reusable switch component. |
 | `DS Foundations` | `499:110`, `499:181` | `Dropdown` | `src/design-system/primitives/Dropdown.tsx` | DS primitive | `pending-figma` | Canonical file now contains verified `Dropdown / Foundations / Light` and `Dropdown / Foundations / Dark` study boards covering trigger context, open shell, selected row, submenu edge, and destructive row. Reusable component mapping is still pending a true component-set promotion. |
 | `not-built` | `not-built` | `Avatar` | `src/design-system/primitives/Avatar.tsx` | DS primitive | `pending-figma` | Current canonical file does not yet verify a reusable avatar component. |

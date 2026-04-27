@@ -195,6 +195,11 @@ When this file conflicts with code, the code wins.
 - `boneyard-js` is an optional capture workflow for generated skeletons under
   `src/bones`. It supplements the repo's loading/fallback parity rules; it does
   not replace route-owned loading, empty, or error-state design.
+- The canonical Figma file currently uses `DS Foundations` as the token-bound
+  base page and `Foundation Review` as a review-only comparison page. Do not
+  treat `Foundation Review` as a reusable library source or as proof that every
+  review node is bound to the same typography variables as the audited
+  foundations page.
 
 ## External Reference Alignment
 

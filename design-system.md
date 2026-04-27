@@ -255,9 +255,25 @@ At a high level:
 
 - the canonical Figma file is now `Krukraft Theme Lab Source-of-Truth`, not the
   older `Krukraft Design System` file previously referenced in repo docs
-- the current canonical file is foundation-first: it contains typography, color,
-  spacing/radius, `Button`, and `Input / Search` study coverage under
-  `DS Foundations`, plus a `Foundation Review` page
+- the current canonical file has two audited pages:
+  - `DS Foundations` (`13:20`) is the true base page and now holds 15
+    top-level light/dark section frames for typography, color primitives,
+    spacing/radius, `Button`, `Input / Search`, `Card`, `Dropdown`, and
+    `Surface`
+  - `Foundation Review` (`371:29`) is a review-only page with one current
+    top-level frame, not a reusable component library source
+- `DS Foundations` is now the stronger token-bound page:
+  - the latest audit found `633/633` text nodes bound to `font/family/base`
+  - `633/633` text nodes with text-fill binding
+  - `1057` bound fills and `261` bound strokes with no local paint drift
+  - the remaining local styling debt is narrow and explicit: mostly local
+    radius geometry inside wrapper frames or study scenes, not broad fill/stroke
+    drift
+- `Foundation Review` still behaves differently on purpose:
+  - its text fills are bound, but its current text nodes are not yet bound to
+    the font-family variable
+  - treat it as a comparison/review artifact, not as proof that the review page
+    is as tokenized as the foundations page
 - reusable-library coverage beyond that foundation slice is still in migration;
   treat `figma-component-map.md` as the status ledger for what is mapped,
   pending, or drifting rather than as proof that every older node ID has
