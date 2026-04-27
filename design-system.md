@@ -286,6 +286,11 @@ At a high level:
     runtime code still carries an older larger comfortable-radius branch, so
     treat the canonical Figma file as the base and the runtime recipe as drift
     until adoption happens
+  - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
+    debt on `Card / Size / Source`; the remaining card debt is now explicit and
+    narrow (`space/20`, `space/10`, and preview-stack polish), while runtime
+    `Card.tsx` has started adopting the same shell hierarchy by using
+    `surface` for the card root and `inset` for the footer band
 - `Foundation Review` still behaves differently on purpose:
   - its text fills are bound, but its current text nodes are not yet bound to
     the font-family variable

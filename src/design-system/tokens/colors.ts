@@ -8,6 +8,7 @@ const figmaPrimitives = {
   neutral: {
     canvas: "#F9F9F9",
     shell: "#F5F3F3",
+    surface: "#F8F7F8",
     inset: "#EFEBEA",
     line: "#E5E1DF",
     ink: "#352F2E",
@@ -15,6 +16,7 @@ const figmaPrimitives = {
     inkSubtle: "#ABA19C",
     canvasDark: "#121016",
     shellDark: "#1D1924",
+    surfaceDark: "#19171D",
     insetDark: "#19161F",
     lineDark: "#2C2832",
     inkDark: "#F2EBDD",
@@ -153,7 +155,7 @@ export const colorScales = {
 
 export const semanticColors = {
   background: figmaPrimitives.neutral.canvas,
-  surface: figmaPrimitives.neutral.shell,
+  surface: figmaPrimitives.neutral.surface,
   surfaceInset: figmaPrimitives.neutral.inset,
   border: figmaPrimitives.neutral.line,
   textPrimary: figmaPrimitives.neutral.ink,
@@ -197,6 +199,7 @@ export const themeColors = {
   light: {
     canvas: "0 0% 97.6%",
     shell: "0 9.1% 95.7%",
+    surface: "300 6.7% 97.1%",
     inset: "12 13.5% 92.7%",
     line: "20 10.3% 88.6%",
     ink: "8.6 7.1% 19.4%",
@@ -249,6 +252,7 @@ export const themeColors = {
   dark: {
     canvas: "260 15.8% 7.5%",
     shell: "261.8 18.0% 12.0%",
+    surface: "260 11.5% 10.2%",
     inset: "260 17.0% 10.4%",
     line: "264 11.1% 17.6%",
     ink: "40 44.7% 90.8%",

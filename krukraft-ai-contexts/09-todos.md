@@ -163,6 +163,13 @@ Figma DS alignment
   - the first repo-side doc drift pass is now closed enough to trust the registry again: stale `mapped-manual` claims from the older file were demoted to truthful `pending-figma` / `legacy` rows, and `Surface` now appears in the code inventory doc
   - the `Input` / `SearchInput` foundation parity pass is now landed in the canonical file via reusable light/dark component sets for the base field shell family
   - `Card` is now landed as the first shared-library shell block in the canonical file via `Card / Size` and `Card / Size / Dark`
+  - runtime `Card` adoption has now started too: the shared primitive renders
+    its root shell through `surface` and its footer through `inset`, matching
+    the current Figma card base more directly
+  - the `Card / Foundations` cleanup also removed wrapper-radius debt from
+    `Card / Size / Source`; the remaining card debt is explicit token-gap /
+    polish work (`space/20`, `space/10`, and preview-stack symmetry), not
+    silent wrapper styling drift
   - `Dropdown` now has verified `Dropdown / Foundations / Light` and `Dropdown / Foundations / Dark` study boards in the canonical file for trigger context, open shell, selected rows, submenu edges, and destructive rows
   - the canonical Figma file now contains a distinct `neutral/surface` primitive and `bg/surface` semantic alias, so `Surface` is no longer just a panel label inside the neutrals study board
   - `Surface` now has verified `Surface / Foundations / Light` and `Surface / Foundations / Dark` boards in the canonical file, each with a `Surface / Variant / Source` block and a dedicated hierarchy study card
@@ -379,6 +386,7 @@ Add only short, high-signal entries here.
 - 2026-04-26: The canonical Figma foundations now reflect that control-size contract more directly: `Button / Size` light/dark were rebuilt to include `xs|sm|md|lg`, while `Input` / `SearchInput` gained explicit light/dark `... / Size` component sets for the shared field ladder.
 - 2026-04-27: A detailed re-audit of the canonical `Input / Search` boards confirmed that `Input / State`, `SearchInput / State`, `Input / Size`, and `SearchInput / Size` now use `radius/sm (8px)` consistently across light and dark. Repo context is synced to that Figma truth; runtime code still carries the older larger comfortable-radius branch and should be treated as drift until adoption.
 - 2026-04-27: A detailed `Button / Foundations` re-audit confirmed that the light/dark boards stay semantically token-bound at the section-shell level; the remaining narrow debt is wrapper-only local radius on `Button / State` and `Button / Size`, plus one dark-board subtitle that still says `light recipe`. The same audit also logged a real design-vs-runtime gap: canonical Figma now uses more explicit `quiet` / `ghost` foreground shifts by state than the current runtime `Button.tsx` recipe exposes.
+- 2026-04-28: `Card` repo adoption has now started too: runtime `Card.tsx` uses `surface` for the root shell and `inset` for the footer band, and the canonical `Card / Size / Source` light/dark component sets no longer carry wrapper-radius debt after the latest Figma cleanup. Remaining card debt is now explicit token-gap / preview-polish work only.
 - 2026-04-26: Runtime adoption has started on the shared search field too: the default `SearchInput` branch now resolves `size` / `density` through the same field recipe as `Input`, while `hero` remains the one intentional exception branch.
 - 2026-04-26: `Surface / Foundations / Light` (`573:143`) and `Surface / Foundations / Dark` (`573:182`) are now landed and screenshot-verified in the canonical file; each board now carries a `Surface / Variant / Source` block plus a hierarchy card, and the remaining gaps are explicit token gaps (`border/subtle`, `bg-muted`, `radius/12`, `space/20`) rather than silent local styling.
 - 2026-04-25: The reviewed light palette from `Theme Lab` frame `464:545` is now promoted into the canonical Figma primitive variables (`primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`) while dark-mode values and semantic alias chains stay unchanged.

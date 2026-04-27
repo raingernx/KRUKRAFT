@@ -314,6 +314,14 @@ Use this order when DS docs disagree:
   - `Surface` is not full token parity yet; the current Figma-first token gaps
     are explicit and narrow: no semantic `border/subtle`, no semantic
     `bg-muted`, no `radius/12` token, and no `space/20` token
+  - `Card` now has its first repo-side adoption slice too: runtime
+    `src/design-system/primitives/Card.tsx` now renders the root shell through
+    `surface` and the footer through `inset`, matching the current Figma base
+    more directly
+  - the canonical `Card / Foundations` boards no longer carry wrapper-radius
+    debt on `Card / Size / Source`; the remaining card debt is explicit token
+    gap / polish territory (`space/20`, `space/10`, and preview-stack
+    symmetry)
   - the canonical Figma semantic layer now also carries
     `state/selected-fill`, `state/selected-stroke`, and
     `state/selected-text`, aliased to the primary emphasis ladder

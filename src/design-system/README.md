@@ -179,6 +179,14 @@ When this file conflicts with code, the code wins.
   search-shell geometry.
 - `RevealImage` is the shared image primitive for already-sized containers. Let
   the surrounding container own placeholder and background treatment.
+- `Card` is the calm generic shell card, not a product/marketplace card. The
+  current canonical Figma base treats the root shell as `surface` and the
+  footer band as `inset`, and runtime `Card.tsx` now follows that surface
+  hierarchy directly.
+- The canonical `Card / Foundations` boards no longer carry wrapper-radius debt
+  on `Card / Size / Source`; the remaining card board debt is explicit token-gap
+  territory (`space/20`, `space/10`, and preview-stack symmetry), not silent
+  wrapper styling drift.
 - Runtime route-level and Suspense-critical skeletons should stay visually
   neutral even when the resolved UI uses richer emphasis or recovery states.
 - Dark-shell selected rows and feedback chips should prefer theme-aware
