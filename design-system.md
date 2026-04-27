@@ -175,6 +175,11 @@ borders and selected states to one bright treatment:
 - `border-border` for chrome and structural boundaries
 - `border-border-strong` / `border-input` for controls
 - theme-aware emphasis surfaces for selected rows, chips, and feedback states
+- the canonical Figma semantic layer now carries
+  `state/selected-fill`, `state/selected-stroke`, and `state/selected-text` as
+  the default selected-surface family; use that trio instead of rebinding
+  selected UI directly to raw `primary/*` primitives or overloading
+  `action/*` / `focus/*` semantics
 
 Hero surfaces should use the hero semantic layer instead of pretending they are
 generic cards.

@@ -301,6 +301,12 @@ Use this order when DS docs disagree:
   - `Surface` is not full token parity yet; the current Figma-first token gaps
     are explicit and narrow: no semantic `border/subtle`, no semantic
     `bg-muted`, no `radius/12` token, and no `space/20` token
+  - the canonical Figma semantic layer now also carries
+    `state/selected-fill`, `state/selected-stroke`, and
+    `state/selected-text`, aliased to the primary emphasis ladder
+    (`primary/mist`, `primary/lift`, `primary/base`) so selected rows/chips can
+    share a stable selected-surface contract without rebinding directly to raw
+    primitives
   - the next mandatory shared-library step after `Surface` is `Badge`, then
     `FormSection` / `DataPanelTable`
 

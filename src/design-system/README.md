@@ -176,6 +176,12 @@ When this file conflicts with code, the code wins.
 - Dark-shell selected rows and feedback chips should prefer theme-aware
   emphasis surfaces such as `bg-accent + semantic border/text color` instead of
   fixed light-only `*-50` fills.
+- The canonical Figma semantic layer now includes
+  `state/selected-fill`, `state/selected-stroke`, and `state/selected-text`,
+  mapped to the primary emphasis ladder (`mist`, `lift`, `base`) for
+  selected rows, chips, and other selected surfaces. Use that family instead of
+  rebinding selected UI directly to raw `primary/*` primitives or action-state
+  tokens.
 - `Badge.featured` should follow the same rule when used on dark shells: keep
   the surface theme-aware and carry emphasis through border/text color.
 - `Badge` is the non-interactive semantic label primitive. Use it for status,

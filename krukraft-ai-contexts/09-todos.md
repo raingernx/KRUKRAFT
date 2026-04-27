@@ -18,7 +18,7 @@ Parent Plan: `Figma DS alignment`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> The canonical Figma source file is now locked, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, `Card` and `Surface` are landed as the current shared-library shell proof points, and `Dropdown` now has verified light/dark foundation study boards; the `Badge vs Chip` contract decision is now locked too, so the next mandatory step is continuing shared-library coverage with `Badge` first, then reopening composed shared chrome on top of the landed shell family
+> The canonical Figma source file is now locked, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, `Card` and `Surface` are landed as the current shared-library shell proof points, `Dropdown` now has verified light/dark foundation study boards, and the supporting `state/selected-*` semantic trio is now present in the canonical file; the `Badge vs Chip` contract decision is now locked too, so the next mandatory step is continuing shared-library coverage with `Badge` first, then reopening composed shared chrome on top of the landed shell family
 
 > [!todo] Next Up
 > Reopen shared-library coverage in impact order: `Badge`, `FormSection` / `DataPanelTable`, then the optional `Dropdown` component-set promotion decision
@@ -49,7 +49,7 @@ Parent Plan: `Figma DS alignment`
 ## Progress
 
 Figma DS alignment
-`[█████████░] 88%`
+`[█████████░] 89%`
 
 ```mermaid
 flowchart TB
@@ -352,6 +352,7 @@ Add only short, high-signal entries here.
 - 2026-04-25: `Badge` is now explicitly part of the shared-library mapping pass too; it should be remapped in Figma as the non-interactive label primitive before the new `Chip` surface expands.
 - 2026-04-25: `Card` is now landed in the canonical file through `Card / Size` and `Card / Size / Dark`; it becomes the first shared-library shell proof point, so the next active slice is `Dropdown`, `Surface`, then `Badge`.
 - 2026-04-25: `Dropdown / Foundations / Light` (`499:110`) and `Dropdown / Foundations / Dark` (`499:181`) are now landed as verified study boards in the canonical file; reusable dropdown mapping remains pending, so the next active slice is `Surface`, then `Badge`.
+- 2026-04-27: The canonical Figma semantic layer now includes `state/selected-fill`, `state/selected-stroke`, and `state/selected-text`, aliased to `primary/mist`, `primary/lift`, and `primary/base` so selected rows, selected chips, and other selected surfaces can share a stable theme-aware state contract before `Badge` remapping resumes.
 - 2026-04-26: The canonical Figma radius collection now includes `radius/xs = 4px`, and the `Spacing + Radius / Primitives` board was expanded to six rows to keep the visual audit surface aligned with the variable truth; repo runtime tokens still do not expose `radius/xs` yet.
 - 2026-04-26: Text across `DS Foundations` now binds `font/family/base` by default; four glyph-only nodes were intentionally left on symbol-font rendering so carets/chevrons do not break during the typography-variable pass.
 - 2026-04-26: `font/family/base` in the canonical Figma file now points to `IBM Plex Sans Thai`; representative `DS Foundations` screenshots were rerun and the current typography plus dropdown boards remained visually stable after the family switch.
