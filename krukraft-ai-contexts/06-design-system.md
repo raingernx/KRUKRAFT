@@ -263,11 +263,15 @@ Use this order when DS docs disagree:
     closely too:
     - `Button / Size` light/dark were rebuilt to include explicit
       `xs|sm|md|lg` coverage
-    - `Input / State` and `SearchInput / State` light/dark now use the
-      comfortable default shell posture from code (`field` height, `radius/lg`,
-      `space/16`, caption-scale text)
+    - `Input / State`, `SearchInput / State`, `Input / Size`, and
+      `SearchInput / Size` were re-audited on 2026-04-27 and now use
+      `radius/sm (8px)` consistently across light/dark while keeping the shared
+      `field` height ladder, `space/16`, and caption-scale text
     - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
       component sets for the shared field ladder
+    - runtime code still carries an older larger comfortable-radius branch for
+      field shells, so the live canonical Figma file should be treated as the
+      approved base until the repo adopts that change
   - runtime adoption has started too:
     - the default `SearchInput` branch now resolves `size` / `density` through
       the same field recipe as `Input`

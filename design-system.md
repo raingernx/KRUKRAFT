@@ -269,6 +269,12 @@ At a high level:
   - the remaining local styling debt is narrow and explicit: mostly local
     radius geometry inside wrapper frames or study scenes, not broad fill/stroke
     drift
+  - the latest `Input / Search` re-audit also confirmed that both
+    `Input / State` / `SearchInput / State` and `Input / Size` /
+    `SearchInput / Size` now use `radius/sm = 8px` across light and dark; repo
+    runtime code still carries an older larger comfortable-radius branch, so
+    treat the canonical Figma file as the base and the runtime recipe as drift
+    until adoption happens
 - `Foundation Review` still behaves differently on purpose:
   - its text fills are bound, but its current text nodes are not yet bound to
     the font-family variable

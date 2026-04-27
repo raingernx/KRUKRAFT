@@ -162,9 +162,12 @@ When this file conflicts with code, the code wins.
   - `md`: `h-10`, `px-4`
   - `lg`: `h-12`, `px-4`
   - `field`: `h-14`, `px-4`
-  - comfortable density uses the calmer larger radius posture
-  - compact density keeps the same height ladder but drops to the tighter
+  - the canonical Figma base now uses `radius/sm (8px)` across `Input` and
+    `SearchInput` state + size sets instead of a split comfortable/compact
     radius posture
+  - current runtime code still resolves comfortable `md|lg|field` to a larger
+    radius branch; treat that as a repo adoption gap, not as the approved Figma
+    contract
   - default resolution: `comfortable -> field`, `compact -> sm`
 - `SearchInput variant=\"default\"` should inherit the same field-size ladder as
   `Input`; only the hero variant is allowed to diverge into its own larger
