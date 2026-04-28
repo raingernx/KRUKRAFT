@@ -279,6 +279,14 @@ Use this order when DS docs disagree:
       - it is not a canonical `ghost` recipe change yet
       - runtime should stay on the locked button-size contract until a separate
         button-ladder decision lands
+      - the first impact audit says a future promotion should likely trial
+        `xs=32 / sm=36 / md=40 / lg=48`, keep
+        `density=\"compact\" -> xs` during the first runtime proof, and leave
+        `Input` / `SearchInput` on the existing field ladder for now
+      - that same audit found the real runtime blast radius is concentrated in
+        `dashboard` (~60 `size=\"sm\"` button usages) and `admin` (~34), while
+        live `density=\"compact\"` usage is still narrow (`public-resources`
+        3, `creator` 1)
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared

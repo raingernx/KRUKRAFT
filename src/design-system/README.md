@@ -176,6 +176,15 @@ When this file conflicts with code, the code wins.
   intentionally not part of that `Button` ladder yet. Treat it as a
   Figma-first candidate for a future size-contract decision, not as a silent
   DS contract change.
+- If the button ladder is deliberately reopened later, the current recommended
+  promotion path is:
+  - keep `xs = 32`
+  - test `sm = 36`
+  - keep `md = 40`
+  - keep `lg = 48`
+  - keep `density=\"compact\" -> xs` during the first rollout proof instead of
+    silently moving compact buttons to `36px`
+  - do not drag `Input` / `SearchInput` into that rollout by default
 - `Input` / default-field size contract for Figma and code should stay:
   - `sm`: `h-8`, `px-3`
   - `md`: `h-10`, `px-4`

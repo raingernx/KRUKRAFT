@@ -108,6 +108,10 @@ Current runtime contract to mirror:
   Figma-first candidate until a deliberate button-size pass decides whether
   `sm` should move to `36px` or whether that posture should stay local to a
   composed shell.
+- If that button-size pass is reopened, the current recommended path is to
+  trial `xs=32 / sm=36 / md=40 / lg=48`, keep `density=\"compact\" -> xs`
+  during the first rollout proof, and leave `Input` / `SearchInput` on the
+  existing field ladder until button impact is proven separately.
 - `Input` / field family
   - `sm`: `h-8`, `px-3`
   - `md`: `h-10`, `px-4`
