@@ -250,6 +250,16 @@ For reusable Figma component sets:
   `736:206` id from the first landing pass.
 - Do not solve interactive chip needs by adding more `Badge` variants just
   because the silhouette is similar.
+- The canonical Figma `FormSection` base now lives in
+  `FormSection / Foundations / Light` and `FormSection / Foundations / Dark`,
+  with source sets that cover only `variant=flat` and `variant=card`.
+- Keep `flat` as the default divider-first settings/admin section shell and
+  reserve `card` for clearly bounded secondary sections that intentionally sit
+  on top of the `Card` + `Surface` family.
+- The current canonical `FormSection` board keeps its runtime geometry gaps
+  explicit instead of inventing fake tokens: `16/20` section-title rhythm,
+  `20px` card padding, the `6px` flat-header gap, and the missing
+  `border/subtle` semantic are all still follow-up token work.
 
 ## Figma Implementation Fidelity Workflow
 

@@ -125,6 +125,16 @@ When this file conflicts with code, the code wins.
   route-owned.
 - `FormSection` is the canonical settings/admin form layout helper. Prefer its
   default `flat` variant before introducing nested cards.
+- The canonical Figma `FormSection` base now lives in dedicated light/dark
+  `FormSection / Foundations` boards, with source sets that cover only
+  `variant=flat` and `variant=card`.
+- Keep `FormSection.flat` as the default stacked settings/admin section shell;
+  use `FormSection.card` only when the section genuinely needs a bounded
+  secondary shell with a footer action area.
+- The current Figma `FormSection` source set records explicit token gaps rather
+  than hiding them: runtime `16/20` section-title rhythm, `20px` card padding,
+  the `6px` flat-header gap, and the missing `border/subtle` semantic still sit
+  outside the current canonical token scales.
 - `LoadingSkeleton` is the canonical skeleton primitive. Placeholders should
   stay neutral and use no more than three tones on a single surface.
 

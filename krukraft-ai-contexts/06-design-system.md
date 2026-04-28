@@ -393,8 +393,20 @@ Use this order when DS docs disagree:
       binding on its current text nodes, so it should be treated as a review
       artifact rather than a token-parity proof page
   - with `Badge` now landed as the next shared-library proof point after
-    `Surface`, the next mandatory shared-library step is reopening
+    `Surface`, the next mandatory shared-library step was reopening
     `FormSection` / `DataPanelTable`
+  - `FormSection` is now landed in the canonical file too through dedicated
+    `FormSection / Foundations / Light` and `FormSection / Foundations / Dark`
+    boards plus `FormSection / Variant / Source` light/dark sets
+  - that `FormSection` source set intentionally stays narrow to the runtime
+    contract: `flat` for divider-first settings/admin sections, `card` for
+    bounded secondary shells
+  - explicit token gaps are now recorded on the board instead of hidden:
+    runtime `16/20` section-title rhythm, `20px` card padding, the `6px`
+    flat-header gap, and the missing `border/subtle` semantic still sit
+    outside the current canonical token scales
+  - with `FormSection` now landed, the next mandatory shared-library step is
+    `DataPanelTable`, then the optional `Dropdown` promotion decision
 
 ## Verification Pointers
 

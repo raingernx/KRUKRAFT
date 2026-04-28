@@ -18,10 +18,10 @@ Parent Plan: `Figma DS alignment`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> The canonical Figma source file is now locked and re-audited as the repo base, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, the 2026-04-27 field-shell re-audit confirmed that canonical `Input` and `SearchInput` state + size sets now use `radius/sm (8px)` across light/dark, `Card`, `Surface`, and `Badge` are landed as the current shared-library proof points, `Dropdown` now has verified light/dark foundation study boards, and the supporting `state/selected-*` semantic trio is now present in the canonical file; `Badge vs Chip` is still locked, but the next mandatory step has now moved up a layer to reopening composed shared chrome on top of the landed shell family
+> The canonical Figma source file is now locked and re-audited as the repo base, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, the 2026-04-27 field-shell re-audit confirmed that canonical `Input` and `SearchInput` state + size sets now use `radius/sm (8px)` across light/dark, `Card`, `Surface`, `Badge`, and now `FormSection` are landed as the current shared-library proof points, `Dropdown` now has verified light/dark foundation study boards, and the supporting `state/selected-*` semantic trio is now present in the canonical file; `Badge vs Chip` is still locked, but the next mandatory step has now moved up a layer to `DataPanelTable` and shared-library close-out work on top of the landed shell family
 
 > [!todo] Next Up
-> Reopen shared-library coverage in impact order: `FormSection` / `DataPanelTable`, then the optional `Dropdown` component-set promotion decision, then a close-out audit of the shared-library pass
+> Reopen shared-library coverage in impact order: `DataPanelTable`, then the optional `Dropdown` component-set promotion decision, then a close-out audit of the shared-library pass
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and hero-search cleanup plan are complete; this new plan is a documentation/alignment pass that should not silently reopen runtime route work.
@@ -261,7 +261,7 @@ Lock one canonical Figma source of truth, align repo-side DS references with rea
 | 0 | Canonical source lock | done | `koZEgVUfQhNEQmXISNQx56` is now the canonical DS source-of-truth file and repo references must follow it |
 | 1 | Inventory diff + docs drift pass | done | canonical-file snapshot landed, stale mapping claims were downgraded, and obvious inventory drift was corrected |
 | 2 | Foundation parity pass | done | `Input / State` and `SearchInput / State` light/dark component sets now exist in the canonical file as first-pass reusable foundations |
-| 3 | Shared DS library mapping pass | in progress | `Card`, `Surface`, and `Badge` are now landed as reusable proof points; reopen composed shared chrome next, then decide whether `Dropdown` is promoted from study board to mapped component set before close-out |
+| 3 | Shared DS library mapping pass | in progress | `Card`, `Surface`, `Badge`, and now `FormSection` are landed as reusable proof points; finish `DataPanelTable` next, then decide whether `Dropdown` is promoted from study board to mapped component set before close-out |
 | 4 | Product exemplar + verification close-out | pending | treat product-bound exports separately, then close the alignment plan with updated references/checks |
 
 ---
@@ -299,7 +299,8 @@ Current recommendation order:
 
 ## Next Up
 
-- [ ] Reopen `FormSection` and `DataPanelTable` on top of the landed `Surface` and `Badge` shell family
+- [x] Reopen `FormSection` on top of the landed `Surface` and `Badge` shell family
+- [ ] Reopen `DataPanelTable` on top of the landed `Surface`, `Badge`, and `FormSection` shell family
 - [ ] Decide whether `Dropdown` stays a study-board reference or is promoted into a reusable component-set mapping during shared-library close-out
 - [ ] Run the shared-library close-out audit once `FormSection` / `DataPanelTable` and the `Dropdown` promotion decision are resolved
 
@@ -406,6 +407,7 @@ Add only short, high-signal entries here.
 - 2026-04-27: The canonical Figma semantic layer now includes `state/selected-fill`, `state/selected-stroke`, and `state/selected-text`, aliased to `primary/mist`, `primary/lift`, and `primary/base` so selected rows, selected chips, and other selected surfaces can share a stable theme-aware state contract before `Badge` remapping resumes.
 - 2026-04-28: `Badge / Foundations / Light` (`736:156`) and `Badge / Foundations / Dark` (`736:184`) are now landed as canonical boards, with `Badge / Variant / Source` (`736:178`) and the current dark source set (`746:208`) as the live reusable sets. The canonical set stays non-interactive, covers `neutral`, `info`, `success`, `warning`, `featured`, `destructive`, and `outline`, and records one explicit token gap: badge labels still rely on a local `12/16` xs recipe until the typography scale grows an xs label token.
 - 2026-04-28: The follow-up badge tuning now keeps the warm semantics intentionally split in the canonical file: `warning` stays crisp on `bg/inset` via `support/warning/base|dust`, while `featured` uses `accent/sand/wash` fill plus `accent/sand/base` border/text so it reads as an editorial highlight instead of a second warning-like badge.
+- 2026-04-28: `FormSection / Foundations / Light` (`759:156`) and `FormSection / Foundations / Dark` (`759:184`) are now landed as canonical boards, with `FormSection / Variant / Source` light/dark sets (`759:251`, `759:252`) covering `variant=flat|card`. The board keeps its runtime geometry gaps explicit: `16/20` section-title rhythm, `20px` card padding, the `6px` flat-header gap, and the missing `border/subtle` semantic still sit outside the current token scales.
 - 2026-04-27: A full-canvas repo-sync audit of `koZEgVUfQhNEQmXISNQx56` is now landed; repo docs now reflect the actual two-page file (`DS Foundations` + `Foundation Review`), the live section inventory, the clean paint-binding posture of `DS Foundations`, the review-only status of `Foundation Review`, and the current live `Button` / `Card` component-set ids after earlier Figma rebuilds.
 - 2026-04-26: The canonical Figma radius collection now includes `radius/xs = 4px`, and the `Spacing + Radius / Primitives` board was expanded to six rows to keep the visual audit surface aligned with the variable truth; repo runtime tokens still do not expose `radius/xs` yet.
 - 2026-04-26: Text across `DS Foundations` now binds `font/family/base` by default; four glyph-only nodes were intentionally left on symbol-font rendering so carets/chevrons do not break during the typography-variable pass.
