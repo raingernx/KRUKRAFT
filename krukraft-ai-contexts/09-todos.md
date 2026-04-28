@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Figma DS section audit`
 
 > [!info] Current Phase
-> `Phase 5 — review + repo close-out`
+> `Plan complete`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -17,11 +17,11 @@ Parent Plan: `Figma DS section audit`
 > Dashboard-v2 stabilization remains frozen
 > Public marketplace perf baseline remains intact
 
-> [!warning] Active
-> Open a new audit-only parent plan that re-checks the canonical Figma DS file against the repo one section family at a time. The goal is not to invent new DS work, but to verify section truth, variable usage, mapping posture, and repo-context parity in a tighter phased order than the previous broad alignment pass.
+> [!success] Complete
+> The audit-only parent plan that re-checked the canonical Figma DS file against the repo one section family at a time is now closed. Its scope stayed inside section truth, variable usage, mapping posture, and repo-context parity without reopening runtime redesign work.
 
 > [!todo] Next Up
-> Run `Foundation Review` + repo close-out for the finished section-audit plan.
+> This parent plan is complete. Wait for an explicit new plan or reprioritization before starting additional DS work.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and hero-search cleanup plan are complete; this new plan is a documentation/alignment pass that should not silently reopen runtime route work.
@@ -37,7 +37,7 @@ Parent Plan: `Figma DS section audit`
 | Discover         | Frozen   | `/resources` listing-mode shell + fail-soft states landed and passed close-out audit    |
 | Theme Refresh    | Complete | brief, playbook, Figma review page, approved surface baseline, cleanup slice, and first runtime slices all passed close-out audit |
 | Figma DS Alignment | Complete | canonical Figma source, repo registry, and DS inventory are now aligned enough to close the previous alignment plan; use it as the baseline for this narrower re-audit |
-| Figma DS Section Audit | Active | section-by-section verification pass for the canonical Figma DS file against repo docs, token contracts, and mapped component truth |
+| Figma DS Section Audit | Complete | section-by-section verification pass for the canonical Figma DS file against repo docs, token contracts, and mapped component truth closed cleanly after the Foundation Review + repo close-out audit |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -50,7 +50,7 @@ Parent Plan: `Figma DS section audit`
 ## Progress
 
 Figma DS section audit
-`[██████████] 95%`
+`[██████████] 100%`
 
 ```mermaid
 flowchart TB
@@ -101,8 +101,8 @@ flowchart TB
     A1["Foundations audit<br/>Typography, Color, Spacing + Radius<br/>Done"]
     A2["Control audit<br/>Button, Input / Search<br/>Done"]
     A3["Shell audit<br/>Card, Dropdown, Surface<br/>Done"]
-    A4["Shared component audit<br/>Badge, FormSection, DataPanelTable<br/>In progress"]
-    A5["Repo sync + close-out<br/>Review page, map, context, tracker"]
+    A4["Shared component audit<br/>Badge, FormSection, DataPanelTable<br/>Done"]
+    A5["Repo sync + close-out<br/>Review page, map, context, tracker<br/>Done"]
   end
 
   D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> A0 --> A1 --> A2 --> A3 --> A4 --> A5
@@ -204,15 +204,15 @@ time and produce an explicit, current parity read on:
       against primitive variables, support colors, and displayed board labels
 - [ ] `Spacing + Radius / Primitives` is checked against the live variable
       collection and repo token docs
-- [ ] `Button`, `Input / Search`, `Card`, `Dropdown`, `Surface`, `Badge`,
+- [x] `Button`, `Input / Search`, `Card`, `Dropdown`, `Surface`, `Badge`,
       `FormSection`, and `DataPanelTable` each have a fresh audit result and
       repo-context sync where needed
-- [ ] `Foundation Review` is checked separately as a review artifact, not
+- [x] `Foundation Review` is checked separately as a review artifact, not
       confused with `DS Foundations` source truth
-- [ ] `figma-component-map.md`, `src/design-system/README.md`,
+- [x] `figma-component-map.md`, `src/design-system/README.md`,
       `design-system.md`, `06-design-system.md`, and `09-todos.md` are synced
       whenever a section audit changes shared understanding
-- [ ] The plan closes with one final close-out audit that stays inside this
+- [x] The plan closes with one final close-out audit that stays inside this
       section-audit scope
 
 ### Phase Map
@@ -224,7 +224,7 @@ time and produce an explicit, current parity read on:
 | 2 | Control audit | complete | `Button` and `Input / Search` foundations, recipes, size/state boards, and repo mappings are re-audited against live Figma truth |
 | 3 | Shell audit | complete | `Card`, `Dropdown`, and `Surface` are re-audited as the shared shell layer |
 | 4 | Shared component audit | complete | `Badge`, `FormSection`, and `DataPanelTable` are re-audited against current repo truth |
-| 5 | Review + repo close-out | in progress | audit `Foundation Review`, sync repo references, run checks, and close the plan |
+| 5 | Review + repo close-out | complete | `Foundation Review` was re-audited as a review-only artifact, repo references stayed aligned, and the plan closed without reopening section scope |
 
 ---
 
@@ -261,7 +261,8 @@ Audit order for this plan:
 - [x] Audit `Badge / Foundations / Light` and `Badge / Foundations / Dark`
 - [x] Audit `FormSection / Foundations / Light` and `FormSection / Foundations / Dark`
 - [x] Audit `DataPanelTable / Foundations / Light` and `DataPanelTable / Foundations / Dark`
-- [ ] Start Phase 5 with `Foundation Review` + repo close-out
+- [x] Start Phase 5 with `Foundation Review` + repo close-out
+- [x] Complete `Foundation Review` + repo close-out
 
 ---
 
@@ -270,7 +271,7 @@ Audit order for this plan:
 - [x] Audit `Badge / Foundations / Light` and `Badge / Foundations / Dark`
 - [x] Audit `FormSection / Foundations / Light` and `FormSection / Foundations / Dark`
 - [x] Audit `DataPanelTable / Foundations / Light` and `DataPanelTable / Foundations / Dark`
-- [ ] Run `Foundation Review` + repo close-out after the shared-component slice lands
+- [x] Run `Foundation Review` + repo close-out after the shared-component slice lands
 
 ---
 
@@ -374,6 +375,7 @@ Add only short, high-signal entries here.
 - 2026-04-28: Phase 4 has now started with `Badge / Foundations`. A fresh shared-component re-audit confirms the light/dark boards stay fully bound for font family, text fill, and all painted fills/strokes, and the `warning` / `featured` split still matches the tuned canonical recipe. The remaining live badge debt is explicit instead of broad: the seven badge labels still use local `12/16` xs type recipes, and the light/dark source-set wrapper frames keep local `cornerRadius=5`.
 - 2026-04-28: Phase 4 is now moving through `FormSection / Foundations`. A fresh shared-component re-audit confirms both light/dark boards stay fully bound for all `24/24` text nodes across font family and text fill plus all painted fills/strokes, and there is no local radius debt. The remaining live gaps are explicit geometry/type gaps instead: local `16/20` section titles, local `14/20` field labels, local `20px` card padding, the local `6px` flat-header gap, and divider/footer separators that still rely on `border/default` until a dedicated `border/subtle` semantic exists. The repo registry also needed the current dark source-set id `746:275`.
 - 2026-04-28: Phase 4 now closes its section audits with `DataPanelTable / Foundations`. A fresh shared-component re-audit confirms the live light/dark boards still keep all painted strokes bound and narrow their true drift to explicit Figma-only gaps: the two `Showing latest 2 entries` footer-note copies are still fully local, the current dark source set now lives at `873:1766`, the light/dark source-set wrapper frames still keep local `cornerRadius=5`, and the shell copy itself still relies on local type recipes (`16/20` titles, `14/20` descriptions/columns/row copy, inherited `12/16` badge labels) while runtime still asks for `border-subtle` and route-owned table-head fills.
+- 2026-04-28: Phase 5 close-out audit is now complete. `Foundation Review` still behaves as a review-only artifact under `371:29` / `371:30`: all `47/47` text nodes keep text-fill binding, `0/47` bind the font-family variable, and all painted fills/strokes remain bound. No material repo drift or in-scope omission remained after the final section audits, so `Figma DS section audit` closes at `100%` without reopening any section family.
 - 2026-04-25: Active plan changed from the completed marketplace hero-search cleanup to `Figma DS alignment`; start by locking the canonical Figma source file and producing a repo-vs-Figma inventory diff before any new parity claim.
 - 2026-04-25: `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`) is now the permanent canonical Figma DS source file; repo references and coverage docs must be migrated to that foundation-first source.
 - 2026-04-25: The first repo-side doc drift pass is complete; stale mapping claims from the previous Figma file were downgraded, so the next active slice is `Input` / `SearchInput` foundation parity.
