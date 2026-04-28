@@ -399,8 +399,8 @@ Use this order when DS docs disagree:
     - the 2026-04-28 support-palette follow-up now surfaces those same support
       primitives directly on `Color Primitives / Light` and
       `Color Primitives / Dark` through dedicated `Success` and `Warning`
-      cards, so the canonical palette boards and the variable collections no
-      longer drift apart on status-color visibility
+      cards, and the support family now extends to `base / dust / soft` in the
+      canonical primitive collection instead of stopping at two status steps
     - the 2026-04-28 badge follow-up tuning now keeps `warning` and
       `featured` intentionally distinct in the canonical base:
       `warning` stays crisp on `bg/inset` through
