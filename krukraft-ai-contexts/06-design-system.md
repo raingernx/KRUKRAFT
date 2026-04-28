@@ -396,6 +396,11 @@ Use this order when DS docs disagree:
       primitives for `support/success/*` and `support/warning/*`, used to keep
       status labels token-bound without reopening the locked primary/rust/sand
       posture
+    - the 2026-04-28 support-palette follow-up now surfaces those same support
+      primitives directly on `Color Primitives / Light` and
+      `Color Primitives / Dark` through dedicated `Success` and `Warning`
+      cards, so the canonical palette boards and the variable collections no
+      longer drift apart on status-color visibility
     - the 2026-04-28 badge follow-up tuning now keeps `warning` and
       `featured` intentionally distinct in the canonical base:
       `warning` stays crisp on `bg/inset` through
