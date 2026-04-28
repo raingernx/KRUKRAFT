@@ -243,6 +243,12 @@ Use this order when DS docs disagree:
     now landed as verified study boards in the canonical file; they are
     foundation evidence for popover shell posture, not a final reusable
     component mapping yet
+  - the 2026-04-28 shell re-audit tightened the `Dropdown` truth too: both
+    light/dark study boards stay fully bound for all `23/23` text nodes across
+    font family, font size, line height, and text fill, and all painted
+    fills/strokes are token-bound; the remaining Figma-only debt is just the
+    intentional local radius on the `context scene` / `row calibration scene`
+    containers (`20`) plus the default/unselected `menu row` shells (`12`)
   - text across `DS Foundations` now binds to the `font/family/base` variable
     by default; four glyph-only nodes remain intentional exceptions on the page
     because they still rely on symbol-font characters such as carets and

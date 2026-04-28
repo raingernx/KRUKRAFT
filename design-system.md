@@ -385,6 +385,19 @@ At a high level:
       `space/10`, and the preview-stack arrangement
   - runtime `Card.tsx` has started adopting the same shell hierarchy by using
     `surface` for the card root and `inset` for the footer band
+  - the latest `Dropdown / Foundations` shell re-audit also confirms that both
+    light/dark study boards stay fully bound for all `23/23` text nodes across
+    font family, font size, line height, and text fill, and all painted
+    fills/strokes on those boards remain token-bound too
+  - the remaining dropdown debt is now explicit and narrow instead of a broad
+    shell-token concern:
+    - the study containers `context scene` and `row calibration scene` still
+      use local `20` radius
+    - the default/unselected `menu row` shells still use local `12` radius
+  - `Dropdown` still stays a verified study-board reference rather than a
+    reusable component-set mapping; the current shell audit should not be read
+    as proof that canonical dropdown variants or prop-driven component sets
+    already exist in the file
   - runtime token semantics now mirror that same split more broadly too:
     `bg-card` resolves to the `surface` layer, while shared chrome that should
     remain on the calmer outer shell must opt into `bg-shell` explicitly
