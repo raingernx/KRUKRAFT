@@ -172,6 +172,10 @@ When this file conflicts with code, the code wins.
   - `lg`: `h-12`, `px-8`, body/sm text
   - `icon`: square icon affordance only, not a text-button recipe
   - default resolution: `comfortable -> md`, `compact -> sm`
+- The `36px` ghost-action explored inside the canonical `FormSection` board is
+  intentionally not part of that `Button` ladder yet. Treat it as a
+  Figma-first candidate for a future size-contract decision, not as a silent
+  DS contract change.
 - `Input` / default-field size contract for Figma and code should stay:
   - `sm`: `h-8`, `px-3`
   - `md`: `h-10`, `px-4`

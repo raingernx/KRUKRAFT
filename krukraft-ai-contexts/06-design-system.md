@@ -272,6 +272,13 @@ Use this order when DS docs disagree:
     - that same button re-audit also confirmed a live adoption gap: canonical
       Figma now changes `quiet` / `ghost` foreground emphasis by state more
       explicitly than the current runtime `Button.tsx` recipe does
+    - a 2026-04-28 follow-up study inside `FormSection` also explored a softer
+      bordered `36px` ghost-action posture, but that remains a Figma-first
+      candidate only:
+      - it is not part of the approved `Button` size ladder yet
+      - it is not a canonical `ghost` recipe change yet
+      - runtime should stay on the locked button-size contract until a separate
+        button-ladder decision lands
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared
