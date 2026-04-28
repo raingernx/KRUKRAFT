@@ -48,7 +48,7 @@ export function CreatorResourcePreview({
             />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center gap-2 px-4 text-center">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-card/80 shadow-sm">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-shell/80 shadow-sm">
                 <FileText className="h-5 w-5 text-muted-foreground" aria-hidden />
               </div>
               {!thumbnailUrl && (

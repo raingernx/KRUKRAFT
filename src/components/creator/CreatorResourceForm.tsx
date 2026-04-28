@@ -1083,7 +1083,7 @@ export function CreatorResourceForm({
                   ) : (
                     <div className="rounded-xl border border-dashed border-border bg-background px-4 py-5">
                       <div className="flex items-start gap-3">
-                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-card text-brand-600">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-shell text-brand-600">
                           <ImagePlus className="h-5 w-5" />
                         </div>
                         <div className="space-y-1">
@@ -1171,7 +1171,7 @@ export function CreatorResourceForm({
                         onClick={() => setDeliverySource("upload")}
                         className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
                           deliverySource === "upload"
-                            ? "bg-card text-foreground shadow-sm"
+                            ? "bg-shell text-foreground shadow-sm"
                             : "text-muted-foreground hover:text-foreground"
                         }`}
                       >
@@ -1182,7 +1182,7 @@ export function CreatorResourceForm({
                         onClick={() => setDeliverySource("external")}
                         className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
                           deliverySource === "external"
-                            ? "bg-card text-foreground shadow-sm"
+                            ? "bg-shell text-foreground shadow-sm"
                             : "text-muted-foreground hover:text-foreground"
                         }`}
                       >
@@ -1350,7 +1350,7 @@ export function CreatorResourceForm({
                             <div className="rounded-xl border border-border bg-background px-4 py-4">
                               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                 <div className="min-w-0 flex items-start gap-3">
-                                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground">
+                                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-shell text-muted-foreground">
                                     <Link2 className="h-4 w-4" />
                                   </div>
                                   <div className="min-w-0">

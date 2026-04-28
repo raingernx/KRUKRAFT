@@ -322,6 +322,18 @@ Use this order when DS docs disagree:
     the `surface` layer, while shared chrome that should stay on the calmer
     shell layer now has to choose `bg-shell` explicitly instead of inheriting
     older `card = shell/inset` behavior
+  - a 2026-04-28 runtime follow-up audit of `bg-card` consumers confirmed that
+    the first material nested-surface holdouts after that semantic shift lived
+    in the creator editor family, not in the public `/resources` shell itself:
+    creator preview placeholders, delivery-source segmented controls, linked
+    file/icon chips, and profile/banner preview wrappers now opt into
+    `bg-shell` explicitly so they remain visually subordinate inside surrounding
+    `bg-card`/`surface` sections
+  - the same follow-up audit kept public `/resources`,
+    `/resources/[slug]`, and `/creators/[slug]` on the `surface` posture and
+    proved the creator editor route family at runtime through the local
+    `creator-editor-refresh-shell` browser probe once the local DB was brought
+    back up; no additional public-route shell remap was required in that slice
   - the canonical `Card / Foundations` boards no longer carry wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is explicit token
     gap / polish territory (`space/20`, `space/10`, and preview-stack

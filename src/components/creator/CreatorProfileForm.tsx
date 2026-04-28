@@ -553,7 +553,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                     </div>
 
                     <div className="space-y-4 border-t border-border pt-6">
-                      <div className="relative rounded-2xl border border-border bg-card p-4">
+                      <div className="relative rounded-2xl border border-border bg-shell p-4">
                         <Badge
                           variant={hasSavedPublicProfile ? "success" : "neutral"}
                           className="absolute right-4 top-4 h-fit w-fit px-2.5 py-1 font-semibold"
@@ -596,12 +596,12 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                         </div>
                       </div>
 
-                      <div className="overflow-hidden rounded-2xl border border-border bg-card">
+                      <div className="overflow-hidden rounded-2xl border border-border bg-shell">
                         {form.creatorBanner && !bannerPreviewError ? (
                           <img
                             src={form.creatorBanner}
                             alt="Creator banner preview"
-                            className="h-48 w-full object-cover object-center bg-card"
+                            className="h-48 w-full object-cover object-center bg-shell"
                             onError={() => setBannerPreviewError(true)}
                           />
                         ) : (
