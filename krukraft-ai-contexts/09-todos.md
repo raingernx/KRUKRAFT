@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
  ## Plan Snapshot
 
-Parent Plan: `Figma DS alignment`
+Parent Plan: `Figma DS section audit`
 
 > [!info] Current Phase
-> `Figma DS alignment complete`
+> `Phase 0 — audit contract + section order lock`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -17,11 +17,11 @@ Parent Plan: `Figma DS alignment`
 > Dashboard-v2 stabilization remains frozen
 > Public marketplace perf baseline remains intact
 
-> [!success] Closed
-> The canonical Figma source file is now locked and re-audited as the repo base, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, the 2026-04-27 field-shell re-audit confirmed that canonical `Input` and `SearchInput` state + size sets now use `radius/sm (8px)` across light/dark, `Card`, `Surface`, `Badge`, `FormSection`, and `DataPanelTable` are landed as the current shared-library proof points, `Dropdown` remains intentionally locked as a verified study-board reference, and the supporting `state/selected-*` semantic trio is now present in the canonical file; the shared-library close-out audit found no remaining in-plan issue that requires reopening this plan
+> [!warning] Active
+> Open a new audit-only parent plan that re-checks the canonical Figma DS file against the repo one section family at a time. The goal is not to invent new DS work, but to verify section truth, variable usage, mapping posture, and repo-context parity in a tighter phased order than the previous broad alignment pass.
 
 > [!todo] Next Up
-> The current `Figma DS alignment` parent plan is complete; wait for an explicit new plan or reprioritization before reopening DS scope
+> Start Phase 1 foundations audit in this order: `Typography` → `Color Primitives` → `Spacing + Radius`, then continue into controls and shell sections only after the foundations pass is written down.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and hero-search cleanup plan are complete; this new plan is a documentation/alignment pass that should not silently reopen runtime route work.
@@ -36,7 +36,8 @@ Parent Plan: `Figma DS alignment`
 | Visual Foundation | Frozen   | completed visual baseline stays in force; do not reopen primitive work implicitly |
 | Discover         | Frozen   | `/resources` listing-mode shell + fail-soft states landed and passed close-out audit    |
 | Theme Refresh    | Complete | brief, playbook, Figma review page, approved surface baseline, cleanup slice, and first runtime slices all passed close-out audit |
-| Figma DS Alignment | Complete | canonical Figma source, repo registry, and DS inventory are now aligned enough to close the plan; `Dropdown` intentionally stays a verified study-board reference and future product exemplars should open as a separate plan |
+| Figma DS Alignment | Complete | canonical Figma source, repo registry, and DS inventory are now aligned enough to close the previous alignment plan; use it as the baseline for this narrower re-audit |
+| Figma DS Section Audit | Active | section-by-section verification pass for the canonical Figma DS file against repo docs, token contracts, and mapped component truth |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -48,8 +49,8 @@ Parent Plan: `Figma DS alignment`
 
 ## Progress
 
-Figma DS alignment
-`[██████████] 100%`
+Figma DS section audit
+`[░░░░░░░░░░] 0%`
 
 ```mermaid
 flowchart TB
@@ -96,14 +97,15 @@ flowchart TB
   end
 
   subgraph Current
-    F1[Canonical Figma source lock<br/>Done]
-    F2[Inventory diff and docs drift audit<br/>Done]
-    F3[Foundation parity closure<br/>Done]
-    F4[Shared DS library mapping pass<br/>Done]
-    F5[Product exemplar + verification close-out<br/>Done]
+    A0["Audit contract + section order lock<br/>In progress"]
+    A1["Foundations audit<br/>Typography, Color, Spacing + Radius"]
+    A2["Control audit<br/>Button, Input / Search"]
+    A3["Shell audit<br/>Card, Dropdown, Surface"]
+    A4["Shared component audit<br/>Badge, FormSection, DataPanelTable"]
+    A5["Repo sync + close-out<br/>Review page, map, context, tracker"]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> F1 --> F2 --> F3 --> F4 --> F5
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> A0 --> A1 --> A2 --> A3 --> A4 --> A5
 ```
 
 ## Daily Workflow
@@ -139,165 +141,115 @@ Rules:
 ## Current Phase
 
 ### Name
-Shared-library mapping kickoff
+Section-by-section Figma DS re-audit
 
 ### Parent Plan
-Figma DS alignment
+Figma DS section audit
 
 ### Current Status Inside Parent Plan
-- The previous `Krukraft theme refresh plan`, `Theme route-level rollout audit`, `Legacy DS usage cleanup`, `Admin / Settings rollout audit`, `Marketplace search shell audit`, and `Marketplace hero search deprecation cleanup` are complete and act as frozen inputs
-- This new plan exists because the current repo references and the Figma file currently under review no longer describe the same DS surface area
-- Approved baseline carried into this plan:
-  - neutral posture: `Paper B`-derived cool-paper light set
-  - primary accent: `#5144ED`
-  - support accents: `Rust #E77661` and `Sand #E1C9A9`
-  - surface baseline: `inset-led shell + quiet border + radius 8`
-- Runtime slices already landed before this alignment plan opened:
-  - `Button family`
-  - `Input / Search family`
-- Current audit evidence established:
-  - the canonical Figma source-of-truth file is now explicitly locked to `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`)
-  - the reviewed Figma file currently contains foundations for typography, color, spacing/radius, `Button`, and `Input / Search`, not the full DS library footprint represented in code
-  - repo inventory drift already existed at plan start: `Surface` was live in code before it had canonical Figma coverage or truthful mapping rows
-  - a first-pass inventory diff snapshot now lives in `figma-component-map.md` and classifies the current canonical coverage into `mapped and current`, `code exists, figma missing`, `figma exists, code missing`, and `doc drift`
-  - the first repo-side doc drift pass is now closed enough to trust the registry again: stale `mapped-manual` claims from the older file were demoted to truthful `pending-figma` / `legacy` rows, and `Surface` now appears in the code inventory doc
-  - the `Input` / `SearchInput` foundation parity pass is now landed in the canonical file via reusable light/dark component sets for the base field shell family
-  - `Card` is now landed as the first shared-library shell block in the canonical file via `Card / Size` and `Card / Size / Dark`
-  - runtime `Card` adoption has now started too: the shared primitive renders
-    its root shell through `surface` and its footer through `inset`, matching
-    the current Figma card base more directly
-  - runtime `bg-card` semantics now follow that same base too: `card` resolves
-    to the `surface` layer, while shared shell/menu/sidebar chrome that should
-    stay on the quieter outer shell now has to opt into `bg-shell` explicitly
-  - a 2026-04-28 follow-up runtime audit of that semantic shift confirmed the
-    first material nested holdouts lived in the creator editor family, not in
-    the public `/resources` shell family: creator preview/icon chips,
-    delivery-source segmented controls, linked-file pills, and profile/banner
-    preview wrappers now opt into `bg-shell` so they stay subordinate inside
-    surrounding `bg-card`/`surface` sections
-  - that follow-up slice kept `Badge` as the active in-plan `Next Up`; it was a
-    user-directed remediation pass, not a silent plan expansion, and it closed
-    after request-level proof on `/resources`, `/resources/[slug]`, and
-    `/creators/[slug]` plus a successful local `creator-editor-refresh-shell`
-    browser probe once the local DB was restarted
-  - a second 2026-04-28 follow-up audit kept the same out-of-plan
-    remediation boundary and narrowed the next affected family to
-    `admin resources`: table/list shells stayed valid `surface` consumers, but
-    editor-only subordinate shells now opt into `bg-shell` / `bg-background`
-    for file-upload subpanels, preview-image rows, dropzones, and the
-    owner-picker trigger inside the admin resource editor card
-  - that `admin resources` slice was runtime-proved through the repo-owned
-    Playwright sentinels for `/admin/resources/new`,
-    `/admin/resources/:id`, and the lazy preview uploader flow, so `Badge`
-    remains the in-plan `Next Up` once the remediation close-out is committed
-  - the `Card / Foundations` cleanup also removed wrapper-radius debt from
-    `Card / Size / Source`; the remaining card debt is explicit token-gap /
-    polish work (`space/20`, `space/10`, and preview-stack symmetry), not
-    silent wrapper styling drift
-  - `Dropdown` now has verified `Dropdown / Foundations / Light` and `Dropdown / Foundations / Dark` study boards in the canonical file for trigger context, open shell, selected rows, submenu edges, and destructive rows
-  - the canonical Figma file now contains a distinct `neutral/surface` primitive and `bg/surface` semantic alias, so `Surface` is no longer just a panel label inside the neutrals study board
-  - `Surface` now has verified `Surface / Foundations / Light` and `Surface / Foundations / Dark` boards in the canonical file, each with a `Surface / Variant / Source` block and a dedicated hierarchy study card
-  - the current `Surface` block is intentionally not full token parity yet; the remaining narrow token gaps are explicit: no semantic `border/subtle`, no semantic `bg-muted`, no `radius/12` token, and no `space/20` token
-  - the tested light palette in `Theme Lab` frame `464:545` is now promoted into the live Figma primitive variables for `primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`; dark-mode values were intentionally left unchanged
-  - the tested dark palette in `Theme Lab` frame `477:479` is now promoted into the live Figma primitive variables for `primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`; the canonical dark primitives board mirrors those values too
-  - a detailed 2026-04-27 `Button / Foundations` re-audit now confirms that
-    the light/dark button boards are clean at the section-shell level, with
-    explicit semantic token usage across header, usage, state, size, and icon
-    cards; the remaining debt is narrow wrapper-only local radius on the
-    `Button / State` and `Button / Size` component-set containers plus one
-    dark-board subtitle line that still says `light recipe`
-  - that same button re-audit also records a live Figma-vs-runtime drift:
-    canonical `quiet` / `ghost` button states now express foreground changes by
-    state more explicitly than the current runtime `Button.tsx` contract does
-  - a full-canvas audit now confirms the file has exactly two pages:
-    `DS Foundations` and `Foundation Review`
-  - `DS Foundations` is the actual token-bound base page with 15 top-level
-    light/dark section frames and clean paint-binding posture
-  - `Foundation Review` is review-only: it mirrors text-fill bindings but its
-    current text nodes are not yet bound to the font-family variable, so it is
-    not the same kind of source page as `DS Foundations`
-  - registry drift was still present before the audit; the repo map now points
-    at the current live `Button` and `Card` component-set ids again
-- This plan must separate four classes of status cleanly:
-  - `mapped and current`
-  - `code exists, figma missing`
-  - `figma exists, code missing`
-  - `doc drift`
-- Explicitly out of scope for the first phase:
-  - route-level runtime redesign
-  - reopening completed marketplace/dashboard rollout plans
-  - treating product-bound exemplars as foundation-library work before the foundation slice is locked
+- The previous `Figma DS alignment` parent plan is complete and now acts as the
+  frozen baseline for this narrower re-audit.
+- This new plan exists because the canonical Figma DS file and repo references
+  are close enough to trust, but they have not yet been re-checked in one
+  deliberate pass section by section.
+- The audit should use the canonical source file
+  `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`) as the base.
+- The audit should stay Figma-first and repo-sync-focused:
+  - verify section structure
+  - verify variable bindings and local overrides
+  - verify mapping truth in repo docs
+  - verify whether each section reflects code/runtime contracts or intentional
+    Figma-first candidates
+- The audit must not silently expand into runtime redesign or new DS invention.
+- The audit should keep the previous decisions intact unless the new evidence
+  clearly disproves them, including:
+  - `Dropdown` stays a study-board reference for now
+  - `Badge` stays non-interactive while `Chip` remains outside the current DS
+    foundations scope
+  - `Button soft` and `sm=36` remain Figma-first candidates, not approved
+    runtime contract
 
 ### Goal
-Lock one canonical Figma source of truth, align repo-side DS references with reality, and then close the gap between Figma foundations/library coverage and the code inventory in a deliberate order.
+Re-audit the canonical Figma DS file against the repo one section family at a
+time and produce an explicit, current parity read on:
+- what is aligned
+- what is doc drift
+- what is intentional Figma-first drift
+- what still needs a follow-up plan
 
 ### Why this is the current phase
-- The Figma file now being used for review does not match the file recorded in repo-side DS mapping docs
-- The reviewed Figma file appears to be a foundation-first lab rather than the full DS library implied by repo inventory docs
-- The canonical file and first repo-side doc drift pass are now locked enough to move forward without pretending the broader library is already mapped
-- The `Input` / `SearchInput` parity slice is now complete enough to use as the second reusable foundation block after `Button`
-- `Card`, `Dropdown`, `Surface`, and now `Badge` establish the current shared
-  shell + label family, so the next highest-signal gap is reopening composed
-  shared chrome on top of those landed primitives
-- `Badge vs Chip` decision is now locked from repo usage evidence:
-  - `Badge` = non-interactive semantic/status label
-  - `Chip` = interactive filter/removable/navigation token surface
-  - `Badge` belongs inside the shared-library pass as its own remapping target
-  - route-owned interactive chip patterns should migrate toward `Chip`, not continue expanding `Badge`
+- The last plan closed at the parent-plan level, but the user now wants a
+  tighter audit pass organized by section instead of broad DS slices.
+- The repo already has enough mapping/context structure to support a more
+  granular audit.
+- A phased section audit reduces the chance of mixing small visual drift with
+  real token, mapping, or contract drift.
 
 ### Definition of Done
-- [ ] Repo references point to the same canonical Figma file
-- [ ] `src/design-system/README.md` inventory matches code reality
-- [ ] Repo-vs-Figma inventory diff exists and every DS item is classified as `mapped and current`, `code exists, figma missing`, `figma exists, code missing`, or `doc drift`
-- [ ] Foundation variables and component families (`Button`, `Input`, `SearchInput`, color, typography, spacing, radius) are aligned between Figma and runtime contracts
-- [ ] Shared DS components have an explicit current status in `figma-component-map.md` instead of silent gaps
-- [ ] Product-bound DS exports are handled in a separate exemplar pass rather than mixed into the foundation/library pass
-- [ ] `09-todos.md` reflects the real phase and progress percentage for this alignment plan
+- [ ] Every `DS Foundations` section family has been re-audited in a deliberate
+      order and recorded as aligned, drifted, or intentionally Figma-first
+- [ ] `Typography / Light` and `Typography / Dark` are checked against
+      typography variables, text bindings, and repo docs
+- [ ] `Color Primitives / Light` and `Color Primitives / Dark` are checked
+      against primitive variables, support colors, and displayed board labels
+- [ ] `Spacing + Radius / Primitives` is checked against the live variable
+      collection and repo token docs
+- [ ] `Button`, `Input / Search`, `Card`, `Dropdown`, `Surface`, `Badge`,
+      `FormSection`, and `DataPanelTable` each have a fresh audit result and
+      repo-context sync where needed
+- [ ] `Foundation Review` is checked separately as a review artifact, not
+      confused with `DS Foundations` source truth
+- [ ] `figma-component-map.md`, `src/design-system/README.md`,
+      `design-system.md`, `06-design-system.md`, and `09-todos.md` are synced
+      whenever a section audit changes shared understanding
+- [ ] The plan closes with one final close-out audit that stays inside this
+      section-audit scope
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Canonical source lock | done | `koZEgVUfQhNEQmXISNQx56` is now the canonical DS source-of-truth file and repo references must follow it |
-| 1 | Inventory diff + docs drift pass | done | canonical-file snapshot landed, stale mapping claims were downgraded, and obvious inventory drift was corrected |
-| 2 | Foundation parity pass | done | `Input / State` and `SearchInput / State` light/dark component sets now exist in the canonical file as first-pass reusable foundations |
-| 3 | Shared DS library mapping pass | done | `Card`, `Surface`, `Badge`, `FormSection`, and `DataPanelTable` are landed as reusable proof points; the close-out decision is to keep `Dropdown` as a verified study-board reference for now instead of promoting a premature component-set mapping |
-| 4 | Product exemplar + verification close-out | done | the plan close-out audit passed after syncing the final Figma truth back into repo references/checks; future product exemplars should open as a separate optional plan instead of keeping this parent plan alive |
+| 0 | Audit contract + section order lock | in progress | lock audit scope, section order, and section-level acceptance criteria before re-auditing surfaces |
+| 1 | Foundations audit | pending | audit `Typography`, `Color Primitives`, and `Spacing + Radius / Primitives` in light/dark pairs |
+| 2 | Control audit | pending | audit `Button` and `Input / Search` foundations, recipes, size/state boards, and repo mappings |
+| 3 | Shell audit | pending | audit `Card`, `Dropdown`, and `Surface` as the shared shell layer |
+| 4 | Shared component audit | pending | audit `Badge`, `FormSection`, and `DataPanelTable` against current repo truth |
+| 5 | Review + repo close-out | pending | audit `Foundation Review`, sync repo references, run checks, and close the plan |
 
 ---
 
 ## Current Goal
 
-The `Figma DS alignment` parent plan is now complete. Keep the canonical Figma
-file and repo-side DS references aligned, but do not silently reopen this plan;
-future product exemplars, runtime adoption work, or additional DS expansion
-should start as a new explicit plan.
+Open a new `Figma DS section audit` parent plan that re-checks the canonical
+Figma file and repo references one section family at a time without silently
+reopening runtime redesign work.
+
+Audit order for this plan:
+1. `Typography / Light` + `Typography / Dark`
+2. `Color Primitives / Light` + `Color Primitives / Dark`
+3. `Spacing + Radius / Primitives`
+4. `Button / Foundations`
+5. `Input / Search`
+6. `Card`, `Dropdown`, `Surface`
+7. `Badge`, `FormSection`, `DataPanelTable`
+8. `Foundation Review` + repo close-out
 
 ---
 
 ## In Progress
 
-- [x] Open a new parent plan for `Figma DS alignment`
-- [x] Lock the canonical Figma source file in repo references
-- [x] Produce the repo-vs-Figma inventory diff and classify `doc drift`
-- [x] Close repo-side `doc drift` from the first diff snapshot
-- [x] Turn `Input` and `SearchInput` study coverage into canonical reusable foundation component sets
-- [x] Start the shared-library mapping pass with the first high-impact holdouts
-- [x] Land `Card` as the first shared-library shell block in the canonical file
-- [x] Land `Dropdown` / popover shell study boards in the canonical file with verified light/dark shell posture
-- [x] Normalize canonical `Button`, `Input`, and `SearchInput` foundation component sets to the locked runtime size contract
-- [x] Land `Surface` as the shared-library shell bridge before reopening `FormSection` and `DataPanelTable`
-- [x] Start `Badge` as an explicit shared-library remapping target after the foundation pass
-- [x] Add `Chip` to the shared-library plan through an explicit `Badge vs Chip` contract decision
-- [x] Keep `Chip` out of this parent plan after the `Badge vs Chip` decision and leave any future `Chip` expansion as optional follow-up work
+- [x] Open a new parent plan for `Figma DS section audit`
+- [x] Lock the audit scope to Figma-vs-repo parity, not new runtime redesign
+- [ ] Define the exact section-by-section audit order and acceptance criteria
+- [ ] Start Phase 1 foundations audit with `Typography`
 
 ---
 
 ## Next Up
 
-- [x] Reopen `FormSection` on top of the landed `Surface` and `Badge` shell family
-- [x] Decide whether `Dropdown` stays a study-board reference or is promoted into a reusable component-set mapping during shared-library close-out
-- [x] Run the shared-library close-out audit once the `Dropdown` promotion decision is resolved
+- [ ] Audit `Typography / Light` and `Typography / Dark`
+- [ ] Audit `Color Primitives / Light` and `Color Primitives / Dark`
+- [ ] Audit `Spacing + Radius / Primitives`
 
 ---
 
@@ -391,6 +343,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-28: After `Figma DS alignment` closed, open a new parent plan `Figma DS section audit` to re-check the canonical Figma DS file against the repo in a stricter section-by-section order instead of reopening broad DS work implicitly.
 - 2026-04-25: Active plan changed from the completed marketplace hero-search cleanup to `Figma DS alignment`; start by locking the canonical Figma source file and producing a repo-vs-Figma inventory diff before any new parity claim.
 - 2026-04-25: `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`) is now the permanent canonical Figma DS source file; repo references and coverage docs must be migrated to that foundation-first source.
 - 2026-04-25: The first repo-side doc drift pass is complete; stale mapping claims from the previous Figma file were downgraded, so the next active slice is `Input` / `SearchInput` foundation parity.
