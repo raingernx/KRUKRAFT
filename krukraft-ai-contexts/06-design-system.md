@@ -482,10 +482,16 @@ Use this order when DS docs disagree:
   - that `FormSection` source set intentionally stays narrow to the runtime
     contract: `flat` for divider-first settings/admin sections, `card` for
     bounded secondary shells
-  - explicit token gaps are now recorded on the board instead of hidden:
-    runtime `16/20` section-title rhythm, `20px` card padding, the `6px`
-    flat-header gap, and the missing `border/subtle` semantic still sit
-    outside the current canonical token scales
+  - the 2026-04-28 shared-component re-audit keeps the remaining live
+    `FormSection` debt explicit instead of hidden:
+    - section titles still use local `16/20`
+    - field labels still use local `14/20`
+    - `card` still keeps local `20px` padding
+    - `flat` still keeps the local `6px` header gap
+    - divider/footer separators still rely on `border/default` until a
+      dedicated `border/subtle` semantic exists
+    - the current dark source set now lives at `746:275` instead of the older
+      `759:252` id
   - `DataPanelTable` is now landed in the canonical file too through dedicated
     `DataPanelTable / Foundations / Light` and
     `DataPanelTable / Foundations / Dark` boards plus `DataPanelTable / Variant / Source`

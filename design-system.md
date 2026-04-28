@@ -283,9 +283,16 @@ For reusable Figma component sets:
   reserve `card` for clearly bounded secondary sections that intentionally sit
   on top of the `Card` + `Surface` family.
 - The current canonical `FormSection` board keeps its runtime geometry gaps
-  explicit instead of inventing fake tokens: `16/20` section-title rhythm,
-  `20px` card padding, the `6px` flat-header gap, and the missing
-  `border/subtle` semantic are all still follow-up token work.
+  explicit instead of inventing fake tokens:
+  - section titles still use local `16/20`
+  - field labels still use local `14/20`
+  - `card` still keeps local `20px` padding
+  - `flat` still keeps the local `6px` header gap
+  - divider/footer separators still rely on `border/default` until a dedicated
+    `border/subtle` semantic exists
+- The current dark source set for that canonical `FormSection` block now lives
+  at `746:275`; repo mapping should follow the live node instead of the older
+  `759:252` id from the first landing pass.
 - The canonical Figma `DataPanelTable` base now lives in
   `DataPanelTable / Foundations / Light` and `DataPanelTable / Foundations / Dark`,
   with source sets that stay intentionally shell-scoped instead of pretending to
