@@ -380,6 +380,15 @@ Use this order when DS docs disagree:
       primitives for `support/success/*` and `support/warning/*`, used to keep
       status labels token-bound without reopening the locked primary/rust/sand
       posture
+    - the 2026-04-28 badge follow-up tuning now keeps `warning` and
+      `featured` intentionally distinct in the canonical base:
+      `warning` stays crisp on `bg/inset` through
+      `support/warning/base|dust`, while `featured` now uses
+      `accent/sand/wash` fill with `accent/sand/base` border/text as the softer
+      editorial highlight posture across light/dark
+    - the live dark badge source set also drifted from the initial landing id
+      and now lives at `746:208`; repo mapping must follow that node instead of
+      the older `736:206` reference
     - `Foundation Review` still has text-fill binding but not font-family
       binding on its current text nodes, so it should be treated as a review
       artifact rather than a token-parity proof page

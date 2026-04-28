@@ -202,8 +202,11 @@ When this file conflicts with code, the code wins.
   selected rows, chips, and other selected surfaces. Use that family instead of
   rebinding selected UI directly to raw `primary/*` primitives or action-state
   tokens.
-- `Badge.featured` should follow the same rule when used on dark shells: keep
-  the surface theme-aware and carry emphasis through border/text color.
+- `Badge.warning` and `Badge.featured` now intentionally diverge in the
+  canonical Figma base: `warning` stays crisp and alert on `bg/inset` through
+  the `support/warning/*` ladder, while `featured` reads as a softer editorial
+  highlight through `accent/sand/wash` fill plus `accent/sand/base` border/text
+  in both light and dark.
 - `Badge` is the non-interactive semantic label primitive. Use it for status,
   metadata, or read-only emphasis.
 - The canonical Figma `Badge` base now covers `neutral`, `info`, `success`,
@@ -213,6 +216,10 @@ When this file conflicts with code, the code wins.
   `default`, `secondary`, `ghost`, and `link`) now sit outside that canonical
   Figma set until they are either remapped deliberately or removed from the
   shared primitive contract.
+- Runtime `Badge.tsx` still exposes broader legacy/product variants and has not
+  adopted the latest `warning`/`featured` Figma recipe split yet; treat that as
+  a runtime adoption gap instead of letting docs drift back to the older badge
+  posture.
 - `Badge` still carries one explicit typography gap in Figma: the source set
   uses a narrow local `12/16` label recipe because the typography scale does
   not yet provide an xs label token.

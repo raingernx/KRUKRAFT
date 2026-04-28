@@ -233,12 +233,21 @@ For reusable Figma component sets:
 - The canonical Figma `Badge` base now lives in `Badge / Foundations / Light`
   and `Badge / Foundations / Dark`, with source sets that cover `neutral`,
   `info`, `success`, `warning`, `featured`, `destructive`, and `outline`.
+- The latest canonical badge tuning now separates the two warm semantics on
+  purpose: `warning` stays alert through `bg/inset` plus
+  `support/warning/base|dust`, while `featured` stays softer and more editorial
+  through `accent/sand/wash` fill with `accent/sand/base` border/text. Keep
+  that split intact instead of collapsing both variants back onto the same warm
+  recipe.
 - Product or legacy runtime variants (`owned`, `new`, `free`, `default`,
   `secondary`, `ghost`, `link`) are intentionally outside that canonical Figma
   set until a deliberate remap or cleanup pass happens.
 - The current canonical `Badge` board keeps one explicit token gap instead of
   silently drifting: the label uses a local `12/16` recipe because the shared
   typography scale still lacks an xs label token.
+- The current dark source set for that canonical badge block now lives at
+  `746:208`; repo mapping should follow the live node instead of the earlier
+  `736:206` id from the first landing pass.
 - Do not solve interactive chip needs by adding more `Badge` variants just
   because the silhouette is similar.
 
