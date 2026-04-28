@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
  ## Plan Snapshot
 
-Parent Plan: `Figma DS section audit`
+Parent Plan: `Runtime DS adoption`
 
 > [!info] Current Phase
-> `Plan complete`
+> `Phase 1 — DataPanelTable runtime adoption`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -17,14 +17,14 @@ Parent Plan: `Figma DS section audit`
 > Dashboard-v2 stabilization remains frozen
 > Public marketplace perf baseline remains intact
 
-> [!success] Complete
-> The audit-only parent plan that re-checked the canonical Figma DS file against the repo one section family at a time is now closed. Its scope stayed inside section truth, variable usage, mapping posture, and repo-context parity without reopening runtime redesign work.
+> [!warning] Active
+> Open a new runtime-first parent plan that converts the newly audited Figma DS truth into web surfaces one slice at a time. Start with `DataPanelTable`, then expand into shared button-recipe adoption only where runtime proof shows the pattern is stable and useful.
 
 > [!todo] Next Up
-> This parent plan is complete. Wait for an explicit new plan or reprioritization before starting additional DS work.
+> Start the runtime adoption plan in this order: `DataPanelTable` runtime inventory → `DataPanelTable` row-action / pagination adoption → route-family runtime proof.
 
 > [!abstract] Partial
-> The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and hero-search cleanup plan are complete; this new plan is a documentation/alignment pass that should not silently reopen runtime route work.
+> The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
 
 ## Status Board
 
@@ -38,6 +38,7 @@ Parent Plan: `Figma DS section audit`
 | Theme Refresh    | Complete | brief, playbook, Figma review page, approved surface baseline, cleanup slice, and first runtime slices all passed close-out audit |
 | Figma DS Alignment | Complete | canonical Figma source, repo registry, and DS inventory are now aligned enough to close the previous alignment plan; use it as the baseline for this narrower re-audit |
 | Figma DS Section Audit | Complete | section-by-section verification pass for the canonical Figma DS file against repo docs, token contracts, and mapped component truth closed cleanly after the Foundation Review + repo close-out audit |
+| Runtime DS Adoption | Active | narrow runtime rollout plan that starts from the audited Figma baseline and adopts the highest-signal DS decisions into shared web surfaces one slice at a time |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -49,8 +50,8 @@ Parent Plan: `Figma DS section audit`
 
 ## Progress
 
-Figma DS section audit
-`[██████████] 100%`
+Runtime DS adoption
+`[█░░░░░░░░░] 10%`
 
 ```mermaid
 flowchart TB
@@ -97,15 +98,15 @@ flowchart TB
   end
 
   subgraph Current
-    A0["Audit contract + section order lock<br/>Done"]
-    A1["Foundations audit<br/>Typography, Color, Spacing + Radius<br/>Done"]
-    A2["Control audit<br/>Button, Input / Search<br/>Done"]
-    A3["Shell audit<br/>Card, Dropdown, Surface<br/>Done"]
-    A4["Shared component audit<br/>Badge, FormSection, DataPanelTable<br/>Done"]
-    A5["Repo sync + close-out<br/>Review page, map, context, tracker<br/>Done"]
+    N0["Runtime plan open<br/>Done"]
+    N1["DataPanelTable runtime inventory<br/>In progress"]
+    N2["DataPanelTable row action + pagination adoption<br/>Pending"]
+    N3["Route-family runtime proof<br/>Pending"]
+    N4["Shared button recipe follow-up<br/>Pending"]
+    N5["Close-out audit<br/>Pending"]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> A0 --> A1 --> A2 --> A3 --> A4 --> A5
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> N0 --> N1 --> N2 --> N3 --> N4 --> N5
 ```
 
 ## Daily Workflow
@@ -141,137 +142,102 @@ Rules:
 ## Current Phase
 
 ### Name
-Control audit after foundations re-check
+Runtime DS adoption kickoff
 
 ### Parent Plan
-Figma DS section audit
+Runtime DS adoption
 
 ### Current Status Inside Parent Plan
-- The previous `Figma DS alignment` parent plan is complete and now acts as the
-  frozen baseline for this narrower re-audit.
-- Phase 0 is now closed: the audit scope, order, and acceptance criteria are
-  locked and written down in this tracker.
-- Phase 1 is now closed: `Typography / Light`, `Typography / Dark`,
-  `Color Primitives / Light`, `Color Primitives / Dark`, and
-  `Spacing + Radius / Primitives` were re-audited and synced to repo context.
-- The current section-level finding from foundations is repo-doc drift, not
-  live Figma token drift: the audited boards are fully bound for text, fills,
-  strokes, and per-corner radius, and the remaining correction was updating
-  repo wording that still assumed older primitive-color counts or older radius
-  audit logic.
-- This new plan exists because the canonical Figma DS file and repo references
-  are close enough to trust, but they have not yet been re-checked in one
-  deliberate pass section by section.
-- The audit should use the canonical source file
-  `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`) as the base.
-- The audit should stay Figma-first and repo-sync-focused:
-  - verify section structure
-  - verify variable bindings and local overrides
-  - verify mapping truth in repo docs
-  - verify whether each section reflects code/runtime contracts or intentional
-    Figma-first candidates
-- The audit must not silently expand into runtime redesign or new DS invention.
-- The audit should keep the previous decisions intact unless the new evidence
-  clearly disproves them, including:
-  - `Dropdown` stays a study-board reference for now
-  - `Badge` stays non-interactive while `Chip` remains outside the current DS
-    foundations scope
-  - `Button soft` and `sm=36` remain Figma-first candidates, not approved
-    runtime contract
+- The previous `Figma DS section audit` parent plan is complete and now acts
+  as the frozen Figma-to-repo baseline for runtime work.
+- This new plan exists to adopt the highest-signal audited DS decisions into
+  the real app one slice at a time instead of leaving them as Figma-only truth.
+- The first slice should start with `DataPanelTable` because its row-action,
+  pagination, and shell posture are now the clearest audited runtime targets.
+- This rollout should stay runtime-first and narrow:
+  - inventory live route usage first
+  - patch only the shared/runtime surfaces needed for the chosen slice
+  - verify the affected route family at runtime before expanding scope
+- The plan must not silently reopen broad Figma redesign, new token invention,
+  or unrelated route work.
+- Current locked Figma truths that should guide runtime adoption:
+  - `DataPanelTable` row actions and pagination use the rounded-rect
+    `radius/sm (8px)` recipe posture
+  - `Button recipes / Row action` is guidance, not a new family
+  - `Dropdown` remains a study-board reference until a separate runtime need
+    proves broader promotion
+  - `Button soft` and `sm=36` remain optional follow-ups, not approved runtime
+    contract by default
 
 ### Goal
-Re-audit the canonical Figma DS file against the repo one section family at a
-time and produce an explicit, current parity read on:
-- what is aligned
-- what is doc drift
-- what is intentional Figma-first drift
-- what still needs a follow-up plan
+Adopt the audited Figma DS decisions into runtime surfaces with the smallest
+safe rollout path, starting from `DataPanelTable` and then expanding only when
+the first runtime proof is clean.
 
 ### Why this is the current phase
-- The last plan closed at the parent-plan level, but the user now wants a
-  tighter audit pass organized by section instead of broad DS slices.
-- The repo already has enough mapping/context structure to support a more
-  granular audit.
-- A phased section audit reduces the chance of mixing small visual drift with
-  real token, mapping, or contract drift.
+- The audit work is complete, so the next highest-impact task is using that
+  truth in the app rather than reopening more DS analysis.
+- `DataPanelTable` is the safest first runtime target because its recipe
+  posture is locked in Figma and already appears in multiple admin/dashboard
+  contexts.
+- A route-family rollout keeps risk lower than broad button-family adoption.
 
 ### Definition of Done
-- [ ] Every `DS Foundations` section family has been re-audited in a deliberate
-      order and recorded as aligned, drifted, or intentionally Figma-first
-- [ ] `Typography / Light` and `Typography / Dark` are checked against
-      typography variables, text bindings, and repo docs
-- [ ] `Color Primitives / Light` and `Color Primitives / Dark` are checked
-      against primitive variables, support colors, and displayed board labels
-- [ ] `Spacing + Radius / Primitives` is checked against the live variable
-      collection and repo token docs
-- [x] `Button`, `Input / Search`, `Card`, `Dropdown`, `Surface`, `Badge`,
-      `FormSection`, and `DataPanelTable` each have a fresh audit result and
-      repo-context sync where needed
-- [x] `Foundation Review` is checked separately as a review artifact, not
-      confused with `DS Foundations` source truth
-- [x] `figma-component-map.md`, `src/design-system/README.md`,
-      `design-system.md`, `06-design-system.md`, and `09-todos.md` are synced
-      whenever a section audit changes shared understanding
-- [x] The plan closes with one final close-out audit that stays inside this
-      section-audit scope
+- [ ] Live runtime usage of `DataPanelTable` row actions, pagination, and
+      adjacent toolbar controls is inventoried before patching
+- [ ] The first runtime adoption slice lands for `DataPanelTable` row-action /
+      pagination posture without silently rewriting unrelated button families
+- [ ] Shared primitives or helper recipes are updated only where the
+      `DataPanelTable` slice actually needs them
+- [ ] At least one affected route family is verified at runtime after the patch
+- [ ] Repo context/docs are updated in the same session if runtime contract
+      understanding changes
+- [ ] The plan closes with one explicit close-out audit instead of drifting
+      into optional follow-up work
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Audit contract + section order lock | complete | scope, section order, and section-level acceptance criteria are now locked in this tracker |
-| 1 | Foundations audit | complete | `Typography`, `Color Primitives`, and `Spacing + Radius / Primitives` were re-audited; the live boards stayed token-bound and the repo sync corrected stale primitive-count and radius-binding wording |
-| 2 | Control audit | complete | `Button` and `Input / Search` foundations, recipes, size/state boards, and repo mappings are re-audited against live Figma truth |
-| 3 | Shell audit | complete | `Card`, `Dropdown`, and `Surface` are re-audited as the shared shell layer |
-| 4 | Shared component audit | complete | `Badge`, `FormSection`, and `DataPanelTable` are re-audited against current repo truth |
-| 5 | Review + repo close-out | complete | `Foundation Review` was re-audited as a review-only artifact, repo references stayed aligned, and the plan closed without reopening section scope |
+| 0 | Runtime plan open + scope lock | complete | runtime-first scope is locked to narrow DS adoption slices starting from audited Figma truth |
+| 1 | DataPanelTable inventory + adoption | in progress | inventory live route usage, adopt row-action / pagination posture, and verify the first route family |
+| 2 | Shared button recipe follow-up | pending | decide whether runtime helper or button-surface adjustments are needed beyond the first `DataPanelTable` slice |
+| 3 | Optional secondary adoption | pending | only reopen adjacent DS runtime gaps such as `Badge` or `Dropdown` if the first slice proves a concrete next need |
+| 4 | Review + repo close-out | pending | run close-out audit, sync tracker/docs, and either close the plan or open one narrow remediation slice |
 
 ---
 
 ## Current Goal
 
-Open a new `Figma DS section audit` parent plan that re-checks the canonical
-Figma file and repo references one section family at a time without silently
-reopening runtime redesign work.
+Open a new `Runtime DS adoption` parent plan that converts the newly audited
+Figma DS truth into real web surfaces one slice at a time without silently
+reopening broad redesign work.
 
 Audit order for this plan:
-1. `Typography / Light` + `Typography / Dark`
-2. `Color Primitives / Light` + `Color Primitives / Dark`
-3. `Spacing + Radius / Primitives`
-4. `Button / Foundations`
-5. `Input / Search`
-6. `Card`, `Dropdown`, `Surface`
-7. `Badge`, `FormSection`, `DataPanelTable`
-8. `Foundation Review` + repo close-out
+1. `DataPanelTable` runtime inventory
+2. `DataPanelTable` row-action / pagination adoption
+3. route-family runtime proof
+4. decide whether shared button-recipe follow-up is needed
+5. close-out audit
 
 ---
 
 ## In Progress
 
-- [x] Open a new parent plan for `Figma DS section audit`
-- [x] Lock the audit scope to Figma-vs-repo parity, not new runtime redesign
-- [x] Define the exact section-by-section audit order and acceptance criteria
-- [x] Complete Phase 1 foundations audit across `Typography`, `Color Primitives`, and `Spacing + Radius`
-- [x] Start Phase 2 with `Button / Foundations`
-- [x] Audit `Button / Foundations / Light` and `Button / Foundations / Dark`
-- [x] Audit `Input / Search / Light` and `Input / Search / Dark`
-- [x] Audit `Card / Foundations / Light` and `Card / Foundations / Dark`
-- [x] Audit `Dropdown / Foundations / Light` and `Dropdown / Foundations / Dark`
-- [x] Audit `Surface / Foundations / Light` and `Surface / Foundations / Dark`
-- [x] Audit `Badge / Foundations / Light` and `Badge / Foundations / Dark`
-- [x] Audit `FormSection / Foundations / Light` and `FormSection / Foundations / Dark`
-- [x] Audit `DataPanelTable / Foundations / Light` and `DataPanelTable / Foundations / Dark`
-- [x] Start Phase 5 with `Foundation Review` + repo close-out
-- [x] Complete `Foundation Review` + repo close-out
+- [x] Open a new parent plan for `Runtime DS adoption`
+- [x] Lock the runtime scope to adoption work, not another Figma audit
+- [x] Choose `DataPanelTable` as the first runtime slice from the completed audit baseline
+- [ ] Inventory live `DataPanelTable` route usage and current action-control posture
+- [ ] Patch the first runtime `DataPanelTable` adoption slice
+- [ ] Run route-family runtime proof for the adoption slice
 
 ---
 
 ## Next Up
 
-- [x] Audit `Badge / Foundations / Light` and `Badge / Foundations / Dark`
-- [x] Audit `FormSection / Foundations / Light` and `FormSection / Foundations / Dark`
-- [x] Audit `DataPanelTable / Foundations / Light` and `DataPanelTable / Foundations / Dark`
-- [x] Run `Foundation Review` + repo close-out after the shared-component slice lands
+- [ ] Inventory live `DataPanelTable` row actions, pagination, and adjacent toolbar controls
+- [ ] Decide whether the first patch belongs in shared button surfaces, `DataPanelTable`, or route-owned table shells
+- [ ] Land the first runtime `DataPanelTable` adoption slice and verify the affected route family
 
 ---
 
@@ -365,6 +331,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-28: After `Figma DS section audit` closed at `100%`, open a new parent plan `Runtime DS adoption` so the next work uses the audited Figma baseline in the app instead of reopening another DS-analysis loop. Start with `DataPanelTable` because its row-action, pagination, and shell posture are the most locked-down runtime targets.
 - 2026-04-28: After `Figma DS alignment` closed, open a new parent plan `Figma DS section audit` to re-check the canonical Figma DS file against the repo in a stricter section-by-section order instead of reopening broad DS work implicitly.
 - 2026-04-28: Phase 1 of `Figma DS section audit` is now closed. A fresh foundations re-audit confirmed that `Typography / Light`, `Typography / Dark`, `Color Primitives / Light`, `Color Primitives / Dark`, and `Spacing + Radius / Primitives` all stay fully bound for text, fills, strokes, and per-corner radius. The live correction was repo wording drift instead: old notes still implied a `20`-color primitive collection and treated per-corner radius bindings as if they were local radius debt.
 - 2026-04-28: Phase 2 has now started with `Button / Foundations`. The live light/dark boards stay fully bound for text family/size/line-height/fill plus shell fills, strokes, and per-corner radius, and the old `wrapper radius debt` + dark `light recipe` subtitle claims are now closed as repo drift. The live `Button recipes` truth is also narrower and clearer now: `Row action` keeps an `Edit / Open` example row plus a compact state strip, `Pagination item` shares the same rounded-rect `radius/sm (8px)` recipe shape, and `Panel CTA` intentionally stays on the bounded-neutral pill candidate instead of inheriting the table posture.
