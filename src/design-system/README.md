@@ -145,10 +145,12 @@ When this file conflicts with code, the code wins.
 - `Button` should read as one pill-shaped family across sizes, icons, and
   disabled/loading states rather than separate button recipes per surface.
 - The canonical Figma `Button / Foundations` boards now go further than the
-  current runtime contract: light/dark state matrices explicitly choreograph
-  `quiet` / `ghost` foreground changes by state while keeping semantic shell
-  tokens clean. Until runtime adopts that behavior, treat the Figma board as
-  the source base and `Button.tsx` as the adoption gap.
+  current runtime contract: light/dark source sets currently show
+  `primary | quiet | soft`, the state matrices explicitly choreograph
+  `quiet` / `soft` behavior more than runtime does today, and the Figma
+  `Button / Size` boards now trial `sm=36` while runtime still stays at `32`.
+  Until runtime adopts that behavior, treat the Figma board as the source
+  base and `Button.tsx` as the adoption gap.
 - `secondary` remains a compatibility alias for quiet-style usage, and
   `outline` remains available for legacy surfaces that still depend on
   explicit borders.
@@ -165,17 +167,19 @@ When this file conflicts with code, the code wins.
   - typography sizes and line heights belong in typography variables
   - `Button`, `Input`, and `SearchInput` sizes belong in component variants
     that bind back to spacing, radius, and typography tokens
-- `Button` size contract for Figma and code should stay:
+- `Button` runtime size contract should stay:
   - `xs`: `h-8`, `px-3`, caption text
   - `sm`: `h-8`, `px-4`, body/sm text
   - `md`: `h-10`, `px-6`, body/sm text
   - `lg`: `h-12`, `px-8`, body/sm text
   - `icon`: square icon affordance only, not a text-button recipe
   - default resolution: `comfortable -> md`, `compact -> sm`
-- The `36px` ghost-action explored inside the canonical `FormSection` board is
-  intentionally not part of that `Button` ladder yet. Treat it as a
-  Figma-first candidate for a future size-contract decision, not as a silent
-  DS contract change.
+- The bounded neutral `soft` tone now exists in the canonical Figma
+  `Button / Foundations` boards and the earlier `36px` footer action study has
+  been folded into that Figma-first direction, but it is intentionally not
+  part of the approved runtime `Button` ladder yet. Treat `soft` and
+  Figma-side `sm=36` as adoption candidates, not as a silent DS contract
+  change.
 - If the button ladder is deliberately reopened later, the current recommended
   promotion path is:
   - keep `xs = 32`

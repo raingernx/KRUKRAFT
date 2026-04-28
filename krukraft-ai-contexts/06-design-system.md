@@ -270,15 +270,14 @@ Use this order when DS docs disagree:
       component-set containers, and the dark board still has one subtitle line
       that says `light recipe`
     - that same button re-audit also confirmed a live adoption gap: canonical
-      Figma now changes `quiet` / `ghost` foreground emphasis by state more
-      explicitly than the current runtime `Button.tsx` recipe does
-    - a 2026-04-28 follow-up study inside `FormSection` also explored a softer
-      bordered `36px` ghost-action posture, but that remains a Figma-first
-      candidate only:
-      - it is not part of the approved `Button` size ladder yet
-      - it is not a canonical `ghost` recipe change yet
-      - runtime should stay on the locked button-size contract until a separate
-        button-ladder decision lands
+      Figma now changes `quiet` / `soft` behavior by state more explicitly than
+      the current runtime `Button.tsx` recipe does
+    - the 2026-04-28 follow-up study has now been folded back into the
+      canonical Figma `Button / Foundations` boards as a bounded neutral
+      `soft` tone plus a Figma-first `sm=36` size step:
+      - runtime should still stay on the locked `primary | quiet | ghost`
+        family and current size ladder until a separate button-ladder decision
+        lands
       - the first impact audit says a future promotion should likely trial
         `xs=32 / sm=36 / md=40 / lg=48`, keep
         `density=\"compact\" -> xs` during the first runtime proof, and leave
