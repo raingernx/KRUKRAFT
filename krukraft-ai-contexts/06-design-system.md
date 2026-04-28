@@ -263,12 +263,12 @@ Use this order when DS docs disagree:
     closely too:
     - `Button / Size` light/dark were rebuilt to include explicit
       `xs|sm|md|lg` coverage
-    - a 2026-04-27 re-audit of `Button / Foundations` confirmed that the
-      header, usage, states, size, and icon cards are all semantic-token-bound
-      at the section-shell level; the only local radius debt still visible
-      there is wrapper-only on the `Button / State` and `Button / Size`
-      component-set containers, and the dark board still has one subtitle line
-      that says `light recipe`
+    - the latest `Button / Foundations` re-audit now closes both stale caveats
+      from that older note: the light/dark header, usage, states, size, icon,
+      and recipe cards all stay semantic-token-bound at the section-shell level,
+      there is no remaining non-zero local radius debt in the live
+      `Button / State` / `Button / Size` / `Button / Icon` component sets, and
+      the old dark subtitle line that said `light recipe` is gone
     - that same button re-audit also confirmed a live adoption gap: canonical
       Figma now separates airy `ghost` from bounded-neutral `soft` and changes
       `quiet` / `ghost` / `soft` behavior by state more explicitly than the
@@ -295,7 +295,9 @@ Use this order when DS docs disagree:
       - the `Button recipes` row-action card now shows both the live
         `Edit / Open` example row and a compact state strip so the recipe
         posture and `default|hover|focus|pressed|disabled` behavior stay
-        visible together
+        visible together, while `Pagination item` mirrors the same rounded-rect
+        `radius/sm (8px)` shape and `Panel CTA` intentionally stays on the
+        bounded-neutral pill candidate
       - that same audit found the real runtime blast radius is concentrated in
         `dashboard` (~60 `size=\"sm\"` button usages) and `admin` (~34), while
         live `density=\"compact\"` usage is still narrow (`public-resources`

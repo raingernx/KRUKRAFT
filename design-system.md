@@ -348,16 +348,23 @@ At a high level:
     per-corner variables, so those boards should not be treated as local-radius
     drift
   - the latest `Button / Foundations` re-audit confirmed that the light/dark
-    header, usage, states, size, and icon cards all use semantic shell tokens
-    rather than local paint overrides; the remaining button debt is narrow:
-    wrapper-only local corner radius on the `Button / State` and
-    `Button / Size` component-set containers, plus one dark-board copy line
-    that still says `light recipe`
+    header, usage, states, size, icon, and recipe cards all use semantic shell
+    tokens rather than local paint overrides, and the old wrapper-radius caveat
+    is now closed too: the live `Button / State`, `Button / Size`, and
+    `Button / Icon` sets no longer show any non-zero local radius drift
+  - the same re-audit also confirms the old dark `light recipe` subtitle drift
+    is gone
   - that same re-audit also showed a live design-vs-runtime contract gap:
     Figma now expresses `quiet` / `ghost` state foreground changes more
     explicitly than the current runtime `Button.tsx` variant contract does, so
     treat the canonical Figma file as the design base and the runtime button
     recipe as adoption drift until code is updated
+  - the current `Button recipes` card is now part of that audited truth too:
+    `Row action` keeps an `Edit / Open` example row plus a compact
+    `Default|Hover|Focus|Pressed|Disabled` state strip, `Pagination item`
+    shares the same rounded-rect `radius/sm (8px)` geometry, and `Panel CTA`
+    stays on the bounded-neutral pill candidate instead of inheriting the
+    rounded-rect table posture
   - the latest `Input / Search` re-audit also confirmed that both
     `Input / State` / `SearchInput / State` and `Input / Size` /
     `SearchInput / Size` now use `radius/sm = 8px` across light and dark; repo

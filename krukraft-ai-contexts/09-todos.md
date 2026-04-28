@@ -50,7 +50,7 @@ Parent Plan: `Figma DS section audit`
 ## Progress
 
 Figma DS section audit
-`[███░░░░░░░] 30%`
+`[████░░░░░░] 40%`
 
 ```mermaid
 flowchart TB
@@ -252,13 +252,13 @@ Audit order for this plan:
 - [x] Lock the audit scope to Figma-vs-repo parity, not new runtime redesign
 - [x] Define the exact section-by-section audit order and acceptance criteria
 - [x] Complete Phase 1 foundations audit across `Typography`, `Color Primitives`, and `Spacing + Radius`
-- [ ] Start Phase 2 with `Button / Foundations`
+- [x] Start Phase 2 with `Button / Foundations`
+- [x] Audit `Button / Foundations / Light` and `Button / Foundations / Dark`
 
 ---
 
 ## Next Up
 
-- [ ] Audit `Button / Foundations / Light` and `Button / Foundations / Dark`
 - [ ] Audit `Input / Search / Light` and `Input / Search / Dark`
 - [ ] Move into `Card`, `Dropdown`, and `Surface` only after the control pass is written down
 
@@ -356,6 +356,7 @@ Add only short, high-signal entries here.
 
 - 2026-04-28: After `Figma DS alignment` closed, open a new parent plan `Figma DS section audit` to re-check the canonical Figma DS file against the repo in a stricter section-by-section order instead of reopening broad DS work implicitly.
 - 2026-04-28: Phase 1 of `Figma DS section audit` is now closed. A fresh foundations re-audit confirmed that `Typography / Light`, `Typography / Dark`, `Color Primitives / Light`, `Color Primitives / Dark`, and `Spacing + Radius / Primitives` all stay fully bound for text, fills, strokes, and per-corner radius. The live correction was repo wording drift instead: old notes still implied a `20`-color primitive collection and treated per-corner radius bindings as if they were local radius debt.
+- 2026-04-28: Phase 2 has now started with `Button / Foundations`. The live light/dark boards stay fully bound for text family/size/line-height/fill plus shell fills, strokes, and per-corner radius, and the old `wrapper radius debt` + dark `light recipe` subtitle claims are now closed as repo drift. The live `Button recipes` truth is also narrower and clearer now: `Row action` keeps an `Edit / Open` example row plus a compact state strip, `Pagination item` shares the same rounded-rect `radius/sm (8px)` recipe shape, and `Panel CTA` intentionally stays on the bounded-neutral pill candidate instead of inheriting the table posture.
 - 2026-04-25: Active plan changed from the completed marketplace hero-search cleanup to `Figma DS alignment`; start by locking the canonical Figma source file and producing a repo-vs-Figma inventory diff before any new parity claim.
 - 2026-04-25: `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`) is now the permanent canonical Figma DS source file; repo references and coverage docs must be migrated to that foundation-first source.
 - 2026-04-25: The first repo-side doc drift pass is complete; stale mapping claims from the previous Figma file were downgraded, so the next active slice is `Input` / `SearchInput` foundation parity.
@@ -382,7 +383,7 @@ Add only short, high-signal entries here.
 - 2026-04-26: The `Button` / `Input` size contract is now explicitly locked for Figma handoff: typography scale stays in variables, while control size stays in component variants (`Button`: `xs|sm|md|lg|icon`; fields: `sm|md|lg|field`) with the current density defaults carried forward from code.
 - 2026-04-26: The canonical Figma foundations now reflect that control-size contract more directly: `Button / Size` light/dark were rebuilt to include `xs|sm|md|lg`, while `Input` / `SearchInput` gained explicit light/dark `... / Size` component sets for the shared field ladder.
 - 2026-04-27: A detailed re-audit of the canonical `Input / Search` boards confirmed that `Input / State`, `SearchInput / State`, `Input / Size`, and `SearchInput / Size` now use `radius/sm (8px)` consistently across light and dark. Repo context is synced to that Figma truth; runtime code still carries the older larger comfortable-radius branch and should be treated as drift until adoption.
-- 2026-04-27: A detailed `Button / Foundations` re-audit confirmed that the light/dark boards stay semantically token-bound at the section-shell level; the remaining narrow debt is wrapper-only local radius on `Button / State` and `Button / Size`, plus one dark-board subtitle that still says `light recipe`. The same audit also logged a real design-vs-runtime gap: canonical Figma now uses more explicit `quiet` / `ghost` foreground shifts by state than the current runtime `Button.tsx` recipe exposes.
+- 2026-04-27: A detailed `Button / Foundations` re-audit confirmed that the light/dark boards stay semantically token-bound at the section-shell level and logged the live design-vs-runtime gap: canonical Figma now uses more explicit `quiet` / `ghost` foreground shifts by state than the current runtime `Button.tsx` recipe exposes. The older `wrapper radius debt` and dark `light recipe` subtitle caveats from that audit were later cleared by the 2026-04-28 control re-audit and should now be treated as superseded repo drift, not live Figma debt.
 - 2026-04-28: `Card` repo adoption has now started too: runtime `Card.tsx` uses `surface` for the root shell and `inset` for the footer band, and the canonical `Card / Size / Source` light/dark component sets no longer carry wrapper-radius debt after the latest Figma cleanup. Remaining card debt is now explicit token-gap / preview-polish work only.
 - 2026-04-28: Runtime `card` semantics now follow the same Figma base as `Card`: `bg-card` resolves to the `surface` layer, while shared shell chrome that should stay on the outer shell now has to use `bg-shell` explicitly. The first shared consumers normalized in that slice were the sidebar, navbar/account chrome, theme switcher menu, and notification chrome.
 - 2026-04-28: A user-directed follow-up audit of `bg-card` consumers closed the first nested-surface remediation slice after the semantic shift. The creator editor family had the first material holdouts, so preview/icon chips, delivery-source segmented controls, and profile/banner preview wrappers now use `bg-shell` explicitly inside creator `bg-card` sections. Public `/resources`, `/resources/[slug]`, and `/creators/[slug]` stayed on the `surface` posture, and the local `creator-editor-refresh-shell` browser probe passed after the local DB was restarted.
