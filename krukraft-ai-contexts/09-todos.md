@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Figma DS alignment`
 
 > [!info] Current Phase
-> `Composed shared chrome reopening`
+> `Figma DS alignment complete`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -17,11 +17,11 @@ Parent Plan: `Figma DS alignment`
 > Dashboard-v2 stabilization remains frozen
 > Public marketplace perf baseline remains intact
 
-> [!warning] Active
-> The canonical Figma source file is now locked and re-audited as the repo base, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, the 2026-04-27 field-shell re-audit confirmed that canonical `Input` and `SearchInput` state + size sets now use `radius/sm (8px)` across light/dark, `Card`, `Surface`, `Badge`, `FormSection`, and now `DataPanelTable` are landed as the current shared-library proof points, `Dropdown` now has verified light/dark foundation study boards, and the supporting `state/selected-*` semantic trio is now present in the canonical file; `Badge vs Chip` is still locked, but the next mandatory step has now narrowed to the optional `Dropdown` promotion decision and then shared-library close-out work on top of the landed shell family
+> [!success] Closed
+> The canonical Figma source file is now locked and re-audited as the repo base, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, the 2026-04-27 field-shell re-audit confirmed that canonical `Input` and `SearchInput` state + size sets now use `radius/sm (8px)` across light/dark, `Card`, `Surface`, `Badge`, `FormSection`, and `DataPanelTable` are landed as the current shared-library proof points, `Dropdown` remains intentionally locked as a verified study-board reference, and the supporting `state/selected-*` semantic trio is now present in the canonical file; the shared-library close-out audit found no remaining in-plan issue that requires reopening this plan
 
 > [!todo] Next Up
-> Reopen shared-library coverage in impact order: the optional `Dropdown` component-set promotion decision, then a close-out audit of the shared-library pass
+> The current `Figma DS alignment` parent plan is complete; wait for an explicit new plan or reprioritization before reopening DS scope
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and hero-search cleanup plan are complete; this new plan is a documentation/alignment pass that should not silently reopen runtime route work.
@@ -36,7 +36,7 @@ Parent Plan: `Figma DS alignment`
 | Visual Foundation | Frozen   | completed visual baseline stays in force; do not reopen primitive work implicitly |
 | Discover         | Frozen   | `/resources` listing-mode shell + fail-soft states landed and passed close-out audit    |
 | Theme Refresh    | Complete | brief, playbook, Figma review page, approved surface baseline, cleanup slice, and first runtime slices all passed close-out audit |
-| Figma DS Alignment | Active | canonical Figma source, repo registry, and DS inventory need to be realigned before claiming Figma parity |
+| Figma DS Alignment | Complete | canonical Figma source, repo registry, and DS inventory are now aligned enough to close the plan; `Dropdown` intentionally stays a verified study-board reference and future product exemplars should open as a separate plan |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -49,7 +49,7 @@ Parent Plan: `Figma DS alignment`
 ## Progress
 
 Figma DS alignment
-`[█████████▌] 95%`
+`[██████████] 100%`
 
 ```mermaid
 flowchart TB
@@ -96,11 +96,11 @@ flowchart TB
   end
 
   subgraph Current
-    F1[Canonical Figma source lock<br/>In progress]
-    F2[Inventory diff and docs drift audit<br/>Planned]
-    F3[Foundation parity closure<br/>Planned]
-    F4[Shared DS library mapping pass<br/>In progress]
-    F5[Product exemplar + verification close-out<br/>Planned]
+    F1[Canonical Figma source lock<br/>Done]
+    F2[Inventory diff and docs drift audit<br/>Done]
+    F3[Foundation parity closure<br/>Done]
+    F4[Shared DS library mapping pass<br/>Done]
+    F5[Product exemplar + verification close-out<br/>Done]
   end
 
   D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> F1 --> F2 --> F3 --> F4 --> F5
@@ -261,21 +261,17 @@ Lock one canonical Figma source of truth, align repo-side DS references with rea
 | 0 | Canonical source lock | done | `koZEgVUfQhNEQmXISNQx56` is now the canonical DS source-of-truth file and repo references must follow it |
 | 1 | Inventory diff + docs drift pass | done | canonical-file snapshot landed, stale mapping claims were downgraded, and obvious inventory drift was corrected |
 | 2 | Foundation parity pass | done | `Input / State` and `SearchInput / State` light/dark component sets now exist in the canonical file as first-pass reusable foundations |
-| 3 | Shared DS library mapping pass | in progress | `Card`, `Surface`, `Badge`, `FormSection`, and now `DataPanelTable` are landed as reusable proof points; decide whether `Dropdown` is promoted from study board to mapped component set before close-out |
-| 4 | Product exemplar + verification close-out | pending | treat product-bound exports separately, then close the alignment plan with updated references/checks |
+| 3 | Shared DS library mapping pass | done | `Card`, `Surface`, `Badge`, `FormSection`, and `DataPanelTable` are landed as reusable proof points; the close-out decision is to keep `Dropdown` as a verified study-board reference for now instead of promoting a premature component-set mapping |
+| 4 | Product exemplar + verification close-out | done | the plan close-out audit passed after syncing the final Figma truth back into repo references/checks; future product exemplars should open as a separate optional plan instead of keeping this parent plan alive |
 
 ---
 
 ## Current Goal
 
-Open and execute a new `Figma DS alignment` parent plan without reopening completed runtime rollout work. Start by locking the canonical Figma file and producing a code-vs-Figma inventory diff the repo can trust.
-
-Current recommendation order:
-1. Lock the canonical Figma file and update repo references if the source-of-truth file changed
-2. Produce the DS inventory diff and mark all current `doc drift`
-3. Close the foundation slice (`Button`, `Input`, `SearchInput`, tokens) before broadening to the rest of the library
-4. Tackle shared DS library surfaces in impact order
-5. Keep product-bound exemplars in a separate final pass
+The `Figma DS alignment` parent plan is now complete. Keep the canonical Figma
+file and repo-side DS references aligned, but do not silently reopen this plan;
+future product exemplars, runtime adoption work, or additional DS expansion
+should start as a new explicit plan.
 
 ---
 
@@ -293,15 +289,15 @@ Current recommendation order:
 - [x] Land `Surface` as the shared-library shell bridge before reopening `FormSection` and `DataPanelTable`
 - [x] Start `Badge` as an explicit shared-library remapping target after the foundation pass
 - [x] Add `Chip` to the shared-library plan through an explicit `Badge vs Chip` contract decision
-- [ ] Start `Chip` as a shared-library surface candidate after `Card`, `Dropdown`, and `Surface`
+- [x] Keep `Chip` out of this parent plan after the `Badge vs Chip` decision and leave any future `Chip` expansion as optional follow-up work
 
 ---
 
 ## Next Up
 
 - [x] Reopen `FormSection` on top of the landed `Surface` and `Badge` shell family
-- [ ] Decide whether `Dropdown` stays a study-board reference or is promoted into a reusable component-set mapping during shared-library close-out
-- [ ] Run the shared-library close-out audit once the `Dropdown` promotion decision is resolved
+- [x] Decide whether `Dropdown` stays a study-board reference or is promoted into a reusable component-set mapping during shared-library close-out
+- [x] Run the shared-library close-out audit once the `Dropdown` promotion decision is resolved
 
 ---
 
@@ -411,7 +407,9 @@ Add only short, high-signal entries here.
 - 2026-04-28: The earlier `36px` footer-button study has now been folded into the canonical Figma `Button / Foundations` boards as a bounded neutral `soft` tone that sits beside `ghost`, plus a Figma-first `sm=36` step. Treat that as source-of-truth design direction only for now; runtime still stays on `primary | quiet | ghost` and the current size ladder until a separate button adoption pass lands.
 - 2026-04-28: The follow-up button-ladder audit is now recorded too: if the `36px` posture is promoted later, the current safest trial path is `xs=32 / sm=36 / md=40 / lg=48`, keep `density=\"compact\" -> xs` during the first rollout proof, and leave `Input` / `SearchInput` on the current field ladder. The impact map is concentrated in `dashboard` (~60 `size=\"sm\"` button uses) and `admin` (~34), while live `density=\"compact\"` usage is still narrow (`public-resources` 3, `creator` 1).
 - 2026-04-28: The button-family decision rule is now locked in repo docs too: keep `primary | quiet | ghost` as the approved runtime family, treat Figma-side `soft` as a bounded-neutral candidate only, and keep `row action`, `pagination item`, and `panel CTA` as recipes on top of existing button variants until cross-context reuse proves a new family member is warranted.
-- 2026-04-28: The follow-up recipe pass now locks the `DataPanelTable`-style action controls in the canonical Figma file too: `row action` and `pagination item` stay recipes, not new families, but they now use the rounded-rect `radius/lg` posture you preferred from the live table instead of inheriting the core pill shape.
+- 2026-04-28: The follow-up recipe pass now locks the `DataPanelTable`-style action controls in the canonical Figma file too: `row action` and `pagination item` stay recipes, not new families, but they now use the rounded-rect `radius/sm (8px)` posture you preferred from the live table instead of inheriting the core pill shape.
+- 2026-04-28: The final recipe cleanup restored the canonical `Button recipes / Row action` card to an `Edit / Open` example row plus a compact `Default|Hover|Focus|Pressed|Disabled` state strip, and `DataPanelTable` now mirrors that same outline recipe posture in its light/dark foundations.
+- 2026-04-28: The optional `Dropdown` promotion decision is now closed for this parent plan: keep `Dropdown` as a verified study-board reference for now rather than forcing a reusable component-set mapping before the shell recipe is proven broader. The shared-library close-out audit found no remaining in-plan issue after syncing the final Figma truth back into repo docs/context, so `Figma DS alignment` closes at `100%`.
 - 2026-04-27: A full-canvas repo-sync audit of `koZEgVUfQhNEQmXISNQx56` is now landed; repo docs now reflect the actual two-page file (`DS Foundations` + `Foundation Review`), the live section inventory, the clean paint-binding posture of `DS Foundations`, the review-only status of `Foundation Review`, and the current live `Button` / `Card` component-set ids after earlier Figma rebuilds.
 - 2026-04-26: The canonical Figma radius collection now includes `radius/xs = 4px`, and the `Spacing + Radius / Primitives` board was expanded to six rows to keep the visual audit surface aligned with the variable truth; repo runtime tokens still do not expose `radius/xs` yet.
 - 2026-04-26: Text across `DS Foundations` now binds `font/family/base` by default; four glyph-only nodes were intentionally left on symbol-font rendering so carets/chevrons do not break during the typography-variable pass.

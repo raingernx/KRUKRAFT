@@ -289,8 +289,13 @@ Use this order when DS docs disagree:
         family members; evaluate them against `outline` and the Figma-first
         `soft` posture before inventing another top-level variant
       - the canonical Figma file now locks the `DataPanelTable` flavor of
-        `row action` and `pagination item` to a rounded-rect `radius/lg`
-        recipe shape instead of the pill geometry used by the core family
+        `row action` and `pagination item` to a rounded-rect
+        `radius/sm (8px)` recipe shape instead of the pill geometry used by
+        the core family
+      - the `Button recipes` row-action card now shows both the live
+        `Edit / Open` example row and a compact state strip so the recipe
+        posture and `default|hover|focus|pressed|disabled` behavior stay
+        visible together
       - that same audit found the real runtime blast radius is concentrated in
         `dashboard` (~60 `size=\"sm\"` button usages) and `admin` (~34), while
         live `density=\"compact\"` usage is still narrow (`public-resources`
@@ -448,9 +453,12 @@ Use this order when DS docs disagree:
   - the remaining token debt is explicit on the board too: runtime still asks
     for `border-subtle`, and the table-head fill remains route-owned rather
     than a shared semantic token
-  - with `DataPanelTable` now landed, the next mandatory shared-library step
-    is the optional `Dropdown` promotion decision, then the shared-library
-    close-out audit
+  - the shared-library close-out audit is now complete too:
+    - `Dropdown` stays a verified study-board reference for now rather than a
+      promoted reusable component-set mapping
+    - the latest `Button recipes` and `DataPanelTable` Figma adjustments are
+      now mirrored in repo docs/context, so the plan no longer needs a
+      follow-up drift pass inside the same scope
 
 ## Verification Pointers
 
