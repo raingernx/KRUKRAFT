@@ -371,6 +371,11 @@ At a high level:
     runtime code still carries an older larger comfortable-radius branch, so
     treat the canonical Figma file as the base and the runtime recipe as drift
     until adoption happens
+  - that same control re-audit also keeps two narrow Figma gaps explicit
+    instead of hiding them: the light/dark component-set wrappers still carry a
+    local `cornerRadius=5`, and the `Clear` action label in the search-state
+    explainer still uses a local `14/20` type recipe while staying bound for
+    font family and text fill
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow (`space/20`, `space/10`, and preview-stack polish), while runtime

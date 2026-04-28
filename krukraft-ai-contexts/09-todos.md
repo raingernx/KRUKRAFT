@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Figma DS section audit`
 
 > [!info] Current Phase
-> `Phase 2 — control audit`
+> `Phase 3 — shell audit`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -50,7 +50,7 @@ Parent Plan: `Figma DS section audit`
 ## Progress
 
 Figma DS section audit
-`[████░░░░░░] 40%`
+`[█████░░░░░] 50%`
 
 ```mermaid
 flowchart TB
@@ -99,8 +99,8 @@ flowchart TB
   subgraph Current
     A0["Audit contract + section order lock<br/>Done"]
     A1["Foundations audit<br/>Typography, Color, Spacing + Radius<br/>Done"]
-    A2["Control audit<br/>Button, Input / Search<br/>In progress"]
-    A3["Shell audit<br/>Card, Dropdown, Surface"]
+    A2["Control audit<br/>Button, Input / Search<br/>Done"]
+    A3["Shell audit<br/>Card, Dropdown, Surface<br/>In progress"]
     A4["Shared component audit<br/>Badge, FormSection, DataPanelTable"]
     A5["Repo sync + close-out<br/>Review page, map, context, tracker"]
   end
@@ -254,13 +254,15 @@ Audit order for this plan:
 - [x] Complete Phase 1 foundations audit across `Typography`, `Color Primitives`, and `Spacing + Radius`
 - [x] Start Phase 2 with `Button / Foundations`
 - [x] Audit `Button / Foundations / Light` and `Button / Foundations / Dark`
+- [x] Audit `Input / Search / Light` and `Input / Search / Dark`
 
 ---
 
 ## Next Up
 
-- [ ] Audit `Input / Search / Light` and `Input / Search / Dark`
-- [ ] Move into `Card`, `Dropdown`, and `Surface` only after the control pass is written down
+- [ ] Audit `Card / Foundations / Light` and `Card / Foundations / Dark`
+- [ ] Audit `Dropdown / Foundations / Light` and `Dropdown / Foundations / Dark`
+- [ ] Audit `Surface / Foundations / Light` and `Surface / Foundations / Dark`
 
 ---
 
@@ -357,6 +359,7 @@ Add only short, high-signal entries here.
 - 2026-04-28: After `Figma DS alignment` closed, open a new parent plan `Figma DS section audit` to re-check the canonical Figma DS file against the repo in a stricter section-by-section order instead of reopening broad DS work implicitly.
 - 2026-04-28: Phase 1 of `Figma DS section audit` is now closed. A fresh foundations re-audit confirmed that `Typography / Light`, `Typography / Dark`, `Color Primitives / Light`, `Color Primitives / Dark`, and `Spacing + Radius / Primitives` all stay fully bound for text, fills, strokes, and per-corner radius. The live correction was repo wording drift instead: old notes still implied a `20`-color primitive collection and treated per-corner radius bindings as if they were local radius debt.
 - 2026-04-28: Phase 2 has now started with `Button / Foundations`. The live light/dark boards stay fully bound for text family/size/line-height/fill plus shell fills, strokes, and per-corner radius, and the old `wrapper radius debt` + dark `light recipe` subtitle claims are now closed as repo drift. The live `Button recipes` truth is also narrower and clearer now: `Row action` keeps an `Edit / Open` example row plus a compact state strip, `Pagination item` shares the same rounded-rect `radius/sm (8px)` recipe shape, and `Panel CTA` intentionally stays on the bounded-neutral pill candidate instead of inheriting the table posture.
+- 2026-04-28: Phase 2 is now closed. A fresh `Input / Search` re-audit confirms that the light/dark boards stay token-bound for text family, text fill, shell fills/strokes, and the shared `radius/sm (8px)` field shells, but two explicit Figma-only gaps remain open by design: the four component-set wrappers still keep local `cornerRadius=5`, and the `Clear` action label in the search-state explainer still uses a local `14/20` type recipe. The repo registry also needed current dark ids for `Input / State`, `Input / Size`, `SearchInput / State`, and `SearchInput / Size`.
 - 2026-04-25: Active plan changed from the completed marketplace hero-search cleanup to `Figma DS alignment`; start by locking the canonical Figma source file and producing a repo-vs-Figma inventory diff before any new parity claim.
 - 2026-04-25: `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`) is now the permanent canonical Figma DS source file; repo references and coverage docs must be migrated to that foundation-first source.
 - 2026-04-25: The first repo-side doc drift pass is complete; stale mapping claims from the previous Figma file were downgraded, so the next active slice is `Input` / `SearchInput` foundation parity.

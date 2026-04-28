@@ -306,6 +306,13 @@ Use this order when DS docs disagree:
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared
       `field` height ladder, `space/16`, and caption-scale text
+    - the latest control re-audit narrows the remaining Figma debt on those
+      boards to two explicit items only:
+      - the light/dark component-set wrappers still keep local
+        `cornerRadius=5`
+      - the `Clear` action label inside the search-state explainer still uses a
+        local `14/20` type recipe even though its font family and text fill are
+        already bound
     - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
       component sets for the shared field ladder
     - runtime code still carries an older larger comfortable-radius branch for
