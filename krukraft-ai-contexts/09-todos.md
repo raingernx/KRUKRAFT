@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Figma DS alignment`
 
 > [!info] Current Phase
-> `Shared-library mapping kickoff`
+> `Composed shared chrome reopening`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Figma DS alignment`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> The canonical Figma source file is now locked and re-audited as the repo base, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, the 2026-04-27 field-shell re-audit confirmed that canonical `Input` and `SearchInput` state + size sets now use `radius/sm (8px)` across light/dark, `Card` and `Surface` are landed as the current shared-library shell proof points, `Dropdown` now has verified light/dark foundation study boards, and the supporting `state/selected-*` semantic trio is now present in the canonical file; the `Badge vs Chip` contract decision is now locked too, so the next mandatory step is continuing shared-library coverage with `Badge` first, then reopening composed shared chrome on top of the landed shell family
+> The canonical Figma source file is now locked and re-audited as the repo base, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, the 2026-04-27 field-shell re-audit confirmed that canonical `Input` and `SearchInput` state + size sets now use `radius/sm (8px)` across light/dark, `Card`, `Surface`, and `Badge` are landed as the current shared-library proof points, `Dropdown` now has verified light/dark foundation study boards, and the supporting `state/selected-*` semantic trio is now present in the canonical file; `Badge vs Chip` is still locked, but the next mandatory step has now moved up a layer to reopening composed shared chrome on top of the landed shell family
 
 > [!todo] Next Up
-> Reopen shared-library coverage in impact order: `Badge`, `FormSection` / `DataPanelTable`, then the optional `Dropdown` component-set promotion decision
+> Reopen shared-library coverage in impact order: `FormSection` / `DataPanelTable`, then the optional `Dropdown` component-set promotion decision, then a close-out audit of the shared-library pass
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and hero-search cleanup plan are complete; this new plan is a documentation/alignment pass that should not silently reopen runtime route work.
@@ -49,7 +49,7 @@ Parent Plan: `Figma DS alignment`
 ## Progress
 
 Figma DS alignment
-`[█████████░] 90%`
+`[█████████▌] 95%`
 
 ```mermaid
 flowchart TB
@@ -236,7 +236,9 @@ Lock one canonical Figma source of truth, align repo-side DS references with rea
 - The reviewed Figma file appears to be a foundation-first lab rather than the full DS library implied by repo inventory docs
 - The canonical file and first repo-side doc drift pass are now locked enough to move forward without pretending the broader library is already mapped
 - The `Input` / `SearchInput` parity slice is now complete enough to use as the second reusable foundation block after `Button`
-- `Card`, `Dropdown`, and `Surface` now establish the current shared shell family, so the next highest-signal gap is the non-interactive `Badge` surface before reopening composed shared chrome
+- `Card`, `Dropdown`, `Surface`, and now `Badge` establish the current shared
+  shell + label family, so the next highest-signal gap is reopening composed
+  shared chrome on top of those landed primitives
 - `Badge vs Chip` decision is now locked from repo usage evidence:
   - `Badge` = non-interactive semantic/status label
   - `Chip` = interactive filter/removable/navigation token surface
@@ -259,7 +261,7 @@ Lock one canonical Figma source of truth, align repo-side DS references with rea
 | 0 | Canonical source lock | done | `koZEgVUfQhNEQmXISNQx56` is now the canonical DS source-of-truth file and repo references must follow it |
 | 1 | Inventory diff + docs drift pass | done | canonical-file snapshot landed, stale mapping claims were downgraded, and obvious inventory drift was corrected |
 | 2 | Foundation parity pass | done | `Input / State` and `SearchInput / State` light/dark component sets now exist in the canonical file as first-pass reusable foundations |
-| 3 | Shared DS library mapping pass | in progress | `Card` is landed as the first shell proof point; continue aligning reusable DS primitives/composed surfaces in impact order, with `Badge` as the non-interactive label surface and `Chip` as the interactive token surface after the locked `Badge vs Chip` decision |
+| 3 | Shared DS library mapping pass | in progress | `Card`, `Surface`, and `Badge` are now landed as reusable proof points; reopen composed shared chrome next, then decide whether `Dropdown` is promoted from study board to mapped component set before close-out |
 | 4 | Product exemplar + verification close-out | pending | treat product-bound exports separately, then close the alignment plan with updated references/checks |
 
 ---
@@ -289,7 +291,7 @@ Current recommendation order:
 - [x] Land `Dropdown` / popover shell study boards in the canonical file with verified light/dark shell posture
 - [x] Normalize canonical `Button`, `Input`, and `SearchInput` foundation component sets to the locked runtime size contract
 - [x] Land `Surface` as the shared-library shell bridge before reopening `FormSection` and `DataPanelTable`
-- [ ] Start `Badge` as an explicit shared-library remapping target after the foundation pass
+- [x] Start `Badge` as an explicit shared-library remapping target after the foundation pass
 - [x] Add `Chip` to the shared-library plan through an explicit `Badge vs Chip` contract decision
 - [ ] Start `Chip` as a shared-library surface candidate after `Card`, `Dropdown`, and `Surface`
 
@@ -297,9 +299,9 @@ Current recommendation order:
 
 ## Next Up
 
-- [ ] Start `Badge` studies/components as the non-interactive semantic label surface after `Surface` establishes the broader shared-library chrome
-- [ ] Reopen `FormSection` and `DataPanelTable` on top of the landed `Surface` shell
+- [ ] Reopen `FormSection` and `DataPanelTable` on top of the landed `Surface` and `Badge` shell family
 - [ ] Decide whether `Dropdown` stays a study-board reference or is promoted into a reusable component-set mapping during shared-library close-out
+- [ ] Run the shared-library close-out audit once `FormSection` / `DataPanelTable` and the `Dropdown` promotion decision are resolved
 
 ---
 
@@ -402,6 +404,7 @@ Add only short, high-signal entries here.
 - 2026-04-25: `Card` is now landed in the canonical file through `Card / Size` and `Card / Size / Dark`; it becomes the first shared-library shell proof point, so the next active slice is `Dropdown`, `Surface`, then `Badge`.
 - 2026-04-25: `Dropdown / Foundations / Light` (`499:110`) and `Dropdown / Foundations / Dark` (`499:181`) are now landed as verified study boards in the canonical file; reusable dropdown mapping remains pending, so the next active slice is `Surface`, then `Badge`.
 - 2026-04-27: The canonical Figma semantic layer now includes `state/selected-fill`, `state/selected-stroke`, and `state/selected-text`, aliased to `primary/mist`, `primary/lift`, and `primary/base` so selected rows, selected chips, and other selected surfaces can share a stable theme-aware state contract before `Badge` remapping resumes.
+- 2026-04-28: `Badge / Foundations / Light` (`736:156`) and `Badge / Foundations / Dark` (`736:184`) are now landed as canonical boards, with `Badge / Variant / Source` (`736:178`) and `Badge / Variant / Source / Dark` (`736:206`) as the live reusable sets. The canonical set stays non-interactive, covers `neutral`, `info`, `success`, `warning`, `featured`, `destructive`, and `outline`, and records one explicit token gap: badge labels still rely on a local `12/16` xs recipe until the typography scale grows an xs label token.
 - 2026-04-27: A full-canvas repo-sync audit of `koZEgVUfQhNEQmXISNQx56` is now landed; repo docs now reflect the actual two-page file (`DS Foundations` + `Foundation Review`), the live section inventory, the clean paint-binding posture of `DS Foundations`, the review-only status of `Foundation Review`, and the current live `Button` / `Card` component-set ids after earlier Figma rebuilds.
 - 2026-04-26: The canonical Figma radius collection now includes `radius/xs = 4px`, and the `Spacing + Radius / Primitives` board was expanded to six rows to keep the visual audit surface aligned with the variable truth; repo runtime tokens still do not expose `radius/xs` yet.
 - 2026-04-26: Text across `DS Foundations` now binds `font/family/base` by default; four glyph-only nodes were intentionally left on symbol-font rendering so carets/chevrons do not break during the typography-variable pass.

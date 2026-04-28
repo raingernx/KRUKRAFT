@@ -361,23 +361,30 @@ Use this order when DS docs disagree:
     and the repo context is now synced to that file as the base:
     - the file currently has exactly two pages: `DS Foundations` and
       `Foundation Review`
-    - `DS Foundations` is the true source page with 15 top-level section frames
+    - `DS Foundations` is the true source page with 17 top-level section frames
       for typography, colors, spacing/radius, `Button`, `Input / Search`,
-      `Card`, `Dropdown`, and `Surface`
+      `Card`, `Dropdown`, `Surface`, and `Badge`
     - `Foundation Review` is review-only and should not be treated as a
       reusable library source
-    - `DS Foundations` currently audits clean on paint bindings:
-      `633/633` text nodes have font-family binding, `633/633` text nodes have
-      text-fill binding, fills have no local drift, and strokes have no local
-      drift
+    - `DS Foundations` now keeps `663/663` text nodes bound to
+      `font/family/base` and `663/663` text nodes bound to text-fill variables
+      after the `Badge` foundations pass landed
     - the remaining local styling debt is now narrow and explicit:
       wrapper/study-scene radius values inside `Button`, `Input / Search`,
       `Card`, `Dropdown`, and `Surface`, plus the already-known token gaps for
-      `Dropdown` and `Surface`
+      `Dropdown`, `Surface`, and the new `Badge` xs label-type gap
+    - `Badge` is now landed in the canonical file through dedicated
+      `Badge / Foundations / Light` and `Badge / Foundations / Dark` boards
+      plus `Badge / Variant / Source` light/dark component sets
+    - the `Badge` pass also introduced the first canonical support-status
+      primitives for `support/success/*` and `support/warning/*`, used to keep
+      status labels token-bound without reopening the locked primary/rust/sand
+      posture
     - `Foundation Review` still has text-fill binding but not font-family
       binding on its current text nodes, so it should be treated as a review
       artifact rather than a token-parity proof page
-  - the next mandatory shared-library step after `Surface` is `Badge`, then
+  - with `Badge` now landed as the next shared-library proof point after
+    `Surface`, the next mandatory shared-library step is reopening
     `FormSection` / `DataPanelTable`
 
 ## Verification Pointers

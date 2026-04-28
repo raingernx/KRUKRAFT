@@ -230,6 +230,15 @@ For reusable Figma component sets:
 - Keep `Badge` and `Chip` as separate DS contracts:
   - `Badge` = non-interactive semantic/status label
   - `Chip` = interactive/removable/filter/navigation token surface
+- The canonical Figma `Badge` base now lives in `Badge / Foundations / Light`
+  and `Badge / Foundations / Dark`, with source sets that cover `neutral`,
+  `info`, `success`, `warning`, `featured`, `destructive`, and `outline`.
+- Product or legacy runtime variants (`owned`, `new`, `free`, `default`,
+  `secondary`, `ghost`, `link`) are intentionally outside that canonical Figma
+  set until a deliberate remap or cleanup pass happens.
+- The current canonical `Badge` board keeps one explicit token gap instead of
+  silently drifting: the label uses a local `12/16` recipe because the shared
+  typography scale still lacks an xs label token.
 - Do not solve interactive chip needs by adding more `Badge` variants just
   because the silhouette is similar.
 

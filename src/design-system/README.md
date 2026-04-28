@@ -206,6 +206,16 @@ When this file conflicts with code, the code wins.
   the surface theme-aware and carry emphasis through border/text color.
 - `Badge` is the non-interactive semantic label primitive. Use it for status,
   metadata, or read-only emphasis.
+- The canonical Figma `Badge` base now covers `neutral`, `info`, `success`,
+  `warning`, `featured`, `destructive`, and `outline` through dedicated light
+  and dark `Badge / Foundations` boards.
+- Runtime-only or product-bound badge variants (`owned`, `new`, `free`,
+  `default`, `secondary`, `ghost`, and `link`) now sit outside that canonical
+  Figma set until they are either remapped deliberately or removed from the
+  shared primitive contract.
+- `Badge` still carries one explicit typography gap in Figma: the source set
+  uses a narrow local `12/16` label recipe because the typography scale does
+  not yet provide an xs label token.
 - `Chip` is now reserved for interactive token-like controls only, such as
   filter chips, pressed/selected chips, removable chips, or navigation chips.
   Do not expand `Badge` to cover those interactive contracts once `Chip` lands.
