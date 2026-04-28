@@ -187,6 +187,27 @@ When this file conflicts with code, the code wins.
   direction, but it is intentionally not part of the approved runtime
   `Button` ladder yet. Treat `soft` and Figma-side `sm=36` as adoption
   candidates, not as a silent DS contract change.
+- Use this decision rule when evaluating new button-looking surfaces:
+  - `variant`: promote only when the posture is meant to work across multiple
+    contexts as part of the core family
+  - `recipe`: keep context-specific action patterns documented on top of an
+    existing variant before creating a new family member
+- Current Krukraft button decision table:
+  - `primary`: canonical high-emphasis CTA variant
+  - `quiet`: canonical low-contrast filled secondary variant
+  - `ghost`: canonical airy low-emphasis action variant
+  - `outline`: legacy bordered variant; keep available for existing surfaces
+    and evaluate new bordered patterns against it first
+  - `soft`: Figma-first bounded neutral candidate beside `ghost`; do not treat
+    it as approved runtime family yet
+  - `row action`: recipe, not a new family; derive from `outline` or a future
+    outline-adjacent variant for dense table/action columns
+  - `pagination item`: recipe, not a new family; page navigation should stay a
+    `Pagination` pattern with `default`, `current`, and `disabled` states
+    instead of creating a separate button tone
+  - `panel CTA`: recipe first, usually outline-derived; if the bounded neutral
+    posture spreads across multiple non-table contexts, reopen it as a real
+    `soft` adoption decision instead of sneaking it into `ghost`
 - If the button ladder is deliberately reopened later, the current recommended
   promotion path is:
   - keep `xs = 32`

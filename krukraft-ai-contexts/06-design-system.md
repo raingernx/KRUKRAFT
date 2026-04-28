@@ -284,6 +284,10 @@ Use this order when DS docs disagree:
         `xs=32 / sm=36 / md=40 / lg=48`, keep
         `density=\"compact\" -> xs` during the first runtime proof, and leave
         `Input` / `SearchInput` on the existing field ladder for now
+      - the new button decision rule is now explicit too: table row actions,
+        pagination items, and panel CTAs should stay recipes first, not new
+        family members; evaluate them against `outline` and the Figma-first
+        `soft` posture before inventing another top-level variant
       - that same audit found the real runtime blast radius is concentrated in
         `dashboard` (~60 `size=\"sm\"` button usages) and `admin` (~34), while
         live `density=\"compact\"` usage is still narrow (`public-resources`

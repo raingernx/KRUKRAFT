@@ -109,6 +109,14 @@ Current runtime contract to mirror:
   only. Keep runtime `Button` on the approved `primary | quiet | ghost`
   family and current size ladder until a deliberate button-size adoption pass
   decides whether `soft` and `sm=36` should graduate into code.
+- Use the current button decision table when mapping Figma posture into DS:
+  - `primary`, `quiet`, and `ghost` are the approved runtime family
+  - `outline` remains the bordered fallback and should absorb most existing
+    table / inline management actions before a new family member is invented
+  - `soft` is a Figma-first bounded neutral candidate, not approved runtime
+  - table row actions, pagination items, and panel CTAs should start life as
+    recipes on top of `outline` / `ghost` / future `soft` posture rather than
+    immediately becoming new top-level variants
 - If that button-size pass is reopened, the current recommended path is to
   trial `xs=32 / sm=36 / md=40 / lg=48`, keep `density=\"compact\" -> xs`
   during the first rollout proof, and leave `Input` / `SearchInput` on the
