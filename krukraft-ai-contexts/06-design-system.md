@@ -434,6 +434,10 @@ Use this order when DS docs disagree:
     the progressive `actions`, `toolbar`, and `footer` combinations without
     pretending to own column schemas, table-head semantics, row rendering, or
     business actions
+  - after the first landing pass, the source set was tightened again to match
+    repo usage more literally: the fourth variant is now
+    `actions=true, toolbar=false, footer=true`, and the footer proof point is a
+    muted metadata note rather than an invented CTA footer
   - the remaining token debt is explicit on the board too: runtime still asks
     for `border-subtle`, and the table-head fill remains route-owned rather
     than a shared semantic token

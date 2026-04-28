@@ -125,7 +125,8 @@ When this file conflicts with code, the code wins.
   route-owned.
 - The canonical Figma `DataPanelTable` base now lives in dedicated light/dark
   `DataPanelTable / Foundations` boards, with source sets that stay shell-only
-  and prove progressive `actions`, `toolbar`, and `footer` combinations.
+  and prove progressive `actions`, `toolbar`, and `footer` combinations that
+  match the current repo usage rather than every possible permutation.
 - Keep `DataPanelTable` responsible for shell, title, description, actions,
   optional toolbar, and optional footer only; do not turn it into a reusable
   table-schema or row-action registry.

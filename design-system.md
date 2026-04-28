@@ -278,6 +278,8 @@ For reusable Figma component sets:
   combinatorially exhaustive: it proves the shell combinations for
   `actions`, `toolbar`, and `footer`, while columns, table-head fills, row
   rendering, empty-state content, and business actions stay route-owned.
+- The current footer proof point should stay close to runtime usage too: use a
+  muted metadata-note footer before inventing CTA-heavy footer recipes.
 - The current canonical `DataPanelTable` board also keeps its token debt
   explicit: runtime still asks for `border-subtle`, and the table-head fill
   remains a route-owned local treatment rather than a shared semantic token.
