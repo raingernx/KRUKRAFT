@@ -33,7 +33,7 @@ export function NavbarItem({
         variant === "primary"
           ? "bg-brand-600 text-white shadow-sm hover:bg-brand-700"
           : variant === "secondary"
-            ? "bg-card text-foreground shadow-sm ring-1 ring-border hover:bg-accent"
+            ? "bg-shell text-foreground shadow-sm ring-1 ring-border hover:bg-accent"
           : variant === "active"
             ? mobile
               ? "bg-brand-50 text-brand-600"

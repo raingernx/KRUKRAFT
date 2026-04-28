@@ -207,7 +207,7 @@ export const themeColors = {
     inkSubtle: "20 8.2% 64.1%",
     background: "0 0% 97.6%",
     foreground: "8.6 7.1% 19.4%",
-    card: "0 9.1% 95.7%",
+    card: "300 6.7% 97.1%",
     cardForeground: "8.6 7.1% 19.4%",
     popover: "0 9.1% 95.7%",
     popoverForeground: "8.6 7.1% 19.4%",
@@ -260,7 +260,7 @@ export const themeColors = {
     inkSubtle: "36.7 7.4% 52.2%",
     background: "260 15.8% 7.5%",
     foreground: "40 44.7% 90.8%",
-    card: "260 17.0% 10.4%",
+    card: "260 11.5% 10.2%",
     cardForeground: "40 44.7% 90.8%",
     popover: "260 17.0% 10.4%",
     popoverForeground: "40 44.7% 90.8%",
@@ -306,7 +306,7 @@ export const themeColors = {
 
 export const colorAliases = {
   foreground: semanticColors.textPrimary,
-  card: semanticColors.background,
+  card: semanticColors.surface,
   cardForeground: semanticColors.textPrimary,
   secondary: semanticColors.surface,
   secondaryForeground: semanticColors.textPrimary,

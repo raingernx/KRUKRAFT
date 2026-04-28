@@ -291,6 +291,9 @@ At a high level:
     narrow (`space/20`, `space/10`, and preview-stack polish), while runtime
     `Card.tsx` has started adopting the same shell hierarchy by using
     `surface` for the card root and `inset` for the footer band
+  - runtime token semantics now mirror that same split more broadly too:
+    `bg-card` resolves to the `surface` layer, while shared chrome that should
+    remain on the calmer outer shell must opt into `bg-shell` explicitly
 - `Foundation Review` still behaves differently on purpose:
   - its text fills are bound, but its current text nodes are not yet bound to
     the font-family variable

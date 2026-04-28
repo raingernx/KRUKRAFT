@@ -86,8 +86,8 @@ function AccountMenuTrigger({
       className={cn(
         "inline-flex size-11 items-center justify-center rounded-full border transition-all group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-background",
         open
-          ? "border-border-strong bg-card shadow-card"
-          : "border-border-subtle bg-card/90 hover:border-border hover:bg-muted/55",
+          ? "border-border-strong bg-shell shadow-card"
+          : "border-border-subtle bg-shell/90 hover:border-border hover:bg-muted/55",
       )}
     >
       <Avatar
@@ -273,7 +273,7 @@ export function AuthenticatedAccountDropdown({
 
       <DropdownMenu
         align="end"
-        className="w-[min(18rem,calc(100vw-1rem))] rounded-lg border-border-subtle bg-card/95 p-0 shadow-card-lg"
+        className="w-[min(18rem,calc(100vw-1rem))] rounded-lg border-border-subtle bg-shell/95 p-0 shadow-card-lg"
         data-dashboard-account-menu="true"
         sideOffset={8}
       >

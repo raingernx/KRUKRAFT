@@ -166,6 +166,9 @@ Figma DS alignment
   - runtime `Card` adoption has now started too: the shared primitive renders
     its root shell through `surface` and its footer through `inset`, matching
     the current Figma card base more directly
+  - runtime `bg-card` semantics now follow that same base too: `card` resolves
+    to the `surface` layer, while shared shell/menu/sidebar chrome that should
+    stay on the quieter outer shell now has to opt into `bg-shell` explicitly
   - the `Card / Foundations` cleanup also removed wrapper-radius debt from
     `Card / Size / Source`; the remaining card debt is explicit token-gap /
     polish work (`space/20`, `space/10`, and preview-stack symmetry), not
@@ -387,6 +390,7 @@ Add only short, high-signal entries here.
 - 2026-04-27: A detailed re-audit of the canonical `Input / Search` boards confirmed that `Input / State`, `SearchInput / State`, `Input / Size`, and `SearchInput / Size` now use `radius/sm (8px)` consistently across light and dark. Repo context is synced to that Figma truth; runtime code still carries the older larger comfortable-radius branch and should be treated as drift until adoption.
 - 2026-04-27: A detailed `Button / Foundations` re-audit confirmed that the light/dark boards stay semantically token-bound at the section-shell level; the remaining narrow debt is wrapper-only local radius on `Button / State` and `Button / Size`, plus one dark-board subtitle that still says `light recipe`. The same audit also logged a real design-vs-runtime gap: canonical Figma now uses more explicit `quiet` / `ghost` foreground shifts by state than the current runtime `Button.tsx` recipe exposes.
 - 2026-04-28: `Card` repo adoption has now started too: runtime `Card.tsx` uses `surface` for the root shell and `inset` for the footer band, and the canonical `Card / Size / Source` light/dark component sets no longer carry wrapper-radius debt after the latest Figma cleanup. Remaining card debt is now explicit token-gap / preview-polish work only.
+- 2026-04-28: Runtime `card` semantics now follow the same Figma base as `Card`: `bg-card` resolves to the `surface` layer, while shared shell chrome that should stay on the outer shell now has to use `bg-shell` explicitly. The first shared consumers normalized in that slice were the sidebar, navbar/account chrome, theme switcher menu, and notification chrome.
 - 2026-04-26: Runtime adoption has started on the shared search field too: the default `SearchInput` branch now resolves `size` / `density` through the same field recipe as `Input`, while `hero` remains the one intentional exception branch.
 - 2026-04-26: `Surface / Foundations / Light` (`573:143`) and `Surface / Foundations / Dark` (`573:182`) are now landed and screenshot-verified in the canonical file; each board now carries a `Surface / Variant / Source` block plus a hierarchy card, and the remaining gaps are explicit token gaps (`border/subtle`, `bg-muted`, `radius/12`, `space/20`) rather than silent local styling.
 - 2026-04-25: The reviewed light palette from `Theme Lab` frame `464:545` is now promoted into the canonical Figma primitive variables (`primary`, `Rust`, `Sand`, `neutral/*`, and `neutral/ink*`) while dark-mode values and semantic alias chains stay unchanged.

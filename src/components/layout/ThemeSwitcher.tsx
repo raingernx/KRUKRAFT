@@ -93,7 +93,7 @@ export function ThemeSwitcher({
       <DropdownMenu
         align={align}
         className={cn(
-          "w-[min(14rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-card p-1 shadow-card-lg",
+          "w-[min(14rem,calc(100vw-1rem))] rounded-xl border-border-subtle bg-shell p-1 shadow-card-lg",
           menuClassName,
         )}
         sideOffset={sideOffset}

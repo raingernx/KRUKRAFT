@@ -89,7 +89,7 @@
     --background:            var(--canvas);
     --foreground:            var(--ink);
 
-    --card:                  var(--shell);
+    --card:                  var(--surface);
     --card-foreground:       var(--ink);
 
     --popover:               var(--shell);
@@ -158,7 +158,7 @@
     --background:            var(--canvas);
     --foreground:            var(--ink);
 
-    --card:                  var(--inset);
+    --card:                  var(--surface);
     --card-foreground:       var(--ink);
 
     --popover:               var(--inset);

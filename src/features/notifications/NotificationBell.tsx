@@ -22,7 +22,7 @@ export function NotificationBell() {
     <div className="relative inline-block">
       <NotificationButton count={unreadCount} onClick={toggle} />
       {open && (
-        <div className="absolute right-0 z-40 mt-2 w-72 overflow-hidden rounded-xl border border-border bg-card shadow-card-lg">
+        <div className="absolute right-0 z-40 mt-2 w-72 overflow-hidden rounded-xl border border-border bg-shell shadow-card-lg">
           <div className="flex items-center justify-between border-b border-border px-3 py-2 text-[11px] font-semibold uppercase tracking-tightest text-muted-foreground">
             <span>Notifications</span>
             <span className="text-[10px] font-normal text-muted-foreground">

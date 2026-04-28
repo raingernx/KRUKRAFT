@@ -318,6 +318,10 @@ Use this order when DS docs disagree:
     `src/design-system/primitives/Card.tsx` now renders the root shell through
     `surface` and the footer through `inset`, matching the current Figma base
     more directly
+  - runtime `bg-card` semantics now follow that same base: `card` resolves to
+    the `surface` layer, while shared chrome that should stay on the calmer
+    shell layer now has to choose `bg-shell` explicitly instead of inheriting
+    older `card = shell/inset` behavior
   - the canonical `Card / Foundations` boards no longer carry wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is explicit token
     gap / polish territory (`space/20`, `space/10`, and preview-stack

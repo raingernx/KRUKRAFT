@@ -590,7 +590,7 @@ function NavbarInner({
                   More
                 </summary>
 
-                <div className="absolute right-0 top-[calc(100%+0.5rem)] z-20 w-72 rounded-xl border border-border-subtle bg-card/95 p-1.5 shadow-card">
+                <div className="absolute right-0 top-[calc(100%+0.5rem)] z-20 w-72 rounded-xl border border-border-subtle bg-shell/95 p-1.5 shadow-card">
                   <ul className="flex flex-col gap-1" aria-label="หมวดหมู่เพิ่มเติม">
                     {overflowMobileCategoryItems.map((item) => (
                       <li key={item.label}>
@@ -819,7 +819,7 @@ function NavbarInner({
                 <Link
                   href={routes.login}
                   onClick={closeAll}
-                  className="rounded-lg border border-border-strong bg-card px-4 py-2.5 text-center font-thai text-sm font-medium text-muted-foreground hover:border-border hover:bg-accent hover:text-foreground"
+                  className="rounded-lg border border-border-strong bg-shell px-4 py-2.5 text-center font-thai text-sm font-medium text-muted-foreground hover:border-border hover:bg-accent hover:text-foreground"
                 >
                   เข้าสู่ระบบ
                 </Link>

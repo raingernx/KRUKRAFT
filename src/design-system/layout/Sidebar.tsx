@@ -18,7 +18,7 @@ export function SidebarContainer({
   return (
     <aside
       className={cn(
-        "sticky top-0 flex h-screen shrink-0 flex-col border-r border-border bg-card",
+        "sticky top-0 flex h-screen shrink-0 flex-col border-r border-border bg-shell",
         collapsed ? "w-16" : "w-[272px]",
         className,
       )}

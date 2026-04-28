@@ -63,7 +63,7 @@ export function MarketplaceAvatarPlaceholder() {
   return (
     <div
       aria-hidden="true"
-      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border-subtle bg-card/90"
+      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border-subtle bg-shell/90"
     >
       <div className="h-8 w-8 rounded-full bg-muted" />
     </div>

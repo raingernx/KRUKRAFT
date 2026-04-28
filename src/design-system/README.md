@@ -183,6 +183,10 @@ When this file conflicts with code, the code wins.
   current canonical Figma base treats the root shell as `surface` and the
   footer band as `inset`, and runtime `Card.tsx` now follows that surface
   hierarchy directly.
+- `bg-card` now mirrors the canonical `surface` layer in runtime tokens. When a
+  shared shell, navbar/menu chrome, or sidebar frame should stay on the calmer
+  outer shell layer, use `bg-shell` explicitly instead of assuming `bg-card`
+  still means shell.
 - The canonical `Card / Foundations` boards no longer carry wrapper-radius debt
   on `Card / Size / Source`; the remaining card board debt is explicit token-gap
   territory (`space/20`, `space/10`, and preview-stack symmetry), not silent
