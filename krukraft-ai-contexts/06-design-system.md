@@ -398,8 +398,11 @@ Use this order when DS docs disagree:
     the table/list surfaces after the semantic shift
   - the canonical `Card / Foundations` boards no longer carry wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is explicit token
-    gap / polish territory (`space/20`, `space/10`, and preview-stack
-    symmetry)
+    gap / polish territory instead:
+    - local type sizes still drive the title/body/footer copy in the light/dark
+      source sets even though family, line height, and fills are bound
+    - geometry still keeps intentional local values (`space/20`, `space/10`,
+      and preview-stack symmetry)
   - the canonical Figma semantic layer now also carries
     `state/selected-fill`, `state/selected-stroke`, and
     `state/selected-text`, aliased to the primary emphasis ladder

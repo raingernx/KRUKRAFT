@@ -378,8 +378,12 @@ At a high level:
     font family and text fill
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
-    narrow (`space/20`, `space/10`, and preview-stack polish), while runtime
-    `Card.tsx` has started adopting the same shell hierarchy by using
+    narrow:
+    - local type sizes still drive the title/body/footer copy in the light/dark
+      source sets even though font family, line height, and text fill are bound
+    - the geometry still keeps intentional local values such as `space/20`,
+      `space/10`, and the preview-stack arrangement
+  - runtime `Card.tsx` has started adopting the same shell hierarchy by using
     `surface` for the card root and `inset` for the footer band
   - runtime token semantics now mirror that same split more broadly too:
     `bg-card` resolves to the `surface` layer, while shared chrome that should
