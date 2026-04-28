@@ -146,11 +146,11 @@ When this file conflicts with code, the code wins.
   disabled/loading states rather than separate button recipes per surface.
 - The canonical Figma `Button / Foundations` boards now go further than the
   current runtime contract: light/dark source sets currently show
-  `primary | quiet | soft`, the state matrices explicitly choreograph
-  `quiet` / `soft` behavior more than runtime does today, and the Figma
-  `Button / Size` boards now trial `sm=36` while runtime still stays at `32`.
-  Until runtime adopts that behavior, treat the Figma board as the source
-  base and `Button.tsx` as the adoption gap.
+  `primary | quiet | ghost | soft`, the state matrices explicitly separate
+  airy `ghost` from bounded-neutral `soft`, and the Figma `Button / Size`
+  boards now trial `sm=36` while runtime still stays at `32`. Until runtime
+  adopts that behavior, treat the Figma board as the source base and
+  `Button.tsx` as the adoption gap.
 - `secondary` remains a compatibility alias for quiet-style usage, and
   `outline` remains available for legacy surfaces that still depend on
   explicit borders.
@@ -175,11 +175,11 @@ When this file conflicts with code, the code wins.
   - `icon`: square icon affordance only, not a text-button recipe
   - default resolution: `comfortable -> md`, `compact -> sm`
 - The bounded neutral `soft` tone now exists in the canonical Figma
-  `Button / Foundations` boards and the earlier `36px` footer action study has
-  been folded into that Figma-first direction, but it is intentionally not
-  part of the approved runtime `Button` ladder yet. Treat `soft` and
-  Figma-side `sm=36` as adoption candidates, not as a silent DS contract
-  change.
+  `Button / Foundations` boards alongside the canonical `ghost` tone, and the
+  earlier `36px` footer action study has been folded into that Figma-first
+  direction, but it is intentionally not part of the approved runtime
+  `Button` ladder yet. Treat `soft` and Figma-side `sm=36` as adoption
+  candidates, not as a silent DS contract change.
 - If the button ladder is deliberately reopened later, the current recommended
   promotion path is:
   - keep `xs = 32`

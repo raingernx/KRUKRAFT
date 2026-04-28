@@ -103,12 +103,12 @@ Current runtime contract to mirror:
   - `lg`: `h-12`, `px-8`, body/sm text
   - `icon`: square icon-only affordance
   - default density resolution: `comfortable -> md`, `compact -> sm`
-- The canonical Figma `Button / Foundations` boards now express a bounded
-  neutral `soft` tone and trial `sm=36` on the `Button / Size` boards, but
-  that posture is still Figma-first only. Keep runtime `Button` on the
-  approved `primary | quiet | ghost` family and current size ladder until a
-  deliberate button-size adoption pass decides whether `soft` and `sm=36`
-  should graduate into code.
+- The canonical Figma `Button / Foundations` boards now keep both `ghost` and
+  a bounded neutral `soft` tone, and they trial `sm=36` on the
+  `Button / Size` boards, but that extra `soft` posture is still Figma-first
+  only. Keep runtime `Button` on the approved `primary | quiet | ghost`
+  family and current size ladder until a deliberate button-size adoption pass
+  decides whether `soft` and `sm=36` should graduate into code.
 - If that button-size pass is reopened, the current recommended path is to
   trial `xs=32 / sm=36 / md=40 / lg=48`, keep `density=\"compact\" -> xs`
   during the first rollout proof, and leave `Input` / `SearchInput` on the
@@ -271,10 +271,10 @@ For reusable Figma component sets:
   `20px` card padding, the `6px` flat-header gap, and the missing
   `border/subtle` semantic are all still follow-up token work.
 - The earlier `ghost action` footer study has now been folded into the Figma
-  button source as a bounded neutral `soft` direction. Treat that move as
-  Figma-first only for now: it should not be read as a runtime `ghost` recipe
-  replacement or a finished button-ladder decision until a dedicated adoption
-  pass lands.
+  button source as a bounded neutral `soft` direction that sits beside
+  `ghost`, not on top of it. Treat that move as Figma-first only for now: it
+  should not be read as a runtime `ghost` recipe replacement or a finished
+  button-ladder decision until a dedicated adoption pass lands.
 
 ## Figma Implementation Fidelity Workflow
 

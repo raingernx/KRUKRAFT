@@ -270,11 +270,13 @@ Use this order when DS docs disagree:
       component-set containers, and the dark board still has one subtitle line
       that says `light recipe`
     - that same button re-audit also confirmed a live adoption gap: canonical
-      Figma now changes `quiet` / `soft` behavior by state more explicitly than
-      the current runtime `Button.tsx` recipe does
+      Figma now separates airy `ghost` from bounded-neutral `soft` and changes
+      `quiet` / `ghost` / `soft` behavior by state more explicitly than the
+      current runtime `Button.tsx` recipe does
     - the 2026-04-28 follow-up study has now been folded back into the
       canonical Figma `Button / Foundations` boards as a bounded neutral
-      `soft` tone plus a Figma-first `sm=36` size step:
+      `soft` tone that sits beside `ghost`, plus a Figma-first `sm=36` size
+      step:
       - runtime should still stay on the locked `primary | quiet | ghost`
         family and current size ladder until a separate button-ladder decision
         lands
