@@ -288,6 +288,9 @@ Use this order when DS docs disagree:
         pagination items, and panel CTAs should stay recipes first, not new
         family members; evaluate them against `outline` and the Figma-first
         `soft` posture before inventing another top-level variant
+      - the canonical Figma file now locks the `DataPanelTable` flavor of
+        `row action` and `pagination item` to a rounded-rect `radius/lg`
+        recipe shape instead of the pill geometry used by the core family
       - that same audit found the real runtime blast radius is concentrated in
         `dashboard` (~60 `size=\"sm\"` button usages) and `admin` (~34), while
         live `density=\"compact\"` usage is still narrow (`public-resources`

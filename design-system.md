@@ -117,6 +117,9 @@ Current runtime contract to mirror:
   - table row actions, pagination items, and panel CTAs should start life as
     recipes on top of `outline` / `ghost` / future `soft` posture rather than
     immediately becoming new top-level variants
+  - the current Figma recipe direction now locks `DataPanelTable` row actions
+    and pagination items to a rounded-rect `radius/lg` shape instead of the
+    pill geometry used by the core family
 - If that button-size pass is reopened, the current recommended path is to
   trial `xs=32 / sm=36 / md=40 / lg=48`, keep `density=\"compact\" -> xs`
   during the first rollout proof, and leave `Input` / `SearchInput` on the
@@ -286,6 +289,10 @@ For reusable Figma component sets:
   combinatorially exhaustive: it proves the shell combinations for
   `actions`, `toolbar`, and `footer`, while columns, table-head fills, row
   rendering, empty-state content, and business actions stay route-owned.
+- Treat the bordered action controls shown with `DataPanelTable` as a recipe
+  posture, not as a new button family: row actions and pagination items should
+  use the same rounded-rect `radius/lg` shape in Figma before any broader
+  button-shape adoption is considered.
 - The current footer proof point should stay close to runtime usage too: use a
   muted metadata-note footer before inventing CTA-heavy footer recipes.
 - The current canonical `DataPanelTable` board also keeps its token debt
