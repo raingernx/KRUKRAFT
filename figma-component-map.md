@@ -53,18 +53,18 @@ baseline when repo docs and older node claims disagree.
 
 | Page | Page node | Top-level coverage | Binding posture | Notes |
 | --- | --- | --- | --- | --- |
-| `DS Foundations` | `13:20` | 15 top-level frames covering `Typography`, `Color Primitives`, `Spacing + Radius`, `Button`, `Input / Search`, `Card`, `Dropdown`, and `Surface` in light/dark pairs | page audit currently reports `633/633` text nodes with `font/family/base` binding, `633/633` text nodes with text-fill binding, `1057` bound fills with `0` local fills, and `261` bound strokes with `0` local strokes | this is the canonical build surface; remaining local styling debt is now mostly narrow radius gaps inside section study boards rather than broad token-binding drift |
+| `DS Foundations` | `13:20` | 21 top-level frames spanning `Typography`, `Color Primitives`, `Spacing + Radius`, `Button`, `Input / Search`, `Card`, `Dropdown`, `Surface`, `Badge`, `FormSection`, and `DataPanelTable` | 2026-04-28 page inventory reports `1045/1047` text nodes with `font/family/base` binding, `1045/1047` text nodes with text-fill binding, `1614` bound fills with `2` local fills, and `441` bound strokes with `0` local strokes; the two current font-family/text-fill exceptions are `Showing latest 2 entries` footer-note copies inside the `DataPanelTable` foundations | this is the canonical build surface; section audits should treat it as source truth while keeping page-wide count drift visible instead of relying on older frozen totals |
 | `Foundation Review` | `371:29` | 1 top-level review frame: `Foundation Review / Light` (`371:30`) | page audit reports `47/47` text nodes with text-fill binding, but `0/47` text nodes bound to the font-family variable | keep this page as a review surface, not a reusable library source; it mirrors the visual system but is not yet fully typography-tokenized like `DS Foundations` |
 
 ### Section Inventory
 
 | Page | Section node | Section | Audit status | Notes |
 | --- | --- | --- | --- | --- |
-| `DS Foundations` | `47:2` | `Typography / Light` | verified | fully token-bound for text, fill, stroke, and radius in the current audit |
-| `DS Foundations` | `2:1176` | `Typography / Dark` | verified | fully token-bound for text, fill, stroke, and radius in the current audit |
-| `DS Foundations` | `2:1269` | `Color Primitives / Light` | verified | fills, strokes, and displayed hex labels align with promoted light primitives; the board now also exposes `support/success/*` and `support/warning/*` as dedicated `base / dust / soft` support-palette cards instead of keeping those colors hidden in variables only |
-| `DS Foundations` | `158:177` | `Color Primitives / Dark` | verified | fills, strokes, and displayed hex labels align with promoted dark primitives; the board now also exposes `support/success/*` and `support/warning/*` as dedicated `base / dust / soft` support-palette cards instead of keeping those colors hidden in variables only |
-| `DS Foundations` | `147:2` | `Spacing + Radius / Primitives` | verified | includes `radius/xs` and remains fully token-bound in the current audit |
+| `DS Foundations` | `47:2` | `Typography / Light` | verified | 2026-04-28 section re-audit confirms all text nodes stay bound for font family, font size, line height, and text fill, and the five section cards bind their 24px corners through per-corner `radius/lg` variables rather than local radius drift |
+| `DS Foundations` | `2:1176` | `Typography / Dark` | verified | 2026-04-28 section re-audit confirms all text nodes stay bound for font family, font size, line height, and text fill, and the five section cards bind their 24px corners through per-corner `radius/lg` variables rather than local radius drift |
+| `DS Foundations` | `2:1269` | `Color Primitives / Light` | verified | 2026-04-28 section re-audit confirms the board stays fully bound for text, fills, strokes, displayed hex labels, and per-corner radius. The live primitive collection now includes `26` color variables after adding the dedicated `support/success/*` and `support/warning/*` `base / dust / soft` families surfaced on this board |
+| `DS Foundations` | `158:177` | `Color Primitives / Dark` | verified | 2026-04-28 section re-audit confirms the board stays fully bound for text, fills, strokes, displayed hex labels, and per-corner radius. The live primitive collection now includes `26` color variables after adding the dedicated `support/success/*` and `support/warning/*` `base / dust / soft` families surfaced on this board |
+| `DS Foundations` | `147:2` | `Spacing + Radius / Primitives` | verified | 2026-04-28 section re-audit confirms the board stays fully bound for text, fills, strokes, spacing samples, and per-corner radius, including the `radius/xs` sample row and the existing `space/2` variable in the primitive collection |
 | `DS Foundations` | `191:2` | `Button / Foundations / Light` | verified with narrow local radius debt | header, usage, states, size, and icon cards all bind semantic shell tokens (`bg/canvas`, `bg/shell`, `border/default`, `fg/*`, semantic type tokens, and `action/*` state tokens); current audit still sees local radius only on wrapper component-set containers such as `Button / State` and `Button / Size` |
 | `DS Foundations` | `294:29` | `Button / Foundations / Dark` | verified with narrow local radius debt | same shell-token posture as the light board and the same wrapper-radius caveat; the latest Figma follow-up also brought the dark board copy, `soft` tone naming, and icon/state/size preview language back in sync with the light board |
 | `DS Foundations` | `315:56` | `Input / Search / Light` | verified with narrow local radius debt | current audit still sees local radius on the component-set wrapper containers |
@@ -81,7 +81,7 @@ baseline when repo docs and older node claims disagree.
 
 | Collection | Modes | Variable count | Current prefix groups |
 | --- | --- | --- | --- |
-| `Color / Primitives` | `Light`, `Dark` | 20 | `neutral` (8), `primary` (4), `accent` (8) |
+| `Color / Primitives` | `Light`, `Dark` | 26 | `neutral` (8), `primary` (4), `accent` (8), `support` (6) |
 | `Color / Semantic` | `Light`, `Dark` | 22 | `bg` (4), `border` (1), `fg` (5), `action` (5), `focus` (1), `state` (6) |
 | `Typography / Primitives` | `Base` | 11 | `font` (3), `type` (8) |
 | `Typography / Semantic` | `Base` | 15 | `type` (15) |

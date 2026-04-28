@@ -328,6 +328,18 @@ Use this order when DS docs disagree:
     and the `Spacing + Radius / Primitives` board mirrors that addition; repo
     runtime token files still do not expose `radius/xs`, so this is currently a
     Figma-first token addition rather than a fully adopted code/runtime token
+  - a 2026-04-28 foundations re-audit of `Typography`, `Color Primitives`, and
+    `Spacing + Radius / Primitives` corrected an earlier false-positive radius
+    reading too:
+    - all five audited boards stay fully bound for text, fills, and strokes
+    - their radius bindings are also intact, but many of those bindings are
+      expressed as per-corner variables (`topLeftRadius/...`) instead of a
+      single `cornerRadius` binding, so radius audits have to treat either form
+      as valid token binding
+    - the live `Color / Primitives` collection now counts `26` variables, not
+      `20`, because the canonical file now includes `support/success/*` and
+      `support/warning/*` `base / dust / soft` families in the primitive
+      collection itself
   - the tested light palette from `Theme Lab` frame `464:545` is now promoted
     into the live Figma primitive variables for `primary`, `Rust`, `Sand`,
     `neutral/*`, and `neutral/ink*`; dark-mode values remain unchanged
@@ -389,14 +401,16 @@ Use this order when DS docs disagree:
     and the repo context is now synced to that file as the base:
     - the file currently has exactly two pages: `DS Foundations` and
       `Foundation Review`
-    - `DS Foundations` is the true source page with 17 top-level section frames
-      for typography, colors, spacing/radius, `Button`, `Input / Search`,
-      `Card`, `Dropdown`, `Surface`, and `Badge`
+    - a 2026-04-28 page inventory refresh now shows `DS Foundations` with
+      21 top-level frames spanning typography, colors, spacing/radius,
+      `Button`, `Input / Search`, `Card`, `Dropdown`, `Surface`, `Badge`,
+      `FormSection`, and `DataPanelTable`
     - `Foundation Review` is review-only and should not be treated as a
       reusable library source
-    - `DS Foundations` now keeps `663/663` text nodes bound to
-      `font/family/base` and `663/663` text nodes bound to text-fill variables
-      after the `Badge` foundations pass landed
+    - page-wide, `DS Foundations` now keeps `1045/1047` text nodes bound to
+      `font/family/base` and `1045/1047` text nodes bound to text-fill
+      variables; the two live exceptions are the `Showing latest 2 entries`
+      footer-note copies inside the `DataPanelTable` foundations
     - the remaining local styling debt is now narrow and explicit:
       wrapper/study-scene radius values inside `Button`, `Input / Search`,
       `Card`, `Dropdown`, and `Surface`, plus the already-known token gaps for

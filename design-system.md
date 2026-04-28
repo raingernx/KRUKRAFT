@@ -329,18 +329,23 @@ At a high level:
 - the canonical Figma file is now `Krukraft Theme Lab Source-of-Truth`, not the
   older `Krukraft Design System` file previously referenced in repo docs
 - the current canonical file has two audited pages:
-  - `DS Foundations` (`13:20`) is the true base page and now holds 15
-    top-level light/dark section frames for typography, color primitives,
-    spacing/radius, `Button`, `Input / Search`, `Card`, `Dropdown`, and
-    `Surface`
+  - `DS Foundations` (`13:20`) is the true base page and now holds `21`
+    top-level frames spanning typography, color primitives, spacing/radius,
+    `Button`, `Input / Search`, `Card`, `Dropdown`, `Surface`, `Badge`,
+    `FormSection`, and `DataPanelTable`
   - `Foundation Review` (`371:29`) is a review-only page with one current
     top-level frame, not a reusable component library source
 - `DS Foundations` is now the stronger token-bound page:
-  - the latest audit found `633/633` text nodes bound to `font/family/base`
-  - `633/633` text nodes with text-fill binding
-  - `1057` bound fills and `261` bound strokes with no local paint drift
-  - the remaining local styling debt is narrow and explicit: mostly local
-    radius geometry inside wrapper frames or study scenes, not broad fill/stroke
+  - the latest page inventory found `1045/1047` text nodes bound to
+    `font/family/base`
+  - `1045/1047` text nodes with text-fill binding
+  - `1614` bound fills, `2` local fills, and `441` bound strokes with `0`
+    local strokes
+  - the two current text/fill exceptions are the `Showing latest 2 entries`
+    footer-note copies inside `DataPanelTable`
+  - the latest foundations re-audit also corrected the radius reading: the
+    audited typography, color, and spacing/radius boards bind radius through
+    per-corner variables, so those boards should not be treated as local-radius
     drift
   - the latest `Button / Foundations` re-audit confirmed that the light/dark
     header, usage, states, size, and icon cards all use semantic shell tokens

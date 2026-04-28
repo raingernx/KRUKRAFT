@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Figma DS section audit`
 
 > [!info] Current Phase
-> `Phase 0 — audit contract + section order lock`
+> `Phase 2 — control audit`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -21,7 +21,7 @@ Parent Plan: `Figma DS section audit`
 > Open a new audit-only parent plan that re-checks the canonical Figma DS file against the repo one section family at a time. The goal is not to invent new DS work, but to verify section truth, variable usage, mapping posture, and repo-context parity in a tighter phased order than the previous broad alignment pass.
 
 > [!todo] Next Up
-> Start Phase 1 foundations audit in this order: `Typography` → `Color Primitives` → `Spacing + Radius`, then continue into controls and shell sections only after the foundations pass is written down.
+> Start Phase 2 control audit in this order: `Button / Foundations` → `Input / Search`, then continue into shell sections only after the foundations pass is written down in repo context.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and hero-search cleanup plan are complete; this new plan is a documentation/alignment pass that should not silently reopen runtime route work.
@@ -50,7 +50,7 @@ Parent Plan: `Figma DS section audit`
 ## Progress
 
 Figma DS section audit
-`[░░░░░░░░░░] 0%`
+`[███░░░░░░░] 30%`
 
 ```mermaid
 flowchart TB
@@ -97,9 +97,9 @@ flowchart TB
   end
 
   subgraph Current
-    A0["Audit contract + section order lock<br/>In progress"]
-    A1["Foundations audit<br/>Typography, Color, Spacing + Radius"]
-    A2["Control audit<br/>Button, Input / Search"]
+    A0["Audit contract + section order lock<br/>Done"]
+    A1["Foundations audit<br/>Typography, Color, Spacing + Radius<br/>Done"]
+    A2["Control audit<br/>Button, Input / Search<br/>In progress"]
     A3["Shell audit<br/>Card, Dropdown, Surface"]
     A4["Shared component audit<br/>Badge, FormSection, DataPanelTable"]
     A5["Repo sync + close-out<br/>Review page, map, context, tracker"]
@@ -141,7 +141,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Section-by-section Figma DS re-audit
+Control audit after foundations re-check
 
 ### Parent Plan
 Figma DS section audit
@@ -149,6 +149,16 @@ Figma DS section audit
 ### Current Status Inside Parent Plan
 - The previous `Figma DS alignment` parent plan is complete and now acts as the
   frozen baseline for this narrower re-audit.
+- Phase 0 is now closed: the audit scope, order, and acceptance criteria are
+  locked and written down in this tracker.
+- Phase 1 is now closed: `Typography / Light`, `Typography / Dark`,
+  `Color Primitives / Light`, `Color Primitives / Dark`, and
+  `Spacing + Radius / Primitives` were re-audited and synced to repo context.
+- The current section-level finding from foundations is repo-doc drift, not
+  live Figma token drift: the audited boards are fully bound for text, fills,
+  strokes, and per-corner radius, and the remaining correction was updating
+  repo wording that still assumed older primitive-color counts or older radius
+  audit logic.
 - This new plan exists because the canonical Figma DS file and repo references
   are close enough to trust, but they have not yet been re-checked in one
   deliberate pass section by section.
@@ -209,9 +219,9 @@ time and produce an explicit, current parity read on:
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Audit contract + section order lock | in progress | lock audit scope, section order, and section-level acceptance criteria before re-auditing surfaces |
-| 1 | Foundations audit | pending | audit `Typography`, `Color Primitives`, and `Spacing + Radius / Primitives` in light/dark pairs |
-| 2 | Control audit | pending | audit `Button` and `Input / Search` foundations, recipes, size/state boards, and repo mappings |
+| 0 | Audit contract + section order lock | complete | scope, section order, and section-level acceptance criteria are now locked in this tracker |
+| 1 | Foundations audit | complete | `Typography`, `Color Primitives`, and `Spacing + Radius / Primitives` were re-audited; the live boards stayed token-bound and the repo sync corrected stale primitive-count and radius-binding wording |
+| 2 | Control audit | in progress | audit `Button` and `Input / Search` foundations, recipes, size/state boards, and repo mappings |
 | 3 | Shell audit | pending | audit `Card`, `Dropdown`, and `Surface` as the shared shell layer |
 | 4 | Shared component audit | pending | audit `Badge`, `FormSection`, and `DataPanelTable` against current repo truth |
 | 5 | Review + repo close-out | pending | audit `Foundation Review`, sync repo references, run checks, and close the plan |
@@ -240,16 +250,17 @@ Audit order for this plan:
 
 - [x] Open a new parent plan for `Figma DS section audit`
 - [x] Lock the audit scope to Figma-vs-repo parity, not new runtime redesign
-- [ ] Define the exact section-by-section audit order and acceptance criteria
-- [ ] Start Phase 1 foundations audit with `Typography`
+- [x] Define the exact section-by-section audit order and acceptance criteria
+- [x] Complete Phase 1 foundations audit across `Typography`, `Color Primitives`, and `Spacing + Radius`
+- [ ] Start Phase 2 with `Button / Foundations`
 
 ---
 
 ## Next Up
 
-- [ ] Audit `Typography / Light` and `Typography / Dark`
-- [ ] Audit `Color Primitives / Light` and `Color Primitives / Dark`
-- [ ] Audit `Spacing + Radius / Primitives`
+- [ ] Audit `Button / Foundations / Light` and `Button / Foundations / Dark`
+- [ ] Audit `Input / Search / Light` and `Input / Search / Dark`
+- [ ] Move into `Card`, `Dropdown`, and `Surface` only after the control pass is written down
 
 ---
 
@@ -344,6 +355,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 Add only short, high-signal entries here.
 
 - 2026-04-28: After `Figma DS alignment` closed, open a new parent plan `Figma DS section audit` to re-check the canonical Figma DS file against the repo in a stricter section-by-section order instead of reopening broad DS work implicitly.
+- 2026-04-28: Phase 1 of `Figma DS section audit` is now closed. A fresh foundations re-audit confirmed that `Typography / Light`, `Typography / Dark`, `Color Primitives / Light`, `Color Primitives / Dark`, and `Spacing + Radius / Primitives` all stay fully bound for text, fills, strokes, and per-corner radius. The live correction was repo wording drift instead: old notes still implied a `20`-color primitive collection and treated per-corner radius bindings as if they were local radius debt.
 - 2026-04-25: Active plan changed from the completed marketplace hero-search cleanup to `Figma DS alignment`; start by locking the canonical Figma source file and producing a repo-vs-Figma inventory diff before any new parity claim.
 - 2026-04-25: `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`) is now the permanent canonical Figma DS source file; repo references and coverage docs must be migrated to that foundation-first source.
 - 2026-04-25: The first repo-side doc drift pass is complete; stale mapping claims from the previous Figma file were downgraded, so the next active slice is `Input` / `SearchInput` foundation parity.
