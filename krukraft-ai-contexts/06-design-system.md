@@ -464,6 +464,11 @@ Use this order when DS docs disagree:
       editorial highlight posture across light/dark
     - the live dark badge source set also drifted from the initial landing id
       and now lives at `746:208`; repo mapping must follow that node instead of
+    - the 2026-04-28 shared-component re-audit keeps the remaining live badge
+      debt narrow and explicit:
+      - the seven badge labels still use local `12/16` xs type recipes
+      - the light/dark `Badge / Variant / Source` wrapper frames still keep
+        local `cornerRadius=5`
       the older `736:206` reference
     - `Foundation Review` still has text-fill binding but not font-family
       binding on its current text nodes, so it should be treated as a review

@@ -265,9 +265,12 @@ For reusable Figma component sets:
 - Product or legacy runtime variants (`owned`, `new`, `free`, `default`,
   `secondary`, `ghost`, `link`) are intentionally outside that canonical Figma
   set until a deliberate remap or cleanup pass happens.
-- The current canonical `Badge` board keeps one explicit token gap instead of
-  silently drifting: the label uses a local `12/16` recipe because the shared
-  typography scale still lacks an xs label token.
+- The current canonical `Badge` board keeps two explicit Figma-only gaps
+  instead of silently drifting:
+  - the seven badge labels still use a local `12/16` recipe because the shared
+    typography scale still lacks an xs label token
+  - the light/dark `Badge / Variant / Source` wrapper frames still keep local
+    `cornerRadius=5`
 - The current dark source set for that canonical badge block now lives at
   `746:208`; repo mapping should follow the live node instead of the earlier
   `736:206` id from the first landing pass.

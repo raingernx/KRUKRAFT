@@ -21,7 +21,7 @@ Parent Plan: `Figma DS section audit`
 > Open a new audit-only parent plan that re-checks the canonical Figma DS file against the repo one section family at a time. The goal is not to invent new DS work, but to verify section truth, variable usage, mapping posture, and repo-context parity in a tighter phased order than the previous broad alignment pass.
 
 > [!todo] Next Up
-> Start Phase 4 shared-component audit in this order: `Badge / Foundations` → `FormSection / Foundations` → `DataPanelTable / Foundations`, then finish with `Foundation Review` + repo close-out.
+> Continue Phase 4 shared-component audit in this order: `FormSection / Foundations` → `DataPanelTable / Foundations`, then finish with `Foundation Review` + repo close-out.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and hero-search cleanup plan are complete; this new plan is a documentation/alignment pass that should not silently reopen runtime route work.
@@ -50,7 +50,7 @@ Parent Plan: `Figma DS section audit`
 ## Progress
 
 Figma DS section audit
-`[████████░░] 80%`
+`[█████████░] 85%`
 
 ```mermaid
 flowchart TB
@@ -262,9 +262,10 @@ Audit order for this plan:
 
 ## Next Up
 
-- [ ] Audit `Badge / Foundations / Light` and `Badge / Foundations / Dark`
+- [x] Audit `Badge / Foundations / Light` and `Badge / Foundations / Dark`
 - [ ] Audit `FormSection / Foundations / Light` and `FormSection / Foundations / Dark`
 - [ ] Audit `DataPanelTable / Foundations / Light` and `DataPanelTable / Foundations / Dark`
+- [ ] Run `Foundation Review` + repo close-out after the shared-component slice lands
 
 ---
 
@@ -365,6 +366,7 @@ Add only short, high-signal entries here.
 - 2026-04-28: Phase 3 has now started with `Card / Foundations`. The live light/dark boards remain bound for font family, line height, text fill, shell fills/strokes, and per-corner radius, and the old wrapper-radius debt on `Card / Size / Source` stays closed. The remaining live Figma gaps are explicit instead: the title/body/footer copy still uses local type sizes, the geometry still keeps intentional local values (`space/20`, `space/10`, preview-stack arrangement), and the repo registry needed current dark ids (`726:156`, `726:171`) for the dark board/source set.
 - 2026-04-28: Phase 3 is now halfway through the shell layer. A fresh `Dropdown / Foundations` re-audit confirms both light/dark study boards stay fully bound for all `23/23` text nodes across font family, font size, line height, and text fill, and all painted fills/strokes remain token-bound. The only remaining live Figma debt is narrow and explicit: local `20` radius on `context scene` + `row calibration scene` and local `12` radius on the default/unselected `menu row` shells. `Dropdown` remains a study-board reference rather than a reusable component-set mapping.
 - 2026-04-28: Phase 3 is now closed. A fresh `Surface / Foundations` re-audit confirms both light/dark boards stay fully bound for all `26/26` text nodes across font family, font size, line height, and text fill, and all painted fills/strokes remain token-bound. The only remaining live local-radius gap is `shell zone` (`20`) in the hierarchy card, and the repo registry needed current dark source/hierarchy ids (`627:633`, `627:646`). The board copy itself is now partially stale because it still describes a broader token-gap story than the live subtle/muted/popover/support nodes actually show.
+- 2026-04-28: Phase 4 has now started with `Badge / Foundations`. A fresh shared-component re-audit confirms the light/dark boards stay fully bound for font family, text fill, and all painted fills/strokes, and the `warning` / `featured` split still matches the tuned canonical recipe. The remaining live badge debt is explicit instead of broad: the seven badge labels still use local `12/16` xs type recipes, and the light/dark source-set wrapper frames keep local `cornerRadius=5`.
 - 2026-04-25: Active plan changed from the completed marketplace hero-search cleanup to `Figma DS alignment`; start by locking the canonical Figma source file and producing a repo-vs-Figma inventory diff before any new parity claim.
 - 2026-04-25: `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`) is now the permanent canonical Figma DS source file; repo references and coverage docs must be migrated to that foundation-first source.
 - 2026-04-25: The first repo-side doc drift pass is complete; stale mapping claims from the previous Figma file were downgraded, so the next active slice is `Input` / `SearchInput` foundation parity.
