@@ -1055,7 +1055,7 @@ export function ResourceForm({
 
             <div className="w-full min-w-0 space-y-1.5">
               <Label htmlFor="file">File upload</Label>
-              <div className="w-full min-w-0 space-y-3 rounded-xl border border-border bg-card p-4">
+              <div className="w-full min-w-0 space-y-3 rounded-xl border border-border bg-shell p-4">
                 <div className="space-y-2">
                   <p className="text-[12px] font-semibold uppercase tracking-tightest text-muted-foreground">
                     File upload
@@ -1186,7 +1186,7 @@ export function ResourceForm({
             {isEdit && resource && (
               <Link
                 href={routes.resource(resource.slug)}
-                className="inline-flex items-center justify-center rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition hover:bg-muted"
+                className="inline-flex items-center justify-center rounded-xl border border-border bg-shell px-4 py-2.5 text-sm font-medium text-foreground transition hover:bg-muted"
               >
                 View resource
               </Link>

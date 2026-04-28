@@ -95,7 +95,7 @@ export function UserSearchSelect({
         type="button"
         id={id}
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between rounded-xl border border-border bg-card px-3 py-2.5 text-left text-[13px] text-foreground shadow-sm transition hover:border-primary/20 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+        className="flex w-full items-center justify-between rounded-xl border border-border bg-background px-3 py-2.5 text-left text-[13px] text-foreground shadow-sm transition hover:border-primary/20 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         aria-haspopup="listbox"
         aria-expanded={open}
       >

@@ -334,6 +334,19 @@ Use this order when DS docs disagree:
     proved the creator editor route family at runtime through the local
     `creator-editor-refresh-shell` browser probe once the local DB was brought
     back up; no additional public-route shell remap was required in that slice
+  - a second 2026-04-28 follow-up audit of `admin resources` confirmed the
+    same split more narrowly:
+    - table/listing shells (`DataTable`, `TableToolbar`, resource rows, modal
+      shells) remain valid `surface` consumers under `bg-card`
+    - editor-only subordinate shells now opt out explicitly: the file-upload
+      subpanel, preview-image sortable rows, lazy/image dropzones, and the
+      owner-picker trigger now use `bg-shell` or `bg-background` so they read
+      as controls/subsections inside the larger admin editor card instead of as
+      duplicate peer surfaces
+  - that `admin resources` slice was proved at runtime through the repo-owned
+    Playwright sentinels for `/admin/resources/new`, `/admin/resources/:id`,
+    and the lazy preview uploader flow; no route-family remap was needed for
+    the table/list surfaces after the semantic shift
   - the canonical `Card / Foundations` boards no longer carry wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is explicit token
     gap / polish territory (`space/20`, `space/10`, and preview-stack

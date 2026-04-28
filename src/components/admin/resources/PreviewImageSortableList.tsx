@@ -56,7 +56,7 @@ function SortableItem({ id, index, url, onRemove, onSetCover }: SortableItemProp
       style={style}
       className={isDragging ? "ring-2 ring-brand-400 rounded-xl" : undefined}
     >
-      <PreviewCard className="flex items-center gap-3 border-border bg-card px-3 py-2 shadow-sm transition">
+      <PreviewCard className="flex items-center gap-3 border-border bg-shell px-3 py-2 shadow-sm transition">
       <button
         type="button"
         className="cursor-grab text-muted-foreground hover:text-foreground"

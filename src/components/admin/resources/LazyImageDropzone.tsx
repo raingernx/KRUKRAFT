@@ -56,7 +56,7 @@ function ImageDropzoneLoadingShell({
     <div className="w-full min-w-0 space-y-1.5">
       <PickerDropzoneShell
         disabled={disabled}
-        className={cn("border-border bg-card")}
+        className={cn("border-border bg-shell")}
         aria-busy="true"
       >
         <ImageDropzoneShellContent
@@ -130,7 +130,7 @@ export function LazyImageDropzone({
         tabIndex={props.disabled ? -1 : 0}
         aria-label="Load image uploader"
         aria-disabled={props.disabled ? "true" : undefined}
-        className="border-border bg-card"
+        className="border-border bg-shell"
         onMouseEnter={requestUploader}
         onFocus={requestUploader}
         onTouchStart={requestUploader}

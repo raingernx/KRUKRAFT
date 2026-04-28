@@ -134,7 +134,7 @@ export function ImageDropzone({
       ? "border-brand-400"
       : "border-border";
 
-  const bgColor = isDragActive ? "bg-muted" : "bg-card";
+  const bgColor = isDragActive ? "bg-muted" : "bg-shell";
 
   return (
     <div className="w-full min-w-0 space-y-1.5">
