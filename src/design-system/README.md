@@ -123,6 +123,12 @@ When this file conflicts with code, the code wins.
   title/description/actions + optional toolbar + table/empty-state content.
   Keep data fetching, column schema, row rendering, and business actions
   route-owned.
+- The canonical Figma `DataPanelTable` base now lives in dedicated light/dark
+  `DataPanelTable / Foundations` boards, with source sets that stay shell-only
+  and prove progressive `actions`, `toolbar`, and `footer` combinations.
+- Keep `DataPanelTable` responsible for shell, title, description, actions,
+  optional toolbar, and optional footer only; do not turn it into a reusable
+  table-schema or row-action registry.
 - `FormSection` is the canonical settings/admin form layout helper. Prefer its
   default `flat` variant before introducing nested cards.
 - The canonical Figma `FormSection` base now lives in dedicated light/dark

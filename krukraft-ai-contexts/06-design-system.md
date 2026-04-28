@@ -426,8 +426,20 @@ Use this order when DS docs disagree:
     runtime `16/20` section-title rhythm, `20px` card padding, the `6px`
     flat-header gap, and the missing `border/subtle` semantic still sit
     outside the current canonical token scales
-  - with `FormSection` now landed, the next mandatory shared-library step is
-    `DataPanelTable`, then the optional `Dropdown` promotion decision
+  - `DataPanelTable` is now landed in the canonical file too through dedicated
+    `DataPanelTable / Foundations / Light` and
+    `DataPanelTable / Foundations / Dark` boards plus `DataPanelTable / Variant / Source`
+    light/dark sets
+  - that `DataPanelTable` source set stays shell-scoped on purpose and proves
+    the progressive `actions`, `toolbar`, and `footer` combinations without
+    pretending to own column schemas, table-head semantics, row rendering, or
+    business actions
+  - the remaining token debt is explicit on the board too: runtime still asks
+    for `border-subtle`, and the table-head fill remains route-owned rather
+    than a shared semantic token
+  - with `DataPanelTable` now landed, the next mandatory shared-library step
+    is the optional `Dropdown` promotion decision, then the shared-library
+    close-out audit
 
 ## Verification Pointers
 

@@ -18,10 +18,10 @@ Parent Plan: `Figma DS alignment`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> The canonical Figma source file is now locked and re-audited as the repo base, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, the 2026-04-27 field-shell re-audit confirmed that canonical `Input` and `SearchInput` state + size sets now use `radius/sm (8px)` across light/dark, `Card`, `Surface`, `Badge`, and now `FormSection` are landed as the current shared-library proof points, `Dropdown` now has verified light/dark foundation study boards, and the supporting `state/selected-*` semantic trio is now present in the canonical file; `Badge vs Chip` is still locked, but the next mandatory step has now moved up a layer to `DataPanelTable` and shared-library close-out work on top of the landed shell family
+> The canonical Figma source file is now locked and re-audited as the repo base, the first repo-side doc drift pass is closed, `Button` / `Input` / `SearchInput` foundation component sets are now normalized to the locked size contract, the 2026-04-27 field-shell re-audit confirmed that canonical `Input` and `SearchInput` state + size sets now use `radius/sm (8px)` across light/dark, `Card`, `Surface`, `Badge`, `FormSection`, and now `DataPanelTable` are landed as the current shared-library proof points, `Dropdown` now has verified light/dark foundation study boards, and the supporting `state/selected-*` semantic trio is now present in the canonical file; `Badge vs Chip` is still locked, but the next mandatory step has now narrowed to the optional `Dropdown` promotion decision and then shared-library close-out work on top of the landed shell family
 
 > [!todo] Next Up
-> Reopen shared-library coverage in impact order: `DataPanelTable`, then the optional `Dropdown` component-set promotion decision, then a close-out audit of the shared-library pass
+> Reopen shared-library coverage in impact order: the optional `Dropdown` component-set promotion decision, then a close-out audit of the shared-library pass
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and hero-search cleanup plan are complete; this new plan is a documentation/alignment pass that should not silently reopen runtime route work.
@@ -261,7 +261,7 @@ Lock one canonical Figma source of truth, align repo-side DS references with rea
 | 0 | Canonical source lock | done | `koZEgVUfQhNEQmXISNQx56` is now the canonical DS source-of-truth file and repo references must follow it |
 | 1 | Inventory diff + docs drift pass | done | canonical-file snapshot landed, stale mapping claims were downgraded, and obvious inventory drift was corrected |
 | 2 | Foundation parity pass | done | `Input / State` and `SearchInput / State` light/dark component sets now exist in the canonical file as first-pass reusable foundations |
-| 3 | Shared DS library mapping pass | in progress | `Card`, `Surface`, `Badge`, and now `FormSection` are landed as reusable proof points; finish `DataPanelTable` next, then decide whether `Dropdown` is promoted from study board to mapped component set before close-out |
+| 3 | Shared DS library mapping pass | in progress | `Card`, `Surface`, `Badge`, `FormSection`, and now `DataPanelTable` are landed as reusable proof points; decide whether `Dropdown` is promoted from study board to mapped component set before close-out |
 | 4 | Product exemplar + verification close-out | pending | treat product-bound exports separately, then close the alignment plan with updated references/checks |
 
 ---
@@ -300,9 +300,8 @@ Current recommendation order:
 ## Next Up
 
 - [x] Reopen `FormSection` on top of the landed `Surface` and `Badge` shell family
-- [ ] Reopen `DataPanelTable` on top of the landed `Surface`, `Badge`, and `FormSection` shell family
 - [ ] Decide whether `Dropdown` stays a study-board reference or is promoted into a reusable component-set mapping during shared-library close-out
-- [ ] Run the shared-library close-out audit once `FormSection` / `DataPanelTable` and the `Dropdown` promotion decision are resolved
+- [ ] Run the shared-library close-out audit once the `Dropdown` promotion decision is resolved
 
 ---
 

@@ -270,6 +270,17 @@ For reusable Figma component sets:
   explicit instead of inventing fake tokens: `16/20` section-title rhythm,
   `20px` card padding, the `6px` flat-header gap, and the missing
   `border/subtle` semantic are all still follow-up token work.
+- The canonical Figma `DataPanelTable` base now lives in
+  `DataPanelTable / Foundations / Light` and `DataPanelTable / Foundations / Dark`,
+  with source sets that stay intentionally shell-scoped instead of pretending to
+  own every table schema.
+- Keep the current `DataPanelTable` source set progressive rather than
+  combinatorially exhaustive: it proves the shell combinations for
+  `actions`, `toolbar`, and `footer`, while columns, table-head fills, row
+  rendering, empty-state content, and business actions stay route-owned.
+- The current canonical `DataPanelTable` board also keeps its token debt
+  explicit: runtime still asks for `border-subtle`, and the table-head fill
+  remains a route-owned local treatment rather than a shared semantic token.
 - The earlier `ghost action` footer study has now been folded into the Figma
   button source as a bounded neutral `soft` direction that sits beside
   `ghost`, not on top of it. Treat that move as Figma-first only for now: it
