@@ -398,6 +398,20 @@ At a high level:
     reusable component-set mapping; the current shell audit should not be read
     as proof that canonical dropdown variants or prop-driven component sets
     already exist in the file
+  - the latest `Surface / Foundations` shell re-audit also confirms that both
+    light/dark boards stay fully bound for all `26/26` text nodes across font
+    family, font size, line height, and text fill, and all painted
+    fills/strokes on the live source/hierarchy blocks remain token-bound too
+  - the remaining live `Surface` debt is now narrower than the older repo notes
+    claimed:
+    - the only remaining local-radius gap on the live nodes is `shell zone`
+      (`20`) in the hierarchy card
+    - the live dark source/hierarchy ids are `627:633` and `627:646`
+  - the current `Surface` board copy itself is now partially stale: it still
+    warns about a broader token-gap story (`border/subtle`, `bg-muted`,
+    `radius/12`, `space/20`) even though the live subtle/muted/popover/support
+    blocks already bind their fills, strokes, and radii; treat the nodes, not
+    the stale explanatory sentence, as the source of truth for this audit
   - runtime token semantics now mirror that same split more broadly too:
     `bg-card` resolves to the `surface` layer, while shared chrome that should
     remain on the calmer outer shell must opt into `bg-shell` explicitly

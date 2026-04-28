@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Figma DS section audit`
 
 > [!info] Current Phase
-> `Phase 3 — shell audit`
+> `Phase 4 — shared component audit`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -21,7 +21,7 @@ Parent Plan: `Figma DS section audit`
 > Open a new audit-only parent plan that re-checks the canonical Figma DS file against the repo one section family at a time. The goal is not to invent new DS work, but to verify section truth, variable usage, mapping posture, and repo-context parity in a tighter phased order than the previous broad alignment pass.
 
 > [!todo] Next Up
-> Continue Phase 3 shell audit in this order: `Surface / Foundations`, then move into the shared-component slice (`Badge` → `FormSection` → `DataPanelTable`) only after the shell pass is fully written down in repo context.
+> Start Phase 4 shared-component audit in this order: `Badge / Foundations` → `FormSection / Foundations` → `DataPanelTable / Foundations`, then finish with `Foundation Review` + repo close-out.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, and hero-search cleanup plan are complete; this new plan is a documentation/alignment pass that should not silently reopen runtime route work.
@@ -50,7 +50,7 @@ Parent Plan: `Figma DS section audit`
 ## Progress
 
 Figma DS section audit
-`[███████░░░] 70%`
+`[████████░░] 80%`
 
 ```mermaid
 flowchart TB
@@ -100,8 +100,8 @@ flowchart TB
     A0["Audit contract + section order lock<br/>Done"]
     A1["Foundations audit<br/>Typography, Color, Spacing + Radius<br/>Done"]
     A2["Control audit<br/>Button, Input / Search<br/>Done"]
-    A3["Shell audit<br/>Card, Dropdown, Surface<br/>In progress"]
-    A4["Shared component audit<br/>Badge, FormSection, DataPanelTable"]
+    A3["Shell audit<br/>Card, Dropdown, Surface<br/>Done"]
+    A4["Shared component audit<br/>Badge, FormSection, DataPanelTable<br/>In progress"]
     A5["Repo sync + close-out<br/>Review page, map, context, tracker"]
   end
 
@@ -256,13 +256,15 @@ Audit order for this plan:
 - [x] Audit `Button / Foundations / Light` and `Button / Foundations / Dark`
 - [x] Audit `Input / Search / Light` and `Input / Search / Dark`
 - [x] Audit `Dropdown / Foundations / Light` and `Dropdown / Foundations / Dark`
+- [x] Audit `Surface / Foundations / Light` and `Surface / Foundations / Dark`
 
 ---
 
 ## Next Up
 
-- [ ] Audit `Surface / Foundations / Light` and `Surface / Foundations / Dark`
-- [ ] Move into `Badge`, `FormSection`, and `DataPanelTable` only after the shell pass is written down
+- [ ] Audit `Badge / Foundations / Light` and `Badge / Foundations / Dark`
+- [ ] Audit `FormSection / Foundations / Light` and `FormSection / Foundations / Dark`
+- [ ] Audit `DataPanelTable / Foundations / Light` and `DataPanelTable / Foundations / Dark`
 
 ---
 
@@ -362,6 +364,7 @@ Add only short, high-signal entries here.
 - 2026-04-28: Phase 2 is now closed. A fresh `Input / Search` re-audit confirms that the light/dark boards stay token-bound for text family, text fill, shell fills/strokes, and the shared `radius/sm (8px)` field shells, but two explicit Figma-only gaps remain open by design: the four component-set wrappers still keep local `cornerRadius=5`, and the `Clear` action label in the search-state explainer still uses a local `14/20` type recipe. The repo registry also needed current dark ids for `Input / State`, `Input / Size`, `SearchInput / State`, and `SearchInput / Size`.
 - 2026-04-28: Phase 3 has now started with `Card / Foundations`. The live light/dark boards remain bound for font family, line height, text fill, shell fills/strokes, and per-corner radius, and the old wrapper-radius debt on `Card / Size / Source` stays closed. The remaining live Figma gaps are explicit instead: the title/body/footer copy still uses local type sizes, the geometry still keeps intentional local values (`space/20`, `space/10`, preview-stack arrangement), and the repo registry needed current dark ids (`726:156`, `726:171`) for the dark board/source set.
 - 2026-04-28: Phase 3 is now halfway through the shell layer. A fresh `Dropdown / Foundations` re-audit confirms both light/dark study boards stay fully bound for all `23/23` text nodes across font family, font size, line height, and text fill, and all painted fills/strokes remain token-bound. The only remaining live Figma debt is narrow and explicit: local `20` radius on `context scene` + `row calibration scene` and local `12` radius on the default/unselected `menu row` shells. `Dropdown` remains a study-board reference rather than a reusable component-set mapping.
+- 2026-04-28: Phase 3 is now closed. A fresh `Surface / Foundations` re-audit confirms both light/dark boards stay fully bound for all `26/26` text nodes across font family, font size, line height, and text fill, and all painted fills/strokes remain token-bound. The only remaining live local-radius gap is `shell zone` (`20`) in the hierarchy card, and the repo registry needed current dark source/hierarchy ids (`627:633`, `627:646`). The board copy itself is now partially stale because it still describes a broader token-gap story than the live subtle/muted/popover/support nodes actually show.
 - 2026-04-25: Active plan changed from the completed marketplace hero-search cleanup to `Figma DS alignment`; start by locking the canonical Figma source file and producing a repo-vs-Figma inventory diff before any new parity claim.
 - 2026-04-25: `koZEgVUfQhNEQmXISNQx56` (`Krukraft Theme Lab Source-of-Truth`) is now the permanent canonical Figma DS source file; repo references and coverage docs must be migrated to that foundation-first source.
 - 2026-04-25: The first repo-side doc drift pass is complete; stale mapping claims from the previous Figma file were downgraded, so the next active slice is `Input` / `SearchInput` foundation parity.

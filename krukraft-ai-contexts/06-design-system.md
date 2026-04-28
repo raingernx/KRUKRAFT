@@ -249,6 +249,17 @@ Use this order when DS docs disagree:
     fills/strokes are token-bound; the remaining Figma-only debt is just the
     intentional local radius on the `context scene` / `row calibration scene`
     containers (`20`) plus the default/unselected `menu row` shells (`12`)
+  - the 2026-04-28 shell re-audit tightened the `Surface` truth too: both
+    light/dark boards stay fully bound for all `26/26` text nodes across font
+    family, font size, line height, and text fill, and the live
+    `Surface / Variant / Source` plus hierarchy nodes keep all painted
+    fills/strokes token-bound
+  - the remaining live `Surface` debt is now narrow:
+    - only the hierarchy `shell zone` still keeps local `20` radius
+    - the dark source/hierarchy ids are `627:633` and `627:646`
+    - the board copy itself is now partially stale because it still describes a
+      broader token-gap story than the live subtle/muted/popover/support nodes
+      actually exhibit
   - text across `DS Foundations` now binds to the `font/family/base` variable
     by default; four glyph-only nodes remain intentional exceptions on the page
     because they still rely on symbol-font characters such as carets and
