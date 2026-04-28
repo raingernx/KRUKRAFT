@@ -308,8 +308,17 @@ For reusable Figma component sets:
 - The current footer proof point should stay close to runtime usage too: use a
   muted metadata-note footer before inventing CTA-heavy footer recipes.
 - The current canonical `DataPanelTable` board also keeps its token debt
-  explicit: runtime still asks for `border-subtle`, and the table-head fill
-  remains a route-owned local treatment rather than a shared semantic token.
+  explicit:
+  - the two `Showing latest 2 entries` footer-note copies still sit fully
+    local for family/size/line-height/fill
+  - the light/dark source-set wrapper frames still keep local `radius=5`
+  - the shell copy itself still relies on local type recipes:
+    - `16/20` titles
+    - `14/20` descriptions, column labels, row meta, and updated dates
+    - inherited `12/16` badge labels from the status pills
+  - runtime still asks for `border-subtle`
+  - the table-head fill remains a route-owned local treatment rather than a
+    shared semantic token
 - The earlier `ghost action` footer study has now been folded into the Figma
   button source as a bounded neutral `soft` direction that sits beside
   `ghost`, not on top of it. Treat that move as Figma-first only for now: it

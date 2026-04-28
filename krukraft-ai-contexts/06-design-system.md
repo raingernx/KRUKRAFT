@@ -504,9 +504,21 @@ Use this order when DS docs disagree:
     repo usage more literally: the fourth variant is now
     `actions=true, toolbar=false, footer=true`, and the footer proof point is a
     muted metadata note rather than an invented CTA footer
-  - the remaining token debt is explicit on the board too: runtime still asks
-    for `border-subtle`, and the table-head fill remains route-owned rather
-    than a shared semantic token
+  - the 2026-04-28 shared-component re-audit narrows the remaining live
+    `DataPanelTable` debt to explicit Figma-only gaps instead of broad shell
+    drift:
+    - the two `Showing latest 2 entries` footer-note copies still sit fully
+      local for family/size/line-height/fill
+    - the current dark source set now lives at `873:1766` instead of the older
+      `800:1050` id
+    - the light/dark source-set wrapper frames still keep local
+      `cornerRadius=5`
+    - the shell copy itself still relies on local type recipes:
+      - `16/20` titles
+      - `14/20` descriptions, column labels, row meta, and updated dates
+      - inherited `12/16` badge labels from the status pills
+    - runtime still asks for `border-subtle`, and the table-head fill remains
+      route-owned rather than a shared semantic token
   - the shared-library close-out audit is now complete too:
     - `Dropdown` stays a verified study-board reference for now rather than a
       promoted reusable component-set mapping
