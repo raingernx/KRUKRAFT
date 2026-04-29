@@ -141,6 +141,7 @@ export function AdminResourcesTrashTable({
                     <RowActions>
                       <RowActionButton
                         type="button"
+                        size="md"
                         disabled={loadingId === resource.id}
                         onClick={() => handleRestore(resource)}
                       >
@@ -149,6 +150,7 @@ export function AdminResourcesTrashTable({
                       </RowActionButton>
                       <RowActionButton
                         type="button"
+                        size="md"
                         tone="danger"
                         disabled={loadingId === resource.id}
                         onClick={() => handlePermanentDelete(resource)}

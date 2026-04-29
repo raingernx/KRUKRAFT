@@ -333,6 +333,18 @@ Use this order when DS docs disagree:
           pager behaves like a standalone table footer
         - `/admin/tags` intentionally stays on compact `sm` row actions
           because its save/cancel/delete clusters are denser inline controls
+      - the next narrow follow-up rollout keeps the same opt-in rule and
+        extends the simple table-action posture only where density still
+        supports it:
+        - `/admin/categories`
+        - `/admin/reviews`
+        - `/admin/resources/trash`
+        - `/admin/resources/[id]/versions`
+        all now opt into `RowActionButton size="md"` after route proof
+      - dense holdouts still remain out of scope on purpose:
+        - `/admin/tags`
+        - `/admin/resources` main table
+        - creator-side status/action groups
       - that same audit found the real runtime blast radius is concentrated in
         `dashboard` (~60 `size=\"sm\"` button usages) and `admin` (~34), while
         live `density=\"compact\"` usage is still narrow (`public-resources`

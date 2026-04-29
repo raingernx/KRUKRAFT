@@ -56,6 +56,7 @@ export function ReviewVisibilityAction({
       <RowActions>
         <RowActionButton
           type="button"
+          size="md"
           disabled={busy}
           loading={busy}
           tone={isVisible ? "danger" : "default"}

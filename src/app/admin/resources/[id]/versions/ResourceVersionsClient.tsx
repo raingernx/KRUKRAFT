@@ -195,6 +195,7 @@ export function ResourceVersionsClient({
                       <RowActions>
                         <RowActionButton
                           type="button"
+                          size="md"
                           variant="quiet"
                           onClick={() => handleDownload(v.id)}
                         >
@@ -204,6 +205,7 @@ export function ResourceVersionsClient({
                         {!isCurrent && (
                           <RowActionButton
                             type="button"
+                            size="md"
                             variant="ghost"
                             tone="muted"
                             className={cn("text-muted-foreground hover:text-foreground")}

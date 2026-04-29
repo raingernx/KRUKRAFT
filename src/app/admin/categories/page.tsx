@@ -240,12 +240,14 @@ export default function AdminCategoriesPage() {
                   <RowActions>
                     <RowActionButton
                       type="button"
+                      size="md"
                       onClick={() => openEditModal(category)}
                     >
                       Edit
                     </RowActionButton>
                     <RowActionButton
                       type="button"
+                      size="md"
                       tone="danger"
                       onClick={() => handleDelete(category)}
                     >

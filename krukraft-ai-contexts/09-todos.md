@@ -4,7 +4,7 @@ Use this file as the single source of truth for active implementation state.
 
  ## Plan Snapshot
 
-Parent Plan: `Admin table action rollout`
+Parent Plan: `Admin simple row-action rollout`
 
 > [!info] Current Phase
 > `Plan complete`
@@ -40,6 +40,7 @@ Parent Plan: `Admin table action rollout`
 | Figma DS Section Audit | Complete | section-by-section verification pass for the canonical Figma DS file against repo docs, token contracts, and mapped component truth closed cleanly after the Foundation Review + repo close-out audit |
 | Runtime DS Adoption | Complete | first runtime slice is landed and closed; use it as the baseline for narrower follow-up rollout plans |
 | Admin Table Action Rollout | Complete | inventory, rollout decision, first admin proof slice, runtime verification, and close-out audit are complete |
+| Admin Simple Row-Action Rollout | Complete | inventory, rollout decision, follow-up adoption slice, runtime verification, and close-out audit are complete |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -51,7 +52,7 @@ Parent Plan: `Admin table action rollout`
 
 ## Progress
 
-Admin table action rollout
+Admin simple row-action rollout
 `[██████████] 100%`
 
 ```mermaid
@@ -99,10 +100,10 @@ flowchart TB
   end
 
   subgraph Current
-    P0["Admin table rollout plan open<br/>Done"]
-    P1["Admin row-action inventory<br/>Done"]
-    P2["Pagination inventory + rollout decision<br/>Done"]
-    P3["First admin route-family adoption slice<br/>Done"]
+    P0["Simple row-action follow-up plan open<br/>Done"]
+    P1["Simple admin row-action inventory<br/>Done"]
+    P2["Rollout decision<br/>Done"]
+    P3["First simple admin adoption slice<br/>Done"]
     P4["Route-family runtime proof<br/>Done"]
     P5["Close-out audit<br/>Done"]
   end
@@ -146,38 +147,46 @@ Rules:
 Plan complete
 
 ### Parent Plan
-Admin table action rollout
+Admin simple row-action rollout
 
 ### Current Status Inside Parent Plan
-- `Runtime DS adoption` remains the frozen baseline:
+- `Runtime DS adoption` and the closed `Admin table action rollout` plan are
+  now the frozen baseline:
   - `RowActionButton size="md"` and `PaginationButton size="md"` already exist
-  - dashboard creator resources remains the first proven live consumer
-  - the larger rounded-rect recipe still stays explicitly opt-in
-- This admin rollout plan is now closed after one narrow admin proof slice:
-  - `/admin/users` adopts `RowActionButton size="md"`
-  - `/admin/audit` adopts `TablePagination buttonSize="md"`
-  - `/admin/tags` intentionally stays on compact `sm` row actions
-- The close-out audit did not find an in-scope reason to widen shared defaults
-  further. Any broader admin rollout now belongs in a separate plan.
+  - dashboard creator resources, `/admin/users`, and `/admin/audit` are proven
+  live consumers
+  - `/admin/tags` remains the explicit compact holdout for dense inline
+    editor/delete clusters
+- This follow-up plan is now closed after one narrow simple-surface proof
+  slice:
+  - `/admin/categories`
+  - `/admin/reviews`
+  - `/admin/resources/trash`
+  - `/admin/resources/[id]/versions`
+  all now opt into `RowActionButton size="md"`
+- Dense clusters remain explicit holdouts after the close-out audit:
+  - `/admin/resources` main table
+  - `/admin/tags`
+  - creator/admin status-action groups outside these admin table-like surfaces
 
 ### Goal
-Completed: decide where the proven `DataPanelTable` row-action / pagination
-recipe should expand across admin tables without silently widening every shared
-helper or dense admin control cluster.
+Completed: decide whether the remaining simple admin row-action surfaces should
+adopt the same `md` rounded-rect posture as the proven table-action recipe,
+without reopening dense multi-action admin clusters.
 
 ### Why this is the current phase
 - The plan has reached its intended milestone: inventory, rollout decision,
-  first admin proof slice, runtime verification, and close-out audit all
+  follow-up adoption slice, runtime verification, and close-out audit all
   landed cleanly.
 
 ### Definition of Done
-- [x] Live admin consumers of `RowActionButton` and `PaginationButton` are
-      inventoried and classified before patching
-- [x] A rollout decision is recorded for `admin/users`, `admin/tags`, and
-      `TablePagination` surfaces: adopt the rounded-rect `md` recipe or keep
-      compact `sm`
-- [x] One narrow admin route-family adoption slice lands without widening
-      unrelated shared helpers
+- [x] Live simple admin row-action consumers are inventoried and classified
+      before patching
+- [x] A rollout decision is recorded for `/admin/categories`,
+      `/admin/reviews`, `/admin/resources/trash`, and
+      `/admin/resources/[id]/versions`
+- [x] One narrow admin follow-up slice lands without widening dense
+      out-of-scope clusters
 - [x] The affected admin route family is verified at runtime after the patch
 - [x] Repo context/docs are updated in the same session if the runtime
       contract understanding changes
@@ -188,10 +197,10 @@ helper or dense admin control cluster.
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Admin rollout plan open + scope lock | complete | scope is limited to admin row actions and pagination on top of the proven helper baseline |
-| 1 | Admin table inventory | complete | `admin/users`, `admin/tags`, and `TablePagination` consumers were audited before patching |
-| 2 | Rollout decision | complete | `/admin/users` and `/admin/audit` adopt `md`; `/admin/tags` stays compact `sm` |
-| 3 | First admin adoption slice | complete | route patch landed without widening shared defaults |
+| 0 | Follow-up plan open + scope lock | complete | scope is limited to simple admin row-action surfaces, not dense multi-action tables |
+| 1 | Simple admin row-action inventory | complete | `admin/categories`, `admin/reviews`, `admin/resources/trash`, and `admin/resources/[id]/versions` were audited before patching |
+| 2 | Rollout decision | complete | all four simple surfaces adopt `md`; dense holdouts stay out of scope |
+| 3 | First follow-up adoption slice | complete | route patch landed without widening dense out-of-scope clusters |
 | 4 | Runtime proof + repo close-out | complete | route proof passed and close-out audit did not reopen the plan |
 
 ---
@@ -199,24 +208,27 @@ helper or dense admin control cluster.
 ## Current Goal
 
 The plan is complete. The recorded rollout decision is:
-1. `admin/users` row actions adopt the `md` rounded-rect recipe
-2. `admin/tags` inline action clusters stay compact on `sm`
-3. `admin/audit` `TablePagination` adopts the `md` recipe through an explicit
-   opt-in prop
-4. shared defaults stay unchanged until a separate plan justifies a wider pass
+1. `/admin/categories` adopts `RowActionButton size="md"`
+2. `/admin/reviews` adopts `RowActionButton size="md"`
+3. `/admin/resources/trash` adopts `RowActionButton size="md"`
+4. `/admin/resources/[id]/versions` adopts `RowActionButton size="md"`
+5. shared defaults stay unchanged until a separate plan justifies a wider pass
 
 ---
 
 ## In Progress
 
-- [x] Open a new parent plan for `Admin table action rollout`
-- [x] Lock the rollout scope to admin table actions + pagination, not a global button rewrite
-- [x] Inventory `admin/users` row actions
-- [x] Inventory `admin/tags` inline save/cancel/delete actions
-- [x] Inventory `TablePagination` consumers and classify their density
-- [x] Decide the first admin rollout patch layer from the inventory findings
-- [x] Land the first admin rollout patch without widening shared defaults
-- [x] Run runtime proof for `/admin/users`, `/admin/tags`, and `/admin/audit`
+- [x] Open a new parent plan for `Admin simple row-action rollout`
+- [x] Lock the rollout scope to simple admin row-action surfaces only
+- [x] Inventory `/admin/categories`
+- [x] Inventory `/admin/reviews`
+- [x] Inventory `/admin/resources/trash`
+- [x] Inventory `/admin/resources/[id]/versions`
+- [x] Decide the first follow-up rollout patch layer from the inventory
+      findings
+- [x] Land the follow-up rollout patch without widening dense holdouts
+- [x] Run runtime proof for `/admin/categories`, `/admin/reviews`,
+      `/admin/resources/trash`, and `/admin/resources/[id]/versions`
 - [x] Run the required close-out audit and close the plan if no material
       in-scope issue remains
 
@@ -318,6 +330,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: `Admin simple row-action rollout` is now closed. Inventory confirmed that `/admin/categories`, `/admin/reviews`, `/admin/resources/trash`, and `/admin/resources/[id]/versions` all behave like simple table-action surfaces rather than dense inline editor clusters, so each now opts into `RowActionButton size="md"`. The close-out audit keeps `/admin/resources` main table, `/admin/tags`, and creator/admin status-action groups as explicit holdouts for a future separate plan.
 - 2026-04-29: After `Runtime DS adoption` closed cleanly, open a new parent plan `Admin table action rollout` instead of silently continuing the old plan. Start with inventory of `admin/users`, `admin/tags`, and `TablePagination` consumers so the next row-action / pagination rollout decision is based on real admin surface density.
 - 2026-04-29: `Admin table action rollout` is now closed. Inventory confirmed three different densities: `/admin/users` behaves like a spaced row-action column and now adopts `RowActionButton size="md"`, `/admin/audit` behaves like a standalone table footer and now adopts `TablePagination buttonSize="md"`, and `/admin/tags` remains an explicit compact `sm` holdout because its edit/save/delete clusters are denser inline controls. Runtime proof passed for `/admin/users`, `/admin/tags`, and `/admin/audit`, and the close-out audit found no in-scope reason to widen shared defaults further.
 - 2026-04-28: After `Figma DS section audit` closed at `100%`, open a new parent plan `Runtime DS adoption` so the next work uses the audited Figma baseline in the app instead of reopening another DS-analysis loop. Start with `DataPanelTable` because its row-action, pagination, and shell posture are the most locked-down runtime targets.

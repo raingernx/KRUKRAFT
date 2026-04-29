@@ -137,6 +137,14 @@ Current runtime contract to mirror:
     - `/admin/tags` intentionally stays on compact `sm` row actions because
       its inline edit/save/delete clusters are denser than the table-action
       recipe proved in `DataPanelTable`
+  - the follow-up simple-admin rollout keeps the same rule:
+    - `/admin/categories`, `/admin/reviews`, `/admin/resources/trash`, and
+      `/admin/resources/[id]/versions` now opt into `RowActionButton size="md"`
+      because each surface behaves like a light table-action column rather than
+      a dense multi-action editor cluster
+    - `/admin/resources` main table still stays out of scope because its
+      publish/restore/edit/menu cluster is denser and would need a separate
+      rollout decision
 - If that button-size pass is reopened, the current recommended path is to
   trial `xs=32 / sm=36 / md=40 / lg=48`, keep `density=\"compact\" -> xs`
   during the first rollout proof, and leave `Input` / `SearchInput` on the

@@ -227,6 +227,19 @@ When this file conflicts with code, the code wins.
       footer behaves like a standalone table paginator
     - `/admin/tags`: keep compact `RowActionButton` `sm` because edit,
       confirm-delete, and save/cancel clusters are denser inline controls
+  - current simple-admin follow-up decision:
+    - `/admin/categories`: adopt `RowActionButton size="md"` because its
+      `Edit / Delete` pair behaves like a simple table-action column
+    - `/admin/reviews`: adopt `RowActionButton size="md"` for the single
+      visibility toggle because it behaves like a standalone moderation action
+    - `/admin/resources/trash`: adopt `RowActionButton size="md"` for the
+      `Restore / Delete` pair because the row stays action-light and table-like
+    - `/admin/resources/[id]/versions`: adopt `RowActionButton size="md"` for
+      `Download / Rollback` because the action cell stays a simple two-action
+      version-history surface
+    - `/admin/resources` main table stays out of scope because its publish /
+      restore / edit / menu cluster is denser and not yet justified for the
+      larger posture
   - `panel CTA`: recipe first, usually outline-derived; if the bounded neutral
     posture spreads across multiple non-table contexts, reopen it as a real
     `soft` adoption decision instead of sneaking it into `ghost`
