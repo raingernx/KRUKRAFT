@@ -145,6 +145,14 @@ Current runtime contract to mirror:
     - `/admin/resources` main table still stays out of scope because its
       publish/restore/edit/menu cluster is denser and would need a separate
       rollout decision
+  - the dense-holdout lockdown follow-up now turns those remaining exceptions
+    into explicit code-level contract instead of leaving them on implicit
+    defaults:
+    - `/admin/resources` main table now passes `size="sm"` on every
+      `RowActionButton` and `RowActionMenuTrigger`
+    - `/admin/tags` now passes `size="sm"` on every inline row action
+    - `CreatorResourceStatusButton` now passes `size="sm"` too, even though
+      no live route mount was found during that rollout audit
 - If that button-size pass is reopened, the current recommended path is to
   trial `xs=32 / sm=36 / md=40 / lg=48`, keep `density=\"compact\" -> xs`
   during the first rollout proof, and leave `Input` / `SearchInput` on the

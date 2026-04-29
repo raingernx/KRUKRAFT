@@ -67,6 +67,7 @@ export function CreatorResourceStatusButton({
           <RowActionButton
             key={action.status}
             type="button"
+            size="sm"
             tone={action.tone}
             disabled={busy}
             onClick={() => void handleStatusChange(action.status, action.label)}

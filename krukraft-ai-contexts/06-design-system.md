@@ -345,6 +345,15 @@ Use this order when DS docs disagree:
         - `/admin/tags`
         - `/admin/resources` main table
         - creator-side status/action groups
+      - the dense-holdout lockdown follow-up now turns those remaining
+        exceptions into explicit contract instead of leaving them on shared
+        defaults:
+        - `/admin/resources` main table now passes `size="sm"` on every row
+          action and overflow trigger
+        - `/admin/tags` now passes `size="sm"` on every inline
+          save/cancel/delete/edit action
+        - `CreatorResourceStatusButton` now passes `size="sm"` too, even
+          though no live route mount was found during the rollout audit
       - that same audit found the real runtime blast radius is concentrated in
         `dashboard` (~60 `size=\"sm\"` button usages) and `admin` (~34), while
         live `density=\"compact\"` usage is still narrow (`public-resources`

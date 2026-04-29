@@ -385,6 +385,7 @@ export function TagsClient({ tags }: Props) {
                           <RowActions>
                             <RowActionButton
                               onClick={handleUpdate}
+                              size="sm"
                               disabled={editPending || !editName.trim()}
                               variant="primary"
                               className="gap-1"
@@ -394,6 +395,7 @@ export function TagsClient({ tags }: Props) {
                             </RowActionButton>
                             <RowActionButton
                               onClick={cancelEdit}
+                              size="sm"
                               disabled={editPending}
                               tone="muted"
                               className="gap-1"
@@ -417,6 +419,7 @@ export function TagsClient({ tags }: Props) {
                             <RowActions>
                               <RowActionButton
                                 onClick={handleDelete}
+                                size="sm"
                                 disabled={deletePending}
                                 variant="danger"
                                 className="gap-1"
@@ -426,6 +429,7 @@ export function TagsClient({ tags }: Props) {
                               </RowActionButton>
                               <RowActionButton
                                 onClick={cancelDelete}
+                                size="sm"
                                 disabled={deletePending}
                                 tone="muted"
                                 className="gap-1"
@@ -440,12 +444,14 @@ export function TagsClient({ tags }: Props) {
                           // ── Default: Edit / Delete buttons
                           <RowActions>
                             <RowActionButton
+                              size="sm"
                               onClick={() => startEdit(tag)}
                             >
                               <Pencil className="h-3 w-3" />
                               Edit
                             </RowActionButton>
                             <RowActionButton
+                              size="sm"
                               onClick={() => startDelete(tag.id)}
                               tone="danger"
                             >

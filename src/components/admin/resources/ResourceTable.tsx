@@ -555,6 +555,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                         <RowActions>
                           <RowActionButton
                             type="button"
+                            size="sm"
                             tone="muted"
                             disabled={isRowLoading}
                             onClick={() => setConfirmDeleteId(null)}
@@ -563,6 +564,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                           </RowActionButton>
                           <RowActionButton
                             type="button"
+                            size="sm"
                             variant="danger"
                             disabled={isRowLoading}
                             onClick={() => handleDelete(resource)}
@@ -576,6 +578,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                         {isDraft && (
                           <RowActionButton
                             type="button"
+                            size="sm"
                             disabled={isRowLoading}
                             onClick={() => handlePublish(resource)}
                           >
@@ -585,6 +588,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                         {isPublished && (
                           <RowActionButton
                             type="button"
+                            size="sm"
                             tone="success"
                             className="cursor-default"
                             disabled
@@ -595,6 +599,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                         {isArchived && (
                           <RowActionButton
                             type="button"
+                            size="sm"
                             disabled={isRowLoading}
                             onClick={async () => {
                               setRowLoadingId(resource.id);
@@ -624,7 +629,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                             Restore
                           </RowActionButton>
                         )}
-                        <RowActionButton asChild>
+                        <RowActionButton asChild size="sm">
                           <Link
                             href={routes.adminResource(resource.id)}
                             className="flex items-center gap-1"
@@ -637,7 +642,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
                         </RowActionButton>
                         <Dropdown>
                           <DropdownTrigger asChild>
-                            <RowActionMenuTrigger>
+                            <RowActionMenuTrigger size="sm">
                               <MoreHorizontal className="h-4 w-4" />
                             </RowActionMenuTrigger>
                           </DropdownTrigger>

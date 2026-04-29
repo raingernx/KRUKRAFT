@@ -4,7 +4,7 @@ Use this file as the single source of truth for active implementation state.
 
  ## Plan Snapshot
 
-Parent Plan: `Admin simple row-action rollout`
+Parent Plan: `Dense action holdout lockdown`
 
 > [!info] Current Phase
 > `Plan complete`
@@ -41,6 +41,7 @@ Parent Plan: `Admin simple row-action rollout`
 | Runtime DS Adoption | Complete | first runtime slice is landed and closed; use it as the baseline for narrower follow-up rollout plans |
 | Admin Table Action Rollout | Complete | inventory, rollout decision, first admin proof slice, runtime verification, and close-out audit are complete |
 | Admin Simple Row-Action Rollout | Complete | inventory, rollout decision, follow-up adoption slice, runtime verification, and close-out audit are complete |
+| Dense Action Holdout Lockdown | Complete | remaining dense admin/creator action clusters are now explicit compact holdouts, with `/admin/resources` and `/admin/tags` proved at runtime |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -52,7 +53,7 @@ Parent Plan: `Admin simple row-action rollout`
 
 ## Progress
 
-Admin simple row-action rollout
+Dense action holdout lockdown
 `[██████████] 100%`
 
 ```mermaid
@@ -100,11 +101,11 @@ flowchart TB
   end
 
   subgraph Current
-    P0["Simple row-action follow-up plan open<br/>Done"]
-    P1["Simple admin row-action inventory<br/>Done"]
-    P2["Rollout decision<br/>Done"]
-    P3["First simple admin adoption slice<br/>Done"]
-    P4["Route-family runtime proof<br/>Done"]
+    P0["Dense holdout plan open<br/>Done"]
+    P1["Dense holdout inventory<br/>Done"]
+    P2["Holdout contract decision<br/>Done"]
+    P3["Explicit compact contract patch<br/>Done"]
+    P4["Runtime proof<br/>Done"]
     P5["Close-out audit<br/>Done"]
   end
 
@@ -147,88 +148,87 @@ Rules:
 Plan complete
 
 ### Parent Plan
-Admin simple row-action rollout
+Dense action holdout lockdown
 
 ### Current Status Inside Parent Plan
-- `Runtime DS adoption` and the closed `Admin table action rollout` plan are
-  now the frozen baseline:
+- `Runtime DS adoption`, `Admin table action rollout`, and
+  `Admin simple row-action rollout` are now the frozen widening baseline:
   - `RowActionButton size="md"` and `PaginationButton size="md"` already exist
-  - dashboard creator resources, `/admin/users`, and `/admin/audit` are proven
-  live consumers
-  - `/admin/tags` remains the explicit compact holdout for dense inline
-    editor/delete clusters
-- This follow-up plan is now closed after one narrow simple-surface proof
-  slice:
-  - `/admin/categories`
-  - `/admin/reviews`
-  - `/admin/resources/trash`
-  - `/admin/resources/[id]/versions`
-  all now opt into `RowActionButton size="md"`
-- Dense clusters remain explicit holdouts after the close-out audit:
-  - `/admin/resources` main table
+  - dashboard creator resources, `/admin/users`, `/admin/audit`,
+    `/admin/categories`, `/admin/reviews`, `/admin/resources/trash`, and
+    `/admin/resources/[id]/versions` are proven widened consumers
+- This follow-up plan is now closed after locking the remaining dense action
+  clusters as explicit compact holdouts instead of leaving them on implicit
+  defaults:
+  - `/admin/resources` main table now passes `size="sm"` on every
+    `RowActionButton` and `RowActionMenuTrigger`
+  - `/admin/tags` now passes `size="sm"` on every inline
+    edit/save/cancel/delete row action
+  - `CreatorResourceStatusButton` now passes `size="sm"` as an explicit
+    creator-side holdout even though no live route mount was found during the
+    inventory
+- Close-out proof passed for the two live admin holdouts that could be tested
+  end-to-end:
+  - `/admin/resources`
   - `/admin/tags`
-  - creator/admin status-action groups outside these admin table-like surfaces
 
 ### Goal
-Completed: decide whether the remaining simple admin row-action surfaces should
-adopt the same `md` rounded-rect posture as the proven table-action recipe,
-without reopening dense multi-action admin clusters.
+Completed: codify the remaining dense admin/creator action clusters as
+explicit compact `sm` holdouts and prove that the compact posture remains
+stable on the live admin routes that still use those denser control groups.
 
 ### Why this is the current phase
-- The plan has reached its intended milestone: inventory, rollout decision,
-  follow-up adoption slice, runtime verification, and close-out audit all
-  landed cleanly.
+- The plan has reached its intended milestone: inventory, holdout decision,
+  explicit compact patch, runtime verification, and close-out audit all landed
+  cleanly.
 
 ### Definition of Done
-- [x] Live simple admin row-action consumers are inventoried and classified
-      before patching
-- [x] A rollout decision is recorded for `/admin/categories`,
-      `/admin/reviews`, `/admin/resources/trash`, and
-      `/admin/resources/[id]/versions`
-- [x] One narrow admin follow-up slice lands without widening dense
-      out-of-scope clusters
-- [x] The affected admin route family is verified at runtime after the patch
+- [x] Remaining dense holdouts are inventoried before patching
+- [x] A runtime decision is recorded for `/admin/resources` main table,
+      `/admin/tags`, and creator/admin status-action groups
+- [x] The holdout contract is made explicit in code instead of relying on
+      inherited defaults
+- [x] The live admin holdouts are verified at runtime after the patch
 - [x] Repo context/docs are updated in the same session if the runtime
       contract understanding changes
 - [x] The plan closes with one explicit close-out audit instead of drifting
-      into optional follow-up work
+      into another widening pass
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Follow-up plan open + scope lock | complete | scope is limited to simple admin row-action surfaces, not dense multi-action tables |
-| 1 | Simple admin row-action inventory | complete | `admin/categories`, `admin/reviews`, `admin/resources/trash`, and `admin/resources/[id]/versions` were audited before patching |
-| 2 | Rollout decision | complete | all four simple surfaces adopt `md`; dense holdouts stay out of scope |
-| 3 | First follow-up adoption slice | complete | route patch landed without widening dense out-of-scope clusters |
-| 4 | Runtime proof + repo close-out | complete | route proof passed and close-out audit did not reopen the plan |
+| 0 | Holdout plan open + scope lock | complete | scope is limited to the remaining dense holdouts, not another widening pass |
+| 1 | Dense holdout inventory | complete | `/admin/resources`, `/admin/tags`, and creator/admin status-action groups were audited before patching |
+| 2 | Holdout contract decision | complete | dense clusters stay compact `sm` and become explicit instead of implicit |
+| 3 | Explicit compact contract patch | complete | code now passes `size="sm"` on the dense holdout controls |
+| 4 | Runtime proof + repo close-out | complete | `/admin/resources` and `/admin/tags` passed proof; creator status holdout was documented as code-level only because no live route mount was found |
 
 ---
 
 ## Current Goal
 
-The plan is complete. The recorded rollout decision is:
-1. `/admin/categories` adopts `RowActionButton size="md"`
-2. `/admin/reviews` adopts `RowActionButton size="md"`
-3. `/admin/resources/trash` adopts `RowActionButton size="md"`
-4. `/admin/resources/[id]/versions` adopts `RowActionButton size="md"`
-5. shared defaults stay unchanged until a separate plan justifies a wider pass
+The plan is complete. The recorded holdout decision is:
+1. `/admin/resources` main table stays on compact `RowActionButton` /
+   `RowActionMenuTrigger` posture and now passes `size="sm"` explicitly
+2. `/admin/tags` stays on compact `RowActionButton` posture for all inline row
+   actions and now passes `size="sm"` explicitly
+3. `CreatorResourceStatusButton` stays on compact `RowActionButton`
+   posture and now passes `size="sm"` explicitly
+4. shared defaults still stay unchanged until a separate plan justifies a
+   wider rollout or a new dense-control family contract
 
 ---
 
 ## In Progress
 
-- [x] Open a new parent plan for `Admin simple row-action rollout`
-- [x] Lock the rollout scope to simple admin row-action surfaces only
-- [x] Inventory `/admin/categories`
-- [x] Inventory `/admin/reviews`
-- [x] Inventory `/admin/resources/trash`
-- [x] Inventory `/admin/resources/[id]/versions`
-- [x] Decide the first follow-up rollout patch layer from the inventory
-      findings
-- [x] Land the follow-up rollout patch without widening dense holdouts
-- [x] Run runtime proof for `/admin/categories`, `/admin/reviews`,
-      `/admin/resources/trash`, and `/admin/resources/[id]/versions`
+- [x] Open a new parent plan for `Dense action holdout lockdown`
+- [x] Lock the rollout scope to the remaining dense admin/creator holdouts
+- [x] Inventory `/admin/resources` main-table action cluster
+- [x] Inventory `/admin/tags` inline row-action clusters
+- [x] Inventory creator/admin status-action holdouts
+- [x] Record the holdout decision and patch the dense surfaces explicitly
+- [x] Run runtime proof for `/admin/resources` and `/admin/tags`
 - [x] Run the required close-out audit and close the plan if no material
       in-scope issue remains
 
@@ -330,6 +330,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: `Dense action holdout lockdown` is now closed. Inventory confirmed that `/admin/resources` main table, `/admin/tags`, and creator-side status actions are dense control clusters that should not silently inherit the widened rounded-rect `md` table-action recipe. The follow-up patch now passes `size="sm"` explicitly on those holdouts, runtime proof passed for `/admin/resources` and `/admin/tags`, and `CreatorResourceStatusButton` is recorded as a code-level compact holdout because no live route mount was found during the audit.
 - 2026-04-29: `Admin simple row-action rollout` is now closed. Inventory confirmed that `/admin/categories`, `/admin/reviews`, `/admin/resources/trash`, and `/admin/resources/[id]/versions` all behave like simple table-action surfaces rather than dense inline editor clusters, so each now opts into `RowActionButton size="md"`. The close-out audit keeps `/admin/resources` main table, `/admin/tags`, and creator/admin status-action groups as explicit holdouts for a future separate plan.
 - 2026-04-29: After `Runtime DS adoption` closed cleanly, open a new parent plan `Admin table action rollout` instead of silently continuing the old plan. Start with inventory of `admin/users`, `admin/tags`, and `TablePagination` consumers so the next row-action / pagination rollout decision is based on real admin surface density.
 - 2026-04-29: `Admin table action rollout` is now closed. Inventory confirmed three different densities: `/admin/users` behaves like a spaced row-action column and now adopts `RowActionButton size="md"`, `/admin/audit` behaves like a standalone table footer and now adopts `TablePagination buttonSize="md"`, and `/admin/tags` remains an explicit compact `sm` holdout because its edit/save/delete clusters are denser inline controls. Runtime proof passed for `/admin/users`, `/admin/tags`, and `/admin/audit`, and the close-out audit found no in-scope reason to widen shared defaults further.

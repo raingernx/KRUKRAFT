@@ -240,6 +240,16 @@ When this file conflicts with code, the code wins.
     - `/admin/resources` main table stays out of scope because its publish /
       restore / edit / menu cluster is denser and not yet justified for the
       larger posture
+  - current dense-holdout lockdown decision:
+    - `/admin/resources` main table is now an explicit compact holdout; every
+      row action and the overflow trigger pass `size="sm"` instead of relying
+      on shared defaults
+    - `/admin/tags` is now an explicit compact holdout; inline
+      save/cancel/delete/edit row actions all pass `size="sm"` because the
+      cluster behaves like an inline editor, not a table-action column
+    - `CreatorResourceStatusButton` is now an explicit compact holdout too;
+      it passes `size="sm"` in code even though no live route mount was found
+      during the rollout audit
   - `panel CTA`: recipe first, usually outline-derived; if the bounded neutral
     posture spreads across multiple non-table contexts, reopen it as a real
     `soft` adoption decision instead of sneaking it into `ghost`
