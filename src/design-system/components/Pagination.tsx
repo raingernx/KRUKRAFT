@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
 
 import { cn } from "@/lib/utils";
 
@@ -20,7 +21,11 @@ export function PaginationList({ className, ...props }: PaginationListProps) {
   return <div className={cn("flex items-center justify-center gap-1", className)} {...props} />;
 }
 
-export interface PaginationButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+type PrimitivePaginationButtonProps = React.ComponentProps<"button"> & {
+  asChild?: boolean;
+};
+
+export interface PaginationButtonProps extends PrimitivePaginationButtonProps {
   active?: boolean;
   size?: "sm" | "md";
 }
@@ -30,20 +35,25 @@ export function PaginationButton({
   active = false,
   size = "md",
   type = "button",
+  asChild = false,
   ...props
 }: PaginationButtonProps) {
+  const Comp = asChild ? Slot : "button";
+
   return (
-    <button
-      type={type}
+    <Comp
+      type={asChild ? undefined : type}
       className={cn(
-        "inline-flex items-center justify-center gap-1 border font-medium transition-colors",
+        "inline-flex items-center justify-center gap-1 border font-medium whitespace-nowrap transition-colors outline-none select-none",
+        "focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40",
+        "aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed aria-disabled:opacity-40",
         size === "sm"
-          ? "rounded-md px-3 py-1.5 text-sm"
-          : "min-w-[36px] rounded-lg px-3 py-2 text-sm",
+          ? "h-8 min-w-8 rounded-[var(--radius-sm)] px-3 text-xs"
+          : "h-10 min-w-10 rounded-[var(--radius-sm)] px-4 text-sm",
         active
-          ? "border-brand-600 bg-brand-600 text-white"
-          : "border-border-strong bg-card text-muted-foreground hover:border-border hover:bg-muted hover:text-brand-600",
+          ? "border-primary bg-primary text-primary-foreground hover:bg-primary-hover"
+          : "border-border-strong bg-transparent text-foreground hover:border-border-strong hover:bg-muted/40 hover:text-foreground",
         className,
       )}
       {...props}

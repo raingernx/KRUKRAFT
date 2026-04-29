@@ -122,6 +122,14 @@ Current runtime contract to mirror:
     the pill geometry used by the core family, and the row-action recipe card
     now keeps both an `Edit / Open` example row and a compact state strip so
     the posture and its states stay visible together
+  - the first runtime adoption slice now mirrors that recipe without
+    widening the whole button family:
+    - `RowActionButton size="md"` carries the 40px rounded-rect posture
+    - `PaginationButton size="md"` carries the matching page-item posture and
+      now supports `asChild` for route-owned link pagination
+    - dashboard creator-resources `DataPanelTable` is the first live consumer;
+      compact `sm` helper postures stay available until a wider rollout is
+      explicitly proven
 - If that button-size pass is reopened, the current recommended path is to
   trial `xs=32 / sm=36 / md=40 / lg=48`, keep `density=\"compact\" -> xs`
   during the first rollout proof, and leave `Input` / `SearchInput` on the

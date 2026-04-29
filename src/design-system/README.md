@@ -205,11 +205,17 @@ When this file conflicts with code, the code wins.
     Figma file this now means the `DataPanelTable`-style rounded-rect posture:
     40px height with `radius/sm (8px)`, not the global pill shape; the live
     recipe card now shows both an `Edit / Open` example row and a compact
-    `Default / Hover / Focus / Pressed / Disabled` state strip
+    `Default / Hover / Focus / Pressed / Disabled` state strip. The first
+    runtime adoption slice now mirrors that posture through
+    `RowActionButton size="md"` while still leaving the existing compact `sm`
+    helper posture available for narrower table/admin surfaces
   - `pagination item`: recipe, not a new family; page navigation should stay a
     `Pagination` pattern with `default`, `current`, and `disabled` states
     instead of creating a separate button tone. The current Figma recipe keeps
-    the same rounded-rect `radius/sm (8px)` geometry as table row actions
+    the same rounded-rect `radius/sm (8px)` geometry as table row actions; the
+    first runtime slice now exposes that through `PaginationButton size="md"`
+    and uses it in the dashboard creator-resources `DataPanelTable` flow while
+    leaving compact `sm` pagination available until wider proof lands
   - `panel CTA`: recipe first, usually outline-derived; if the bounded neutral
     posture spreads across multiple non-table contexts, reopen it as a real
     `soft` adoption decision instead of sneaking it into `ghost`

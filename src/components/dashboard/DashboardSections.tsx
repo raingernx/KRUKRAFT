@@ -34,10 +34,12 @@ import {
   CardHeader,
   CardTitle,
   LoadingSkeleton,
+  PaginationButton,
   PaginationEllipsis,
   PaginationInfo,
   PaginationList,
   PaginationNav,
+  RowActionButton,
   SearchInput,
 } from "@/design-system";
 import { ResourceCard } from "@/design-system/product";
@@ -3543,9 +3545,9 @@ export function DashboardCreatorResourcesContent({
                             {resource.updatedLabel}
                           </td>
                           <td className="px-5 py-4">
-                            <Button asChild size="sm" variant="quiet">
+                            <RowActionButton asChild size="md">
                               <Link href={resource.href}>Edit</Link>
-                            </Button>
+                            </RowActionButton>
                           </td>
                         </tr>
                       ))}
@@ -3560,11 +3562,9 @@ export function DashboardCreatorResourcesContent({
                     </PaginationInfo>
                     <PaginationNav className="justify-start lg:justify-end">
                       <PaginationList className="flex-wrap justify-start lg:justify-end">
-                        <Button
+                        <PaginationButton
                           asChild
-                          size="xs"
-                          variant="quiet"
-                          className="rounded-lg"
+                          size="md"
                         >
                           <Link
                             aria-disabled={data.page <= 1}
@@ -3580,17 +3580,16 @@ export function DashboardCreatorResourcesContent({
                           >
                             Previous
                           </Link>
-                        </Button>
+                        </PaginationButton>
                         {paginationItems.map((item, index) =>
                           item === "…" ? (
                             <PaginationEllipsis key={`ellipsis-${index}`} />
                           ) : (
-                            <Button
+                            <PaginationButton
                               key={item}
                               asChild
-                              size="xs"
-                              variant={item === data.page ? "primary" : "quiet"}
-                              className="min-w-9 rounded-lg px-3"
+                              size="md"
+                              active={item === data.page}
                             >
                               <Link
                                 aria-current={item === data.page ? "page" : undefined}
@@ -3604,14 +3603,12 @@ export function DashboardCreatorResourcesContent({
                               >
                                 {item}
                               </Link>
-                            </Button>
+                            </PaginationButton>
                           ),
                         )}
-                        <Button
+                        <PaginationButton
                           asChild
-                          size="xs"
-                          variant="quiet"
-                          className="rounded-lg"
+                          size="md"
                         >
                           <Link
                             aria-disabled={data.page >= data.totalPages}
@@ -3630,7 +3627,7 @@ export function DashboardCreatorResourcesContent({
                           >
                             Next
                           </Link>
-                        </Button>
+                        </PaginationButton>
                       </PaginationList>
                     </PaginationNav>
                   </div>

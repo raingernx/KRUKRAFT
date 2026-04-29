@@ -315,6 +315,17 @@ Use this order when DS docs disagree:
         visible together, while `Pagination item` mirrors the same rounded-rect
         `radius/sm (8px)` shape and `Panel CTA` intentionally stays on the
         bounded-neutral pill candidate
+      - the first runtime adoption slice is now in code too, but still kept
+        narrow on purpose:
+        - `RowActionButton size="md"` mirrors the 40px rounded-rect table
+          action recipe while compact `sm` stays available for smaller admin
+          surfaces
+        - `PaginationButton size="md"` mirrors the matching page-item recipe,
+          now supports `asChild`, and is live in the dashboard creator
+          resources pagination flow
+        - dashboard creator-resources `DataPanelTable` is the first live
+          route-family consumer; broader admin rollout is still an active
+          follow-up decision, not a silent global button rewrite
       - that same audit found the real runtime blast radius is concentrated in
         `dashboard` (~60 `size=\"sm\"` button usages) and `admin` (~34), while
         live `density=\"compact\"` usage is still narrow (`public-resources`

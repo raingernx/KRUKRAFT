@@ -24,14 +24,35 @@ export interface RowActionButtonProps extends ButtonProps {
 }
 
 const toneClasses: Record<RowActionTone, string> = {
-  default: "border-border text-foreground hover:bg-muted",
+  default:
+    "border-border-strong bg-transparent text-foreground hover:border-border-strong hover:bg-muted/40 hover:text-foreground",
   danger:
-    "border-danger-200 text-danger-600 hover:bg-danger-50 hover:text-danger-700",
+    "border-danger-200 bg-transparent text-danger-600 hover:bg-danger-50 hover:text-danger-700",
   success:
-    "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-700",
+    "border-emerald-200 bg-transparent text-emerald-700 hover:bg-emerald-50 hover:text-emerald-700",
   muted:
-    "border-border text-muted-foreground hover:bg-muted hover:text-foreground",
+    "border-border-strong bg-transparent text-muted-foreground hover:border-border-strong hover:bg-muted/40 hover:text-foreground",
 };
+
+const rowActionSizeClasses = {
+  xs: "h-8 gap-1.5 rounded-[var(--radius-sm)] px-2.5 text-xs",
+  sm: "h-8 gap-1.5 rounded-[var(--radius-sm)] px-2.5 text-xs",
+  md: "h-10 gap-2 rounded-[var(--radius-sm)] px-4 text-sm",
+  lg: "h-10 gap-2 rounded-[var(--radius-sm)] px-4 text-sm",
+} as const;
+
+function getRowActionSizeClass(size: ButtonProps["size"]) {
+  switch (size) {
+    case "md":
+    case "lg":
+      return rowActionSizeClasses.md;
+    case "xs":
+      return rowActionSizeClasses.xs;
+    case "sm":
+    default:
+      return rowActionSizeClasses.sm;
+  }
+}
 
 export function RowActionButton({
   className,
@@ -42,13 +63,19 @@ export function RowActionButton({
   children,
   ...props
 }: RowActionButtonProps) {
+  const resolvedSize = size ?? "sm";
+  const resolvedSizeClass = getRowActionSizeClass(resolvedSize);
+
   return (
     <Button
       variant={variant ?? "outline"}
-      size={size ?? "sm"}
+      size={resolvedSize}
       className={cn(
-        "h-8 gap-1.5 px-2.5 text-xs",
-        iconOnly && "w-8 px-0",
+        resolvedSizeClass,
+        iconOnly &&
+          (resolvedSize === "md" || resolvedSize === "lg"
+            ? "size-10 px-0"
+            : "size-8 px-0"),
         variant === "outline" || variant == null ? toneClasses[tone] : null,
         className,
       )}
