@@ -412,10 +412,14 @@ Use this order when DS docs disagree:
         the shared `type` / `category` selects now keep the same `56px / 8px`
         shell, and the main `description` textarea stays on the shared
         multiline shell across both new and edit routes
-      - the delivery/upload zone stays deferred after that slice:
+      - the delivery/previews linked URL follow-up is now closed too:
+        `/dashboard/creator/resources/new` and edit keep the preview image URL
+        rows plus the external file URL editor on the same shared
+        `56px / 8px` `Input` shell
+      - the remaining delivery/upload zone stays deferred after that:
         the bulk preview URL textarea is still a route-owned composite editor,
-        and the external-link / upload widgets remain entangled with preview
-        parsing and AI-adjacent authoring behavior
+        and `FileUploadWidget` plus the delivery-source toggle remain
+        product-owned delivery controls entangled with preview parsing
     - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
       component sets for the shared field ladder
     - runtime code still carries an older larger comfortable-radius branch for

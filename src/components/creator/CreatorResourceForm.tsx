@@ -1053,7 +1053,7 @@ export function CreatorResourceForm({
                         <div className="mt-3">
                           <Input
                             id={`${previewUrlDraftPrefix}-${index}`}
-                            size="md"
+                            size="field"
                             value={url}
                             onChange={(event) => updatePreviewUrlDraft(index, event.target.value)}
                             onBlur={() => commitPreviewUrlDraft(index)}
@@ -1319,7 +1319,7 @@ export function CreatorResourceForm({
                                 <Input
                                   id={externalFileUrlInputId}
                                   name="externalFileUrl"
-                                  size="md"
+                                  size="field"
                                   value={externalFileUrlDraft}
                                   onChange={(event) => {
                                     const nextValue = event.target.value;

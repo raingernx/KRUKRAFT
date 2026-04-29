@@ -200,9 +200,12 @@ When this file conflicts with code, the code wins.
   where the bio field keeps the shared `8px` shell while `min-height` and the
   character-count affordance stay route-owned. The next creator-owned widened
   slice is now the creator resource editor metadata zone, where the main
-  description field keeps the shared shell on both new/edit routes while the
-  bulk preview URL textarea remains a route-owned composite editor in the
-  delivery/previews section.
+  description field keeps the shared shell on both new/edit routes. That
+  creator follow-up is now closed too: the delivery/previews linked URL editor
+  inputs on `/dashboard/creator/resources/new` and edit now keep the same
+  shared `56px / 8px` field shell, while the bulk preview URL textarea remains
+  a route-owned composite editor and `FileUploadWidget` stays a product-owned
+  delivery control.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may

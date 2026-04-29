@@ -69,14 +69,14 @@ export function CreatorResourceFormLoadingShellPreview() {
             <div className="space-y-3 rounded-xl border border-border bg-muted p-4">
               <LoadingSkeleton className="h-4 w-20" />
               <LoadingSkeleton className="h-28 w-full rounded-3xl" />
-              <LoadingSkeleton className="h-20 w-full rounded-2xl" />
+              <LoadingSkeleton className="h-24 w-full rounded-2xl" />
             </div>
 
             <div className="space-y-3 rounded-xl border border-border bg-muted p-4">
               <LoadingSkeleton className="h-4 w-32" />
               <LoadingSkeleton className="h-10 w-52 rounded-xl" />
               <LoadingSkeleton className="h-28 w-full rounded-3xl" />
-              <LoadingSkeleton className="h-10 w-full rounded-xl" />
+              <LoadingSkeleton className="h-14 w-full rounded-xl" />
             </div>
           </div>
         </section>

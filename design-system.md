@@ -484,10 +484,15 @@ At a high level:
         the shared `type` / `category` selects now keep the same `56px / 8px`
         shell, and the main `description` textarea stays on the shared
         multiline shell across both new and edit routes
-      - the delivery/upload zone is intentionally still deferred after that
-        slice because the bulk preview URL textarea belongs to a route-owned
-        composite editor, and the external-link / upload widgets stay entangled
-        with preview parsing plus AI-adjacent authoring behavior
+      - the delivery/previews linked URL follow-up is now closed too:
+        `/dashboard/creator/resources/new` and edit keep the preview image URL
+        rows plus the external file URL editor on the same shared
+        `56px / 8px` `Input` shell
+      - the remaining delivery/upload zone stays intentionally deferred after
+        that because the bulk preview URL textarea belongs to a route-owned
+        composite editor, and `FileUploadWidget` plus the delivery-source
+        toggle stay entangled with preview parsing and product-owned upload
+        behavior
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:
