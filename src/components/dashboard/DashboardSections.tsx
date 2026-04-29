@@ -48,6 +48,7 @@ import { CreatorResourceForm } from "@/components/creator/CreatorResourceForm";
 import {
   DashboardPageShell,
 } from "@/components/layout/dashboard/DashboardPageShell";
+import { DashboardPageHeader } from "@/components/layout/dashboard/DashboardPageHeader";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
 import { NotificationSettings } from "@/components/settings/NotificationSettings";
@@ -2154,7 +2155,7 @@ function DashboardLibraryToolbar({ data }: { data: DashboardLibraryData }) {
                 placeholder="Search your library"
                 containerClassName="min-w-0"
                 submitButton={
-                  <Button size="sm" type="submit">
+                  <Button size="md" type="submit">
                     Search
                   </Button>
                 }
@@ -2304,20 +2305,17 @@ function DashboardLibraryResults({ data }: { data: DashboardLibraryData }) {
 
 function DashboardLibraryRouteIntro() {
   return (
-    <section className="flex flex-col gap-4 border-b border-border-subtle pb-6 md:flex-row md:items-end md:justify-between">
-      <div>
-        <Badge variant="info">Library</Badge>
-        <h1 className="mt-3 text-balance font-ui text-3xl font-semibold text-foreground">
-          My library
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-          Search what you own, recover recent purchases, and reopen the right
-          resource quickly.
-        </p>
-      </div>
-      <Button asChild size="sm">
-        <Link href={routes.marketplace}>Browse marketplace</Link>
-      </Button>
+    <section className="border-b border-border-subtle pb-6">
+      <DashboardPageHeader
+        eyebrow="Library"
+        title="My library"
+        description="Search what you own, recover recent purchases, and reopen the right resource quickly."
+        actions={
+          <Button asChild size="md">
+            <Link href={routes.marketplace}>Browse marketplace</Link>
+          </Button>
+        }
+      />
     </section>
   );
 }

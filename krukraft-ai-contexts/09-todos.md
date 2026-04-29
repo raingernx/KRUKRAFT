@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
 ## Plan Snapshot
 
-Parent Plan: `Creator delivery action control styling`
+Parent Plan: `Dashboard/Admin runtime normalization`
 
 > [!info] Current Phase
-> `Plan complete`
+> `Phase 3 — Adjacent dashboard/admin grouped inventory`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,12 @@ Parent Plan: `Creator delivery action control styling`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> No parent plan is active right now. `Creator delivery action control styling` is closed, and any follow-up should open as a new narrow plan instead of extending this one.
+> `Dashboard/Admin runtime normalization` is now active. The first slice uses `/dashboard/library` as the canonical repro to normalize shared search rendering, page-intro hierarchy, and undersized CTA misuse before widening into broader dashboard/admin route families.
 
 > [!todo] Next Up
-> Open a new parent plan only if you want to continue into a separate creator-control bucket or an untouched DS family.
+> 1. Expand grouped drift inventory to adjacent dashboard routes using the `/dashboard/library` root-cause classes
+> 2. Compare admin headers/toolbars for the same CTA-sizing and component-selection drift
+> 3. Choose the next shared-safe remediation slice instead of reopening isolated route tweaks
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -64,6 +66,7 @@ Parent Plan: `Creator delivery action control styling`
 | Route-Level Upload Flash Messaging | Complete | creator create now proves the route-owned remove-file failure message outside the widget shell, while admin create has no matching create-flow upload/remove flash slice beyond the frozen widget banners |
 | Admin Edit-Flow Upload/Remove Feedback | Complete | `/admin/resources/[id]` now proves the route-owned remove-file success/error rail, and the close-out audit found no in-scope reason to keep the plan open |
 | Creator Delivery Action Control Styling | Complete | `/dashboard/creator/resources/new` and edit now prove the creator-owned linked-file action cluster on an explicit compact `40px / 8px` posture; close-out audit found no in-scope reason to keep the plan open |
+| Dashboard/Admin Runtime Normalization | Active | `/dashboard/library` is now the canonical first repro: the shared `SearchInput` start/loading adornments are normalized, the route intro reuses the shared eyebrow/header pattern, and header/toolbar CTAs stop shrinking onto `sm` by default |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -75,8 +78,8 @@ Parent Plan: `Creator delivery action control styling`
 
 ## Progress
 
-Creator delivery action control styling
-`[██████████] 100%`
+Dashboard/Admin runtime normalization
+`[███░░░░░░░] 30%`
 
 ```mermaid
 flowchart TB
@@ -124,10 +127,10 @@ flowchart TB
 
   subgraph Current
     AD0["Plan open<br/>Done"]
-    AD1["Admin edit inventory<br/>Active"]
-    AD2["First proof-slice decision<br/>Pending"]
-    AD3["Route-scoped runtime slice<br/>Pending"]
-    AD4["Close-out audit<br/>Pending"]
+    AD1["Library root-cause grouping<br/>Done"]
+    AD2["Shared search/header/CTA slice<br/>Done"]
+    AD3["Adjacent dashboard/admin inventory<br/>Active"]
+    AD4["Next shared-safe remediation choice<br/>Pending"]
   end
 
   D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4 --> AD0 --> AD1 --> AD2 --> AD3 --> AD4
@@ -166,78 +169,70 @@ Rules:
 ## Current Phase
 
 ### Name
-Plan complete
+Phase 3 — Adjacent dashboard/admin grouped inventory
 
 ### Parent Plan
-Creator delivery action control styling
+Dashboard/Admin runtime normalization
 
 ### Current Status Inside Parent Plan
-- Frozen widget/runtime baselines that remain in force:
-  - shared pre-upload branch on creator/admin create routes
-  - shared uploaded-file card plus replace/remove posture on creator/admin edit routes
-  - shared success banner and oversize-validation banner on creator/admin create routes
-  - route-owned save-first copy on creator/admin create routes
-  - route-owned backend `500`/fallback copy on creator/admin create routes
-  - route-owned `404` upload-not-found copy on creator/admin create routes
-- Frozen proof baselines carried into this plan:
-  - shared `unsupported format` `400` proof on creator/admin create routes
-  - route-owned save-first proof on creator/admin create routes
-  - route-owned backend `500` fallback proof on creator/admin create routes
-  - route-owned `404` upload-not-found proof on creator/admin create routes
-- Frozen route-owned feedback baselines carried into this plan:
-  - creator create route-owned remove-file failure message outside the widget shell
-  - admin create has no matching upload/remove flash slice beyond the widget-owned banners
-- This new parent plan isolates the next creator-owned delivery styling bucket:
-  - delivery-source toggle and adjacent action controls on `/dashboard/creator/resources/*`
-  - route-owned action clusters around upload, link, and removal behavior after the shared widget and field-shell proofs
-- Inventory is now closed with these answers:
-  - the delivery-source toggle shell is already covered by the frozen `creator delivery upload controls` proof
-  - upload-branch actions stay widget-owned through `FileUploadWidget` and should not be the first route-owned styling slice
-  - the remaining creator-owned styling drift sits in the external/linked-file branch:
-    `Clear link`, `Edit`, `Open link`, and the `Remove uploaded file` guard card/action
-  - the first safe proof slice should therefore start in the linked-file branch on `/dashboard/creator/resources/*`
-- That runtime slice is now landed and route-proved:
-  - `/dashboard/creator/resources/new` now proves the creator-owned linked-file summary actions
-    (`Clear link`, `Edit`, `Open link`) on the explicit compact `40px / 8px` posture
-  - `/dashboard/creator/resources/[id]` now proves the uploaded-file guard action
-    (`Remove uploaded file`) on the same compact `40px / 8px` posture
-  - the linked-file summary/edit/guard shells now use the same `rounded-2xl`
-    route-owned chrome on the creator editor side
-- Close-out audit result:
-  - keep the delivery-source toggle and upload-branch wrapper shell frozen from the prior plan
-  - keep upload-branch actions frozen as widget-owned internals
-  - do not reopen lower-signal upload `400` branches or untouched DS families here
-  - no additional in-scope creator delivery-action slice remains inside this parent plan
-- Keep these out of scope for this plan:
-  - admin edit upload/remove feedback already proved in the previous plan
-  - lower-signal `400` validation branches (`resourceId required`, empty file, invalid generated key)
-  - untouched DS-family rollout work (`Switch`, `Dropdown`, and other new family plans)
-  - shared widget geometry/state-machine changes
-  - shared or route-owned upload banner copy already proved in prior plans
+- The active parent plan is no longer opening new DS families; it is using the
+  existing DS/Figma baseline to normalize routes that visibly drifted away from
+  that contract across `dashboard` and `admin`.
+- `/dashboard/library` is the canonical first repro because it exposes three
+  different drift classes at once:
+  - shared primitive bug in `SearchInput`
+  - component-selection drift (`Badge` used as a page eyebrow)
+  - undersized header/toolbar CTA misuse (`Button size="sm"` in the wrong
+    context)
+- The first slice is now landed and route-proved:
+  - shared `SearchInput` default start/loading adornments now render through
+    full-height wrappers instead of collapsing to a `16px` icon box
+  - the library route intro now reuses the shared `DashboardPageHeader`
+    eyebrow/header pattern instead of a status-chip badge
+  - `Browse marketplace` and the library toolbar `Search` submit action now use
+    `Button size="md"` instead of shrinking onto `sm`
+- `/dashboard/library` now acts as the frozen first normalization proof for:
+  - centered shared search adornments on both the toolbar search and dashboard
+    topbar override
+  - the topbar clear action after hydration
+  - eyebrow text replacing badge misuse in the route intro
+  - medium CTA sizing on the route intro and toolbar submit action
+- The active next step is grouped inventory across adjacent dashboard/admin
+  routes using these root-cause classes before choosing the next remediation
+  slice:
+  - shared primitive rendering bugs
+  - page-intro/header composition drift
+  - undersized CTA misuse in toolbars and headers
+  - broader shell/layout drift that should stay separate from primitive fixes
+- Keep these out of scope for this slice:
+  - new DS family rollout work (`Switch`, `Dropdown`, and other untouched
+    families)
+  - unrelated creator upload/error-copy follow-ups already closed in prior
+    plans
+  - broad shell-width normalization until the shared primitive/header drift is
+    grouped cleanly first
 
 ### Goal
-Keep the parent plan closed cleanly after linked-file runtime proof, and defer
-any remaining creator-control or DS-family work to separate future plans.
+Use `/dashboard/library` as the first frozen normalization proof route, then
+widen based on grouped root-cause classes instead of ad-hoc page tweaks.
 
 ### Why this is the current phase
-- The linked-file action slice is now landed and proved on both creator create
-  and edit routes.
-- The required close-out audit stayed inside the original scope and found no
-  reason to keep the parent plan open.
-- Remaining ideas belong to separate future plans, not to this completed one.
+- The first normalization slice now proves cleanly on the live route and in
+  automated runtime checks.
+- The next highest-value work is no longer another patch on `/dashboard/library`
+  itself; it is grouped inventory that can show which nearby dashboard/admin
+  routes share the same primitive/composition/sizing drift classes.
+- Holding that grouping step inside the active parent plan keeps the follow-up
+  remediation slices narrow instead of reopening broad DS work blindly.
 
 ### Definition of Done
-- [x] The prior admin and creator profile proof routes stay frozen as baselines
-- [x] The creator editor metadata slice stays frozen as a baseline
-- [x] The linked URL editor slice stays frozen as a baseline
-- [x] The bulk preview parser proof stays frozen as a baseline
-- [x] The creator-owned upload wrapper slice stays frozen as a baseline
-- [x] The shared pre-upload widget slice stays frozen as a baseline
-- [x] The shared uploaded-card/replace/remove slice stays frozen as a baseline
-- [x] The shared success-banner slice stays frozen as a baseline
-- [x] The shared oversize-validation slice stays frozen as a baseline
-- [x] The shared `unsupported format` `400` proof stays frozen as a baseline
-- [x] The route-owned save-first / backend `500` / `404` upload-copy proofs stay frozen as baselines
+- [x] Open a new active parent plan for dashboard/admin runtime normalization
+- [x] Use `/dashboard/library` as the canonical first repro
+- [x] Land the shared `SearchInput` adornment fix on the default branch
+- [x] Normalize the library route intro onto the shared eyebrow/header pattern
+- [x] Restore medium CTA sizing where the route was incorrectly pinned to `sm`
+- [ ] Expand grouped drift inventory to adjacent dashboard/admin surfaces
+- [ ] Choose the next shared-safe remediation slice from grouped evidence
 - [x] The creator create flash proof stays frozen as a baseline
 - [x] Creator delivery action controls are inventoried
 - [x] One creator-owned delivery action proof slice is chosen

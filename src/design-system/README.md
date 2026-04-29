@@ -361,6 +361,9 @@ When this file conflicts with code, the code wins.
       `radius/sm (8px)` shell at runtime
     - the first proof routes are `/dashboard/library` toolbar search
       (`56px / 8px`) and the dashboard topbar override (`44px / 8px`)
+    - the shared start/loading adornments on that default branch now render
+      through full-height wrappers too, so toolbar and topbar search icons stay
+      vertically centered instead of collapsing to a `16px` corner box
     - the topbar clear action is now route-proved too once the client shell is
       hydrated; the proof path verifies that the clear button appears and resets
       the field locally

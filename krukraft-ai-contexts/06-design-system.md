@@ -369,6 +369,10 @@ Use this order when DS docs disagree:
       - the `Clear` action label inside the search-state explainer still uses a
         local `14/20` type recipe even though its font family and text fill are
         already bound
+    - the first runtime-normalization follow-up after that parity slice is now
+      live too: the shared `SearchInput` default start/loading adornments render
+      through full-height wrappers, which fixes the visible top-left icon drift
+      on `/dashboard/library` without reopening the route-owned `hero` branch
     - the first adjacent control-mapping follow-up now exists too:
       - `Select / Foundations / Light` (`994:244`) and
         `Select / Foundations / Dark` (`994:421`) are now live in the canonical

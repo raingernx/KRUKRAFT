@@ -64,16 +64,28 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
     const endAdornmentSizeClassName = fieldEndAdornmentWidthClassNames[resolvedSize];
 
     const searchIcon = startAdornment ?? (
-      <Search
-        className={cn(
-          fieldStartAdornmentClassName,
-          "pointer-events-none text-muted-foreground",
-          variant === "hero"
-            ? "h-full w-12 p-4 sm:w-14 sm:p-[18px]"
-            : cn(startAdornmentSizeClassName, "size-4"),
-        )}
-        aria-hidden
-      />
+      variant === "hero" ? (
+        <Search
+          className={cn(
+            fieldStartAdornmentClassName,
+            "pointer-events-none text-muted-foreground",
+            "h-full w-12 p-4 sm:w-14 sm:p-[18px]",
+          )}
+          aria-hidden
+        />
+      ) : (
+        <span
+          className={cn(
+            fieldStartAdornmentClassName,
+            startAdornmentSizeClassName,
+            "pointer-events-none justify-center text-muted-foreground",
+          )}
+          data-testid="search-input-start-adornment"
+          aria-hidden="true"
+        >
+          <Search className="size-4" aria-hidden />
+        </span>
+      )
     );
 
     const clearButton =
@@ -89,21 +101,34 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
               ? "w-12 rounded-xl p-4 sm:w-14 sm:p-[18px]"
               : cn(endAdornmentSizeClassName, "rounded-[var(--radius-sm)]"),
           )}
+          data-testid="search-input-clear"
         >
           <X className="h-4 w-4" />
         </button>
       ) : null;
 
     const loadingIndicator = loading ? (
-      <Loader2
-        className={cn(
-          fieldEndAdornmentClassName,
-          "animate-spin text-muted-foreground",
-          variant === "hero"
-            ? "h-full w-12 p-4 sm:w-14 sm:p-[18px]"
-            : cn(endAdornmentSizeClassName, "size-4"),
-        )}
-      />
+      variant === "hero" ? (
+        <Loader2
+          className={cn(
+            fieldEndAdornmentClassName,
+            "animate-spin text-muted-foreground",
+            "h-full w-12 p-4 sm:w-14 sm:p-[18px]",
+          )}
+        />
+      ) : (
+        <span
+          className={cn(
+            fieldEndAdornmentClassName,
+            endAdornmentSizeClassName,
+            "justify-center text-muted-foreground",
+          )}
+          data-testid="search-input-loading"
+          aria-hidden="true"
+        >
+          <Loader2 className="size-4 animate-spin" />
+        </span>
+      )
     ) : null;
 
     const trailingAdornment = loadingIndicator ?? clearButton ?? endAdornment;

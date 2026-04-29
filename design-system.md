@@ -429,6 +429,9 @@ At a high level:
       shell at runtime
     - the first route proofs are `/dashboard/library` toolbar search
       (`56px / 8px`) and dashboard topbar search (`44px / 8px`)
+    - the shared start/loading adornments on that branch now render through
+      full-height wrappers, so the icon stays centered in toolbar/topbar mounts
+      instead of collapsing into the top-left corner
     - the dashboard topbar clear action is now route-proved too after client
       hydration: the clear button appears, keeps `8px` radius, and resets the
       local query state
