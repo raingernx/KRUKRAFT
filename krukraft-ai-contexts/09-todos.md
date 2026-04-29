@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
  ## Plan Snapshot
 
-Parent Plan: `Runtime DS adoption`
+Parent Plan: `Admin table action rollout`
 
 > [!info] Current Phase
-> `Plan complete`
+> `Phase 1 — Admin table runtime inventory`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Runtime DS adoption`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> The first runtime DS adoption slice is complete: `DataPanelTable` row-action and pagination posture is live in dashboard creator resources, wider helper rollout remains intentionally opt-in, and the creator-editor navigation drift has been cleared.
+> Open a narrow admin-table runtime rollout plan that starts from the proven `DataPanelTable` helper posture and decides where the same row-action / pagination recipe should or should not spread across admin surfaces.
 
 > [!todo] Next Up
-> No in-plan work remains. Wait for an explicit new runtime rollout plan or another reprioritization.
+> Start with a focused admin-table inventory: `admin/users` row actions → `admin/tags` inline edit/delete actions → `TablePagination` consumers such as `admin audit`.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -38,7 +38,8 @@ Parent Plan: `Runtime DS adoption`
 | Theme Refresh    | Complete | brief, playbook, Figma review page, approved surface baseline, cleanup slice, and first runtime slices all passed close-out audit |
 | Figma DS Alignment | Complete | canonical Figma source, repo registry, and DS inventory are now aligned enough to close the previous alignment plan; use it as the baseline for this narrower re-audit |
 | Figma DS Section Audit | Complete | section-by-section verification pass for the canonical Figma DS file against repo docs, token contracts, and mapped component truth closed cleanly after the Foundation Review + repo close-out audit |
-| Runtime DS Adoption | Active | narrow runtime rollout plan that starts from the audited Figma baseline and adopts the highest-signal DS decisions into shared web surfaces one slice at a time |
+| Runtime DS Adoption | Complete | first runtime slice is landed and closed; use it as the baseline for narrower follow-up rollout plans |
+| Admin Table Action Rollout | Active | decide where the proven rounded-rect row-action / pagination recipe should expand across admin tables without silently widening dense admin controls |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -50,8 +51,8 @@ Parent Plan: `Runtime DS adoption`
 
 ## Progress
 
-Runtime DS adoption
-`[██████████] 100%`
+Admin table action rollout
+`[█░░░░░░░░░] 10%`
 
 ```mermaid
 flowchart TB
@@ -98,15 +99,15 @@ flowchart TB
   end
 
   subgraph Current
-    N0["Runtime plan open<br/>Done"]
-    N1["DataPanelTable runtime inventory<br/>Done"]
-    N2["DataPanelTable row action + pagination adoption<br/>Done"]
-    N3["Route-family runtime proof<br/>Done"]
-    N4["Shared button recipe follow-up<br/>Done"]
-    N5["Close-out audit<br/>Done"]
+    P0["Admin table rollout plan open<br/>Done"]
+    P1["Admin row-action inventory<br/>In progress"]
+    P2["Pagination inventory + rollout decision<br/>Pending"]
+    P3["First admin route-family adoption slice<br/>Pending"]
+    P4["Route-family runtime proof<br/>Pending"]
+    P5["Close-out audit<br/>Pending"]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> N0 --> N1 --> N2 --> N3 --> N4 --> N5
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> P0 --> P1 --> P2 --> P3 --> P4 --> P5
 ```
 
 ## Daily Workflow
@@ -142,155 +143,100 @@ Rules:
 ## Current Phase
 
 ### Name
-Runtime DS adoption complete
+Admin table runtime inventory
 
 ### Parent Plan
-Runtime DS adoption
+Admin table action rollout
 
 ### Current Status Inside Parent Plan
-- The previous `Figma DS section audit` parent plan is complete and now acts
-  as the frozen Figma-to-repo baseline for runtime work.
-- This new plan exists to adopt the highest-signal audited DS decisions into
-  the real app one slice at a time instead of leaving them as Figma-only truth.
-- The first slice should start with `DataPanelTable` because its row-action,
-  pagination, and shell posture are now the clearest audited runtime targets.
-- This rollout should stay runtime-first and narrow:
-  - inventory live route usage first
-  - patch only the shared/runtime surfaces needed for the chosen slice
-  - verify the affected route family at runtime before expanding scope
-- The plan must not silently reopen broad Figma redesign, new token invention,
-  or unrelated route work.
-- Current locked Figma truths that should guide runtime adoption:
-  - `DataPanelTable` row actions and pagination use the rounded-rect
-    `radius/sm (8px)` recipe posture
-  - `Button recipes / Row action` is guidance, not a new family
-  - `Dropdown` remains a study-board reference until a separate runtime need
-    proves broader promotion
-  - `Button soft` and `sm=36` remain optional follow-ups, not approved runtime
-    contract by default
-- The initial runtime inventory is now clear enough to choose the first patch
-  layer:
-  - `DataPanelTable` itself is used only in
-    `src/components/dashboard/DashboardSections.tsx` (`12` mounts)
-  - dashboard table actions/pagination there still bypass the dedicated DS
-    recipe helpers and render generic `Button` instances
-  - the shared recipe helpers already exist elsewhere:
-    - `RowActionButton` / `RowActions` / `RowActionMenuTrigger` are live across
-      admin, creator, and moderation surfaces
-    - `PaginationButton` is live in `TablePagination` and in dashboard table
-      pagination
-  - therefore the first adoption slice should not patch `DataPanelTable`
-    shell-only props in isolation; it should patch the shared row-action /
-    pagination helpers and the dashboard `DataPanelTable` consumers together
-- That first slice is now landed in runtime:
-  - `RowActionButton` keeps the legacy compact `sm` posture available, but now
-    supports the audited `md` `DataPanelTable` recipe (`40px` height,
-    rounded-rect `radius/sm (8px)`, outline-derived shell) for table actions
-  - `PaginationButton` now supports the same `md` rounded-rect posture and
-    `asChild`, which lets route-owned pagination links adopt the recipe
-    without falling back to generic `Button`
-  - dashboard creator resources now uses those shared helpers for its `Edit`
-    row action and page controls instead of generic `Button` instances
-- Runtime proof for the first slice is good enough to move the plan forward:
-  - `creator-refresh-shell` browser probe passed after the patch
-  - `creator workspace routes render creator shells without dashboard-in-dashboard flash`
-    passed in Playwright
-  - `dashboard creator editor route family keeps inventory, new, and edit
-    flows inside dashboard` now passes again after isolating the adjacent
-    `Cancel` drift: the UI now treats cancel as plain navigation, and the spec
-    was updated from role=`button` to role=`link` to match the live semantics
-- The shared-helper follow-up decision is now explicit:
-  - keep the new rounded-rect `md` posture opt-in for now
-  - keep `RowActionButton` / `PaginationButton` compact `sm` posture available
-    as the broader default while the remaining admin/creator consumers stay on
-    dense table/control surfaces such as:
-    - `admin/users` action rows
-    - `admin/tags` inline edit/delete controls
-    - `creator status` action clusters
-    - `TablePagination` on admin audit/listing surfaces
-  - no wider helper rollout is justified yet without a second proven route
-    family that actually benefits from the larger 40px table-action recipe
-- The required close-out audit is now clean inside the scope of this plan:
-  - no material doc drift remains for the first runtime slice
-  - no runtime blocker remains in the original `DataPanelTable` adoption scope
-  - the creator-editor `Cancel` drift was resolved by moving the UI to plain
-    navigation semantics and updating the route-family spec to expect the live
-    `link` role instead of the older `button` role
-  - wider rollout of the helper posture stays deferred by design, not because
-    of an unresolved failure in this plan
+- `Runtime DS adoption` is now the frozen runtime baseline:
+  - `RowActionButton size="md"` and `PaginationButton size="md"` exist
+  - dashboard creator resources is the first proven live consumer
+  - the larger rounded-rect recipe remains explicitly opt-in
+- This new plan exists to decide whether the same recipe should expand across
+  admin table surfaces, not to reopen broad button-family redesign.
+- The first audit targets should stay narrow and concrete:
+  - `admin/users` row actions
+  - `admin/tags` inline save/cancel/delete controls
+  - `TablePagination` consumers such as admin audit/listing surfaces
+- The working question is whether each surface behaves like:
+  - `DataPanelTable`-style table action / pagination that should adopt the
+    rounded-rect `md` recipe
+  - or dense admin control clusters that should stay on compact `sm`
+- The plan should inventory first, decide blast radius second, patch one
+  admin route family third, then run runtime proof before widening further.
 
 ### Goal
-This plan is complete. Its output is a proven first runtime DS slice plus an
-explicit decision to keep the larger row-action / pagination posture opt-in
-until another route family proves broader rollout value.
+Decide where the proven `DataPanelTable` row-action / pagination recipe should
+expand across admin tables without silently widening every shared helper or
+dense admin control cluster.
 
 ### Why this is the current phase
-- The plan hit its intended milestone:
-  - first audited Figma DS runtime slice adopted
-  - helper rollout decision made
-  - route-family proof clean
-  - close-out audit complete
-- No required in-plan work remains without changing scope.
+- The last plan closed with a deliberate deferral: wider helper rollout was not
+  justified yet, but it was the most obvious next candidate for a new plan.
+- Admin tables are the next safest runtime surface because they already use
+  `RowActionButton` and `PaginationButton`, but in denser contexts than
+  dashboard creator resources.
+- Starting with inventory keeps this rollout incremental and reversible.
 
 ### Definition of Done
-- [x] Live runtime usage of `DataPanelTable` row actions, pagination, and
-      adjacent toolbar controls is inventoried before patching
-- [x] The first runtime adoption slice lands for `DataPanelTable` row-action /
-      pagination posture without silently rewriting unrelated button families
-- [x] Shared primitives or helper recipes are updated only where the
-      `DataPanelTable` slice actually needs them
-- [x] At least one affected route family is verified at runtime after the patch
-- [x] Repo context/docs are updated in the same session if runtime contract
-      understanding changes
-- [x] The plan closes with one explicit close-out audit instead of drifting
+- [ ] Live admin consumers of `RowActionButton` and `PaginationButton` are
+      inventoried and classified before patching
+- [ ] A rollout decision is recorded for `admin/users`, `admin/tags`, and
+      `TablePagination` surfaces: adopt the rounded-rect `md` recipe or keep
+      compact `sm`
+- [ ] One narrow admin route-family adoption slice lands without widening
+      unrelated shared helpers
+- [ ] The affected admin route family is verified at runtime after the patch
+- [ ] Repo context/docs are updated in the same session if the runtime
+      contract understanding changes
+- [ ] The plan closes with one explicit close-out audit instead of drifting
       into optional follow-up work
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Runtime plan open + scope lock | complete | runtime-first scope is locked to narrow DS adoption slices starting from audited Figma truth |
-| 1 | DataPanelTable inventory + adoption | complete | inventory landed, shared helpers gained the audited `md` row-action / pagination posture, dashboard creator resources migrated to them, and the first route-shell proof passed |
-| 2 | Shared button recipe follow-up | complete | audit of remaining admin/creator consumers says the larger rounded-rect posture should stay opt-in for now; dense admin rows and compact table pagination do not justify a wider default rollout yet |
-| 3 | Optional secondary adoption | deferred | no second proven route family required rollout in this plan; reopen only under a new explicit plan |
-| 4 | Review + repo close-out | complete | close-out audit found no material blocker inside scope; the plan can close cleanly |
+| 0 | Admin rollout plan open + scope lock | complete | scope is limited to admin row actions and pagination on top of the proven helper baseline |
+| 1 | Admin table inventory | in progress | audit `admin/users`, `admin/tags`, and `TablePagination` consumers before touching code |
+| 2 | Rollout decision | pending | decide which admin surfaces should adopt `md` rounded-rect posture and which should stay compact `sm` |
+| 3 | First admin adoption slice | pending | patch one narrow admin route family or shared helper path that the inventory justifies |
+| 4 | Runtime proof + repo close-out | pending | verify the affected admin route family, sync docs/tracker, and close or open one narrow remediation slice |
 
 ---
 
 ## Current Goal
 
-Close the first runtime adoption plan without over-expanding it: keep the
-`DataPanelTable` recipe rollout narrow, keep the wider helper-default decision
-explicit, and finish with one close-out audit instead of inventing more plan
-scope.
+Inventory live admin-table consumers of the proven row-action / pagination
+helpers so the next rollout decision is based on real surface density and not
+on the earlier dashboard `DataPanelTable` proof alone.
 
 Audit order for this plan:
-1. `DataPanelTable` runtime inventory
-2. `DataPanelTable` row-action / pagination adoption
-3. route-family runtime proof
-4. decide whether shared button-recipe follow-up is needed
-5. close-out audit
+1. `admin/users` row-action inventory
+2. `admin/tags` inline action inventory
+3. `TablePagination` consumer inventory
+4. rollout decision
+5. first admin route-family adoption slice
+6. runtime proof + close-out audit
 
 ---
 
 ## In Progress
 
-- [x] Open a new parent plan for `Runtime DS adoption`
-- [x] Lock the runtime scope to adoption work, not another Figma audit
-- [x] Choose `DataPanelTable` as the first runtime slice from the completed audit baseline
-- [x] Inventory live `DataPanelTable` route usage and current action-control posture
-- [x] Decide the first patch layer from the inventory findings
-- [x] Patch the first runtime `DataPanelTable` adoption slice
-- [x] Run route-family runtime proof for the adoption slice
-- [x] Audit the remaining `RowActionButton` / `PaginationButton` consumers and decide whether the new rounded-rect `md` posture should become broader runtime default behavior or remain opt-in
-- [x] Isolate the adjacent creator-editor `Cancel` navigation/test drift so it no longer muddies the button recipe rollout proof
-- [x] Run the parent-plan close-out audit and decide whether the plan can close cleanly
+- [x] Open a new parent plan for `Admin table action rollout`
+- [x] Lock the rollout scope to admin table actions + pagination, not a global button rewrite
+- [ ] Inventory `admin/users` row actions
+- [ ] Inventory `admin/tags` inline save/cancel/delete actions
+- [ ] Inventory `TablePagination` consumers and classify their density
+- [ ] Decide the first admin rollout patch layer from the inventory findings
 
 ---
 
 ## Next Up
 
-- [ ] None — wait for a new parent plan
+- [ ] Audit `admin/users` row actions against the proven `RowActionButton` recipe
+- [ ] Audit `admin/tags` inline action clusters and decide whether they should stay compact
+- [ ] Audit `TablePagination` consumers such as admin audit/listing surfaces before choosing the first rollout patch
 
 ---
 
@@ -384,6 +330,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: After `Runtime DS adoption` closed cleanly, open a new parent plan `Admin table action rollout` instead of silently continuing the old plan. Start with inventory of `admin/users`, `admin/tags`, and `TablePagination` consumers so the next row-action / pagination rollout decision is based on real admin surface density.
 - 2026-04-28: After `Figma DS section audit` closed at `100%`, open a new parent plan `Runtime DS adoption` so the next work uses the audited Figma baseline in the app instead of reopening another DS-analysis loop. Start with `DataPanelTable` because its row-action, pagination, and shell posture are the most locked-down runtime targets.
 - 2026-04-29: Phase 1 runtime inventory is now complete. `DataPanelTable` itself is live only in `src/components/dashboard/DashboardSections.tsx` (`12` mounts), but the related runtime recipe helpers already exist beyond that route family: `RowActionButton` is live across admin/creator/moderation surfaces and `PaginationButton` is already used by both admin table pagination and dashboard pagination. That makes the first safe adoption slice a shared helper + dashboard-consumer patch, not a `DataPanelTable` shell-only rewrite.
 - 2026-04-28: After `Figma DS alignment` closed, open a new parent plan `Figma DS section audit` to re-check the canonical Figma DS file against the repo in a stricter section-by-section order instead of reopening broad DS work implicitly.
