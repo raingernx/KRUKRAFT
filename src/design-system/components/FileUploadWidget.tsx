@@ -137,11 +137,13 @@ export function FileUploadWidget({
     }
 
     if (!targetResourceId) {
+      setStatus("error");
       setErrorMsg(labels.saveFirstError);
       return;
     }
 
     if (selectedFile.size > MAX_MB * 1024 * 1024) {
+      setStatus("error");
       setErrorMsg(`File is too large. Maximum size is ${MAX_MB} MB.`);
       return;
     }
@@ -395,7 +397,10 @@ export function FileUploadWidget({
       ) : null}
 
       {status === "error" && errorMsg ? (
-        <div className="flex items-start gap-2 rounded-xl border border-danger-500/25 bg-accent px-4 py-3">
+        <div
+          data-testid="file-upload-error"
+          className="flex items-start gap-2 rounded-2xl border border-danger-500/25 bg-accent px-4 py-3"
+        >
           <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger-600" />
           <p className="text-[13px] text-danger-700">{errorMsg}</p>
         </div>

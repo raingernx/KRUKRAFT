@@ -215,9 +215,13 @@ When this file conflicts with code, the code wins.
   (`dropzone`, selected-file preview, and upload CTA). The next shared widget
   follow-up is now closed too: creator/admin edit routes now prove the
   uploaded-file card plus replace/remove posture. The latest shared widget
-  follow-up now closes the shared success banner on creator/admin create
-  routes too, while widget error feedback plus route-level flash messaging
-  remain future-plan material.
+  follow-ups now close both widget-owned feedback slices on creator/admin
+  create routes too: the shared success banner after upload completes and the
+  shared oversize-validation error banner after selecting a file larger than
+  `50 MB`. `saveFirstError`, backend upload-failure copy, and route-level
+  flash messaging remain future-plan material because they still diverge by
+  draft-creation timing or route-owned backend messages rather than shared
+  widget shell posture.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may

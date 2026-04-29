@@ -505,11 +505,15 @@ At a high level:
         `/dashboard/creator/resources/[id]` and `/admin/resources/[id]` prove
         the uploaded-file card plus replace/remove posture without reopening
         creator-only wrappers or route-level flash messaging
-      - the latest shared widget follow-up is now closed too:
-        `/dashboard/creator/resources/new` and `/admin/resources/new` now
-        prove the widget-owned success banner after upload completes
-      - widget error feedback and route-level flash messaging still stay
-        product-owned future-plan material outside these first shared slices
+      - the latest shared widget follow-ups are now closed too:
+        - `/dashboard/creator/resources/new` and `/admin/resources/new` now
+          prove the widget-owned success banner after upload completes
+        - those same creator/admin create routes now also prove the shared
+          oversize-validation error banner after selecting a file larger than
+          `50 MB`
+      - `saveFirstError`, backend upload-failure copy, and route-level flash
+        messaging still stay product-owned future-plan material outside these
+        first shared slices
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:
