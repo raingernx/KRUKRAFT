@@ -553,9 +553,18 @@ Use this order when DS docs disagree:
           - the visible copy still remains route-owned
             (`/api/creator/resources/draft` Thai payload vs
             `/api/admin/resources/draft` English fallback copy)
-        - backend upload-failure copy and route-level flash messaging still
-          remain future-plan material so admin resource form consumers do not
-          inherit a broader upload-state rewrite without a separate proof slice
+        - the next route-owned follow-up now also proves the backend
+          `500`/fallback upload-failure slice on those creator/admin create
+          routes:
+          - the shared widget still owns the error-banner shell after upload
+            starts
+          - the visible copy still remains route-owned
+            (`/api/creator/resources/upload` Thai fallback vs
+            `/api/admin/resources/upload` English fallback copy)
+        - service-specific validation copy (`400/404`) and route-level flash
+          messaging still remain future-plan material so admin resource form
+          consumers do not inherit a broader upload-state rewrite without a
+          separate proof slice
   - the canonical `Card / Foundations` boards no longer carry wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is explicit token
     gap / polish territory instead:

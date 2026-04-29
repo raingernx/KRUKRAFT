@@ -8,6 +8,9 @@ import {
   uploadAdminResourceFile,
 } from "@/services/resources/mutations";
 
+const adminUploadFallbackErrorMessage =
+  "Could not upload the file right now. Please try again.";
+
 // ── Route ─────────────────────────────────────────────────────────────────────
 
 /**
@@ -81,6 +84,9 @@ export async function POST(req: Request) {
     }
 
     console.error("[UPLOAD_POST]", err);
-    return NextResponse.json({ error: "Internal server error." }, { status: 500 });
+    return NextResponse.json(
+      { error: adminUploadFallbackErrorMessage },
+      { status: 500 },
+    );
   }
 }

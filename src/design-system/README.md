@@ -222,10 +222,15 @@ When this file conflicts with code, the code wins.
   `saveFirstError` slice on creator/admin create routes: the shared widget
   catches `onEnsureResourceId()` failures, but the visible copy still remains
   route-owned (`/api/creator/resources/draft` Thai payload vs
-  `/api/admin/resources/draft` English fallback copy). Backend upload-failure
-  copy and route-level flash messaging remain future-plan material because
-  they still diverge by route-owned backend messages rather than shared widget
-  shell posture.
+  `/api/admin/resources/draft` English fallback copy). The next route-owned
+  follow-up now also proves the backend `500`/fallback upload-failure slice on
+  creator/admin create routes: the shared widget still owns the error banner
+  shell, but the visible copy remains route-owned
+  (`/api/creator/resources/upload` Thai fallback vs
+  `/api/admin/resources/upload` English fallback copy). Service-specific
+  validation copy (`400/404`) and route-level flash messaging remain
+  future-plan material because they still diverge by deeper route/service
+  semantics rather than shared widget shell posture.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may
