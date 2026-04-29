@@ -188,7 +188,7 @@ Dashboard/Admin runtime normalization
   - shared `SearchInput` default start/loading adornments now render through
     full-height wrappers instead of collapsing to a `16px` icon box
   - the dashboard topbar search no longer keeps the local `44px` height
-    override; it now uses the same shared `48px / 8px` ladder as toolbar
+    override; it now uses the same shared `40px / 8px` ladder as toolbar
     search
   - dashboard user-route intros now normalize through the shared
     `DashboardRouteIntro` / `DashboardPageHeader` authority instead of direct
@@ -204,10 +204,10 @@ Dashboard/Admin runtime normalization
   - eyebrow text replacing badge misuse in the route intro
   - medium CTA sizing on the route intro and toolbar submit action
 - The next shared slice is now landed too:
-  - `SearchInput variant="default"` now resolves to the `lg` rung (`48px`) by
+  - `SearchInput variant="default"` now resolves to the `md` rung (`40px`) by
     default instead of the old `field` (`56px`) posture
   - dashboard toolbar search + dashboard topbar search both inherit that
-    shared `48px / 8px` contract without route-local height overrides
+    shared `40px / 8px` contract without route-local height overrides
   - admin global search, admin users, admin resources, admin activity, and
     admin ranking now route through the same `SearchInput` primitive instead
     of `Input + local icon wrapper` copies

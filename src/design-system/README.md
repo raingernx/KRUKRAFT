@@ -360,15 +360,15 @@ When this file conflicts with code, the code wins.
     - `SearchInput variant="default"` now forces the canonical
       `radius/sm (8px)` shell at runtime
     - the first proof routes are `/dashboard/library` toolbar search
-      (`48px / 8px`) and the dashboard topbar search on the same
-      `48px / 8px` ladder
+      (`40px / 8px`) and the dashboard topbar search on the same
+      `40px / 8px` ladder
     - the shared start/loading adornments on that default branch now render
       through full-height wrappers too, so toolbar and topbar search icons stay
       vertically centered instead of collapsing to a `16px` corner box
     - the topbar clear action is now route-proved too once the client shell is
       hydrated; the proof path verifies that the clear button appears and resets
       the field locally
-    - the shared default search contract now resolves to `size="lg"` (`48px`)
+    - the shared default search contract now resolves to `size="md"` (`40px`)
       before local exceptions; admin global search, admin users, admin
       resources, admin activity, and admin ranking now route through the same
       `SearchInput` primitive instead of `Input + local icon wrapper` copies
@@ -379,8 +379,8 @@ When this file conflicts with code, the code wins.
     `/admin/users` is the first proof route for the shared field primitive
   - default resolution: `comfortable -> field`, `compact -> sm`
 - `SearchInput variant=\"default\"` should stay on the same field-size ladder as
-  `Input`, but the shared default runtime mount now resolves to `size="lg"`
-  (`48px`) unless a route opts into another rung explicitly; only the hero
+  `Input`, but the shared default runtime mount now resolves to `size="md"`
+  (`40px`) unless a route opts into another rung explicitly; only the hero
   variant is allowed to diverge into its own larger search-shell geometry.
 - Dashboard route intros should reuse `DashboardRouteIntro` /
   `DashboardPageHeader` eyebrow text instead of reintroducing `Badge` pills for

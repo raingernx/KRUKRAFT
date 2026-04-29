@@ -42,9 +42,9 @@ test("dashboard library toolbar search keeps canonical shared search-input geome
     .locator("xpath=..")
     .getByTestId("search-input-start-adornment");
   await expect(searchInput).toBeVisible();
-  await expectControlGeometry(searchInput, 48, "8px");
+  await expectControlGeometry(searchInput, 40, "8px");
   await expect(startAdornment).toBeVisible();
-  await expectControlGeometry(startAdornment, 48, "0px");
+  await expectControlGeometry(startAdornment, 40, "0px");
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -62,9 +62,9 @@ test("dashboard topbar search keeps the same canonical shared search-input geome
     .locator("xpath=..")
     .getByTestId("search-input-start-adornment");
   await expect(searchInput).toBeVisible();
-  await expectControlGeometry(searchInput, 48, "8px");
+  await expectControlGeometry(searchInput, 40, "8px");
   await expect(startAdornment).toBeVisible();
-  await expectControlGeometry(startAdornment, 48, "0px");
+  await expectControlGeometry(startAdornment, 40, "0px");
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -134,7 +134,7 @@ test("dashboard downloads intro uses eyebrow text and medium quiet CTA sizing", 
   const cta = intro.getByRole("link", { name: "Open library" });
 
   await expect(searchInput).toBeVisible();
-  await expectControlGeometry(searchInput, 48, "8px");
+  await expectControlGeometry(searchInput, 40, "8px");
   await expect(eyebrow).toHaveText("Downloads");
   await expect(cta).toBeVisible();
   await expect(cta).toHaveAttribute("data-size", "md");
@@ -175,16 +175,16 @@ test("admin users filter input keeps canonical shared field radius", async ({ pa
   await expectNoTracking(heading);
   const globalSearchInput = page.getByRole("searchbox", { name: "Global admin search" });
   await expect(globalSearchInput).toBeVisible();
-  await expectControlGeometry(globalSearchInput, 48, "9999px");
+  await expectControlGeometry(globalSearchInput, 40, "9999px");
   const searchInput = page.locator("form").getByRole("searchbox", { name: "Search" });
   await expect(searchInput).toBeVisible();
-  await expectControlGeometry(searchInput, 48, "8px");
+  await expectControlGeometry(searchInput, 40, "8px");
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
 });
 
-test("admin resources, activity, and ranking search inputs use the shared 48px search contract", async ({
+test("admin resources, activity, and ranking search inputs use the shared 40px search contract", async ({
   page,
 }) => {
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
@@ -193,19 +193,19 @@ test("admin resources, activity, and ranking search inputs use the shared 48px s
 
   const resourcesSearchInput = page.locator("form").getByRole("searchbox", { name: "Search" });
   await expect(resourcesSearchInput).toBeVisible();
-  await expectControlGeometry(resourcesSearchInput, 48, "8px");
+  await expectControlGeometry(resourcesSearchInput, 40, "8px");
 
   await page.goto("/admin/activity");
 
   const activitySearchInput = page.getByRole("searchbox", { name: "User search" });
   await expect(activitySearchInput).toBeVisible();
-  await expectControlGeometry(activitySearchInput, 48, "8px");
+  await expectControlGeometry(activitySearchInput, 40, "8px");
 
   await page.goto("/admin/analytics/ranking");
 
   const rankingSearchInput = page.getByRole("searchbox", { name: "Search title" });
   await expect(rankingSearchInput).toBeVisible();
-  await expectControlGeometry(rankingSearchInput, 48, "8px");
+  await expectControlGeometry(rankingSearchInput, 40, "8px");
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
