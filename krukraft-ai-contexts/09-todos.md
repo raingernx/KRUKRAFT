@@ -51,7 +51,7 @@ Parent Plan: `Runtime DS adoption`
 ## Progress
 
 Runtime DS adoption
-`[█░░░░░░░░░] 10%`
+`[██░░░░░░░░] 20%`
 
 ```mermaid
 flowchart TB
@@ -168,6 +168,20 @@ Runtime DS adoption
     proves broader promotion
   - `Button soft` and `sm=36` remain optional follow-ups, not approved runtime
     contract by default
+- The initial runtime inventory is now clear enough to choose the first patch
+  layer:
+  - `DataPanelTable` itself is used only in
+    `src/components/dashboard/DashboardSections.tsx` (`12` mounts)
+  - dashboard table actions/pagination there still bypass the dedicated DS
+    recipe helpers and render generic `Button` instances
+  - the shared recipe helpers already exist elsewhere:
+    - `RowActionButton` / `RowActions` / `RowActionMenuTrigger` are live across
+      admin, creator, and moderation surfaces
+    - `PaginationButton` is live in `TablePagination` and in dashboard table
+      pagination
+  - therefore the first adoption slice should not patch `DataPanelTable`
+    shell-only props in isolation; it should patch the shared row-action /
+    pagination helpers and the dashboard `DataPanelTable` consumers together
 
 ### Goal
 Adopt the audited Figma DS decisions into runtime surfaces with the smallest
@@ -200,7 +214,7 @@ the first runtime proof is clean.
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
 | 0 | Runtime plan open + scope lock | complete | runtime-first scope is locked to narrow DS adoption slices starting from audited Figma truth |
-| 1 | DataPanelTable inventory + adoption | in progress | inventory live route usage, adopt row-action / pagination posture, and verify the first route family |
+| 1 | DataPanelTable inventory + adoption | in progress | runtime inventory is complete; next patch should target shared row-action / pagination helpers plus dashboard `DataPanelTable` consumers, then verify the first route family |
 | 2 | Shared button recipe follow-up | pending | decide whether runtime helper or button-surface adjustments are needed beyond the first `DataPanelTable` slice |
 | 3 | Optional secondary adoption | pending | only reopen adjacent DS runtime gaps such as `Badge` or `Dropdown` if the first slice proves a concrete next need |
 | 4 | Review + repo close-out | pending | run close-out audit, sync tracker/docs, and either close the plan or open one narrow remediation slice |
@@ -227,7 +241,8 @@ Audit order for this plan:
 - [x] Open a new parent plan for `Runtime DS adoption`
 - [x] Lock the runtime scope to adoption work, not another Figma audit
 - [x] Choose `DataPanelTable` as the first runtime slice from the completed audit baseline
-- [ ] Inventory live `DataPanelTable` route usage and current action-control posture
+- [x] Inventory live `DataPanelTable` route usage and current action-control posture
+- [x] Decide the first patch layer from the inventory findings
 - [ ] Patch the first runtime `DataPanelTable` adoption slice
 - [ ] Run route-family runtime proof for the adoption slice
 
@@ -235,9 +250,9 @@ Audit order for this plan:
 
 ## Next Up
 
-- [ ] Inventory live `DataPanelTable` row actions, pagination, and adjacent toolbar controls
-- [ ] Decide whether the first patch belongs in shared button surfaces, `DataPanelTable`, or route-owned table shells
-- [ ] Land the first runtime `DataPanelTable` adoption slice and verify the affected route family
+- [ ] Patch shared `RowActionButton` / `PaginationButton` posture to match the audited `DataPanelTable` recipe
+- [ ] Migrate dashboard `DataPanelTable` consumers off generic `Button` where the recipe now has a shared helper
+- [ ] Verify the affected dashboard/admin table route family at runtime
 
 ---
 
@@ -332,6 +347,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 Add only short, high-signal entries here.
 
 - 2026-04-28: After `Figma DS section audit` closed at `100%`, open a new parent plan `Runtime DS adoption` so the next work uses the audited Figma baseline in the app instead of reopening another DS-analysis loop. Start with `DataPanelTable` because its row-action, pagination, and shell posture are the most locked-down runtime targets.
+- 2026-04-29: Phase 1 runtime inventory is now complete. `DataPanelTable` itself is live only in `src/components/dashboard/DashboardSections.tsx` (`12` mounts), but the related runtime recipe helpers already exist beyond that route family: `RowActionButton` is live across admin/creator/moderation surfaces and `PaginationButton` is already used by both admin table pagination and dashboard pagination. That makes the first safe adoption slice a shared helper + dashboard-consumer patch, not a `DataPanelTable` shell-only rewrite.
 - 2026-04-28: After `Figma DS alignment` closed, open a new parent plan `Figma DS section audit` to re-check the canonical Figma DS file against the repo in a stricter section-by-section order instead of reopening broad DS work implicitly.
 - 2026-04-28: Phase 1 of `Figma DS section audit` is now closed. A fresh foundations re-audit confirmed that `Typography / Light`, `Typography / Dark`, `Color Primitives / Light`, `Color Primitives / Dark`, and `Spacing + Radius / Primitives` all stay fully bound for text, fills, strokes, and per-corner radius. The live correction was repo wording drift instead: old notes still implied a `20`-color primitive collection and treated per-corner radius bindings as if they were local radius debt.
 - 2026-04-28: Phase 2 has now started with `Button / Foundations`. The live light/dark boards stay fully bound for text family/size/line-height/fill plus shell fills, strokes, and per-corner radius, and the old `wrapper radius debt` + dark `light recipe` subtitle claims are now closed as repo drift. The live `Button recipes` truth is also narrower and clearer now: `Row action` keeps an `Edit / Open` example row plus a compact state strip, `Pagination item` shares the same rounded-rect `radius/sm (8px)` recipe shape, and `Panel CTA` intentionally stays on the bounded-neutral pill candidate instead of inheriting the table posture.
