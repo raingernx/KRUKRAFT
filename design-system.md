@@ -526,9 +526,16 @@ At a high level:
         - the visible copy still stays route-owned
           (`/api/creator/resources/upload` Thai fallback vs
           `/api/admin/resources/upload` English fallback copy)
-      - service-specific validation copy (`400/404`) and route-level flash
-        messaging still stay product-owned future-plan material outside these
-        shared slices
+      - the next route-owned follow-up now also proves the creator/admin `404`
+        upload-not-found slice on those create routes:
+        - the shared widget still owns the error-banner shell after upload
+          starts
+        - the visible copy still stays route-owned
+          (`/api/creator/resources/upload` Thai not-found vs
+          `/api/admin/resources/upload` English not-found)
+      - the remaining `400` validation strings still stay shared service copy,
+        and route-level flash messaging still stays product-owned future-plan
+        material outside these shared slices
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:

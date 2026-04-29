@@ -228,9 +228,13 @@ When this file conflicts with code, the code wins.
   shell, but the visible copy remains route-owned
   (`/api/creator/resources/upload` Thai fallback vs
   `/api/admin/resources/upload` English fallback copy). Service-specific
-  validation copy (`400/404`) and route-level flash messaging remain
-  future-plan material because they still diverge by deeper route/service
-  semantics rather than shared widget shell posture.
+  validation copy is now narrower too: creator/admin create routes also prove
+  the route-owned `404` upload-not-found slice
+  (`/api/creator/resources/upload` Thai not-found vs
+  `/api/admin/resources/upload` English not-found), while the remaining `400`
+  validation strings stay shared service copy. Route-level flash messaging
+  remains future-plan material because it still diverges outside the shared
+  widget shell.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may

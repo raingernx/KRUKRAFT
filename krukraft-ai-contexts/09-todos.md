@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Route-owned upload validation copy`
 
 > [!info] Current Phase
-> `Phase 3 — Upload validation proof slice`
+> `Plan complete`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Route-owned upload validation copy`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Route-owned upload validation copy` is active. Inventory is now closed, and the first safe route-owned slice is locked to the creator/admin `404` upload-not-found path after draft creation succeeds, while route-level flash messaging stays out of scope.
+> `Route-owned upload validation copy` is now complete. Creator/admin create routes prove the route-owned `404` upload-not-found slice after draft creation succeeds, while shared `400` validation copy and route-level flash messaging remain optional future plans.
 
 > [!todo] Next Up
-> Land and verify the creator/admin `404` upload-not-found copy slice after draft creation succeeds, while keeping route-level flash messaging out of scope.
+> No in-plan `Next Up`. Wait for an explicit new parent plan; the closest optional follow-ups are shared upload `400` validation copy or route-level flash messaging.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -59,7 +59,7 @@ Parent Plan: `Route-owned upload validation copy`
 | Shared FileUploadWidget Save-First / Backend Error Copy | Complete | inventory found no shared-safe widget patch: creator/admin diverge at widget prop copy and backend response copy |
 | Route-Owned Upload Error Copy | Complete | creator/admin create routes now prove the route-owned draft-create failure copy before upload; backend upload-failure copy and route-level flash messaging remain separate optional follow-ups |
 | Route-Owned Backend Upload-Failure Copy | Complete | creator/admin create routes now prove the route-owned backend `500`/fallback upload-failure slice after draft creation succeeds; validation copy and route-level flash messaging remain optional follow-ups |
-| Route-Owned Upload Validation Copy | Active | inventory is closed; creator/admin upload validation copy now needs one route-scoped `404` proof slice before any flash-messaging plan |
+| Route-Owned Upload Validation Copy | Complete | creator/admin create routes now prove the route-owned `404` upload-not-found slice after draft creation succeeds; shared `400` validation copy and route-level flash messaging remain optional follow-ups |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -72,7 +72,7 @@ Parent Plan: `Route-owned upload validation copy`
 ## Progress
 
 Route-owned upload validation copy
-`[██████░░░░] 60%`
+`[██████████] 100%`
 
 ```mermaid
 flowchart TB
@@ -122,8 +122,8 @@ flowchart TB
     AA0["Plan open<br/>Done"]
     AA1["Validation-copy inventory<br/>Done"]
     AA2["First proof-slice decision<br/>Done"]
-    AA3["Route-scoped runtime slice<br/>Pending"]
-    AA4["Close-out audit<br/>Pending"]
+    AA3["Route-scoped runtime slice<br/>Done"]
+    AA4["Close-out audit<br/>Done"]
   end
 
   D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4
@@ -162,7 +162,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 3 — Upload validation proof slice
+Plan complete
 
 ### Parent Plan
 Route-owned upload validation copy
@@ -228,18 +228,20 @@ Route-owned upload validation copy
     - creator route returns `ไม่พบ resource ที่ต้องการอัปโหลดไฟล์`
   - creator also has a `403` creator-workspace access branch, but that is less
     representative for the normal create flow than the post-draft `404` path
-- Decision from inventory:
-  - first proof slice = creator/admin `404` upload-not-found copy
+- Closed proof slice for this parent plan:
+  - creator/admin `404` upload-not-found copy
   - proof routes:
     - `/dashboard/creator/resources/new`
     - `/admin/resources/new`
-  - proof method:
-    - ensure draft creation succeeds first
-    - then inject `404` upload responses on
-      `/api/creator/resources/upload` and `/api/admin/resources/upload`
-    - assert the shared widget error banner surfaces the route-owned not-found
-      copy without reopening route-level flash messaging
-  - keep out of first slice:
+  - landed runtime behavior:
+    - creator create continues to surface the Thai not-found copy from
+      `/api/creator/resources/upload`
+    - admin create continues to surface the English not-found copy from
+      `/api/admin/resources/upload`
+    - creator/admin create routes now both prove the shared widget error
+      banner surfaces those route-owned `404` copy paths after draft creation
+      succeeds
+  - kept out of scope:
     - shared `400` validation copy
     - save-first / draft-create failure copy
     - backend `500`/fallback upload-failure copy
@@ -253,17 +255,16 @@ Route-owned upload validation copy
   - backend `500`/fallback upload-failure copy
 
 ### Goal
-Land one route-owned upload validation proof slice on creator/admin create
-routes after draft creation succeeds, starting with the `404` not-found path
-and without reopening route-level flash messaging.
+This plan is closed. It proved the route-owned `404` upload-not-found slice on
+creator/admin create routes after draft creation succeeds, without reopening
+route-level flash messaging.
 
 ### Why this is the current phase
 - The previous plan already froze save-first and backend `500` fallback copy.
-- Inventory now shows that most `400` validation messages are shared between
-  creator/admin, while `404` is the first clear route-owned divergence.
-- A `404` proof slice is safer than widening the whole validation bucket
-  because it isolates the real creator/admin copy split without mixing in
-  shared service validation strings.
+- This plan closed the first material route-owned validation divergence too:
+  creator/admin `404` upload-not-found copy after draft creation succeeds.
+- The remaining `400` validation strings stay shared service copy, and
+  route-level flash messaging still sits outside the widget-owned shell.
 
 ### Definition of Done
 - [x] The prior admin and creator profile proof routes stay frozen as baselines
@@ -274,12 +275,11 @@ and without reopening route-level flash messaging.
 - [x] The shared pre-upload widget slice stays frozen as a baseline
 - [x] The shared uploaded-card/replace/remove slice stays frozen as a baseline
 - [x] The shared success-banner slice stays frozen as a baseline
-- [x] The shared success-banner slice stays frozen as a baseline
 - [x] The shared oversize-validation slice stays frozen as a baseline
 - [x] Route-owned upload validation copy (`400/404`) is inventoried across creator and admin consumers
 - [x] One route-owned proof slice is chosen
-- [ ] That route-scoped runtime slice is landed and verified
-- [ ] A close-out audit decides whether the parent plan should continue or close
+- [x] That route-scoped runtime slice is landed and verified
+- [x] A close-out audit decides whether the parent plan should continue or close
 
 ### Phase Map
 
@@ -288,34 +288,32 @@ and without reopening route-level flash messaging.
 | 0 | Plan open | complete | save-first and backend `500` fallback baselines are frozen; the next route-owned copy work is isolated to validation semantics |
 | 1 | Validation-copy inventory | complete | creator/admin share most `400` strings, but diverge materially on the `404` not-found copy path |
 | 2 | First proof-slice decision | complete | the safe first slice is the creator/admin `404` upload-not-found branch after draft creation succeeds |
-| 3 | Route-scoped runtime slice | pending | land and verify the chosen validation-copy slice |
-| 4 | Close-out audit | pending | close cleanly or split any remaining route-owned feedback into a narrower future plan |
+| 3 | Route-scoped runtime slice | complete | creator/admin create routes now prove the route-owned `404` upload-not-found copy after draft creation succeeds |
+| 4 | Close-out audit | complete | shared `400` validation copy and route-level flash messaging are optional future plans, not in-scope reasons to keep this plan open |
 
 ---
 
 ## Current Goal
 
 1. keep the shared widget parity baselines frozen
-2. land the creator/admin `404` upload-not-found copy slice first
-3. keep route-level flash messaging out of scope while proving the first route-scoped slice
+2. keep the creator/admin `404` upload-not-found proof as the closed baseline for this plan
+3. leave shared `400` validation copy and route-level flash messaging to optional future plans
 
 ---
 
 ## In Progress
 
-- [x] Open a new parent plan for route-owned upload error copy
 - [x] Keep shared widget parity baselines frozen
-- [ ] Open a new parent plan for route-owned upload validation copy
+- [x] Open a new parent plan for route-owned upload validation copy
 - [x] Inventory route-owned upload validation copy across creator and admin consumers
 - [x] Choose the first route-owned upload validation proof slice
+- [x] Land the creator/admin `404` validation proof slice
 
 ---
 
 ## Next Up
 
-- [ ] Land the creator/admin `404` upload-not-found copy slice
-- [ ] Verify `/dashboard/creator/resources/new` and `/admin/resources/new`
-- [ ] Keep route-level flash messaging out of scope
+- [x] No in-plan work remains for this parent plan
 
 ---
 
@@ -414,6 +412,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: `Route-owned upload validation copy` is now closed. `/dashboard/creator/resources/new` and `/admin/resources/new` both prove the route-owned `404` upload-not-found slice after draft creation succeeds: creator create continues to surface the Thai `/api/creator/resources/upload` not-found copy, admin create continues to surface the English `/api/admin/resources/upload` not-found copy, and the shared widget error banner stays frozen while surfacing those route-owned messages. The required close-out audit found no in-scope reason to keep this parent plan open; the remaining `400` validation strings stay shared service copy, and route-level flash messaging remains an optional future plan.
 - 2026-04-29: Inventory for `Route-owned upload validation copy` is now closed. Creator/admin still surface validation responses through the shared widget error banner after upload starts, but most `400` validation strings are shared English service copy on both sides (`resourceId` missing, empty file, oversize, unsupported format, invalid generated key). The first clear route-owned divergence inside validation copy is `404`: admin upload returns `Resource not found.`, while creator upload returns `ไม่พบ resource ที่ต้องการอัปโหลดไฟล์`. The safest first proof slice is therefore the creator/admin `404` upload-not-found path after draft creation succeeds, while route-level flash messaging stays out of scope.
 - 2026-04-29: Open a new parent plan `Route-owned upload validation copy` instead of jumping straight to route-level flash messaging. Save-first and backend `500` fallback copy are now both frozen on creator/admin create routes, so the next narrow ownership bucket is the route/service validation copy (`400/404`) that appears after draft creation succeeds. Flash messaging stays explicitly out of scope until validation-copy inventory is complete and one safe proof slice is chosen.
 - 2026-04-29: `Route-owned backend upload-failure copy` is now closed. `/dashboard/creator/resources/new` and `/admin/resources/new` both prove the backend `500`/fallback upload-failure slice after draft creation succeeds: creator create continues to surface the Thai `/api/creator/resources/upload` fallback, admin create now uses an upload-specific English fallback from `/api/admin/resources/upload`, and the shared widget error banner stays frozen while surfacing those route-owned messages. The required close-out audit found no in-scope reason to keep this parent plan open; validation copy (`400/404`) and route-level flash messaging remain optional future plans.
