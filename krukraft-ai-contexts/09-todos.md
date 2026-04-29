@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Family-by-family DS runtime adoption`
 
 > [!info] Current Phase
-> `Phase 1 — Badge runtime adoption`
+> `Phase 2 — Input/Search runtime parity`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Family-by-family DS runtime adoption`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> Open a narrow family-by-family runtime adoption plan that starts with `Badge` and only moves to `Input/Search` after the first family closes cleanly.
+> `Badge` runtime adoption is now landed and proved on the first route family. The active work can move to `Input/Search` runtime parity without reopening broader DS families.
 
 > [!todo] Next Up
-> Start with `Badge runtime adoption`, then move to `Input/Search runtime parity` as the second family only after the badge slice passes runtime proof and close-out audit.
+> Start `Input/Search runtime parity` by inventorying live field consumers, comparing runtime radius/size branches to the canonical Figma contract, and choosing one first proof route family before patching.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -42,7 +42,7 @@ Parent Plan: `Family-by-family DS runtime adoption`
 | Admin Table Action Rollout | Complete | inventory, rollout decision, first admin proof slice, runtime verification, and close-out audit are complete |
 | Admin Simple Row-Action Rollout | Complete | inventory, rollout decision, follow-up adoption slice, runtime verification, and close-out audit are complete |
 | Dense Action Holdout Lockdown | Complete | remaining dense admin/creator action clusters are now explicit compact holdouts, with `/admin/resources` and `/admin/tags` proved at runtime |
-| Family-by-family DS Runtime Adoption | Active | start with `Badge` runtime adoption, then reopen `Input/Search` as the second runtime-parity family |
+| Family-by-family DS Runtime Adoption | Active | `Badge` runtime adoption is closed; `Input/Search` runtime parity is now the active second family |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -55,7 +55,7 @@ Parent Plan: `Family-by-family DS runtime adoption`
 ## Progress
 
 Family-by-family DS runtime adoption
-`[█░░░░░░░░░] 10%`
+`[█████░░░░░] 55%`
 
 ```mermaid
 flowchart TB
@@ -103,10 +103,10 @@ flowchart TB
 
   subgraph Current
     P0["Family-by-family runtime plan open<br/>Done"]
-    P1["Badge runtime inventory + contract audit<br/>In progress"]
-    P2["Badge adoption patch<br/>Pending"]
-    P3["Badge runtime proof + close-out<br/>Pending"]
-    P4["Input/Search runtime parity inventory<br/>Pending"]
+    P1["Badge runtime inventory + contract audit<br/>Done"]
+    P2["Badge adoption patch<br/>Done"]
+    P3["Badge runtime proof + close-out<br/>Done"]
+    P4["Input/Search runtime parity inventory<br/>In progress"]
     P5["Input/Search adoption path decision<br/>Pending"]
   end
 
@@ -146,7 +146,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 1 — Badge runtime adoption
+Phase 2 — Input/Search runtime parity
 
 ### Parent Plan
 Family-by-family DS runtime adoption
@@ -159,29 +159,40 @@ Family-by-family DS runtime adoption
     proven table-action recipe
   - dense holdouts such as `/admin/resources`, `/admin/tags`, and
     `CreatorResourceStatusButton` are explicitly locked to compact `sm`
-- This new plan changes strategy from route-cluster rollout to
-  family-by-family adoption:
-  - family 1 = `Badge runtime adoption`
-  - family 2 = `Input/Search runtime parity`
-- The intent is to reuse the audited Figma truth without reopening broad repo
-  audit loops or widening unrelated DS families in the same slice.
+- Family 1 is now closed:
+  - runtime `Badge.tsx` mirrors the canonical `warning` / `featured` split for
+    the approved semantic set
+  - first proof routes passed on `/dashboard/creator/apply` and
+    `/dashboard/creator`
+- Family 2 is now active:
+  - `Input/Search` runtime parity should compare the runtime radius/size
+    branches to the canonical `radius/sm (8px)` field contract before any
+    rollout decision
+- The intent remains the same: reuse the audited Figma truth without reopening
+  broad repo audit loops or widening unrelated DS families in the same slice.
 
 ### Goal
-Land `Badge` runtime adoption first, then use the same narrow plan structure to
-decide and stage `Input/Search` runtime parity only after the badge slice is
-verified and closed cleanly.
+Use the now-closed badge slice as the pattern for the second family:
+inventory live `Input/Search` consumers, decide the smallest safe shared patch
+layer, then prove one narrow runtime parity slice before considering wider
+rollout.
 
 ### Why this is the current phase
-- `Badge` is the safest next family because the canonical Figma contract is
-  already clear, the variant set is narrower than `Button`, and the blast
-  radius is easier to inventory than `Dropdown` or broader shell families.
+- `Badge` has now closed cleanly, so the next safest family is `Input/Search`:
+  the Figma radius/size contract is already audited, the runtime adoption gaps
+  are explicit, and the blast radius is still narrower than broader button or
+  dropdown work.
 
 ### Definition of Done
-- [ ] Live `Badge` runtime consumers are inventoried before patching
-- [ ] A rollout decision is recorded for canonical badge variants versus
+- [x] Live `Badge` runtime consumers are inventoried before patching
+- [x] A rollout decision is recorded for canonical badge variants versus
       legacy/product-only variants
-- [ ] One narrow `Badge` runtime adoption slice lands with matching route proof
-- [ ] `Input/Search` inventory begins only after the badge slice closes
+- [x] One narrow `Badge` runtime adoption slice lands with matching route proof
+- [x] `Input/Search` inventory begins only after the badge slice closes
+- [ ] Live `Input/Search` runtime consumers are inventoried before patching
+- [ ] A rollout decision is recorded for canonical field shells versus
+      runtime-only/legacy branches
+- [ ] One narrow `Input/Search` runtime parity slice lands with matching route proof
 - [ ] Repo context/docs are updated in the same session if runtime contract
       understanding changes
 - [ ] The plan closes with one explicit close-out audit instead of drifting
@@ -192,10 +203,10 @@ verified and closed cleanly.
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
 | 0 | Family plan open + scope lock | complete | scope is limited to runtime adoption family slices, not another broad DS audit |
-| 1 | Badge runtime inventory + contract audit | in progress | inventory live badge consumers, compare runtime variants to canonical Figma set, and choose the first proof route family |
-| 2 | Badge runtime adoption slice | pending | patch the narrowest shared badge layer and affected first proof routes |
-| 3 | Badge proof + close-out | pending | prove the affected route family at runtime and close the badge slice cleanly |
-| 4 | Input/Search runtime inventory | pending | audit runtime field consumers after badge closes |
+| 1 | Badge runtime inventory + contract audit | complete | inventoried live badge consumers, narrowed the rollout to the canonical `warning` / `featured` split, and chose `/dashboard/creator/apply` plus `/dashboard/creator` as the first proof family |
+| 2 | Badge runtime adoption slice | complete | runtime `Badge.tsx` now mirrors the canonical `warning` / `featured` split while leaving broader legacy/product variants intact |
+| 3 | Badge proof + close-out | complete | route-level proof passed for pending creator-apply and creator workspace intro, and repo docs/tracker were synced in the same slice |
+| 4 | Input/Search runtime inventory | in progress | audit runtime field consumers after the closed badge family and choose the first safe proof route family |
 | 5 | Input/Search adoption decision | pending | decide parity path and whether a safe first runtime slice exists inside the same parent plan |
 
 ---
@@ -203,10 +214,10 @@ verified and closed cleanly.
 ## Current Goal
 
 The current runtime-adoption order is:
-1. inventory live `Badge` consumers
-2. decide which canonical badge variants should map into runtime first
-3. land one narrow badge adoption slice with route proof
-4. only then begin `Input/Search` runtime inventory and parity planning
+1. inventory live `Input/Search` consumers
+2. compare runtime field radius/size branches to the canonical Figma contract
+3. choose the first proof route family for an `Input/Search` parity slice
+4. only then land one narrow field adoption patch
 
 ---
 
@@ -214,18 +225,22 @@ The current runtime-adoption order is:
 
 - [x] Open a new parent plan for `Family-by-family DS runtime adoption`
 - [x] Lock the phase order to `Badge` first, `Input/Search` second
-- [ ] Inventory live `Badge` consumers
-- [ ] Compare runtime `Badge.tsx` variants to the canonical Figma set
-- [ ] Choose one first proof route family for the badge slice
-- [ ] Record the badge rollout decision before patching
+- [x] Inventory live `Badge` consumers
+- [x] Compare runtime `Badge.tsx` variants to the canonical Figma set
+- [x] Choose the first proof route family for the badge slice
+- [x] Record the badge rollout decision before patching
+- [ ] Inventory live `Input/Search` consumers
+- [ ] Compare runtime `Input.tsx` / `SearchInput.tsx` branches to the canonical Figma contract
+- [ ] Choose one first proof route family for `Input/Search`
+- [ ] Record the `Input/Search` rollout decision before patching
 
 ---
 
 ## Next Up
 
-- [ ] Inventory live `Badge` consumers
-- [ ] Compare runtime `Badge.tsx` variants to the canonical Figma set
-- [ ] Choose the first proof route family for `Badge runtime adoption`
+- [ ] Inventory live `Input/Search` consumers
+- [ ] Compare runtime `Input.tsx` / `SearchInput.tsx` branches to the canonical Figma set
+- [ ] Choose the first proof route family for `Input/Search runtime parity`
 
 ---
 
@@ -319,6 +334,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: `Badge runtime adoption` is now closed inside the family-by-family plan. Inventory narrowed the rollout to the canonical `warning` / `featured` split only, runtime `Badge.tsx` now mirrors that split, route-level proof passed on `/dashboard/creator/apply` and `/dashboard/creator`, and broader legacy/product badge variants remain intentionally outside the Figma-owned set for now.
 - 2026-04-29: After `Dense action holdout lockdown` closed cleanly, open a new parent plan `Family-by-family DS runtime adoption` instead of another broad repo audit. Lock the rollout order to `Badge runtime adoption` first and `Input/Search runtime parity` second because both families already have stable Figma truth and a safer blast radius than broader button/dropdown/shell rewrites.
 - 2026-04-29: `Dense action holdout lockdown` is now closed. Inventory confirmed that `/admin/resources` main table, `/admin/tags`, and creator-side status actions are dense control clusters that should not silently inherit the widened rounded-rect `md` table-action recipe. The follow-up patch now passes `size="sm"` explicitly on those holdouts, runtime proof passed for `/admin/resources` and `/admin/tags`, and `CreatorResourceStatusButton` is recorded as a code-level compact holdout because no live route mount was found during the audit.
 - 2026-04-29: `Admin simple row-action rollout` is now closed. Inventory confirmed that `/admin/categories`, `/admin/reviews`, `/admin/resources/trash`, and `/admin/resources/[id]/versions` all behave like simple table-action surfaces rather than dense inline editor clusters, so each now opts into `RowActionButton size="md"`. The close-out audit keeps `/admin/resources` main table, `/admin/tags`, and creator/admin status-action groups as explicit holdouts for a future separate plan.

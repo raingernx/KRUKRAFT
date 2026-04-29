@@ -11,10 +11,11 @@ const badgeVariants = cva(
         success:
           "border-success-500/25 bg-accent text-success-700",
         warning:
-          "border-warning-500/25 bg-accent text-warning-700",
+          "border-warning-500/35 bg-inset text-warning-700",
         neutral: "bg-muted text-muted-foreground",
         info: "border-primary/25 bg-accent text-primary",
-        featured: "border-highlight-500/25 bg-accent text-highlight-700",
+        featured:
+          "border-accent-yellow/40 bg-accent-yellow-soft text-accent-yellow",
         owned: "bg-violet-50 text-violet-600",
         new: "bg-accent-blue-soft text-accent-blue",
         free: "bg-green-50 text-green-600",

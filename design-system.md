@@ -296,6 +296,9 @@ For reusable Figma component sets:
 - Product or legacy runtime variants (`owned`, `new`, `free`, `default`,
   `secondary`, `ghost`, `link`) are intentionally outside that canonical Figma
   set until a deliberate remap or cleanup pass happens.
+- Runtime `Badge.tsx` now follows that canonical split for `warning` and
+  `featured`, while the broader legacy/product badge variants remain intentionally
+  outside the Figma-owned set.
 - The current canonical `Badge` board keeps two explicit Figma-only gaps
   instead of silently drifting:
   - the seven badge labels still use a local `12/16` recipe because the shared

@@ -316,10 +316,10 @@ When this file conflicts with code, the code wins.
   `default`, `secondary`, `ghost`, and `link`) now sit outside that canonical
   Figma set until they are either remapped deliberately or removed from the
   shared primitive contract.
-- Runtime `Badge.tsx` still exposes broader legacy/product variants and has not
-  adopted the latest `warning`/`featured` Figma recipe split yet; treat that as
-  a runtime adoption gap instead of letting docs drift back to the older badge
-  posture.
+- Runtime `Badge.tsx` now mirrors the canonical `warning`/`featured` split for
+  the approved semantic set while still exposing broader legacy/product
+  variants; keep those extra variants outside the canonical Figma contract
+  until a deliberate remap or cleanup pass happens.
 - `Badge` still carries one explicit typography gap in Figma: the source set
   uses a narrow local `12/16` label recipe because the typography scale does
   not yet provide an xs label token.
