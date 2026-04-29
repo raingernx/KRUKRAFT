@@ -374,8 +374,11 @@ Use this order when DS docs disagree:
       through full-height wrappers, which fixes the visible top-left icon drift
       on `/dashboard/library` without reopening the route-owned `hero` branch
     - the dashboard topbar search no longer keeps a local `44px` height
-      exception; it now rides the same shared `56px / 8px` ladder as toolbar
-      search
+      exception; dashboard/admin shared search now resolves to the `lg`
+      `48px / 8px` rung by default instead of the old `56px` field posture
+    - admin global search plus the main users/resources/activity/ranking search
+      mounts now use the same `SearchInput` primitive instead of route-local
+      `Input + icon` compositions
     - dashboard user-route intros now normalize through the shared
       `DashboardRouteIntro` / `DashboardPageHeader` eyebrow-text pattern, with
       matching header CTAs promoted back to `Button size="md"` by default
@@ -451,10 +454,10 @@ Use this order when DS docs disagree:
     - the 2026-04-29 runtime parity slice now makes that default branch honor
       `radius/sm (8px)` directly in code
     - the first live proof family is `/dashboard/library`:
-      - the library toolbar search now proves the shared `56px / 8px` field
+      - the library toolbar search now proves the shared `48px / 8px` field
         shell
-      - the dashboard topbar search stays an intentional `44px` height
-        override while still inheriting the same `8px` radius
+      - the dashboard topbar search now rides that same `48px / 8px` shared
+        contract instead of a route-local height override
       - the dashboard topbar clear action is now proved after hydration too:
         the clear button appears, keeps `8px` radius, and clears the local
         query value

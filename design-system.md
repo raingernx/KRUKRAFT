@@ -428,14 +428,18 @@ At a high level:
     - `SearchInput variant="default"` now adopts the canonical `8px` radius
       shell at runtime
     - the first route proofs are `/dashboard/library` toolbar search
-      (`56px / 8px`) and dashboard topbar search on that same
-      `56px / 8px` ladder
+      (`48px / 8px`) and dashboard topbar search on that same
+      `48px / 8px` ladder
     - the shared start/loading adornments on that branch now render through
       full-height wrappers, so the icon stays centered in toolbar/topbar mounts
       instead of collapsing into the top-left corner
     - the dashboard topbar clear action is now route-proved too after client
       hydration: the clear button appears, keeps `8px` radius, and resets the
       local query state
+    - admin global search, admin users, admin resources, admin activity, and
+      admin ranking now use the same `SearchInput` primitive too, so the shared
+      default search posture is `48px / 8px` across dashboard/admin before
+      route-owned exceptions
     - public `/resources` search remains a route-owned product override with
       `40px` height and pill geometry
     - dashboard route intros now normalize through the shared

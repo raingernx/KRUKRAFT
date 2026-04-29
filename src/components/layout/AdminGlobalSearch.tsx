@@ -2,9 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "@/lib/icons";
 
-import { Input } from "@/design-system";
+import { SearchInput } from "@/design-system";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
@@ -130,12 +129,16 @@ export function AdminGlobalSearch() {
       ref={containerRef}
       className="relative hidden w-72 md:block"
     >
-      <Input
-        type="search"
+      <SearchInput
+        aria-label="Global admin search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        onClear={() => {
+          setQuery("");
+          setDebouncedQuery("");
+          setIsOpen(false);
+        }}
         placeholder="Search resources, users, orders..."
-        leftAdornment={<Search className="h-4 w-4" />}
         className="rounded-full bg-muted"
       />
 

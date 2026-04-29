@@ -2,9 +2,9 @@
 
 import { FormEvent, KeyboardEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Filter, Search } from "@/lib/icons";
+import { Filter } from "@/lib/icons";
 
-import { Button, Input, Select } from "@/design-system";
+import { Button, SearchInput, Select } from "@/design-system";
 import { useDebounce } from "@/hooks/useDebounce";
 import { AdminResourcesClearButton } from "./AdminResourcesClearButton";
 import { FilterChips } from "@/components/admin/resources";
@@ -133,22 +133,19 @@ export function AdminResourcesFilters({
             >
               Search
             </label>
-            <div className="relative">
-              <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                <Search className="h-4 w-4 text-muted-foreground" />
-              </span>
-              <Input
-                id="q"
-                name="q"
-                value={filters.search}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, search: e.target.value }))
-                }
-                onKeyDown={handleSearchKeyDown}
-                placeholder="Search by title or creator…"
-                className="pl-9"
-              />
-            </div>
+            <SearchInput
+              id="q"
+              name="q"
+              value={filters.search}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, search: e.target.value }))
+              }
+              onKeyDown={handleSearchKeyDown}
+              onClear={() =>
+                setFilters((prev) => ({ ...prev, search: "" }))
+              }
+              placeholder="Search by title or creator…"
+            />
           </div>
 
           <div className="flex w-full flex-col gap-1 sm:w-40">

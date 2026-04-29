@@ -1,6 +1,5 @@
 import { Suspense } from "react";
-import { Search } from "@/lib/icons";
-import { Input, Button, RowActionButton, RowActions } from "@/design-system";
+import { Button, RowActionButton, RowActions, SearchInput } from "@/design-system";
 import { formatNumber, formatDate } from "@/lib/format";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { StatusBadge } from "@/components/admin/StatusBadge";
@@ -131,21 +130,14 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
                 <label htmlFor="q" className="font-ui text-caption text-muted-foreground">
                   Search
                 </label>
-                <div className="relative">
-                  <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                    <Search className="h-4 w-4 text-muted-foreground" />
-                  </span>
-                  <Input
-                    id="q"
-                    type="search"
-                    name="q"
-                    defaultValue={query}
-                    placeholder="Search by name or email…"
-                    className="pl-9"
-                  />
-                </div>
+                <SearchInput
+                  id="q"
+                  name="q"
+                  defaultValue={query}
+                  placeholder="Search by name or email…"
+                />
               </div>
-              <Button type="submit" variant="outline" size="sm" className="self-end">
+              <Button type="submit" variant="outline" size="md" className="self-end">
                 Search
               </Button>
             </TableToolbar>

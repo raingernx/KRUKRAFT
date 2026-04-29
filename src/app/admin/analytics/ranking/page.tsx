@@ -5,7 +5,7 @@ import {
   getRankingDebugReport,
 } from "@/services/analytics";
 import { SlidersHorizontal, ExternalLink } from "@/lib/icons";
-import { Button, Input, Select } from "@/design-system";
+import { Button, SearchInput, Select } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { TableToolbar } from "@/components/admin/table";
 import {
@@ -177,10 +177,9 @@ async function RankingFiltersSection({
             >
               Search title
             </label>
-            <Input
+            <SearchInput
               id="search"
               name="search"
-              type="text"
               defaultValue={search}
               placeholder="e.g. Math worksheet"
               className="w-full sm:w-56"

@@ -58,8 +58,9 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
         : typeof value === "number"
           ? true
           : false;
-    const resolvedSize = resolveFieldControlSize(size, density);
-    const inputSizeClassName = getFieldControlSizeClassName(size, density);
+    const searchSize = size ?? (variant === "default" ? "lg" : undefined);
+    const resolvedSize = resolveFieldControlSize(searchSize, density);
+    const inputSizeClassName = getFieldControlSizeClassName(searchSize, density);
     const startAdornmentSizeClassName = fieldStartAdornmentWidthClassNames[resolvedSize];
     const endAdornmentSizeClassName = fieldEndAdornmentWidthClassNames[resolvedSize];
 

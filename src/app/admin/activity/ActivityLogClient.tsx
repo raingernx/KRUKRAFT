@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { Badge, Button, Input, Select } from "@/design-system";
+import { Badge, Button, Input, SearchInput, Select } from "@/design-system";
 
 type ActivityAction =
   | "created_resource"
@@ -246,11 +246,12 @@ export function ActivityLogClient() {
           >
             User search
           </label>
-          <Input
+          <SearchInput
             id="userQuery"
             placeholder="Search by user or target…"
             value={userQuery}
             onChange={(e) => setUserQuery(e.target.value)}
+            onClear={() => setUserQuery("")}
           />
         </div>
       </div>
