@@ -458,11 +458,14 @@ At a high level:
     - the canonical `Textarea` contract reuses the same quiet field-shell
       target and helper/error posture, but keeps rows, counters, max length,
       and resize behavior route-owned instead of inventing a fake size ladder
-    - runtime parity is not live yet, so treat those new boards as the design
-      base for the next adoption slice rather than as proof of code parity;
-      `/admin/settings` is now the first proof-route family because it mounts
-      `Input`, `Select`, and `Textarea` together without product-owned search
-      overrides
+    - the first runtime parity slice is now live too:
+      - `Select.tsx` explicitly overrides its shared field shell back to
+        `radius/sm (8px)` at runtime
+      - `Textarea.tsx` now keeps the same `8px` target while preserving
+        route-owned rows / counter / resize behavior
+      - `/admin/settings` is the first proved route family because it mounts
+        `Input`, `Select`, and `Textarea` together without product-owned search
+        overrides
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:

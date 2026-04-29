@@ -386,9 +386,13 @@ Use this order when DS docs disagree:
         target and helper/error posture, but leaves rows, counters, max
         length, and resize behavior route-owned instead of inventing a size
         ladder
-      - runtime parity is still pending; `/admin/settings` is now the first
-        proof-route family because it mounts `Input`, `Select`, and `Textarea`
-        together without product-owned search overrides
+      - the first runtime parity slice is now live too:
+        - `Select.tsx` keeps the canonical `8px` radius at runtime
+        - `Textarea.tsx` keeps the same `8px` target without widening
+          route-owned rows / counter / resize behavior
+        - `/admin/settings` is the first proved route family because it mounts
+          `Input`, `Select`, and `Textarea` together without product-owned
+          search overrides
     - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
       component sets for the shared field ladder
     - runtime code still carries an older larger comfortable-radius branch for

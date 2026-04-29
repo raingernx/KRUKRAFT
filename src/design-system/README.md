@@ -169,16 +169,17 @@ When this file conflicts with code, the code wins.
   `Select / Foundations` boards plus `Select / State` and `Select / Size`
   sets that mirror the same quiet field shell, `radius/sm (8px)` geometry,
   helper/error posture, and field-size ladder while keeping option lists
-  route-owned. Treat those boards as the design base for the upcoming runtime
-  parity pass.
+  route-owned. The first runtime parity slice is now live on
+  `/admin/settings`, where `Select.tsx` keeps the same `8px` radius target in
+  shared admin forms.
 - `Textarea` now has matching light/dark `Textarea / Foundations` boards plus
   dedicated `Textarea / State` sets in the canonical file. The multiline
   contract intentionally keeps the same quiet field shell target and
   `radius/sm (8px)` geometry, but it does not invent a reusable size ladder:
   rows, counters, resize behavior, and long-form affordances stay route-owned.
-  Treat `/admin/settings` as the first proof-route family because it mounts
-  `Input`, `Select`, and `Textarea` together without product-owned search
-  overrides.
+  `/admin/settings` is also the first proved runtime route family: shared
+  `Textarea.tsx` now keeps the same `8px` radius target there while rows and
+  route-specific long-form behavior remain route-owned.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may

@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { fieldInputBaseClassName } from "./fieldRecipe"
 
 export interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -33,8 +34,9 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(function T
         id={textareaId}
         data-slot="textarea"
         className={cn(
-          "input-base min-h-[120px] resize-y py-2.5",
-          "aria-invalid:border-danger-600 aria-invalid:ring-2 aria-invalid:ring-danger-600/20",
+          fieldInputBaseClassName,
+          "h-auto min-h-[120px] resize-y rounded-[var(--radius-sm)] px-4 py-4",
+          "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/18",
           className,
         )}
         aria-describedby={describedBy}
@@ -42,7 +44,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(function T
         {...props}
       />
       {error ? (
-        <p id={errorId} className="text-caption text-danger-700">
+        <p id={errorId} className="text-caption text-destructive">
           {error}
         </p>
       ) : hint ? (

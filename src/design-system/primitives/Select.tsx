@@ -46,8 +46,9 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function Select(
         data-density={density}
         className={cn(
           "select-base",
-          "aria-invalid:border-danger-600 aria-invalid:ring-2 aria-invalid:ring-danger-600/20",
+          "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/18",
           getFieldControlSizeClassName(size, density),
+          "rounded-[var(--radius-sm)]",
           className,
         )}
         aria-describedby={describedBy}
@@ -55,7 +56,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function Select(
         {...props}
       />
       {error ? (
-        <p id={errorId} className="text-caption text-danger-700">
+        <p id={errorId} className="text-caption text-destructive">
           {error}
         </p>
       ) : hint ? (
