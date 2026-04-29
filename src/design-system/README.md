@@ -237,8 +237,11 @@ When this file conflicts with code, the code wins.
   `unsupported format` `400` branch after draft creation succeeds, while the
   lower-signal `resourceId required`, empty-file, and invalid-generated-key
   branches remain optional future follow-ups. Route-level flash messaging
-  remains future-plan material because it still diverges outside the shared
-  widget shell.
+  is narrower too: creator create now proves the route-owned remove-file
+  failure message outside the widget shell, while admin create does not expose
+  a matching upload/remove flash slice beyond the already-frozen widget
+  banners. Any admin-side follow-up there would be a separate edit-flow or
+  control-styling plan, not a shared create-flow flash rollout.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may

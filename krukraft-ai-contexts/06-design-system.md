@@ -574,9 +574,14 @@ Use this order when DS docs disagree:
             format` `400` branch after draft creation succeeds
           - the lower-signal `resourceId required`, empty-file, and invalid
             generated-key branches remain optional follow-up territory
-        - route-level flash messaging still remains future-plan material so
-          admin resource form consumers do not inherit a broader upload-state
-          rewrite without a separate proof slice
+        - route-level flash messaging is narrower too:
+          - creator create now proves the route-owned remove-file failure
+            message outside the widget shell
+          - admin create does not expose a matching upload/remove flash slice
+            beyond the already-frozen widget banners
+        - any admin-side follow-up there remains a separate edit-flow or
+          control-styling plan, so admin resource form consumers do not
+          inherit a broader upload-state rewrite without a separate proof slice
   - the canonical `Card / Foundations` boards no longer carry wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is explicit token
     gap / polish territory instead:

@@ -539,8 +539,13 @@ At a high level:
           format` `400` branch after draft creation succeeds
         - the lower-signal `resourceId required`, empty-file, and invalid
           generated-key branches stay optional follow-up territory
-      - route-level flash messaging still stays product-owned future-plan
-        material outside these shared slices
+      - route-level flash messaging is narrower too:
+        - creator create now proves the route-owned remove-file failure
+          message outside the widget shell
+        - admin create does not expose a matching upload/remove flash slice
+          beyond the already-frozen widget banners
+      - any admin-side follow-up there is a separate edit-flow or
+        control-styling plan, not a shared create-flow flash rollout
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:

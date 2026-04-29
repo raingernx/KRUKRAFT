@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Route-level upload flash messaging`
 
 > [!info] Current Phase
-> `Phase 1 — Flash messaging inventory`
+> `Plan complete`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Route-level upload flash messaging`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Route-level upload flash messaging` is now active. The shared and route-owned widget error-copy baselines stay frozen, and the next narrow pass is to inventory route-level upload/remove flash behavior on creator/admin resource create flows.
+> `Route-level upload flash messaging` is now complete. Creator create now proves the route-owned remove-file failure message outside the widget shell, while admin create exposes no matching upload/remove flash slice beyond the already-frozen widget banners.
 
 > [!todo] Next Up
-> Inventory creator/admin upload/remove flash messaging on resource create flows, choose one route-owned proof slice, and keep lower-signal `400` validation branches out of scope.
+> No in-plan `Next Up`. Wait for an explicit new parent plan; the closest optional follow-ups are an admin edit-flow upload/remove feedback plan, a control-styling plan for creator delivery actions, or one of the lower-signal remaining `400` validation branches.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -61,7 +61,7 @@ Parent Plan: `Route-level upload flash messaging`
 | Route-Owned Backend Upload-Failure Copy | Complete | creator/admin create routes now prove the route-owned backend `500`/fallback upload-failure slice after draft creation succeeds; validation copy and route-level flash messaging remain optional follow-ups |
 | Route-Owned Upload Validation Copy | Complete | creator/admin create routes now prove the route-owned `404` upload-not-found slice after draft creation succeeds; use that as the frozen baseline for the next shared `400` validation pass |
 | Shared Upload 400 Validation Copy | Complete | creator/admin create routes now prove the shared `unsupported format` `400` branch after draft creation succeeds; use that as the frozen baseline for any later lower-signal `400` follow-up |
-| Route-Level Upload Flash Messaging | Active | next narrow follow-up: inventory creator/admin route-owned upload/remove flash behavior and choose one safe proof slice before touching lower-signal `400` branches |
+| Route-Level Upload Flash Messaging | Complete | creator create now proves the route-owned remove-file failure message outside the widget shell, while admin create has no matching upload/remove flash slice beyond the frozen widget banners |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -74,7 +74,7 @@ Parent Plan: `Route-level upload flash messaging`
 ## Progress
 
 Route-level upload flash messaging
-`[█░░░░░░░░░] 10%`
+`[██████████] 100%`
 
 ```mermaid
 flowchart TB
@@ -122,10 +122,10 @@ flowchart TB
 
   subgraph Current
     AC0["Plan open<br/>Done"]
-    AC1["Flash messaging inventory<br/>Active"]
-    AC2["First proof-slice decision<br/>Pending"]
-    AC3["Route-scoped runtime slice<br/>Pending"]
-    AC4["Close-out audit<br/>Pending"]
+    AC1["Flash messaging inventory<br/>Done"]
+    AC2["First proof-slice decision<br/>Done"]
+    AC3["Route-scoped runtime slice<br/>Done"]
+    AC4["Close-out audit<br/>Done"]
   end
 
   D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4
@@ -164,7 +164,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 1 — Flash messaging inventory
+Plan complete
 
 ### Parent Plan
 Route-level upload flash messaging
@@ -185,27 +185,49 @@ Route-level upload flash messaging
 - This new parent plan isolates the next route-owned feedback bucket:
   - creator/admin flash or toast messaging after upload/remove side effects
   - copy and timing that live outside the frozen widget-owned banner shell
-- Inventory now needs to answer:
-  - which upload/remove messages are route-owned on `/dashboard/creator/resources/new`
-  - which upload/remove messages are route-owned on `/admin/resources/new`
-  - whether creator/admin share any safe proof slice, or whether the first slice should stay route-specific
-  - whether create-flow flash timing can be proved without reopening lower-signal `400` validation branches
+- Inventory is now closed for this parent plan:
+  - creator create route surfaces route-owned upload/remove feedback through
+    the `error` rail in `CreatorPublishActions`
+  - the clearest in-scope branch is uploaded-file removal failure on
+    `/dashboard/creator/resources/new`, where the delete request can fail
+    after a successful upload and draft creation
+  - admin create route does not expose a matching upload/remove flash slice
+    outside the frozen widget-owned banners:
+    - upload success/error stays inside `FileUploadWidget`
+    - remove-file route feedback exists on admin edit mode, not create mode
+    - form-level `success/error` in admin create is about resource save/create,
+      not upload/remove side effects
+- Locked proof slice for this parent plan:
+  - creator create route-owned remove-file failure message
+  - proof route:
+    - `/dashboard/creator/resources/new`
+  - proof method:
+    - ensure draft creation succeeds
+    - upload a supported file through the widget
+    - switch to the external-link branch
+    - fail `DELETE /api/creator/resources/[id]/file`
+    - assert the route-owned error rail surfaces the remove failure outside the
+      widget shell
+  - kept out of scope:
+    - admin edit-mode remove feedback
+    - creator delivery-action button styling
+    - lower-signal `400` validation branches
 - Keep these out of scope for this plan:
   - lower-signal `400` validation branches (`resourceId required`, empty file, invalid generated key)
   - shared widget geometry/state-machine changes
   - shared or route-owned upload banner copy already proved in prior plans
 
 ### Goal
-Inventory creator/admin route-level upload/remove flash messaging, choose one
-route-owned proof slice, and keep the lower-signal `400` validation branches
-out of scope.
+This plan is closed. It proved the creator create route-owned remove-file
+failure message outside the widget shell and confirmed that admin create has no
+matching upload/remove flash slice in scope.
 
 ### Why this is the current phase
-- The widget-owned and route-owned banner-copy plans are closed already.
-- What remains closest to the user-visible upload flow is route-level flash
-  behavior outside the widget shell.
-- Inventory has to close first so the next proof slice does not mix flash
-  timing/ownership with already-frozen validation-copy work.
+- Inventory is now closed: creator/admin are not symmetric here.
+- Creator create has one clear route-owned remove-failure branch outside the
+  widget shell, and that slice is now proved at runtime.
+- Admin create has no matching upload/remove flash slice in scope, so the
+  close-out audit found no reason to keep this parent plan open.
 
 ### Definition of Done
 - [x] The prior admin and creator profile proof routes stay frozen as baselines
@@ -219,28 +241,28 @@ out of scope.
 - [x] The shared oversize-validation slice stays frozen as a baseline
 - [x] The shared `unsupported format` `400` proof stays frozen as a baseline
 - [x] The route-owned save-first / backend `500` / `404` upload-copy proofs stay frozen as baselines
-- [ ] Route-level upload/remove flash messaging is inventoried across creator/admin create flows
-- [ ] One route-owned flash proof slice is chosen
-- [ ] That route-scoped runtime slice is landed and verified
-- [ ] A close-out audit decides whether the parent plan should continue or close
+- [x] Route-level upload/remove flash messaging is inventoried across creator/admin create flows
+- [x] One route-owned flash proof slice is chosen
+- [x] That route-scoped runtime slice is landed and verified
+- [x] A close-out audit decides whether the parent plan should continue or close
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
 | 0 | Plan open | complete | the previous shared and route-owned upload-copy proofs are now frozen and the next follow-up is isolated to route-level flash behavior |
-| 1 | Flash messaging inventory | active | inventory creator/admin upload/remove flash messaging outside the widget banner shell |
-| 2 | First proof-slice decision | pending | choose one safe route-owned flash slice |
-| 3 | Route-scoped runtime slice | pending | land and verify the chosen flash slice |
-| 4 | Close-out audit | pending | close cleanly or split remaining route-owned feedback into a narrower future plan |
+| 1 | Flash messaging inventory | complete | creator create has one clear route-owned remove-failure slice; admin create has no matching upload/remove flash branch in scope |
+| 2 | First proof-slice decision | complete | the safe first slice is creator create remove-file failure after upload and draft creation succeed |
+| 3 | Route-scoped runtime slice | complete | `/dashboard/creator/resources/new` now proves the route-owned remove-file failure message outside the widget shell |
+| 4 | Close-out audit | complete | admin create has no matching slice in scope; admin edit feedback and creator control styling are optional future plans |
 
 ---
 
 ## Current Goal
 
 1. keep the shared widget parity baselines frozen
-2. inventory creator/admin route-level upload/remove flash behavior
-3. leave lower-signal `400` validation branches to optional future plans
+2. keep the creator create remove-failure proof as the closed baseline for this plan
+3. leave admin edit feedback, creator control styling, and lower-signal `400` branches to optional future plans
 
 ---
 
@@ -248,14 +270,15 @@ out of scope.
 
 - [x] Keep shared widget parity baselines frozen
 - [x] Open a new parent plan for route-level upload flash messaging
+- [x] Inventory creator/admin upload/remove flash messaging on create flows
+- [x] Choose the creator create remove-failure proof slice
+- [x] Land the creator create remove-failure flash proof slice
 
 ---
 
 ## Next Up
 
-- [ ] Inventory creator/admin upload/remove flash messaging on create flows
-- [ ] Choose one route-owned flash proof slice
-- [ ] Keep lower-signal `400` validation branches out of scope
+- [x] No in-plan work remains for this parent plan
 
 ---
 
@@ -358,6 +381,7 @@ Add only short, high-signal entries here.
 - 2026-04-29: Inventory for `Shared upload 400 validation copy` is now closed. Creator/admin still share the same service-layer `400` wording for missing `resourceId`, empty file, unsupported mime type, and invalid generated key after upload starts; local oversize validation remains a separate frozen widget-owned branch. The safest first shared proof slice is `unsupported format` because it runs through the real upload route/service on both sides after draft creation succeeds, stays clear of the route-owned `404` divergence, and avoids the low-signal `invalid generated key` branch that normal sanitized filenames cannot reach through the UI. Route-level flash messaging remains out of scope.
 - 2026-04-29: `Shared upload 400 validation copy` is now closed. `/dashboard/creator/resources/new` and `/admin/resources/new` both prove the shared `unsupported format` `400` branch after draft creation succeeds, and the proof confirmed the existing shared service copy already surfaces through the frozen widget error banner without any new runtime patch. The required close-out audit found no in-scope reason to keep this parent plan open; route-level flash messaging plus the lower-signal remaining `400` branches (`resourceId required`, empty file, invalid generated key) remain optional future plans.
 - 2026-04-29: Open a new parent plan `Route-level upload flash messaging` instead of reopening lower-signal `400` validation branches first. The shared `unsupported format` proof plus the route-owned save-first / backend `500` / `404` upload-copy proofs are now frozen on creator/admin create routes, so the next narrow ownership bucket is flash or toast feedback that lives outside the widget banner shell. Lower-signal `400` branches stay explicitly out of scope until flash-message inventory is closed and one safe proof slice is chosen.
+- 2026-04-29: `Route-level upload flash messaging` is now closed. Inventory confirmed the create flows are asymmetric: creator create exposes a clear route-owned remove-file failure message outside the widget shell, while admin create has no matching upload/remove flash branch beyond the already-frozen widget banners. `/dashboard/creator/resources/new` now proves the creator remove-failure slice after upload and draft creation succeed. The required close-out audit found no in-scope reason to keep this parent plan open; any admin-side feedback work there belongs to a separate edit-flow plan, and creator delivery-action styling belongs to a separate control-styling plan.
 - 2026-04-29: Inventory for `Route-owned upload validation copy` is now closed. Creator/admin still surface validation responses through the shared widget error banner after upload starts, but most `400` validation strings are shared English service copy on both sides (`resourceId` missing, empty file, oversize, unsupported format, invalid generated key). The first clear route-owned divergence inside validation copy is `404`: admin upload returns `Resource not found.`, while creator upload returns `ไม่พบ resource ที่ต้องการอัปโหลดไฟล์`. The safest first proof slice is therefore the creator/admin `404` upload-not-found path after draft creation succeeds, while route-level flash messaging stays out of scope.
 - 2026-04-29: Open a new parent plan `Route-owned upload validation copy` instead of jumping straight to route-level flash messaging. Save-first and backend `500` fallback copy are now both frozen on creator/admin create routes, so the next narrow ownership bucket is the route/service validation copy (`400/404`) that appears after draft creation succeeds. Flash messaging stays explicitly out of scope until validation-copy inventory is complete and one safe proof slice is chosen.
 - 2026-04-29: `Route-owned backend upload-failure copy` is now closed. `/dashboard/creator/resources/new` and `/admin/resources/new` both prove the backend `500`/fallback upload-failure slice after draft creation succeeds: creator create continues to surface the Thai `/api/creator/resources/upload` fallback, admin create now uses an upload-specific English fallback from `/api/admin/resources/upload`, and the shared widget error banner stays frozen while surfacing those route-owned messages. The required close-out audit found no in-scope reason to keep this parent plan open; validation copy (`400/404`) and route-level flash messaging remain optional future plans.
