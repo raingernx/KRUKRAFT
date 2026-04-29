@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
 ## Plan Snapshot
 
-Parent Plan: `Shared upload 400 validation copy`
+Parent Plan: `Route-level upload flash messaging`
 
 > [!info] Current Phase
-> `Plan complete`
+> `Phase 1 — Flash messaging inventory`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Shared upload 400 validation copy`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Shared upload 400 validation copy` is now complete. Creator/admin create routes prove the shared `unsupported format` `400` branch after draft creation succeeds, while route-level flash messaging and the lower-signal remaining `400` branches stay optional future plans.
+> `Route-level upload flash messaging` is now active. The shared and route-owned widget error-copy baselines stay frozen, and the next narrow pass is to inventory route-level upload/remove flash behavior on creator/admin resource create flows.
 
 > [!todo] Next Up
-> No in-plan `Next Up`. Wait for an explicit new parent plan; the closest optional follow-ups are route-level flash messaging or one of the lower-signal remaining `400` validation branches.
+> Inventory creator/admin upload/remove flash messaging on resource create flows, choose one route-owned proof slice, and keep lower-signal `400` validation branches out of scope.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -60,7 +60,8 @@ Parent Plan: `Shared upload 400 validation copy`
 | Route-Owned Upload Error Copy | Complete | creator/admin create routes now prove the route-owned draft-create failure copy before upload; backend upload-failure copy and route-level flash messaging remain separate optional follow-ups |
 | Route-Owned Backend Upload-Failure Copy | Complete | creator/admin create routes now prove the route-owned backend `500`/fallback upload-failure slice after draft creation succeeds; validation copy and route-level flash messaging remain optional follow-ups |
 | Route-Owned Upload Validation Copy | Complete | creator/admin create routes now prove the route-owned `404` upload-not-found slice after draft creation succeeds; use that as the frozen baseline for the next shared `400` validation pass |
-| Shared Upload 400 Validation Copy | Complete | creator/admin create routes now prove the shared `unsupported format` `400` branch after draft creation succeeds; remaining lower-signal `400` branches and route-level flash messaging stay optional follow-ups |
+| Shared Upload 400 Validation Copy | Complete | creator/admin create routes now prove the shared `unsupported format` `400` branch after draft creation succeeds; use that as the frozen baseline for any later lower-signal `400` follow-up |
+| Route-Level Upload Flash Messaging | Active | next narrow follow-up: inventory creator/admin route-owned upload/remove flash behavior and choose one safe proof slice before touching lower-signal `400` branches |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -72,8 +73,8 @@ Parent Plan: `Shared upload 400 validation copy`
 
 ## Progress
 
-Shared upload 400 validation copy
-`[██████████] 100%`
+Route-level upload flash messaging
+`[█░░░░░░░░░] 10%`
 
 ```mermaid
 flowchart TB
@@ -120,14 +121,14 @@ flowchart TB
   end
 
   subgraph Current
-    AB0["Plan open<br/>Done"]
-    AB1["Shared 400 inventory<br/>Done"]
-    AB2["First proof-slice decision<br/>Done"]
-    AB3["Route-scoped runtime slice<br/>Done"]
-    AB4["Close-out audit<br/>Done"]
+    AC0["Plan open<br/>Done"]
+    AC1["Flash messaging inventory<br/>Active"]
+    AC2["First proof-slice decision<br/>Pending"]
+    AC3["Route-scoped runtime slice<br/>Pending"]
+    AC4["Close-out audit<br/>Pending"]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4
 ```
 
 ## Daily Workflow
@@ -163,10 +164,10 @@ Rules:
 ## Current Phase
 
 ### Name
-Plan complete
+Phase 1 — Flash messaging inventory
 
 ### Parent Plan
-Shared upload 400 validation copy
+Route-level upload flash messaging
 
 ### Current Status Inside Parent Plan
 - Frozen widget/runtime baselines that remain in force:
@@ -176,58 +177,35 @@ Shared upload 400 validation copy
   - route-owned save-first copy on creator/admin create routes
   - route-owned backend `500`/fallback copy on creator/admin create routes
   - route-owned `404` upload-not-found copy on creator/admin create routes
-- This new parent plan isolates the next shared-safe validation bucket:
-  - creator/admin `400` upload validation strings surfaced through the widget error banner after upload starts
-  - service/route branches that may still be shared enough to normalize or prove once
-- Inventory is now closed for this parent plan:
-  - creator/admin still share the same service-layer `400` wording for:
-    - missing `resourceId`
-    - empty file
-    - unsupported mime type
-    - invalid generated key
-  - local oversize validation is already frozen as a widget-owned branch and is not part of this route-owned/shared-service inventory
-  - the safest first shared proof slice is `unsupported format`
-    - it still crosses the real upload route and service on both creator/admin
-    - it stays downstream of draft creation, so it does not mix with save-first semantics
-    - it avoids the route-owned `404` divergence that is already frozen
-    - it avoids the low-signal `invalid generated key` branch, which the UI cannot reach through normal sanitized filenames
-    - it is more representative than `resourceId is required`, which sits too close to the draft/save-first boundary
-- Locked proof slice for this parent plan:
-  - creator/admin shared `400` unsupported-format copy
-  - proof routes:
-    - `/dashboard/creator/resources/new`
-    - `/admin/resources/new`
-  - landed runtime behavior:
-    - creator/admin create routes both already surfaced the same shared
-      service copy through the frozen widget error banner
-    - the route-scoped proof now confirms that behavior after draft creation
-      succeeds on both routes without requiring a new widget/runtime patch
-  - kept out of scope:
-    - missing `resourceId`
-    - empty file
-    - invalid generated key
-    - route-level upload/remove flash messaging
+- Frozen proof baselines carried into this plan:
+  - shared `unsupported format` `400` proof on creator/admin create routes
+  - route-owned save-first proof on creator/admin create routes
+  - route-owned backend `500` fallback proof on creator/admin create routes
+  - route-owned `404` upload-not-found proof on creator/admin create routes
+- This new parent plan isolates the next route-owned feedback bucket:
+  - creator/admin flash or toast messaging after upload/remove side effects
+  - copy and timing that live outside the frozen widget-owned banner shell
+- Inventory now needs to answer:
+  - which upload/remove messages are route-owned on `/dashboard/creator/resources/new`
+  - which upload/remove messages are route-owned on `/admin/resources/new`
+  - whether creator/admin share any safe proof slice, or whether the first slice should stay route-specific
+  - whether create-flow flash timing can be proved without reopening lower-signal `400` validation branches
 - Keep these out of scope for this plan:
-  - route-level upload/remove flash messaging
-  - route-owned save-first / draft-create failure copy
-  - route-owned backend `500`/fallback copy
-  - route-owned `404` upload-not-found copy
-  - shared widget geometry/state-machine changes outside the `400` copy branch
+  - lower-signal `400` validation branches (`resourceId required`, empty file, invalid generated key)
+  - shared widget geometry/state-machine changes
+  - shared or route-owned upload banner copy already proved in prior plans
 
 ### Goal
-This plan is closed. It proved the shared `unsupported format` `400` upload
-validation slice on creator/admin create routes after draft creation succeeds,
-without reopening route-level flash messaging.
+Inventory creator/admin route-level upload/remove flash messaging, choose one
+route-owned proof slice, and keep the lower-signal `400` validation branches
+out of scope.
 
 ### Why this is the current phase
-- Inventory is now closed: creator/admin share the same service-layer wording
-  for the remaining route-relevant `400` branches.
-- `Unsupported format` is the safest first proof slice because it runs through
-  the real upload route/service on both sides without touching save-first,
-  route-owned `404`, or local oversize semantics.
-- This slice is now proved at runtime too, and the close-out audit found no
-  in-scope reason to keep this parent plan open for the remaining
-  lower-signal `400` branches.
+- The widget-owned and route-owned banner-copy plans are closed already.
+- What remains closest to the user-visible upload flow is route-level flash
+  behavior outside the widget shell.
+- Inventory has to close first so the next proof slice does not mix flash
+  timing/ownership with already-frozen validation-copy work.
 
 ### Definition of Done
 - [x] The prior admin and creator profile proof routes stay frozen as baselines
@@ -239,45 +217,45 @@ without reopening route-level flash messaging.
 - [x] The shared uploaded-card/replace/remove slice stays frozen as a baseline
 - [x] The shared success-banner slice stays frozen as a baseline
 - [x] The shared oversize-validation slice stays frozen as a baseline
-- [x] The route-owned `404` validation proof stays frozen as a baseline
-- [x] Shared `400` upload validation copy is inventoried across creator and admin consumers
-- [x] One shared-safe `400` proof slice is chosen
-- [x] That route-scoped runtime slice is landed and verified
-- [x] A close-out audit decides whether the parent plan should continue or close
+- [x] The shared `unsupported format` `400` proof stays frozen as a baseline
+- [x] The route-owned save-first / backend `500` / `404` upload-copy proofs stay frozen as baselines
+- [ ] Route-level upload/remove flash messaging is inventoried across creator/admin create flows
+- [ ] One route-owned flash proof slice is chosen
+- [ ] That route-scoped runtime slice is landed and verified
+- [ ] A close-out audit decides whether the parent plan should continue or close
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Plan open | complete | the route-owned `404` proof is now frozen and the next follow-up is isolated to shared `400` validation semantics |
-| 1 | Shared 400 inventory | complete | creator/admin share the remaining route-relevant `400` validation strings after upload starts |
-| 2 | First proof-slice decision | complete | the safe first slice is the shared `unsupported format` branch after draft creation succeeds |
-| 3 | Route-scoped runtime slice | complete | creator/admin create routes now prove the shared `unsupported format` `400` branch after draft creation succeeds |
-| 4 | Close-out audit | complete | route-level flash messaging and the remaining lower-signal `400` branches are optional future plans, not in-scope reasons to keep this plan open |
+| 0 | Plan open | complete | the previous shared and route-owned upload-copy proofs are now frozen and the next follow-up is isolated to route-level flash behavior |
+| 1 | Flash messaging inventory | active | inventory creator/admin upload/remove flash messaging outside the widget banner shell |
+| 2 | First proof-slice decision | pending | choose one safe route-owned flash slice |
+| 3 | Route-scoped runtime slice | pending | land and verify the chosen flash slice |
+| 4 | Close-out audit | pending | close cleanly or split remaining route-owned feedback into a narrower future plan |
 
 ---
 
 ## Current Goal
 
 1. keep the shared widget parity baselines frozen
-2. keep the creator/admin `unsupported format` proof as the closed shared `400` baseline for this plan
-3. leave route-level flash messaging and the remaining lower-signal `400` branches to optional future plans
+2. inventory creator/admin route-level upload/remove flash behavior
+3. leave lower-signal `400` validation branches to optional future plans
 
 ---
 
 ## In Progress
 
 - [x] Keep shared widget parity baselines frozen
-- [x] Open a new parent plan for shared upload `400` validation copy
-- [x] Inventory shared creator/admin `400` validation copy across upload routes
-- [x] Choose the first shared-safe `400` proof slice
-- [x] Land the creator/admin `unsupported format` proof slice
+- [x] Open a new parent plan for route-level upload flash messaging
 
 ---
 
 ## Next Up
 
-- [x] No in-plan work remains for this parent plan
+- [ ] Inventory creator/admin upload/remove flash messaging on create flows
+- [ ] Choose one route-owned flash proof slice
+- [ ] Keep lower-signal `400` validation branches out of scope
 
 ---
 
@@ -310,7 +288,6 @@ Use this section only for real blockers:
 ### DS Runtime Follow-ups
 - [ ] Open a separate parent plan for `creator application` if the next goal is widening the creator application form
 - [ ] Open a separate parent plan for `creator AI draft helpers` if the next goal is widening AI-assisted authoring shells
-- [ ] Open a separate parent plan for route-level upload/remove flash messaging if the next goal is widening route-owned feedback outside the shared widget shell
 
 ### Brand / Platform
 - [ ] Re-run perf measurements after major listing/detail/search changes and update thresholds intentionally
@@ -380,6 +357,7 @@ Add only short, high-signal entries here.
 - 2026-04-29: Open a new parent plan `Shared upload 400 validation copy` instead of jumping straight to route-level flash messaging. The route-owned `404` upload-not-found branch is now frozen on creator/admin create routes, so the next narrow bucket is the remaining shared `400` validation strings surfaced through the widget error banner after upload starts. Flash messaging stays explicitly out of scope until shared `400` inventory is closed and one safe proof slice is chosen.
 - 2026-04-29: Inventory for `Shared upload 400 validation copy` is now closed. Creator/admin still share the same service-layer `400` wording for missing `resourceId`, empty file, unsupported mime type, and invalid generated key after upload starts; local oversize validation remains a separate frozen widget-owned branch. The safest first shared proof slice is `unsupported format` because it runs through the real upload route/service on both sides after draft creation succeeds, stays clear of the route-owned `404` divergence, and avoids the low-signal `invalid generated key` branch that normal sanitized filenames cannot reach through the UI. Route-level flash messaging remains out of scope.
 - 2026-04-29: `Shared upload 400 validation copy` is now closed. `/dashboard/creator/resources/new` and `/admin/resources/new` both prove the shared `unsupported format` `400` branch after draft creation succeeds, and the proof confirmed the existing shared service copy already surfaces through the frozen widget error banner without any new runtime patch. The required close-out audit found no in-scope reason to keep this parent plan open; route-level flash messaging plus the lower-signal remaining `400` branches (`resourceId required`, empty file, invalid generated key) remain optional future plans.
+- 2026-04-29: Open a new parent plan `Route-level upload flash messaging` instead of reopening lower-signal `400` validation branches first. The shared `unsupported format` proof plus the route-owned save-first / backend `500` / `404` upload-copy proofs are now frozen on creator/admin create routes, so the next narrow ownership bucket is flash or toast feedback that lives outside the widget banner shell. Lower-signal `400` branches stay explicitly out of scope until flash-message inventory is closed and one safe proof slice is chosen.
 - 2026-04-29: Inventory for `Route-owned upload validation copy` is now closed. Creator/admin still surface validation responses through the shared widget error banner after upload starts, but most `400` validation strings are shared English service copy on both sides (`resourceId` missing, empty file, oversize, unsupported format, invalid generated key). The first clear route-owned divergence inside validation copy is `404`: admin upload returns `Resource not found.`, while creator upload returns `ไม่พบ resource ที่ต้องการอัปโหลดไฟล์`. The safest first proof slice is therefore the creator/admin `404` upload-not-found path after draft creation succeeds, while route-level flash messaging stays out of scope.
 - 2026-04-29: Open a new parent plan `Route-owned upload validation copy` instead of jumping straight to route-level flash messaging. Save-first and backend `500` fallback copy are now both frozen on creator/admin create routes, so the next narrow ownership bucket is the route/service validation copy (`400/404`) that appears after draft creation succeeds. Flash messaging stays explicitly out of scope until validation-copy inventory is complete and one safe proof slice is chosen.
 - 2026-04-29: `Route-owned backend upload-failure copy` is now closed. `/dashboard/creator/resources/new` and `/admin/resources/new` both prove the backend `500`/fallback upload-failure slice after draft creation succeeds: creator create continues to surface the Thai `/api/creator/resources/upload` fallback, admin create now uses an upload-specific English fallback from `/api/admin/resources/upload`, and the shared widget error banner stays frozen while surfacing those route-owned messages. The required close-out audit found no in-scope reason to keep this parent plan open; validation copy (`400/404`) and route-level flash messaging remain optional future plans.
