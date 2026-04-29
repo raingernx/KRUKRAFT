@@ -378,9 +378,17 @@ Use this order when DS docs disagree:
       - the canonical `Select` contract intentionally reuses the shared field
         shell posture (`radius/sm = 8px`, shared height ladder, helper/error
         copy below the shell) and only layers on the explicit caret affordance
-      - runtime parity is still pending; `/admin/activity` and `/admin/audit`
-        filter families are the first proof-route candidates once the plan
-        advances out of Figma mapping
+      - `Textarea / Foundations / Light` (`1019:312`) and
+        `Textarea / Foundations / Dark` (`1019:433`) are now live too
+      - the verified reusable nodes are `Textarea / State`
+        (`1019:386`, `1019:507`)
+      - the canonical `Textarea` contract keeps the same quiet field-shell
+        target and helper/error posture, but leaves rows, counters, max
+        length, and resize behavior route-owned instead of inventing a size
+        ladder
+      - runtime parity is still pending; `/admin/settings` is now the first
+        proof-route family because it mounts `Input`, `Select`, and `Textarea`
+        together without product-owned search overrides
     - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
       component sets for the shared field ladder
     - runtime code still carries an older larger comfortable-radius branch for

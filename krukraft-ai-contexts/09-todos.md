@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Select/Textarea runtime parity preparation`
 
 > [!info] Current Phase
-> `Phase 3 — Canonical Figma mapping`
+> `Phase 5 — Runtime parity slice`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Select/Textarea runtime parity preparation`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Select/Textarea runtime parity preparation` is active. Readiness inventory and the source-of-truth decision are now locked, and the first canonical Figma slice (`Select`) is landed. `Textarea` is still pending before any runtime parity rollout should start.
+> `Select/Textarea runtime parity preparation` is active. Readiness inventory, the source-of-truth decision, both canonical Figma slices, and the first proof-route lock are now complete. The only in-plan work left is the narrow runtime parity slice.
 
 > [!todo] Next Up
-> Finish the canonical Figma mapping by landing `Textarea`, then choose the first proof-route family before any runtime parity patch begins.
+> Run the first runtime parity slice on `/admin/settings`, then verify that route family before widening beyond it.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -44,7 +44,7 @@ Parent Plan: `Select/Textarea runtime parity preparation`
 | Dense Action Holdout Lockdown | Complete | remaining dense admin/creator action clusters are now explicit compact holdouts, with `/admin/resources` and `/admin/tags` proved at runtime |
 | Family-by-family DS Runtime Adoption | Complete | `Badge` runtime adoption and the narrow `SearchInput` runtime parity slice are both closed; the plan-level close-out audit found no in-scope reason to keep this parent plan open |
 | Field Shell Runtime Residual Follow-up | Complete | the shared `Input` radius gap and `SearchInput onClear` route-proof gap are both closed after one narrow follow-up slice |
-| Select/Textarea Runtime Parity Preparation | Active | readiness is locked and `Select` is now mapped in the canonical Figma file; `Textarea` still needs its matching slice before runtime parity starts |
+| Select/Textarea Runtime Parity Preparation | Active | readiness is locked, both sibling controls now have canonical Figma slices, and `/admin/settings` is the first proof-route family before runtime parity starts |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -57,7 +57,7 @@ Parent Plan: `Select/Textarea runtime parity preparation`
 ## Progress
 
 Select/Textarea runtime parity preparation
-`[█████░░░░░] 55%`
+`[████████░░] 80%`
 
 ```mermaid
 flowchart TB
@@ -108,7 +108,7 @@ flowchart TB
     P1["Readiness inventory<br/>Done"]
     P2["Source-of-truth decision<br/>Done"]
     P3["Select Figma mapping slice<br/>Done"]
-    P4["Textarea Figma mapping slice<br/>Pending"]
+    P4["Textarea Figma mapping slice<br/>Done"]
     P5["Runtime parity slice<br/>Pending"]
   end
 
@@ -148,7 +148,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 3 — Canonical Figma mapping
+Phase 5 — Runtime parity slice
 
 ### Parent Plan
 Select/Textarea runtime parity preparation
@@ -167,8 +167,11 @@ Select/Textarea runtime parity preparation
     - `Select / Foundations / Dark` now lives at `994:421`
     - the verified reusable nodes are `Select / State`
       (`994:342`, `994:519`) and `Select / Size` (`994:366`, `994:543`)
-  - `Textarea` still remains `pending-figma` in `figma-component-map.md`, so
-    the parent plan cannot advance to runtime parity yet
+  - `Textarea` is no longer `pending-figma` either:
+    - `Textarea / Foundations / Light` now lives at `1019:312`
+    - `Textarea / Foundations / Dark` now lives at `1019:433`
+    - the verified reusable nodes are `Textarea / State`
+      (`1019:386`, `1019:507`)
 - This parent plan is intentionally a preparation pass first:
   - lock both controls as Figma-verified DS primitives before runtime parity
   - choose the first proof-route family only after those canonical boards
@@ -181,16 +184,21 @@ Select/Textarea runtime parity preparation
   - `Select` intentionally inherits the shared field-shell grammar proven in
     `Input / Search` (`radius/sm = 8px`, shared ladder, helper/error copy
     below the shell) and only adds the explicit caret affordance
-  - `/admin/activity` and `/admin/audit` are the first proof-route candidates
-    for that runtime slice once `Textarea` is mapped too
+  - `Textarea` intentionally inherits the same quiet field-shell target but
+    leaves rows, counters, max length, and resize behavior route-owned instead
+    of inventing a reusable size ladder
+  - `/admin/settings` is now the locked first proof-route family because it
+    mounts `Input`, `Select`, and `Textarea` together without product-owned
+    search overrides
 
 ### Goal
-Finish the canonical Figma mapping for `Select` / `Textarea`, then choose a
-narrow first proof-route family before any runtime parity rollout.
+Start the narrow runtime parity slice from `/admin/settings`, now that both
+`Select` and `Textarea` have canonical Figma coverage.
 
 ### Why this is the current phase
-- The source-of-truth decision is done; the remaining risk is starting runtime
-  parity before both sibling controls have canonical Figma coverage.
+- The source-of-truth and canonical mapping work are done; the remaining risk
+  is starting runtime parity from the wrong route family or widening beyond a
+  shared-form surface too early.
 
 ### Definition of Done
 - [x] Live `Select` consumers are inventoried by route family
@@ -198,8 +206,9 @@ narrow first proof-route family before any runtime parity rollout.
 - [x] The source-of-truth decision is recorded:
       `Figma-first DS primitive` or `code-owned documented primitive`
 - [x] The first canonical Figma mapping slice (`Select`) is landed
-- [ ] `Textarea` has a matching canonical Figma slice
-- [ ] The next in-plan parity slice is chosen from a narrow first proof route
+- [x] `Textarea` has a matching canonical Figma slice
+- [x] The next in-plan parity slice is chosen from a narrow first proof route
+- [ ] The first route-scoped runtime parity slice is landed
 
 ### Phase Map
 
@@ -209,17 +218,16 @@ narrow first proof-route family before any runtime parity rollout.
 | 1 | Readiness inventory | complete | inventory confirms `Select` and `Textarea` are widely reused across admin/creator/product forms |
 | 2 | Source-of-truth decision | complete | both controls are now locked as `Figma-first DS primitives`, not code-owned exceptions |
 | 3 | First Figma mapping slice | complete | `Select` now has canonical light/dark foundations plus verified `State` and `Size` sets |
-| 4 | Remaining Figma mapping slice | pending | `Textarea` still needs canonical light/dark coverage before runtime parity can start |
-| 5 | Runtime parity slice or close-out | pending | choose the first proof route only after both sibling controls are mapped |
+| 4 | Remaining Figma mapping slice | complete | `Textarea` now has canonical light/dark coverage plus verified `Textarea / State` sets |
+| 5 | Runtime parity slice or close-out | pending | `/admin/settings` is now locked as the first proof route; land the narrow parity patch there before deciding whether the parent plan should close or continue |
 
 ---
 
 ## Current Goal
 
-1. land the `Textarea` canonical Figma slice
-2. choose the first proof-route family for `Select`
-3. decide whether runtime parity should start in the same parent plan
-4. keep runtime patches blocked until both sibling controls are mapped
+1. use `/admin/settings` as the first proof-route family
+2. land the narrow runtime parity slice for shared `Select` / `Textarea`
+3. keep product-owned or creator-only field overrides out of the first slice
 
 ---
 
@@ -230,16 +238,17 @@ narrow first proof-route family before any runtime parity rollout.
 - [x] Inventory live `Textarea` consumers
 - [x] Record the source-of-truth decision
 - [x] Land the first canonical Figma slice for `Select`
-- [ ] Land the canonical Figma slice for `Textarea`
-- [ ] Decide whether a narrow runtime parity slice should start in this plan
+- [x] Land the canonical Figma slice for `Textarea`
+- [x] Decide whether a narrow runtime parity slice should start in this plan
+- [ ] Land the first route-scoped runtime parity slice
 
 ---
 
 ## Next Up
 
-- [ ] Land `Textarea / Foundations / Light`
-- [ ] Land `Textarea / Foundations / Dark`
-- [ ] Lock the first proof-route family after both slices land
+- [ ] Audit `/admin/settings` field consumers against the canonical `Select` / `Textarea` boards
+- [ ] Land the first runtime parity patch from `/admin/settings`
+- [ ] Verify `/admin/settings` at runtime before widening beyond that family
 
 ---
 
@@ -335,6 +344,7 @@ Add only short, high-signal entries here.
 
 - 2026-04-29: Open a new parent plan `Select/Textarea runtime parity preparation` instead of jumping straight into another runtime rollout. The first inventory pass already shows both primitives are widely used in admin/creator flows but still `pending-figma` in the canonical registry, so the immediate job is to lock the source-of-truth decision before patching runtime shells. That decision is now recorded too: both controls should be treated as `Figma-first DS primitives`, not code-owned exceptions, so the next in-plan work is canonical Figma mapping rather than a blind runtime shell edit.
 - 2026-04-29: The first canonical mapping slice of `Select/Textarea runtime parity preparation` is now landed. `Select` now has dedicated light/dark `Select / Foundations` boards plus verified `Select / State` and `Select / Size` sets in the canonical Figma file, intentionally derived from the shared `Input / Search` shell grammar with the explicit caret affordance layered on top. The plan stays open because `Textarea` is still pending, and `/admin/activity` + `/admin/audit` are only route-proof candidates for the later runtime slice, not permission to patch code yet.
+- 2026-04-29: The sibling `Textarea` canonical mapping is now landed too. `Textarea / Foundations / Light` (`1019:312`) and `Textarea / Foundations / Dark` (`1019:433`) now exist with verified `Textarea / State` sets (`1019:386`, `1019:507`) and rendered screenshot QA, while rows, counters, max length, and resize behavior stay route-owned instead of turning into a fake size ladder. With both controls mapped, the plan now locks `/admin/settings` as the first proof-route family because it mounts shared `Input`, `Select`, and `Textarea` shells together without product-owned search overrides.
 - 2026-04-29: `Field shell runtime residual follow-up` is now closed. The final shared field-shell drift did not require another broad family rollout: `Input.tsx` now enforces canonical `radius/sm (8px)` directly, `/admin/users` proves that shared field shell, and the old `SearchInput onClear` proof gap narrowed to a route-hydration issue instead of a primitive bug. `/dashboard/library` now proves the hydrated topbar clear action too, so no in-scope blocker remains.
 - 2026-04-29: Open a new parent plan `Field shell runtime residual follow-up` instead of silently reopening the closed family-by-family rollout. Scope it tightly to the two known leftovers: `Input.tsx` still carrying the larger comfortable-radius branch and `SearchInput` clear-action visibility still depending on props alone in some controlled consumers.
 - 2026-04-29: `Family-by-family DS runtime adoption` is now closed. The second family did not widen into `Input.tsx`; inventory showed that the smallest safe runtime slice was `SearchInput variant="default"` first. Runtime now enforces the canonical `radius/sm (8px)` shell on that shared branch, route proof passed on `/dashboard/library` for both the `56px / 8px` toolbar search and the `44px / 8px` topbar override, and the close-out audit found no in-scope reason to keep the parent plan open. Any wider `Input` parity or product-bound search-shell work should start as a new plan.

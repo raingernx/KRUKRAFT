@@ -451,8 +451,18 @@ At a high level:
       shell grammar (`radius/sm = 8px`, shared height ladder, helper/error copy
       below the shell) and only adds the explicit caret affordance; option
       lists remain route-owned
+    - `Textarea / Foundations / Light` and `Textarea / Foundations / Dark` now
+      live under `1019:312` and `1019:433`
+    - the verified reusable nodes are `Textarea / State`
+      (`1019:386`, `1019:507`)
+    - the canonical `Textarea` contract reuses the same quiet field-shell
+      target and helper/error posture, but keeps rows, counters, max length,
+      and resize behavior route-owned instead of inventing a fake size ladder
     - runtime parity is not live yet, so treat those new boards as the design
-      base for the next adoption slice rather than as proof of code parity
+      base for the next adoption slice rather than as proof of code parity;
+      `/admin/settings` is now the first proof-route family because it mounts
+      `Input`, `Select`, and `Textarea` together without product-owned search
+      overrides
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:

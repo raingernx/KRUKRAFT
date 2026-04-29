@@ -171,6 +171,14 @@ When this file conflicts with code, the code wins.
   helper/error posture, and field-size ladder while keeping option lists
   route-owned. Treat those boards as the design base for the upcoming runtime
   parity pass.
+- `Textarea` now has matching light/dark `Textarea / Foundations` boards plus
+  dedicated `Textarea / State` sets in the canonical file. The multiline
+  contract intentionally keeps the same quiet field shell target and
+  `radius/sm (8px)` geometry, but it does not invent a reusable size ladder:
+  rows, counters, resize behavior, and long-form affordances stay route-owned.
+  Treat `/admin/settings` as the first proof-route family because it mounts
+  `Input`, `Select`, and `Textarea` together without product-owned search
+  overrides.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may
