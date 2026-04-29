@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Creator delivery preview parser`
 
 > [!info] Current Phase
-> `Phase 1 — Preview parser inventory`
+> `Plan complete`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Creator delivery preview parser`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Creator delivery preview parser` is active. The next narrow job is to inventory the bulk preview URL editor and parser behavior before deciding whether any shared textarea parity change is safe.
+> `Creator delivery preview parser` is closed. The bulk preview editor is now proved as a route-owned composite parser that already sits on the shared textarea shell.
 
 > [!todo] Next Up
-> Inventory the bulk preview URL editor first, then choose one parser-safe route-scoped slice before patching runtime.
+> No in-plan `Next Up`. Wait for an explicit new parent plan before widening upload controls, creator application, or AI draft helpers.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -50,7 +50,7 @@ Parent Plan: `Creator delivery preview parser`
 | Creator Select/Textarea Widening | Complete | `/dashboard/creator/profile` now proves the first creator-owned widened follow-up; heavier creator buckets stay deferred to future plans |
 | Creator Resource Editor Field-Shell Widening | Complete | `/dashboard/creator/resources/new` and edit now prove the metadata slice; delivery/previews stays deferred as a separate future plan |
 | Creator Delivery/Previews Shell Widening | Complete | linked URL editor inputs are widened and proved on `/dashboard/creator/resources/new` and edit; bulk preview parsing and upload controls stay deferred to future plans |
-| Creator Delivery Preview Parser | Active | inventory the bulk preview URL editor and parser/apply state inside `/dashboard/creator/resources/*`, then choose one safe slice without reopening upload controls or metadata buckets |
+| Creator Delivery Preview Parser | Complete | create/edit route proof confirms the bulk preview URL editor stays a route-owned composite parser on top of the shared `Textarea` shell; upload controls remain deferred |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -63,7 +63,7 @@ Parent Plan: `Creator delivery preview parser`
 ## Progress
 
 Creator delivery preview parser
-`[██░░░░░░░░] 20%`
+`[██████████] 100%`
 
 ```mermaid
 flowchart TB
@@ -111,10 +111,10 @@ flowchart TB
 
   subgraph Current
     P0["Plan open<br/>Done"]
-    P1["Preview parser inventory<br/>Pending"]
-    P2["First proof-slice decision<br/>Pending"]
-    P3["Route-scoped runtime slice<br/>Pending"]
-    P4["Close-out audit<br/>Pending"]
+    P1["Preview parser inventory<br/>Done"]
+    P2["First proof-slice decision<br/>Done"]
+    P3["Route-scoped runtime slice<br/>Done"]
+    P4["Close-out audit<br/>Done"]
   end
 
   D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> P0 --> P1 --> P2 --> P3 --> P4
@@ -153,7 +153,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 1 — Preview parser inventory
+Plan complete
 
 ### Parent Plan
 Creator delivery preview parser
@@ -221,41 +221,56 @@ Creator delivery preview parser
   - `Apply URLs` performs validation + dedupe + cover-order side effects
   - parser state is tied to `previewUrlError`, `bulkPreviewOpen`, and preview ordering
   - the same route still mounts upload/external delivery controls nearby, but they are not part of this plan
+- Inventory is now closed:
+  - the shell itself is already the shared `Textarea`
+  - the route-owned behavior lives in:
+    - line-splitting parser
+    - invalid URL validation
+    - apply-button enable/disable state
+    - cover-first ordering and persistence
+- The first proof slice is now locked and complete:
+  - new route proves invalid parser/error state without persistence
+  - edit route proves valid apply + persisted cover ordering
+- The close-out audit closes this parent plan:
+  - no in-scope runtime shell patch was needed
+  - the bulk preview editor should stay a route-owned composite parser on top
+    of the shared `Textarea` shell
+  - `FileUploadWidget` and the delivery-source toggle remain separate future-plan material
 
 ### Goal
-Inventory the bulk preview URL editor and choose one parser-safe route-scoped widening slice.
+This parent plan is complete.
 
 ### Why this is the current phase
-- The linked URL editor slice is already frozen, so the next safe step is to
-  isolate the parser-heavy textarea/editor behavior before touching any upload
-  controls.
+- The linked URL editor slice is already frozen, and route proof now confirms
+  the bulk preview editor already sits on the correct shared shell while its
+  parser/apply logic stays route-owned.
 
 ### Definition of Done
 - [x] The prior admin and creator profile proof routes stay frozen as baselines
 - [x] The creator editor metadata slice stays frozen as a baseline
 - [x] The linked URL editor slice stays frozen as a baseline
-- [ ] Preview parser/editor behavior is grouped into route-owned sub-buckets
-- [ ] One parser-safe proof slice is chosen
-- [ ] That preview parser route-scoped runtime slice is landed and verified
-- [ ] A close-out audit decides whether the parent plan should continue or close
+- [x] Preview parser/editor behavior is grouped into route-owned sub-buckets
+- [x] One parser-safe proof slice is chosen
+- [x] That preview parser route-scoped runtime slice is landed and verified
+- [x] A close-out audit decides whether the parent plan should continue or close
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
 | 0 | Plan open | complete | the bulk preview URL parser/editor is now isolated into its own parent plan |
-| 1 | Preview parser inventory | pending | group textarea parsing, apply-state, and preview-order side effects inside `/dashboard/creator/resources/*` |
-| 2 | First proof-slice decision | pending | choose one parser-safe slice before patching runtime |
-| 3 | Route-scoped runtime slice | pending | land and verify the chosen preview parser bucket |
-| 4 | Close-out audit | pending | decide whether the parent plan should continue or close |
+| 1 | Preview parser inventory | complete | grouped textarea parsing, apply-state, and preview-order side effects inside `/dashboard/creator/resources/*` |
+| 2 | First proof-slice decision | complete | the safe slice is parser-state proof on create/edit without widening upload controls |
+| 3 | Route-scoped runtime slice | complete | create/edit route proof confirms the bulk preview editor already sits on the shared `Textarea` shell |
+| 4 | Close-out audit | complete | no in-scope shell patch was required, so the parent plan closes at `100%` |
 
 ---
 
 ## Current Goal
 
-1. inventory the bulk preview URL parser/editor
-2. keep the linked URL editor slice frozen as the baseline beside it
-3. choose one parser-safe slice before patching runtime
+1. keep the creator metadata, linked-URL, and preview-parser baselines frozen
+2. defer upload controls to a separate future plan
+3. wait for an explicit new parent plan before widening creator delivery controls again
 
 ---
 
@@ -263,17 +278,17 @@ Inventory the bulk preview URL editor and choose one parser-safe route-scoped wi
 
 - [x] Open a new parent plan for creator delivery preview parser
 - [x] Keep `/dashboard/creator/profile`, creator metadata, and creator linked-URL slices as frozen baselines
-- [ ] Group preview parser/editor behavior by route-owned sub-bucket
-- [ ] Choose the first parser-safe preview-editor slice
-- [ ] Land the next route-scoped preview parser slice
+- [x] Group preview parser/editor behavior by route-owned sub-bucket
+- [x] Choose the first parser-safe preview-editor slice
+- [x] Land the next route-scoped preview parser slice
 
 ---
 
 ## Next Up
 
-- [ ] Inventory the bulk preview URL editor inside the creator resource editor family
-- [ ] Choose one parser-safe proof slice before runtime patching
-- [ ] Keep `FileUploadWidget` and the delivery-source toggle out of scope for this plan
+- [x] Inventory the bulk preview URL editor inside the creator resource editor family
+- [x] Choose one parser-safe proof slice before runtime patching
+- [x] Keep `FileUploadWidget` and the delivery-source toggle out of scope for this plan
 
 ---
 
@@ -390,6 +405,7 @@ Add only short, high-signal entries here.
 - 2026-04-29: Creator delivery/previews inventory is now closed too. The bucket splits into two safe classes and two deferred composites: per-image preview URL rows and the external file URL editor both still use shared `Input` shells with route-owned surrounding chrome, while the bulk preview URL textarea remains a route-owned parser/apply editor and the upload flow stays inside `FileUploadWidget` plus the delivery-source toggle. The first runtime slice is therefore locked to `linked URL editors`, leaving the parser-heavy textarea and upload controls deferred unless a later close-out audit justifies a separate future plan.
 - 2026-04-29: `Creator delivery/previews shell widening` is now closed. `/dashboard/creator/resources/new` and edit now prove the linked URL editor slice: preview image URL rows and the external file URL editor both keep the shared `56px / 8px` `Input` shell, while the close-out audit intentionally defers the bulk preview parser and `FileUploadWidget`/delivery-source controls into separate future plans instead of stretching this parent plan beyond the safe shared-shell slice.
 - 2026-04-29: Open a new parent plan `Creator delivery preview parser` instead of stretching the closed linked-URL plan or mixing parser work with upload controls. The new frozen baseline is the creator editor metadata + linked-URL proof routes, while the next in-plan step is to inventory the bulk preview URL textarea as its own parser/apply bucket before any runtime patching.
+- 2026-04-29: `Creator delivery preview parser` is now closed. Route proof on `/dashboard/creator/resources/new` and edit confirms the bulk preview editor already sits on the shared `Textarea` shell while invalid-URL validation, apply-button state, line parsing, dedupe, cover ordering, and persistence remain route-owned composite behavior. The close-out audit found no in-scope runtime shell patch to land, so only `FileUploadWidget` / delivery-source controls remain as future-plan work.
 - 2026-04-29: `Field shell runtime residual follow-up` is now closed. The final shared field-shell drift did not require another broad family rollout: `Input.tsx` now enforces canonical `radius/sm (8px)` directly, `/admin/users` proves that shared field shell, and the old `SearchInput onClear` proof gap narrowed to a route-hydration issue instead of a primitive bug. `/dashboard/library` now proves the hydrated topbar clear action too, so no in-scope blocker remains.
 - 2026-04-29: Open a new parent plan `Field shell runtime residual follow-up` instead of silently reopening the closed family-by-family rollout. Scope it tightly to the two known leftovers: `Input.tsx` still carrying the larger comfortable-radius branch and `SearchInput` clear-action visibility still depending on props alone in some controlled consumers.
 - 2026-04-29: `Family-by-family DS runtime adoption` is now closed. The second family did not widen into `Input.tsx`; inventory showed that the smallest safe runtime slice was `SearchInput variant="default"` first. Runtime now enforces the canonical `radius/sm (8px)` shell on that shared branch, route proof passed on `/dashboard/library` for both the `56px / 8px` toolbar search and the `44px / 8px` topbar override, and the close-out audit found no in-scope reason to keep the parent plan open. Any wider `Input` parity or product-bound search-shell work should start as a new plan.

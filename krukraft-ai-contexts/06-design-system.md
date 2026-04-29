@@ -416,10 +416,15 @@ Use this order when DS docs disagree:
         `/dashboard/creator/resources/new` and edit keep the preview image URL
         rows plus the external file URL editor on the same shared
         `56px / 8px` `Input` shell
+      - the bulk preview parser follow-up is now closed too:
+        `/dashboard/creator/resources/new` and edit prove that the bulk
+        preview textarea already sits on the shared `Textarea` shell, while
+        parsing, validation, apply-state, and cover-order side effects stay
+        route-owned composite behavior
       - the remaining delivery/upload zone stays deferred after that:
-        the bulk preview URL textarea is still a route-owned composite editor,
-        and `FileUploadWidget` plus the delivery-source toggle remain
-        product-owned delivery controls entangled with preview parsing
+        `FileUploadWidget` plus the delivery-source toggle remain
+        product-owned delivery controls outside the shared field-shell
+        contract
     - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
       component sets for the shared field ladder
     - runtime code still carries an older larger comfortable-radius branch for

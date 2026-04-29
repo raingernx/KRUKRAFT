@@ -204,8 +204,11 @@ When this file conflicts with code, the code wins.
   creator follow-up is now closed too: the delivery/previews linked URL editor
   inputs on `/dashboard/creator/resources/new` and edit now keep the same
   shared `56px / 8px` field shell, while the bulk preview URL textarea remains
-  a route-owned composite editor and `FileUploadWidget` stays a product-owned
-  delivery control.
+  a route-owned composite editor. The follow-up parser-only proof is now
+  closed too: the bulk preview editor still uses the shared `Textarea` shell
+  on create/edit routes, but parsing, validation, apply-state, and cover-order
+  side effects remain route-owned behavior. `FileUploadWidget` still stays a
+  product-owned delivery control.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may
