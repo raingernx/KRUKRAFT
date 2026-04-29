@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Save, Rocket, X, Eye } from "@/lib/icons";
 import { Button } from "@/design-system";
 
@@ -10,7 +11,7 @@ interface CreatorPublishActionsProps {
   error: string | null;
   onSaveDraft: () => void;
   onPublish: () => void;
-  onCancel: () => void;
+  cancelHref: string;
   /** When provided, renders a "Preview as buyer" button before Publish. */
   onPreview?: () => void;
 }
@@ -21,7 +22,7 @@ export function CreatorPublishActions({
   error,
   onSaveDraft,
   onPublish,
-  onCancel,
+  cancelHref,
   onPreview,
 }: CreatorPublishActionsProps) {
   return (
@@ -45,15 +46,11 @@ export function CreatorPublishActions({
         </div>
 
         <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-          <Button
-            type="button"
-            onClick={onCancel}
-            disabled={saving}
-            variant="ghost"
-            size="lg"
-            leftIcon={<X className="h-4 w-4" />}
-          >
-            <span className="hidden sm:inline">Cancel</span>
+          <Button asChild disabled={saving} variant="ghost" size="lg">
+            <Link href={cancelHref}>
+              <X className="h-4 w-4" />
+              <span className="hidden sm:inline">Cancel</span>
+            </Link>
           </Button>
 
           <Button

@@ -113,7 +113,7 @@ test("dashboard creator editor route family keeps inventory, new, and edit flows
       page.getByRole("heading", { name: /^New resource$/i }),
     ).toBeVisible();
 
-    await page.getByRole("button", { name: /^Cancel$/i }).click();
+    await page.getByRole("link", { name: /^Cancel$/i }).click();
     await expect(page).toHaveURL(/\/dashboard\/creator\/resources$/);
 
     const ownedRow = page.locator("tbody tr", {

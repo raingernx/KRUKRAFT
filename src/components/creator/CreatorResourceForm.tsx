@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ExternalLink, ImagePlus, Link2, Plus, Trash2 } from "@/lib/icons";
@@ -1432,13 +1433,8 @@ export function CreatorResourceForm({
               )}
             </div>
             <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-              <Button
-                type="button"
-                variant="ghost"
-                size="lg"
-                onClick={() => router.push(routes.dashboardCreatorResources)}
-              >
-                Cancel
+              <Button asChild variant="ghost" size="lg">
+                <Link href={routes.dashboardCreatorResources}>Cancel</Link>
               </Button>
               <Button type="submit" size="lg" loading={saving}>
                 Save changes
@@ -1456,7 +1452,7 @@ export function CreatorResourceForm({
           error={error}
           onSaveDraft={() => submitWithStatus("DRAFT")}
           onPublish={() => submitWithStatus("PUBLISHED")}
-          onCancel={() => router.push(routes.dashboardCreatorResources)}
+          cancelHref={routes.dashboardCreatorResources}
           onPreview={() => setPreviewOpen(true)}
         />
       )}
