@@ -312,14 +312,14 @@ When this file conflicts with code, the code wins.
 - The canonical Figma `Badge` base now covers `neutral`, `info`, `success`,
   `warning`, `featured`, `destructive`, and `outline` through dedicated light
   and dark `Badge / Foundations` boards.
-- Runtime-only or product-bound badge variants (`owned`, `new`, `free`,
-  `default`, `secondary`, `ghost`, and `link`) now sit outside that canonical
-  Figma set until they are either remapped deliberately or removed from the
-  shared primitive contract.
-- Runtime `Badge.tsx` now mirrors the canonical `warning`/`featured` split for
-  the approved semantic set while still exposing broader legacy/product
-  variants; keep those extra variants outside the canonical Figma contract
-  until a deliberate remap or cleanup pass happens.
+- The runtime `Badge` primitive now stays on the same canonical set as Figma:
+  `neutral`, `info`, `success`, `warning`, `featured`, `destructive`, and
+  `outline`.
+- Older runtime-only badge aliases (`owned`, `new`, `free`, `default`,
+  `secondary`, `ghost`, and `link`) have been cleaned out of the primitive
+  contract; if a future route needs one of those ideas again, it should be
+  remapped deliberately onto the canonical badge set or moved into a separate
+  product-bound component instead of reopening ad-hoc badge variants.
 - `Badge` still carries one explicit typography gap in Figma: the source set
   uses a narrow local `12/16` label recipe because the typography scale does
   not yet provide an xs label token.

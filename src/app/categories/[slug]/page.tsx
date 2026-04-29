@@ -136,7 +136,7 @@ async function CategoryResourceCount({
 
   return (
     <div className="flex items-center gap-3">
-      <Badge variant="secondary" className="bg-white/20 text-white ring-white/20">
+      <Badge variant="neutral" className="bg-white/20 text-white ring-white/20">
         <BookOpen className="mr-1.5 h-3 w-3" />
         {total} resource{total !== 1 ? "s" : ""}
       </Badge>

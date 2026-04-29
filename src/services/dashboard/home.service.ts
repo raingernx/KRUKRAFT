@@ -28,7 +28,7 @@ export interface DashboardHomeContinueLearningItem {
   meta: string;
   secondaryLabel: string;
   statusLabel: string;
-  statusVariant: "neutral" | "new";
+  statusVariant: "neutral" | "info";
   previewUrl: string | null;
 }
 
@@ -285,7 +285,7 @@ export async function getDashboardHomeData(input: {
               statusLabel:
                 purchase.createdAt.getTime() >= weekAgo ? "New" : "Ready",
               statusVariant:
-                purchase.createdAt.getTime() >= weekAgo ? "new" : "neutral",
+                purchase.createdAt.getTime() >= weekAgo ? "info" : "neutral",
               previewUrl: purchase.resource.previewUrl ?? null,
             })),
           };

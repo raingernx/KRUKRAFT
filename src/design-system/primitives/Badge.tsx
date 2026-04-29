@@ -16,15 +16,8 @@ const badgeVariants = cva(
         info: "border-primary/25 bg-accent text-primary",
         featured:
           "border-accent-yellow/40 bg-accent-yellow-soft text-accent-yellow",
-        owned: "bg-violet-50 text-violet-600",
-        new: "bg-accent-blue-soft text-accent-blue",
-        free: "bg-green-50 text-green-600",
-        default: "bg-primary text-primary-foreground",
-        secondary: "bg-muted text-muted-foreground",
         destructive: "bg-red-50 text-red-600",
         outline: "border border-border-strong bg-transparent text-foreground",
-        ghost: "bg-transparent text-muted-foreground hover:bg-muted",
-        link: "bg-transparent text-brand-600 underline-offset-3 hover:underline",
       },
     },
     defaultVariants: {

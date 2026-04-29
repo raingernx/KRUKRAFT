@@ -122,3 +122,23 @@ test("badge runtime adoption keeps warning and featured on the canonical recipes
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
 });
+
+test("badge cleanup keeps the category count on a canonical neutral badge", async ({
+  page,
+}) => {
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+
+  await page.goto("/categories/science", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { name: /^Science$/i })).toBeVisible();
+
+  const categoryCountBadge = page.locator('[data-slot="badge"]', {
+    hasText: /resource/i,
+  });
+  await expect(categoryCountBadge).toBeVisible();
+  await expect(categoryCountBadge).toHaveAttribute("data-variant", "neutral");
+  await expect(categoryCountBadge).toHaveClass(/bg-white\/20/);
+  await expect(categoryCountBadge).toHaveClass(/text-white/);
+
+  expect(pageErrors).toEqual([]);
+  expect(consoleErrors).toEqual([]);
+});

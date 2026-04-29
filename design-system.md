@@ -293,12 +293,13 @@ For reusable Figma component sets:
   through `accent/sand/wash` fill with `accent/sand/base` border/text. Keep
   that split intact instead of collapsing both variants back onto the same warm
   recipe.
-- Product or legacy runtime variants (`owned`, `new`, `free`, `default`,
-  `secondary`, `ghost`, `link`) are intentionally outside that canonical Figma
-  set until a deliberate remap or cleanup pass happens.
-- Runtime `Badge.tsx` now follows that canonical split for `warning` and
-  `featured`, while the broader legacy/product badge variants remain intentionally
-  outside the Figma-owned set.
+- Runtime `Badge.tsx` now stays on that same canonical set and follows the
+  `warning` / `featured` split directly.
+- The earlier runtime-only badge aliases (`owned`, `new`, `free`, `default`,
+  `secondary`, `ghost`, `link`) have now been removed from the shared primitive
+  contract; future product-specific label needs should be solved by deliberate
+  remaps or separate product-bound components, not by reopening ad-hoc badge
+  variants.
 - The current canonical `Badge` board keeps two explicit Figma-only gaps
   instead of silently drifting:
   - the seven badge labels still use a local `12/16` recipe because the shared

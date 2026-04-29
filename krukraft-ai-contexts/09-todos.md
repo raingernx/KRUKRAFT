@@ -160,8 +160,7 @@ Family-by-family DS runtime adoption
   - dense holdouts such as `/admin/resources`, `/admin/tags`, and
     `CreatorResourceStatusButton` are explicitly locked to compact `sm`
 - Family 1 is now closed:
-  - runtime `Badge.tsx` mirrors the canonical `warning` / `featured` split for
-    the approved semantic set
+  - runtime `Badge.tsx` mirrors the canonical badge set directly
   - first proof routes passed on `/dashboard/creator/apply` and
     `/dashboard/creator`
 - Family 2 is now active:
@@ -334,7 +333,8 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
-- 2026-04-29: `Badge runtime adoption` is now closed inside the family-by-family plan. Inventory narrowed the rollout to the canonical `warning` / `featured` split only, runtime `Badge.tsx` now mirrors that split, route-level proof passed on `/dashboard/creator/apply` and `/dashboard/creator`, and broader legacy/product badge variants remain intentionally outside the Figma-owned set for now.
+- 2026-04-29: `Badge runtime adoption` is now closed inside the family-by-family plan. Inventory narrowed the rollout to the canonical `warning` / `featured` split first, runtime `Badge.tsx` now mirrors that split, and route-level proof passed on `/dashboard/creator/apply` and `/dashboard/creator` before the follow-up cleanup removed the last non-canonical badge aliases from the shared primitive.
+- 2026-04-29: A user-directed badge cleanup follow-up closed immediately after the first badge slice. The only live non-canonical badge consumers (`owned` in admin bulk preview counts and `secondary` in the public category hero count) were remapped to canonical `neutral`, the unused alias variants were removed from `Badge.tsx`, and the public category route was added to badge runtime proof. `Input/Search` remains the next in-plan family after that cleanup.
 - 2026-04-29: After `Dense action holdout lockdown` closed cleanly, open a new parent plan `Family-by-family DS runtime adoption` instead of another broad repo audit. Lock the rollout order to `Badge runtime adoption` first and `Input/Search runtime parity` second because both families already have stable Figma truth and a safer blast radius than broader button/dropdown/shell rewrites.
 - 2026-04-29: `Dense action holdout lockdown` is now closed. Inventory confirmed that `/admin/resources` main table, `/admin/tags`, and creator-side status actions are dense control clusters that should not silently inherit the widened rounded-rect `md` table-action recipe. The follow-up patch now passes `size="sm"` explicitly on those holdouts, runtime proof passed for `/admin/resources` and `/admin/tags`, and `CreatorResourceStatusButton` is recorded as a code-level compact holdout because no live route mount was found during the audit.
 - 2026-04-29: `Admin simple row-action rollout` is now closed. Inventory confirmed that `/admin/categories`, `/admin/reviews`, `/admin/resources/trash`, and `/admin/resources/[id]/versions` all behave like simple table-action surfaces rather than dense inline editor clusters, so each now opts into `RowActionButton size="md"`. The close-out audit keeps `/admin/resources` main table, `/admin/tags`, and creator/admin status-action groups as explicit holdouts for a future separate plan.

@@ -509,9 +509,11 @@ Use this order when DS docs disagree:
       - the seven badge labels still use local `12/16` xs type recipes
       - the light/dark `Badge / Variant / Source` wrapper frames still keep
         local `cornerRadius=5`
-    - runtime `Badge.tsx` now mirrors the canonical `warning` / `featured`
-      split for the approved semantic set, while broader legacy/product badge
-      variants still remain intentionally outside the Figma-owned contract
+    - runtime `Badge.tsx` now mirrors the canonical badge set directly:
+      `warning` / `featured` follow the tuned Figma split, and the earlier
+      runtime-only badge aliases have been remapped off the live app surface
+      and removed from the shared primitive contract instead of lingering as
+      extra non-canonical variants
     - `Foundation Review` still has text-fill binding but not font-family
       binding on its current text nodes, so it should be treated as a review
       artifact rather than a token-parity proof page

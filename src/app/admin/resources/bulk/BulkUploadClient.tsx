@@ -438,7 +438,7 @@ export function BulkUploadClient() {
                       </td>
                       <td className="px-4 py-3">
                         {tags.length > 0 ? (
-                          <Badge variant="owned">
+                          <Badge variant="neutral">
                             {tags.length} tag{tags.length !== 1 ? "s" : ""}
                           </Badge>
                         ) : (
