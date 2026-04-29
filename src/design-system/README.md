@@ -218,10 +218,14 @@ When this file conflicts with code, the code wins.
   follow-ups now close both widget-owned feedback slices on creator/admin
   create routes too: the shared success banner after upload completes and the
   shared oversize-validation error banner after selecting a file larger than
-  `50 MB`. `saveFirstError`, backend upload-failure copy, and route-level
-  flash messaging remain future-plan material because they still diverge by
-  draft-creation timing or route-owned backend messages rather than shared
-  widget shell posture.
+  `50 MB`. A later route-owned follow-up now also proves the draft-create /
+  `saveFirstError` slice on creator/admin create routes: the shared widget
+  catches `onEnsureResourceId()` failures, but the visible copy still remains
+  route-owned (`/api/creator/resources/draft` Thai payload vs
+  `/api/admin/resources/draft` English fallback copy). Backend upload-failure
+  copy and route-level flash messaging remain future-plan material because
+  they still diverge by route-owned backend messages rather than shared widget
+  shell posture.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may

@@ -12,7 +12,7 @@ function handleServiceError(err: unknown, label: string) {
 
   console.error(label, err);
   return NextResponse.json(
-    { error: "Internal server error." },
+    { error: "Could not create a draft resource for upload right now. Please try again." },
     { status: 500 },
   );
 }

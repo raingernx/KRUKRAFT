@@ -130,28 +130,28 @@ export function FileUploadWidget({
   async function handleUpload() {
     if (!selectedFile) return;
 
-    let targetResourceId: string | undefined = resourceId;
-
-    if (!targetResourceId && onEnsureResourceId) {
-      targetResourceId = await onEnsureResourceId();
-    }
-
-    if (!targetResourceId) {
-      setStatus("error");
-      setErrorMsg(labels.saveFirstError);
-      return;
-    }
-
-    if (selectedFile.size > MAX_MB * 1024 * 1024) {
-      setStatus("error");
-      setErrorMsg(`File is too large. Maximum size is ${MAX_MB} MB.`);
-      return;
-    }
-
-    setStatus("uploading");
-    setErrorMsg(null);
-
     try {
+      let targetResourceId: string | undefined = resourceId;
+
+      if (!targetResourceId && onEnsureResourceId) {
+        targetResourceId = await onEnsureResourceId();
+      }
+
+      if (!targetResourceId) {
+        setStatus("error");
+        setErrorMsg(labels.saveFirstError);
+        return;
+      }
+
+      if (selectedFile.size > MAX_MB * 1024 * 1024) {
+        setStatus("error");
+        setErrorMsg(`File is too large. Maximum size is ${MAX_MB} MB.`);
+        return;
+      }
+
+      setStatus("uploading");
+      setErrorMsg(null);
+
       const body = new FormData();
       body.append("resourceId", targetResourceId);
       body.append("file", selectedFile);

@@ -511,9 +511,15 @@ At a high level:
         - those same creator/admin create routes now also prove the shared
           oversize-validation error banner after selecting a file larger than
           `50 MB`
-      - `saveFirstError`, backend upload-failure copy, and route-level flash
-        messaging still stay product-owned future-plan material outside these
-        first shared slices
+      - a later route-owned follow-up now also proves the draft-create /
+        `saveFirstError` slice on those creator/admin create routes:
+        - the shared widget now catches `onEnsureResourceId()` failures before
+          upload starts
+        - the visible copy still stays route-owned
+          (`/api/creator/resources/draft` Thai payload vs
+          `/api/admin/resources/draft` English fallback copy)
+      - backend upload-failure copy and route-level flash messaging still stay
+        product-owned future-plan material outside these shared slices
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:

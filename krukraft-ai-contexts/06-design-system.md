@@ -546,10 +546,16 @@ Use this order when DS docs disagree:
           - those same creator/admin create routes now also prove the shared
             oversize-validation error banner after selecting a file larger than
             `50 MB`
-        - `saveFirstError`, backend upload-failure copy, and route-level flash
-          messaging still remain future-plan material so admin resource form
-          consumers do not inherit a broader upload-state rewrite without a
-          separate proof slice
+        - a later route-owned follow-up now also proves the draft-create /
+          `saveFirstError` slice on those creator/admin create routes:
+          - the shared widget now catches `onEnsureResourceId()` failures
+            before upload starts
+          - the visible copy still remains route-owned
+            (`/api/creator/resources/draft` Thai payload vs
+            `/api/admin/resources/draft` English fallback copy)
+        - backend upload-failure copy and route-level flash messaging still
+          remain future-plan material so admin resource form consumers do not
+          inherit a broader upload-state rewrite without a separate proof slice
   - the canonical `Card / Foundations` boards no longer carry wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is explicit token
     gap / polish territory instead:

@@ -53,6 +53,8 @@ export function CreateResourceForm({ categories, tags: initialTags, currentUser 
     useState<ResourceCardData>(defaultPreviewData);
   const [draftResourceId, setDraftResourceId] = useState<string | null>(null);
   const draftResourcePromiseRef = useRef<Promise<string | undefined> | null>(null);
+  const adminDraftUploadErrorMessage =
+    "Could not create a draft resource for upload right now. Please try again.";
 
   async function ensureDraftResource() {
     if (draftResourceId) return draftResourceId;
@@ -69,18 +71,26 @@ export function CreateResourceForm({ categories, tags: initialTags, currentUser 
         const data = await res.json();
 
         if (!res.ok) {
-          console.error("Failed to create draft resource", data);
-          return undefined;
+          console.warn("Failed to create draft resource", data);
+          throw new Error(
+            typeof data?.error === "string"
+              ? data.error
+              : adminDraftUploadErrorMessage,
+          );
         }
 
         const draftId = data.id as string | undefined;
-        if (!draftId) return undefined;
+        if (!draftId) {
+          throw new Error(adminDraftUploadErrorMessage);
+        }
 
         setDraftResourceId(draftId);
         return draftId;
       } catch (err) {
-        console.error("Error creating draft resource", err);
-        return undefined;
+        console.warn("Error creating draft resource", err);
+        throw err instanceof Error
+          ? err
+          : new Error(adminDraftUploadErrorMessage);
       } finally {
         draftResourcePromiseRef.current = null;
       }

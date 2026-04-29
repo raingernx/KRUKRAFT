@@ -1104,6 +1104,10 @@ export function ResourceForm({
                     onEnsureResourceId={
                       !isEdit && onEnsureDraftResource ? onEnsureDraftResource : undefined
                     }
+                    copy={{
+                      saveFirstError:
+                        "Could not create a draft resource for upload right now. Please try again.",
+                    }}
                   />
                 </div>
               </div>
