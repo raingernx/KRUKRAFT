@@ -275,12 +275,14 @@ When this file conflicts with code, the code wins.
       `radius/sm (8px)` shell at runtime
     - the first proof routes are `/dashboard/library` toolbar search
       (`56px / 8px`) and the dashboard topbar override (`44px / 8px`)
+    - the topbar clear action is now route-proved too once the client shell is
+      hydrated; the proof path verifies that the clear button appears and resets
+      the field locally
     - public `/resources` search stays a route-owned product override
       (`h-[40px]`, pill radius) and is intentionally outside this shared-shell
       parity slice
-  - `Input.tsx` still resolves comfortable `md|lg|field` through the older
-    larger radius branch; treat that as the remaining repo adoption gap, not as
-    the approved Figma contract
+  - `Input.tsx` now matches the canonical `8px` radius shell at runtime too;
+    `/admin/users` is the first proof route for the shared field primitive
   - default resolution: `comfortable -> field`, `compact -> sm`
 - `SearchInput variant=\"default\"` should inherit the same field-size ladder as
   `Input`; only the hero variant is allowed to diverge into its own larger

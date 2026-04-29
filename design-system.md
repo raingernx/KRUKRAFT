@@ -429,11 +429,14 @@ At a high level:
       shell at runtime
     - the first route proofs are `/dashboard/library` toolbar search
       (`56px / 8px`) and dashboard topbar search (`44px / 8px`)
+    - the dashboard topbar clear action is now route-proved too after client
+      hydration: the clear button appears, keeps `8px` radius, and resets the
+      local query state
     - public `/resources` search remains a route-owned product override with
       `40px` height and pill geometry
-    - `Input.tsx` still carries the older larger comfortable-radius branch, so
-      the remaining runtime drift now sits on the shared field primitive rather
-      than the default search shell
+    - `Input.tsx` no longer carries that older radius branch at runtime:
+      the shared field primitive now enforces `radius/sm (8px)` directly, with
+      `/admin/users` as the first proof route
   - that same control re-audit also keeps two narrow Figma gaps explicit
     instead of hiding them: the light/dark component-set wrappers still carry a
     local `cornerRadius=5`, and the `Clear` action label in the search-state

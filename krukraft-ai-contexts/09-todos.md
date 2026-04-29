@@ -4,7 +4,7 @@ Use this file as the single source of truth for active implementation state.
 
  ## Plan Snapshot
 
-Parent Plan: `Family-by-family DS runtime adoption`
+Parent Plan: `Field shell runtime residual follow-up`
 
 > [!info] Current Phase
 > `Plan complete`
@@ -18,10 +18,10 @@ Parent Plan: `Family-by-family DS runtime adoption`
 > Public marketplace perf baseline remains intact
 
 > [!success] Active
-> `Family-by-family DS runtime adoption` is now closed cleanly after the badge slice, the narrow `SearchInput` runtime parity slice, and one close-out audit.
+> `Field shell runtime residual follow-up` is now closed cleanly after the shared `Input` radius patch, the hydrated `SearchInput onClear` route proof, and one close-out audit.
 
 > [!todo] Next Up
-> No in-plan `Next Up`. Wait for an explicit new plan before widening `Input`, reopening product-bound search shells, or starting another DS family.
+> No in-plan `Next Up`. Wait for an explicit new plan before widening field work beyond the shared residual slice.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -43,6 +43,7 @@ Parent Plan: `Family-by-family DS runtime adoption`
 | Admin Simple Row-Action Rollout | Complete | inventory, rollout decision, follow-up adoption slice, runtime verification, and close-out audit are complete |
 | Dense Action Holdout Lockdown | Complete | remaining dense admin/creator action clusters are now explicit compact holdouts, with `/admin/resources` and `/admin/tags` proved at runtime |
 | Family-by-family DS Runtime Adoption | Complete | `Badge` runtime adoption and the narrow `SearchInput` runtime parity slice are both closed; the plan-level close-out audit found no in-scope reason to keep this parent plan open |
+| Field Shell Runtime Residual Follow-up | Complete | the shared `Input` radius gap and `SearchInput onClear` route-proof gap are both closed after one narrow follow-up slice |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -54,7 +55,7 @@ Parent Plan: `Family-by-family DS runtime adoption`
 
 ## Progress
 
-Family-by-family DS runtime adoption
+Field shell runtime residual follow-up
 `[██████████] 100%`
 
 ```mermaid
@@ -102,17 +103,13 @@ flowchart TB
   end
 
   subgraph Current
-    P0["Family-by-family runtime plan open<br/>Done"]
-    P1["Badge runtime inventory + contract audit<br/>Done"]
-    P2["Badge adoption patch<br/>Done"]
-    P3["Badge runtime proof + close-out<br/>Done"]
-    P4["Input/Search runtime parity inventory<br/>Done"]
-    P5["Input/Search adoption path decision<br/>Done"]
-    P6["SearchInput default parity slice<br/>Done"]
-    P7["Plan close-out audit<br/>Done"]
+    P0["Residual follow-up plan open<br/>Done"]
+    P1["Residual inventory + root-cause audit<br/>Done"]
+    P2["Shared field-shell patch<br/>Done"]
+    P3["Runtime proof + close-out<br/>Done"]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> P0 --> P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> P0 --> P1 --> P2 --> P3
 ```
 
 ## Daily Workflow
@@ -151,92 +148,72 @@ Rules:
 Plan complete
 
 ### Parent Plan
-Family-by-family DS runtime adoption
+Field shell runtime residual follow-up
 
 ### Current Status Inside Parent Plan
-- The Figma DS baseline is now treated as sufficiently audited and stable for
-  narrow runtime family rollouts.
-- Previous runtime rollout plans are now the frozen baseline:
-  - `RowActionButton size="md"` and `PaginationButton size="md"` exist for the
-    proven table-action recipe
-  - dense holdouts such as `/admin/resources`, `/admin/tags`, and
-    `CreatorResourceStatusButton` are explicitly locked to compact `sm`
-- Family 1 is now closed:
+- The previous `Family-by-family DS runtime adoption` plan is now the frozen
+  baseline:
   - runtime `Badge.tsx` mirrors the canonical badge set directly
-  - first proof routes passed on `/dashboard/creator/apply` and
-    `/dashboard/creator`
-- Family 2 is now closed:
-  - inventory confirmed that `SearchInput` was the smaller safe rollout target
-    while `Input.tsx` still carries the broader comfortable-radius drift
-  - the rollout decision kept public/product-bound search shells out of scope
-    and patched `SearchInput variant="default"` first
-  - runtime proof passed on `/dashboard/library` for both the shared toolbar
-    search (`56px / 8px`) and the topbar override (`44px / 8px`)
-- The plan close-out audit found no in-scope reason to widen into `Input`,
-  reopen hero/product search shells, or keep the parent plan open.
-- The intent remains the same: reuse the audited Figma truth without reopening
-  broad repo audit loops or widening unrelated DS families in the same slice.
+  - `SearchInput variant="default"` already proves shared `8px` radius on
+    `/dashboard/library`
+- Two explicit residual gaps remain outside that closed plan:
+  - `Input.tsx` used to resolve the comfortable field ladder through the older
+    larger-radius branch
+  - `SearchInput onClear` proof used to fail on the dashboard topbar until the
+    route had a hydration settle before typing
+- This follow-up is now closed:
+  - `Input.tsx` enforces canonical `radius/sm (8px)` at runtime
+  - `/admin/users` proves the shared `Input` shell
+  - `/dashboard/library` proves the hydrated topbar clear action
+  - public `/resources` search remains intentionally out of scope as a
+    product-owned override
 
 ### Goal
-Plan complete. The family-by-family rollout proved two narrow DS families
-(`Badge` and `SearchInput`) without reopening broader control or route families.
+Close the remaining shared field-shell runtime gaps safely:
+1. bring `Input.tsx` onto the canonical `8px` radius shell
+2. close the `SearchInput onClear` route-proof gap safely
+3. prove the result on one admin `Input` route and one `SearchInput onClear`
+   route before closing
 
 ### Why this is the current phase
-- `Badge` has now closed cleanly, so the next safest family is `Input/Search`:
-  the Figma radius/size contract is already audited, the runtime adoption gaps
-  are explicit, and the blast radius is still narrower than broader button or
-  dropdown work.
+- The residual root causes are now known and narrow enough to justify a
+  separate follow-up instead of reopening the broader family plan.
 
 ### Definition of Done
-- [x] Live `Badge` runtime consumers are inventoried before patching
-- [x] A rollout decision is recorded for canonical badge variants versus
-      legacy/product-only variants
-- [x] One narrow `Badge` runtime adoption slice lands with matching route proof
-- [x] `Input/Search` inventory begins only after the badge slice closes
-- [x] Live `Input/Search` runtime consumers are inventoried before patching
-- [x] A rollout decision is recorded for canonical field shells versus
-      runtime-only/legacy branches
-- [x] One narrow `Input/Search` runtime parity slice lands with matching route proof
-- [x] Repo context/docs are updated in the same session if runtime contract
-      understanding changes
-- [x] The plan closes with one explicit close-out audit instead of drifting
-      into broad DS runtime work
+- [x] Root-cause inventory is recorded for the `Input` radius gap and the
+      `SearchInput onClear` route-proof gap
+- [x] `Input.tsx` lands on canonical `radius/sm (8px)` without reopening
+      broader product-owned field shells
+- [x] One admin `Input` route and one `SearchInput onClear` route pass runtime
+      proof
+- [x] Repo context/docs/tracker are updated in the same session
+- [x] The follow-up closes with one explicit close-out audit
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Family plan open + scope lock | complete | scope is limited to runtime adoption family slices, not another broad DS audit |
-| 1 | Badge runtime inventory + contract audit | complete | inventoried live badge consumers, narrowed the rollout to the canonical `warning` / `featured` split, and chose `/dashboard/creator/apply` plus `/dashboard/creator` as the first proof family |
-| 2 | Badge runtime adoption slice | complete | runtime `Badge.tsx` now mirrors the canonical `warning` / `featured` split while leaving broader legacy/product variants intact |
-| 3 | Badge proof + close-out | complete | route-level proof passed for pending creator-apply and creator workspace intro, and repo docs/tracker were synced in the same slice |
-| 4 | Input/Search runtime inventory | complete | inventory confirmed that `SearchInput` is the smaller safe target and that public/product search shells should not be used as the first shared proof route |
-| 5 | Input/Search adoption decision | complete | narrow the rollout to `SearchInput variant="default"` and keep `Input.tsx`, hero search, and route-owned product overrides out of scope |
-| 6 | SearchInput parity slice | complete | runtime `SearchInput` now enforces `radius/sm (8px)` on the shared default branch and is proved on `/dashboard/library` toolbar + topbar |
-| 7 | Plan close-out audit | complete | no in-scope blocker remained after the search slice; further `Input` or product-shell work requires a new parent plan |
+| 0 | Residual follow-up plan open | complete | scope is limited to shared field-shell leftovers, not another broad DS family rollout |
+| 1 | Residual inventory + root-cause audit | complete | root cause narrowed to shared `Input` radius drift plus a topbar hydration-proof gap for `SearchInput onClear` |
+| 2 | Shared field-shell patch | complete | `Input.tsx` now enforces `8px` radius directly without reopening public/product search shells |
+| 3 | Runtime proof + close-out | complete | `/admin/users` proves `Input`, `/dashboard/library` proves the hydrated topbar clear action, and no in-scope blocker remained |
 
 ---
 
 ## Current Goal
 
-No active in-plan goal. The family-by-family runtime adoption plan is closed.
+No active in-plan goal. The residual follow-up is closed.
 
 ---
 
 ## In Progress
 
-- [x] Open a new parent plan for `Family-by-family DS runtime adoption`
-- [x] Lock the phase order to `Badge` first, `Input/Search` second
-- [x] Inventory live `Badge` consumers
-- [x] Compare runtime `Badge.tsx` variants to the canonical Figma set
-- [x] Choose the first proof route family for the badge slice
-- [x] Record the badge rollout decision before patching
-- [x] Inventory live `Input/Search` consumers
-- [x] Compare runtime `Input.tsx` / `SearchInput.tsx` branches to the canonical Figma contract
-- [x] Choose one first proof route family for `Input/Search`
-- [x] Record the `Input/Search` rollout decision before patching
-- [x] Land one narrow `SearchInput` runtime parity slice with route proof
-- [x] Run a plan close-out audit
+- [x] Open a new parent plan for `Field shell runtime residual follow-up`
+- [x] Record the residual root causes and route inventory
+- [x] Patch the smallest shared field-shell layer
+- [x] Prove one admin `Input` route
+- [x] Prove one live `SearchInput onClear` route
+- [x] Run a close-out audit and close the plan
 
 ---
 
@@ -336,6 +313,8 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: `Field shell runtime residual follow-up` is now closed. The final shared field-shell drift did not require another broad family rollout: `Input.tsx` now enforces canonical `radius/sm (8px)` directly, `/admin/users` proves that shared field shell, and the old `SearchInput onClear` proof gap narrowed to a route-hydration issue instead of a primitive bug. `/dashboard/library` now proves the hydrated topbar clear action too, so no in-scope blocker remains.
+- 2026-04-29: Open a new parent plan `Field shell runtime residual follow-up` instead of silently reopening the closed family-by-family rollout. Scope it tightly to the two known leftovers: `Input.tsx` still carrying the larger comfortable-radius branch and `SearchInput` clear-action visibility still depending on props alone in some controlled consumers.
 - 2026-04-29: `Family-by-family DS runtime adoption` is now closed. The second family did not widen into `Input.tsx`; inventory showed that the smallest safe runtime slice was `SearchInput variant="default"` first. Runtime now enforces the canonical `radius/sm (8px)` shell on that shared branch, route proof passed on `/dashboard/library` for both the `56px / 8px` toolbar search and the `44px / 8px` topbar override, and the close-out audit found no in-scope reason to keep the parent plan open. Any wider `Input` parity or product-bound search-shell work should start as a new plan.
 - 2026-04-29: `Badge runtime adoption` is now closed inside the family-by-family plan. Inventory narrowed the rollout to the canonical `warning` / `featured` split first, runtime `Badge.tsx` now mirrors that split, and route-level proof passed on `/dashboard/creator/apply` and `/dashboard/creator` before the follow-up cleanup removed the last non-canonical badge aliases from the shared primitive.
 - 2026-04-29: A user-directed badge cleanup follow-up closed immediately after the first badge slice. The only live non-canonical badge consumers (`owned` in admin bulk preview counts and `secondary` in the public category hero count) were remapped to canonical `neutral`, the unused alias variants were removed from `Badge.tsx`, and the public category route was added to badge runtime proof. `Input/Search` remains the next in-plan family after that cleanup.

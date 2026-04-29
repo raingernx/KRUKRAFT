@@ -74,6 +74,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
               fieldInputBaseClassName,
               "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/18",
               inputSizeClassName,
+              "rounded-[var(--radius-sm)]",
               leftAdornment &&
                 (resolvedSize === "sm" ? "pl-9" : resolvedSize === "md" ? "pl-10" : "pl-11"),
               rightAdornment &&
@@ -106,6 +107,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
             fieldInputBaseClassName,
             "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/18",
             inputSizeClassName,
+            "rounded-[var(--radius-sm)]",
             className,
           )}
           aria-describedby={describedBy}

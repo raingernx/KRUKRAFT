@@ -384,12 +384,15 @@ Use this order when DS docs disagree:
         shell
       - the dashboard topbar search stays an intentional `44px` height
         override while still inheriting the same `8px` radius
+      - the dashboard topbar clear action is now proved after hydration too:
+        the clear button appears, keeps `8px` radius, and clears the local
+        query value
     - public `/resources` search remains a route-owned product override
       (`40px` tall, pill geometry) and should not be misread as a failure of
       the shared field-shell adoption slice
-    - `Input.tsx` itself still carries the older larger comfortable-radius
-      branch, so the remaining runtime drift is now concentrated in the shared
-      field primitive rather than the default search shell
+    - the residual field-shell follow-up now closes the last shared runtime gap
+      too: `Input.tsx` enforces the same `radius/sm (8px)` shell at runtime,
+      with `/admin/users` as the first proof route
     - `SearchInput variant=\"hero\"` remains the one intentional exception
       branch, while `loading`, `clear`, and `submitButton` now sit on top of
       the shared default-field shell instead of a separate hardcoded search box
