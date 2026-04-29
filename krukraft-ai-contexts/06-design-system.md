@@ -529,6 +529,11 @@ Use this order when DS docs disagree:
     - the delivery-source segmented toggle and the upload-branch wrapper shell
       are creator-owned route chrome and now prove cleanly on
       `/dashboard/creator/resources/new` and edit
+    - the next creator-owned control-styling follow-up is now closed too:
+      the external-file action cluster (`Clear link`, `Edit`, `Open link`,
+      and the uploaded-file guard action) now uses the explicit compact
+      `40px / 8px` route-owned posture on `/dashboard/creator/resources/new`
+      and edit, while shared widget internals stay frozen
     - the first shared widget follow-up now closes the lowest-risk internal
       slice too:
       - `/dashboard/creator/resources/new` and `/admin/resources/new` now

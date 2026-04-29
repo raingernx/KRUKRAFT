@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Creator delivery action control styling`
 
 > [!info] Current Phase
-> `Phase 3 — Linked-file action proof slice`
+> `Plan complete`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Creator delivery action control styling`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Creator delivery action control styling` is now in the first route-scoped proof pass. The DS/runtime upload baselines stay frozen, and the next narrow pass is to prove the creator-owned linked-file action cluster around the external delivery branch.
+> No parent plan is active right now. `Creator delivery action control styling` is closed, and any follow-up should open as a new narrow plan instead of extending this one.
 
 > [!todo] Next Up
-> Land and verify the creator linked-file action slice on `/dashboard/creator/resources/*`, then close out the parent plan if the remaining delivery controls stay out of scope.
+> Open a new parent plan only if you want to continue into a separate creator-control bucket or an untouched DS family.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -63,7 +63,7 @@ Parent Plan: `Creator delivery action control styling`
 | Shared Upload 400 Validation Copy | Complete | creator/admin create routes now prove the shared `unsupported format` `400` branch after draft creation succeeds; use that as the frozen baseline for any later lower-signal `400` follow-up |
 | Route-Level Upload Flash Messaging | Complete | creator create now proves the route-owned remove-file failure message outside the widget shell, while admin create has no matching create-flow upload/remove flash slice beyond the frozen widget banners |
 | Admin Edit-Flow Upload/Remove Feedback | Complete | `/admin/resources/[id]` now proves the route-owned remove-file success/error rail, and the close-out audit found no in-scope reason to keep the plan open |
-| Creator Delivery Action Control Styling | Active | next narrow follow-up: prove the creator linked-file action cluster on `/dashboard/creator/resources/*` without reopening shared widget or field-shell work |
+| Creator Delivery Action Control Styling | Complete | `/dashboard/creator/resources/new` and edit now prove the creator-owned linked-file action cluster on an explicit compact `40px / 8px` posture; close-out audit found no in-scope reason to keep the plan open |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -76,7 +76,7 @@ Parent Plan: `Creator delivery action control styling`
 ## Progress
 
 Creator delivery action control styling
-`[██████░░░░] 60%`
+`[██████████] 100%`
 
 ```mermaid
 flowchart TB
@@ -166,7 +166,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 3 — Linked-file action proof slice
+Plan complete
 
 ### Parent Plan
 Creator delivery action control styling
@@ -196,6 +196,18 @@ Creator delivery action control styling
   - the remaining creator-owned styling drift sits in the external/linked-file branch:
     `Clear link`, `Edit`, `Open link`, and the `Remove uploaded file` guard card/action
   - the first safe proof slice should therefore start in the linked-file branch on `/dashboard/creator/resources/*`
+- That runtime slice is now landed and route-proved:
+  - `/dashboard/creator/resources/new` now proves the creator-owned linked-file summary actions
+    (`Clear link`, `Edit`, `Open link`) on the explicit compact `40px / 8px` posture
+  - `/dashboard/creator/resources/[id]` now proves the uploaded-file guard action
+    (`Remove uploaded file`) on the same compact `40px / 8px` posture
+  - the linked-file summary/edit/guard shells now use the same `rounded-2xl`
+    route-owned chrome on the creator editor side
+- Close-out audit result:
+  - keep the delivery-source toggle and upload-branch wrapper shell frozen from the prior plan
+  - keep upload-branch actions frozen as widget-owned internals
+  - do not reopen lower-signal upload `400` branches or untouched DS families here
+  - no additional in-scope creator delivery-action slice remains inside this parent plan
 - Keep these out of scope for this plan:
   - admin edit upload/remove feedback already proved in the previous plan
   - lower-signal `400` validation branches (`resourceId required`, empty file, invalid generated key)
@@ -204,17 +216,15 @@ Creator delivery action control styling
   - shared or route-owned upload banner copy already proved in prior plans
 
 ### Goal
-Land and verify the creator linked-file action slice on
-`/dashboard/creator/resources/*`, while keeping lower-signal upload `400`
-branches plus untouched DS-family rollout work out of scope.
+Keep the parent plan closed cleanly after linked-file runtime proof, and defer
+any remaining creator-control or DS-family work to separate future plans.
 
 ### Why this is the current phase
-- Inventory is now complete and confirmed that the upload toggle/wrapper work
-  is already frozen while the creator external-file branch still owns its own
-  action styling.
-- Existing hardening tests already prove the linked-file behavior semantics,
-  which makes this the smallest safe route-owned styling slice.
-- The remaining work is now runtime proof, not more inventory.
+- The linked-file action slice is now landed and proved on both creator create
+  and edit routes.
+- The required close-out audit stayed inside the original scope and found no
+  reason to keep the parent plan open.
+- Remaining ideas belong to separate future plans, not to this completed one.
 
 ### Definition of Done
 - [x] The prior admin and creator profile proof routes stay frozen as baselines
@@ -231,8 +241,8 @@ branches plus untouched DS-family rollout work out of scope.
 - [x] The creator create flash proof stays frozen as a baseline
 - [x] Creator delivery action controls are inventoried
 - [x] One creator-owned delivery action proof slice is chosen
-- [ ] That route-scoped runtime styling slice is landed and verified
-- [ ] A close-out audit decides whether the parent plan should continue or close
+- [x] That route-scoped runtime styling slice is landed and verified
+- [x] A close-out audit decides whether the parent plan should continue or close
 
 ### Phase Map
 
@@ -241,15 +251,15 @@ branches plus untouched DS-family rollout work out of scope.
 | 0 | Plan open | complete | the previous admin edit-flow proof is frozen and this new plan is isolated to creator delivery controls |
 | 1 | Creator delivery control inventory | complete | inventory isolated which creator delivery controls are truly route-owned styling work |
 | 2 | First proof-slice decision | complete | first slice is the linked-file action cluster on `/dashboard/creator/resources/*` |
-| 3 | Route-scoped runtime slice | active | land and verify the chosen creator linked-file action slice |
-| 4 | Close-out audit | pending | close cleanly or split remaining creator delivery controls into a narrower future plan |
+| 3 | Route-scoped runtime slice | complete | creator create/edit routes now prove the linked-file action cluster on the explicit compact posture |
+| 4 | Close-out audit | complete | no in-scope reason to keep the parent plan open; future ideas move to separate plans |
 
 ---
 
 ## Current Goal
 
 1. keep the shared widget parity baselines frozen
-2. prove the creator linked-file action cluster
+2. keep the creator linked-file action slice frozen as the latest creator delivery-control baseline
 3. leave lower-signal upload `400` branches and untouched DS families to optional future plans
 
 ---
@@ -259,14 +269,14 @@ branches plus untouched DS-family rollout work out of scope.
 - [x] Keep shared widget parity baselines frozen
 - [x] Open a new parent plan for creator delivery action control styling
 - [x] Close creator delivery-control inventory and choose the first proof slice
+- [x] Land and verify the creator linked-file action proof
+- [x] Close the parent plan after the in-scope audit
 
 ---
 
 ## Next Up
 
-- [ ] Land creator linked-file action proof
-- [ ] Run close-out audit on the parent plan
-- [ ] Keep lower-signal upload `400` branches and untouched DS families out of scope
+- [ ] Open a new parent plan only if the user explicitly wants another creator-control slice or a different DS family
 
 ---
 
@@ -364,6 +374,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: `Creator delivery action control styling` is now closed. The landed route-scoped slice keeps the shared widget/upload baselines frozen while proving the remaining creator-owned linked-file controls on `/dashboard/creator/resources/new` and edit: `Clear link`, `Edit`, `Open link`, and the uploaded-file guard `Remove uploaded file` action now all use the explicit compact `40px / 8px` posture, and the linked-file summary/edit/guard shells now share the same `rounded-2xl` route-owned chrome. The close-out audit found no in-scope reason to keep the parent plan open; upload-branch internals stay widget-owned and any later creator-control or untouched DS-family work must open as a separate plan.
 - 2026-04-29: Inventory for `Creator delivery action control styling` is now closed. The route-owned delivery-source toggle and upload wrapper shell were already frozen by the earlier creator upload-controls proof, and the upload-branch actions themselves stay widget-owned inside `FileUploadWidget`. The remaining creator-owned styling drift sits in the external/linked-file branch instead: `Clear link`, `Edit`, `Open link`, and the `Remove uploaded file` guard card/action. Existing hardening coverage already proves those branch semantics, so the first safe proof slice is the creator linked-file action cluster on `/dashboard/creator/resources/new` and `/dashboard/creator/resources/[id]`, while lower-signal upload `400` follow-ups and untouched DS families remain out of scope.
 - 2026-04-29: Open a new parent plan `Creator delivery action control styling` instead of jumping to another upload-copy branch or a brand-new DS family. The admin edit-flow plan is now closed and frozen, so the next highest-signal visible drift is the creator-owned delivery action layer around upload, link, and removal controls on `/dashboard/creator/resources/*`. Lower-signal upload `400` follow-ups and untouched DS families stay explicitly out of scope until this creator delivery-control inventory chooses one safe proof slice.
 - 2026-04-29: `Admin edit-flow upload/remove feedback` is now closed. `/admin/resources/[id]` now proves the route-owned remove-file success/error rail outside the shared widget shell: success shows `File removed`, failure shows `Failed to remove file`, and both paths were verified on the live edit route after priming the uploaded state through the real admin upload API. Runtime proof found one material issue inside the same scope, so a narrow remediation landed before close-out: `ResourceForm.handleRemoveFile()` now rethrows route-owned delete failures, and `FileUploadWidget` now preserves the uploaded card while catching that rejection locally so the form-level error rail remains visible without triggering a Next dev overlay. The close-out audit reran the shared uploaded-branch proof and found no remaining in-scope reason to keep this parent plan open; creator control styling and lower-signal `400` branches remain optional separate plans.

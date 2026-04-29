@@ -497,6 +497,11 @@ At a high level:
         `/dashboard/creator/resources/new` and edit prove the creator-owned
         delivery-source toggle plus the upload-branch wrapper shell without
         widening shared `FileUploadWidget` internals
+      - the next creator-owned control-styling follow-up is now closed too:
+        `/dashboard/creator/resources/new` and edit prove the external-file
+        action cluster (`Clear link`, `Edit`, `Open link`, and the
+        uploaded-file guard action) on the explicit compact `40px / 8px`
+        route-owned posture, while shared widget internals stay frozen
       - the first shared widget follow-up is now closed too:
         `/dashboard/creator/resources/new` and `/admin/resources/new` prove the
         shared pre-upload branch (`dropzone`, selected-file preview, upload

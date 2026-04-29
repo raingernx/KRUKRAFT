@@ -1288,6 +1288,8 @@ export function CreatorResourceForm({
                           type="button"
                           variant="ghost"
                           size="md"
+                          density="compact"
+                          data-testid="creator-linked-file-clear-link"
                           leftIcon={<Trash2 className="h-4 w-4" />}
                           onClick={() => {
                             void clearExternalFileUrl();
@@ -1300,7 +1302,10 @@ export function CreatorResourceForm({
 
                     <div className="space-y-2.5">
                       {hasUploadedFile ? (
-                        <div className="rounded-xl border border-dashed border-border bg-background/50 px-4 py-4">
+                        <div
+                          data-testid="creator-linked-file-upload-guard"
+                          className="rounded-2xl border border-dashed border-border bg-background/50 px-4 py-4"
+                        >
                           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <div className="space-y-1">
                               <p className="text-sm font-medium text-foreground">Uploaded file is still active</p>
@@ -1312,6 +1317,8 @@ export function CreatorResourceForm({
                               type="button"
                               variant="quiet"
                               size="md"
+                              density="compact"
+                              data-testid="creator-linked-file-remove-uploaded"
                               onClick={async () => {
                                 try {
                                   await handleRemoveUploadedFile();
@@ -1331,7 +1338,10 @@ export function CreatorResourceForm({
                       ) : (
                         <>
                           {isEditingExternalFileUrl || !form.fileUrl ? (
-                            <div className="rounded-xl border border-border bg-background px-4 py-4">
+                            <div
+                              data-testid="creator-linked-file-edit-shell"
+                              className="rounded-2xl border border-border bg-background px-4 py-4"
+                            >
                               <div className="space-y-1.5">
                                 <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground">
                                   <span className="inline-flex h-7 items-center rounded-full border border-border bg-muted px-2.5 text-[11px] text-foreground">
@@ -1371,7 +1381,10 @@ export function CreatorResourceForm({
                               </div>
                             </div>
                           ) : externalFileSummary ? (
-                            <div className="rounded-xl border border-border bg-background px-4 py-4">
+                            <div
+                              data-testid="creator-linked-file-summary-shell"
+                              className="rounded-2xl border border-border bg-background px-4 py-4"
+                            >
                               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                 <div className="min-w-0 flex items-start gap-3">
                                   <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-shell text-muted-foreground">
@@ -1396,6 +1409,8 @@ export function CreatorResourceForm({
                                     type="button"
                                     variant="ghost"
                                     size="md"
+                                    density="compact"
+                                    data-testid="creator-linked-file-edit"
                                     onClick={() => {
                                       setExternalFileUrlDraft(form.fileUrl);
                                       setExternalFileUrlIssue(null);
@@ -1404,7 +1419,14 @@ export function CreatorResourceForm({
                                   >
                                     Edit
                                   </Button>
-                                  <Button type="button" variant="quiet" size="md" asChild>
+                                  <Button
+                                    type="button"
+                                    variant="quiet"
+                                    size="md"
+                                    density="compact"
+                                    data-testid="creator-linked-file-open"
+                                    asChild
+                                  >
                                     <a href={form.fileUrl} target="_blank" rel="noreferrer">
                                       Open link
                                       <ExternalLink className="h-4 w-4" />
