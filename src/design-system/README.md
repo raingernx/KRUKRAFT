@@ -232,7 +232,11 @@ When this file conflicts with code, the code wins.
   the route-owned `404` upload-not-found slice
   (`/api/creator/resources/upload` Thai not-found vs
   `/api/admin/resources/upload` English not-found), while the remaining `400`
-  validation strings stay shared service copy. Route-level flash messaging
+  validation strings stay shared service copy. The first shared proof slice is
+  now closed too: creator/admin create routes both prove the shared
+  `unsupported format` `400` branch after draft creation succeeds, while the
+  lower-signal `resourceId required`, empty-file, and invalid-generated-key
+  branches remain optional future follow-ups. Route-level flash messaging
   remains future-plan material because it still diverges outside the shared
   widget shell.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating

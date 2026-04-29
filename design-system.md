@@ -534,7 +534,12 @@ At a high level:
           (`/api/creator/resources/upload` Thai not-found vs
           `/api/admin/resources/upload` English not-found)
       - the remaining `400` validation strings still stay shared service copy,
-        and route-level flash messaging still stays product-owned future-plan
+        and the first shared proof slice is now closed too:
+        - creator/admin create routes both prove the shared `unsupported
+          format` `400` branch after draft creation succeeds
+        - the lower-signal `resourceId required`, empty-file, and invalid
+          generated-key branches stay optional follow-up territory
+      - route-level flash messaging still stays product-owned future-plan
         material outside these shared slices
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and

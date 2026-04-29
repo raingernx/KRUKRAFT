@@ -569,9 +569,14 @@ Use this order when DS docs disagree:
             (`/api/creator/resources/upload` Thai not-found vs
             `/api/admin/resources/upload` English not-found)
         - the remaining `400` validation strings still remain shared service
-          copy, and route-level flash messaging still remains future-plan
-          material so admin resource form consumers do not inherit a broader
-          upload-state rewrite without a separate proof slice
+          copy, and the first shared proof slice is now closed too:
+          - creator/admin create routes both prove the shared `unsupported
+            format` `400` branch after draft creation succeeds
+          - the lower-signal `resourceId required`, empty-file, and invalid
+            generated-key branches remain optional follow-up territory
+        - route-level flash messaging still remains future-plan material so
+          admin resource form consumers do not inherit a broader upload-state
+          rewrite without a separate proof slice
   - the canonical `Card / Foundations` boards no longer carry wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is explicit token
     gap / polish territory instead:
