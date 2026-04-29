@@ -164,6 +164,13 @@ When this file conflicts with code, the code wins.
 - `Input` and `SearchInput` are now the second themed runtime slice. Keep
   both on the same quiet field shell, placeholder/value hierarchy, and focus
   ring language for new work.
+- `Select` is now the next Figma-first control sibling after `Input` /
+  `SearchInput`. The canonical file now carries light/dark
+  `Select / Foundations` boards plus `Select / State` and `Select / Size`
+  sets that mirror the same quiet field shell, `radius/sm (8px)` geometry,
+  helper/error posture, and field-size ladder while keeping option lists
+  route-owned. Treat those boards as the design base for the upcoming runtime
+  parity pass.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may

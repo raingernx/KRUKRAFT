@@ -442,6 +442,17 @@ At a high level:
     local `cornerRadius=5`, and the `Clear` action label in the search-state
     explainer still uses a local `14/20` type recipe while staying bound for
     font family and text fill
+  - the first follow-up control mapping beyond `Input / Search` now exists too:
+    - `Select / Foundations / Light` and `Select / Foundations / Dark` now live
+      under `994:244` and `994:421`
+    - the verified reusable nodes are `Select / State` (`994:342`, `994:519`)
+      and `Select / Size` (`994:366`, `994:543`)
+    - the canonical `Select` contract intentionally inherits the shared field
+      shell grammar (`radius/sm = 8px`, shared height ladder, helper/error copy
+      below the shell) and only adds the explicit caret affordance; option
+      lists remain route-owned
+    - runtime parity is not live yet, so treat those new boards as the design
+      base for the next adoption slice rather than as proof of code parity
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:

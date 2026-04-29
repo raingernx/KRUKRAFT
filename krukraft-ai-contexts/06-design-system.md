@@ -369,6 +369,18 @@ Use this order when DS docs disagree:
       - the `Clear` action label inside the search-state explainer still uses a
         local `14/20` type recipe even though its font family and text fill are
         already bound
+    - the first adjacent control-mapping follow-up now exists too:
+      - `Select / Foundations / Light` (`994:244`) and
+        `Select / Foundations / Dark` (`994:421`) are now live in the canonical
+        file
+      - the verified reusable nodes are `Select / State`
+        (`994:342`, `994:519`) and `Select / Size` (`994:366`, `994:543`)
+      - the canonical `Select` contract intentionally reuses the shared field
+        shell posture (`radius/sm = 8px`, shared height ladder, helper/error
+        copy below the shell) and only layers on the explicit caret affordance
+      - runtime parity is still pending; `/admin/activity` and `/admin/audit`
+        filter families are the first proof-route candidates once the plan
+        advances out of Figma mapping
     - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
       component sets for the shared field ladder
     - runtime code still carries an older larger comfortable-radius branch for
