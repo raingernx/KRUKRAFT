@@ -493,9 +493,12 @@ At a high level:
         preview textarea already sits on the shared `Textarea` shell, while
         parsing, validation, apply-state, and cover-order side effects stay
         route-owned composite behavior
-      - the remaining delivery/upload zone stays intentionally deferred after
-        that because `FileUploadWidget` plus the delivery-source toggle stay
-        product-owned upload controls outside the shared field-shell contract
+      - the creator upload-controls follow-up is now closed too:
+        `/dashboard/creator/resources/new` and edit prove the creator-owned
+        delivery-source toggle plus the upload-branch wrapper shell without
+        widening shared `FileUploadWidget` internals
+      - shared `FileUploadWidget` internals still stay product-owned upload
+        controls outside the shared field-shell contract
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:

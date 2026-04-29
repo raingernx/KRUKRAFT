@@ -24,6 +24,7 @@ import {
   PreviewImageSortableList,
 } from "@/components/admin/resources";
 import { routes } from "@/lib/routes";
+import { cn } from "@/lib/utils";
 
 export interface CreatorResourceFormCategory {
   id: string;
@@ -678,6 +679,13 @@ export function CreatorResourceForm({
   // now driven by the merged image set. thumbnailUrl stays synced for
   // compatibility with downstream preview consumers that still read it.
   const previewThumbnail = previewUrls[0] || form.thumbnailUrl || null;
+  const deliveryToggleButtonClass = (source: DeliverySource) =>
+    cn(
+      "inline-flex h-10 min-w-[116px] items-center justify-center rounded-lg px-4 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40",
+      deliverySource === source
+        ? "bg-shell text-foreground shadow-sm ring-1 ring-border"
+        : "text-muted-foreground hover:bg-background hover:text-foreground",
+    );
   const aiDraftResourceSeed = useMemo<CreatorAIDraftResourceSeed>(
     () => ({
       title: form.title,
@@ -1158,34 +1166,34 @@ export function CreatorResourceForm({
               </div>
 
               <div className="space-y-4">
-                <div className="rounded-xl border border-border bg-background/70 p-3">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
+                <div
+                  data-testid="creator-delivery-source-shell"
+                  className="rounded-2xl border border-border bg-shell/70 p-4"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-4">
                     <div>
                       <p className="text-sm font-medium text-foreground">Delivery method</p>
                       <p className="text-xs text-muted-foreground">
                         Pick one source and keep it active.
                       </p>
                     </div>
-                    <div className="inline-flex rounded-xl border border-border bg-background p-1">
+                    <div
+                      data-testid="creator-delivery-source-toggle"
+                      className="inline-flex rounded-2xl border border-border bg-background p-1"
+                    >
                       <button
                         type="button"
+                        aria-pressed={deliverySource === "upload"}
                         onClick={() => setDeliverySource("upload")}
-                        className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-                          deliverySource === "upload"
-                            ? "bg-shell text-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
+                        className={deliveryToggleButtonClass("upload")}
                       >
                         Upload file
                       </button>
                       <button
                         type="button"
+                        aria-pressed={deliverySource === "external"}
                         onClick={() => setDeliverySource("external")}
-                        className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-                          deliverySource === "external"
-                            ? "bg-shell text-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
+                        className={deliveryToggleButtonClass("external")}
                       >
                         Use link
                       </button>
@@ -1194,63 +1202,78 @@ export function CreatorResourceForm({
                 </div>
 
                 {deliverySource === "upload" ? (
-                  <div className="space-y-3">
-                    <FileUploadWidget
-                      resourceId={form.id}
-                    initialFileName={form.fileName ?? null}
-                    initialFileSize={form.fileSize ?? null}
-                    uploadEndpoint="/api/creator/resources/upload"
-                    onEnsureResourceId={ensureDraftResourceId}
-                    onUploadComplete={(payload) => {
-                      setDeliverySource("upload");
-                      setExternalFileUrlDraft("");
-                      setExternalFileUrlIssue(null);
-                      setIsEditingExternalFileUrl(true);
-                      setForm((prev) => ({
-                        ...prev,
-                        id: prev.id || payload.resourceId,
-                        fileUrl: "",
-                        fileKey: payload.fileKey ?? "",
-                        fileName: payload.fileName ?? "",
-                        fileSize: payload.fileSize ?? null,
-                      }));
-                      setFieldErrors((prev) => {
-                        const next = { ...prev };
-                        delete next.fileUrl;
-                        return next;
-                      });
-                    }}
-                    onRemoveCurrentFile={async () => {
-                      try {
-                        await handleRemoveUploadedFile();
-                      } catch (removeError) {
-                        setError(
-                          removeError instanceof Error ? removeError.message : "ลบไฟล์ไม่สำเร็จ",
-                        );
-                      }
-                    }}
-                    copy={{
-                      saveFirstError: "ยังไม่สามารถสร้างฉบับร่างเพื่ออัปโหลดไฟล์ได้",
-                      dragAndDrop: "ลากไฟล์มาวาง หรือคลิกเพื่อเลือกไฟล์",
-                      formats: "PDF, DOCX, XLSX, ZIP หรือรูปภาพ สูงสุด 50 MB",
-                      maxSize: "ขนาดไฟล์สูงสุด 50 MB",
-                      replaceFile: "เปลี่ยนไฟล์",
-                      uploading: "กำลังอัปโหลด…",
-                      uploadFile: "อัปโหลดไฟล์",
-                      uploadSuccess: "อัปโหลดไฟล์เรียบร้อยแล้ว",
-                      removeFileAriaLabel: "ลบไฟล์",
-                      removeSelectedFileAriaLabel: "ลบไฟล์ที่เลือก",
-                    }}
-                  />
-                  {form.fileUrl && !hasUploadedFile ? (
-                    <div className="rounded-xl border border-dashed border-border bg-background/50 px-4 py-3.5">
-                      <p className="text-sm font-medium text-foreground">An external link is saved</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        Uploading a file here will replace the current external URL as the active delivery source.
+                  <div
+                    data-testid="creator-delivery-upload-branch"
+                    className="space-y-4 rounded-2xl border border-border bg-background px-4 py-4"
+                  >
+                    <div className="space-y-1.5">
+                      <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground">
+                        <span className="inline-flex h-7 items-center rounded-full border border-border bg-muted px-2.5 text-[11px] text-foreground">
+                          Upload
+                        </span>
+                        <span>Upload the file buyers will receive after checkout.</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Keep the uploader inside this branch and let the shared widget own file states.
                       </p>
                     </div>
-                  ) : null}
-                </div>
+
+                    <FileUploadWidget
+                      resourceId={form.id}
+                      initialFileName={form.fileName ?? null}
+                      initialFileSize={form.fileSize ?? null}
+                      uploadEndpoint="/api/creator/resources/upload"
+                      onEnsureResourceId={ensureDraftResourceId}
+                      onUploadComplete={(payload) => {
+                        setDeliverySource("upload");
+                        setExternalFileUrlDraft("");
+                        setExternalFileUrlIssue(null);
+                        setIsEditingExternalFileUrl(true);
+                        setForm((prev) => ({
+                          ...prev,
+                          id: prev.id || payload.resourceId,
+                          fileUrl: "",
+                          fileKey: payload.fileKey ?? "",
+                          fileName: payload.fileName ?? "",
+                          fileSize: payload.fileSize ?? null,
+                        }));
+                        setFieldErrors((prev) => {
+                          const next = { ...prev };
+                          delete next.fileUrl;
+                          return next;
+                        });
+                      }}
+                      onRemoveCurrentFile={async () => {
+                        try {
+                          await handleRemoveUploadedFile();
+                        } catch (removeError) {
+                          setError(
+                            removeError instanceof Error ? removeError.message : "ลบไฟล์ไม่สำเร็จ",
+                          );
+                        }
+                      }}
+                      copy={{
+                        saveFirstError: "ยังไม่สามารถสร้างฉบับร่างเพื่ออัปโหลดไฟล์ได้",
+                        dragAndDrop: "ลากไฟล์มาวาง หรือคลิกเพื่อเลือกไฟล์",
+                        formats: "PDF, DOCX, XLSX, ZIP หรือรูปภาพ สูงสุด 50 MB",
+                        maxSize: "ขนาดไฟล์สูงสุด 50 MB",
+                        replaceFile: "เปลี่ยนไฟล์",
+                        uploading: "กำลังอัปโหลด…",
+                        uploadFile: "อัปโหลดไฟล์",
+                        uploadSuccess: "อัปโหลดไฟล์เรียบร้อยแล้ว",
+                        removeFileAriaLabel: "ลบไฟล์",
+                        removeSelectedFileAriaLabel: "ลบไฟล์ที่เลือก",
+                      }}
+                    />
+                    {form.fileUrl && !hasUploadedFile ? (
+                      <div className="rounded-xl border border-dashed border-border bg-background/50 px-4 py-3.5">
+                        <p className="text-sm font-medium text-foreground">An external link is saved</p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Uploading a file here will replace the current external URL as the active delivery source.
+                        </p>
+                      </div>
+                    ) : null}
+                  </div>
                 ) : (
                   <div className="space-y-4 border-t border-border/80 pt-5">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

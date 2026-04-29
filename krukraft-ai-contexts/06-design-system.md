@@ -524,6 +524,14 @@ Use this order when DS docs disagree:
     Playwright sentinels for `/admin/resources/new`, `/admin/resources/:id`,
     and the lazy preview uploader flow; no route-family remap was needed for
     the table/list surfaces after the semantic shift
+  - a 2026-04-29 creator delivery upload-controls follow-up now confirms the
+    same split on the creator editor side:
+    - the delivery-source segmented toggle and the upload-branch wrapper shell
+      are creator-owned route chrome and now prove cleanly on
+      `/dashboard/creator/resources/new` and edit
+    - shared `FileUploadWidget` internals remain product-owned and were left
+      untouched so admin resource form consumers do not inherit creator-only
+      upload chrome changes by accident
   - the canonical `Card / Foundations` boards no longer carry wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is explicit token
     gap / polish territory instead:

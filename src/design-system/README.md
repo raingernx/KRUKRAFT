@@ -207,7 +207,10 @@ When this file conflicts with code, the code wins.
   a route-owned composite editor. The follow-up parser-only proof is now
   closed too: the bulk preview editor still uses the shared `Textarea` shell
   on create/edit routes, but parsing, validation, apply-state, and cover-order
-  side effects remain route-owned behavior. `FileUploadWidget` still stays a
+  side effects remain route-owned behavior. The next creator upload follow-up
+  is now closed too: the route-owned delivery-source toggle plus the upload
+  branch wrapper shell on `/dashboard/creator/resources/new` and edit are now
+  proved at runtime, while shared `FileUploadWidget` internals still stay a
   product-owned delivery control.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
