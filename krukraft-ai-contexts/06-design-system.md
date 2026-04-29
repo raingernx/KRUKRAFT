@@ -398,6 +398,10 @@ Use this order when DS docs disagree:
         move-category modal, while the bulk-upload textarea keeps the same
         `8px` shell target and limits its local overrides to the JSON-editor
         treatment
+      - the next low-risk widened follow-up is now the admin filter bucket:
+        `/admin/activity`, `/admin/audit`, and
+        `/admin/analytics/ranking` all keep the same shared `Select`
+        geometry on select-only filter surfaces without reopening creator forms
     - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
       component sets for the shared field ladder
     - runtime code still carries an older larger comfortable-radius branch for

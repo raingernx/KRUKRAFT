@@ -134,6 +134,7 @@ export function AuditTrailShell({
             Action type
           </label>
           <Select
+            size="field"
             id="actionFilter"
             defaultValue={initialFilters.action || "all"}
             onChange={(e) => updateQuery({ action: e.target.value })}
@@ -155,6 +156,7 @@ export function AuditTrailShell({
             Admin
           </label>
           <Select
+            size="field"
             id="adminFilter"
             defaultValue={initialFilters.adminId || "all"}
             onChange={(e) => updateQuery({ adminId: e.target.value })}

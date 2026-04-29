@@ -174,7 +174,10 @@ When this file conflicts with code, the code wins.
   shared admin forms. The first widened follow-up family is now
   `admin/resources`: the resource form, listing filters, and move-category
   modal all opt into the same shared select shell without local radius/padding
-  overrides.
+  overrides. The next widened admin-only follow-up is now the low-risk filter
+  bucket on `/admin/activity`, `/admin/audit`, and
+  `/admin/analytics/ranking`, which all prove the same `56px / 8px` select
+  shell without reopening creator-owned forms.
 - `Textarea` now has matching light/dark `Textarea / Foundations` boards plus
   dedicated `Textarea / State` sets in the canonical file. The multiline
   contract intentionally keeps the same quiet field shell target and

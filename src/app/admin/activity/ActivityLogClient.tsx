@@ -191,6 +191,7 @@ export function ActivityLogClient() {
             Action type
           </label>
           <Select
+            size="field"
             id="actionFilter"
             value={actionFilter}
             onChange={(e) =>

@@ -470,6 +470,10 @@ At a high level:
         resource form, listing filters, move-category modal, and bulk-upload
         editor all stay on the same shared `Select` / `Textarea` shell grammar
         while leaving route-owned JSON/editor coloration intact
+      - the next narrowed widening follow-up is now the admin filter-shell
+        bucket: `/admin/activity`, `/admin/audit`, and
+        `/admin/analytics/ranking` all explicitly keep the same shared `Select`
+        geometry (`56px / 8px`) without reopening creator-owned forms
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:
