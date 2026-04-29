@@ -383,7 +383,10 @@ export function FileUploadWidget({
       )}
 
       {status === "success" ? (
-        <div className="flex items-center gap-2 rounded-xl border border-success-500/25 bg-accent px-4 py-3">
+        <div
+          data-testid="file-upload-success"
+          className="flex items-center gap-2 rounded-2xl border border-success-500/25 bg-accent px-4 py-3"
+        >
           <CheckCircle className="h-4 w-4 shrink-0 text-success-600" />
           <p className="text-[13px] font-medium text-success-700">
             {labels.uploadSuccess}

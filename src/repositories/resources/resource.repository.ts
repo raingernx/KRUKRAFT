@@ -1878,6 +1878,33 @@ export async function deleteStaleDraftResources(cutoff: Date) {
       isFree: true,
       price: 0,
       status: "DRAFT",
+      tags: {
+        none: {},
+      },
+      previews: {
+        none: {},
+      },
+      purchases: {
+        none: {},
+      },
+      reviews: {
+        none: {},
+      },
+      versions: {
+        none: {},
+      },
+      downloadEvents: {
+        none: {},
+      },
+      analyticsEvents: {
+        none: {},
+      },
+      creatorRevenue: {
+        none: {},
+      },
+      resourceStat: {
+        is: null,
+      },
       createdAt: {
         lt: cutoff,
       },

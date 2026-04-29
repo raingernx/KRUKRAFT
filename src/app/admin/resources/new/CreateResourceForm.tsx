@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Card } from "@/design-system";
@@ -52,30 +52,41 @@ export function CreateResourceForm({ categories, tags: initialTags, currentUser 
   const [previewData, setPreviewData] =
     useState<ResourceCardData>(defaultPreviewData);
   const [draftResourceId, setDraftResourceId] = useState<string | null>(null);
+  const draftResourcePromiseRef = useRef<Promise<string | undefined> | null>(null);
 
   async function ensureDraftResource() {
     if (draftResourceId) return draftResourceId;
 
-    try {
-      const res = await fetch("/api/admin/resources/draft", {
-        method: "POST",
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        console.error("Failed to create draft resource", data);
-        return undefined;
-      }
-
-      const draftId = data.id as string | undefined;
-      if (!draftId) return undefined;
-
-      setDraftResourceId(draftId);
-      return draftId;
-    } catch (err) {
-      console.error("Error creating draft resource", err);
-      return undefined;
+    if (draftResourcePromiseRef.current) {
+      return draftResourcePromiseRef.current;
     }
+
+    draftResourcePromiseRef.current = (async () => {
+      try {
+        const res = await fetch("/api/admin/resources/draft", {
+          method: "POST",
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          console.error("Failed to create draft resource", data);
+          return undefined;
+        }
+
+        const draftId = data.id as string | undefined;
+        if (!draftId) return undefined;
+
+        setDraftResourceId(draftId);
+        return draftId;
+      } catch (err) {
+        console.error("Error creating draft resource", err);
+        return undefined;
+      } finally {
+        draftResourcePromiseRef.current = null;
+      }
+    })();
+
+    return draftResourcePromiseRef.current;
   }
 
   async function handleCreate(payload: ResourcePayload) {

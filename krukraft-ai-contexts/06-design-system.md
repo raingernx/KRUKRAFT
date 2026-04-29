@@ -539,9 +539,13 @@ Use this order when DS docs disagree:
         upload-complete slice too:
         - `/dashboard/creator/resources/[id]` and `/admin/resources/[id]` now
           prove the uploaded-file card plus replace/remove posture
-        - success/error feedback still remains future-plan material so admin
-          resource form consumers do not inherit a broader upload-state rewrite
-          without a separate proof slice
+        - the latest shared widget follow-up now closes the success banner
+          slice too:
+          - `/dashboard/creator/resources/new` and `/admin/resources/new` now
+            prove the widget-owned success banner shell after upload completes
+        - widget error feedback and route-level flash messaging still remain
+          future-plan material so admin resource form consumers do not inherit
+          a broader upload-state rewrite without a separate proof slice
   - the canonical `Card / Foundations` boards no longer carry wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is explicit token
     gap / polish territory instead:
