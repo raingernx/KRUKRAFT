@@ -212,8 +212,10 @@ When this file conflicts with code, the code wins.
   branch wrapper shell on `/dashboard/creator/resources/new` and edit are now
   proved at runtime. The first shared widget follow-up is now closed too:
   creator/admin create routes now prove the shared pre-upload branch
-  (`dropzone`, selected-file preview, and upload CTA) while uploaded/removal/
-  success/error flows still stay as product-owned future-plan material.
+  (`dropzone`, selected-file preview, and upload CTA). The next shared widget
+  follow-up is now closed too: creator/admin edit routes now prove the
+  uploaded-file card plus replace/remove posture, while success/error feedback
+  still stays as product-owned future-plan material.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may

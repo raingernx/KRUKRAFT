@@ -210,7 +210,10 @@ export function FileUploadWidget({
     <div data-testid="file-upload-widget" className="w-full min-w-0 space-y-4">
       {uploadedFile ? (
         <>
-          <PreviewCard className="flex items-center gap-3">
+          <PreviewCard
+            data-testid="file-upload-uploaded-file"
+            className="flex items-center gap-3 rounded-2xl"
+          >
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-card">
               <FileText className="h-4 w-4 text-brand-600" />
             </span>
@@ -230,9 +233,10 @@ export function FileUploadWidget({
               ) : null}
             </div>
             <PickerIconButton
+              data-testid="file-upload-remove-existing"
               aria-label={labels.removeFileAriaLabel}
               onClick={handleRemoveExisting}
-              className="ml-auto inline-flex h-6 w-6 items-center justify-center rounded-full p-0"
+              className="ml-auto inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] p-0"
             >
               <X className="h-4 w-4" />
             </PickerIconButton>
@@ -240,9 +244,13 @@ export function FileUploadWidget({
 
           <div className="space-y-2">
             <PickerActionButton
+              data-testid="file-upload-replace"
               type="button"
               onClick={() => inputRef.current?.click()}
               actionStyle="dashed"
+              size="md"
+              density="compact"
+              className="h-10 justify-center rounded-[var(--radius-sm)] px-5 text-[13px] font-semibold"
             >
               <Upload className="h-4 w-4" />
               {labels.replaceFile}

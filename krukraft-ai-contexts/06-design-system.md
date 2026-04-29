@@ -535,9 +535,13 @@ Use this order when DS docs disagree:
         prove the shared pre-upload branch
       - that shared slice is intentionally limited to the empty dropzone,
         selected-file preview row, and upload CTA posture/copy surface
-      - uploaded/removal/success/error states remain future-plan material so
-        admin resource form consumers do not inherit a broader upload-state
-        rewrite without a separate proof slice
+      - the next shared widget follow-up now closes the lowest-risk
+        upload-complete slice too:
+        - `/dashboard/creator/resources/[id]` and `/admin/resources/[id]` now
+          prove the uploaded-file card plus replace/remove posture
+        - success/error feedback still remains future-plan material so admin
+          resource form consumers do not inherit a broader upload-state rewrite
+          without a separate proof slice
   - the canonical `Card / Foundations` boards no longer carry wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is explicit token
     gap / polish territory instead:
