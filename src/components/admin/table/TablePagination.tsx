@@ -17,6 +17,8 @@ export interface TablePaginationProps {
   className?: string;
   /** Optional label for the entity (e.g. "resources") */
   entityLabel?: string;
+  /** Opt-in button posture for route families that use the larger DS recipe */
+  buttonSize?: "sm" | "md";
 }
 
 /**
@@ -30,6 +32,7 @@ export function TablePagination({
   onPageChange,
   className,
   entityLabel = "items",
+  buttonSize = "sm",
 }: TablePaginationProps) {
   const from = totalItems != null ? (page - 1) * pageSize + 1 : null;
   const to =
@@ -55,7 +58,7 @@ export function TablePagination({
         <PaginationButton
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}
-          size="sm"
+          size={buttonSize}
         >
           Previous
         </PaginationButton>
@@ -65,7 +68,7 @@ export function TablePagination({
         <PaginationButton
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages || totalPages === 0}
-          size="sm"
+          size={buttonSize}
         >
           Next
         </PaginationButton>

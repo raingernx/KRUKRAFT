@@ -130,6 +130,13 @@ Current runtime contract to mirror:
     - dashboard creator-resources `DataPanelTable` is the first live consumer;
       compact `sm` helper postures stay available until a wider rollout is
       explicitly proven
+  - the first admin rollout proof keeps that same posture opt-in instead of
+    silently widening every admin control cluster:
+    - `/admin/users` now opts into `RowActionButton size="md"`
+    - `/admin/audit` now opts into `TablePagination buttonSize="md"`
+    - `/admin/tags` intentionally stays on compact `sm` row actions because
+      its inline edit/save/delete clusters are denser than the table-action
+      recipe proved in `DataPanelTable`
 - If that button-size pass is reopened, the current recommended path is to
   trial `xs=32 / sm=36 / md=40 / lg=48`, keep `density=\"compact\" -> xs`
   during the first rollout proof, and leave `Input` / `SearchInput` on the

@@ -50,7 +50,7 @@ async function AdminUsersResultsSection({
         </tr>
       </DataTableHeader>
       <DataTableBody>
-        {users.length === 0 ? (
+                {users.length === 0 ? (
           <TableEmptyState message="No users found." />
         ) : (
           users.map((user) => (
@@ -86,11 +86,13 @@ async function AdminUsersResultsSection({
               </DataTableCell>
               <DataTableCell align="right">
                 <RowActions>
-                  <RowActionButton type="button">View</RowActionButton>
-                  <RowActionButton type="button" tone="muted">
+                  <RowActionButton type="button" size="md">
+                    View
+                  </RowActionButton>
+                  <RowActionButton type="button" tone="muted" size="md">
                     Suspend
                   </RowActionButton>
-                  <RowActionButton type="button" tone="danger">
+                  <RowActionButton type="button" tone="danger" size="md">
                     Delete
                   </RowActionButton>
                 </RowActions>

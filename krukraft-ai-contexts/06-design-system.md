@@ -320,12 +320,19 @@ Use this order when DS docs disagree:
         - `RowActionButton size="md"` mirrors the 40px rounded-rect table
           action recipe while compact `sm` stays available for smaller admin
           surfaces
-        - `PaginationButton size="md"` mirrors the matching page-item recipe,
-          now supports `asChild`, and is live in the dashboard creator
-          resources pagination flow
-        - dashboard creator-resources `DataPanelTable` is the first live
-          route-family consumer; broader admin rollout is still an active
-          follow-up decision, not a silent global button rewrite
+      - `PaginationButton size="md"` mirrors the matching page-item recipe,
+        now supports `asChild`, and is live in the dashboard creator
+        resources pagination flow
+      - dashboard creator-resources `DataPanelTable` is the first live
+        route-family consumer; broader admin rollout is still an active
+        follow-up decision, not a silent global button rewrite
+      - the first admin rollout proof now narrows that follow-up decision:
+        - `/admin/users` adopts `RowActionButton size="md"` because its row
+          actions behave like a spaced table-action column
+        - `/admin/audit` adopts `TablePagination buttonSize="md"` because its
+          pager behaves like a standalone table footer
+        - `/admin/tags` intentionally stays on compact `sm` row actions
+          because its save/cancel/delete clusters are denser inline controls
       - that same audit found the real runtime blast radius is concentrated in
         `dashboard` (~60 `size=\"sm\"` button usages) and `admin` (~34), while
         live `density=\"compact\"` usage is still narrow (`public-resources`

@@ -285,6 +285,7 @@ export function AuditTrailResults({
         page={page}
         totalPages={totalPages}
         onPageChange={handlePageChange}
+        buttonSize="md"
         className="px-4 py-2.5"
       />
     </div>

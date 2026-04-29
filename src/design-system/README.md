@@ -215,7 +215,18 @@ When this file conflicts with code, the code wins.
     the same rounded-rect `radius/sm (8px)` geometry as table row actions; the
     first runtime slice now exposes that through `PaginationButton size="md"`
     and uses it in the dashboard creator-resources `DataPanelTable` flow while
-    leaving compact `sm` pagination available until wider proof lands
+    leaving compact `sm` pagination available until wider proof lands. The
+    first admin rollout proof now keeps that posture opt-in through
+    `TablePagination buttonSize="md"` on `/admin/audit` instead of widening
+    every table footer by default
+  - current admin rollout decision:
+    - `/admin/users`: adopt `RowActionButton size="md"` because the row-action
+      cluster behaves like a spaced table-action column rather than a dense
+      inline editor
+    - `/admin/audit`: adopt `TablePagination buttonSize="md"` because the
+      footer behaves like a standalone table paginator
+    - `/admin/tags`: keep compact `RowActionButton` `sm` because edit,
+      confirm-delete, and save/cancel clusters are denser inline controls
   - `panel CTA`: recipe first, usually outline-derived; if the bounded neutral
     posture spreads across multiple non-table contexts, reopen it as a real
     `soft` adoption decision instead of sneaking it into `ghost`
