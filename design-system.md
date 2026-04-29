@@ -300,12 +300,14 @@ For reusable Figma component sets:
   contract; future product-specific label needs should be solved by deliberate
   remaps or separate product-bound components, not by reopening ad-hoc badge
   variants.
-- The current canonical `Badge` board keeps two explicit Figma-only gaps
-  instead of silently drifting:
-  - the seven badge labels still use a local `12/16` recipe because the shared
-    typography scale still lacks an xs label token
-  - the light/dark `Badge / Variant / Source` wrapper frames still keep local
-    `cornerRadius=5`
+- The 2026-04-29 badge residual cleanup closed the last canonical badge-board
+  gaps too: the light/dark `Badge / Variant / Source` wrappers now sit at
+  `cornerRadius=0`, and the seven badge labels now bind to dedicated
+  `type/badge/size` + `type/badge/line` variables instead of local `12/16`
+  overrides.
+- Runtime `Badge.tsx` now consumes the same `text-badge` `12/16` size token,
+  so the primitive and the canonical badge source sets no longer diverge on
+  size/line-height.
 - The current dark source set for that canonical badge block now lives at
   `746:208`; repo mapping should follow the live node instead of the earlier
   `736:206` id from the first landing pass.
@@ -350,7 +352,7 @@ For reusable Figma component sets:
   - the shell copy itself still relies on local type recipes:
     - `16/20` titles
     - `14/20` descriptions, column labels, row meta, and updated dates
-    - inherited `12/16` badge labels from the status pills
+    - inherited `12/16` badge sizing from the shared badge recipe
   - runtime still asks for `border-subtle`
   - the table-head fill remains a route-owned local treatment rather than a
     shared semantic token

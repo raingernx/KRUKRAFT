@@ -320,9 +320,12 @@ When this file conflicts with code, the code wins.
   contract; if a future route needs one of those ideas again, it should be
   remapped deliberately onto the canonical badge set or moved into a separate
   product-bound component instead of reopening ad-hoc badge variants.
-- `Badge` still carries one explicit typography gap in Figma: the source set
-  uses a narrow local `12/16` label recipe because the typography scale does
-  not yet provide an xs label token.
+- The 2026-04-29 badge residual cleanup closed the last Figma-side badge gaps:
+  the light/dark source-set wrappers now sit at `cornerRadius=0`, and the
+  source-set labels now bind to dedicated `type/badge/size` + `type/badge/line`
+  variables instead of staying on local `12/16` overrides.
+- Runtime `Badge.tsx` now consumes the matching `text-badge` size token so the
+  primitive and the canonical Figma set share the same `12/16` badge recipe.
 - `Chip` is now reserved for interactive token-like controls only, such as
   filter chips, pressed/selected chips, removable chips, or navigation chips.
   Do not expand `Badge` to cover those interactive contracts once `Chip` lands.

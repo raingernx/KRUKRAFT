@@ -482,7 +482,7 @@ Use this order when DS docs disagree:
     - the remaining local styling debt is now narrow and explicit:
       wrapper/study-scene radius values inside `Button`, `Input / Search`,
       `Card`, `Dropdown`, and `Surface`, plus the already-known token gaps for
-      `Dropdown`, `Surface`, and the new `Badge` xs label-type gap
+      `Dropdown` and `Surface`, plus the then-open `Badge` xs label-type gap
     - `Badge` is now landed in the canonical file through dedicated
       `Badge / Foundations / Light` and `Badge / Foundations / Dark` boards
       plus `Badge / Variant / Source` light/dark component sets
@@ -504,11 +504,12 @@ Use this order when DS docs disagree:
     - the live dark badge source set also drifted from the initial landing id
       and now lives at `746:208`; repo mapping must follow that node instead of
       the older `736:206` reference
-    - the 2026-04-28 shared-component re-audit keeps the remaining live badge
-      debt narrow and explicit:
-      - the seven badge labels still use local `12/16` xs type recipes
-      - the light/dark `Badge / Variant / Source` wrapper frames still keep
-        local `cornerRadius=5`
+    - the 2026-04-29 badge residual cleanup closes the last live badge
+      Figma gaps too:
+      - the seven badge labels now bind to dedicated `type/badge/size` and
+        `type/badge/line` variables instead of local `12/16` xs recipes
+      - the light/dark `Badge / Variant / Source` wrapper frames now sit at
+        `cornerRadius=0`
     - runtime `Badge.tsx` now mirrors the canonical badge set directly:
       `warning` / `featured` follow the tuned Figma split, and the earlier
       runtime-only badge aliases have been remapped off the live app surface
@@ -560,7 +561,7 @@ Use this order when DS docs disagree:
     - the shell copy itself still relies on local type recipes:
       - `16/20` titles
       - `14/20` descriptions, column labels, row meta, and updated dates
-      - inherited `12/16` badge labels from the status pills
+      - inherited `12/16` badge sizing from the shared badge recipe
     - runtime still asks for `border-subtle`, and the table-head fill remains
       route-owned rather than a shared semantic token
   - the shared-library close-out audit is now complete too:

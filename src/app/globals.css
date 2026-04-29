@@ -45,6 +45,7 @@
   --page-content-narrow-max-width: 800px;
 
   --font-size-base: 16px;
+  --font-size-badge: 0.75rem;
   --font-size-display: 3rem;
   --font-size-h1: 2rem;
   --font-size-h2: 2rem;
@@ -53,6 +54,7 @@
   --font-size-small: 0.875rem;
   --font-size-caption: 0.875rem;
 
+  --line-height-badge: 1rem;
   --line-height-body: 1.875rem;
   --line-height-heading: 2.5rem;
   --line-height-display: 3.5rem;
@@ -371,6 +373,12 @@
     line-height: var(--line-height-h3);
     letter-spacing: var(--letter-spacing-heading);
     font-weight: var(--font-weight-heading);
+  }
+
+  .text-badge {
+    font-size: var(--font-size-badge);
+    line-height: var(--line-height-badge);
+    letter-spacing: var(--letter-spacing-body);
   }
 
   .text-body {

@@ -17,6 +17,7 @@ export const fontSizeScale: Record<
   [string, { lineHeight: string }]
 > = {
   "2xs": ["0.75rem", { lineHeight: "1.25rem" }],
+  badge: ["0.75rem", { lineHeight: "1rem" }],
   display: ["3rem", { lineHeight: "3.5rem" }],
   hero: ["3rem", { lineHeight: "3.5rem" }],
   h1: ["2rem", { lineHeight: "2.5rem" }],
@@ -32,6 +33,7 @@ export const fontSizeScale: Record<
 };
 
 export const lineHeights = {
+  badge: "1rem",
   body: "1.875rem",
   heading: "2.5rem",
   display: "3.5rem",
@@ -115,6 +117,14 @@ export const typography = {
       lineHeight: fontSizeScale["body-lg"][1].lineHeight,
       letterSpacing: letterSpacingScale.body,
       fontWeight: fontWeights.body,
+    },
+    badge: {
+      className: "text-badge",
+      weight: "font-medium",
+      fontSize: fontSizeScale.badge[0],
+      lineHeight: fontSizeScale.badge[1].lineHeight,
+      letterSpacing: letterSpacingScale.body,
+      fontWeight: 500,
     },
     body: {
       className: "text-body",
