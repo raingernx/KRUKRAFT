@@ -18,10 +18,10 @@ Parent Plan: `Shared FileUploadWidget error feedback states`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Shared FileUploadWidget error feedback states` is active. Success-banner proof is now frozen, and the next safe branch to inventory is widget-owned error feedback only.
+> `Shared FileUploadWidget error feedback states` is active. Inventory is now closed, and the first safe error slice is locked to the shared oversize-validation banner.
 
 > [!todo] Next Up
-> Inventory shared widget error-feedback states, choose one shared-safe proof slice, and keep route-level flash messaging out of scope.
+> Land and verify the shared oversize-validation error slice on creator/admin create routes, while keeping draft-creation/save-first failures and route-level flash messaging out of scope.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -55,7 +55,7 @@ Parent Plan: `Shared FileUploadWidget error feedback states`
 | Shared FileUploadWidget Internals | Complete | creator/admin create routes now prove the shared empty-state + selected-file preview + upload CTA slice; that baseline is now frozen |
 | Shared FileUploadWidget Upload-Complete States | Complete | creator/admin edit routes now prove the uploaded-file card + replace/remove posture slice; that baseline is now frozen |
 | Shared FileUploadWidget Success/Error Feedback States | Complete | creator/admin create routes now prove the shared success banner; that baseline is now frozen |
-| Shared FileUploadWidget Error Feedback States | Active | success-banner proof is frozen; inventory the widget-owned error branch before touching route-level flash messaging |
+| Shared FileUploadWidget Error Feedback States | Active | inventory is closed; land the shared oversize-validation error slice before touching draft/save-first failures or route-level flash messaging |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -68,7 +68,7 @@ Parent Plan: `Shared FileUploadWidget error feedback states`
 ## Progress
 
 Shared FileUploadWidget error feedback states
-`[██░░░░░░░░] 20%`
+`[██████░░░░] 60%`
 
 ```mermaid
 flowchart TB
@@ -116,8 +116,8 @@ flowchart TB
 
   subgraph Current
     V0["Plan open<br/>Done"]
-    V1["Error feedback inventory<br/>Current"]
-    V2["First proof-slice decision<br/>Pending"]
+    V1["Error feedback inventory<br/>Done"]
+    V2["First proof-slice decision<br/>Done"]
     V3["Route-scoped runtime slice<br/>Pending"]
     V4["Close-out audit<br/>Pending"]
   end
@@ -191,11 +191,23 @@ Shared FileUploadWidget error feedback states
 - This parent plan isolates the remaining widget-owned feedback bucket:
   - error banner shell
   - error icon/text posture
-- Inventory has not started yet for this parent plan:
+- Inventory is now closed for this parent plan:
   - creator and admin both already prove the shared success banner
-  - route-level flash messaging still stays out of scope
-  - the next job is to map the shared widget-owned error branch before
-    deciding whether a creator/admin proof slice is safe
+  - three error classes exist inside the current widget path:
+    - `saveFirstError` when no draft/resource id is available yet
+    - oversize validation (`File is too large. Maximum size is 50 MB.`)
+    - upload-endpoint failure text returned from the route
+  - the error branch is less uniform than success:
+    - `saveFirstError` still depends on route-specific draft creation behavior
+      and creator/admin copy divergence
+    - upload-endpoint failures depend on route-owned backend messages
+    - route-level remove/upload flash messaging remains outside the widget
+- The first safe proof slice is now locked:
+  - shared oversize-validation error banner
+  - shared error icon/banner shell
+  - proof routes:
+    - `/dashboard/creator/resources/new`
+    - `/admin/resources/new`
 - Keep these out of scope for this plan:
   - creator-owned delivery-source toggle wrappers
   - bulk preview URL parser/editor
@@ -203,19 +215,21 @@ Shared FileUploadWidget error feedback states
   - route-owned wrapper copy outside the widget
   - route-level remove/upload flash messages
   - route-owned save-first messaging
+  - backend-driven upload failure copy
 
 ### Goal
-Inventory the shared widget-owned error branch without reopening the frozen
+Land one shared-safe widget-owned error slice without reopening the frozen
 pre-upload, uploaded-card, or success-banner baselines, and without mixing
 widget error feedback into route-level flash messaging.
 
 ### Why this is the current phase
 - The previous parent plan proved the shared success banner and closed cleanly.
-- The next unresolved shared widget surface is the error branch, but it still
-  risks mixing widget-owned upload failures with route-level save/remove flash
-  messaging.
-- Inventory must come first so the next proof slice stays narrow instead of
-  accidentally reopening broader route-owned error behavior.
+- Inventory now shows the lowest-risk widget-owned error surface is not
+  `saveFirstError` or backend upload failures, but the local oversize
+  validation branch, because that branch does not depend on route-owned draft
+  creation or route-specific backend copy.
+- The next in-plan job is therefore the oversize-validation slice on creator
+  and admin create routes before considering broader error behavior.
 
 ### Definition of Done
 - [x] The prior admin and creator profile proof routes stay frozen as baselines
@@ -226,8 +240,8 @@ widget error feedback into route-level flash messaging.
 - [x] The shared pre-upload widget slice stays frozen as a baseline
 - [x] The shared uploaded-card/replace/remove slice stays frozen as a baseline
 - [x] The shared success-banner slice stays frozen as a baseline
-- [ ] Shared widget-owned error feedback states are inventoried across creator and admin consumers
-- [ ] One error-feedback proof slice is chosen
+- [x] Shared widget-owned error feedback states are inventoried across creator and admin consumers
+- [x] One error-feedback proof slice is chosen
 - [ ] That shared widget runtime slice is landed and verified
 - [ ] A close-out audit decides whether the parent plan should continue or close
 
@@ -236,8 +250,8 @@ widget error feedback into route-level flash messaging.
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
 | 0 | Plan open | complete | success-banner proof is now frozen and error feedback is isolated into its own parent plan |
-| 1 | Error feedback inventory | current | identify the shared widget-owned error branch without mixing route-level flash messaging |
-| 2 | First proof-slice decision | pending | choose one shared-safe error slice only after inventory closes |
+| 1 | Error feedback inventory | complete | oversize validation is the lowest-risk widget-owned branch; save-first and backend failures still diverge more by route |
+| 2 | First proof-slice decision | complete | the safe first slice is the shared oversize-validation error banner on creator/admin create routes |
 | 3 | Route-scoped runtime slice | pending | land and verify the chosen error-feedback slice |
 | 4 | Close-out audit | pending | close cleanly or split any remaining error behavior into narrower future plans |
 
@@ -246,8 +260,8 @@ widget error feedback into route-level flash messaging.
 ## Current Goal
 
 1. keep the creator wrapper, linked-URL, preview-parser, pre-upload, uploaded-card, and success-banner baselines frozen
-2. inventory the shared widget-owned error branch
-3. keep route-level flash messaging out of scope
+2. land the shared oversize-validation error slice
+3. keep draft/save-first failures and route-level flash messaging out of scope
 
 ---
 
@@ -255,17 +269,17 @@ widget error feedback into route-level flash messaging.
 
 - [x] Open a new parent plan for shared `FileUploadWidget` error feedback states
 - [x] Keep creator wrapper, linked-URL, preview-parser, pre-upload, uploaded-card, and success-banner slices as frozen baselines
-- [ ] Inventory shared widget-owned error feedback states across creator and admin consumers
-- [ ] Choose the first error-feedback proof slice
+- [x] Inventory shared widget-owned error feedback states across creator and admin consumers
+- [x] Choose the first error-feedback proof slice
 - [ ] Land the next shared widget runtime slice
 
 ---
 
 ## Next Up
 
-- [ ] Inventory shared widget-owned error feedback states
-- [ ] Choose one shared-safe proof slice
-- [ ] Keep route-level flash messaging out of scope
+- [ ] Land the shared oversize-validation error slice
+- [ ] Verify `/dashboard/creator/resources/new` and `/admin/resources/new`
+- [ ] Keep draft/save-first failures and route-level flash messaging out of scope
 
 ---
 
@@ -364,6 +378,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: Inventory for `Shared FileUploadWidget error feedback states` is now closed. The widget currently exposes three error classes: `saveFirstError` when no draft/resource id exists, local oversize validation, and upload-endpoint failure text returned from the route. The safest first slice is the shared oversize-validation banner on `/dashboard/creator/resources/new` and `/admin/resources/new`, because `saveFirstError` still depends on route-specific draft creation behavior and upload-failure copy still depends on backend messaging. Route-level flash messaging stays out of scope.
 - 2026-04-29: Open a new parent plan `Shared FileUploadWidget error feedback states` instead of stretching the closed success-banner slice. The frozen shared baseline now includes creator/admin proof for the pre-upload branch, the uploaded-file card plus replace/remove posture, and the success banner on create routes, so the only unresolved shared widget surface is the error branch. Route-level flash messaging and save-first messaging remain explicitly out of scope until the widget-owned error states are inventoried.
 - 2026-04-29: `Shared FileUploadWidget success/error feedback states` is now closed. `/dashboard/creator/resources/new` and `/admin/resources/new` both prove the widget-owned success banner after upload completion, while widget error feedback and route-level flash messaging remain deferred to a separate future plan. This slice also closed the admin-side blocker discovered during proof: create-route draft creation now reuses one in-flight draft request, and stale draft cleanup deletes only unreferenced drafts so historical purchase foreign keys no longer break `POST /api/admin/resources/draft`.
 - 2026-04-29: Inventory for `Shared FileUploadWidget success/error feedback states` is now closed. Creator and admin both mount the same widget-owned success banner after upload completion, but error feedback diverges more than success because upload failures can surface through the widget while `saveFirstError` and route-level remove/upload failures still use separate route-owned messaging. The safest first feedback slice is therefore the shared success banner on `/dashboard/creator/resources/new` and `/admin/resources/new`, while error feedback stays deferred until that lower-risk proof is green.
