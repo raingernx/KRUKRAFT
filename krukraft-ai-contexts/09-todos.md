@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
 ## Plan Snapshot
 
-Parent Plan: `Select filter-shell widening`
+Parent Plan: `Creator Select/Textarea widening`
 
 > [!info] Current Phase
-> `Plan complete`
+> `Phase 1 — Creator route-family inventory`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Select filter-shell widening`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> No active parent plan. `Select filter-shell widening` closed cleanly after the low-risk admin filter bucket passed runtime proof.
+> `Creator Select/Textarea widening` is active. The next narrow job is to inventory the creator-owned route family and choose one first proof slice without mixing in admin or marketplace-owned shells.
 
 > [!todo] Next Up
-> No in-plan `Next Up`. Open a separate parent plan before widening creator-owned forms or any product-bound field shells.
+> Inventory the creator-owned `Select` / `Textarea` mounts, choose one first proof route family, and keep admin/product-owned shells out of scope.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -47,6 +47,7 @@ Parent Plan: `Select filter-shell widening`
 | Select/Textarea Runtime Parity Preparation | Complete | both sibling controls now have canonical Figma slices and the first runtime parity proof passed on `/admin/settings` |
 | Select/Textarea Rollout Widening | Complete | `/admin/resources` landed as the first widened follow-up family after `/admin/settings`; close-out audit found no in-scope reason to keep the plan open |
 | Select Filter-Shell Widening | Complete | the low-risk `Select`-only admin filter bucket (`activity`, `audit`, `analytics/ranking`) now proves the shared `56px / 8px` shell; creator routes remain a separate optional future plan |
+| Creator Select/Textarea Widening | Active | inventory creator-owned route families, choose one first proof slice, and widen shared field shells without reopening admin/product buckets |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -58,8 +59,8 @@ Parent Plan: `Select filter-shell widening`
 
 ## Progress
 
-Select filter-shell widening
-`[██████████] 100%`
+Creator Select/Textarea widening
+`[██░░░░░░░░] 20%`
 
 ```mermaid
 flowchart TB
@@ -106,13 +107,14 @@ flowchart TB
   end
 
   subgraph Current
-    S0["Plan open + bucket lock<br/>Done"]
-    S1["Admin filter-shell slice<br/>Done"]
-    S2["Route proof<br/>Done"]
-    S3["Close-out audit<br/>Done"]
+    C0["Plan open<br/>Done"]
+    C1["Creator route-family inventory<br/>In progress"]
+    C2["First proof-slice decision<br/>Pending"]
+    C3["Route-scoped runtime slice<br/>Pending"]
+    C4["Close-out audit<br/>Pending"]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> C0 --> C1 --> C2 --> C3 --> C4
 ```
 
 ## Daily Workflow
@@ -148,83 +150,87 @@ Rules:
 ## Current Phase
 
 ### Name
-Plan complete
+Phase 1 — Creator route-family inventory
 
 ### Parent Plan
-Select filter-shell widening
+Creator Select/Textarea widening
 
 ### Current Status Inside Parent Plan
 - The frozen baselines are now clear:
   - `Select.tsx` keeps canonical `radius/sm (8px)` at runtime
   - `/admin/settings` remains the first full sibling-control proof route
   - `/admin/resources` remains the first widened `Select` + `Textarea` follow-up
-- The next safest residual bucket is now locked:
-  - `admin/activity|audit|analytics` is the low-risk `Select`-only filter
-    family
-  - representative mounts live in:
-    - `/admin/activity`
-    - `/admin/audit`
-    - `/admin/analytics/ranking`
-  - these routes already lean on shared filter shells and avoid the heavier
-    draft/upload/storefront behavior that still makes `creator` its own future
-    plan
-- `creator` remains explicitly out of scope for this parent plan:
-  - resource/profile/application surfaces mount through route-owned creator
-    shells and deserve their own plan after this narrower admin filter pass
-- The admin filter-shell slice is now landed and proved:
   - `/admin/activity`, `/admin/audit`, and `/admin/analytics/ranking` now
-    opt into the shared `Select` shell explicitly through `size="field"`
-  - route proof passed for all three routes at `56px / 8px`
-- The close-out audit found no in-scope reason to keep this parent plan open:
-  - the narrow admin filter bucket is clean
-  - creator-owned form routes still deserve a separate parent plan because
-    they mount through route-owned creator shells and longer authoring flows
+    prove the low-risk `Select`-only admin filter bucket
+- Creator now becomes the next isolated widening target:
+  - creator resource/profile/application flows still mount shared `Select` /
+    `Textarea` through route-owned creator shells
+  - representative mounts already confirmed in:
+    - `CreatorResourceForm`
+    - `CreatorProfileForm`
+    - `CreatorApplicationForm`
+    - `CreatorAIDraftGenerator`
+  - route families likely split into:
+    - creator resource editor
+    - creator profile/settings
+    - creator application
+    - creator AI draft helpers
+- This parent plan should still widen only one creator bucket at a time; do not
+  mix creator work with admin or product-owned field shells
 
 ### Goal
-Completed. The plan widened the shared `Select` shell into the low-risk admin
-filter bucket, proved it at runtime, and then closed without silently rolling
-into creator forms.
+Choose the smallest safe creator-owned route family after the completed admin
+baselines, then land one route-scoped creator widening slice before deciding
+whether the parent plan should continue or close.
 
 ### Why this is the current phase
-- The parent plan reached its definition of done and is now closed instead of
-  stretching into creator-owned form routes.
+- The admin-only widening buckets are now closed, and creator-owned forms are
+  the next explicit residual area that should be handled in their own parent
+  plan.
 
 ### Definition of Done
-- [x] The prior `/admin/settings` and `/admin/resources` proofs stay frozen as baselines
-- [x] `admin/activity`, `admin/audit`, and `admin/analytics/ranking` are normalized onto the shared select shell explicitly where needed
-- [x] Route-level proof passes for that filter bucket
-- [x] The close-out audit decides whether creator should stay a separate optional plan
+- [x] The prior admin proof routes stay frozen as baselines
+- [ ] Creator-owned `Select` / `Textarea` consumers are grouped into widening buckets
+- [ ] One creator bucket is chosen as the first proof slice
+- [ ] That creator route-scoped runtime slice is landed and verified
+- [ ] A close-out audit decides whether the parent plan should continue or close
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Plan open + bucket lock | complete | low-risk admin filter-shell bucket is explicitly separated from creator-owned forms |
-| 1 | Admin filter-shell slice | complete | shared select-shell widening now covers activity, audit, and analytics ranking |
-| 2 | Route proof | complete | runtime proof passed for all three admin filter routes |
-| 3 | Close-out audit | complete | creator remains a separate optional future plan |
+| 0 | Plan open | complete | creator widening now becomes its own parent plan instead of a residual note |
+| 1 | Creator route-family inventory | in progress | group creator-owned mounts into safe widening buckets |
+| 2 | First proof-slice decision | pending | choose one creator bucket only |
+| 3 | Route-scoped runtime slice | pending | land and verify the chosen creator bucket |
+| 4 | Close-out audit | pending | decide whether the parent plan should continue or close |
 
 ---
 
 ## Current Goal
 
-1. completed
+1. inventory creator-owned `Select` / `Textarea` route families
+2. choose the smallest safe creator bucket
+3. keep admin/product-owned shells out of this parent plan
 
 ---
 
 ## In Progress
 
-- [x] Open a new parent plan for the low-risk admin filter bucket
-- [x] Keep `/admin/settings` and `/admin/resources` as frozen baselines
-- [x] Land the admin filter-shell widening slice
-- [x] Run route proof for `/admin/activity`, `/admin/audit`, and `/admin/analytics/ranking`
-- [x] Close the plan cleanly without silently reopening creator forms
+- [x] Open a new parent plan for creator-owned widening
+- [x] Keep `/admin/settings`, `/admin/resources`, and the admin filter bucket as frozen baselines
+- [ ] Group creator `Select` consumers by widening bucket
+- [ ] Group creator `Textarea` consumers by widening bucket
+- [ ] Choose the first creator widening slice
+- [ ] Land the next route-scoped creator parity slice
 
 ---
 
 ## Next Up
 
-- [ ] No in-plan `Next Up` — open a separate parent plan before widening creator-owned forms
+- [ ] Finish route-family inventory for creator resource editor, creator profile/settings, creator application, and creator AI draft flows
+- [ ] Choose the first creator widening slice from those buckets
+- [ ] Keep admin/product-owned shells out of scope until a later plan
 
 ---
 
@@ -329,6 +335,7 @@ Add only short, high-signal entries here.
 - 2026-04-29: Route-family inventory for `Select/Textarea rollout widening` is now closed. `admin/resources` is the first widened slice because it stays admin-only like `/admin/settings` while still exercising both sibling controls together; `admin/activity|audit|analytics` remains the lower-risk `Select`-only follow-up bucket, and `creator` stays deferred until after one more admin-side proof slice because its draft/upload behavior is more route-owned.
 - 2026-04-29: `Select/Textarea rollout widening` is now closed. The first widened slice landed on `admin/resources`: the resource form, listing filters, move-category modal, and bulk-upload editor now stay on the shared `Select` / `Textarea` shell grammar without local radius drift, and route proof passed across `/admin/resources/new`, `/admin/resources/bulk`, and `/admin/resources`. The close-out audit found no in-scope reason to widen a second bucket inside the same parent plan, so `admin/activity|audit|analytics` and `creator` are now optional new plans rather than hidden continuations.
 - 2026-04-29: `Select filter-shell widening` is now closed too. The low-risk admin filter bucket (`/admin/activity`, `/admin/audit`, `/admin/analytics/ranking`) now explicitly opts into the shared `Select` shell through `size="field"`, route proof passed for all three routes at `56px / 8px`, and the close-out audit kept `creator` as a separate optional parent plan because those forms still mount through route-owned creator shells and longer authoring flows.
+- 2026-04-29: Open a new parent plan `Creator Select/Textarea widening` instead of stretching the completed admin filter-shell plan. The frozen admin baselines are now sufficient, and creator-owned forms need their own route-family inventory because the resource editor, profile/settings, application flow, and AI draft helpers all mix shared controls with heavier route-owned authoring behavior.
 - 2026-04-29: `Field shell runtime residual follow-up` is now closed. The final shared field-shell drift did not require another broad family rollout: `Input.tsx` now enforces canonical `radius/sm (8px)` directly, `/admin/users` proves that shared field shell, and the old `SearchInput onClear` proof gap narrowed to a route-hydration issue instead of a primitive bug. `/dashboard/library` now proves the hydrated topbar clear action too, so no in-scope blocker remains.
 - 2026-04-29: Open a new parent plan `Field shell runtime residual follow-up` instead of silently reopening the closed family-by-family rollout. Scope it tightly to the two known leftovers: `Input.tsx` still carrying the larger comfortable-radius branch and `SearchInput` clear-action visibility still depending on props alone in some controlled consumers.
 - 2026-04-29: `Family-by-family DS runtime adoption` is now closed. The second family did not widen into `Input.tsx`; inventory showed that the smallest safe runtime slice was `SearchInput variant="default"` first. Runtime now enforces the canonical `radius/sm (8px)` shell on that shared branch, route proof passed on `/dashboard/library` for both the `56px / 8px` toolbar search and the `44px / 8px` topbar override, and the close-out audit found no in-scope reason to keep the parent plan open. Any wider `Input` parity or product-bound search-shell work should start as a new plan.
