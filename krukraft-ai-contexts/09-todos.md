@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Shared FileUploadWidget internals`
 
 > [!info] Current Phase
-> `Phase 1 — Shared widget inventory`
+> `Phase 3 — Route-scoped runtime slice`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Shared FileUploadWidget internals`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Shared FileUploadWidget internals` is active. Inventory upload/replace/success/error states across creator and admin before choosing one shared-safe runtime slice.
+> `Shared FileUploadWidget internals` is active. The first safe slice is now locked to shared empty-state, selected-file preview, and upload CTA posture across creator and admin.
 
 > [!todo] Next Up
-> Inventory shared widget states, choose one shared-safe proof slice, and keep creator application / AI draft helpers out of scope.
+> Land and verify the shared empty/selected/upload-CTA slice on creator and admin routes, and keep uploaded/success/error/remove flows for later.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -52,7 +52,7 @@ Parent Plan: `Shared FileUploadWidget internals`
 | Creator Delivery/Previews Shell Widening | Complete | linked URL editor inputs are widened and proved on `/dashboard/creator/resources/new` and edit; bulk preview parsing and upload controls stay deferred to future plans |
 | Creator Delivery Preview Parser | Complete | create/edit route proof confirms the bulk preview URL editor stays a route-owned composite parser on top of the shared `Textarea` shell |
 | Creator Delivery Upload Controls | Complete | creator-owned delivery-source toggle + upload-branch wrapper shell now prove cleanly on `/dashboard/creator/resources/new` and edit |
-| Shared FileUploadWidget Internals | Active | inventory upload/replace/success/error states across creator and admin, then choose one shared-safe runtime slice without reopening creator-only wrappers |
+| Shared FileUploadWidget Internals | Active | inventory is closed; land the shared empty-state + selected-file preview + upload CTA slice across creator/admin without reopening creator-only wrappers |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -65,7 +65,7 @@ Parent Plan: `Shared FileUploadWidget internals`
 ## Progress
 
 Shared FileUploadWidget internals
-`[██░░░░░░░░] 20%`
+`[██████░░░░] 60%`
 
 ```mermaid
 flowchart TB
@@ -113,9 +113,9 @@ flowchart TB
 
   subgraph Current
     F0["Plan open<br/>Done"]
-    F1["Shared widget inventory<br/>Current"]
-    F2["First proof-slice decision<br/>Pending"]
-    F3["Route-scoped runtime slice<br/>Pending"]
+    F1["Shared widget inventory<br/>Done"]
+    F2["First proof-slice decision<br/>Done"]
+    F3["Route-scoped runtime slice<br/>Current"]
     F4["Close-out audit<br/>Pending"]
   end
 
@@ -155,7 +155,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 1 — Shared widget inventory
+Phase 3 — Route-scoped runtime slice
 
 ### Parent Plan
 Shared FileUploadWidget internals
@@ -186,27 +186,48 @@ Shared FileUploadWidget internals
     states plus upload/replace/remove affordances
   - creator and admin wrappers already froze different surrounding chrome, so
     this plan must avoid silently reworking route-owned sections
-- Inventory is now the next in-plan job:
-  - group widget states and copy surfaces across creator and admin consumers
-  - choose exactly one shared-safe proof slice before editing runtime behavior
+- Inventory is now closed:
+  - creator and admin both mount the same shared internal state machine:
+    - empty dropzone shell
+    - selected-file preview row
+    - upload CTA
+    - uploaded-file card
+    - success banner
+    - error banner
+  - creator overrides copy strings heavily inside the upload branch
+  - admin mostly keeps shared copy and adds surrounding helper text outside the
+    widget
+  - the lowest-risk shared surface is the pre-upload branch because it avoids
+    persisted file state, remove flows, and upload-response timing
+- The first proof slice is now locked:
+  - empty dropzone shell
+  - selected-file preview row
+  - upload CTA posture/copy surface
+  - proof routes:
+    - `/dashboard/creator/resources/new`
+    - `/admin/resources/new`
+- Keep out of the first slice:
+  - uploaded-file card/removal flow
+  - success banner
+  - error banner
+  - route-owned wrapper copy outside the widget
 
 ### Goal
-Inventory shared `FileUploadWidget` internals and choose one runtime slice that
-is safe for both creator and admin consumers.
+Land one shared-safe `FileUploadWidget` runtime slice for creator/admin create
+routes without reopening creator-only wrappers or upload-complete flows.
 
 ### Why this is the current phase
-- The creator-owned wrapper plan is now complete, so the remaining upload work
-  is shared widget behavior. Because `FileUploadWidget` is mounted by both
-  creator and admin resource forms, the next step must be shared-state
-  inventory before any primitive/product-component patch.
+- Inventory showed the safest first move is the pre-upload branch, not the
+  uploaded/success/remove states. The next in-plan work is therefore one
+  shared widget slice that creator and admin can both prove on create routes.
 
 ### Definition of Done
 - [x] The prior admin and creator profile proof routes stay frozen as baselines
 - [x] The creator editor metadata slice stays frozen as a baseline
 - [x] The linked URL editor slice stays frozen as a baseline
 - [x] The bulk preview parser proof stays frozen as a baseline
-- [ ] Shared `FileUploadWidget` states and ownership are inventoried across creator and admin consumers
-- [ ] One shared-safe proof slice is chosen
+- [x] Shared `FileUploadWidget` states and ownership are inventoried across creator and admin consumers
+- [x] One shared-safe proof slice is chosen
 - [ ] That shared widget runtime slice is landed and verified
 - [ ] A close-out audit decides whether the parent plan should continue or close
 
@@ -215,9 +236,9 @@ is safe for both creator and admin consumers.
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
 | 0 | Plan open | complete | the remaining upload work is now isolated as shared widget internals |
-| 1 | Shared widget inventory | current | inventory upload/replace/success/error states plus copy surfaces across creator and admin consumers |
-| 2 | First proof-slice decision | pending | choose one shared-safe slice without reopening creator-only wrappers |
-| 3 | Route-scoped runtime slice | pending | land and verify one shared widget slice on both creator and admin proof routes |
+| 1 | Shared widget inventory | complete | creator/admin mount the same internal state machine, but creator overrides copy heavily while admin relies on shared copy plus outer helper text |
+| 2 | First proof-slice decision | complete | the safe first slice is empty dropzone + selected-file preview + upload CTA on create routes |
+| 3 | Route-scoped runtime slice | current | land and verify the shared pre-upload slice on creator/admin create routes |
 | 4 | Close-out audit | pending | close cleanly or split remaining shared widget behavior into narrower future plans |
 
 ---
@@ -225,8 +246,8 @@ is safe for both creator and admin consumers.
 ## Current Goal
 
 1. keep the creator wrapper, linked-URL, and preview-parser baselines frozen
-2. inventory shared `FileUploadWidget` behavior across creator and admin
-3. choose one shared-safe slice before any product-component patch
+2. land the shared pre-upload `FileUploadWidget` slice
+3. verify creator/admin create routes without reopening upload-complete flows
 
 ---
 
@@ -234,17 +255,17 @@ is safe for both creator and admin consumers.
 
 - [x] Open a new parent plan for shared `FileUploadWidget` internals
 - [x] Keep creator wrapper, linked-URL, and preview-parser slices as frozen baselines
-- [ ] Inventory shared widget states across creator and admin consumers
-- [ ] Choose the first shared-safe proof slice
+- [x] Inventory shared widget states across creator and admin consumers
+- [x] Choose the first shared-safe proof slice
 - [ ] Land the next shared widget runtime slice
 
 ---
 
 ## Next Up
 
-- [ ] Inventory `FileUploadWidget` states across creator and admin resource forms
-- [ ] Inventory copy/label surfaces that are safe to normalize in the shared widget
-- [ ] Choose one shared-safe proof slice before runtime patching
+- [ ] Land the shared empty-state + selected-file preview + upload CTA slice
+- [ ] Verify `/dashboard/creator/resources/new` and `/admin/resources/new`
+- [ ] Keep uploaded/removal/success/error flows out of the first slice
 
 ---
 
@@ -342,6 +363,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: Inventory for `Shared FileUploadWidget internals` is now closed. Creator and admin both mount the same widget state machine, but creator overrides copy heavily while admin keeps mostly shared copy plus outer helper text. The safest first shared slice is therefore the pre-upload branch only: empty dropzone shell, selected-file preview row, and upload CTA on `/dashboard/creator/resources/new` plus `/admin/resources/new`, while uploaded/removal/success/error flows stay deferred until that lower-risk proof is green.
 - 2026-04-29: Open a new parent plan `Shared FileUploadWidget internals` instead of stretching the closed creator upload-controls plan. The creator-owned wrapper chrome is now frozen, so the remaining upload work is the shared widget itself: upload/replace/success/error states and copy surfaces that are mounted by both creator editor and admin resource form. The next in-plan job is shared-state inventory before any product-component patch.
 - 2026-04-29: `Creator delivery upload controls` is now closed. The safe first runtime slice landed on creator-owned wrapper chrome only: `/dashboard/creator/resources/new` and edit now prove the `delivery-source` toggle posture plus the upload-branch wrapper shell around `FileUploadWidget`, while shared widget internals remain intentionally deferred so admin resource form consumers do not inherit creator-only changes by accident.
 - 2026-04-29: Inventory for `Creator delivery upload controls` is now closed. `FileUploadWidget` is not creator-only; it is a shared DS product component also mounted by the admin resource form, so the safest first proof slice is not a blind shared-widget patch. The first in-plan runtime slice is now locked to creator-owned wrapper behavior only: the `delivery-source` segmented toggle plus the upload-branch shell around the widget on create/edit routes, while external-link editing and the preview parser stay frozen out of scope.
