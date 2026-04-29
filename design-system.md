@@ -497,8 +497,12 @@ At a high level:
         `/dashboard/creator/resources/new` and edit prove the creator-owned
         delivery-source toggle plus the upload-branch wrapper shell without
         widening shared `FileUploadWidget` internals
-      - shared `FileUploadWidget` internals still stay product-owned upload
-        controls outside the shared field-shell contract
+      - the first shared widget follow-up is now closed too:
+        `/dashboard/creator/resources/new` and `/admin/resources/new` prove the
+        shared pre-upload branch (`dropzone`, selected-file preview, upload
+        CTA) without reopening creator-only wrappers
+      - uploaded/removal/success/error widget states still stay product-owned
+        future-plan material outside this first shared slice
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:

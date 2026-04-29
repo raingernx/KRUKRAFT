@@ -529,9 +529,15 @@ Use this order when DS docs disagree:
     - the delivery-source segmented toggle and the upload-branch wrapper shell
       are creator-owned route chrome and now prove cleanly on
       `/dashboard/creator/resources/new` and edit
-    - shared `FileUploadWidget` internals remain product-owned and were left
-      untouched so admin resource form consumers do not inherit creator-only
-      upload chrome changes by accident
+    - the first shared widget follow-up now closes the lowest-risk internal
+      slice too:
+      - `/dashboard/creator/resources/new` and `/admin/resources/new` now
+        prove the shared pre-upload branch
+      - that shared slice is intentionally limited to the empty dropzone,
+        selected-file preview row, and upload CTA posture/copy surface
+      - uploaded/removal/success/error states remain future-plan material so
+        admin resource form consumers do not inherit a broader upload-state
+        rewrite without a separate proof slice
   - the canonical `Card / Foundations` boards no longer carry wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is explicit token
     gap / polish territory instead:

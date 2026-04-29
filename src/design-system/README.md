@@ -210,8 +210,10 @@ When this file conflicts with code, the code wins.
   side effects remain route-owned behavior. The next creator upload follow-up
   is now closed too: the route-owned delivery-source toggle plus the upload
   branch wrapper shell on `/dashboard/creator/resources/new` and edit are now
-  proved at runtime, while shared `FileUploadWidget` internals still stay a
-  product-owned delivery control.
+  proved at runtime. The first shared widget follow-up is now closed too:
+  creator/admin create routes now prove the shared pre-upload branch
+  (`dropzone`, selected-file preview, and upload CTA) while uploaded/removal/
+  success/error flows still stay as product-owned future-plan material.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may

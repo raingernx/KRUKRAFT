@@ -207,7 +207,7 @@ export function FileUploadWidget({
   }
 
   return (
-    <div className="w-full min-w-0 space-y-4">
+    <div data-testid="file-upload-widget" className="w-full min-w-0 space-y-4">
       {uploadedFile ? (
         <>
           <PreviewCard className="flex items-center gap-3">
@@ -276,11 +276,13 @@ export function FileUploadWidget({
             className="block"
           >
             <PickerDropzoneShell
+              data-testid="file-upload-dropzone"
               disabled={!resourceId && !onEnsureResourceId}
               role="button"
               tabIndex={!resourceId && !onEnsureResourceId ? -1 : 0}
               aria-label={labels.uploadFile}
               aria-disabled={!resourceId && !onEnsureResourceId ? "true" : undefined}
+              className="min-h-[132px] rounded-2xl bg-background px-5 py-7"
               onClick={() => {
                 if (resourceId || onEnsureResourceId) {
                   inputRef.current?.click();
@@ -320,7 +322,11 @@ export function FileUploadWidget({
           </div>
 
           {selectedFile ? (
-            <PreviewCard tone="info" className="flex items-center gap-2">
+            <PreviewCard
+              data-testid="file-upload-selected-file"
+              tone="info"
+              className="flex items-center gap-2 rounded-2xl"
+            >
               <FileText className="h-4 w-4 shrink-0 text-brand-600" />
               <p className="min-w-0 flex-1 truncate text-[13px] text-foreground">
                 {selectedFile.name}{" "}
@@ -340,6 +346,7 @@ export function FileUploadWidget({
           ) : null}
 
           <PickerActionButton
+            data-testid="file-upload-submit"
             type="button"
             onClick={handleUpload}
             disabled={
@@ -348,7 +355,9 @@ export function FileUploadWidget({
               status === "uploading"
             }
             variant="primary"
-            className="h-10 w-full justify-center px-5 text-[13px] font-semibold disabled:opacity-40"
+            size="md"
+            density="compact"
+            className="h-10 w-full justify-center rounded-[var(--radius-sm)] px-5 text-[13px] font-semibold disabled:opacity-40"
           >
             {status === "uploading" ? (
               <>
