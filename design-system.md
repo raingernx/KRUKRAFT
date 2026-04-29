@@ -424,9 +424,16 @@ At a high level:
   - the latest `Input / Search` re-audit also confirmed that both
     `Input / State` / `SearchInput / State` and `Input / Size` /
     `SearchInput / Size` now use `radius/sm = 8px` across light and dark; repo
-    runtime code still carries an older larger comfortable-radius branch, so
-    treat the canonical Figma file as the base and the runtime recipe as drift
-    until adoption happens
+    runtime code no longer drifts uniformly:
+    - `SearchInput variant="default"` now adopts the canonical `8px` radius
+      shell at runtime
+    - the first route proofs are `/dashboard/library` toolbar search
+      (`56px / 8px`) and dashboard topbar search (`44px / 8px`)
+    - public `/resources` search remains a route-owned product override with
+      `40px` height and pill geometry
+    - `Input.tsx` still carries the older larger comfortable-radius branch, so
+      the remaining runtime drift now sits on the shared field primitive rather
+      than the default search shell
   - that same control re-audit also keeps two narrow Figma gaps explicit
     instead of hiding them: the light/dark component-set wrappers still carry a
     local `cornerRadius=5`, and the `Clear` action label in the search-state

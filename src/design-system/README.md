@@ -270,9 +270,17 @@ When this file conflicts with code, the code wins.
   - the canonical Figma base now uses `radius/sm (8px)` across `Input` and
     `SearchInput` state + size sets instead of a split comfortable/compact
     radius posture
-  - current runtime code still resolves comfortable `md|lg|field` to a larger
-    radius branch; treat that as a repo adoption gap, not as the approved Figma
-    contract
+  - runtime adoption has now started on the shared search branch:
+    - `SearchInput variant="default"` now forces the canonical
+      `radius/sm (8px)` shell at runtime
+    - the first proof routes are `/dashboard/library` toolbar search
+      (`56px / 8px`) and the dashboard topbar override (`44px / 8px`)
+    - public `/resources` search stays a route-owned product override
+      (`h-[40px]`, pill radius) and is intentionally outside this shared-shell
+      parity slice
+  - `Input.tsx` still resolves comfortable `md|lg|field` through the older
+    larger radius branch; treat that as the remaining repo adoption gap, not as
+    the approved Figma contract
   - default resolution: `comfortable -> field`, `compact -> sm`
 - `SearchInput variant=\"default\"` should inherit the same field-size ladder as
   `Input`; only the hero variant is allowed to diverge into its own larger

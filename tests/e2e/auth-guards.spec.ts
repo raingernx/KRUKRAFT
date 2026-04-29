@@ -1,8 +1,8 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { collectRuntimeErrors } from "./helpers/browser";
 
 async function gotoExpectRedirect(
-  page: Parameters<typeof test>[0]["page"],
+  page: Page,
   href: string,
   urlPattern: RegExp,
 ) {

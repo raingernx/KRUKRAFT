@@ -377,6 +377,19 @@ Use this order when DS docs disagree:
   - runtime adoption has started too:
     - the default `SearchInput` branch now resolves `size` / `density` through
       the same field recipe as `Input`
+    - the 2026-04-29 runtime parity slice now makes that default branch honor
+      `radius/sm (8px)` directly in code
+    - the first live proof family is `/dashboard/library`:
+      - the library toolbar search now proves the shared `56px / 8px` field
+        shell
+      - the dashboard topbar search stays an intentional `44px` height
+        override while still inheriting the same `8px` radius
+    - public `/resources` search remains a route-owned product override
+      (`40px` tall, pill geometry) and should not be misread as a failure of
+      the shared field-shell adoption slice
+    - `Input.tsx` itself still carries the older larger comfortable-radius
+      branch, so the remaining runtime drift is now concentrated in the shared
+      field primitive rather than the default search shell
     - `SearchInput variant=\"hero\"` remains the one intentional exception
       branch, while `loading`, `clear`, and `submitButton` now sit on top of
       the shared default-field shell instead of a separate hardcoded search box

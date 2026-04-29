@@ -87,7 +87,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
             "justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             variant === "hero"
               ? "w-12 rounded-xl p-4 sm:w-14 sm:p-[18px]"
-              : endAdornmentSizeClassName,
+              : cn(endAdornmentSizeClassName, "rounded-[var(--radius-sm)]"),
           )}
         >
           <X className="h-4 w-4" />
@@ -130,6 +130,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
               : [
                   fieldInputBaseClassName,
                   inputSizeClassName,
+                  "rounded-[var(--radius-sm)]",
                   resolvedSize === "sm"
                     ? "pl-9 pr-9"
                     : resolvedSize === "md"
