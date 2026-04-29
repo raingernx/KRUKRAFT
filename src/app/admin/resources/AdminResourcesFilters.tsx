@@ -159,6 +159,7 @@ export function AdminResourcesFilters({
               Status
             </label>
             <Select
+              size="field"
               id="status"
               name="status"
               value={filters.status}
@@ -181,6 +182,7 @@ export function AdminResourcesFilters({
               Category
             </label>
             <Select
+              size="field"
               id="categoryId"
               name="categoryId"
               value={filters.categoryId}

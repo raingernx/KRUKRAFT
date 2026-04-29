@@ -386,13 +386,18 @@ Use this order when DS docs disagree:
         target and helper/error posture, but leaves rows, counters, max
         length, and resize behavior route-owned instead of inventing a size
         ladder
-      - the first runtime parity slice is now live too:
-        - `Select.tsx` keeps the canonical `8px` radius at runtime
-        - `Textarea.tsx` keeps the same `8px` target without widening
+    - the first runtime parity slice is now live too:
+      - `Select.tsx` keeps the canonical `8px` radius at runtime
+      - `Textarea.tsx` keeps the same `8px` target without widening
           route-owned rows / counter / resize behavior
-        - `/admin/settings` is the first proved route family because it mounts
+      - `/admin/settings` is the first proved route family because it mounts
           `Input`, `Select`, and `Textarea` together without product-owned
           search overrides
+      - `/admin/resources` is now the first widened follow-up family: shared
+        `Select` shells cover the resource form, listing filters, and
+        move-category modal, while the bulk-upload textarea keeps the same
+        `8px` shell target and limits its local overrides to the JSON-editor
+        treatment
     - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
       component sets for the shared field ladder
     - runtime code still carries an older larger comfortable-radius branch for

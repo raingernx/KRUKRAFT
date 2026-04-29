@@ -466,6 +466,10 @@ At a high level:
       - `/admin/settings` is the first proved route family because it mounts
         `Input`, `Select`, and `Textarea` together without product-owned search
         overrides
+      - `/admin/resources` is now the first widened follow-up family: the
+        resource form, listing filters, move-category modal, and bulk-upload
+        editor all stay on the same shared `Select` / `Textarea` shell grammar
+        while leaving route-owned JSON/editor coloration intact
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:

@@ -171,7 +171,10 @@ When this file conflicts with code, the code wins.
   helper/error posture, and field-size ladder while keeping option lists
   route-owned. The first runtime parity slice is now live on
   `/admin/settings`, where `Select.tsx` keeps the same `8px` radius target in
-  shared admin forms.
+  shared admin forms. The first widened follow-up family is now
+  `admin/resources`: the resource form, listing filters, and move-category
+  modal all opt into the same shared select shell without local radius/padding
+  overrides.
 - `Textarea` now has matching light/dark `Textarea / Foundations` boards plus
   dedicated `Textarea / State` sets in the canonical file. The multiline
   contract intentionally keeps the same quiet field shell target and
@@ -179,7 +182,10 @@ When this file conflicts with code, the code wins.
   rows, counters, resize behavior, and long-form affordances stay route-owned.
   `/admin/settings` is also the first proved runtime route family: shared
   `Textarea.tsx` now keeps the same `8px` radius target there while rows and
-  route-specific long-form behavior remain route-owned.
+  route-specific long-form behavior remain route-owned. The first widened
+  follow-up family is now `admin/resources`, where the main resource form and
+  bulk-upload editor both keep the same shell/radius target while the JSON
+  editor remains route-owned through color and monospace overrides only.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may

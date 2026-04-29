@@ -312,8 +312,8 @@ export function BulkUploadClient() {
             placeholder={`[\n  {\n    "title": "…",\n    "description": "…",\n    …\n  }\n]`}
             rows={16}
             spellCheck={false}
-            className="min-h-[360px] rounded-xl border border-border bg-foreground p-4 font-mono
-                       text-[13px] leading-relaxed text-background placeholder:text-background/45
+            className="min-h-[360px] bg-foreground font-mono text-[13px]
+                       leading-relaxed text-background placeholder:text-background/45
                        focus:border-primary-500 focus:ring-primary-500/20"
           />
 

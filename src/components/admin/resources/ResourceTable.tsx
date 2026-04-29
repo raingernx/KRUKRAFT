@@ -757,9 +757,10 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
             </p>
             <div className="mt-4">
               <Select
+                size="field"
                 value={moveCategoryId}
                 onChange={(e) => setMoveCategoryId(e.target.value)}
-                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground"
+                className="w-full"
               >
                 <option value="">Select a category…</option>
                 {categories.map((category) => (

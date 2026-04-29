@@ -739,6 +739,7 @@ export function ResourceForm({
           <div className="min-w-0 space-y-1.5">
             <Label htmlFor="categoryId">Category</Label>
             <Select
+              size="field"
               id="categoryId"
               name="categoryId"
               value={form.categoryId}
@@ -761,6 +762,7 @@ export function ResourceForm({
           <div className="min-w-0 space-y-1.5">
             <Label htmlFor="level">Level</Label>
             <Select
+              size="field"
               id="level"
               name="level"
               value={form.level}
@@ -776,6 +778,7 @@ export function ResourceForm({
           <div className="min-w-0 space-y-1.5">
             <Label htmlFor="type">Resource Type</Label>
             <Select
+              size="field"
               id="type"
               name="type"
               value={form.type}
@@ -842,6 +845,7 @@ export function ResourceForm({
             <div className="min-w-0 space-y-1.5 sm:max-w-[180px]">
               <Label htmlFor="status">Status</Label>
               <Select
+                size="field"
                 id="status"
                 name="status"
                 value={form.status}
@@ -876,6 +880,7 @@ export function ResourceForm({
               <div className="min-w-0 space-y-1.5 sm:max-w-[180px]">
                 <Label htmlFor="visibility">Visibility</Label>
                 <Select
+                  size="field"
                   id="visibility"
                   name="visibility"
                   value={form.visibility}
@@ -1115,6 +1120,7 @@ export function ResourceForm({
           <div className="min-w-0 max-w-md space-y-1.5">
             <Label htmlFor="license">License type</Label>
             <Select
+              size="field"
               id="license"
               name="license"
               value={form.license}
