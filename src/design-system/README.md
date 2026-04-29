@@ -381,6 +381,11 @@ When this file conflicts with code, the code wins.
   `DashboardPageHeader` eyebrow text instead of reintroducing `Badge` pills for
   page labels; header CTAs in that family should default to `Button size="md"`
   unless a route proves a narrower control is intentional.
+- Dashboard/admin product headers and sidebar section labels should not use
+  tracking by default. Shared `DashboardPageHeader`, `AdminPageHeader`, and
+  `DashboardSidebar` labels now treat `letter-spacing` as `normal`; any
+  remaining tracked labels in those route families should be treated as
+  route-owned exceptions to inventory explicitly, not as the baseline.
 - `RevealImage` is the shared image primitive for already-sized containers. Let
   the surrounding container own placeholder and background treatment.
 - `Card` is the calm generic shell card, not a product/marketplace card. The

@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Dashboard/Admin runtime normalization`
 
 > [!info] Current Phase
-> `Phase 3 — Adjacent dashboard/admin grouped inventory`
+> `Phase 5 — Shared tracking-removal slice`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,11 +18,11 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Dashboard/Admin runtime normalization` is now active. The first shared slice has normalized dashboard search height and user-route intro ownership across `library`, `downloads`, and `purchases`; the next step is inventorying the remaining dashboard/admin surfaces that still bypass that contract.
+> `Dashboard/Admin runtime normalization` is now active. Shared dashboard/admin header, sidebar-label, and search contracts are being normalized first; the next step is inventorying route-owned tracking leftovers and remaining intro bypasses that still sit outside those shared patterns.
 
 > [!todo] Next Up
-> 1. Inventory the remaining direct dashboard intros that still bypass the shared intro authority, starting with creator workspace and preview-only dashboard shells
-> 2. Compare admin headers/toolbars for the same CTA-sizing and component-selection drift
+> 1. Inventory the remaining route-owned tracking uses in dashboard/admin product UI after the shared header/sidebar cleanup
+> 2. Inventory the remaining direct dashboard intros that still bypass the shared intro authority, starting with creator workspace and preview-only dashboard shells
 > 3. Choose the next shared-safe remediation slice instead of reopening isolated route tweaks
 
 > [!abstract] Partial
@@ -66,7 +66,7 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 | Route-Level Upload Flash Messaging | Complete | creator create now proves the route-owned remove-file failure message outside the widget shell, while admin create has no matching create-flow upload/remove flash slice beyond the frozen widget banners |
 | Admin Edit-Flow Upload/Remove Feedback | Complete | `/admin/resources/[id]` now proves the route-owned remove-file success/error rail, and the close-out audit found no in-scope reason to keep the plan open |
 | Creator Delivery Action Control Styling | Complete | `/dashboard/creator/resources/new` and edit now prove the creator-owned linked-file action cluster on an explicit compact `40px / 8px` posture; close-out audit found no in-scope reason to keep the plan open |
-| Dashboard/Admin Runtime Normalization | Active | dashboard user-route intros now normalize through one shared authority and dashboard topbar search no longer keeps the old `44px` exception; next work is inventorying the remaining dashboard/admin surfaces that still bypass that contract |
+| Dashboard/Admin Runtime Normalization | Active | dashboard user-route intros, dashboard topbar search, and shared dashboard/admin product labels now normalize through one authority with no default tracking; next work is inventorying the remaining route-owned dashboard/admin surfaces that still bypass that contract |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -79,7 +79,7 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 ## Progress
 
 Dashboard/Admin runtime normalization
-`[█████░░░░░] 50%`
+`[███████░░░] 65%`
 
 ```mermaid
 flowchart TB
@@ -169,7 +169,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 4 — Remaining dashboard/admin grouped inventory
+Phase 5 — Shared tracking-removal slice
 
 ### Parent Plan
 Dashboard/Admin runtime normalization
@@ -202,6 +202,16 @@ Dashboard/Admin runtime normalization
   - the topbar clear action after hydration
   - eyebrow text replacing badge misuse in the route intro
   - medium CTA sizing on the route intro and toolbar submit action
+- The next shared slice is now landed too:
+  - `DashboardPageHeader` eyebrow and title no longer apply tracking in the
+    shared dashboard product-header pattern
+  - `AdminPageHeader` title no longer applies tracking in the shared admin
+    product-header pattern
+  - `DashboardSidebar` no longer injects tracking into shared sidebar section
+    labels for either dashboard or admin variants
+- `/dashboard/library`, `/dashboard/downloads`, `/dashboard/purchases`, and
+  `/admin/users` now prove the shared no-tracking rule on product header/label
+  surfaces that route through those shared components
 - The active next step is grouped inventory across adjacent dashboard/admin
   routes using these root-cause classes before choosing the next remediation
   slice:
@@ -211,6 +221,8 @@ Dashboard/Admin runtime normalization
   - broader shell/layout drift that should stay separate from primitive fixes
   - remaining direct route-intro bypasses that still do not ride the shared
     dashboard intro authority
+  - route-owned tracking that still lives outside the shared header/sidebar
+    authority
 - Keep these out of scope for this slice:
   - new DS family rollout work (`Switch`, `Dropdown`, and other untouched
     families)
@@ -220,12 +232,15 @@ Dashboard/Admin runtime normalization
     grouped cleanly first
 
 ### Goal
-Use the normalized dashboard intro/search slice as the frozen first proof, then
-widen based on grouped root-cause classes instead of ad-hoc page tweaks.
+Use the normalized dashboard intro/search/tracking slice as the frozen first
+proof, then widen based on grouped root-cause classes instead of ad-hoc page
+tweaks.
 
 ### Why this is the current phase
 - The first normalization slice now proves cleanly on live dashboard routes and
   in automated runtime checks.
+- Shared header/sidebar tracking removal was the next highest-impact safe slice
+  because one fix affects multiple dashboard/admin surfaces at once.
 - The next highest-value work is no longer another patch on `/dashboard/library`
   itself; it is grouped inventory that can show which nearby dashboard/admin
   routes share the same primitive/composition/sizing drift classes.
@@ -242,6 +257,8 @@ widen based on grouped root-cause classes instead of ad-hoc page tweaks.
   field ladder
 - [x] Promote the shared dashboard intro authority across the user dashboard
   route family (`library`, `downloads`, `purchases`, `membership`, `settings`)
+- [x] Remove default tracking from shared dashboard/admin product header/sidebar
+  patterns
 - [ ] Expand grouped drift inventory to adjacent dashboard/admin surfaces
 - [ ] Choose the next shared-safe remediation slice from grouped evidence
 - [x] The creator create flash proof stays frozen as a baseline

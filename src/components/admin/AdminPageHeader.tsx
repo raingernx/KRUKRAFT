@@ -24,7 +24,7 @@ export function AdminPageHeader({
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-4 border-b border-border pb-4 sm:items-end">
       <div className="min-w-0">
         <p className="font-ui text-caption text-muted-foreground">Admin</p>
-        <h1 className="mt-1 font-display text-h2 font-semibold tracking-tight text-foreground">
+        <h1 className="mt-1 font-display text-h2 font-semibold text-foreground">
           {title}
         </h1>
         {description && (

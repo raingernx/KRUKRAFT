@@ -24,6 +24,10 @@ async function expectButtonGeometry(
   await expect(locator).toHaveCSS("border-radius", expectedRadiusPx);
 }
 
+async function expectNoTracking(locator: Locator) {
+  await expect(locator).toHaveCSS("letter-spacing", "normal");
+}
+
 test.describe.configure({ timeout: 120_000 });
 
 test("dashboard library toolbar search keeps canonical shared search-input geometry", async ({
@@ -99,8 +103,13 @@ test("dashboard library intro uses eyebrow text and medium CTA sizing", async ({
   });
   const eyebrow = intro.getByTestId("dashboard-page-eyebrow");
   const cta = intro.getByRole("link", { name: "Browse marketplace" });
+  const heading = intro.getByRole("heading", { name: "My library" });
+  const sectionLabel = page.locator("aside").getByText("Learn", { exact: true });
 
   await expect(eyebrow).toHaveText("Library");
+  await expectNoTracking(eyebrow);
+  await expectNoTracking(heading);
+  await expectNoTracking(sectionLabel);
   await expect(cta).toBeVisible();
   await expect(cta).toHaveAttribute("data-size", "md");
   await expectButtonGeometry(cta, "40px", "999px");
@@ -161,7 +170,9 @@ test("admin users filter input keeps canonical shared field radius", async ({ pa
 
   await loginAsAdmin(page, "/admin/users");
 
-  const searchInput = page.locator("input#q");
+  const heading = page.getByRole("heading", { name: "Users" });
+  await expectNoTracking(heading);
+  const searchInput = page.locator("form").getByRole("searchbox", { name: "Search" });
   await expect(searchInput).toBeVisible();
   await expectControlGeometry(searchInput, 56, "8px");
 

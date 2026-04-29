@@ -34,7 +34,7 @@ export function DashboardPageHeader({
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="font-display text-h2 font-semibold tracking-tight text-foreground">
+        <h1 className="font-display text-h2 font-semibold text-foreground">
           {title}
         </h1>
         {description ? (

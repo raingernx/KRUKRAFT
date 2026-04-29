@@ -95,9 +95,9 @@ export function DashboardSidebar({
         className={cn(
           "pt-4",
           isDashboardVariant &&
-            "[&_p]:tracking-[0.08em] [&_p]:text-muted-foreground [&_ul]:space-y-1",
+            "[&_p]:text-muted-foreground [&_ul]:space-y-1",
           variant === "admin" &&
-            "pt-5 [&_p]:mb-2 [&_p]:mt-0 [&_p]:px-2 [&_p]:font-ui [&_p]:text-caption [&_p]:tracking-[0.08em] [&_p]:text-muted-foreground [&_ul]:space-y-1"
+            "pt-5 [&_p]:mb-2 [&_p]:mt-0 [&_p]:px-2 [&_p]:font-ui [&_p]:text-caption [&_p]:text-muted-foreground [&_ul]:space-y-1"
         )}
       >
         {sections.map((section, index) => (

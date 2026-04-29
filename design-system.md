@@ -442,6 +442,10 @@ At a high level:
       `DashboardRouteIntro` / `DashboardPageHeader` eyebrow-text pattern rather
       than route-owned `Badge` pills, and matching header CTAs use `md`
       posture by default
+    - dashboard/admin shared product headers and sidebar labels now also treat
+      tracking as opt-in instead of default: the shared `DashboardPageHeader`,
+      `AdminPageHeader`, and `DashboardSidebar` patterns no longer inject
+      letter-spacing into those labels/headings
     - `Input.tsx` no longer carries that older radius branch at runtime:
       the shared field primitive now enforces `radius/sm (8px)` directly, with
       `/admin/users` as the first proof route
