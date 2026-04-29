@@ -240,8 +240,11 @@ When this file conflicts with code, the code wins.
   is narrower too: creator create now proves the route-owned remove-file
   failure message outside the widget shell, while admin create does not expose
   a matching upload/remove flash slice beyond the already-frozen widget
-  banners. Any admin-side follow-up there would be a separate edit-flow or
-  control-styling plan, not a shared create-flow flash rollout.
+  banners. That admin-side follow-up is now closed too: `/admin/resources/[id]`
+  proves the route-owned remove-file success/error rail outside the shared
+  widget shell, and the narrow remediation was to keep `FileUploadWidget`
+  from clearing the uploaded card or surfacing a dev overlay when the
+  route-owned delete callback fails.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may

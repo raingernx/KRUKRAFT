@@ -544,8 +544,11 @@ At a high level:
           message outside the widget shell
         - admin create does not expose a matching upload/remove flash slice
           beyond the already-frozen widget banners
-      - any admin-side follow-up there is a separate edit-flow or
-        control-styling plan, not a shared create-flow flash rollout
+      - the separate admin edit-flow follow-up is now closed too:
+        - `/admin/resources/[id]` proves the route-owned remove-file
+          success/error rail outside the shared widget shell
+        - `FileUploadWidget` now preserves the uploaded card and suppresses
+          dev-overlay escalation when that route-owned delete callback fails
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:

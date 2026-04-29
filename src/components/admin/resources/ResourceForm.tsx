@@ -614,9 +614,10 @@ export function ResourceForm({
       setFileUploadKey((prev) => prev + 1);
       setSuccess("File removed");
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Network error. Please try again.",
-      );
+      const nextError =
+        err instanceof Error ? err : new Error("Network error. Please try again.");
+      setError(nextError.message);
+      throw nextError;
     } finally {
       setRemoveFileLoading(false);
     }

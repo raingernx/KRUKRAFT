@@ -579,9 +579,11 @@ Use this order when DS docs disagree:
             message outside the widget shell
           - admin create does not expose a matching upload/remove flash slice
             beyond the already-frozen widget banners
-        - any admin-side follow-up there remains a separate edit-flow or
-          control-styling plan, so admin resource form consumers do not
-          inherit a broader upload-state rewrite without a separate proof slice
+        - that separate admin edit-flow proof slice is now closed too:
+          - `/admin/resources/[id]` proves the route-owned remove-file
+            success/error rail outside the shared widget shell
+          - `FileUploadWidget` now preserves the uploaded card and suppresses
+            dev-overlay escalation when that route-owned delete callback fails
   - the canonical `Card / Foundations` boards no longer carry wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is explicit token
     gap / polish territory instead:

@@ -199,13 +199,18 @@ export function FileUploadWidget({
   async function handleRemoveExisting() {
     setStatus("idle");
     setErrorMsg(null);
+
+    if (onRemoveCurrentFile) {
+      try {
+        await onRemoveCurrentFile();
+      } catch {
+        return;
+      }
+    }
+
     setSelectedFile(null);
     setUploadedFile(null);
     if (inputRef.current) inputRef.current.value = "";
-
-    if (onRemoveCurrentFile) {
-      await onRemoveCurrentFile();
-    }
   }
 
   return (
