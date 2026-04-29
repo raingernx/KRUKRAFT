@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
  ## Plan Snapshot
 
-Parent Plan: `Dense action holdout lockdown`
+Parent Plan: `Family-by-family DS runtime adoption`
 
 > [!info] Current Phase
-> `Plan complete`
+> `Phase 1 — Badge runtime adoption`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Dense action holdout lockdown`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> No active implementation slice inside this parent plan; wait for a new plan or explicit reprioritization.
+> Open a narrow family-by-family runtime adoption plan that starts with `Badge` and only moves to `Input/Search` after the first family closes cleanly.
 
 > [!todo] Next Up
-> This parent plan is complete. Any further rollout should start as a new optional plan.
+> Start with `Badge runtime adoption`, then move to `Input/Search runtime parity` as the second family only after the badge slice passes runtime proof and close-out audit.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -42,6 +42,7 @@ Parent Plan: `Dense action holdout lockdown`
 | Admin Table Action Rollout | Complete | inventory, rollout decision, first admin proof slice, runtime verification, and close-out audit are complete |
 | Admin Simple Row-Action Rollout | Complete | inventory, rollout decision, follow-up adoption slice, runtime verification, and close-out audit are complete |
 | Dense Action Holdout Lockdown | Complete | remaining dense admin/creator action clusters are now explicit compact holdouts, with `/admin/resources` and `/admin/tags` proved at runtime |
+| Family-by-family DS Runtime Adoption | Active | start with `Badge` runtime adoption, then reopen `Input/Search` as the second runtime-parity family |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -53,8 +54,8 @@ Parent Plan: `Dense action holdout lockdown`
 
 ## Progress
 
-Dense action holdout lockdown
-`[██████████] 100%`
+Family-by-family DS runtime adoption
+`[█░░░░░░░░░] 10%`
 
 ```mermaid
 flowchart TB
@@ -101,12 +102,12 @@ flowchart TB
   end
 
   subgraph Current
-    P0["Dense holdout plan open<br/>Done"]
-    P1["Dense holdout inventory<br/>Done"]
-    P2["Holdout contract decision<br/>Done"]
-    P3["Explicit compact contract patch<br/>Done"]
-    P4["Runtime proof<br/>Done"]
-    P5["Close-out audit<br/>Done"]
+    P0["Family-by-family runtime plan open<br/>Done"]
+    P1["Badge runtime inventory + contract audit<br/>In progress"]
+    P2["Badge adoption patch<br/>Pending"]
+    P3["Badge runtime proof + close-out<br/>Pending"]
+    P4["Input/Search runtime parity inventory<br/>Pending"]
+    P5["Input/Search adoption path decision<br/>Pending"]
   end
 
   D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> P0 --> P1 --> P2 --> P3 --> P4 --> P5
@@ -145,98 +146,86 @@ Rules:
 ## Current Phase
 
 ### Name
-Plan complete
+Phase 1 — Badge runtime adoption
 
 ### Parent Plan
-Dense action holdout lockdown
+Family-by-family DS runtime adoption
 
 ### Current Status Inside Parent Plan
-- `Runtime DS adoption`, `Admin table action rollout`, and
-  `Admin simple row-action rollout` are now the frozen widening baseline:
-  - `RowActionButton size="md"` and `PaginationButton size="md"` already exist
-  - dashboard creator resources, `/admin/users`, `/admin/audit`,
-    `/admin/categories`, `/admin/reviews`, `/admin/resources/trash`, and
-    `/admin/resources/[id]/versions` are proven widened consumers
-- This follow-up plan is now closed after locking the remaining dense action
-  clusters as explicit compact holdouts instead of leaving them on implicit
-  defaults:
-  - `/admin/resources` main table now passes `size="sm"` on every
-    `RowActionButton` and `RowActionMenuTrigger`
-  - `/admin/tags` now passes `size="sm"` on every inline
-    edit/save/cancel/delete row action
-  - `CreatorResourceStatusButton` now passes `size="sm"` as an explicit
-    creator-side holdout even though no live route mount was found during the
-    inventory
-- Close-out proof passed for the two live admin holdouts that could be tested
-  end-to-end:
-  - `/admin/resources`
-  - `/admin/tags`
+- The Figma DS baseline is now treated as sufficiently audited and stable for
+  narrow runtime family rollouts.
+- Previous runtime rollout plans are now the frozen baseline:
+  - `RowActionButton size="md"` and `PaginationButton size="md"` exist for the
+    proven table-action recipe
+  - dense holdouts such as `/admin/resources`, `/admin/tags`, and
+    `CreatorResourceStatusButton` are explicitly locked to compact `sm`
+- This new plan changes strategy from route-cluster rollout to
+  family-by-family adoption:
+  - family 1 = `Badge runtime adoption`
+  - family 2 = `Input/Search runtime parity`
+- The intent is to reuse the audited Figma truth without reopening broad repo
+  audit loops or widening unrelated DS families in the same slice.
 
 ### Goal
-Completed: codify the remaining dense admin/creator action clusters as
-explicit compact `sm` holdouts and prove that the compact posture remains
-stable on the live admin routes that still use those denser control groups.
+Land `Badge` runtime adoption first, then use the same narrow plan structure to
+decide and stage `Input/Search` runtime parity only after the badge slice is
+verified and closed cleanly.
 
 ### Why this is the current phase
-- The plan has reached its intended milestone: inventory, holdout decision,
-  explicit compact patch, runtime verification, and close-out audit all landed
-  cleanly.
+- `Badge` is the safest next family because the canonical Figma contract is
+  already clear, the variant set is narrower than `Button`, and the blast
+  radius is easier to inventory than `Dropdown` or broader shell families.
 
 ### Definition of Done
-- [x] Remaining dense holdouts are inventoried before patching
-- [x] A runtime decision is recorded for `/admin/resources` main table,
-      `/admin/tags`, and creator/admin status-action groups
-- [x] The holdout contract is made explicit in code instead of relying on
-      inherited defaults
-- [x] The live admin holdouts are verified at runtime after the patch
-- [x] Repo context/docs are updated in the same session if the runtime
-      contract understanding changes
-- [x] The plan closes with one explicit close-out audit instead of drifting
-      into another widening pass
+- [ ] Live `Badge` runtime consumers are inventoried before patching
+- [ ] A rollout decision is recorded for canonical badge variants versus
+      legacy/product-only variants
+- [ ] One narrow `Badge` runtime adoption slice lands with matching route proof
+- [ ] `Input/Search` inventory begins only after the badge slice closes
+- [ ] Repo context/docs are updated in the same session if runtime contract
+      understanding changes
+- [ ] The plan closes with one explicit close-out audit instead of drifting
+      into broad DS runtime work
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Holdout plan open + scope lock | complete | scope is limited to the remaining dense holdouts, not another widening pass |
-| 1 | Dense holdout inventory | complete | `/admin/resources`, `/admin/tags`, and creator/admin status-action groups were audited before patching |
-| 2 | Holdout contract decision | complete | dense clusters stay compact `sm` and become explicit instead of implicit |
-| 3 | Explicit compact contract patch | complete | code now passes `size="sm"` on the dense holdout controls |
-| 4 | Runtime proof + repo close-out | complete | `/admin/resources` and `/admin/tags` passed proof; creator status holdout was documented as code-level only because no live route mount was found |
+| 0 | Family plan open + scope lock | complete | scope is limited to runtime adoption family slices, not another broad DS audit |
+| 1 | Badge runtime inventory + contract audit | in progress | inventory live badge consumers, compare runtime variants to canonical Figma set, and choose the first proof route family |
+| 2 | Badge runtime adoption slice | pending | patch the narrowest shared badge layer and affected first proof routes |
+| 3 | Badge proof + close-out | pending | prove the affected route family at runtime and close the badge slice cleanly |
+| 4 | Input/Search runtime inventory | pending | audit runtime field consumers after badge closes |
+| 5 | Input/Search adoption decision | pending | decide parity path and whether a safe first runtime slice exists inside the same parent plan |
 
 ---
 
 ## Current Goal
 
-The plan is complete. The recorded holdout decision is:
-1. `/admin/resources` main table stays on compact `RowActionButton` /
-   `RowActionMenuTrigger` posture and now passes `size="sm"` explicitly
-2. `/admin/tags` stays on compact `RowActionButton` posture for all inline row
-   actions and now passes `size="sm"` explicitly
-3. `CreatorResourceStatusButton` stays on compact `RowActionButton`
-   posture and now passes `size="sm"` explicitly
-4. shared defaults still stay unchanged until a separate plan justifies a
-   wider rollout or a new dense-control family contract
+The current runtime-adoption order is:
+1. inventory live `Badge` consumers
+2. decide which canonical badge variants should map into runtime first
+3. land one narrow badge adoption slice with route proof
+4. only then begin `Input/Search` runtime inventory and parity planning
 
 ---
 
 ## In Progress
 
-- [x] Open a new parent plan for `Dense action holdout lockdown`
-- [x] Lock the rollout scope to the remaining dense admin/creator holdouts
-- [x] Inventory `/admin/resources` main-table action cluster
-- [x] Inventory `/admin/tags` inline row-action clusters
-- [x] Inventory creator/admin status-action holdouts
-- [x] Record the holdout decision and patch the dense surfaces explicitly
-- [x] Run runtime proof for `/admin/resources` and `/admin/tags`
-- [x] Run the required close-out audit and close the plan if no material
-      in-scope issue remains
+- [x] Open a new parent plan for `Family-by-family DS runtime adoption`
+- [x] Lock the phase order to `Badge` first, `Input/Search` second
+- [ ] Inventory live `Badge` consumers
+- [ ] Compare runtime `Badge.tsx` variants to the canonical Figma set
+- [ ] Choose one first proof route family for the badge slice
+- [ ] Record the badge rollout decision before patching
 
 ---
 
 ## Next Up
 
-- [ ] No in-plan next up remains. Open a new plan before continuing rollout.
+- [ ] Inventory live `Badge` consumers
+- [ ] Compare runtime `Badge.tsx` variants to the canonical Figma set
+- [ ] Choose the first proof route family for `Badge runtime adoption`
 
 ---
 
@@ -330,6 +319,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: After `Dense action holdout lockdown` closed cleanly, open a new parent plan `Family-by-family DS runtime adoption` instead of another broad repo audit. Lock the rollout order to `Badge runtime adoption` first and `Input/Search runtime parity` second because both families already have stable Figma truth and a safer blast radius than broader button/dropdown/shell rewrites.
 - 2026-04-29: `Dense action holdout lockdown` is now closed. Inventory confirmed that `/admin/resources` main table, `/admin/tags`, and creator-side status actions are dense control clusters that should not silently inherit the widened rounded-rect `md` table-action recipe. The follow-up patch now passes `size="sm"` explicitly on those holdouts, runtime proof passed for `/admin/resources` and `/admin/tags`, and `CreatorResourceStatusButton` is recorded as a code-level compact holdout because no live route mount was found during the audit.
 - 2026-04-29: `Admin simple row-action rollout` is now closed. Inventory confirmed that `/admin/categories`, `/admin/reviews`, `/admin/resources/trash`, and `/admin/resources/[id]/versions` all behave like simple table-action surfaces rather than dense inline editor clusters, so each now opts into `RowActionButton size="md"`. The close-out audit keeps `/admin/resources` main table, `/admin/tags`, and creator/admin status-action groups as explicit holdouts for a future separate plan.
 - 2026-04-29: After `Runtime DS adoption` closed cleanly, open a new parent plan `Admin table action rollout` instead of silently continuing the old plan. Start with inventory of `admin/users`, `admin/tags`, and `TablePagination` consumers so the next row-action / pagination rollout decision is based on real admin surface density.
