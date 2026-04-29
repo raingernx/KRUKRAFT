@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
 ## Plan Snapshot
 
-Parent Plan: `Creator resource editor field-shell widening`
+Parent Plan: `Plan complete`
 
 > [!info] Current Phase
-> `Phase 3 — Creator editor metadata widening slice`
+> `Plan complete`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Creator resource editor field-shell widening`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Creator resource editor field-shell widening` is active. The inventory and first-slice decision are now locked; the next narrow job is to land the metadata slice without dragging delivery/upload or AI-helper behavior into the same patch.
+> No active parent plan. `Creator resource editor field-shell widening` is complete; open a new plan before widening the delivery/previews zone or other creator buckets.
 
 > [!todo] Next Up
-> Land the creator editor metadata slice first, then run route-level proof before deciding whether delivery/previews should remain a follow-up bucket.
+> No in-plan next step remains. Wait for an explicit new plan before widening the creator delivery/previews zone, `creator application`, or `creator AI draft helpers`.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -48,7 +48,7 @@ Parent Plan: `Creator resource editor field-shell widening`
 | Select/Textarea Rollout Widening | Complete | `/admin/resources` landed as the first widened follow-up family after `/admin/settings`; close-out audit found no in-scope reason to keep the plan open |
 | Select Filter-Shell Widening | Complete | the low-risk `Select`-only admin filter bucket (`activity`, `audit`, `analytics/ranking`) now proves the shared `56px / 8px` shell; creator routes remain a separate optional future plan |
 | Creator Select/Textarea Widening | Complete | `/dashboard/creator/profile` now proves the first creator-owned widened follow-up; heavier creator buckets stay deferred to future plans |
-| Creator Resource Editor Field-Shell Widening | Active | editor inventory and first-slice decision are locked; widen the clean metadata fields first and keep delivery/upload + AI helper behavior out of scope |
+| Creator Resource Editor Field-Shell Widening | Complete | `/dashboard/creator/resources/new` and edit now prove the metadata slice; delivery/previews stays deferred as a separate future plan |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -61,7 +61,7 @@ Parent Plan: `Creator resource editor field-shell widening`
 ## Progress
 
 Creator resource editor field-shell widening
-`[██████░░░░] 60%`
+`[██████████] 100%`
 
 ```mermaid
 flowchart TB
@@ -111,8 +111,8 @@ flowchart TB
     E0["Plan open<br/>Done"]
     E1["Editor route-family inventory<br/>Done"]
     E2["First proof-slice decision<br/>Done"]
-    E3["Route-scoped runtime slice<br/>Pending"]
-    E4["Close-out audit<br/>Pending"]
+    E3["Route-scoped runtime slice<br/>Done"]
+    E4["Close-out audit<br/>Done"]
   end
 
   D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> E0 --> E1 --> E2 --> E3 --> E4
@@ -151,10 +151,10 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 3 — Creator editor metadata widening slice
+Plan complete
 
 ### Parent Plan
-Creator resource editor field-shell widening
+None active
 
 ### Current Status Inside Parent Plan
 - Frozen baselines that remain in force:
@@ -168,12 +168,15 @@ Creator resource editor field-shell widening
   - the status `Select` explicitly opts into `size="field"`
   - the creator bio keeps the shared `Textarea` shell while `min-height` and
     the counter stay route-owned
-- This new parent plan isolates the heaviest remaining creator bucket:
+- This plan isolated the heaviest remaining creator bucket:
   - `creator resource editor`
-- Keep these out of scope for this plan:
-  - `creator application`
-  - `creator AI draft helpers`
-- The editor inventory and slice decision are now locked:
+- The editor metadata slice is now landed and proved:
+  - `/dashboard/creator/resources/new`
+  - `/dashboard/creator/resources/[id]`
+  - the edit-only `status` select plus the shared `type` / `category` selects
+    now keep the canonical `56px / 8px` field shell
+  - the main `description` textarea stays on the shared multiline shell
+- The editor inventory and slice decision that led to this patch remain:
   - shared `Select` candidates live in the `Pricing and visibility` section:
     - `status` (edit mode only)
     - `type`
@@ -190,21 +193,29 @@ Creator resource editor field-shell widening
     - it avoids the heavier delivery/upload zone where preview URL lists,
       external file links, file widgets, and AI helper adjacency make the
       rollout riskier
+- The close-out audit found no in-scope reason to keep this parent plan open.
+- These remain deferred to separate future plans:
+  - `creator delivery/previews`
+  - `creator application`
+  - `creator AI draft helpers`
+- The reason they stay deferred:
+  - the bulk preview URL textarea is still a route-owned composite editor
+  - upload/external-link widgets remain entangled with preview parsing and
+    AI-adjacent authoring behavior
 
 ### Goal
-Land the creator editor metadata slice and prove it before deciding whether the
-delivery/previews zone should stay as a separate follow-up bucket.
+Wait for the next explicit parent plan.
 
 ### Why this is the current phase
-- The editor inventory is complete, and the safest first widening target is now
-  explicit: metadata fields first, delivery/upload later.
+- The creator editor metadata slice passed route-level proof and the required
+  close-out audit found no remaining in-scope blocker.
 
 ### Definition of Done
 - [x] The prior admin and creator profile proof routes stay frozen as baselines
 - [x] Creator editor `Select` / `Textarea` mounts are grouped into route-owned buckets
 - [x] One editor-only proof slice is chosen
-- [ ] That editor route-scoped runtime slice is landed and verified
-- [ ] A close-out audit decides whether the parent plan should continue or close
+- [x] That editor route-scoped runtime slice is landed and verified
+- [x] A close-out audit decides whether the parent plan should continue or close
 
 ### Phase Map
 
@@ -213,17 +224,17 @@ delivery/previews zone should stay as a separate follow-up bucket.
 | 0 | Plan open | complete | the heavier creator editor bucket is now isolated into its own parent plan |
 | 1 | Creator editor route-family inventory | complete | shared-shell mounts are now grouped away from delivery/upload and AI-adjacent controls |
 | 2 | First proof-slice decision | complete | `basic info + pricing/visibility metadata` is now the locked first slice |
-| 3 | Route-scoped runtime slice | pending | land and verify the chosen editor bucket |
-| 4 | Close-out audit | pending | decide whether the parent plan should continue or close |
+| 3 | Route-scoped runtime slice | complete | new/edit creator resource routes now prove the metadata slice |
+| 4 | Close-out audit | complete | delivery/previews is deferred to a separate future plan |
 
 ---
 
 ## Current Goal
 
-1. widen the clean creator editor metadata fields first
-2. keep `/dashboard/creator/profile` and the admin proof routes frozen
-3. leave delivery/upload, preview URL editing, and AI-adjacent controls out of
-   the first slice
+1. wait for an explicit new parent plan
+2. keep `/dashboard/creator/profile` and creator editor metadata as frozen baselines
+3. treat delivery/previews and the remaining creator buckets as optional
+   follow-up plans
 
 ---
 
@@ -234,15 +245,13 @@ delivery/previews zone should stay as a separate follow-up bucket.
 - [x] Group creator editor `Select` consumers by widening bucket
 - [x] Group creator editor `Textarea` consumers by widening bucket
 - [x] Choose the first creator editor widening slice
-- [ ] Land the next route-scoped creator editor parity slice
+- [x] Land the next route-scoped creator editor parity slice
 
 ---
 
 ## Next Up
 
-- [ ] Land the `basic info + pricing/visibility` metadata slice for shared `Select` / `Textarea`
-- [ ] Verify the widened creator resource editor metadata fields at runtime
-- [ ] Decide after proof whether delivery/previews should stay a separate follow-up bucket
+- [ ] None. Open a new plan before widening the creator delivery/previews zone or another creator bucket.
 
 ---
 
@@ -273,6 +282,7 @@ Use this section only for real blockers:
 - [ ] Verify dashboard/admin hard refreshes no longer show the global app-root fallback before their family loading shells under repeated refresh stress
 
 ### DS Runtime Follow-ups
+- [ ] Open a separate parent plan for the creator delivery/previews zone if the next goal is widening field shells around preview-link editing, external-file links, or upload widgets
 - [ ] Open a separate parent plan for `creator application` if the next goal is widening the creator application form
 - [ ] Open a separate parent plan for `creator AI draft helpers` if the next goal is widening AI-assisted authoring shells
 
@@ -353,6 +363,7 @@ Add only short, high-signal entries here.
 - 2026-04-29: `Creator Select/Textarea widening` is now closed. `/dashboard/creator/profile` proved the first creator-owned widened slice at runtime: `creator-status` now opts into `Select size="field"`, the creator bio keeps the shared `Textarea` shell while preserving route-owned `min-height` and counter behavior, and the close-out audit intentionally deferred `creator resource editor`, `creator application`, and `creator AI draft helpers` into future separate plans instead of silently widening them here.
 - 2026-04-29: Open a new parent plan `Creator resource editor field-shell widening` instead of stretching the closed creator profile plan. `/dashboard/creator/resources/*` is the heaviest remaining creator bucket and the highest-impact next step, but it mixes shared field shells with upload, preview, pricing, status, and AI-helper behavior, so the first required job is a route-family inventory rather than a blind runtime patch.
 - 2026-04-29: Creator editor inventory is now closed too. The clean shared-shell candidates are the `description` textarea plus the `status` (edit only), `type`, and `category` selects inside the metadata sections, while the bulk preview URL textarea belongs to a route-owned composite editor inside the delivery/previews zone. The first proof slice is therefore `basic info + pricing/visibility metadata`, leaving upload, external-link, preview-list, and AI-adjacent behavior for a later follow-up bucket.
+- 2026-04-29: `Creator resource editor field-shell widening` is now closed. `/dashboard/creator/resources/new` and `/dashboard/creator/resources/[id]` now prove the metadata slice at runtime: the edit-only `status` select plus the shared `type` / `category` selects all keep the canonical `56px / 8px` field shell, and the main `description` textarea stays on the shared multiline shell. The close-out audit intentionally deferred the delivery/previews zone because the bulk preview URL textarea remains a route-owned composite editor and the upload/external-link widgets still sit too close to preview parsing and AI-adjacent authoring behavior.
 - 2026-04-29: `Field shell runtime residual follow-up` is now closed. The final shared field-shell drift did not require another broad family rollout: `Input.tsx` now enforces canonical `radius/sm (8px)` directly, `/admin/users` proves that shared field shell, and the old `SearchInput onClear` proof gap narrowed to a route-hydration issue instead of a primitive bug. `/dashboard/library` now proves the hydrated topbar clear action too, so no in-scope blocker remains.
 - 2026-04-29: Open a new parent plan `Field shell runtime residual follow-up` instead of silently reopening the closed family-by-family rollout. Scope it tightly to the two known leftovers: `Input.tsx` still carrying the larger comfortable-radius branch and `SearchInput` clear-action visibility still depending on props alone in some controlled consumers.
 - 2026-04-29: `Family-by-family DS runtime adoption` is now closed. The second family did not widen into `Input.tsx`; inventory showed that the smallest safe runtime slice was `SearchInput variant="default"` first. Runtime now enforces the canonical `radius/sm (8px)` shell on that shared branch, route proof passed on `/dashboard/library` for both the `56px / 8px` toolbar search and the `44px / 8px` topbar override, and the close-out audit found no in-scope reason to keep the parent plan open. Any wider `Input` parity or product-bound search-shell work should start as a new plan.

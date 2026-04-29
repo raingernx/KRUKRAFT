@@ -479,6 +479,15 @@ At a high level:
         explicitly opts into the shared `field` shell there, and the creator
         bio keeps the same `8px` `Textarea` shell while `min-height` plus the
         character-count affordance remain route-owned
+      - the next creator-owned widened slice is now the metadata zone of
+        `/dashboard/creator/resources/*`: the edit-only `status` select plus
+        the shared `type` / `category` selects now keep the same `56px / 8px`
+        shell, and the main `description` textarea stays on the shared
+        multiline shell across both new and edit routes
+      - the delivery/upload zone is intentionally still deferred after that
+        slice because the bulk preview URL textarea belongs to a route-owned
+        composite editor, and the external-link / upload widgets stay entangled
+        with preview parsing plus AI-adjacent authoring behavior
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:

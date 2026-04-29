@@ -407,6 +407,15 @@ Use this order when DS docs disagree:
         shared `field` shell there, while the creator bio keeps the shared
         `Textarea` shell and leaves only `min-height` plus the character count
         as route-owned behavior
+      - the next creator-owned widened slice is now the metadata zone of
+        `/dashboard/creator/resources/*`: the edit-only `status` select plus
+        the shared `type` / `category` selects now keep the same `56px / 8px`
+        shell, and the main `description` textarea stays on the shared
+        multiline shell across both new and edit routes
+      - the delivery/upload zone stays deferred after that slice:
+        the bulk preview URL textarea is still a route-owned composite editor,
+        and the external-link / upload widgets remain entangled with preview
+        parsing and AI-adjacent authoring behavior
     - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
       component sets for the shared field ladder
     - runtime code still carries an older larger comfortable-radius branch for

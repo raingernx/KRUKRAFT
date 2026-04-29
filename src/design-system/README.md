@@ -180,7 +180,11 @@ When this file conflicts with code, the code wins.
   shell without reopening creator-owned forms. The first creator-owned widened
   follow-up is now `/dashboard/creator/profile`, where the status `Select`
   explicitly opts into `size="field"` while the rest of the profile form keeps
-  its creator-specific long-form behavior route-owned.
+  its creator-specific long-form behavior route-owned. The next creator-owned
+  widened slice is now the metadata zone of `/dashboard/creator/resources/*`:
+  the editor's `status` (edit mode only), `type`, and `category` selects now
+  opt into the same shared `field` shell while the delivery/upload zone stays
+  route-owned for now.
 - `Textarea` now has matching light/dark `Textarea / Foundations` boards plus
   dedicated `Textarea / State` sets in the canonical file. The multiline
   contract intentionally keeps the same quiet field shell target and
@@ -194,7 +198,11 @@ When this file conflicts with code, the code wins.
   editor remains route-owned through color and monospace overrides only. The
   first creator-owned widened follow-up is now `/dashboard/creator/profile`,
   where the bio field keeps the shared `8px` shell while `min-height` and the
-  character-count affordance stay route-owned.
+  character-count affordance stay route-owned. The next creator-owned widened
+  slice is now the creator resource editor metadata zone, where the main
+  description field keeps the shared shell on both new/edit routes while the
+  bulk preview URL textarea remains a route-owned composite editor in the
+  delivery/previews section.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may

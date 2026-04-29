@@ -856,7 +856,7 @@ export function CreatorResourceForm({
             <div className="space-y-1.5">
               <label htmlFor={statusSelectId} className="text-sm font-medium text-foreground">Status</label>
             <Select
-              size="md"
+              size="field"
               id={statusSelectId}
               name="status"
               value={form.status}
@@ -873,7 +873,7 @@ export function CreatorResourceForm({
           <div className="space-y-1.5">
             <label htmlFor={typeSelectId} className="text-sm font-medium text-foreground">Type</label>
             <Select
-              size="md"
+              size="field"
               id={typeSelectId}
               name="type"
               value={form.type}
@@ -888,7 +888,7 @@ export function CreatorResourceForm({
           <div className="space-y-1.5">
             <label htmlFor={categorySelectId} className="text-sm font-medium text-foreground">Category</label>
             <Select
-              size="md"
+              size="field"
               id={categorySelectId}
               name="categoryId"
               value={form.categoryId}
