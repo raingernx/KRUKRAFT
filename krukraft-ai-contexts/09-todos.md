@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
 ## Plan Snapshot
 
-Parent Plan: `Route-owned upload error copy`
+Parent Plan: `Route-owned backend upload-failure copy`
 
 > [!info] Current Phase
-> `Plan complete`
+> `Phase 1 — Backend upload-failure copy inventory`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Route-owned upload error copy`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Route-owned upload error copy` is now complete. Creator/admin create routes prove the route-owned draft-create / `saveFirstError` slice before upload, while backend upload-failure copy and route-level flash messaging remain optional future plans.
+> `Route-owned backend upload-failure copy` is active. The save-first branch is frozen, and the next narrow bucket is inventorying creator/admin backend upload-failure copy after draft creation while keeping route-level flash messaging out of scope.
 
 > [!todo] Next Up
-> No in-plan `Next Up`. Wait for an explicit new parent plan; the closest optional follow-ups are route-owned backend upload-failure copy or route-level flash messaging.
+> Inventory creator/admin backend upload-failure copy on create flows, choose one shared-safe route-owned proof slice, and keep route-level flash messaging out of scope.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -58,6 +58,7 @@ Parent Plan: `Route-owned upload error copy`
 | Shared FileUploadWidget Error Feedback States | Complete | creator/admin create routes now prove the shared oversize-validation error banner; that baseline is now frozen |
 | Shared FileUploadWidget Save-First / Backend Error Copy | Complete | inventory found no shared-safe widget patch: creator/admin diverge at widget prop copy and backend response copy |
 | Route-Owned Upload Error Copy | Complete | creator/admin create routes now prove the route-owned draft-create failure copy before upload; backend upload-failure copy and route-level flash messaging remain separate optional follow-ups |
+| Route-Owned Backend Upload-Failure Copy | Active | inventory creator/admin backend upload-failure copy after draft creation, before opening any route-level flash messaging plan |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -69,8 +70,8 @@ Parent Plan: `Route-owned upload error copy`
 
 ## Progress
 
-Route-owned upload error copy
-`[██████████] 100%`
+Route-owned backend upload-failure copy
+`[█░░░░░░░░░] 10%`
 
 ```mermaid
 flowchart TB
@@ -117,14 +118,14 @@ flowchart TB
   end
 
   subgraph Current
-    Y0["Plan open<br/>Done"]
-    Y1["Route-copy inventory<br/>Done"]
-    Y2["First proof-slice decision<br/>Done"]
-    Y3["Route-scoped runtime slice<br/>Done"]
-    Y4["Close-out audit<br/>Done"]
+    Z0["Plan open<br/>Done"]
+    Z1["Backend-copy inventory<br/>Pending"]
+    Z2["First proof-slice decision<br/>Pending"]
+    Z3["Route-scoped runtime slice<br/>Pending"]
+    Z4["Close-out audit<br/>Pending"]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4
 ```
 
 ## Daily Workflow
@@ -160,10 +161,10 @@ Rules:
 ## Current Phase
 
 ### Name
-Plan complete
+Phase 1 — Backend upload-failure copy inventory
 
 ### Parent Plan
-Route-owned upload error copy
+Route-owned backend upload-failure copy
 
 ### Current Status Inside Parent Plan
 - Frozen route baselines that remain in force:
@@ -198,58 +199,37 @@ Route-owned upload error copy
     uploaded-card, success-banner, and oversize-validation branches
   - `saveFirstError` and backend upload-failure copy are confirmed route-owned,
     not shared-widget ownership
-- This parent plan isolated the route-owned copy bucket:
-  - creator/admin `saveFirstError` wording and timing expectations
+- This new parent plan isolates the next route-owned copy bucket:
   - creator/admin backend upload-failure wording returned through the widget
-- Inventory is now closed for this parent plan:
-  - the save-first branch diverges before the upload endpoint:
-    - creator create route calls `/api/creator/resources/draft` through
-      `ensureDraftResourceId()` and throws the route/API error payload on
-      failure, so the visible copy comes from the creator draft route rather
-      than the widget prop override
-    - admin create route now calls `/api/admin/resources/draft` through
-      `ensureDraftResource()`, throws route-owned fallback copy on failure,
-      and passes that copy into the widget instead of relying on the default
-      shared English `saveFirstError`
-  - the backend upload-failure branch still diverges later and more deeply:
-    - admin upload errors surface English route/service copy
-    - creator upload errors surface Thai route/service copy
-    - both require endpoint/storage-path failure injection after draft creation
-- Closed proof slice for this parent plan:
-  - route-owned `saveFirstError` / draft-create failure
-  - proof routes:
-    - `/dashboard/creator/resources/new`
-    - `/admin/resources/new`
-  - landed runtime behavior:
-    - `FileUploadWidget` now catches `onEnsureResourceId()` failures before
-      upload starts, so route-owned draft-create failures render inline through
-      the widget error state on both creator/admin create routes
-  - kept out of scope:
-    - backend upload-failure copy
-    - route-level remove/upload flash messaging
+  - upload-endpoint failure copy after draft creation succeeds
+- Frozen baselines carried into this plan:
+  - creator/admin create routes already prove the draft-create /
+    `saveFirstError` slice before upload starts
+  - shared widget parity work is complete for pre-upload, uploaded-card,
+    success-banner, and oversize-validation branches
+  - route-level flash messaging is still out of scope
+- This plan has just opened:
+  - inventory has not started yet for creator/admin backend upload-failure
+    copy on create routes
+  - no proof slice is chosen yet
 - Keep these out of scope for this plan:
-  - shared `FileUploadWidget` geometry/state-machine changes
-  - creator-owned delivery-source toggle wrappers
-  - bulk preview URL parser/editor
-  - linked URL editors
   - route-level remove/upload flash messages
-  - route-owned wrapper copy outside the widget
-  - the already-frozen success and oversize banner geometry slices
+  - creator-owned delivery-source toggle wrappers
+  - shared `FileUploadWidget` geometry/state-machine changes
+  - already-frozen success and oversize banner geometry slices
 
 ### Goal
-This plan is closed. It proved one route-owned upload error-copy slice after
-inventory: the draft-create / save-first branch on creator/admin create routes,
-while upload-endpoint failure copy and flash messaging remain out of scope.
+Inventory the remaining route-owned backend upload-failure copy on creator/admin
+create routes, then choose one safe proof slice without reopening route-level
+flash messaging.
 
 ### Why this is the current phase
-- The previous close-out audit proved the remaining copy divergence was
-  route-owned, so this plan isolated that bucket instead of reopening shared
-  widget parity work.
-- The save-first branch closed cleanly once the widget caught
-  `onEnsureResourceId()` failures and the admin draft route switched to
-  explicit route-owned fallback copy.
-- Backend upload-failure copy and route-level flash messaging still diverge at
-  later route-owned layers and remain better scoped as optional future plans.
+- The previous plan closed the safer save-first path first.
+- The next remaining upload-copy divergence is backend upload failure after
+  draft creation, which is still route-owned but narrower than a full flash
+  messaging plan.
+- Inventory has to happen before any patch because creator/admin may diverge by
+  endpoint payloads, locale, and route-side fallbacks.
 
 ### Definition of Done
 - [x] The prior admin and creator profile proof routes stay frozen as baselines
@@ -262,28 +242,28 @@ while upload-endpoint failure copy and flash messaging remain out of scope.
 - [x] The shared success-banner slice stays frozen as a baseline
 - [x] The shared success-banner slice stays frozen as a baseline
 - [x] The shared oversize-validation slice stays frozen as a baseline
-- [x] Route-owned upload error-copy states are inventoried across creator and admin consumers
-- [x] One route-owned proof slice is chosen
-- [x] That route-scoped runtime slice is landed and verified
-- [x] A close-out audit decides whether the parent plan should continue or close
+- [ ] Route-owned backend upload-failure copy is inventoried across creator and admin consumers
+- [ ] One route-owned proof slice is chosen
+- [ ] That route-scoped runtime slice is landed and verified
+- [ ] A close-out audit decides whether the parent plan should continue or close
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Plan open | complete | shared widget parity is frozen and the remaining upload error-copy work is isolated into a route-owned parent plan |
-| 1 | Route-copy inventory | complete | creator/admin diverge differently on save-first vs backend upload failure; the two branches should not be mixed |
-| 2 | First proof-slice decision | complete | the safe first slice is the route-owned `saveFirstError` / draft-create failure branch |
-| 3 | Route-scoped runtime slice | complete | creator/admin create routes now prove the route-owned draft-create failure copy before upload |
-| 4 | Close-out audit | complete | the remaining backend upload-failure copy and flash messaging are optional future plans, not in-scope reasons to keep this plan open |
+| 0 | Plan open | complete | the save-first branch is frozen and the remaining route-owned copy work is isolated to backend upload failure |
+| 1 | Backend-copy inventory | pending | inventory creator/admin backend upload-failure wording after draft creation succeeds |
+| 2 | First proof-slice decision | pending | choose one safe route-owned backend-failure slice |
+| 3 | Route-scoped runtime slice | pending | land and verify the chosen backend upload-failure copy slice |
+| 4 | Close-out audit | pending | close cleanly or split any remaining route-owned feedback into a narrower future plan |
 
 ---
 
 ## Current Goal
 
 1. keep the shared widget parity baselines frozen
-2. prove the route-owned save-first copy slice first
-3. leave backend upload-failure copy and route-level flash messaging to optional future plans
+2. inventory creator/admin backend upload-failure copy first
+3. keep route-level flash messaging out of scope while choosing a safe proof slice
 
 ---
 
@@ -291,15 +271,17 @@ while upload-endpoint failure copy and flash messaging remain out of scope.
 
 - [x] Open a new parent plan for route-owned upload error copy
 - [x] Keep shared widget parity baselines frozen
-- [x] Inventory route-owned upload error-copy states across creator and admin consumers
-- [x] Choose the first route-owned proof slice
-- [x] Land the next route-scoped runtime slice
+- [ ] Open a new parent plan for route-owned backend upload-failure copy
+- [ ] Inventory route-owned backend upload-failure copy across creator and admin consumers
+- [ ] Choose the first route-owned backend upload-failure proof slice
 
 ---
 
 ## Next Up
 
-- [x] No in-plan work remains for this parent plan
+- [ ] Inventory creator/admin backend upload-failure copy on create routes
+- [ ] Choose one safe route-owned proof slice
+- [ ] Keep route-level flash messaging out of scope
 
 ---
 
@@ -398,6 +380,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: Open a new parent plan `Route-owned backend upload-failure copy` instead of jumping straight to route-level flash messaging. The save-first branch is now frozen on creator/admin create routes, so the next narrow ownership bucket is the upload-endpoint failure copy that appears after draft creation succeeds. Flash messaging stays explicitly out of scope until backend upload-failure inventory is complete and one safe proof slice is chosen.
 - 2026-04-29: `Route-owned upload error copy` is now closed. `/dashboard/creator/resources/new` and `/admin/resources/new` both prove the draft-create / `saveFirstError` slice before upload starts: `FileUploadWidget` now catches `onEnsureResourceId()` failures, creator continues to surface the Thai `/api/creator/resources/draft` payload inline, and admin create now throws/passes an explicit English fallback from `/api/admin/resources/draft` instead of relying on the shared default copy. The required close-out audit found no in-scope reason to keep this parent plan open; backend upload-failure copy and route-level flash messaging remain optional future plans.
 - 2026-04-29: Inventory for `Route-owned upload error copy` is now closed. The save-first branch diverges earlier and more safely than backend upload failure: admin create uses `/api/admin/resources/draft` and falls back to the widget default English `saveFirstError` when draft creation returns `undefined`, while creator create uses `/api/creator/resources/draft` and surfaces the thrown route/API payload directly instead of the widget prop override. Backend upload-failure copy diverges later and more deeply because it depends on upload-endpoint/storage failure after draft creation. The safest first route-owned slice is therefore the draft-create / save-first error path on creator/admin create routes, while backend upload-failure copy and route-level flash messaging stay out of scope.
 - 2026-04-29: Open a new parent plan `Route-owned upload error copy` instead of jumping straight to flash messaging. The previous inventory proved there is no shared-safe `FileUploadWidget` patch left for `saveFirstError` or backend upload-failure text, so the next narrow bucket is route-owned copy only: creator/admin draft-timing copy and creator/admin backend upload-failure wording. Flash messaging remains explicitly out of scope until that route-owned copy bucket is inventoried and one safe proof slice is chosen.
