@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
 ## Plan Snapshot
 
-Parent Plan: `Route-owned backend upload-failure copy`
+Parent Plan: `Route-owned upload validation copy`
 
 > [!info] Current Phase
-> `Plan complete`
+> `Phase 1 — Upload validation copy inventory`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Route-owned backend upload-failure copy`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Route-owned backend upload-failure copy` is now complete. Creator/admin create routes prove the route-owned backend `500`/fallback upload-failure slice after draft creation succeeds, while validation copy and route-level flash messaging remain optional future plans.
+> `Route-owned upload validation copy` is active. The backend `500`/fallback branch is frozen, and the next narrow bucket is inventorying creator/admin route-owned validation copy (`400/404`) while keeping route-level flash messaging out of scope.
 
 > [!todo] Next Up
-> No in-plan `Next Up`. Wait for an explicit new parent plan; the closest optional follow-ups are route-owned upload validation copy (`400/404`) or route-level flash messaging.
+> Inventory creator/admin upload validation copy (`400/404`), choose one safe proof slice, and keep route-level flash messaging out of scope.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -59,6 +59,7 @@ Parent Plan: `Route-owned backend upload-failure copy`
 | Shared FileUploadWidget Save-First / Backend Error Copy | Complete | inventory found no shared-safe widget patch: creator/admin diverge at widget prop copy and backend response copy |
 | Route-Owned Upload Error Copy | Complete | creator/admin create routes now prove the route-owned draft-create failure copy before upload; backend upload-failure copy and route-level flash messaging remain separate optional follow-ups |
 | Route-Owned Backend Upload-Failure Copy | Complete | creator/admin create routes now prove the route-owned backend `500`/fallback upload-failure slice after draft creation succeeds; validation copy and route-level flash messaging remain optional follow-ups |
+| Route-Owned Upload Validation Copy | Active | inventory creator/admin upload validation copy (`400/404`) after draft creation succeeds, before opening any flash-messaging plan |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -70,8 +71,8 @@ Parent Plan: `Route-owned backend upload-failure copy`
 
 ## Progress
 
-Route-owned backend upload-failure copy
-`[██████████] 100%`
+Route-owned upload validation copy
+`[█░░░░░░░░░] 10%`
 
 ```mermaid
 flowchart TB
@@ -118,14 +119,14 @@ flowchart TB
   end
 
   subgraph Current
-    Z0["Plan open<br/>Done"]
-    Z1["Backend-copy inventory<br/>Done"]
-    Z2["First proof-slice decision<br/>Done"]
-    Z3["Route-scoped runtime slice<br/>Done"]
-    Z4["Close-out audit<br/>Done"]
+    AA0["Plan open<br/>Done"]
+    AA1["Validation-copy inventory<br/>Pending"]
+    AA2["First proof-slice decision<br/>Pending"]
+    AA3["Route-scoped runtime slice<br/>Pending"]
+    AA4["Close-out audit<br/>Pending"]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4
 ```
 
 ## Daily Workflow
@@ -161,10 +162,10 @@ Rules:
 ## Current Phase
 
 ### Name
-Plan complete
+Phase 1 — Upload validation copy inventory
 
 ### Parent Plan
-Route-owned backend upload-failure copy
+Route-owned upload validation copy
 
 ### Current Status Inside Parent Plan
 - Frozen route baselines that remain in force:
@@ -200,64 +201,39 @@ Route-owned backend upload-failure copy
   - `saveFirstError` and backend upload-failure copy are confirmed route-owned,
     not shared-widget ownership
 - This new parent plan isolates the next route-owned copy bucket:
-  - creator/admin backend upload-failure wording returned through the widget
-  - upload-endpoint failure copy after draft creation succeeds
+  - creator/admin upload validation copy (`400/404`) returned through the widget
+  - route/service validation wording after draft creation succeeds
 - Frozen baselines carried into this plan:
   - creator/admin create routes already prove the draft-create /
     `saveFirstError` slice before upload starts
+  - creator/admin create routes already prove the backend `500`/fallback
+    upload-failure slice after draft creation succeeds
   - shared widget parity work is complete for pre-upload, uploaded-card,
     success-banner, and oversize-validation branches
   - route-level flash messaging is still out of scope
-- Inventory is now closed for this parent plan:
-  - creator and admin both still use the shared widget error branch after the
-    upload request starts, but the visible message is route-owned API copy
-  - creator upload route returns Thai route/service copy:
-    - explicit rate-limit / auth / creator-access / not-found / generic 500
-      responses all live on `/api/creator/resources/upload`
-    - unexpected failures currently fall back to
-      `อัปโหลดไฟล์ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง`
-  - admin upload route returns English route/service copy:
-    - service-thrown validation/not-found payloads come from
-      `uploadAdminResourceFile()`
-    - unexpected failures currently fall back to `Internal server error.`
-  - to isolate this branch from the already-frozen save-first proof, draft
-    creation must succeed before the failing upload request is asserted
-- Closed proof slice for this parent plan:
-  - backend 500/fallback upload-failure copy
-  - proof routes:
-    - `/dashboard/creator/resources/new`
-    - `/admin/resources/new`
-  - landed runtime behavior:
-    - creator create continues to surface the Thai fallback from
-      `/api/creator/resources/upload`
-    - admin create now uses an upload-specific English fallback from
-      `/api/admin/resources/upload` instead of the generic
-      `Internal server error.`
-    - creator/admin create routes now both prove the shared widget error
-      banner surfaces those route-owned backend `500` copy paths after draft
-      creation succeeds
-  - kept out of scope:
-    - service-specific validation copy (`400/404`)
-    - save-first / draft-create failure copy
-    - route-level remove/upload flash messaging
+- This plan has just opened:
+  - inventory has not started yet for creator/admin validation copy
+    (`400/404`) on create routes
+  - no proof slice is chosen yet
 - Keep these out of scope for this plan:
   - route-level remove/upload flash messages
   - creator-owned delivery-source toggle wrappers
   - shared `FileUploadWidget` geometry/state-machine changes
   - already-frozen success and oversize banner geometry slices
+  - save-first / draft-create failure copy
+  - backend `500`/fallback upload-failure copy
 
 ### Goal
-This plan is closed. It proved the route-owned backend `500`/fallback
-upload-failure slice on creator/admin create routes after draft creation
-succeeds, without reopening route-level flash messaging.
+Inventory route-owned upload validation copy (`400/404`) on creator/admin
+create routes, then choose one safe proof slice without reopening route-level
+flash messaging.
 
 ### Why this is the current phase
-- The previous plan closed the safer save-first path first.
-- This plan closed the next narrow ownership bucket too: backend
-  `500`/fallback copy after draft creation succeeds.
-- Service-specific validation copy (`400/404`) and route-level flash messaging
-  still sit at deeper route/service layers and remain better scoped as
-  optional future plans.
+- The previous plan already froze save-first and backend `500` fallback copy.
+- The next remaining upload-copy divergence is route/service validation copy
+  (`400/404`) after draft creation succeeds.
+- Inventory has to happen first because creator/admin may diverge by not-found,
+  ownership, invalid key, or file validation semantics.
 
 ### Definition of Done
 - [x] The prior admin and creator profile proof routes stay frozen as baselines
@@ -270,28 +246,28 @@ succeeds, without reopening route-level flash messaging.
 - [x] The shared success-banner slice stays frozen as a baseline
 - [x] The shared success-banner slice stays frozen as a baseline
 - [x] The shared oversize-validation slice stays frozen as a baseline
-- [x] Route-owned backend upload-failure copy is inventoried across creator and admin consumers
-- [x] One route-owned proof slice is chosen
-- [x] That route-scoped runtime slice is landed and verified
-- [x] A close-out audit decides whether the parent plan should continue or close
+- [ ] Route-owned upload validation copy (`400/404`) is inventoried across creator and admin consumers
+- [ ] One route-owned proof slice is chosen
+- [ ] That route-scoped runtime slice is landed and verified
+- [ ] A close-out audit decides whether the parent plan should continue or close
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Plan open | complete | the save-first branch is frozen and the remaining route-owned copy work is isolated to backend upload failure |
-| 1 | Backend-copy inventory | complete | creator/admin diverge by route/API payload locale and fallback wording after upload starts |
-| 2 | First proof-slice decision | complete | the safe first slice is the backend 500/fallback upload-failure branch after draft creation succeeds |
-| 3 | Route-scoped runtime slice | complete | creator/admin create routes now prove the route-owned backend `500`/fallback upload-failure copy after draft creation succeeds |
-| 4 | Close-out audit | complete | validation copy (`400/404`) and route-level flash messaging are optional future plans, not in-scope reasons to keep this plan open |
+| 0 | Plan open | complete | save-first and backend `500` fallback baselines are frozen; the next route-owned copy work is isolated to validation semantics |
+| 1 | Validation-copy inventory | pending | inventory creator/admin validation copy (`400/404`) after draft creation succeeds |
+| 2 | First proof-slice decision | pending | choose one safe route-owned validation-copy slice |
+| 3 | Route-scoped runtime slice | pending | land and verify the chosen validation-copy slice |
+| 4 | Close-out audit | pending | close cleanly or split any remaining route-owned feedback into a narrower future plan |
 
 ---
 
 ## Current Goal
 
 1. keep the shared widget parity baselines frozen
-2. prove the backend 500/fallback upload-failure copy slice first
-3. leave validation copy and route-level flash messaging to optional future plans
+2. inventory creator/admin upload validation copy (`400/404`) first
+3. keep route-level flash messaging out of scope while choosing a safe proof slice
 
 ---
 
@@ -299,16 +275,17 @@ succeeds, without reopening route-level flash messaging.
 
 - [x] Open a new parent plan for route-owned upload error copy
 - [x] Keep shared widget parity baselines frozen
-- [x] Open a new parent plan for route-owned backend upload-failure copy
-- [x] Inventory route-owned backend upload-failure copy across creator and admin consumers
-- [x] Choose the first route-owned backend upload-failure proof slice
-- [x] Land the backend upload-failure proof slice
+- [ ] Open a new parent plan for route-owned upload validation copy
+- [ ] Inventory route-owned upload validation copy across creator and admin consumers
+- [ ] Choose the first route-owned upload validation proof slice
 
 ---
 
 ## Next Up
 
-- [x] No in-plan work remains for this parent plan
+- [ ] Inventory creator/admin upload validation copy (`400/404`) on create routes
+- [ ] Choose one safe route-owned proof slice
+- [ ] Keep route-level flash messaging out of scope
 
 ---
 
@@ -407,6 +384,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: Open a new parent plan `Route-owned upload validation copy` instead of jumping straight to route-level flash messaging. Save-first and backend `500` fallback copy are now both frozen on creator/admin create routes, so the next narrow ownership bucket is the route/service validation copy (`400/404`) that appears after draft creation succeeds. Flash messaging stays explicitly out of scope until validation-copy inventory is complete and one safe proof slice is chosen.
 - 2026-04-29: `Route-owned backend upload-failure copy` is now closed. `/dashboard/creator/resources/new` and `/admin/resources/new` both prove the backend `500`/fallback upload-failure slice after draft creation succeeds: creator create continues to surface the Thai `/api/creator/resources/upload` fallback, admin create now uses an upload-specific English fallback from `/api/admin/resources/upload`, and the shared widget error banner stays frozen while surfacing those route-owned messages. The required close-out audit found no in-scope reason to keep this parent plan open; validation copy (`400/404`) and route-level flash messaging remain optional future plans.
 - 2026-04-29: Inventory for `Route-owned backend upload-failure copy` is now closed. Creator/admin both still render backend upload failures through the shared widget error banner after the upload request starts, but the visible copy is route-owned: creator create uses Thai route/API fallback copy from `/api/creator/resources/upload`, while admin create uses English route/service fallback copy from `/api/admin/resources/upload`. The safest first proof slice is therefore the backend `500`/fallback path after draft creation succeeds, because it isolates route-owned locale/fallback wording without mixing in validation/not-found semantics or route-level flash messaging.
 - 2026-04-29: Open a new parent plan `Route-owned backend upload-failure copy` instead of jumping straight to route-level flash messaging. The save-first branch is now frozen on creator/admin create routes, so the next narrow ownership bucket is the upload-endpoint failure copy that appears after draft creation succeeds. Flash messaging stays explicitly out of scope until backend upload-failure inventory is complete and one safe proof slice is chosen.
