@@ -384,7 +384,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                           <Select
                             id="creator-status"
                             name="creatorStatus"
-                            size="md"
+                            size="field"
                             value={form.creatorStatus}
                             onChange={handleChange}
                             disabled={formDisabled}

@@ -402,6 +402,11 @@ Use this order when DS docs disagree:
         `/admin/activity`, `/admin/audit`, and
         `/admin/analytics/ranking` all keep the same shared `Select`
         geometry on select-only filter surfaces without reopening creator forms
+      - the first creator-owned widened follow-up is now
+        `/dashboard/creator/profile`: the status `Select` now opts into the
+        shared `field` shell there, while the creator bio keeps the shared
+        `Textarea` shell and leaves only `min-height` plus the character count
+        as route-owned behavior
     - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
       component sets for the shared field ladder
     - runtime code still carries an older larger comfortable-radius branch for

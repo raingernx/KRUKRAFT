@@ -474,6 +474,11 @@ At a high level:
         bucket: `/admin/activity`, `/admin/audit`, and
         `/admin/analytics/ranking` all explicitly keep the same shared `Select`
         geometry (`56px / 8px`) without reopening creator-owned forms
+      - the first creator-owned widened follow-up is now
+        `/dashboard/creator/profile`: the storefront-status `Select`
+        explicitly opts into the shared `field` shell there, and the creator
+        bio keeps the same `8px` `Textarea` shell while `min-height` plus the
+        character-count affordance remain route-owned
   - the latest `Card / Foundations` cleanup also closed the old wrapper-radius
     debt on `Card / Size / Source`; the remaining card debt is now explicit and
     narrow:

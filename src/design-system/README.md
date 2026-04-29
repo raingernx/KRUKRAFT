@@ -177,7 +177,10 @@ When this file conflicts with code, the code wins.
   overrides. The next widened admin-only follow-up is now the low-risk filter
   bucket on `/admin/activity`, `/admin/audit`, and
   `/admin/analytics/ranking`, which all prove the same `56px / 8px` select
-  shell without reopening creator-owned forms.
+  shell without reopening creator-owned forms. The first creator-owned widened
+  follow-up is now `/dashboard/creator/profile`, where the status `Select`
+  explicitly opts into `size="field"` while the rest of the profile form keeps
+  its creator-specific long-form behavior route-owned.
 - `Textarea` now has matching light/dark `Textarea / Foundations` boards plus
   dedicated `Textarea / State` sets in the canonical file. The multiline
   contract intentionally keeps the same quiet field shell target and
@@ -188,7 +191,10 @@ When this file conflicts with code, the code wins.
   route-specific long-form behavior remain route-owned. The first widened
   follow-up family is now `admin/resources`, where the main resource form and
   bulk-upload editor both keep the same shell/radius target while the JSON
-  editor remains route-owned through color and monospace overrides only.
+  editor remains route-owned through color and monospace overrides only. The
+  first creator-owned widened follow-up is now `/dashboard/creator/profile`,
+  where the bio field keeps the shared `8px` shell while `min-height` and the
+  character-count affordance stay route-owned.
 - `SearchInput` is the canonical DS search primitive. Reuse it before creating
   route-owned search shells.
 - `Input` and `SearchInput` should stay on the same field recipe. Search may
