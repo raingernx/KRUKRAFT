@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
 ## Plan Snapshot
 
-Parent Plan: `Admin edit-flow upload/remove feedback`
+Parent Plan: `Creator delivery action control styling`
 
 > [!info] Current Phase
-> `Plan complete`
+> `Phase 1 — Creator delivery control inventory`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Admin edit-flow upload/remove feedback`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Admin edit-flow upload/remove feedback` is now complete. Creator create flash proof stays frozen, and the admin edit-mode remove-file success/error rail is now proved on `/admin/resources/[id]`.
+> `Creator delivery action control styling` is now active. The DS/runtime upload baselines stay frozen, and the next narrow pass is to inventory the remaining creator-owned delivery action controls around the upload and linked-file branches.
 
 > [!todo] Next Up
-> No in-plan Next Up. Wait for an explicit new parent plan before widening creator control styling or lower-signal `400` follow-ups.
+> Inventory creator delivery action controls, choose one route-owned proof slice, and keep lower-signal upload `400` follow-ups plus new DS families out of scope.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -63,6 +63,7 @@ Parent Plan: `Admin edit-flow upload/remove feedback`
 | Shared Upload 400 Validation Copy | Complete | creator/admin create routes now prove the shared `unsupported format` `400` branch after draft creation succeeds; use that as the frozen baseline for any later lower-signal `400` follow-up |
 | Route-Level Upload Flash Messaging | Complete | creator create now proves the route-owned remove-file failure message outside the widget shell, while admin create has no matching create-flow upload/remove flash slice beyond the frozen widget banners |
 | Admin Edit-Flow Upload/Remove Feedback | Complete | `/admin/resources/[id]` now proves the route-owned remove-file success/error rail, and the close-out audit found no in-scope reason to keep the plan open |
+| Creator Delivery Action Control Styling | Active | next narrow follow-up: inventory creator-owned delivery action controls and choose one safe proof slice before widening route styling |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -74,8 +75,8 @@ Parent Plan: `Admin edit-flow upload/remove feedback`
 
 ## Progress
 
-Admin edit-flow upload/remove feedback
-`[██████████] 100%`
+Creator delivery action control styling
+`[█░░░░░░░░░] 10%`
 
 ```mermaid
 flowchart TB
@@ -165,10 +166,10 @@ Rules:
 ## Current Phase
 
 ### Name
-Plan complete
+Phase 1 — Creator delivery control inventory
 
 ### Parent Plan
-Admin edit-flow upload/remove feedback
+Creator delivery action control styling
 
 ### Current Status Inside Parent Plan
 - Frozen widget/runtime baselines that remain in force:
@@ -186,38 +187,31 @@ Admin edit-flow upload/remove feedback
 - Frozen route-owned feedback baselines carried into this plan:
   - creator create route-owned remove-file failure message outside the widget shell
   - admin create has no matching upload/remove flash slice beyond the widget-owned banners
-- This new parent plan isolates the next route-owned admin bucket:
-  - admin edit-mode upload/remove feedback outside the widget shell
-  - form-level success/error copy that follows file replacement or deletion on `/admin/resources/[id]`
-- Inventory is now closed with these answers:
-  - the clear route-owned admin edit feedback branch is `handleRemoveFile()` on `/admin/resources/[id]`
-  - the form-level `success/error` rail is already the right proof surface; no narrower extraction is needed first
-  - generic resource-save success (`Resource updated successfully.`) and shared widget upload banners stay out of scope for this slice
-  - replace-file posture is already covered by the frozen shared uploaded-card baseline, so the remaining admin edit proof is the remove-file success/error rail
-- Proof + remediation are now closed:
-  - `/admin/resources/[id]` proves both `File removed` success feedback and `Failed to remove file` error feedback outside the shared widget shell
-  - `FileUploadWidget` now preserves the uploaded card when route-owned delete fails instead of clearing it prematurely
-  - `FileUploadWidget` also catches the route-owned delete rejection so the form-level error rail stays visible without escalating into a Next dev overlay
+- This new parent plan isolates the next creator-owned delivery styling bucket:
+  - delivery-source toggle and adjacent action controls on `/dashboard/creator/resources/*`
+  - route-owned action clusters around upload, link, and removal behavior after the shared widget and field-shell proofs
+- Inventory now needs to answer:
+  - which creator delivery controls are true route-owned styling drift versus already-covered DS primitives
+  - whether upload-branch actions and linked-file actions share one proof slice or need separate slices
+  - whether the first safe proof slice should start in the upload branch, linked-file branch, or the delivery-source toggle itself
 - Keep these out of scope for this plan:
-  - creator create flash behavior already proved in the previous plan
-  - creator delivery-action control styling
+  - admin edit upload/remove feedback already proved in the previous plan
   - lower-signal `400` validation branches (`resourceId required`, empty file, invalid generated key)
+  - untouched DS-family rollout work (`Switch`, `Dropdown`, and other new family plans)
   - shared widget geometry/state-machine changes
   - shared or route-owned upload banner copy already proved in prior plans
 
 ### Goal
-Closed. The route-owned admin edit remove-file success/error slice is now
-proved on `/admin/resources/[id]`, while creator styling plus lower-signal
-`400` validation branches remain out of scope.
+Inventory creator delivery action controls, choose one route-owned proof
+slice, and keep lower-signal upload `400` branches plus untouched DS-family
+rollout work out of scope.
 
 ### Why this is the current phase
-- The route-scoped proof slice landed cleanly on `/admin/resources/[id]`.
-- Runtime verification found one material issue inside the same scope:
-  `FileUploadWidget` was clearing the uploaded card and surfacing a dev overlay
-  when the route-owned remove callback failed.
-- That narrow remediation landed in-scope, adjacent uploaded-branch proof was
-  rerun, and the close-out audit found no remaining in-scope reason to keep the
-  parent plan open.
+- The previous admin edit-flow plan is now closed and frozen.
+- The next highest-signal visible DS/runtime drift is creator delivery action
+  styling, not another lower-signal upload-copy branch.
+- Inventory has to close first so the next route-owned slice stays narrow and
+  does not silently reopen shared widget or field-shell work.
 
 ### Definition of Done
 - [x] The prior admin and creator profile proof routes stay frozen as baselines
@@ -232,43 +226,43 @@ proved on `/admin/resources/[id]`, while creator styling plus lower-signal
 - [x] The shared `unsupported format` `400` proof stays frozen as a baseline
 - [x] The route-owned save-first / backend `500` / `404` upload-copy proofs stay frozen as baselines
 - [x] The creator create flash proof stays frozen as a baseline
-- [x] Admin edit-mode upload/remove feedback is inventoried
-- [x] One route-owned admin edit proof slice is chosen
-- [x] That route-scoped runtime slice is landed and verified
-- [x] A close-out audit decides whether the parent plan should continue or close
+- [ ] Creator delivery action controls are inventoried
+- [ ] One creator-owned delivery action proof slice is chosen
+- [ ] That route-scoped runtime styling slice is landed and verified
+- [ ] A close-out audit decides whether the parent plan should continue or close
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Plan open | complete | creator create flash proof is frozen and the next follow-up is isolated to admin edit-mode feedback |
-| 1 | Admin edit inventory | complete | inventory isolated which edit-mode feedback is truly upload/remove-specific |
-| 2 | First proof-slice decision | complete | first slice is the remove-file success/error rail on `/admin/resources/[id]` |
-| 3 | Route-scoped runtime slice | complete | `/admin/resources/[id]` now proves the chosen remove-file feedback slice |
-| 4 | Close-out audit | complete | no in-scope reason remains to keep the parent plan open |
+| 0 | Plan open | complete | the previous admin edit-flow proof is frozen and this new plan is isolated to creator delivery controls |
+| 1 | Creator delivery control inventory | active | inventory creator-owned delivery action controls on `/dashboard/creator/resources/*` |
+| 2 | First proof-slice decision | pending | choose one safe creator delivery-action styling slice |
+| 3 | Route-scoped runtime slice | pending | land and verify the chosen creator delivery-action slice |
+| 4 | Close-out audit | pending | close cleanly or split remaining creator delivery controls into a narrower future plan |
 
 ---
 
 ## Current Goal
 
 1. keep the shared widget parity baselines frozen
-2. keep the admin edit-mode remove-file success/error proof frozen
-3. leave creator control styling and lower-signal `400` branches to optional future plans
+2. inventory creator delivery action controls
+3. leave lower-signal upload `400` branches and untouched DS families to optional future plans
 
 ---
 
 ## In Progress
 
 - [x] Keep shared widget parity baselines frozen
-- [x] Open a new parent plan for admin edit-flow upload/remove feedback
-- [x] Close admin edit-flow inventory and choose the first proof slice
-- [x] Land the route-scoped runtime proof and close the parent plan
+- [x] Open a new parent plan for creator delivery action control styling
 
 ---
 
 ## Next Up
 
-- [ ] No in-plan Next Up right now
+- [ ] Inventory creator delivery action controls
+- [ ] Choose one creator-owned delivery action proof slice
+- [ ] Keep lower-signal upload `400` branches and untouched DS families out of scope
 
 ---
 
@@ -366,6 +360,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: Open a new parent plan `Creator delivery action control styling` instead of jumping to another upload-copy branch or a brand-new DS family. The admin edit-flow plan is now closed and frozen, so the next highest-signal visible drift is the creator-owned delivery action layer around upload, link, and removal controls on `/dashboard/creator/resources/*`. Lower-signal upload `400` follow-ups and untouched DS families stay explicitly out of scope until this creator delivery-control inventory chooses one safe proof slice.
 - 2026-04-29: `Admin edit-flow upload/remove feedback` is now closed. `/admin/resources/[id]` now proves the route-owned remove-file success/error rail outside the shared widget shell: success shows `File removed`, failure shows `Failed to remove file`, and both paths were verified on the live edit route after priming the uploaded state through the real admin upload API. Runtime proof found one material issue inside the same scope, so a narrow remediation landed before close-out: `ResourceForm.handleRemoveFile()` now rethrows route-owned delete failures, and `FileUploadWidget` now preserves the uploaded card while catching that rejection locally so the form-level error rail remains visible without triggering a Next dev overlay. The close-out audit reran the shared uploaded-branch proof and found no remaining in-scope reason to keep this parent plan open; creator control styling and lower-signal `400` branches remain optional separate plans.
 - 2026-04-29: Inventory for `Admin edit-flow upload/remove feedback` is now closed. `ResourceForm` already isolates the true route-owned admin edit branch in `handleRemoveFile()`: `DELETE /api/admin/resources/[id]/file` clears the private upload and then surfaces either `File removed` or the route fallback `Failed to remove file` through the existing form-level `success/error` rail. Generic save success (`Resource updated successfully.`) stays out of scope, and replace-file posture remains frozen under the shared uploaded-card baseline, so the first proof slice should stay narrow: prove the admin edit remove-file success/error rail on `/admin/resources/[id]`.
 - 2026-04-29: `Route-owned upload validation copy` is now closed. `/dashboard/creator/resources/new` and `/admin/resources/new` both prove the route-owned `404` upload-not-found slice after draft creation succeeds: creator create continues to surface the Thai `/api/creator/resources/upload` not-found copy, admin create continues to surface the English `/api/admin/resources/upload` not-found copy, and the shared widget error banner stays frozen while surfacing those route-owned messages. The required close-out audit found no in-scope reason to keep this parent plan open; the remaining `400` validation strings stay shared service copy, and route-level flash messaging remains an optional future plan.
