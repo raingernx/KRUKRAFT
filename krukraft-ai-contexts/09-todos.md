@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Creator delivery upload controls`
 
 > [!info] Current Phase
-> `Phase 1 — Upload control inventory`
+> `Phase 3 — Route-scoped runtime slice`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Creator delivery upload controls`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Creator delivery upload controls` is active. Inventory the `FileUploadWidget` and delivery-source toggle inside `/dashboard/creator/resources/*` before choosing one upload-safe runtime slice.
+> `Creator delivery upload controls` is active. The first safe slice is now locked to the creator-owned delivery-source toggle plus the upload-branch wrapper shell around `FileUploadWidget` on `/dashboard/creator/resources/*`.
 
 > [!todo] Next Up
-> Inventory upload-control states in the creator resource editor, choose one upload-safe proof slice, and keep parser/editor/application helpers out of scope.
+> Land and verify the creator upload-branch slice, keep `FileUploadWidget` internals shared-safe, and leave external-link/parser/application helpers out of scope.
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -51,7 +51,7 @@ Parent Plan: `Creator delivery upload controls`
 | Creator Resource Editor Field-Shell Widening | Complete | `/dashboard/creator/resources/new` and edit now prove the metadata slice; delivery/previews stays deferred as a separate future plan |
 | Creator Delivery/Previews Shell Widening | Complete | linked URL editor inputs are widened and proved on `/dashboard/creator/resources/new` and edit; bulk preview parsing and upload controls stay deferred to future plans |
 | Creator Delivery Preview Parser | Complete | create/edit route proof confirms the bulk preview URL editor stays a route-owned composite parser on top of the shared `Textarea` shell |
-| Creator Delivery Upload Controls | Active | inventory `FileUploadWidget` and the delivery-source toggle inside `/dashboard/creator/resources/*`, then choose one safe slice without reopening parser/editor buckets |
+| Creator Delivery Upload Controls | Active | inventory is closed; land the creator-owned delivery-source toggle + upload-branch wrapper shell slice without reopening parser/editor buckets or widening shared widget internals blindly |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -64,7 +64,7 @@ Parent Plan: `Creator delivery upload controls`
 ## Progress
 
 Creator delivery upload controls
-`[██░░░░░░░░] 20%`
+`[██████░░░░] 60%`
 
 ```mermaid
 flowchart TB
@@ -112,9 +112,9 @@ flowchart TB
 
   subgraph Current
     U0["Plan open<br/>Done"]
-    U1["Upload-control inventory<br/>Current"]
-    U2["First proof-slice decision<br/>Pending"]
-    U3["Route-scoped runtime slice<br/>Pending"]
+    U1["Upload-control inventory<br/>Done"]
+    U2["First proof-slice decision<br/>Done"]
+    U3["Route-scoped runtime slice<br/>Current"]
     U4["Close-out audit<br/>Pending"]
   end
 
@@ -154,7 +154,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 1 — Upload control inventory
+Phase 3 — Route-scoped runtime slice
 
 ### Parent Plan
 Creator delivery upload controls
@@ -185,27 +185,43 @@ Creator delivery upload controls
     or state transitions that should not be silently normalized
   - external file URL editors now sit on the widened linked-URL baseline, so
     upload-control work must avoid regressing that proof route
-- The next in-plan job is inventory, not runtime patching:
-  - group upload-control states and ownership inside `/dashboard/creator/resources/*`
-  - choose exactly one upload-safe proof slice before editing runtime behavior
+- Inventory is now closed:
+  - `FileUploadWidget` is a shared DS product component with live consumers in
+    both creator editor and admin resource form
+  - creator route ownership lives in the wrapper shell around that widget:
+    - the `Delivery method` segmented toggle
+    - the upload-branch note when an external link exists
+    - the branch gate that blocks external-link editing while an uploaded file
+      is still active
+  - the external-link branch stays covered by the linked-URL baseline and must
+    not be reopened in this plan
+- The first proof slice is now locked:
+  - creator-owned `delivery-source` toggle posture
+  - upload-branch wrapper shell around `FileUploadWidget`
+  - create/edit route proof on `/dashboard/creator/resources/new` and
+    `/dashboard/creator/resources/[id]`
+- Keep out of the first slice:
+  - shared `FileUploadWidget` internals that would ripple into admin resources
+  - the external-link editing branch
+  - the bulk preview parser/editor
 
 ### Goal
-Inventory creator delivery upload controls and choose one upload-safe runtime
-slice without reopening parser/editor buckets.
+Land one creator-owned upload-control runtime slice and verify it on create/edit
+routes without reopening parser/editor buckets or widening shared widget
+internals by accident.
 
 ### Why this is the current phase
-- The preview parser proof is already frozen, so the only remaining creator
-  delivery bucket is upload controls. Those controls mix shared shell geometry
-  with product-owned upload, replace, and delivery-source state, so inventory
-  must happen before any patch.
+- Inventory showed that the safest first move is route-owned creator wrapper
+  work, not a blind shared `FileUploadWidget` change. The next in-plan work is
+  therefore the upload-branch runtime slice on creator create/edit routes.
 
 ### Definition of Done
 - [x] The prior admin and creator profile proof routes stay frozen as baselines
 - [x] The creator editor metadata slice stays frozen as a baseline
 - [x] The linked URL editor slice stays frozen as a baseline
 - [x] The bulk preview parser proof stays frozen as a baseline
-- [ ] Upload-control states and ownership are inventoried inside `/dashboard/creator/resources/*`
-- [ ] One upload-safe proof slice is chosen
+- [x] Upload-control states and ownership are inventoried inside `/dashboard/creator/resources/*`
+- [x] One upload-safe proof slice is chosen
 - [ ] That upload-control runtime slice is landed and verified
 - [ ] A close-out audit decides whether the parent plan should continue or close
 
@@ -214,9 +230,9 @@ slice without reopening parser/editor buckets.
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
 | 0 | Plan open | complete | the remaining creator delivery bucket is now isolated as upload controls |
-| 1 | Upload control inventory | current | inventory `FileUploadWidget` states and delivery-source toggle ownership inside `/dashboard/creator/resources/*` |
-| 2 | First proof-slice decision | pending | choose one upload-safe slice without reopening parser/editor buckets |
-| 3 | Route-scoped runtime slice | pending | land and verify one creator delivery upload-control slice |
+| 1 | Upload control inventory | complete | `FileUploadWidget` stays shared across creator and admin; creator route ownership lives in the wrapper shell and branch gating |
+| 2 | First proof-slice decision | complete | the safe first slice is creator-owned delivery-source toggle + upload-branch wrapper shell, not shared widget internals |
+| 3 | Route-scoped runtime slice | current | land and verify the creator upload-branch slice on create/edit routes |
 | 4 | Close-out audit | pending | close cleanly or split remaining upload-heavy work into narrower future plans |
 
 ---
@@ -224,8 +240,8 @@ slice without reopening parser/editor buckets.
 ## Current Goal
 
 1. keep the creator metadata, linked-URL, and preview-parser baselines frozen
-2. inventory `FileUploadWidget` and delivery-source toggle behavior inside the creator editor
-3. choose one upload-safe proof slice before any runtime patch
+2. land the creator-owned delivery-source toggle + upload-branch wrapper slice
+3. verify create/edit routes without regressing linked-URL, parser, or admin widget consumers
 
 ---
 
@@ -233,17 +249,17 @@ slice without reopening parser/editor buckets.
 
 - [x] Open a new parent plan for creator delivery upload controls
 - [x] Keep `/dashboard/creator/profile`, creator metadata, creator linked-URL, and preview-parser slices as frozen baselines
-- [ ] Inventory upload-control states in `/dashboard/creator/resources/*`
-- [ ] Choose the first upload-safe proof slice
+- [x] Inventory upload-control states in `/dashboard/creator/resources/*`
+- [x] Choose the first upload-safe proof slice
 - [ ] Land the next route-scoped upload-control slice
 
 ---
 
 ## Next Up
 
-- [ ] Inventory `FileUploadWidget` states inside the creator resource editor family
-- [ ] Inventory delivery-source toggle ownership and layout impact
-- [ ] Choose one upload-safe proof slice before runtime patching
+- [ ] Land the creator-owned delivery-source toggle + upload-branch wrapper shell slice
+- [ ] Verify `/dashboard/creator/resources/new` and `/dashboard/creator/resources/[id]`
+- [ ] Keep shared `FileUploadWidget` internals and external-link/parser branches out of scope
 
 ---
 
@@ -341,6 +357,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-29: Inventory for `Creator delivery upload controls` is now closed. `FileUploadWidget` is not creator-only; it is a shared DS product component also mounted by the admin resource form, so the safest first proof slice is not a blind shared-widget patch. The first in-plan runtime slice is now locked to creator-owned wrapper behavior only: the `delivery-source` segmented toggle plus the upload-branch shell around the widget on create/edit routes, while external-link editing and the preview parser stay frozen out of scope.
 - 2026-04-29: Open a new parent plan `Creator delivery upload controls` instead of stretching the closed preview-parser plan. The linked-URL and parser baselines are now frozen, so the remaining creator delivery work is the upload-control bucket only: `FileUploadWidget` plus the delivery-source toggle. The next in-plan job is inventory and slice choice, not another parser/editor patch.
 - 2026-04-29: Open a new parent plan `Select/Textarea runtime parity preparation` instead of jumping straight into another runtime rollout. The first inventory pass already shows both primitives are widely used in admin/creator flows but still `pending-figma` in the canonical registry, so the immediate job is to lock the source-of-truth decision before patching runtime shells. That decision is now recorded too: both controls should be treated as `Figma-first DS primitives`, not code-owned exceptions, so the next in-plan work is canonical Figma mapping rather than a blind runtime shell edit.
 - 2026-04-29: The first canonical mapping slice of `Select/Textarea runtime parity preparation` is now landed. `Select` now has dedicated light/dark `Select / Foundations` boards plus verified `Select / State` and `Select / Size` sets in the canonical Figma file, intentionally derived from the shared `Input / Search` shell grammar with the explicit caret affordance layered on top. The plan stays open because `Textarea` is still pending, and `/admin/activity` + `/admin/audit` are only route-proof candidates for the later runtime slice, not permission to patch code yet.
