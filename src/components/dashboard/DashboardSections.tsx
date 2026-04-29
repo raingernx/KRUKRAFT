@@ -346,21 +346,16 @@ function DashboardRouteIntro({
   eyebrow,
   title,
   description,
-  tone = "info",
   action,
 }: RouteIntroProps) {
   return (
-    <section className="flex flex-col gap-4 border-b border-border-subtle pb-6 md:flex-row md:items-end md:justify-between">
-      <div>
-        <Badge variant={tone}>{eyebrow}</Badge>
-        <h1 className="mt-3 text-balance font-ui text-3xl font-semibold text-foreground">
-          {title}
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-          {description}
-        </p>
-      </div>
-      {action ? <div className="shrink-0">{action}</div> : null}
+    <section className="border-b border-border-subtle pb-6">
+      <DashboardPageHeader
+        eyebrow={eyebrow}
+        title={title}
+        description={description}
+        actions={action}
+      />
     </section>
   );
 }
@@ -1596,21 +1591,16 @@ export function DashboardDownloadsRouteFrame({
 
 export function DashboardDownloadsRouteIntro() {
   return (
-    <section className="flex flex-col gap-4 border-b border-border-subtle pb-6 md:flex-row md:items-end md:justify-between">
-      <div>
-        <Badge variant="info">Downloads</Badge>
-        <h1 className="mt-3 text-balance font-ui text-3xl font-semibold text-foreground">
-          Download history
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-          Re-download owned files through the protected download route. File
-          access stays gated behind your purchase record.
-        </p>
-      </div>
-      <Button asChild size="sm" variant="quiet">
-        <Link href={routes.dashboardLibrary}>Open library</Link>
-      </Button>
-    </section>
+    <DashboardRouteIntro
+      eyebrow="Downloads"
+      title="Download history"
+      description="Re-download owned files through the protected download route. File access stays gated behind your purchase record."
+      action={
+        <Button asChild size="md" variant="quiet">
+          <Link href={routes.dashboardLibrary}>Open library</Link>
+        </Button>
+      }
+    />
   );
 }
 
@@ -2305,18 +2295,16 @@ function DashboardLibraryResults({ data }: { data: DashboardLibraryData }) {
 
 function DashboardLibraryRouteIntro() {
   return (
-    <section className="border-b border-border-subtle pb-6">
-      <DashboardPageHeader
-        eyebrow="Library"
-        title="My library"
-        description="Search what you own, recover recent purchases, and reopen the right resource quickly."
-        actions={
-          <Button asChild size="md">
-            <Link href={routes.marketplace}>Browse marketplace</Link>
-          </Button>
-        }
-      />
-    </section>
+    <DashboardRouteIntro
+      eyebrow="Library"
+      title="My library"
+      description="Search what you own, recover recent purchases, and reopen the right resource quickly."
+      action={
+        <Button asChild size="md">
+          <Link href={routes.marketplace}>Browse marketplace</Link>
+        </Button>
+      }
+    />
   );
 }
 
@@ -2486,20 +2474,16 @@ export function DashboardPurchasesRouteFrame({
 }) {
   return (
     <DashboardPageShell routeReady="dashboard-purchases">
-      <section className="flex flex-col gap-4 border-b border-border-subtle pb-6 md:flex-row md:items-end md:justify-between">
-        <div>
-          <Badge variant="info">Purchases</Badge>
-          <h1 className="mt-3 text-balance font-ui text-3xl font-semibold text-foreground">
-            Order history
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-            Review completed, pending, and failed purchases in one ledger.
-          </p>
-        </div>
-        <Button asChild size="sm" variant="quiet">
-          <Link href={routes.marketplace}>Browse marketplace</Link>
-        </Button>
-      </section>
+      <DashboardRouteIntro
+        eyebrow="Purchases"
+        title="Order history"
+        description="Review completed, pending, and failed purchases in one ledger."
+        action={
+          <Button asChild size="md" variant="quiet">
+            <Link href={routes.marketplace}>Browse marketplace</Link>
+          </Button>
+        }
+      />
       {children}
     </DashboardPageShell>
   );
@@ -2759,19 +2743,12 @@ function DashboardMembershipIntroContent({
   actions?: ReactNode;
 }) {
   return (
-    <section className="flex flex-col gap-4 border-b border-border-subtle pb-6 md:flex-row md:items-end md:justify-between">
-      <div>
-        <Badge variant="info">Membership</Badge>
-        <h1 className="mt-3 text-balance font-ui text-3xl font-semibold text-foreground">
-          Membership
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-          Review plan status, renewal timing, and billing coverage without
-          leaving the dashboard shell.
-        </p>
-      </div>
-      <div className="flex flex-wrap gap-2">{actions}</div>
-    </section>
+    <DashboardRouteIntro
+      eyebrow="Membership"
+      title="Membership"
+      description="Review plan status, renewal timing, and billing coverage without leaving the dashboard shell."
+      action={actions}
+    />
   );
 }
 
@@ -2988,15 +2965,11 @@ async function DashboardSettingsStreamedSections({
 
 function DashboardSettingsIntroContent() {
   return (
-    <section className="border-b border-border-subtle pb-6">
-      <Badge variant="info">Settings</Badge>
-      <h1 className="mt-3 text-balance font-ui text-3xl font-semibold text-foreground">
-        Account settings
-      </h1>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-        Update your profile, appearance, notifications, and account controls from one protected dashboard page.
-      </p>
-    </section>
+    <DashboardRouteIntro
+      eyebrow="Settings"
+      title="Account settings"
+      description="Update your profile, appearance, notifications, and account controls from one protected dashboard page."
+    />
   );
 }
 

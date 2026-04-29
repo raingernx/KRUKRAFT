@@ -360,7 +360,8 @@ When this file conflicts with code, the code wins.
     - `SearchInput variant="default"` now forces the canonical
       `radius/sm (8px)` shell at runtime
     - the first proof routes are `/dashboard/library` toolbar search
-      (`56px / 8px`) and the dashboard topbar override (`44px / 8px`)
+      (`56px / 8px`) and the dashboard topbar search on the same
+      `56px / 8px` ladder
     - the shared start/loading adornments on that default branch now render
       through full-height wrappers too, so toolbar and topbar search icons stay
       vertically centered instead of collapsing to a `16px` corner box
@@ -376,6 +377,10 @@ When this file conflicts with code, the code wins.
 - `SearchInput variant=\"default\"` should inherit the same field-size ladder as
   `Input`; only the hero variant is allowed to diverge into its own larger
   search-shell geometry.
+- Dashboard route intros should reuse `DashboardRouteIntro` /
+  `DashboardPageHeader` eyebrow text instead of reintroducing `Badge` pills for
+  page labels; header CTAs in that family should default to `Button size="md"`
+  unless a route proves a narrower control is intentional.
 - `RevealImage` is the shared image primitive for already-sized containers. Let
   the surrounding container own placeholder and background treatment.
 - `Card` is the calm generic shell card, not a product/marketplace card. The

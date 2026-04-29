@@ -15,6 +15,15 @@ async function expectControlGeometry(
   await expect(locator).toHaveCSS("border-radius", expectedRadiusPx);
 }
 
+async function expectButtonGeometry(
+  locator: Locator,
+  expectedHeightPx: string,
+  expectedRadiusPx: string,
+) {
+  await expect(locator).toHaveCSS("height", expectedHeightPx);
+  await expect(locator).toHaveCSS("border-radius", expectedRadiusPx);
+}
+
 test.describe.configure({ timeout: 120_000 });
 
 test("dashboard library toolbar search keeps canonical shared search-input geometry", async ({
@@ -37,7 +46,7 @@ test("dashboard library toolbar search keeps canonical shared search-input geome
   expect(consoleErrors).toEqual([]);
 });
 
-test("dashboard topbar search keeps rounded-rect override on canonical radius", async ({
+test("dashboard topbar search keeps the same canonical shared search-input geometry", async ({
   page,
 }) => {
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
@@ -49,9 +58,9 @@ test("dashboard topbar search keeps rounded-rect override on canonical radius", 
     .locator("xpath=..")
     .getByTestId("search-input-start-adornment");
   await expect(searchInput).toBeVisible();
-  await expectControlGeometry(searchInput, 44, "8px");
+  await expectControlGeometry(searchInput, 56, "8px");
   await expect(startAdornment).toBeVisible();
-  await expectControlGeometry(startAdornment, 44, "0px");
+  await expectControlGeometry(startAdornment, 56, "0px");
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -94,7 +103,54 @@ test("dashboard library intro uses eyebrow text and medium CTA sizing", async ({
   await expect(eyebrow).toHaveText("Library");
   await expect(cta).toBeVisible();
   await expect(cta).toHaveAttribute("data-size", "md");
-  await expectControlGeometry(cta, 40, "999px");
+  await expectButtonGeometry(cta, "40px", "999px");
+
+  expect(pageErrors).toEqual([]);
+  expect(consoleErrors).toEqual([]);
+});
+
+test("dashboard downloads intro uses eyebrow text and medium quiet CTA sizing", async ({
+  page,
+}) => {
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+
+  await loginAsCreator(page, "/dashboard/downloads");
+
+  const searchInput = page.locator("#dashboard-search");
+  const intro = page.locator("section").filter({
+    has: page.getByRole("heading", { name: "Download history" }),
+  });
+  const eyebrow = intro.getByTestId("dashboard-page-eyebrow");
+  const cta = intro.getByRole("link", { name: "Open library" });
+
+  await expect(searchInput).toBeVisible();
+  await expectControlGeometry(searchInput, 56, "8px");
+  await expect(eyebrow).toHaveText("Downloads");
+  await expect(cta).toBeVisible();
+  await expect(cta).toHaveAttribute("data-size", "md");
+  await expectButtonGeometry(cta, "40px", "999px");
+
+  expect(pageErrors).toEqual([]);
+  expect(consoleErrors).toEqual([]);
+});
+
+test("dashboard purchases intro uses eyebrow text and medium quiet CTA sizing", async ({
+  page,
+}) => {
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+
+  await loginAsCreator(page, "/dashboard/purchases");
+
+  const intro = page.locator("section").filter({
+    has: page.getByRole("heading", { name: "Order history" }),
+  });
+  const eyebrow = intro.getByTestId("dashboard-page-eyebrow");
+  const cta = intro.getByRole("link", { name: "Browse marketplace" });
+
+  await expect(eyebrow).toHaveText("Purchases");
+  await expect(cta).toBeVisible();
+  await expect(cta).toHaveAttribute("data-size", "md");
+  await expectButtonGeometry(cta, "40px", "999px");
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -105,7 +161,7 @@ test("admin users filter input keeps canonical shared field radius", async ({ pa
 
   await loginAsAdmin(page, "/admin/users");
 
-  const searchInput = page.locator("#q");
+  const searchInput = page.locator("input#q");
   await expect(searchInput).toBeVisible();
   await expectControlGeometry(searchInput, 56, "8px");
 

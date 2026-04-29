@@ -554,7 +554,6 @@ function DashboardAppTopbarSearch() {
     <form className="min-w-0 flex-1" onSubmit={handleSubmit}>
       <SearchInput
         aria-label="Search your dashboard library"
-        className="h-11"
         containerClassName="max-w-2xl"
         id="dashboard-search"
         name="dashboardSearch"

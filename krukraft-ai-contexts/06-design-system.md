@@ -373,6 +373,12 @@ Use this order when DS docs disagree:
       live too: the shared `SearchInput` default start/loading adornments render
       through full-height wrappers, which fixes the visible top-left icon drift
       on `/dashboard/library` without reopening the route-owned `hero` branch
+    - the dashboard topbar search no longer keeps a local `44px` height
+      exception; it now rides the same shared `56px / 8px` ladder as toolbar
+      search
+    - dashboard user-route intros now normalize through the shared
+      `DashboardRouteIntro` / `DashboardPageHeader` eyebrow-text pattern, with
+      matching header CTAs promoted back to `Button size="md"` by default
     - the first adjacent control-mapping follow-up now exists too:
       - `Select / Foundations / Light` (`994:244`) and
         `Select / Foundations / Dark` (`994:421`) are now live in the canonical

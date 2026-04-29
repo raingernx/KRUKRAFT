@@ -18,10 +18,10 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Dashboard/Admin runtime normalization` is now active. The first slice uses `/dashboard/library` as the canonical repro to normalize shared search rendering, page-intro hierarchy, and undersized CTA misuse before widening into broader dashboard/admin route families.
+> `Dashboard/Admin runtime normalization` is now active. The first shared slice has normalized dashboard search height and user-route intro ownership across `library`, `downloads`, and `purchases`; the next step is inventorying the remaining dashboard/admin surfaces that still bypass that contract.
 
 > [!todo] Next Up
-> 1. Expand grouped drift inventory to adjacent dashboard routes using the `/dashboard/library` root-cause classes
+> 1. Inventory the remaining direct dashboard intros that still bypass the shared intro authority, starting with creator workspace and preview-only dashboard shells
 > 2. Compare admin headers/toolbars for the same CTA-sizing and component-selection drift
 > 3. Choose the next shared-safe remediation slice instead of reopening isolated route tweaks
 
@@ -66,7 +66,7 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 | Route-Level Upload Flash Messaging | Complete | creator create now proves the route-owned remove-file failure message outside the widget shell, while admin create has no matching create-flow upload/remove flash slice beyond the frozen widget banners |
 | Admin Edit-Flow Upload/Remove Feedback | Complete | `/admin/resources/[id]` now proves the route-owned remove-file success/error rail, and the close-out audit found no in-scope reason to keep the plan open |
 | Creator Delivery Action Control Styling | Complete | `/dashboard/creator/resources/new` and edit now prove the creator-owned linked-file action cluster on an explicit compact `40px / 8px` posture; close-out audit found no in-scope reason to keep the plan open |
-| Dashboard/Admin Runtime Normalization | Active | `/dashboard/library` is now the canonical first repro: the shared `SearchInput` start/loading adornments are normalized, the route intro reuses the shared eyebrow/header pattern, and header/toolbar CTAs stop shrinking onto `sm` by default |
+| Dashboard/Admin Runtime Normalization | Active | dashboard user-route intros now normalize through one shared authority and dashboard topbar search no longer keeps the old `44px` exception; next work is inventorying the remaining dashboard/admin surfaces that still bypass that contract |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -79,7 +79,7 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 ## Progress
 
 Dashboard/Admin runtime normalization
-`[███░░░░░░░] 30%`
+`[█████░░░░░] 50%`
 
 ```mermaid
 flowchart TB
@@ -169,7 +169,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 3 — Adjacent dashboard/admin grouped inventory
+Phase 4 — Remaining dashboard/admin grouped inventory
 
 ### Parent Plan
 Dashboard/Admin runtime normalization
@@ -187,13 +187,18 @@ Dashboard/Admin runtime normalization
 - The first slice is now landed and route-proved:
   - shared `SearchInput` default start/loading adornments now render through
     full-height wrappers instead of collapsing to a `16px` icon box
-  - the library route intro now reuses the shared `DashboardPageHeader`
-    eyebrow/header pattern instead of a status-chip badge
-  - `Browse marketplace` and the library toolbar `Search` submit action now use
-    `Button size="md"` instead of shrinking onto `sm`
-- `/dashboard/library` now acts as the frozen first normalization proof for:
+  - the dashboard topbar search no longer keeps the local `44px` height
+    override; it now uses the same `56px / 8px` ladder as shared toolbar search
+  - dashboard user-route intros now normalize through the shared
+    `DashboardRouteIntro` / `DashboardPageHeader` authority instead of direct
+    `Badge` + bespoke-section copies
+  - `Browse marketplace`, `Open library`, and matching intro/toolbar actions in
+    the normalized routes now use `Button size="md"` instead of shrinking onto
+    `sm`
+- `/dashboard/library`, `/dashboard/downloads`, and `/dashboard/purchases` now
+  act as the frozen first normalization proofs for:
   - centered shared search adornments on both the toolbar search and dashboard
-    topbar override
+    topbar mount
   - the topbar clear action after hydration
   - eyebrow text replacing badge misuse in the route intro
   - medium CTA sizing on the route intro and toolbar submit action
@@ -204,6 +209,8 @@ Dashboard/Admin runtime normalization
   - page-intro/header composition drift
   - undersized CTA misuse in toolbars and headers
   - broader shell/layout drift that should stay separate from primitive fixes
+  - remaining direct route-intro bypasses that still do not ride the shared
+    dashboard intro authority
 - Keep these out of scope for this slice:
   - new DS family rollout work (`Switch`, `Dropdown`, and other untouched
     families)
@@ -213,12 +220,12 @@ Dashboard/Admin runtime normalization
     grouped cleanly first
 
 ### Goal
-Use `/dashboard/library` as the first frozen normalization proof route, then
+Use the normalized dashboard intro/search slice as the frozen first proof, then
 widen based on grouped root-cause classes instead of ad-hoc page tweaks.
 
 ### Why this is the current phase
-- The first normalization slice now proves cleanly on the live route and in
-  automated runtime checks.
+- The first normalization slice now proves cleanly on live dashboard routes and
+  in automated runtime checks.
 - The next highest-value work is no longer another patch on `/dashboard/library`
   itself; it is grouped inventory that can show which nearby dashboard/admin
   routes share the same primitive/composition/sizing drift classes.
@@ -231,6 +238,10 @@ widen based on grouped root-cause classes instead of ad-hoc page tweaks.
 - [x] Land the shared `SearchInput` adornment fix on the default branch
 - [x] Normalize the library route intro onto the shared eyebrow/header pattern
 - [x] Restore medium CTA sizing where the route was incorrectly pinned to `sm`
+- [x] Normalize the dashboard topbar search back onto the shared `56px / 8px`
+  field ladder
+- [x] Promote the shared dashboard intro authority across the user dashboard
+  route family (`library`, `downloads`, `purchases`, `membership`, `settings`)
 - [ ] Expand grouped drift inventory to adjacent dashboard/admin surfaces
 - [ ] Choose the next shared-safe remediation slice from grouped evidence
 - [x] The creator create flash proof stays frozen as a baseline

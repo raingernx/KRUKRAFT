@@ -28,7 +28,7 @@ export function DashboardPageHeader({
       <div className="min-w-0 space-y-2">
         {eyebrow ? (
           <p
-            className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground"
+            className="text-xs font-semibold uppercase text-muted-foreground"
             data-testid="dashboard-page-eyebrow"
           >
             {eyebrow}

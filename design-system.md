@@ -428,7 +428,8 @@ At a high level:
     - `SearchInput variant="default"` now adopts the canonical `8px` radius
       shell at runtime
     - the first route proofs are `/dashboard/library` toolbar search
-      (`56px / 8px`) and dashboard topbar search (`44px / 8px`)
+      (`56px / 8px`) and dashboard topbar search on that same
+      `56px / 8px` ladder
     - the shared start/loading adornments on that branch now render through
       full-height wrappers, so the icon stays centered in toolbar/topbar mounts
       instead of collapsing into the top-left corner
@@ -437,6 +438,10 @@ At a high level:
       local query state
     - public `/resources` search remains a route-owned product override with
       `40px` height and pill geometry
+    - dashboard route intros now normalize through the shared
+      `DashboardRouteIntro` / `DashboardPageHeader` eyebrow-text pattern rather
+      than route-owned `Badge` pills, and matching header CTAs use `md`
+      posture by default
     - `Input.tsx` no longer carries that older radius branch at runtime:
       the shared field primitive now enforces `radius/sm (8px)` directly, with
       `/admin/users` as the first proof route
