@@ -58,6 +58,10 @@ Use this order when DS docs disagree:
   eyebrow/title no longer use tracked text.
 - `/admin/orders` now uses that same shared admin-table proof surface, and its
   summary metrics no longer rely on `tracking-tight`.
+- `/dashboard/creator/apply` is now the first live creator color-token proof
+  route: pending, approved, and rejected panels now use semantic
+  warning/success/danger emphasis surfaces, and the rejected feedback rail uses
+  the same semantic danger family instead of a route-owned light alert shell.
 - The live dashboard settings loading shell now reuses the shared dashboard
   page-header intro contract too; remaining badge-first dashboard intro demos
   are preview-only exceptions rather than live route drift.

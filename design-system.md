@@ -177,6 +177,10 @@ Current runtime contract to mirror:
 - `/admin/orders` now follows that same contract too: its summary metrics no
   longer rely on `tracking-tight`, and its table headers now prove the shared
   `DataTableHeadCell` contract through route-level hooks.
+- `/dashboard/creator/apply` is now the first live creator color-token proof
+  route: pending, approved, and rejected state panels use semantic
+  warning/success/danger emphasis surfaces, and the rejected feedback rail uses
+  the same semantic danger family rather than a lighter route-owned alert fill.
 - The live dashboard settings loading shell now mirrors the same shared
   dashboard page-header contract as the resolved settings route instead of
   keeping a badge-first intro copy; any remaining badge-led dashboard intro

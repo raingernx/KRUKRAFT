@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
 ## Plan Snapshot
 
-Parent Plan: `Dashboard/Admin runtime normalization`
+Parent Plan: `Creator color token normalization`
 
 > [!info] Current Phase
-> `Phase 13 — Close-out audit`
+> `Phase 2 — Remaining live creator surface inventory`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -20,10 +20,13 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 > [!success] Completed
 > `Dashboard/Admin runtime normalization` is now closed. Shared dashboard/admin header, sidebar-label, and search contracts normalize through one authority, the last live admin tracking hotspot (`/admin/orders`) is route-proved, and the live settings loading intro no longer bypasses the shared dashboard page-header contract.
 
+> [!warning] Active
+> `Creator color token normalization` is now active. The first live proof slice on `/dashboard/creator/apply` is landed, and the next step is inventorying the remaining live creator color/token hotspots before widening into heavier editor or preview-only surfaces.
+
 > [!todo] Next Up
-> 1. No in-plan next up remains
-> 2. Broad shell-width/layout normalization is now an optional separate plan
-> 3. Creator color drift remains optional separate follow-up inventory, not active work in this parent plan
+> 1. Inventory the remaining live creator color/token hotspots after the apply-route slice, starting with creator resource-editor helper/callout surfaces
+> 2. Choose one next live creator proof slice from that inventory
+> 3. Keep preview-only creator cards/skeleton demos and broad shell-width/layout work out of scope for this parent plan
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -67,6 +70,7 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 | Admin Edit-Flow Upload/Remove Feedback | Complete | `/admin/resources/[id]` now proves the route-owned remove-file success/error rail, and the close-out audit found no in-scope reason to keep the plan open |
 | Creator Delivery Action Control Styling | Complete | `/dashboard/creator/resources/new` and edit now prove the creator-owned linked-file action cluster on an explicit compact `40px / 8px` posture; close-out audit found no in-scope reason to keep the plan open |
 | Dashboard/Admin Runtime Normalization | Complete | dashboard user-route intros, creator workspace intro, creator resource-form labels, creator settings labels, admin creators/reviews/orders table-summary labels, dashboard/admin search surfaces, and the live settings loading intro now normalize through one authority with no default tracking; remaining dashboard intro exceptions are preview/demo-only |
+| Creator color token normalization | Active | `/dashboard/creator/apply` now uses semantic warning/success/danger emphasis surfaces for pending, approved, and rejected states; next work is inventorying the remaining live creator color drift before widening into heavier editor surfaces |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -78,8 +82,8 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 
 ## Progress
 
-Dashboard/Admin runtime normalization
-`[██████████] 100%`
+Creator color token normalization
+`[███░░░░░░░] 30%`
 
 ```mermaid
 flowchart TB
@@ -169,235 +173,103 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 12 — Final admin tracking + intro inventory
+Phase 2 — Remaining live creator surface inventory
 
 ### Parent Plan
-Dashboard/Admin runtime normalization
+Creator color token normalization
 
 ### Current Status Inside Parent Plan
-- The active parent plan is no longer opening new DS families; it is using the
-  existing DS/Figma baseline to normalize routes that visibly drifted away from
-  that contract across `dashboard` and `admin`.
-- `/dashboard/library` is the canonical first repro because it exposes three
-  different drift classes at once:
-  - shared primitive bug in `SearchInput`
-  - component-selection drift (`Badge` used as a page eyebrow)
-  - undersized header/toolbar CTA misuse (`Button size="sm"` in the wrong
-    context)
-- The first slice is now landed and route-proved:
-  - shared `SearchInput` default start/loading adornments now render through
-    full-height wrappers instead of collapsing to a `16px` icon box
-  - the dashboard topbar search no longer keeps the local `44px` height
-    override; it now uses the same shared `40px / 8px` ladder as toolbar
-    search
-  - dashboard user-route intros now normalize through the shared
-    `DashboardRouteIntro` / `DashboardPageHeader` authority instead of direct
-    `Badge` + bespoke-section copies
-  - `Browse marketplace`, `Open library`, and matching intro/toolbar actions in
-    the normalized routes now use `Button size="md"` instead of shrinking onto
-    `sm`
-- `/dashboard/library`, `/dashboard/downloads`, and `/dashboard/purchases` now
-  act as the frozen first normalization proofs for:
-  - centered shared search adornments on both the toolbar search and dashboard
-    topbar mount
-  - the topbar clear action after hydration
-  - eyebrow text replacing badge misuse in the route intro
-  - medium CTA sizing on the route intro and toolbar submit action
-- The next shared slice is now landed too:
-  - `SearchInput variant="default"` now resolves to the `md` rung (`40px`) by
-    default instead of the old `field` (`56px`) posture
-  - dashboard toolbar search + dashboard topbar search both inherit that
-    shared `40px / 8px` contract without route-local height overrides
-  - admin global search, admin users, admin resources, admin activity, and
-    admin ranking now route through the same `SearchInput` primitive instead
-    of `Input + local icon wrapper` copies
-- The next remediation slice is now landed too:
-  - `DashboardCreatorWorkspaceRouteIntro` no longer bypasses the shared
-    dashboard intro authority with a `Badge` + bespoke `h1` block
-  - the live workspace intro and its loading companion now both route through
-  `DashboardRouteIntro` / `DashboardPageHeader`
-  - creator workspace header CTAs now follow the same `Button size="md"`
-    contract as the normalized dashboard user-route intros
-- The next route-owned tracking slice is now landed too:
-  - `CreatorResourceForm` no longer uses tracked uppercase for the mobile or
-    desktop `Marketplace preview` labels
-  - required-field asterisks and highlighted-field states now lean on semantic
-    DS color tokens instead of `red/blue/indigo` utilities in the same form
-  - the section-step chips in that form now use the shared primary token family
-    rather than route-owned blue pills
-- The next route-owned tracking slice is now landed too:
-  - `SecuritySettings` no longer uses tracked uppercase for the `Security`
-    micro-label on `/dashboard/settings`
-  - `/dashboard/settings` now proves that label through a route-level test hook
-    instead of leaving it as an unverified settings-only exception
-- The next route-owned tracking slice is now landed too:
-  - `/admin/creators` summary metrics no longer rely on `tracking-tight`
-  - the route now uses shared `DataTableHeadCell` semantics for table headers
-    instead of raw uppercase/tracking-wider `<th>` copies
-  - `/admin/creators` now proves those summary + header labels through
-    route-level test hooks on the live admin surface
-  - shared `DataTableHeadCell` now forwards DOM attributes such as
-    `data-testid`, so route-level proofs can attach directly to the shared
-    admin table contract instead of falling back to route-owned raw `<th>`
-    markup
-- The next route-owned tracking slice is now landed too:
-  - `/admin/reviews` summary metrics no longer rely on `tracking-tight`
-  - the route now proves shared `DataTableHeadCell` header labels through
-    route-level hooks instead of leaving them as an unverified admin-only
-    exception
-  - the temporary-unavailable heading and eyebrow copy on that route no longer
-    use tracked text when the fallback shell renders
-- The next route-owned tracking slice is now landed too:
-  - `/admin/orders` summary metrics no longer rely on `tracking-tight`
-  - the route now proves shared `DataTableHeadCell` header labels through
-    route-level hooks instead of leaving the admin orders table as the final
-    route-owned report/stat holdout
-- The next shared slice is now landed too:
-  - `DashboardPageHeader` eyebrow and title no longer apply tracking in the
-    shared dashboard product-header pattern
-  - `AdminPageHeader` title no longer applies tracking in the shared admin
-    product-header pattern
-  - `DashboardSidebar` no longer injects tracking into shared sidebar section
-    labels for either dashboard or admin variants
-- `/dashboard/library`, `/dashboard/downloads`, `/dashboard/purchases`, and
-  `/admin/users` now prove the shared no-tracking rule on product header/label
-  surfaces that route through those shared components
-- The active next step is grouped inventory across adjacent dashboard/admin
-  routes using these root-cause classes before choosing the next remediation
-  slice:
-  - shared primitive rendering bugs
-  - page-intro/header composition drift
-  - undersized CTA misuse in toolbars and headers
-  - broader shell/layout drift that should stay separate from primitive fixes
-  - remaining direct route-intro bypasses that still do not ride the shared
-    dashboard intro authority after creator workspace
-  - route-owned tracking that still lives outside the shared header/sidebar
-    authority
-- The latest grouped inventory now has concrete hotspots instead of a broad
-  unknown bucket:
-  - admin report/stat pages (`admin/reviews`, `admin/creators`, `admin/orders`,
-    parts of `admin/activity`) were the concrete hotspot set under review for
-    this plan
-  - `admin/creators`, `admin/reviews`, and `admin/orders` are now normalized
-    and route-proved, so no live admin report/stat tracking hotspot remains in
-    scope
-  - creator/settings labels are now normalized on the visible settings route,
-    but creator helper/preview-modal micro-labels still need separate
-    inventory
-  - creator resource-form still keeps additional local color drift outside this
-    label slice (`text-brand-600` icon accents, preview/helper amber cards, and
-    preview modal micro-labels) even after the required/highlight token cleanup
-  - the live dashboard settings loading shell had been a real intro bypass, and
-    it is now normalized back onto the shared dashboard page-header contract
-  - remaining badge-first dashboard intro surfaces (`DashboardPageIntro` and
-    `DashboardContentOnlySkeletonPreview`) are preview/demo-only, not live route
-    drift
-- Keep these out of scope for this slice:
-  - new DS family rollout work (`Switch`, `Dropdown`, and other untouched
-    families)
-  - unrelated creator upload/error-copy follow-ups already closed in prior
-    plans
-  - broad shell-width normalization until the shared primitive/header drift is
-    grouped cleanly first
+- The previous parent plan `Dashboard/Admin runtime normalization` is now a
+  frozen baseline and should not be silently reopened from this narrower
+  follow-up.
+- `Creator color token normalization` is now the active optional parent plan.
+- The first live proof slice is landed on `/dashboard/creator/apply`:
+  - the pending panel now uses a semantic warning emphasis surface
+  - the approved panel now uses a semantic success emphasis surface and a
+    success-oriented icon treatment
+  - the rejected panel now uses a semantic danger emphasis surface
+  - the rejected feedback rail now uses the same semantic danger family instead
+    of a lighter route-owned `danger-50` shell
+- Runtime proof for the first slice passed on the live creator apply route for:
+  - `PENDING`
+  - `APPROVED`
+  - `REJECTED`
+- The first slice stays intentionally narrow:
+  - it does not reopen intro/header normalization on this route
+  - it does not widen into preview-only creator demos or skeleton showcases
+  - it does not attempt broad creator editor color cleanup in the same patch
+- The current grouped creator color inventory already points to the next likely
+  live hotspot family:
+  - creator resource-editor helper/callout surfaces
+  - creator preview/helper warning surfaces
+  - creator publish/readiness feedback surfaces
+- Keep these out of scope for the current parent plan until the live creator
+  inventory is closed:
+  - dashboard/admin shell-width or layout normalization
+  - preview-only creator cards and skeleton demos
+  - non-creator DS-family rollouts
 
 ### Goal
-Use the normalized dashboard intro/search/tracking slice as the frozen first
-proof, then widen based on grouped root-cause classes instead of ad-hoc page
-tweaks.
+Use `/dashboard/creator/apply` as the first frozen live proof, then widen
+creator color-token normalization one live slice at a time instead of mixing
+color cleanup into unrelated layout, intro, or preview-demo work.
 
 ### Why this is the current phase
-- The first normalization slice now proves cleanly on live dashboard routes and
-  in automated runtime checks.
-- Shared header/sidebar tracking removal was the next highest-impact safe slice
-  because one fix affects multiple dashboard/admin surfaces at once.
-- The next highest-value work is no longer another patch on `/dashboard/library`
-  itself; it is grouped inventory that can show which nearby dashboard/admin
-  routes share the same primitive/composition/sizing drift classes.
-- The admin hotspot proofs are now closed on `/admin/creators`,
-  `/admin/reviews`, and `/admin/orders`, and the loading-shell audit found that
-  the only remaining intro bypasses are preview/demo-only surfaces after the
-  live settings loading shell was normalized.
-- With creator color drift still explicitly deferred to a future color-token
-  plan, the close-out audit found no in-scope reason to keep this parent plan
-  open.
-- Holding that grouping step inside the active parent plan keeps the follow-up
-  remediation slices narrow instead of reopening broad DS work blindly.
+- Creator color drift was the clearest optional follow-up after the closed
+  dashboard/admin normalization work.
+- `/dashboard/creator/apply` was the narrowest live creator route where semantic
+  warning/success/danger surfaces could be proved without reopening heavier
+  editor/upload complexity first.
+- The plan is still in inventory mode after that first slice because the next
+  creator color hotspot should be chosen from live route evidence, not from
+  preview/demo-only surfaces.
 
 ### Definition of Done
-- [x] Open a new active parent plan for dashboard/admin runtime normalization
-- [x] Use `/dashboard/library` as the canonical first repro
-- [x] Land the shared `SearchInput` adornment fix on the default branch
-- [x] Normalize the library route intro onto the shared eyebrow/header pattern
-- [x] Restore medium CTA sizing where the route was incorrectly pinned to `sm`
-- [x] Normalize the dashboard topbar search back onto the shared search ladder
-- [x] Unify dashboard/admin search surfaces on the shared `SearchInput`
-  primitive and drop the default runtime rung to `lg` (`48px`) before any
-  route-owned exceptions
-- [x] Promote the shared dashboard intro authority across the user dashboard
-  route family (`library`, `downloads`, `purchases`, `membership`, `settings`)
-- [x] Remove default tracking from shared dashboard/admin product header/sidebar
-  patterns
-- [x] Normalize the creator workspace intro back onto the shared dashboard intro
-  authority and medium CTA contract
-- [x] Normalize creator resource-form preview labels back onto the shared
-  no-tracking contract and remove local red/blue/indigo label-adjacent color
-  drift in the same slice
-- [x] Normalize creator settings security labels back onto the shared
-  no-tracking contract
-- [x] Normalize the first admin route-owned tracking hotspot (`/admin/creators`)
-  back onto shared summary/table no-tracking contracts
-- [x] Normalize the second admin route-owned tracking hotspot (`/admin/reviews`)
-  back onto shared summary/table no-tracking contracts
-- [x] Normalize the final admin route-owned tracking hotspot (`/admin/orders`)
-  back onto shared summary/table no-tracking contracts
-- [x] Expand grouped drift inventory to adjacent dashboard/admin surfaces
-- [x] Choose the next shared-safe remediation slice from grouped evidence
-- [x] Audit the remaining loading-shell intro bypasses and normalize any live
-  route exception found in scope
-- [x] The creator create flash proof stays frozen as a baseline
-- [x] Creator delivery action controls are inventoried
-- [x] One creator-owned delivery action proof slice is chosen
-- [x] That route-scoped runtime styling slice is landed and verified
-- [x] A close-out audit decides whether the parent plan should continue or close
+- [x] Open a new active parent plan for creator color token normalization
+- [x] Choose one narrow live creator proof route for the first slice
+- [x] Normalize `/dashboard/creator/apply` pending state onto a semantic warning
+  emphasis surface
+- [x] Normalize `/dashboard/creator/apply` approved state onto a semantic
+  success emphasis surface
+- [x] Normalize `/dashboard/creator/apply` rejected state and feedback rail onto
+  a semantic danger emphasis surface
+- [x] Verify pending/rejected/approved creator apply flows at runtime
+- [ ] Inventory the remaining live creator color/token hotspots
+- [ ] Choose the next live creator proof slice from that inventory
+- [ ] Keep preview-only creator demos and unrelated shell/layout work out of
+  scope while the live creator inventory is still open
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Plan open | complete | `/dashboard/library` was chosen as the canonical repro for shared runtime drift |
-| 1 | Library root-cause grouping | complete | shared primitive, component-selection, CTA sizing, and shell drift classes were identified |
-| 2 | Shared search/header/CTA slice | complete | `SearchInput`, route intros, and header CTA sizing were normalized on the first dashboard routes |
-| 3 | Shared dashboard/admin search unification | complete | dashboard + admin search mounts now ride the same `SearchInput` authority on the `40px / 8px` rung |
-| 4 | Shared tracking-removal slice | complete | shared dashboard/admin header and sidebar product labels now default to `letter-spacing: normal` |
-| 5 | Creator workspace intro normalization | complete | creator workspace live + loading intros now use the shared dashboard intro authority |
-| 6 | Creator resource-form label normalization | complete | creator resource-form preview labels no longer use tracked uppercase, and label-adjacent emphasis moved onto semantic tokens |
-| 7 | Adjacent route-owned drift inventory | complete | `admin/orders` and the live settings loading intro were the last in-scope live holdouts; remaining dashboard intro exceptions are preview/demo-only and creator form color drift stays deferred |
+| 0 | Plan open | complete | creator color drift was chosen as the next optional live follow-up after dashboard/admin normalization closed |
+| 1 | Creator apply semantic slice | complete | `/dashboard/creator/apply` now proves semantic warning/success/danger panels and a semantic rejected-feedback rail |
+| 2 | Remaining live creator surface inventory | active | next work is choosing the next live creator hotspot family without widening into preview-only demos |
 
 ---
 
 ## Current Goal
 
-1. keep the shared dashboard/admin search + header + no-tracking baselines frozen
-2. narrow the remaining route-owned drift into one next remediation slice instead of reopening broad DS work
-3. keep creator resource-form color drift as inventory until a dedicated color-token slice is explicitly chosen
+1. keep the creator-apply semantic proof slice frozen
+2. inventory the remaining live creator color/token hotspots without wandering into preview-only demos
+3. choose the next live creator proof slice from that grouped evidence
 
 ---
 
 ## In Progress
 
-- [x] Keep the shared dashboard/admin search + intro + tracking baselines frozen
-- [x] Normalize the creator workspace intro onto the shared dashboard intro authority
-- [x] Normalize creator resource-form preview labels and label-adjacent token drift
-- [x] Normalize the first admin route-owned tracking hotspot on `/admin/creators`
-- [x] Normalize the second admin route-owned tracking hotspot on `/admin/reviews`
-- [x] Normalize the final admin route-owned tracking hotspot on `/admin/orders`
-- [x] Inventory the remaining preview-only intro/loading bypasses after creator workspace
+- [x] Land the first live creator color-token slice on `/dashboard/creator/apply`
+- [ ] Inventory the remaining live creator color/token hotspots
+- [ ] Choose the next live creator proof slice from grouped evidence
 
 ---
 
 ## Next Up
 
-- [x] No in-plan next up remains; the normalization parent plan is complete after close-out audit
+- [ ] Inventory live creator resource-editor helper/callout surfaces (`CreatorResourceForm`, preview/helper warnings, icon accents)
+- [ ] Inventory live creator publish/readiness feedback surfaces
+- [ ] Keep preview-only creator cards/demos out of scope until the live creator inventory is resolved
 
 ---
 
@@ -495,6 +367,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-30: Open a new parent plan `Creator color token normalization` instead of jumping into dashboard demo cleanup or shell-width work. The closed dashboard/admin normalization plan stays frozen, and the first narrow live proof route is now `/dashboard/creator/apply`: pending, approved, and rejected state panels now ride semantic warning/success/danger emphasis surfaces, the rejected feedback rail rides the same semantic danger family, and runtime proof passed for all three creator-application states. The next in-plan step is inventorying the remaining live creator color hotspots before choosing a heavier editor or publish/readiness slice.
 - 2026-04-29: `Creator delivery action control styling` is now closed. The landed route-scoped slice keeps the shared widget/upload baselines frozen while proving the remaining creator-owned linked-file controls on `/dashboard/creator/resources/new` and edit: `Clear link`, `Edit`, `Open link`, and the uploaded-file guard `Remove uploaded file` action now all use the explicit compact `40px / 8px` posture, and the linked-file summary/edit/guard shells now share the same `rounded-2xl` route-owned chrome. The close-out audit found no in-scope reason to keep the parent plan open; upload-branch internals stay widget-owned and any later creator-control or untouched DS-family work must open as a separate plan.
 - 2026-04-29: Inventory for `Creator delivery action control styling` is now closed. The route-owned delivery-source toggle and upload wrapper shell were already frozen by the earlier creator upload-controls proof, and the upload-branch actions themselves stay widget-owned inside `FileUploadWidget`. The remaining creator-owned styling drift sits in the external/linked-file branch instead: `Clear link`, `Edit`, `Open link`, and the `Remove uploaded file` guard card/action. Existing hardening coverage already proves those branch semantics, so the first safe proof slice is the creator linked-file action cluster on `/dashboard/creator/resources/new` and `/dashboard/creator/resources/[id]`, while lower-signal upload `400` follow-ups and untouched DS families remain out of scope.
 - 2026-04-29: Open a new parent plan `Creator delivery action control styling` instead of jumping to another upload-copy branch or a brand-new DS family. The admin edit-flow plan is now closed and frozen, so the next highest-signal visible drift is the creator-owned delivery action layer around upload, link, and removal controls on `/dashboard/creator/resources/*`. Lower-signal upload `400` follow-ups and untouched DS families stay explicitly out of scope until this creator delivery-control inventory chooses one safe proof slice.

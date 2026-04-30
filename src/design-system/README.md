@@ -130,6 +130,10 @@ When this file conflicts with code, the code wins.
   summary metrics no longer rely on `tracking-tight`.
 - `/admin/orders` now rides that same admin-table contract too, and its summary
   metrics no longer rely on `tracking-tight`.
+- `/dashboard/creator/apply` is now the first live creator color-token proof
+  route: pending, approved, and rejected state panels use semantic
+  warning/success/danger emphasis surfaces, and the rejected feedback rail uses
+  the same semantic danger family instead of a lighter route-owned alert shell.
 - The live dashboard settings loading shell now routes its intro back through
   the shared dashboard page-header contract too; any remaining badge-first
   dashboard intro demos should be treated as preview-only exceptions until a

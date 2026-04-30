@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import {
+  CheckCircle2,
   Clock,
   XCircle,
 } from "@/lib/icons";
@@ -118,9 +119,9 @@ async function CreatorApplyStatePanel({
 
 function PendingPanel() {
   return (
-    <Card className="rounded-2xl">
+    <Card className="rounded-2xl border-warning-500/25 bg-accent">
       <CardContent className="flex items-start gap-3 px-6 py-6">
-        <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-warning-50 text-warning-700">
+        <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-card text-warning-600">
           <Clock className="h-5 w-5" />
         </span>
         <div className="min-w-0">
@@ -143,10 +144,10 @@ function PendingPanel() {
 
 function ApprovedPanel() {
   return (
-    <Card className="rounded-2xl">
+    <Card className="rounded-2xl border-success-500/25 bg-accent">
       <CardContent className="flex items-start gap-3 px-6 py-6">
-        <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-success-50 text-success-700">
-          <Clock className="h-5 w-5" />
+        <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-card text-success-600">
+          <CheckCircle2 className="h-5 w-5" />
         </span>
         <div className="min-w-0">
           <Badge variant="success" className="w-fit">
@@ -168,10 +169,10 @@ function ApprovedPanel() {
 
 async function RejectedPanel({ userId }: { userId: string }) {
   return (
-    <Card className="rounded-2xl">
+    <Card className="rounded-2xl border-danger-500/25 bg-accent">
       <CardContent className="space-y-5 px-6 py-6">
         <div className="flex items-start gap-3">
-          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-danger-50 text-danger-600">
+          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-card text-danger-600">
             <XCircle className="h-5 w-5" />
           </span>
           <div className="min-w-0">
@@ -212,7 +213,7 @@ async function RejectedFeedbackSection({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="rounded-xl border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700">
+    <div className="rounded-xl border border-danger-500/25 bg-accent px-4 py-3 text-sm text-danger-700">
       <span className="font-medium">Feedback: </span>
       {reason}
     </div>
