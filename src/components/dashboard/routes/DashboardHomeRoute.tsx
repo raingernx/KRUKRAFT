@@ -1,5 +1,4 @@
 import type { ComponentType } from "react";
-import Image from "next/image";
 import Link from "next/link";
 
 import {
@@ -21,7 +20,6 @@ import {
   LoadingSkeleton,
 } from "@/design-system";
 import { DashboardPageShell } from "@/components/layout/dashboard/DashboardPageShell";
-import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
 import type {
   DashboardHomeActivityItem,
   DashboardHomeContinueLearningItem,
@@ -31,7 +29,6 @@ import type {
   DashboardHomeStatItem,
   DashboardHomeStatKey,
 } from "@/services/dashboard/home.service";
-import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 import { cn } from "@/lib/utils";
 import { routes } from "@/lib/routes";
 
@@ -180,20 +177,18 @@ function DashboardHomeContinueLearning({
       {state.status === "ready" ? (
         <CardContent className="grid gap-3 py-4 md:grid-cols-3">
           {state.data.map((resource) => (
-            <ResourceIntentLink
+            <Link
               key={resource.id}
               href={resource.href}
               className="rounded-xl border border-border-subtle bg-background p-3 transition hover:bg-muted/40"
             >
               <div className="relative h-28 overflow-hidden rounded-lg border border-border-subtle bg-muted/50">
                 {resource.previewUrl ? (
-                  <Image
+                  <img
                     src={resource.previewUrl}
                     alt={resource.title}
-                    fill
-                    sizes="(min-width: 1280px) 250px, (min-width: 768px) 33vw, 100vw"
-                    unoptimized={shouldBypassImageOptimizer(resource.previewUrl)}
-                    className="object-cover"
+                    loading="lazy"
+                    className="h-full w-full object-cover"
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center">
@@ -218,7 +213,7 @@ function DashboardHomeContinueLearning({
                   <ChevronRight className="size-4 shrink-0" aria-hidden />
                 </div>
               </div>
-            </ResourceIntentLink>
+            </Link>
           ))}
         </CardContent>
       ) : (
