@@ -38,13 +38,12 @@ export default function RootLayout({
       className="min-h-screen bg-background"
       suppressHydrationWarning
     >
-      <head />
-      <Script id="theme-init" strategy="beforeInteractive">
-        {THEME_INIT_SCRIPT}
-      </Script>
       <body
         className={`${fontVariables} min-h-screen bg-background font-sans text-foreground antialiased`.trim()}
       >
+        <Script id="theme-init" strategy="beforeInteractive">
+          {THEME_INIT_SCRIPT}
+        </Script>
         <BonesRegistryBootstrap />
         <PlatformConfigProvider initialConfig={platform}>
           <ThemeProvider>
