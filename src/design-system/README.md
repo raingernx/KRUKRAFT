@@ -398,6 +398,9 @@ When this file conflicts with code, the code wins.
   same no-tracking rule. Required asterisks, step chips, and highlighted-field
   emphasis in that form should use semantic tokens (`danger`, `primary`)
   instead of route-local `red`, `blue`, or `indigo` utilities.
+- Creator settings micro-labels should follow that same rule too. The
+  `Security` label on `/dashboard/settings` now renders without uppercase
+  tracking and acts as the visible creator-settings baseline.
 - `RevealImage` is the shared image primitive for already-sized containers. Let
   the surrounding container own placeholder and background treatment.
 - `Card` is the calm generic shell card, not a product/marketplace card. The

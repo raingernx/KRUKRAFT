@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Dashboard/Admin runtime normalization`
 
 > [!info] Current Phase
-> `Phase 8 — Creator resource-form label normalization`
+> `Phase 9 — Creator settings label normalization`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,10 +18,10 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Dashboard/Admin runtime normalization` is now active. Shared dashboard/admin header, sidebar-label, and search contracts are being normalized first; the next step is tightening the remaining route-owned tracking leftovers and intro/layout bypasses that still sit outside those shared patterns after the creator resource-form label slice.
+> `Dashboard/Admin runtime normalization` is now active. Shared dashboard/admin header, sidebar-label, and search contracts are being normalized first; the next step is tightening the remaining route-owned tracking leftovers and intro/layout bypasses that still sit outside those shared patterns after the creator settings label slice.
 
 > [!todo] Next Up
-> 1. Choose the next route-owned tracking remediation slice from the remaining inventoried admin/dashboard hotspots (`admin/reviews`, `admin/creators`, `admin/orders`, creator/settings labels`)
+> 1. Choose the next route-owned tracking remediation slice from the remaining inventoried admin/dashboard hotspots (`admin/reviews`, `admin/creators`, `admin/orders`)
 > 2. Inventory the remaining direct dashboard intros and loading shells that still bypass the shared intro authority after creator workspace, starting with preview-only dashboard shells
 > 3. Keep broad shell-width/layout normalization deferred, and carry creator resource-form color drift as inventory until a dedicated color-token slice is explicitly chosen
 
@@ -66,7 +66,7 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 | Route-Level Upload Flash Messaging | Complete | creator create now proves the route-owned remove-file failure message outside the widget shell, while admin create has no matching create-flow upload/remove flash slice beyond the frozen widget banners |
 | Admin Edit-Flow Upload/Remove Feedback | Complete | `/admin/resources/[id]` now proves the route-owned remove-file success/error rail, and the close-out audit found no in-scope reason to keep the plan open |
 | Creator Delivery Action Control Styling | Complete | `/dashboard/creator/resources/new` and edit now prove the creator-owned linked-file action cluster on an explicit compact `40px / 8px` posture; close-out audit found no in-scope reason to keep the plan open |
-| Dashboard/Admin Runtime Normalization | Active | dashboard user-route intros, creator workspace intro, creator resource-form labels, dashboard/admin search surfaces, and shared dashboard/admin product labels now normalize through one authority with no default tracking; next work is inventorying the remaining route-owned dashboard/admin surfaces that still bypass that contract |
+| Dashboard/Admin Runtime Normalization | Active | dashboard user-route intros, creator workspace intro, creator resource-form labels, creator settings labels, dashboard/admin search surfaces, and shared dashboard/admin product labels now normalize through one authority with no default tracking; next work is inventorying the remaining route-owned dashboard/admin surfaces that still bypass that contract |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -79,7 +79,7 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 ## Progress
 
 Dashboard/Admin runtime normalization
-`[█████████░] 90%`
+`[█████████░] 92%`
 
 ```mermaid
 flowchart TB
@@ -169,7 +169,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 8 — Creator resource-form label normalization
+Phase 9 — Creator settings label normalization
 
 ### Parent Plan
 Dashboard/Admin runtime normalization
@@ -225,6 +225,11 @@ Dashboard/Admin runtime normalization
     DS color tokens instead of `red/blue/indigo` utilities in the same form
   - the section-step chips in that form now use the shared primary token family
     rather than route-owned blue pills
+- The next route-owned tracking slice is now landed too:
+  - `SecuritySettings` no longer uses tracked uppercase for the `Security`
+    micro-label on `/dashboard/settings`
+  - `/dashboard/settings` now proves that label through a route-level test hook
+    instead of leaving it as an unverified settings-only exception
 - The next shared slice is now landed too:
   - `DashboardPageHeader` eyebrow and title no longer apply tracking in the
     shared dashboard product-header pattern
@@ -251,10 +256,9 @@ Dashboard/Admin runtime normalization
   - admin report/stat pages (`admin/reviews`, `admin/creators`, `admin/orders`,
     parts of `admin/activity`) still carry route-owned tracking on metric/value
     labels and table headers
-  - creator/settings labels still keep tracked uppercase micro-label patterns
-    outside the shared header/sidebar contract; creator resource-form preview
-    labels are now normalized, but helper/preview-modal micro-labels still need
-    separate inventory
+  - creator/settings labels are now normalized on the visible settings route,
+    but creator helper/preview-modal micro-labels still need separate
+    inventory
   - creator resource-form still keeps additional local color drift outside this
     label slice (`text-brand-600` icon accents, preview/helper amber cards, and
     preview modal micro-labels) even after the required/highlight token cleanup
@@ -304,6 +308,8 @@ tweaks.
 - [x] Normalize creator resource-form preview labels back onto the shared
   no-tracking contract and remove local red/blue/indigo label-adjacent color
   drift in the same slice
+- [x] Normalize creator settings security labels back onto the shared
+  no-tracking contract
 - [ ] Expand grouped drift inventory to adjacent dashboard/admin surfaces
 - [ ] Choose the next shared-safe remediation slice from grouped evidence
 - [x] The creator create flash proof stays frozen as a baseline

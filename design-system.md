@@ -453,6 +453,9 @@ At a high level:
       rather than as a creator-specific pattern, and label-adjacent emphasis in
       that form now prefers semantic `primary` / `danger` tokens over local
       `red`, `blue`, and `indigo` utilities
+    - creator settings micro-labels now follow that same no-tracking rule on
+      the visible `/dashboard/settings` route too; `Security` is no longer a
+      route-owned uppercase/tracked exception
     - dashboard/admin shared product headers and sidebar labels now also treat
       tracking as opt-in instead of default: the shared `DashboardPageHeader`,
       `AdminPageHeader`, and `DashboardSidebar` patterns no longer inject

@@ -60,7 +60,10 @@ export function SecuritySettings({
 
   return (
     <section className="space-y-3">
-      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <p
+        data-testid="settings-security-label"
+        className="text-xs font-medium text-muted-foreground"
+      >
         Security
       </p>
       <div className="space-y-2.5">

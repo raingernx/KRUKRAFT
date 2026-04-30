@@ -100,6 +100,8 @@ test("settings follows system runtime theme when DB preference differs from stor
   await expect(page.getByRole("heading", { name: DASHBOARD_SETTINGS_HEADING })).toBeVisible({
     timeout: 30_000,
   });
+  await expect(page.getByTestId("settings-security-label")).toHaveText("Security");
+  await expect(page.getByTestId("settings-security-label")).toHaveCSS("letter-spacing", "normal");
   await expect
     .poll(() => page.locator("html").getAttribute("data-theme"), {
       timeout: 20_000,

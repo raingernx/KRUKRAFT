@@ -389,6 +389,9 @@ Use this order when DS docs disagree:
       rule, and the form's required/highlight emphasis now leans on semantic
       `danger` / `primary` tokens instead of route-local red/blue/indigo
       utilities
+    - creator settings micro-labels now follow that no-tracking rule too on
+      the visible `/dashboard/settings` route; the `Security` label no longer
+      acts as a tracked uppercase holdout
     - shared dashboard/admin product labels now stop treating tracking as the
       baseline too: `DashboardPageHeader`, `AdminPageHeader`, and
       `DashboardSidebar` labels all render with normal letter-spacing, so any
