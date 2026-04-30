@@ -1,4 +1,4 @@
-import { DashboardCreatorWorkspaceLoadingContent } from "@/components/dashboard/routes/DashboardCreatorWorkspaceRoute";
+import { DashboardCreatorWorkspaceLoadingContent } from "@/components/dashboard/routes/DashboardCreatorWorkspaceLoading";
 
 export default function DashboardCreatorWorkspaceLoading() {
   return <DashboardCreatorWorkspaceLoadingContent />;
