@@ -274,6 +274,12 @@ Use this order when DS docs disagree:
   - the current approved support accents are `Rust #DB3A1C` and
     `Sand #E59C46`; they stay support-only and do not replace the
     primary/action role
+  - `src/app/globals.css` should keep mirroring the current `themeColors`
+    values in `src/design-system/tokens/colors.ts`; theme CSS is not allowed to
+    lag behind the canonical token file after a Figma-token recalibration
+  - the Tokens Studio exporter now supports CSS alias values like `var(--inset)`
+    and `var(--line)` when building theme tokens, so generated token artifacts
+    should no longer be blocked by harmless semantic aliases in `globals.css`
   - `src/design-system/foundation-study-checklist.md` is now the dedicated
     checklist artifact for the `Figma foundation first` phase
   - the old `/dev/theme-playbook` route was removed so the review surface is no

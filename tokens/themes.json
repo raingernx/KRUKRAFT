@@ -2,11 +2,11 @@
   "dark": {
     "colors": {
       "accent": {
-        "value": "#F8FAFC",
+        "value": "#322D39",
         "type": "color"
       },
       "accentForeground": {
-        "value": "#0F172A",
+        "value": "#F4EFF6",
         "type": "color"
       },
       "background": {
@@ -14,15 +14,15 @@
         "type": "color"
       },
       "border": {
-        "value": "#E2E8F0",
+        "value": "#322D39",
         "type": "color"
       },
       "card": {
-        "value": "#FFFFFF",
+        "value": "#19171D",
         "type": "color"
       },
       "cardForeground": {
-        "value": "#0F172A",
+        "value": "#F4EFF6",
         "type": "color"
       },
       "chart": {
@@ -48,7 +48,7 @@
         }
       },
       "destructive": {
-        "value": "#EF4444",
+        "value": "#7F1D1D",
         "type": "color"
       },
       "destructiveForeground": {
@@ -60,68 +60,68 @@
         "type": "color"
       },
       "input": {
-        "value": "#E2E8F0",
+        "value": "#322D39",
         "type": "color"
       },
       "muted": {
-        "value": "#F8FAFC",
+        "value": "#322D39",
         "type": "color"
       },
       "mutedForeground": {
-        "value": "#475569",
+        "value": "#B4ABB9",
         "type": "color"
       },
       "popover": {
-        "value": "#FFFFFF",
+        "value": "#282330",
         "type": "color"
       },
       "popoverForeground": {
-        "value": "#0F172A",
+        "value": "#F4EFF6",
         "type": "color"
       },
       "primary": {
-        "value": "#2D28BB",
+        "value": "#5A4DF7",
         "type": "color"
       },
       "primaryForeground": {
-        "value": "#FFFFFF",
+        "value": "#F4EFF6",
         "type": "color"
       },
       "ring": {
-        "value": "#2D28BB",
+        "value": "#433BD6",
         "type": "color"
       },
       "secondary": {
-        "value": "#F8FAFC",
+        "value": "#322D39",
         "type": "color"
       },
       "secondaryForeground": {
-        "value": "#0F172A",
+        "value": "#F4EFF6",
         "type": "color"
       },
       "sidebar": {
         "accent": {
-          "value": "#F8FAFC",
+          "value": "#322D39",
           "type": "color"
         },
         "accentForeground": {
-          "value": "#0F172A",
+          "value": "#F4EFF6",
           "type": "color"
         },
         "border": {
-          "value": "#E2E8F0",
+          "value": "#322D39",
           "type": "color"
         },
         "default": {
-          "value": "#FAFAFA",
+          "value": "#1B1820",
           "type": "color"
         },
         "foreground": {
-          "value": "#0F172A",
+          "value": "#F4EFF6",
           "type": "color"
         },
         "primary": {
-          "value": "#2D28BB",
+          "value": "#5A4DF7",
           "type": "color"
         },
         "primaryForeground": {
@@ -129,7 +129,7 @@
           "type": "color"
         },
         "ring": {
-          "value": "#2D28BB",
+          "value": "#433BD6",
           "type": "color"
         }
       }

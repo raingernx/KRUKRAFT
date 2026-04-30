@@ -340,7 +340,11 @@ async function parseCssVariables() {
   const darkVariables: CssVariableMap = {};
 
   root.walkRules((rule) => {
-    if (rule.selector !== ":root" && rule.selector !== ".dark") {
+    if (
+      rule.selector !== ":root" &&
+      rule.selector !== ".dark" &&
+      rule.selector !== ":root[data-theme=\"dark\"]"
+    ) {
       return;
     }
 
@@ -354,6 +358,34 @@ async function parseCssVariables() {
   });
 
   return { darkVariables, rootVariables };
+}
+
+function resolveCssVariableValue(
+  value: string,
+  variables: CssVariableMap,
+  fallbackVariables: CssVariableMap,
+  seen = new Set<string>(),
+): string {
+  const normalized = value.trim();
+  const match = normalized.match(/^var\((--[A-Za-z0-9-_]+)\)$/);
+
+  if (!match) {
+    return normalized;
+  }
+
+  const token = match[1];
+
+  if (seen.has(token)) {
+    throw new Error(`Circular CSS variable reference detected for "${token}".`);
+  }
+
+  const next = variables[token] ?? fallbackVariables[token];
+
+  if (!next) {
+    throw new Error(`Missing CSS variable reference "${token}".`);
+  }
+
+  return resolveCssVariableValue(next, variables, fallbackVariables, new Set([...seen, token]));
 }
 
 function getExtendTheme() {
@@ -564,7 +596,15 @@ function buildThemeColorGroup(
   fallbackVariables: CssVariableMap,
   references: Partial<Record<string, string>>,
 ): TokenTree {
-  const pick = (name: string) => variables[name] ?? fallbackVariables[name];
+  const pick = (name: string) => {
+    const value = variables[name] ?? fallbackVariables[name];
+
+    if (!value) {
+      return "";
+    }
+
+    return resolveCssVariableValue(value, variables, fallbackVariables);
+  };
   const colorOrReference = (name: string) => {
     const reference = references[name];
     if (reference) {
