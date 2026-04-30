@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Figma shared-component coverage`
 
 > [!info] Current Phase
-> `Phase 1 — Shared-component coverage inventory`
+> `Phase 2 — Avatar coverage slice selection`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -30,9 +30,9 @@ Parent Plan: `Figma shared-component coverage`
 > `Figma shared-component coverage` is now active. This parent plan is the next explicit follow-up after the Figma/runtime audit: it should stay confined to missing shared DS component coverage in the canonical Figma file before any new runtime adoption or product-exemplar work starts.
 
 > [!todo] Next Up
-> 1. Reconfirm and group the missing shared-component coverage in canonical Figma: `Switch`, `Avatar`, `Modal`, `LoadingSkeleton`, `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`, and `ConfirmDialog`
-> 2. Choose one narrow first Figma coverage slice from that inventory, preferring shared primitives before composed components
-> 3. Keep runtime adoption work (`Button`, `Dropdown`, `DataPanelTable`, search overrides) and product exemplars (`ResourceCard`, pricing, upload, notifications, picker controls) out of scope for this parent plan
+> 1. Land the first canonical Figma shared-component slice for `Avatar`
+> 2. Verify `Avatar` coverage against its real runtime size/fallback/image states and sync the mapping/docs in the same session
+> 3. Keep `Switch`, heavier shared primitives, runtime adoption work, and product exemplars out of scope until the `Avatar` slice closes
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow Figma coverage pass and should not silently reopen broad runtime rollout or product-exemplar work.
@@ -78,7 +78,7 @@ Parent Plan: `Figma shared-component coverage`
 | Dashboard/Admin Runtime Normalization | Complete | dashboard user-route intros, creator workspace intro, creator resource-form labels, creator settings labels, admin creators/reviews/orders table-summary labels, dashboard/admin search surfaces, and the live settings loading intro now normalize through one authority with no default tracking; remaining dashboard intro exceptions are preview/demo-only |
 | Creator color token normalization | Complete | `/dashboard/creator/apply`, `/dashboard/creator/resources/*`, and `/dashboard/creator/profile` now prove the main live creator semantic warning/success/danger feedback surfaces, and the close-out audit found no remaining in-scope live slice strong enough to keep the plan open |
 | Creator application semantic cleanup | Complete | route-level inventory on `/dashboard/creator/apply` found no remaining high-signal runtime slice; the form already rides semantic success/danger/muted families closely enough to close the optional follow-up plan |
-| Figma shared-component coverage | Active | audit confirmed the canonical file still lacks several shared DS components; next work is inventory + first-slice selection before any runtime adoption restart |
+| Figma shared-component coverage | Active | inventory is now grouped and the first narrow canonical Figma slice is `Avatar`; runtime adoption restart still stays out of scope until that coverage lands |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -91,7 +91,7 @@ Parent Plan: `Figma shared-component coverage`
 ## Progress
 
 Figma shared-component coverage
-`[█░░░░░░░░░] 10%`
+`[██░░░░░░░░] 20%`
 
 ```mermaid
 flowchart TB
@@ -139,8 +139,8 @@ flowchart TB
 
   subgraph Current
     AD0["Plan open<br/>Done"]
-    AD1["Shared-component coverage inventory<br/>Active"]
-    AD2["First Figma coverage slice selection<br/>Pending"]
+    AD1["Shared-component coverage inventory<br/>Done"]
+    AD2["Avatar coverage slice selection<br/>Active"]
   end
 
   D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4 --> AD0 --> AD1 --> AD2
@@ -179,7 +179,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 1 — Shared-component coverage inventory
+Phase 2 — Avatar coverage slice selection
 
 ### Parent Plan
 Figma shared-component coverage
@@ -188,11 +188,13 @@ Figma shared-component coverage
 - The broad Figma alignment + section-audit work is now a frozen baseline and
   should not be silently reopened from this narrower follow-up.
 - The latest repo + Figma audit confirms a focused shared-component gap in the
-  canonical file:
-  - missing shared primitives in Figma:
-    `Switch`, `Avatar`, `Modal`, `LoadingSkeleton`, `RevealImage`,
-    `ToastProvider`
-  - missing shared composed components in Figma:
+  canonical file, and that inventory is now grouped:
+  - tier 1 shared primitives with the safest first-slice profile:
+    `Avatar`, `Switch`
+  - tier 2 heavier shared primitives with wider behavioral or fanout risk:
+    `Modal`, `LoadingSkeleton`, `RevealImage`, `ToastProvider`
+  - tier 3 composed shared components that should wait until the primitive gap
+    shrinks:
     `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`,
     `ConfirmDialog`
 - The same audit also confirmed separate classes that are intentionally out of
@@ -201,13 +203,19 @@ Figma shared-component coverage
     `Dropdown`, `DataPanelTable`, and route-owned search overrides
   - product-bound exemplar gaps like `ResourceCard`, pricing surfaces,
     `FileUploadWidget`, `NotificationButton`, and `PickerControls`
-- The immediate job is to inventory and order the missing shared coverage, not
-  to write runtime code yet.
+- The first slice is now chosen:
+  - `Avatar` is the next canonical Figma target because it is reused across
+    dashboard, public account chrome, creator/profile surfaces, and creator
+    detail views
+  - its state space is still bounded enough for a narrow Figma pass:
+    size ladder, image vs initials fallback, and ring/shell posture
+  - it is safer than `LoadingSkeleton` and `Modal`, and more leveraged than
+    starting with `Switch`
 
 ### Goal
-Lock the next Figma-only parent plan to missing shared DS component coverage in
-the canonical file, inventory that missing set cleanly, and choose one narrow
-first coverage slice before reopening any runtime adoption work.
+Lock `Avatar` as the first canonical Figma shared-component slice, then use
+that slice to restart DS-from-Figma coverage work without mixing in runtime
+adoption or product-bound exemplar cleanup.
 
 ### Why this is the current phase
 - The repo already has enough evidence to say the next highest-signal DS work
@@ -216,14 +224,15 @@ first coverage slice before reopening any runtime adoption work.
 - Opening this as a separate parent plan keeps the sequencing clean:
   Figma shared-component coverage first, runtime adoption second, and
   product-bound exemplars later.
-- This prevents the next rollout from mixing three different problem classes in
-  one pass.
+- `Avatar` is the best first slice because it sits in the sweet spot:
+  clearly shared, visibly reused, but still much less structurally risky than
+  `Modal` or `LoadingSkeleton`.
 
 ### Definition of Done
 - [x] Open a new active parent plan for missing shared-component Figma coverage
-- [ ] Reconfirm the missing shared-component coverage set in canonical Figma
-- [ ] Group the missing set into a safe rollout order
-- [ ] Choose one narrow first Figma coverage slice, preferring shared
+- [x] Reconfirm the missing shared-component coverage set in canonical Figma
+- [x] Group the missing set into a safe rollout order
+- [x] Choose one narrow first Figma coverage slice, preferring shared
   primitives before composed components
 - [ ] Land and verify that first Figma coverage slice
 - [ ] Update the mapping/docs for every newly covered shared component in the
@@ -234,31 +243,32 @@ first coverage slice before reopening any runtime adoption work.
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
 | 0 | Plan open | complete | shared-component Figma coverage was explicitly chosen as the next DS plan after the audit split Figma gaps from runtime adoption gaps |
-| 1 | Shared-component coverage inventory | active | next work is grouping the missing shared primitives/composed components and choosing the first narrow Figma slice |
+| 1 | Shared-component coverage inventory | complete | canonical Figma is still missing the shared primitives/composed set confirmed by the repo + Figma audit |
+| 2 | Avatar coverage slice selection | active | `Avatar` is now the first narrow slice because it is shared, visible, and bounded enough to cover safely before `Switch` or heavier primitives |
 
 ---
 
 ## Current Goal
 
-1. inventory the missing shared-component coverage in canonical Figma
-2. choose the first narrow Figma coverage slice from that inventory
-3. keep runtime adoption and product-exemplar work out of scope while this plan stays open
+1. land canonical Figma coverage for `Avatar`
+2. sync the repo mapping/docs around that first slice
+3. keep `Switch`, heavier shared primitives, runtime adoption, and product exemplars out of scope while the `Avatar` slice is open
 
 ---
 
 ## In Progress
 
 - [x] Open the new parent plan `Figma shared-component coverage`
-- [ ] Reconfirm the missing shared-component coverage set in canonical Figma
-- [ ] Choose the first narrow Figma coverage slice from that grouped inventory
+- [x] Reconfirm the missing shared-component coverage set in canonical Figma
+- [x] Choose `Avatar` as the first narrow Figma coverage slice from that grouped inventory
 
 ---
 
 ## Next Up
 
-- [ ] Reconfirm and group the missing shared-component coverage in canonical Figma
-- [ ] Choose one narrow first Figma coverage slice, preferring shared primitives before composed components
-- [ ] Keep runtime adoption work and product exemplars out of scope for this parent plan
+- [ ] Land the first canonical Figma shared-component slice for `Avatar`
+- [ ] Verify `Avatar` coverage against its real runtime size/fallback/image states and sync the mapping/docs in the same session
+- [ ] Keep `Switch`, heavier shared primitives, runtime adoption work, and product exemplars out of scope for this parent plan
 
 ---
 
@@ -355,6 +365,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-30: The first narrow slice inside `Figma shared-component coverage` is now chosen. Inventory grouped the missing canonical Figma set into safer primitives first (`Avatar`, `Switch`), then heavier primitives (`Modal`, `LoadingSkeleton`, `RevealImage`, `ToastProvider`), then composed components (`SectionHeader`, `Pagination`, `EmptyState`, `RowActions`, `ConfirmDialog`). `Avatar` is the best first slice because it is already reused across dashboard, public account chrome, creator/profile surfaces, and creator detail views, but its state space is still bounded enough to map cleanly in one canonical Figma pass.
 - 2026-04-30: Open a new parent plan `Figma shared-component coverage` after the latest DS audit separated canonical Figma gaps from runtime-adoption gaps. The next required work is confined to missing shared coverage in the canonical file (`Switch`, `Avatar`, `Modal`, `LoadingSkeleton`, `RevealImage`, `ToastProvider`, `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`, `ConfirmDialog`) before reopening runtime adoption or product-exemplar work.
 - 2026-04-30: `Creator application semantic cleanup` is now closed at `100%`. Route-level inventory on the live `/dashboard/creator/apply` form found no remaining high-signal runtime slice: `CreatorApplicationForm` already uses semantic danger for the top-level error rail and field-error copy, semantic success/danger/muted for slug availability messaging, and no raw utility color branch remained strong enough to justify another required proof patch. Any future creator-application cleanup should reopen only as a separate optional plan if a new live drift is discovered.
 - 2026-04-30: Open a new optional parent plan `Creator application semantic cleanup` after `Creator color token normalization` closed. Keep the scope narrow: only the live `/dashboard/creator/apply` route and route-owned `CreatorApplicationForm` semantic utility holdouts are in play, while preview-only helper/demo surfaces, creator profile/resource-editor feedback, and broader creator/dashboard work stay out of scope. The first required step is inventory, not another automatic runtime patch.
