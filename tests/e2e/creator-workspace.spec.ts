@@ -587,6 +587,18 @@ test("creator workspace empty recent resources state stays centered and actionab
   ).toBeVisible({
     timeout: DASHBOARD_ROUTE_READY_TIMEOUT_MS,
   });
+  const intro = page.locator("section").filter({
+    has: page.getByRole("heading", { name: /^Workspace$/i }),
+  }).first();
+  const eyebrow = intro.getByTestId("dashboard-page-eyebrow");
+  const primaryCta = intro.getByRole("link", { name: /^Create resource$/i }).first();
+  const secondaryCta = intro.getByRole("link", { name: /^Storefront$/i }).first();
+  await expect(eyebrow).toHaveText("Creator route");
+  await expect(eyebrow).toHaveCSS("letter-spacing", "normal");
+  await expect(primaryCta).toHaveAttribute("data-size", "md");
+  await expect(primaryCta).toHaveCSS("height", "40px");
+  await expect(secondaryCta).toHaveAttribute("data-size", "md");
+  await expect(secondaryCta).toHaveCSS("height", "40px");
   await expect(page.getByRole("heading", { name: /^Workspace$/i })).toBeVisible();
   await expect(
     page.locator("#creator-quick-links").getByText(/^Launch checklist$/i),

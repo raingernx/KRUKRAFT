@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Dashboard/Admin runtime normalization`
 
 > [!info] Current Phase
-> `Phase 6 — Shared search unification slice`
+> `Phase 7 — Creator workspace intro normalization`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -18,12 +18,12 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 > Public marketplace perf baseline remains intact
 
 > [!warning] Active
-> `Dashboard/Admin runtime normalization` is now active. Shared dashboard/admin header, sidebar-label, and search contracts are being normalized first; the next step is inventorying route-owned tracking leftovers and remaining intro/layout bypasses that still sit outside those shared patterns after the search unification slice.
+> `Dashboard/Admin runtime normalization` is now active. Shared dashboard/admin header, sidebar-label, and search contracts are being normalized first; the next step is inventorying the remaining route-owned tracking leftovers and intro/layout bypasses that still sit outside those shared patterns after the creator workspace intro slice.
 
 > [!todo] Next Up
-> 1. Inventory the remaining route-owned tracking uses in dashboard/admin product UI after the shared header/sidebar/search cleanup
-> 2. Inventory the remaining direct dashboard intros that still bypass the shared intro authority, starting with creator workspace and preview-only dashboard shells
-> 3. Choose the next shared-safe remediation slice instead of reopening isolated route tweaks
+> 1. Choose the first route-owned tracking remediation slice from the inventoried admin/dashboard hotspots (`admin/reviews`, `admin/creators`, `admin/orders`, creator/settings labels, resource-form labels)
+> 2. Inventory the remaining direct dashboard intros and loading shells that still bypass the shared intro authority after creator workspace, starting with preview-only dashboard shells
+> 3. Keep broad shell-width/layout normalization deferred until the route-owned tracking + intro bypass groups are narrowed further
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
@@ -66,7 +66,7 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 | Route-Level Upload Flash Messaging | Complete | creator create now proves the route-owned remove-file failure message outside the widget shell, while admin create has no matching create-flow upload/remove flash slice beyond the frozen widget banners |
 | Admin Edit-Flow Upload/Remove Feedback | Complete | `/admin/resources/[id]` now proves the route-owned remove-file success/error rail, and the close-out audit found no in-scope reason to keep the plan open |
 | Creator Delivery Action Control Styling | Complete | `/dashboard/creator/resources/new` and edit now prove the creator-owned linked-file action cluster on an explicit compact `40px / 8px` posture; close-out audit found no in-scope reason to keep the plan open |
-| Dashboard/Admin Runtime Normalization | Active | dashboard user-route intros, dashboard/admin search surfaces, and shared dashboard/admin product labels now normalize through one authority with no default tracking; next work is inventorying the remaining route-owned dashboard/admin surfaces that still bypass that contract |
+| Dashboard/Admin Runtime Normalization | Active | dashboard user-route intros, creator workspace intro, dashboard/admin search surfaces, and shared dashboard/admin product labels now normalize through one authority with no default tracking; next work is inventorying the remaining route-owned dashboard/admin surfaces that still bypass that contract |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -79,7 +79,7 @@ Parent Plan: `Dashboard/Admin runtime normalization`
 ## Progress
 
 Dashboard/Admin runtime normalization
-`[████████░░] 78%`
+`[████████░░] 86%`
 
 ```mermaid
 flowchart TB
@@ -169,7 +169,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 5 — Shared tracking-removal slice
+Phase 7 — Creator workspace intro normalization
 
 ### Parent Plan
 Dashboard/Admin runtime normalization
@@ -211,6 +211,13 @@ Dashboard/Admin runtime normalization
   - admin global search, admin users, admin resources, admin activity, and
     admin ranking now route through the same `SearchInput` primitive instead
     of `Input + local icon wrapper` copies
+- The next remediation slice is now landed too:
+  - `DashboardCreatorWorkspaceRouteIntro` no longer bypasses the shared
+    dashboard intro authority with a `Badge` + bespoke `h1` block
+  - the live workspace intro and its loading companion now both route through
+    `DashboardRouteIntro` / `DashboardPageHeader`
+  - creator workspace header CTAs now follow the same `Button size="md"`
+    contract as the normalized dashboard user-route intros
 - The next shared slice is now landed too:
   - `DashboardPageHeader` eyebrow and title no longer apply tracking in the
     shared dashboard product-header pattern
@@ -229,9 +236,19 @@ Dashboard/Admin runtime normalization
   - undersized CTA misuse in toolbars and headers
   - broader shell/layout drift that should stay separate from primitive fixes
   - remaining direct route-intro bypasses that still do not ride the shared
-    dashboard intro authority
+    dashboard intro authority after creator workspace
   - route-owned tracking that still lives outside the shared header/sidebar
     authority
+- The latest grouped inventory now has concrete hotspots instead of a broad
+  unknown bucket:
+  - admin report/stat pages (`admin/reviews`, `admin/creators`, `admin/orders`,
+    parts of `admin/activity`) still carry route-owned tracking on metric/value
+    labels and table headers
+  - creator/settings and resource-form helper labels still keep tracked
+    uppercase micro-label patterns outside the shared header/sidebar contract
+  - preview-only dashboard shells such as `DashboardPageIntro` and
+    `DashboardSettingsIntroContent` still keep badge-first intro posture even
+    after the live creator workspace route was normalized
 - Keep these out of scope for this slice:
   - new DS family rollout work (`Switch`, `Dropdown`, and other untouched
     families)
@@ -270,6 +287,8 @@ tweaks.
   route family (`library`, `downloads`, `purchases`, `membership`, `settings`)
 - [x] Remove default tracking from shared dashboard/admin product header/sidebar
   patterns
+- [x] Normalize the creator workspace intro back onto the shared dashboard intro
+  authority and medium CTA contract
 - [ ] Expand grouped drift inventory to adjacent dashboard/admin surfaces
 - [ ] Choose the next shared-safe remediation slice from grouped evidence
 - [x] The creator create flash proof stays frozen as a baseline

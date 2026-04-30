@@ -446,6 +446,9 @@ At a high level:
       `DashboardRouteIntro` / `DashboardPageHeader` eyebrow-text pattern rather
       than route-owned `Badge` pills, and matching header CTAs use `md`
       posture by default
+    - creator workspace now rides that same shared intro authority instead of a
+      bespoke `Badge + h1 + sm CTA` block, and its loading companion inherits
+      the same geometry
     - dashboard/admin shared product headers and sidebar labels now also treat
       tracking as opt-in instead of default: the shared `DashboardPageHeader`,
       `AdminPageHeader`, and `DashboardSidebar` patterns no longer inject

@@ -385,7 +385,10 @@ When this file conflicts with code, the code wins.
 - Dashboard route intros should reuse `DashboardRouteIntro` /
   `DashboardPageHeader` eyebrow text instead of reintroducing `Badge` pills for
   page labels; header CTAs in that family should default to `Button size="md"`
-  unless a route proves a narrower control is intentional.
+  unless a route proves a narrower control is intentional. The creator
+  workspace intro now follows that same contract, and loading companions should
+  reuse the same authority instead of carrying separate badge-first intro
+  shells.
 - Dashboard/admin product headers and sidebar section labels should not use
   tracking by default. Shared `DashboardPageHeader`, `AdminPageHeader`, and
   `DashboardSidebar` labels now treat `letter-spacing` as `normal`; any

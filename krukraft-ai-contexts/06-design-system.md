@@ -382,6 +382,9 @@ Use this order when DS docs disagree:
     - dashboard user-route intros now normalize through the shared
       `DashboardRouteIntro` / `DashboardPageHeader` eyebrow-text pattern, with
       matching header CTAs promoted back to `Button size="md"` by default
+    - creator workspace now uses that same intro authority too, so the live
+      route and its loading companion no longer keep a separate badge-first
+      header shell
     - shared dashboard/admin product labels now stop treating tracking as the
       baseline too: `DashboardPageHeader`, `AdminPageHeader`, and
       `DashboardSidebar` labels all render with normal letter-spacing, so any

@@ -726,50 +726,45 @@ function DashboardCreatorWorkspaceRouteIntro({
 } = {}) {
   const isFirstTimeCreator = data?.activationStage === "first-run";
   const storefrontHref = data?.profile.publicProfileHref ?? routes.dashboardCreatorProfile;
+  const actions = isFirstTimeCreator ? (
+    <>
+      <Button asChild size="md">
+        <Link className="whitespace-nowrap" href={routes.dashboardCreatorNewResource}>
+          Create resource
+        </Link>
+      </Button>
+      <Button asChild size="md" variant="quiet">
+        <Link className="whitespace-nowrap" href={storefrontHref}>
+          Storefront
+        </Link>
+      </Button>
+    </>
+  ) : (
+    <>
+      <Button asChild size="md">
+        <Link className="whitespace-nowrap" href={routes.dashboardCreatorResources}>
+          Resources
+        </Link>
+      </Button>
+      <Button asChild size="md" variant="quiet">
+        <Link className="whitespace-nowrap" href={storefrontHref}>
+          Storefront
+        </Link>
+      </Button>
+    </>
+  );
 
   return (
-    <section className="flex flex-col gap-4 border-b border-border-subtle pb-6 md:flex-row md:items-end md:justify-between">
-      <div>
-        <Badge variant="featured">Creator route</Badge>
-        <h1 className="mt-3 text-balance font-ui text-3xl font-semibold text-foreground">
-          Workspace
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          {isFirstTimeCreator
-            ? "Set up your storefront, publish your first listing, and unlock creator reporting from one workspace."
-            : "Resources, earnings, and storefront status in one place."}
-        </p>
-      </div>
-      <div className="flex w-full flex-nowrap gap-2 overflow-x-auto pb-1 md:w-auto md:overflow-visible md:pb-0">
-        {isFirstTimeCreator ? (
-          <>
-            <Button asChild size="sm">
-              <Link className="whitespace-nowrap" href={routes.dashboardCreatorNewResource}>
-                Create resource
-              </Link>
-            </Button>
-            <Button asChild size="sm" variant="quiet">
-              <Link className="whitespace-nowrap" href={storefrontHref}>
-                Storefront
-              </Link>
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button asChild size="sm">
-              <Link className="whitespace-nowrap" href={routes.dashboardCreatorResources}>
-                Resources
-              </Link>
-            </Button>
-            <Button asChild size="sm" variant="quiet">
-              <Link className="whitespace-nowrap" href={storefrontHref}>
-                Storefront
-              </Link>
-            </Button>
-          </>
-        )}
-      </div>
-    </section>
+    <DashboardRouteIntro
+      eyebrow="Creator route"
+      title="Workspace"
+      description={
+        isFirstTimeCreator
+          ? "Set up your storefront, publish your first listing, and unlock creator reporting from one workspace."
+          : "Resources, earnings, and storefront status in one place."
+      }
+      action={actions}
+    />
   );
 }
 
