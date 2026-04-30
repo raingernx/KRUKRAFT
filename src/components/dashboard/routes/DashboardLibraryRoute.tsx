@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { BookOpen, Clock3, FileText } from "@/lib/icons";
@@ -11,8 +10,8 @@ import {
   LoadingSkeleton,
   SearchInput,
 } from "@/design-system";
-import { ResourceCard } from "@/design-system/product";
 import { DashboardRouteIntro } from "@/components/dashboard/DashboardRouteIntro";
+import { DashboardLibraryResourceCard } from "@/components/dashboard/routes/DashboardLibraryResourceCard";
 import { DashboardPageShell } from "@/components/layout/dashboard/DashboardPageShell";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
@@ -21,7 +20,6 @@ import type {
   DashboardLibraryFilterKey,
 } from "@/services/dashboard/library.service";
 import { getDashboardLibraryHref } from "@/services/dashboard/library.service";
-import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 import { cn } from "@/lib/utils";
 import { routes } from "@/lib/routes";
 
@@ -254,23 +252,7 @@ function DashboardLibraryResults({ data }: { data: DashboardLibraryData }) {
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {data.items.map((item) => (
-        <ResourceCard
-          key={item.purchaseId}
-          variant="library"
-          resource={{
-            id: item.id,
-            slug: item.slug,
-            title: item.title,
-            authorName: item.authorName,
-            previewUrl: item.previewUrl,
-            downloadedAt: item.purchasedAt,
-            mimeType: item.mimeType,
-            description: "",
-            tags: [],
-            isFree: true,
-            price: 0,
-          }}
-        />
+        <DashboardLibraryResourceCard key={item.purchaseId} item={item} />
       ))}
     </div>
   );
