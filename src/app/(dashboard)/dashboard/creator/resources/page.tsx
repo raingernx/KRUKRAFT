@@ -1,4 +1,4 @@
-import { DashboardCreatorResourcesContent } from "@/components/dashboard/DashboardSections";
+import { DashboardCreatorResourcesContent } from "@/components/dashboard/routes/DashboardCreatorResourcesRoute";
 import { requireCreatorDashboardAccess } from "@/lib/auth/require-creator-dashboard-access";
 import { routes } from "@/lib/routes";
 import { getDashboardCreatorResourcesData } from "@/services/dashboard/creator-resources.service";
