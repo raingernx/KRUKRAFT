@@ -99,6 +99,14 @@ Use this order when DS docs disagree:
   divider rails still bind to `neutral/line` because the canonical file does
   not yet expose a semantic `border/subtle` variable, while overlay tint,
   portal motion, and button semantics stay runtime-owned.
+- `LoadingSkeleton` now has canonical Figma coverage on `DS Primitives` too:
+  the live boards document only the shell-level primitive plus a bounded
+  `line | bar | circle | pill` posture set. Content-block, table-row, hero,
+  and detail loading layouts remain route-owned composition instead of shared
+  primitive variants. The current Figma-only gap is explicit instead of silent:
+  the canonical file still lacks a dedicated semantic `bg/muted` variable, so
+  the light board binds shell fills to `bg/inset` while the dark board binds
+  them to `border/default` to mirror the current runtime aliasing.
 - `RevealImage` is the shared image primitive for already-sized containers; the
   surrounding container should own placeholder/background treatment.
 - `Badge` and `Chip` are now separate DS contracts:

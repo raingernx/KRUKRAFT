@@ -73,12 +73,15 @@ Current canonical Figma shared-coverage note:
 - `Avatar` is no longer a code-only primitive
 - `Switch` is no longer a code-only primitive
 - `Modal` is no longer a code-only primitive
+- `LoadingSkeleton` is no longer a code-only primitive
 - the canonical file now has `Avatar / Foundations / Light` and
   `Avatar / Foundations / Dark` on `DS Primitives`
 - the canonical file now has `Switch / Foundations / Light` and
   `Switch / Foundations / Dark` on `DS Primitives`
 - the canonical file now has `Modal / Foundations / Light` and
   `Modal / Foundations / Dark` on `DS Primitives`
+- the canonical file now has `LoadingSkeleton / Foundations / Light` and
+  `LoadingSkeleton / Foundations / Dark` on `DS Primitives`
 - that slice currently documents the shared `24 / 32 / 40 / 56` ladder plus
   image and fallback states, while `28 / 36 / 72 / 104` remain runtime-owned
   posture extensions
@@ -94,6 +97,13 @@ Current canonical Figma shared-coverage note:
 - the modal board also makes the current divider-token gap explicit:
   the canonical file still lacks a semantic `border/subtle` variable, so the
   proof boards bind divider rails to `neutral/line` intentionally
+- the loading-skeleton slice currently documents the shell-only primitive and a
+  bounded `line | bar | circle | pill` posture set while keeping content-block,
+  table-row, hero, and detail loading geometry route-owned
+- the loading-skeleton board also keeps one explicit Figma token gap visible:
+  there is still no dedicated semantic `bg/muted` variable in the canonical
+  file, so the light board binds shell fills to `bg/inset` while the dark board
+  binds them to `border/default` to mirror the current runtime aliasing
 
 ### Composed Components
 

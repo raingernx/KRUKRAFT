@@ -85,7 +85,8 @@ layer itself is being maintained.
 - `LoadingSkeleton`
 - layout helpers under `src/design-system/layout/*`
 
-The canonical Figma file now covers `Avatar`, `Switch`, and `Modal` directly on
+The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
+`LoadingSkeleton` directly on
 `DS Primitives`:
 
 - `Avatar / Foundations / Light`
@@ -116,6 +117,16 @@ The canonical Figma file now covers `Avatar`, `Switch`, and `Modal` directly on
 - the avatar fallback shell still carries one explicit Figma token gap:
   a narrow local brand gradient plus proportional initials sizing because the
   canonical file does not yet expose avatar-specific gradient/type tokens
+- `LoadingSkeleton / Foundations / Light`
+- `LoadingSkeleton / Foundations / Dark`
+- nested `LoadingSkeleton / Shape` component sets
+- the loading-skeleton slice locks only the shell-level primitive contract and
+  a bounded `line | bar | circle | pill` posture set while keeping content
+  block, table row, hero, and detail loading layouts route-owned
+- the current Figma-only gap is explicit here too: the canonical file still
+  lacks a dedicated semantic `bg/muted` variable, so the light board binds the
+  shell fill to `bg/inset` and the dark board binds it to `border/default` to
+  mirror the current runtime aliasing
 
 ### Control Size Contract
 
