@@ -108,7 +108,12 @@ Use this order when DS docs disagree:
   the light board binds shell fills to `bg/inset` while the dark board binds
   them to `border/default` to mirror the current runtime aliasing.
 - `RevealImage` is the shared image primitive for already-sized containers; the
-  surrounding container should own placeholder/background treatment.
+  surrounding container should own placeholder/background treatment. The
+  2026-04-30 heavier-primitive follow-up audit now locks one more boundary
+  explicitly: `RevealImage` should stay deferred from canonical Figma coverage
+  for now because runtime callers still own the visible shell, crop mode,
+  overlay tone, badges, zoom affordances, and other editorial/product-specific
+  decoration around the image itself.
 - `Badge` and `Chip` are now separate DS contracts:
   - `Badge` stays non-interactive and semantic/status-oriented
   - `Chip` is reserved for interactive filter/removable/token behavior

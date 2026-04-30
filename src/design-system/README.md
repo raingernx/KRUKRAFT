@@ -472,6 +472,11 @@ Current canonical Figma shared-coverage note:
   metrics no longer rely on `tracking-tight`.
 - `RevealImage` is the shared image primitive for already-sized containers. Let
   the surrounding container own placeholder and background treatment.
+- The 2026-04-30 heavier-primitive follow-up audit keeps `RevealImage`
+  intentionally out of canonical Figma coverage for now: the runtime helper
+  does not expose a bounded shell/size/state ladder of its own, and real
+  mounts still let the caller own crop mode, placeholder tone, overlay, and
+  surrounding image chrome.
 - `Card` is the calm generic shell card, not a product/marketplace card. The
   current canonical Figma base treats the root shell as `surface` and the
   footer band as `inset`, and runtime `Card.tsx` now follows that surface

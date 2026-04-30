@@ -127,6 +127,11 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   lacks a dedicated semantic `bg/muted` variable, so the light board binds the
   shell fill to `bg/inset` and the dark board binds it to `border/default` to
   mirror the current runtime aliasing
+- `RevealImage` remains intentionally outside canonical Figma coverage for now:
+  the runtime helper only wraps `next/image` for already-sized containers, and
+  real callers still own shell geometry, crop, placeholder tone, overlay, and
+  surrounding image chrome. Treat it as a code-owned helper until a bounded
+  shared image contract exists beyond product/container examples.
 
 ### Control Size Contract
 
