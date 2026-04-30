@@ -1,4 +1,4 @@
-import { DashboardPurchasesContent } from "@/components/dashboard/DashboardSections";
+import { DashboardPurchasesContent } from "@/components/dashboard/routes/DashboardPurchasesRoute";
 import { requireSession } from "@/lib/auth/require-session";
 import { routes } from "@/lib/routes";
 import { getDashboardPurchasesData } from "@/services/dashboard/purchases.service";

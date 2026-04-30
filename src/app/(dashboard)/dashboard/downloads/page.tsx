@@ -1,4 +1,4 @@
-import { DashboardDownloadsContent } from "@/components/dashboard/DashboardSections";
+import { DashboardDownloadsContent } from "@/components/dashboard/routes/DashboardDownloadsRoute";
 import { requireSession } from "@/lib/auth/require-session";
 import { routes } from "@/lib/routes";
 import { getDashboardDownloadsData } from "@/services/dashboard/downloads.service";

@@ -1,7 +1,7 @@
 import {
   DashboardPurchasesRouteFrame,
   DashboardPurchasesSectionsSkeleton,
-} from "@/components/dashboard/DashboardSections";
+} from "@/components/dashboard/routes/DashboardPurchasesRoute";
 
 export default function DashboardPurchasesLoading() {
   return (

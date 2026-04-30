@@ -1,4 +1,4 @@
-import { DashboardLibraryContent } from "@/components/dashboard/DashboardSections";
+import { DashboardLibraryContent } from "@/components/dashboard/routes/DashboardLibraryRoute";
 import { requireSession } from "@/lib/auth/require-session";
 import { routes } from "@/lib/routes";
 import { getDashboardLibraryData } from "@/services/dashboard/library.service";

@@ -1,4 +1,4 @@
-import { DashboardLibraryLoadingContent } from "@/components/dashboard/DashboardSections";
+import { DashboardLibraryLoadingContent } from "@/components/dashboard/routes/DashboardLibraryRoute";
 
 export default function DashboardLibraryLoading() {
   return <DashboardLibraryLoadingContent />;

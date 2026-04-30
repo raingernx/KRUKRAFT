@@ -1,6 +1,6 @@
 import {
   DashboardDownloadsLoadingContent,
-} from "@/components/dashboard/DashboardSections";
+} from "@/components/dashboard/routes/DashboardDownloadsRoute";
 
 export default function DashboardDownloadsLoading() {
   return <DashboardDownloadsLoadingContent />;
