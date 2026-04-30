@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
 import { getServerAuthTokenSnapshot } from "@/lib/auth/token-snapshot";
+import type { DashboardAppViewer } from "@/components/dashboard/DashboardAppViewer";
 import {
   DashboardAppSidebar,
   DashboardAppTopbar,
-  type DashboardAppViewer,
 } from "@/components/dashboard/DashboardAppNavigation";
 import { DashboardNavigationReady } from "@/components/layout/dashboard/DashboardNavigationReady";
 import { DashboardOverlayReady } from "@/components/layout/dashboard/DashboardOverlayReady";

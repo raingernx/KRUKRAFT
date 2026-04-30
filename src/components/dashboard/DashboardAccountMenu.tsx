@@ -5,6 +5,7 @@ import { signOut } from "next-auth/react";
 
 import { AuthenticatedAccountDropdown } from "@/components/layout/account/AuthenticatedAccountDropdown";
 import { getAuthenticatedAccountWarmTargets } from "@/components/layout/account/accountMenuConfig";
+import type { DashboardAppViewer } from "@/components/dashboard/DashboardAppViewer";
 import { CreditCard, LogIn, Sparkles } from "@/lib/icons";
 import {
   Dropdown,
@@ -18,18 +19,10 @@ import { cn } from "@/lib/utils";
 import { routes } from "@/lib/routes";
 import { useState } from "react";
 
-export interface DashboardAccountMenuViewer {
-  displayName: string;
-  email: string | null;
-  image: string | null;
-  creatorNavMode: "hidden" | "apply" | "full";
-  isAuthenticated: boolean;
-}
-
 export function DashboardAccountMenu({
   viewer,
 }: {
-  viewer: DashboardAccountMenuViewer;
+  viewer: DashboardAppViewer;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
