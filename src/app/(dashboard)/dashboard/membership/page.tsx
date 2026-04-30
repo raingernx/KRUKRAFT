@@ -1,4 +1,4 @@
-import { DashboardMembershipStreamedContent } from "@/components/dashboard/DashboardSections";
+import { DashboardMembershipStreamedContent } from "@/components/dashboard/routes/DashboardAccountRoutes";
 import { requireSession } from "@/lib/auth/require-session";
 import { routes } from "@/lib/routes";
 import { getDashboardMembershipData } from "@/services/dashboard/membership.service";

@@ -1,4 +1,4 @@
-import { DashboardSettingsStreamedContent } from "@/components/dashboard/DashboardSections";
+import { DashboardSettingsStreamedContent } from "@/components/dashboard/routes/DashboardAccountRoutes";
 import { requireSession } from "@/lib/auth/require-session";
 import { routes } from "@/lib/routes";
 import { getDashboardSettingsData } from "@/services/dashboard/settings.service";
