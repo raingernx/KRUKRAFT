@@ -265,7 +265,7 @@ Use this order when DS docs disagree:
     inside `Krukraft Theme Lab Source-of-Truth`
   - the current approved neutral direction is a softened `Paper B`-derived
     cool-paper light set promoted into the canonical variables:
-    `shell #FCFBFB`, `surface #F8F5F6`, `canvas #FFFFFF`, `inset #F1ECEB`,
+    `shell #FCFBFB`, `surface #F9F7F8`, `canvas #FFFFFF`, `inset #F3EFED`,
     `line #E5E2E4`
   - the current approved dark companion now reads:
     `canvas #111019`, `shell #1B1820`, `surface #19171D`, `inset #282330`,
