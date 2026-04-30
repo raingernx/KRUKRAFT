@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
 ## Plan Snapshot
 
-Parent Plan: `Creator application semantic cleanup`
+Parent Plan: `Figma shared-component coverage`
 
 > [!info] Current Phase
-> `Phase 2 — Creator application close-out audit`
+> `Phase 1 — Shared-component coverage inventory`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -26,13 +26,16 @@ Parent Plan: `Creator application semantic cleanup`
 > [!success] Completed
 > `Creator application semantic cleanup` is now closed. Route-level inventory on the live `/dashboard/creator/apply` form found no remaining high-signal runtime slice: `CreatorApplicationForm` already uses semantic `danger`, `success`, and `muted` families for its error rail, field-error copy, and slug-availability states, so the remaining route-owned styling is too minor to justify another required proof patch.
 
+> [!warning] Active
+> `Figma shared-component coverage` is now active. This parent plan is the next explicit follow-up after the Figma/runtime audit: it should stay confined to missing shared DS component coverage in the canonical Figma file before any new runtime adoption or product-exemplar work starts.
+
 > [!todo] Next Up
-> 1. This parent plan is complete; wait for an explicit new plan or reprioritization before starting more creator-application cleanup
-> 2. Treat preview-only creator helper/demo cleanup or broader creator dashboard cleanup as separate optional plans, not in-plan work
-> 3. Keep broader creator/dashboard shell/layout/perf work out of scope unless a new plan explicitly reopens it
+> 1. Reconfirm and group the missing shared-component coverage in canonical Figma: `Switch`, `Avatar`, `Modal`, `LoadingSkeleton`, `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`, and `ConfirmDialog`
+> 2. Choose one narrow first Figma coverage slice from that inventory, preferring shared primitives before composed components
+> 3. Keep runtime adoption work (`Button`, `Dropdown`, `DataPanelTable`, search overrides) and product exemplars (`ResourceCard`, pricing, upload, notifications, picker controls) out of scope for this parent plan
 
 > [!abstract] Partial
-> The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow runtime rollout pass that should not silently reopen broad Figma redesign work.
+> The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow Figma coverage pass and should not silently reopen broad runtime rollout or product-exemplar work.
 
 ## Status Board
 
@@ -75,6 +78,7 @@ Parent Plan: `Creator application semantic cleanup`
 | Dashboard/Admin Runtime Normalization | Complete | dashboard user-route intros, creator workspace intro, creator resource-form labels, creator settings labels, admin creators/reviews/orders table-summary labels, dashboard/admin search surfaces, and the live settings loading intro now normalize through one authority with no default tracking; remaining dashboard intro exceptions are preview/demo-only |
 | Creator color token normalization | Complete | `/dashboard/creator/apply`, `/dashboard/creator/resources/*`, and `/dashboard/creator/profile` now prove the main live creator semantic warning/success/danger feedback surfaces, and the close-out audit found no remaining in-scope live slice strong enough to keep the plan open |
 | Creator application semantic cleanup | Complete | route-level inventory on `/dashboard/creator/apply` found no remaining high-signal runtime slice; the form already rides semantic success/danger/muted families closely enough to close the optional follow-up plan |
+| Figma shared-component coverage | Active | audit confirmed the canonical file still lacks several shared DS components; next work is inventory + first-slice selection before any runtime adoption restart |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -86,8 +90,8 @@ Parent Plan: `Creator application semantic cleanup`
 
 ## Progress
 
-Creator application semantic cleanup
-`[██████████] 100%`
+Figma shared-component coverage
+`[█░░░░░░░░░] 10%`
 
 ```mermaid
 flowchart TB
@@ -135,8 +139,8 @@ flowchart TB
 
   subgraph Current
     AD0["Plan open<br/>Done"]
-    AD1["Creator application feedback inventory<br/>Done"]
-    AD2["Creator application close-out audit<br/>Done"]
+    AD1["Shared-component coverage inventory<br/>Active"]
+    AD2["First Figma coverage slice selection<br/>Pending"]
   end
 
   D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4 --> AD0 --> AD1 --> AD2
@@ -175,86 +179,86 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 2 — Creator application close-out audit
+Phase 1 — Shared-component coverage inventory
 
 ### Parent Plan
-Creator application semantic cleanup
+Figma shared-component coverage
 
 ### Current Status Inside Parent Plan
-- `Creator color token normalization` is now a frozen completed baseline and
+- The broad Figma alignment + section-audit work is now a frozen baseline and
   should not be silently reopened from this narrower follow-up.
-- The only in-scope live route for this optional follow-up stayed
-  `/dashboard/creator/apply`, and the inventory is now complete.
-- Inventory result:
-  - the top-level non-field error rail already uses semantic danger surface
-    tokens
-  - field-error copy already uses semantic danger text tokens
-  - slug availability already maps to semantic success / danger / muted
-    branches instead of raw utility colors
-  - the remaining route-owned styling is limited to low-signal details such as
-    required asterisks and route-local shell composition, not a material token
-    drift worth another required runtime proof slice
-- Keep these out of scope after close-out:
-  - preview-only creator helper cards and skeleton/demo surfaces
-  - `CreatorProfileForm` and creator resource-editor feedback surfaces already
-    frozen by the closed creator color plan
-  - broader creator/dashboard layout, shell-width, or perf follow-ups
+- The latest repo + Figma audit confirms a focused shared-component gap in the
+  canonical file:
+  - missing shared primitives in Figma:
+    `Switch`, `Avatar`, `Modal`, `LoadingSkeleton`, `RevealImage`,
+    `ToastProvider`
+  - missing shared composed components in Figma:
+    `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`,
+    `ConfirmDialog`
+- The same audit also confirmed separate classes that are intentionally out of
+  scope for this parent plan:
+  - runtime adoption gaps on already-mapped components like `Button`,
+    `Dropdown`, `DataPanelTable`, and route-owned search overrides
+  - product-bound exemplar gaps like `ResourceCard`, pricing surfaces,
+    `FileUploadWidget`, `NotificationButton`, and `PickerControls`
+- The immediate job is to inventory and order the missing shared coverage, not
+  to write runtime code yet.
 
 ### Goal
-Confirm whether inventory found any remaining `CreatorApplicationForm` slice
-worth runtime proof, and close the optional plan because the remaining live
-drift is too low-signal to justify another required patch.
+Lock the next Figma-only parent plan to missing shared DS component coverage in
+the canonical file, inventory that missing set cleanly, and choose one narrow
+first coverage slice before reopening any runtime adoption work.
 
 ### Why this is the current phase
-- The optional follow-up plan was intentionally opened just to answer one
-  question: did `CreatorApplicationForm` still hide a meaningful semantic-token
-  gap after the broader creator color plan closed?
-- That inventory is now complete, and the answer is no: the live form already
-  stays on semantic danger/success/muted families closely enough that opening a
-  runtime proof slice would be churn, not high-signal rollout work.
+- The repo already has enough evidence to say the next highest-signal DS work
+  is not another runtime tweak; it is missing canonical Figma coverage for
+  shared components that still exist only in code.
+- Opening this as a separate parent plan keeps the sequencing clean:
+  Figma shared-component coverage first, runtime adoption second, and
+  product-bound exemplars later.
+- This prevents the next rollout from mixing three different problem classes in
+  one pass.
 
 ### Definition of Done
-- [x] Open a new active parent plan for the `CreatorApplicationForm` follow-up work
-- [x] Inventory the remaining live route-owned semantic utility holdouts inside
-  `CreatorApplicationForm` on `/dashboard/creator/apply`
-- [x] Decide whether one narrow runtime proof slice is still warranted after
-  that inventory
-- [x] Close the plan quickly because the remaining drift is too low-signal to
-  justify more runtime rollout work
-- [x] Record that no additional `CreatorApplicationForm` runtime proof slice is
-  required at this time
+- [x] Open a new active parent plan for missing shared-component Figma coverage
+- [ ] Reconfirm the missing shared-component coverage set in canonical Figma
+- [ ] Group the missing set into a safe rollout order
+- [ ] Choose one narrow first Figma coverage slice, preferring shared
+  primitives before composed components
+- [ ] Land and verify that first Figma coverage slice
+- [ ] Update the mapping/docs for every newly covered shared component in the
+  same session
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Plan open | complete | `CreatorApplicationForm` semantic cleanup was explicitly chosen as the next optional follow-up after the broader creator color plan closed |
-| 1 | Creator application feedback inventory | complete | route-level inventory confirmed the live form already rides semantic danger/success/muted families closely enough to avoid another runtime slice |
-| 2 | Creator application close-out audit | complete | remaining route-owned drift is low-signal and not worth reopening runtime rollout work |
+| 0 | Plan open | complete | shared-component Figma coverage was explicitly chosen as the next DS plan after the audit split Figma gaps from runtime adoption gaps |
+| 1 | Shared-component coverage inventory | active | next work is grouping the missing shared primitives/composed components and choosing the first narrow Figma slice |
 
 ---
 
 ## Current Goal
 
-1. keep `Creator color token normalization` and this narrower follow-up frozen as closed baselines
-2. treat preview-only creator helper/demo cleanup or broader creator dashboard cleanup as separate optional plans
-3. avoid reopening `CreatorApplicationForm` unless a new higher-signal live drift is found later
+1. inventory the missing shared-component coverage in canonical Figma
+2. choose the first narrow Figma coverage slice from that inventory
+3. keep runtime adoption and product-exemplar work out of scope while this plan stays open
 
 ---
 
 ## In Progress
 
-- [x] Open the new optional parent plan `Creator application semantic cleanup`
-- [x] Inventory the remaining live route-owned semantic utility holdouts inside `CreatorApplicationForm`
-- [x] Decide that no narrow runtime proof slice is warranted after that inventory
+- [x] Open the new parent plan `Figma shared-component coverage`
+- [ ] Reconfirm the missing shared-component coverage set in canonical Figma
+- [ ] Choose the first narrow Figma coverage slice from that grouped inventory
 
 ---
 
 ## Next Up
 
-- [x] Inventory live `CreatorApplicationForm` semantic utility holdouts on `/dashboard/creator/apply`
-- [x] Close `Creator application semantic cleanup` because the remaining live drift is too low-signal to justify another runtime slice
-- [x] Keep preview-only creator helper/demo cleanup and broader creator/dashboard work out of scope for this parent plan
+- [ ] Reconfirm and group the missing shared-component coverage in canonical Figma
+- [ ] Choose one narrow first Figma coverage slice, preferring shared primitives before composed components
+- [ ] Keep runtime adoption work and product exemplars out of scope for this parent plan
 
 ---
 
@@ -351,6 +355,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-30: Open a new parent plan `Figma shared-component coverage` after the latest DS audit separated canonical Figma gaps from runtime-adoption gaps. The next required work is confined to missing shared coverage in the canonical file (`Switch`, `Avatar`, `Modal`, `LoadingSkeleton`, `RevealImage`, `ToastProvider`, `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`, `ConfirmDialog`) before reopening runtime adoption or product-exemplar work.
 - 2026-04-30: `Creator application semantic cleanup` is now closed at `100%`. Route-level inventory on the live `/dashboard/creator/apply` form found no remaining high-signal runtime slice: `CreatorApplicationForm` already uses semantic danger for the top-level error rail and field-error copy, semantic success/danger/muted for slug availability messaging, and no raw utility color branch remained strong enough to justify another required proof patch. Any future creator-application cleanup should reopen only as a separate optional plan if a new live drift is discovered.
 - 2026-04-30: Open a new optional parent plan `Creator application semantic cleanup` after `Creator color token normalization` closed. Keep the scope narrow: only the live `/dashboard/creator/apply` route and route-owned `CreatorApplicationForm` semantic utility holdouts are in play, while preview-only helper/demo surfaces, creator profile/resource-editor feedback, and broader creator/dashboard work stay out of scope. The first required step is inventory, not another automatic runtime patch.
 - 2026-04-30: `Creator color token normalization` is now closed at `100%`. The required close-out audit stayed inside the original live creator preview/account scope and found no remaining required slice: `CreatorResourcePreview` already rides semantic warning/muted families, `CreatorApplicationForm` still contains a few route-owned success/danger utility classes but keeps the same semantic intent contract, and the heavier amber helper cards are not live route mounts for this plan. Remaining creator helper/demo cleanup should only reopen as an optional new plan if explicitly chosen.
