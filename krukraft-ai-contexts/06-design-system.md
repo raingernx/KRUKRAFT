@@ -107,6 +107,16 @@ Use this order when DS docs disagree:
   the canonical file still lacks a dedicated semantic `bg/muted` variable, so
   the light board binds shell fills to `bg/inset` while the dark board binds
   them to `border/default` to mirror the current runtime aliasing.
+- `EmptyState` now has canonical Figma coverage on `DS Components` too:
+  the live boards document the bounded composed shell only through a paired
+  `default | minimal` source set. The shared contract is the centered stack
+  rhythm, dashed rounded container posture, and the `icon -> title ->
+  description -> action` slot order; business copy, final CTA semantics, and
+  route-owned illustrations remain outside the composed contract. The current
+  Figma-only gap is explicit instead of silent here as well: runtime uses
+  `border-border-subtle`, but canonical Figma still lacks a semantic
+  `border/subtle` variable, so the dashed rail currently binds to
+  `border/default`.
 - `RevealImage` is the shared image primitive for already-sized containers; the
   surrounding container should own placeholder/background treatment. The
   2026-04-30 heavier-primitive follow-up audit now locks one more boundary

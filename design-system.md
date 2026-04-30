@@ -137,6 +137,25 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   contract is dominated by timing, dismiss behavior, persistent-state defaults,
   and mount ownership rather than one bounded static visual shell.
 
+The canonical Figma file now also covers `EmptyState` directly on
+`DS Components`:
+
+- `EmptyState / Foundations / Light`
+- `EmptyState / Foundations / Dark`
+- nested `EmptyState / Variant / Source` light/dark component sets
+- the composed slice locks the bounded shared shell only:
+  centered stack rhythm, dashed rounded container posture, and the shared
+  `icon -> title -> description -> action` slot order
+- the current source pair proves `variant=default` and `variant=minimal`
+  without promoting route-owned empty-state copy, business CTAs, or product
+  illustrations into the composed contract
+- icon and action visuals on the board are illustrative slot examples, not
+  primitive-owned treatments
+- the current Figma-only gap is explicit here too:
+  runtime asks for `border-border-subtle`, but the canonical file still lacks
+  a semantic `border/subtle` variable, so the dashed rail currently binds to
+  `border/default`
+
 ### Control Size Contract
 
 When mapping control sizes into Figma:

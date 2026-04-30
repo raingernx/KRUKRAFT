@@ -209,6 +209,20 @@ Current canonical Figma shared-coverage note:
   outside the current canonical token scales.
 - `LoadingSkeleton` is the canonical skeleton primitive. Placeholders should
   stay neutral and use no more than three tones on a single surface.
+- `EmptyState` is no longer a code-only composed component:
+  the canonical file now has `EmptyState / Foundations / Light` and
+  `EmptyState / Foundations / Dark` on `DS Components`, plus paired
+  `EmptyState / Variant / Source` light/dark sets that lock the bounded shared
+  shell only.
+- That composed slice currently documents the centered stack rhythm, dashed
+  rounded container posture, and the shared `icon | title | description |
+  action` slot order through a `default` and `minimal` source pair while
+  keeping business copy, live CTA semantics, and route-owned illustrations out
+  of the contract.
+- The current Figma-only gap is explicit:
+  runtime `EmptyState` uses `border-border-subtle`, but canonical Figma still
+  lacks a semantic `border/subtle` variable, so the dashed rail currently
+  binds to `border/default`.
 
 ## Current Implementation Rules
 
