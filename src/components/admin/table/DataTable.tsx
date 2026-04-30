@@ -127,13 +127,16 @@ export interface DataTableHeadCellProps {
   children: React.ReactNode;
   className?: string;
   align?: "left" | "center" | "right";
+  scope?: React.ThHTMLAttributes<HTMLTableCellElement>["scope"];
 }
 
 export function DataTableHeadCell({
   children,
   className,
   align = "left",
-}: DataTableHeadCellProps) {
+  scope = "col",
+  ...props
+}: DataTableHeadCellProps & React.ThHTMLAttributes<HTMLTableCellElement>) {
   const alignClass =
     align === "center"
       ? "text-center"
@@ -142,11 +145,13 @@ export function DataTableHeadCell({
         : "";
   return (
     <th
+      scope={scope}
       className={cn(
         "px-4 py-2.5 font-ui text-caption text-muted-foreground whitespace-nowrap",
         alignClass,
         className
       )}
+      {...props}
     >
       {children}
     </th>

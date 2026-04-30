@@ -50,6 +50,9 @@ Use this order when DS docs disagree:
   default to the flat, divider-first treatment rather than nested-card layouts.
 - `DataPanelTable` is the canonical dashboard/admin table shell, but filtering,
   row rendering, and business actions stay route-owned.
+- Shared admin table header cells should keep DOM attributes such as
+  `data-testid` and `scope` intact so route-level proofs and accessibility
+  semantics do not require raw route-owned `<th>` fallbacks.
 - `LoadingSkeleton` is the canonical shared skeleton primitive; runtime loading
   shells should stay neutral and structurally close to the resolved UI.
 - `RevealImage` is the shared image primitive for already-sized containers; the
@@ -392,6 +395,9 @@ Use this order when DS docs disagree:
     - creator settings micro-labels now follow that no-tracking rule too on
       the visible `/dashboard/settings` route; the `Security` label no longer
       acts as a tracked uppercase holdout
+    - `/admin/creators` now uses the shared admin table header contract
+      instead of route-owned uppercase/tracking-heavy `<th>` copies, and its
+      summary metrics no longer rely on `tracking-tight`
     - shared dashboard/admin product labels now stop treating tracking as the
       baseline too: `DashboardPageHeader`, `AdminPageHeader`, and
       `DashboardSidebar` labels all render with normal letter-spacing, so any

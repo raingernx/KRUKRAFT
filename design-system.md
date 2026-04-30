@@ -166,6 +166,10 @@ Current runtime contract to mirror:
 - `SearchInput`
   - `variant=\"default\"` should ride the same field-size contract as `Input`
   - `variant=\"hero\"` is the only allowed search-shell exception
+- Shared admin table header cells should preserve DOM attributes such as
+  `data-testid` and `scope` so runtime proofs and accessibility semantics stay
+  attached to the shared contract rather than pushing routes back to bespoke
+  `<th>` markup.
 
 ### Treat as product-bound components, not generic library foundations
 
@@ -456,6 +460,9 @@ At a high level:
     - creator settings micro-labels now follow that same no-tracking rule on
       the visible `/dashboard/settings` route too; `Security` is no longer a
       route-owned uppercase/tracked exception
+    - `/admin/creators` now routes its table headers back through the shared
+      admin table contract and drops route-owned tracking on summary metrics,
+      instead of keeping raw uppercase/tracking-heavy `<th>` copies
     - dashboard/admin shared product headers and sidebar labels now also treat
       tracking as opt-in instead of default: the shared `DashboardPageHeader`,
       `AdminPageHeader`, and `DashboardSidebar` patterns no longer inject

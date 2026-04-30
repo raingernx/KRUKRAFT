@@ -123,6 +123,9 @@ When this file conflicts with code, the code wins.
   title/description/actions + optional toolbar + table/empty-state content.
   Keep data fetching, column schema, row rendering, and business actions
   route-owned.
+- Shared admin table primitives should preserve DOM attributes on header cells
+  so route-level proof hooks and accessibility metadata stay attached without
+  forcing routes back to raw `<th>` markup.
 - The canonical Figma `DataPanelTable` base now lives in dedicated light/dark
   `DataPanelTable / Foundations` boards, with source sets that stay shell-only
   and prove progressive `actions`, `toolbar`, and `footer` combinations that
@@ -401,6 +404,10 @@ When this file conflicts with code, the code wins.
 - Creator settings micro-labels should follow that same rule too. The
   `Security` label on `/dashboard/settings` now renders without uppercase
   tracking and acts as the visible creator-settings baseline.
+- Admin route-owned table/report labels should prefer the shared admin table
+  contract instead of raw uppercase/tracking-heavy `<th>` copies. The
+  `/admin/creators` table is now back on `DataTableHeadCell`, and its summary
+  metrics no longer rely on `tracking-tight`.
 - `RevealImage` is the shared image primitive for already-sized containers. Let
   the surrounding container own placeholder and background treatment.
 - `Card` is the calm generic shell card, not a product/marketplace card. The
