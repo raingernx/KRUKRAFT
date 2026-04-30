@@ -76,6 +76,8 @@ Current canonical Figma shared-coverage note:
 - that slice currently documents the shared `24 / 32 / 40 / 56` ladder plus
   image and fallback states, while `28 / 36 / 72 / 104` remain runtime-owned
   posture extensions
+- image and fallback states now share one stroked circular shell posture across
+  the canonical Figma board and runtime primitive
 
 ### Composed Components
 

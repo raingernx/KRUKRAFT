@@ -83,7 +83,8 @@ Use this order when DS docs disagree:
 - `Avatar` now has canonical Figma coverage on `DS Primitives` too:
   the live source set documents the shared `24 / 32 / 40 / 56` ladder plus
   image/name/email/explicit-initials/anonymous fallback states, while
-  `28 / 36 / 72 / 104` still remain runtime-owned posture extensions and the
+  `28 / 36 / 72 / 104` still remain runtime-owned posture extensions, all
+  source variants now share the same stroked circular shell posture, and the
   fallback shell keeps one explicit Figma token gap around gradient/type scale.
 - `RevealImage` is the shared image primitive for already-sized containers; the
   surrounding container should own placeholder/background treatment.

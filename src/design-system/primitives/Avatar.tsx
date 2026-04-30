@@ -80,15 +80,14 @@ export function Avatar({
     setBroken(false);
   }, [normalizedSrc]);
 
+  const shellClassName = cn(
+    "relative overflow-hidden rounded-full ring-1 ring-surface-200 bg-surface-100",
+    className,
+  );
+
   if (normalizedSrc && !broken) {
     return (
-      <div
-        className={cn(
-          "relative overflow-hidden rounded-full ring-1 ring-surface-200 bg-surface-100",
-          className,
-        )}
-        style={dimension}
-      >
+      <div className={shellClassName} style={dimension}>
         {canUseNextImage(normalizedSrc) ? (
           <Image
             src={normalizedSrc}
@@ -115,14 +114,10 @@ export function Avatar({
   }
 
   return (
-    <span
-      className={cn(
-        "flex items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white font-semibold",
-        className,
-      )}
-      style={dimension}
-    >
-      {resolvedInitials}
-    </span>
+    <div className={shellClassName} style={dimension}>
+      <span className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 font-semibold text-white">
+        {resolvedInitials}
+      </span>
+    </div>
   );
 }

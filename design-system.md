@@ -92,6 +92,8 @@ The canonical Figma file now covers `Avatar` directly on `DS Primitives`:
 - nested `Avatar / Size` and `Avatar / Source` component sets
 - the current slice locks the shared `24 / 32 / 40 / 56` ladder plus
   image/name/email/explicit-initials/anonymous fallback states
+- image and fallback states now share the same stroked circular shell posture
+  in both Figma and runtime code
 - runtime-only `28 / 36 / 72 / 104` mounts remain product-owned posture
   extensions until avatar sizing graduates into a shared token ladder
 - the fallback shell still carries one explicit Figma token gap:
