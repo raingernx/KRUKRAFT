@@ -1,30 +1,20 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import {
-  usePathname,
-  useRouter,
-  useSearchParams,
-  type ReadonlyURLSearchParams,
-} from "next/navigation";
-import {
   Menu,
+  Search,
 } from "@/lib/icons";
 
 import {
   Button,
-  SearchInput,
 } from "@/design-system";
 import type { DashboardAppViewer } from "@/components/dashboard/DashboardAppViewer";
 import {
   DashboardSidebarContent,
-  getDashboardTopbarSearchHref,
-  getDashboardTopbarSearchPlaceholder,
-  getDashboardTopbarSearchValue,
 } from "@/components/dashboard/DashboardSidebarContent";
 import { cn } from "@/lib/utils";
-import { routes } from "@/lib/routes";
 
 const DashboardTopbarActions = dynamic(
   () =>
@@ -67,65 +57,45 @@ const DashboardMobileNavigation = dynamic(
   },
 );
 
+const DashboardTopbarSearch = dynamic(
+  () =>
+    import("@/components/dashboard/DashboardTopbarSearch").then((module) => ({
+      default: module.DashboardTopbarSearch,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-w-0 flex-1">
+        <div className="relative w-full max-w-2xl">
+          <span
+            className="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-muted-foreground"
+            data-testid="dashboard-topbar-search-fallback-adornment"
+            aria-hidden="true"
+          >
+            <Search className="size-4" aria-hidden />
+          </span>
+          <input
+            aria-label="Search your dashboard library"
+            className={cn(
+              "h-10 w-full rounded-[var(--radius-sm)] border border-input bg-background px-3 py-2 pl-10 pr-10 text-sm text-foreground shadow-sm transition-[border-color,box-shadow,background-color] duration-150",
+              "placeholder:text-muted-foreground",
+            )}
+            data-testid="dashboard-topbar-search-fallback"
+            disabled
+            placeholder="Search your library"
+            type="search"
+          />
+        </div>
+      </div>
+    ),
+  },
+);
+
 export function DashboardAppSidebar({ viewer }: { viewer: DashboardAppViewer }) {
   return (
     <aside className="hidden w-72 shrink-0 border-r border-border-subtle bg-card lg:sticky lg:top-0 lg:flex lg:h-dvh lg:self-start lg:flex-col lg:overflow-hidden">
       <DashboardSidebarContent viewer={viewer} />
     </aside>
-  );
-}
-
-function DashboardAppTopbarSearch() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [query, setQuery] = useState(() =>
-    getDashboardTopbarSearchValue(pathname, searchParams),
-  );
-
-  useEffect(() => {
-    setQuery(getDashboardTopbarSearchValue(pathname, searchParams));
-  }, [pathname, searchParams]);
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    router.push(
-      getDashboardTopbarSearchHref({
-        pathname,
-        searchParams,
-        query,
-      }),
-    );
-  };
-
-  const handleClear = () => {
-    setQuery("");
-
-    if (pathname === routes.dashboardLibrary && searchParams.get("q")) {
-      router.push(
-        getDashboardTopbarSearchHref({
-          pathname,
-          searchParams,
-          query: "",
-        }),
-      );
-    }
-  };
-
-  return (
-    <form className="min-w-0 flex-1" onSubmit={handleSubmit}>
-      <SearchInput
-        aria-label="Search your dashboard library"
-        containerClassName="max-w-2xl"
-        id="dashboard-search"
-        name="dashboardSearch"
-        onChange={(event) => setQuery(event.target.value)}
-        onClear={handleClear}
-        placeholder={getDashboardTopbarSearchPlaceholder(pathname)}
-        title="Press Enter to open library search results"
-        value={query}
-      />
-    </form>
   );
 }
 
@@ -155,7 +125,7 @@ export function DashboardAppTopbar({ viewer }: { viewer: DashboardAppViewer }) {
             <Menu className="size-5" aria-hidden />
           </Button>
 
-          <DashboardAppTopbarSearch />
+          <DashboardTopbarSearch />
           <DashboardTopbarActions viewer={viewer} />
         </div>
       </header>
