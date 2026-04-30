@@ -72,10 +72,13 @@ Current canonical Figma shared-coverage note:
 
 - `Avatar` is no longer a code-only primitive
 - `Switch` is no longer a code-only primitive
+- `Modal` is no longer a code-only primitive
 - the canonical file now has `Avatar / Foundations / Light` and
   `Avatar / Foundations / Dark` on `DS Primitives`
 - the canonical file now has `Switch / Foundations / Light` and
   `Switch / Foundations / Dark` on `DS Primitives`
+- the canonical file now has `Modal / Foundations / Light` and
+  `Modal / Foundations / Dark` on `DS Primitives`
 - that slice currently documents the shared `24 / 32 / 40 / 56` ladder plus
   image and fallback states, while `28 / 36 / 72 / 104` remain runtime-owned
   posture extensions
@@ -84,6 +87,13 @@ Current canonical Figma shared-coverage note:
 - the switch slice currently documents the runtime `46×24` track, `20×20`
   thumb, and checked/unchecked + disabled visual states while keeping labels,
   helper copy, and row shells route-owned
+- the modal slice currently documents the runtime `384 / 448 / 512 / 576`
+  width ladder, centered surface shell, close affordance, and the shared
+  header/body/footer rail structure while keeping overlay tint, portal motion,
+  and footer button semantics runtime-owned
+- the modal board also makes the current divider-token gap explicit:
+  the canonical file still lacks a semantic `border/subtle` variable, so the
+  proof boards bind divider rails to `neutral/line` intentionally
 
 ### Composed Components
 

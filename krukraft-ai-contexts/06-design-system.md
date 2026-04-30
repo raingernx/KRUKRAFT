@@ -91,6 +91,14 @@ Use this order when DS docs disagree:
   thumb, and checked/unchecked + disabled visual states while keeping labels,
   helper copy, and row shells route-owned composition instead of promoting them
   into the primitive contract.
+- `Modal` now has canonical Figma coverage on `DS Primitives` too:
+  the live boards document the shared runtime `384 / 448 / 512 / 576` width
+  ladder, centered surface shell, close affordance, and header/body/footer
+  rail structure without promoting route-owned form geometry into the
+  primitive contract. The current Figma-only gap is explicit instead of silent:
+  divider rails still bind to `neutral/line` because the canonical file does
+  not yet expose a semantic `border/subtle` variable, while overlay tint,
+  portal motion, and button semantics stay runtime-owned.
 - `RevealImage` is the shared image primitive for already-sized containers; the
   surrounding container should own placeholder/background treatment.
 - `Badge` and `Chip` are now separate DS contracts:

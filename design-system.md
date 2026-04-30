@@ -85,7 +85,7 @@ layer itself is being maintained.
 - `LoadingSkeleton`
 - layout helpers under `src/design-system/layout/*`
 
-The canonical Figma file now covers `Avatar` and `Switch` directly on
+The canonical Figma file now covers `Avatar`, `Switch`, and `Modal` directly on
 `DS Primitives`:
 
 - `Avatar / Foundations / Light`
@@ -103,7 +103,17 @@ The canonical Figma file now covers `Avatar` and `Switch` directly on
 - the switch slice locks the current runtime `46×24` track, `20×20` thumb, and
   checked/unchecked + disabled visual states without inventing a broader
   control-size ladder around the primitive
-- the fallback shell still carries one explicit Figma token gap:
+- `Modal / Foundations / Light`
+- `Modal / Foundations / Dark`
+- nested `Modal / Size` component sets
+- the modal slice locks the shared runtime `384 / 448 / 512 / 576` width
+  ladder, centered surface shell, close affordance, and header/body/footer rail
+  structure without promoting route-owned form geometry into the primitive
+- the current Figma-only gap is explicit: divider rails still bind to
+  `neutral/line` because the canonical file does not yet expose a separate
+  semantic `border/subtle` variable, while overlay tint, portal motion, and
+  button semantics stay runtime-owned
+- the avatar fallback shell still carries one explicit Figma token gap:
   a narrow local brand gradient plus proportional initials sizing because the
   canonical file does not yet expose avatar-specific gradient/type tokens
 
