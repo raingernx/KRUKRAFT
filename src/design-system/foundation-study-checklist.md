@@ -13,10 +13,10 @@ This is a study checklist, not a token file.
 Use these as the fixed inputs for the current study round:
 
 - neutral: `Paper B`-derived cool-paper light set
-  - `shell #FCFCFC`
-  - `surface #F8F7F8`
+  - `shell #FAF8F8`
+  - `surface #F5F2F3`
   - `canvas #FFFFFF`
-  - `inset #F3F1F3`
+  - `inset #EEE9E8`
   - `line #E5E2E4`
 - primary: `#5144ED`
 - support accents: `Rust #E77661` and `Sand #E1C9A9`

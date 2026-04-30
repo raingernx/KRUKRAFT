@@ -265,8 +265,11 @@ Use this order when DS docs disagree:
     inside `Krukraft Theme Lab Source-of-Truth`
   - the current approved neutral direction is a `Paper B`-derived cool-paper
     light set promoted into the canonical variables:
-    `shell #FCFCFC`, `surface #F8F7F8`, `canvas #FFFFFF`, `inset #F3F1F3`,
+    `shell #FAF8F8`, `surface #F5F2F3`, `canvas #FFFFFF`, `inset #EEE9E8`,
     `line #E5E2E4`
+  - the current approved dark companion now reads:
+    `canvas #111019`, `shell #1B1820`, `surface #19171D`, `inset #282330`,
+    `line #322D39`
   - the current approved primary accent is `#5144ED`
   - the current approved support accents are `Rust #E77661` and
     `Sand #E1C9A9`; they stay support-only and do not replace the
