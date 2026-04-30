@@ -79,7 +79,7 @@
     /* Theme values mirror `themeColors.light` in src/design-system/tokens/colors.ts. */
     /* ── shadcn/ui v3 design tokens aligned to Krukraft surface system ── */
     color-scheme: light;
-    --canvas:                0 0% 100.0%;
+    --canvas:                30.0 50.0% 99.2%;
     --shell:                 0 14.3% 98.6%;
     --surface:               330.0 14.3% 97.3%;
     --inset:                 20.0 20.0% 94.1%;
@@ -102,10 +102,10 @@
     --primary-pressed:       242.5 58.2% 48.8%;
     --primary-quiet:         245.3 100.0% 93.3%;
     --action-ghost:          39.2 74.3% 86.3%;
-    --primary-foreground:    0 0% 100.0%;
+    --primary-foreground:    30.0 50.0% 99.2%;
     --primary-quiet-foreground: 280.0 6.5% 18.0%;
     --action-ghost-foreground: 280.0 6.5% 18.0%;
-    --on-fill-dark:          0 0% 100.0%;
+    --on-fill-dark:          30.0 50.0% 99.2%;
     --on-fill-light:         280.0 6.5% 18.0%;
     --danger-text:           0 73.7% 49.0%;
 

@@ -10,7 +10,7 @@ const figmaPrimitives = {
     mistDark: "#252245",
   },
   neutral: {
-    canvas: "#FFFFFF",
+    canvas: "#FEFDFC",
     shell: "#FCFBFB",
     surface: "#F9F7F8",
     inset: "#F3EFED",
@@ -206,7 +206,7 @@ export const chartColors = {
 
 export const themeColors = {
   light: {
-    canvas: "0 0% 100.0%",
+    canvas: "30.0 50.0% 99.2%",
     shell: "0 14.3% 98.6%",
     surface: "330.0 14.3% 97.3%",
     inset: "20.0 20.0% 94.1%",
@@ -214,7 +214,7 @@ export const themeColors = {
     ink: "280.0 6.5% 18.0%",
     inkMuted: "293.3 4.0% 44.5%",
     inkSubtle: "286.7 4.6% 61.4%",
-    background: "0 0% 100.0%",
+    background: "30.0 50.0% 99.2%",
     foreground: "280.0 6.5% 18.0%",
     card: "330.0 14.3% 97.3%",
     cardForeground: "280.0 6.5% 18.0%",
@@ -225,10 +225,10 @@ export const themeColors = {
     primaryPressed: "242.5 58.2% 48.8%",
     primaryQuiet: "245.3 100.0% 93.3%",
     ghost: "39.2 74.3% 86.3%",
-    primaryForeground: "0 0% 100.0%",
+    primaryForeground: "30.0 50.0% 99.2%",
     primaryQuietForeground: "280.0 6.5% 18.0%",
     ghostForeground: "280.0 6.5% 18.0%",
-    onFillDark: "0 0% 100.0%",
+    onFillDark: "30.0 50.0% 99.2%",
     onFillLight: "280.0 6.5% 18.0%",
     dangerText: "0 73.7% 49.0%",
     secondary: "20.0 20.0% 94.1%",

@@ -15,7 +15,7 @@ Use these as the fixed inputs for the current study round:
 - neutral: `Paper B`-derived cool-paper light set
   - `shell #FCFBFB`
   - `surface #F9F7F8`
-  - `canvas #FFFFFF`
+  - `canvas #FEFDFC`
   - `inset #F3EFED`
   - `line #E5E2E4`
 - primary: `#5144ED`

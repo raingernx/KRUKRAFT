@@ -236,7 +236,7 @@
     },
     "neutral": {
       "50": {
-        "value": "#FFFFFF",
+        "value": "#FEFDFC",
         "type": "color"
       },
       "100": {
@@ -334,7 +334,7 @@
     },
     "surface": {
       "50": {
-        "value": "#FFFFFF",
+        "value": "#FEFDFC",
         "type": "color"
       },
       "100": {
