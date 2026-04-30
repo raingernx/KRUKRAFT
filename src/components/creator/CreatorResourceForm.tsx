@@ -723,12 +723,18 @@ export function CreatorResourceForm({
     });
   }
 
+  const previewLabelClassName = "mb-3 text-xs font-semibold text-muted-foreground";
+  const sectionStepBadgeClassName =
+    "flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary";
+  const highlightedFieldClassName = " ring-2 ring-inset ring-primary/25 bg-primary/10";
+  const requiredFieldAsteriskClassName = "text-danger-600";
+
   return (
     <>
     <form onSubmit={isCreateMode ? (e) => e.preventDefault() : handleSubmit}>
       {/* ── Mobile: preview above form content ───────────────────────────── */}
       <div className="mb-6 lg:hidden">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className={previewLabelClassName}>
           Marketplace preview
         </p>
         <CreatorResourcePreview
@@ -759,7 +765,7 @@ export function CreatorResourceForm({
         <div className="mb-5">
           <div className="flex items-center gap-2">
             {isCreateMode && (
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
+              <span className={sectionStepBadgeClassName}>
                 1
               </span>
             )}
@@ -777,10 +783,10 @@ export function CreatorResourceForm({
         <div className="grid gap-5">
           <div
             ref={titleRef}
-            className={`space-y-1.5 rounded-xl p-1 -m-1 transition-all duration-300${highlightedField === "title" ? " ring-2 ring-inset ring-indigo-400/60 bg-indigo-50/60" : ""}`}
+            className={`space-y-1.5 rounded-xl p-1 -m-1 transition-all duration-300${highlightedField === "title" ? highlightedFieldClassName : ""}`}
           >
             <label htmlFor={titleInputId} className="text-sm font-medium text-foreground">
-              Title <span className="text-red-500">*</span>
+              Title <span className={requiredFieldAsteriskClassName}>*</span>
             </label>
             <Input
               id={titleInputId}
@@ -820,10 +826,10 @@ export function CreatorResourceForm({
 
           <div
             ref={descriptionRef}
-            className={`space-y-1.5 rounded-xl p-1 -m-1 transition-all duration-300${highlightedField === "description" ? " ring-2 ring-inset ring-indigo-400/60 bg-indigo-50/60" : ""}`}
+            className={`space-y-1.5 rounded-xl p-1 -m-1 transition-all duration-300${highlightedField === "description" ? highlightedFieldClassName : ""}`}
           >
             <label htmlFor={descriptionInputId} className="text-sm font-medium text-foreground">
-              Description <span className="text-red-500">*</span>
+              Description <span className={requiredFieldAsteriskClassName}>*</span>
             </label>
             <Textarea
               id={descriptionInputId}
@@ -851,7 +857,7 @@ export function CreatorResourceForm({
       <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
         <div className="mb-5 flex items-center gap-2">
           {isCreateMode && (
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100 text-[10px] font-bold text-blue-600">
+            <span className={sectionStepBadgeClassName}>
               2
             </span>
           )}
@@ -914,7 +920,7 @@ export function CreatorResourceForm({
 
           <div
             ref={priceRef}
-            className={`space-y-1.5 rounded-xl p-1 -m-1 transition-all duration-300${highlightedField === "price" ? " ring-2 ring-inset ring-indigo-400/60 bg-indigo-50/60" : ""}`}
+            className={`space-y-1.5 rounded-xl p-1 -m-1 transition-all duration-300${highlightedField === "price" ? highlightedFieldClassName : ""}`}
           >
             <label htmlFor={priceInputId} className="text-sm font-medium text-foreground">Price (THB)</label>
             <Input
@@ -943,7 +949,7 @@ export function CreatorResourceForm({
             type="checkbox"
             checked={form.isFree}
             onChange={handleChange}
-            className="h-4 w-4 rounded border-border text-blue-600 focus:ring-blue-500"
+            className="h-4 w-4 rounded border-border text-primary focus:ring-primary-500/20"
           />
           Make this resource free
         </label>
@@ -954,7 +960,7 @@ export function CreatorResourceForm({
         <div className="mb-5 space-y-2">
           <div className="flex items-center gap-2">
             {isCreateMode && (
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100 text-[10px] font-bold text-blue-600">
+              <span className={sectionStepBadgeClassName}>
                 3
               </span>
             )}
@@ -1150,7 +1156,7 @@ export function CreatorResourceForm({
 
           <div
             ref={fileRef}
-            className={`space-y-1.5 rounded-xl p-1 -m-1 transition-all duration-300${highlightedField === "file" ? " ring-2 ring-inset ring-indigo-400/60 bg-indigo-50/60" : ""}`}
+            className={`space-y-1.5 rounded-xl p-1 -m-1 transition-all duration-300${highlightedField === "file" ? highlightedFieldClassName : ""}`}
           >
             <div className="rounded-xl border border-border bg-muted p-4 sm:p-5">
               <div className="mb-4 flex items-start gap-3">
@@ -1507,7 +1513,7 @@ export function CreatorResourceForm({
       {/* ── Right column: sticky preview (desktop only) ───────────────────── */}
       <aside className="hidden lg:block">
         <div className="sticky top-24">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <p className={previewLabelClassName}>
             Marketplace preview
           </p>
           <CreatorResourcePreview

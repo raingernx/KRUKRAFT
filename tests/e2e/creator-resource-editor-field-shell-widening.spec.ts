@@ -98,6 +98,13 @@ test("creator resource editor metadata fields keep widened shared select and tex
     await expect(descriptionTextarea).toBeVisible();
     await expect(descriptionTextarea).toHaveCSS("border-radius", "8px");
 
+    const createPreviewLabel = page.locator("p").filter({
+      hasText: /^Marketplace preview$/i,
+      visible: true,
+    });
+    await expect(createPreviewLabel).toHaveCount(1);
+    await expect(createPreviewLabel).toHaveCSS("letter-spacing", "normal");
+
     let box = await descriptionTextarea.boundingBox();
     expect(box).not.toBeNull();
     expect(Math.round(box?.height ?? 0)).toBeGreaterThanOrEqual(144);
@@ -119,6 +126,13 @@ test("creator resource editor metadata fields keep widened shared select and tex
 
     await expect(descriptionTextarea).toBeVisible();
     await expect(descriptionTextarea).toHaveCSS("border-radius", "8px");
+
+    const editPreviewLabel = page.locator("p").filter({
+      hasText: /^Marketplace preview$/i,
+      visible: true,
+    });
+    await expect(editPreviewLabel).toHaveCount(1);
+    await expect(editPreviewLabel).toHaveCSS("letter-spacing", "normal");
 
     box = await descriptionTextarea.boundingBox();
     expect(box).not.toBeNull();

@@ -449,6 +449,10 @@ At a high level:
     - creator workspace now rides that same shared intro authority instead of a
       bespoke `Badge + h1 + sm CTA` block, and its loading companion inherits
       the same geometry
+    - creator resource-form preview labels now also treat tracking as drift
+      rather than as a creator-specific pattern, and label-adjacent emphasis in
+      that form now prefers semantic `primary` / `danger` tokens over local
+      `red`, `blue`, and `indigo` utilities
     - dashboard/admin shared product headers and sidebar labels now also treat
       tracking as opt-in instead of default: the shared `DashboardPageHeader`,
       `AdminPageHeader`, and `DashboardSidebar` patterns no longer inject

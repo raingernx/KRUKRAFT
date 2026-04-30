@@ -394,6 +394,10 @@ When this file conflicts with code, the code wins.
   `DashboardSidebar` labels now treat `letter-spacing` as `normal`; any
   remaining tracked labels in those route families should be treated as
   route-owned exceptions to inventory explicitly, not as the baseline.
+- In `CreatorResourceForm`, the `Marketplace preview` labels now follow that
+  same no-tracking rule. Required asterisks, step chips, and highlighted-field
+  emphasis in that form should use semantic tokens (`danger`, `primary`)
+  instead of route-local `red`, `blue`, or `indigo` utilities.
 - `RevealImage` is the shared image primitive for already-sized containers. Let
   the surrounding container own placeholder and background treatment.
 - `Card` is the calm generic shell card, not a product/marketplace card. The

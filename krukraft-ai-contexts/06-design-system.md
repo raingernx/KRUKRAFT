@@ -385,6 +385,10 @@ Use this order when DS docs disagree:
     - creator workspace now uses that same intro authority too, so the live
       route and its loading companion no longer keep a separate badge-first
       header shell
+    - creator resource-form preview labels now follow the same no-tracking
+      rule, and the form's required/highlight emphasis now leans on semantic
+      `danger` / `primary` tokens instead of route-local red/blue/indigo
+      utilities
     - shared dashboard/admin product labels now stop treating tracking as the
       baseline too: `DashboardPageHeader`, `AdminPageHeader`, and
       `DashboardSidebar` labels all render with normal letter-spacing, so any
