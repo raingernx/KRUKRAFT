@@ -389,21 +389,22 @@ async function ResourcesListingContent({
               </div>
             ) : null}
 
-            {listingUnavailable ? (
-              <ResourcesListingUnavailableState
-                retryHref={resourceGridQueryKey}
-              />
-            ) : isEmptySearchResults ? (
-              <Suspense fallback={<SearchRecoveryPanelFallback />}>
-                {searchRecoveryPromise ? (
-                  <SearchRecoveryPanelDeferred
-                    query={normalizedSearch}
-                    recoveryPromise={searchRecoveryPromise}
-                  />
-                ) : null}
-              </Suspense>
-            ) : (
-              <>
+            <ResourcesViewerStateProvider>
+              {listingUnavailable ? (
+                <ResourcesListingUnavailableState
+                  retryHref={resourceGridQueryKey}
+                />
+              ) : isEmptySearchResults ? (
+                <Suspense fallback={<SearchRecoveryPanelFallback />}>
+                  {searchRecoveryPromise ? (
+                    <SearchRecoveryPanelDeferred
+                      query={normalizedSearch}
+                      recoveryPromise={searchRecoveryPromise}
+                    />
+                  ) : null}
+                </Suspense>
+              ) : (
+                <>
                 {spotlightResource ? (
                   <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/12 via-card to-card p-4 shadow-sm sm:p-5">
                     <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(280px,320px)] lg:items-start">
@@ -447,17 +448,15 @@ async function ResourcesListingContent({
 
                       <div className="w-full max-w-[320px] justify-self-start lg:justify-self-end">
                         <div className="rounded-[1.35rem] border border-border-strong bg-background/85 p-2 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.48)]">
-                          <ResourcesViewerStateProvider>
-                            <ViewerAwareResourceCard
-                              resource={{
-                                ...spotlightResource,
-                                highlightBadge: spotlightLabel,
-                              }}
-                              variant="marketplace"
-                              linkPrefetchMode="viewport"
-                              imageLoading="eager"
-                            />
-                          </ResourcesViewerStateProvider>
+                          <ViewerAwareResourceCard
+                            resource={{
+                              ...spotlightResource,
+                              highlightBadge: spotlightLabel,
+                            }}
+                            variant="marketplace"
+                            linkPrefetchMode="viewport"
+                            imageLoading="eager"
+                          />
                         </div>
                       </div>
                     </div>
@@ -479,8 +478,9 @@ async function ResourcesListingContent({
                     cardPrefetchScope: `resource-card-grid:${resourceGridQueryKey}`,
                   }}
                 />
-              </>
-            )}
+                </>
+              )}
+            </ResourcesViewerStateProvider>
           </div>
         </div>
       </section>
