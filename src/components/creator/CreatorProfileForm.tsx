@@ -35,7 +35,25 @@ const LABEL_CLASS = "text-sm font-medium text-foreground";
 const SUPPORTING_COPY_CLASS = "text-sm text-muted-foreground";
 const SUBSECTION_TITLE_CLASS = "text-base font-semibold text-foreground";
 const FEEDBACK_ERROR_CLASS =
-  "rounded-xl border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700";
+  "rounded-xl border border-danger-500/25 bg-accent px-4 py-3 text-sm text-danger-700";
+const FEEDBACK_SUCCESS_CLASS =
+  "inline-flex w-full items-center gap-2 rounded-xl border border-success-500/25 bg-accent px-4 py-3 text-sm text-success-700";
+const PROFILE_SUCCESS_MESSAGE = "Creator profile updated.";
+const CREATOR_PROFILE_SUCCESS_STORAGE_KEY = "krukraft.creatorProfile.success";
+
+type AssetStatusTone = "success" | "warning";
+
+type AssetStatusState = {
+  message: string;
+  tone: AssetStatusTone;
+} | null;
+
+const ASSET_STATUS_CLASS_BY_TONE: Record<AssetStatusTone, string> = {
+  success:
+    "inline-flex items-center gap-1.5 rounded-full border border-success-500/25 bg-accent px-2.5 py-1 text-xs font-medium text-success-700",
+  warning:
+    "inline-flex items-center gap-1.5 rounded-full border border-warning-500/25 bg-accent px-2.5 py-1 text-xs font-medium text-warning-700",
+};
 
 function buildCreatorProfileFormState(profile: CreatorProfileFormProps["profile"]) {
   return {
@@ -63,7 +81,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [bannerPreviewError, setBannerPreviewError] = useState(false);
-  const [assetStatus, setAssetStatus] = useState<string | null>(null);
+  const [assetStatus, setAssetStatus] = useState<AssetStatusState>(null);
   const [uploadingAsset, setUploadingAsset] = useState<"avatar" | "banner" | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
@@ -132,6 +150,22 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const persistedSuccessMessage = window.sessionStorage.getItem(
+      CREATOR_PROFILE_SUCCESS_STORAGE_KEY,
+    );
+    if (!persistedSuccessMessage) {
+      return;
+    }
+
+    setSuccessMessage(persistedSuccessMessage);
+    window.sessionStorage.removeItem(CREATOR_PROFILE_SUCCESS_STORAGE_KEY);
+  }, []);
+
+  useEffect(() => {
     setForm(initialFormState);
     setSavedFormState(initialFormState);
   }, [initialFormState]);
@@ -192,7 +226,13 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
         throw new Error(json.error ?? "Failed to update creator profile.");
       }
 
-      setSuccessMessage("Creator profile updated.");
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem(
+          CREATOR_PROFILE_SUCCESS_STORAGE_KEY,
+          PROFILE_SUCCESS_MESSAGE,
+        );
+      }
+      setSuccessMessage(PROFILE_SUCCESS_MESSAGE);
       setAssetStatus(null);
       setSavedFormState(form);
     } catch (submitError) {
@@ -231,7 +271,10 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
           ? { creatorAvatar: json.url }
           : { creatorBanner: json.url }),
       }));
-      setAssetStatus(target === "avatar" ? "Store avatar ready to save." : "Banner ready to save.");
+      setAssetStatus({
+        message: target === "avatar" ? "Store avatar ready to save." : "Banner ready to save.",
+        tone: "success",
+      });
       setSuccessMessage(null);
       if (target === "banner") {
         setBannerPreviewError(false);
@@ -413,11 +456,14 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                           <label htmlFor="creator-avatar" className={LABEL_CLASS}>
                             Store avatar URL
                           </label>
-                          {assetStatus === "Store avatar removed. Save to apply." ||
+                          {assetStatus?.message === "Store avatar removed. Save to apply." ||
                           avatarHasUnsavedChanges ? (
-                            <p className="pt-0.5 text-right text-xs font-medium text-muted-foreground">
-                              {assetStatus === "Store avatar removed. Save to apply."
-                                ? assetStatus
+                            <p
+                              data-testid="creator-profile-avatar-status"
+                              className={ASSET_STATUS_CLASS_BY_TONE[assetStatus?.tone ?? "success"]}
+                            >
+                              {assetStatus?.message === "Store avatar removed. Save to apply."
+                                ? assetStatus.message
                                 : "Store avatar ready to save."}
                             </p>
                           ) : null}
@@ -468,7 +514,10 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                               disabled={assetControlsDisabled}
                               onClick={() => {
                                 setForm((prev) => ({ ...prev, creatorAvatar: "" }));
-                                setAssetStatus("Store avatar removed. Save to apply.");
+                                setAssetStatus({
+                                  message: "Store avatar removed. Save to apply.",
+                                  tone: "warning",
+                                });
                                 setSuccessMessage(null);
                               }}
                             >
@@ -484,11 +533,14 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                           <label htmlFor="creator-banner" className={LABEL_CLASS}>
                             Banner URL
                           </label>
-                          {assetStatus === "Banner removed. Save to apply." ||
+                          {assetStatus?.message === "Banner removed. Save to apply." ||
                           bannerHasUnsavedChanges ? (
-                            <p className="pt-0.5 text-right text-xs font-medium text-muted-foreground">
-                              {assetStatus === "Banner removed. Save to apply."
-                                ? assetStatus
+                            <p
+                              data-testid="creator-profile-banner-status"
+                              className={ASSET_STATUS_CLASS_BY_TONE[assetStatus?.tone ?? "success"]}
+                            >
+                              {assetStatus?.message === "Banner removed. Save to apply."
+                                ? assetStatus.message
                                 : "Banner ready to save."}
                             </p>
                           ) : null}
@@ -540,7 +592,10 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                               onClick={() => {
                                 setForm((prev) => ({ ...prev, creatorBanner: "" }));
                                 setBannerPreviewError(false);
-                                setAssetStatus("Banner removed. Save to apply.");
+                                setAssetStatus({
+                                  message: "Banner removed. Save to apply.",
+                                  tone: "warning",
+                                });
                                 setSuccessMessage(null);
                               }}
                             >
@@ -656,9 +711,19 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
             </section>
 
             <div className="space-y-3 border-t border-border-subtle pt-6">
-              {error ? <p className={FEEDBACK_ERROR_CLASS}>{error}</p> : null}
+              {error ? (
+                <p
+                  data-testid="creator-profile-feedback-error"
+                  className={FEEDBACK_ERROR_CLASS}
+                >
+                  {error}
+                </p>
+              ) : null}
               {successMessage ? (
-                <p className="inline-flex items-center gap-2 text-sm text-success-600">
+                <p
+                  data-testid="creator-profile-feedback-success"
+                  className={FEEDBACK_SUCCESS_CLASS}
+                >
                   <CheckCircle2 className="h-4 w-4" />
                   {successMessage}
                 </p>

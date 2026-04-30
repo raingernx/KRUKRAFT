@@ -189,6 +189,11 @@ Current runtime contract to mirror:
   publish/readiness feedback slice: `CreatorPublishReadiness` warning/ready
   states and the `CreatorPublishSuccessModal` success indicator both ride
   semantic warning/success families on the real publish flow.
+- `/dashboard/creator/profile` now proves the next live creator color-token
+  slice too: `CreatorProfileForm` asset-ready statuses ride semantic
+  success/warning families, the profile-save success message now uses a
+  semantic success surface, and the profile-save error rail now uses the same
+  semantic danger surface family as the creator-apply slice.
 - The live dashboard settings loading shell now mirrors the same shared
   dashboard page-header contract as the resolved settings route instead of
   keeping a badge-first intro copy; any remaining badge-led dashboard intro

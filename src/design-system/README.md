@@ -142,6 +142,11 @@ When this file conflicts with code, the code wins.
   publish/readiness feedback slice: `CreatorPublishReadiness` warning/ready
   states and the `CreatorPublishSuccessModal` success indicator both ride
   semantic warning/success families on the real publish flow.
+- `/dashboard/creator/profile` now proves the next live creator color-token
+  slice too: `CreatorProfileForm` asset-ready statuses ride semantic
+  success/warning families, the profile-save success message now uses a
+  semantic success surface, and the profile-save error rail now uses the same
+  semantic danger surface family as the creator-apply slice.
 - The live dashboard settings loading shell now routes its intro back through
   the shared dashboard page-header contract too; any remaining badge-first
   dashboard intro demos should be treated as preview-only exceptions until a
