@@ -8,6 +8,7 @@ import { Button } from "@/design-system";
 import { Logo } from "@/components/brand/Logo";
 import { LoginFormSkeleton } from "@/components/skeletons/LoginFormSkeleton";
 import { AlertCircle, CheckCircle2, Loader2 } from "@/lib/icons";
+import { primeAuthViewer } from "@/lib/auth/use-auth-viewer";
 import { routes } from "@/lib/routes";
 
 // Google icon — inline so we don't need an extra dep
@@ -71,6 +72,7 @@ function LoginForm() {
       if (result?.error) {
         setError("Invalid email or password. Please try again.");
       } else {
+        await primeAuthViewer().catch(() => null);
         router.push(next);
         router.refresh();
       }
