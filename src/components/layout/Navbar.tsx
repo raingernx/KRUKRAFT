@@ -234,7 +234,7 @@ function NavbarInner({
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const authViewer = useAuthViewer({ hydrateFromCache: false });
+  const authViewer = useAuthViewer();
   const authUser = authViewer.user;
   const creatorMenuMode = authViewer.creatorMenuMode;
   const isMarketplaceNavbar = Boolean(headerSearch);
