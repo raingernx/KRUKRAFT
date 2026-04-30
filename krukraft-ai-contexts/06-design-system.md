@@ -80,6 +80,11 @@ Use this order when DS docs disagree:
   are preview-only exceptions rather than live route drift.
 - `LoadingSkeleton` is the canonical shared skeleton primitive; runtime loading
   shells should stay neutral and structurally close to the resolved UI.
+- `Avatar` now has canonical Figma coverage on `DS Primitives` too:
+  the live source set documents the shared `24 / 32 / 40 / 56` ladder plus
+  image/name/email/explicit-initials/anonymous fallback states, while
+  `28 / 36 / 72 / 104` still remain runtime-owned posture extensions and the
+  fallback shell keeps one explicit Figma token gap around gradient/type scale.
 - `RevealImage` is the shared image primitive for already-sized containers; the
   surrounding container should own placeholder/background treatment.
 - `Badge` and `Chip` are now separate DS contracts:

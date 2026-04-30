@@ -85,6 +85,19 @@ layer itself is being maintained.
 - `LoadingSkeleton`
 - layout helpers under `src/design-system/layout/*`
 
+The canonical Figma file now covers `Avatar` directly on `DS Primitives`:
+
+- `Avatar / Foundations / Light`
+- `Avatar / Foundations / Dark`
+- nested `Avatar / Size` and `Avatar / Source` component sets
+- the current slice locks the shared `24 / 32 / 40 / 56` ladder plus
+  image/name/email/explicit-initials/anonymous fallback states
+- runtime-only `28 / 36 / 72 / 104` mounts remain product-owned posture
+  extensions until avatar sizing graduates into a shared token ladder
+- the fallback shell still carries one explicit Figma token gap:
+  a narrow local brand gradient plus proportional initials sizing because the
+  canonical file does not yet expose avatar-specific gradient/type tokens
+
 ### Control Size Contract
 
 When mapping control sizes into Figma:
@@ -166,6 +179,14 @@ Current runtime contract to mirror:
 - `SearchInput`
   - `variant=\"default\"` should ride the same field-size contract as `Input`
   - `variant=\"hero\"` is the only allowed search-shell exception
+- `Avatar`
+  - canonical Figma ladder: `24`, `32`, `40`, `56`
+  - preserve the current shared fallback order in docs and Figma source:
+    image → name-derived initials → email-derived initials → explicit initials
+    override → anonymous default
+  - treat `28`, `36`, `72`, and `104` as runtime/product-owned posture
+    extensions for now, not proof that the shared primitive already has a
+    settled size-family contract
 - Shared admin table header cells should preserve DOM attributes such as
   `data-testid` and `scope` so runtime proofs and accessibility semantics stay
   attached to the shared contract rather than pushing routes back to bespoke

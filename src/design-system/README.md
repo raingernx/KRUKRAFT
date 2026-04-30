@@ -68,6 +68,15 @@ When this file conflicts with code, the code wins.
 - `ToastProvider`
 - `useToast`
 
+Current canonical Figma shared-coverage note:
+
+- `Avatar` is no longer a code-only primitive
+- the canonical file now has `Avatar / Foundations / Light` and
+  `Avatar / Foundations / Dark` on `DS Primitives`
+- that slice currently documents the shared `24 / 32 / 40 / 56` ladder plus
+  image and fallback states, while `28 / 36 / 72 / 104` remain runtime-owned
+  posture extensions
+
 ### Composed Components
 
 - `ConfirmDialog`

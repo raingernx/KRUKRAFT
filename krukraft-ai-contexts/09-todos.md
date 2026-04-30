@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Figma shared-component coverage`
 
 > [!info] Current Phase
-> `Phase 3 — Avatar coverage on new primitives page`
+> `Phase 4 — Switch coverage slice selection`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -30,9 +30,9 @@ Parent Plan: `Figma shared-component coverage`
 > `Figma shared-component coverage` is now active. This parent plan is the next explicit follow-up after the Figma/runtime audit: it should stay confined to missing shared DS component coverage in the canonical Figma file before any new runtime adoption or product-exemplar work starts.
 
 > [!todo] Next Up
-> 1. Land the first canonical Figma shared-component slice for `Avatar` on `DS Primitives`
-> 2. Verify `Avatar` coverage against its real runtime size/fallback/image states and sync the mapping/docs in the same session
-> 3. Keep `Switch`, heavier shared primitives, runtime adoption work, and product exemplars out of scope until the `Avatar` slice closes
+> 1. Inventory the real runtime `Switch` surface and confirm what the canonical Figma file still lacks on `DS Primitives`
+> 2. Decide whether `Switch` is still the safest second narrow primitive slice now that `Avatar` is landed
+> 3. Keep heavier shared primitives, runtime adoption work, and product exemplars out of scope while the second primitive slice is being chosen
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow Figma coverage pass and should not silently reopen broad runtime rollout or product-exemplar work.
@@ -78,7 +78,7 @@ Parent Plan: `Figma shared-component coverage`
 | Dashboard/Admin Runtime Normalization | Complete | dashboard user-route intros, creator workspace intro, creator resource-form labels, creator settings labels, admin creators/reviews/orders table-summary labels, dashboard/admin search surfaces, and the live settings loading intro now normalize through one authority with no default tracking; remaining dashboard intro exceptions are preview/demo-only |
 | Creator color token normalization | Complete | `/dashboard/creator/apply`, `/dashboard/creator/resources/*`, and `/dashboard/creator/profile` now prove the main live creator semantic warning/success/danger feedback surfaces, and the close-out audit found no remaining in-scope live slice strong enough to keep the plan open |
 | Creator application semantic cleanup | Complete | route-level inventory on `/dashboard/creator/apply` found no remaining high-signal runtime slice; the form already rides semantic success/danger/muted families closely enough to close the optional follow-up plan |
-| Figma shared-component coverage | Active | page roles are now normalized (`DS Foundations`, `DS Primitives`, `DS Components`, `DS Parking / Legacy`, `Foundation Review`) and the first narrow canonical Figma slice is still `Avatar` |
+| Figma shared-component coverage | Active | page roles are now normalized and the first narrow canonical primitive slice (`Avatar`) is landed, so the next required choice is the second shared primitive slice rather than more runtime adoption work |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -91,7 +91,7 @@ Parent Plan: `Figma shared-component coverage`
 ## Progress
 
 Figma shared-component coverage
-`[███░░░░░░░] 35%`
+`[█████░░░░░] 50%`
 
 ```mermaid
 flowchart TB
@@ -141,10 +141,11 @@ flowchart TB
     AD0["Plan open<br/>Done"]
     AD1["Shared-component coverage inventory<br/>Done"]
     AD2["Canonical page architecture normalization<br/>Complete"]
-    AD3["Avatar coverage on new primitives page<br/>Active"]
+    AD3["Avatar coverage on new primitives page<br/>Complete"]
+    AD4["Switch coverage slice selection<br/>Active"]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4 --> AD0 --> AD1 --> AD2 --> AD3
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4 --> AD0 --> AD1 --> AD2 --> AD3 --> AD4
 ```
 
 ## Daily Workflow
@@ -180,7 +181,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 3 — Avatar coverage on new primitives page
+Phase 4 — Switch coverage slice selection
 
 ### Parent Plan
 Figma shared-component coverage
@@ -211,19 +212,24 @@ Figma shared-component coverage
     `Dropdown`, `DataPanelTable`, and route-owned search overrides
   - product-bound exemplar gaps like `ResourceCard`, pricing surfaces,
     `FileUploadWidget`, `NotificationButton`, and `PickerControls`
-- The first slice is now chosen:
-  - `Avatar` is the next canonical Figma target because it is reused across
-    dashboard, public account chrome, creator/profile surfaces, and creator
-    detail views
-  - its state space is still bounded enough for a narrow Figma pass:
-    size ladder, image vs initials fallback, and ring/shell posture
-  - it is safer than `LoadingSkeleton` and `Modal`, and more leveraged than
-    starting with `Switch`
+- The first narrow primitive slice is now landed:
+  - `Avatar` now has canonical `DS Primitives` coverage through paired
+    `Avatar / Foundations` boards plus nested `Avatar / Size` and
+    `Avatar / Source` sets
+  - the slice locks the shared `24 / 32 / 40 / 56` ladder and the current
+    runtime fallback order without silently pulling in runtime-only
+    `28 / 36 / 72 / 104` posture overrides
+  - it also exposes one explicit Figma token gap instead of hiding it:
+    local avatar gradient/type scaling still stands in until dedicated avatar
+    tokens exist
+- The next required plan decision is no longer whether `Avatar` should land.
+  It is whether `Switch` is still the safest second primitive slice now that
+  the first coverage proof exists.
 
 ### Goal
-Land `Avatar` as the first canonical Figma shared-component slice on top of the
-new page-role split, then use that slice to restart DS-from-Figma coverage work
-without mixing in runtime adoption or product-bound exemplar cleanup.
+Use the landed `Avatar` slice to choose the second narrow shared-primitive
+coverage target without reopening runtime adoption or jumping early to heavier
+shared primitives / product exemplars.
 
 ### Why this is the current phase
 - The repo already has enough evidence to say the next highest-signal DS work
@@ -235,9 +241,12 @@ without mixing in runtime adoption or product-bound exemplar cleanup.
 - The page-role cleanup was worth landing before `Avatar` because the canonical
   file had started to blur foundations, primitive boards, composed boards, and
   orphan scraps on one page.
-- `Avatar` is the best first slice because it sits in the sweet spot:
-  clearly shared, visibly reused, but still much less structurally risky than
-  `Modal` or `LoadingSkeleton`.
+- With `Avatar` now landed, the plan has enough proof to pick the second
+  primitive slice deliberately instead of guessing from the original grouped
+  inventory.
+- `Switch` is still the leading candidate because it stays in the same safe
+  shared-primitive tier as `Avatar`, but this phase should confirm that against
+  the real runtime surface before opening another Figma write.
 
 ### Definition of Done
 - [x] Open a new active parent plan for missing shared-component Figma coverage
@@ -247,9 +256,11 @@ without mixing in runtime adoption or product-bound exemplar cleanup.
   primitives before composed components
 - [x] Normalize canonical Figma page roles so `DS Foundations` holds only true
   foundations again before new shared coverage lands
-- [ ] Land and verify that first Figma coverage slice
-- [ ] Update the mapping/docs for every newly covered shared component in the
+- [x] Land and verify that first Figma coverage slice
+- [x] Update the mapping/docs for every newly covered shared component in the
   same session
+- [ ] Confirm the second narrow shared-primitive slice from the remaining tier
+  1 inventory
 
 ### Phase Map
 
@@ -258,15 +269,16 @@ without mixing in runtime adoption or product-bound exemplar cleanup.
 | 0 | Plan open | complete | shared-component Figma coverage was explicitly chosen as the next DS plan after the audit split Figma gaps from runtime adoption gaps |
 | 1 | Shared-component coverage inventory | complete | canonical Figma is still missing the shared primitives/composed set confirmed by the repo + Figma audit |
 | 2 | Canonical page architecture normalization | complete | the canonical file now separates true foundations, primitive boards, composed boards, parking/legacy scraps, and the review surface instead of mixing everything into one page |
-| 3 | Avatar coverage on new primitives page | active | `Avatar` is still the first narrow slice, but it should now land on `DS Primitives` instead of reopening the old all-in-one `DS Foundations` page |
+| 3 | Avatar coverage on new primitives page | complete | `Avatar` now lives on `DS Primitives` through paired `Avatar / Foundations` boards plus nested `Avatar / Size` and `Avatar / Source` sets, and the repo mapping/docs are synced to that live coverage |
+| 4 | Switch coverage slice selection | active | the next required move is to confirm whether `Switch` stays the safest second primitive slice now that the first narrow proof is landed |
 
 ---
 
 ## Current Goal
 
-1. land canonical Figma coverage for `Avatar` on `DS Primitives`
-2. sync the repo mapping/docs around that first slice
-3. keep `Switch`, heavier shared primitives, runtime adoption, and product exemplars out of scope while the `Avatar` slice is open
+1. inventory the real runtime `Switch` surface and the remaining canonical Figma gap on `DS Primitives`
+2. decide whether `Switch` should become the second narrow primitive slice
+3. keep heavier shared primitives, runtime adoption, and product exemplars out of scope while the second slice is being chosen
 
 ---
 
@@ -276,14 +288,16 @@ without mixing in runtime adoption or product-bound exemplar cleanup.
 - [x] Reconfirm the missing shared-component coverage set in canonical Figma
 - [x] Choose `Avatar` as the first narrow Figma coverage slice from that grouped inventory
 - [x] Split the canonical file into explicit page roles before starting the first new shared-component board
+- [x] Land canonical Figma coverage for `Avatar` on `DS Primitives`
+- [x] Verify `Avatar` coverage against the real runtime size/fallback/image states and sync the mapping/docs in the same session
 
 ---
 
 ## Next Up
 
-- [ ] Land the first canonical Figma shared-component slice for `Avatar` on `DS Primitives`
-- [ ] Verify `Avatar` coverage against its real runtime size/fallback/image states and sync the mapping/docs in the same session
-- [ ] Keep `Switch`, heavier shared primitives, runtime adoption work, and product exemplars out of scope for this parent plan
+- [ ] Inventory the real runtime `Switch` surface and confirm what the canonical Figma file still lacks on `DS Primitives`
+- [ ] Decide whether `Switch` is still the safest second narrow primitive slice now that `Avatar` is landed
+- [ ] Keep heavier shared primitives, runtime adoption work, and product exemplars out of scope for this parent plan
 
 ---
 
@@ -380,6 +394,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-30: The first canonical shared-primitive slice inside `Figma shared-component coverage` is now landed. `DS Primitives` now carries paired `Avatar / Foundations / Light` and `Avatar / Foundations / Dark` boards plus nested `Avatar / Size` and `Avatar / Source` sets. The slice locks the shared `24 / 32 / 40 / 56` ladder, the current runtime fallback order (image, name, email, explicit initials, anonymous), and makes the remaining gap explicit instead of silent: avatar fallback still uses a narrow local brand gradient and proportional initials sizing because the canonical file does not yet expose avatar-specific gradient/type tokens. The parent plan stays open, but the next phase is no longer `Avatar`; it is choosing the second narrow primitive slice, with `Switch` as the leading candidate.
 - 2026-04-30: The first narrow slice inside `Figma shared-component coverage` is now chosen. Inventory grouped the missing canonical Figma set into safer primitives first (`Avatar`, `Switch`), then heavier primitives (`Modal`, `LoadingSkeleton`, `RevealImage`, `ToastProvider`), then composed components (`SectionHeader`, `Pagination`, `EmptyState`, `RowActions`, `ConfirmDialog`). `Avatar` is the best first slice because it is already reused across dashboard, public account chrome, creator/profile surfaces, and creator detail views, but its state space is still bounded enough to map cleanly in one canonical Figma pass.
 - 2026-04-30: Before landing `Avatar`, the canonical Figma file now has explicit page roles again. `DS Foundations` was reduced to the 5 true token/foundation boards, `DS Primitives` now owns the primitive component boards, `DS Components` now owns the composed shared boards, `DS Parking / Legacy` now keeps recovered orphan root text off canonical pages, and `Foundation Review` was restored as a review-only surface. The next in-plan slice stays `Avatar`, but it should now land on `DS Primitives` instead of reopening the old all-in-one foundation page.
 - 2026-04-30: Open a new parent plan `Figma shared-component coverage` after the latest DS audit separated canonical Figma gaps from runtime-adoption gaps. The next required work is confined to missing shared coverage in the canonical file (`Switch`, `Avatar`, `Modal`, `LoadingSkeleton`, `RevealImage`, `ToastProvider`, `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`, `ConfirmDialog`) before reopening runtime adoption or product-exemplar work.
