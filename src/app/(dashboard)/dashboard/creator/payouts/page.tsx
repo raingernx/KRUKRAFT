@@ -1,4 +1,4 @@
-import { DashboardCreatorPayoutsContent } from "@/components/dashboard/routes/DashboardCreatorProtectedRoutes";
+import { DashboardCreatorPayoutsContent } from "@/components/dashboard/routes/DashboardCreatorEarningsRoute";
 import { requireCreatorDashboardAccess } from "@/lib/auth/require-creator-dashboard-access";
 import { routes } from "@/lib/routes";
 import { getDashboardCreatorEarningsData } from "@/services/dashboard/creator-earnings.service";

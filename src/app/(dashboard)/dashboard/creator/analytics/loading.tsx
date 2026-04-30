@@ -1,4 +1,4 @@
-import { DashboardCreatorAnalyticsLoadingContent } from "@/components/dashboard/routes/DashboardCreatorProtectedRoutes";
+import { DashboardCreatorAnalyticsLoadingContent } from "@/components/dashboard/routes/DashboardCreatorAnalyticsRoute";
 
 export default function DashboardCreatorAnalyticsLoading() {
   return <DashboardCreatorAnalyticsLoadingContent />;

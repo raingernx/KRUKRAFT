@@ -1,4 +1,4 @@
-import { DashboardCreatorProfileLoadingContent } from "@/components/dashboard/routes/DashboardCreatorProtectedRoutes";
+import { DashboardCreatorProfileLoadingContent } from "@/components/dashboard/routes/DashboardCreatorProfileRoute";
 
 export default function DashboardCreatorProfileLoading() {
   return <DashboardCreatorProfileLoadingContent />;
