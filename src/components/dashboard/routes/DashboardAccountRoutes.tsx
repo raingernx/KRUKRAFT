@@ -20,6 +20,7 @@ import {
   DashboardSettingsLoadingContent,
   DashboardSettingsSectionsLoadingContent,
 } from "@/components/dashboard/DashboardSettingsLoadingContent";
+import { AuthSessionProvider } from "@/components/providers/AuthSessionProvider";
 import { DashboardRouteIntro } from "@/components/dashboard/DashboardRouteIntro";
 import { DashboardPageShell } from "@/components/layout/dashboard/DashboardPageShell";
 import { NotificationSettings } from "@/components/settings/NotificationSettings";
@@ -306,13 +307,15 @@ function DashboardSettingsResolvedContent({
           <div className="min-w-0">
             <div className="rounded-2xl border border-border-subtle bg-card px-6 py-6">
               <div id="settings-profile" className="scroll-mt-24">
-                <ProfileSettings
-                  name={data.profile.displayName}
-                  email={data.profile.email}
-                  image={data.profile.avatarUrl}
-                  providerImage={data.profile.providerAvatarUrl}
-                  providerLabel={data.profile.providerLabel}
-                />
+                <AuthSessionProvider>
+                  <ProfileSettings
+                    name={data.profile.displayName}
+                    email={data.profile.email}
+                    image={data.profile.avatarUrl}
+                    providerImage={data.profile.providerAvatarUrl}
+                    providerLabel={data.profile.providerLabel}
+                  />
+                </AuthSessionProvider>
               </div>
               <div
                 id="settings-preferences"
