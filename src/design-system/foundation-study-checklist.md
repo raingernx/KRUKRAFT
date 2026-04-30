@@ -16,7 +16,7 @@ Use these as the fixed inputs for the current study round:
   - `shell #FCFBFB`
   - `surface #F9F7F8`
   - `canvas #FEFDFC`
-  - `inset #F3EFED`
+  - `inset #F1EFEE`
   - `line #E5E2E4`
 - primary: `#5144ED`
 - support accents: `Rust #DB3A1C` and `Sand #E59C46`
