@@ -8,55 +8,23 @@ import {
   useSearchParams,
   type ReadonlyURLSearchParams,
 } from "next/navigation";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
 import {
   Menu,
-  X,
-  type AppIcon,
 } from "@/lib/icons";
 
 import {
-  Badge,
   Button,
   SearchInput,
-  SidebarItem,
-  SidebarSectionLabel,
 } from "@/design-system";
 import type { DashboardAppViewer } from "@/components/dashboard/DashboardAppViewer";
-import { Logo } from "@/components/brand/Logo";
-import { CORE_DASHBOARD_NAV_SECTIONS } from "@/config/dashboard-nav/dashboard-core";
 import {
-  getDashboardCreatorNavSection,
-  insertDashboardCreatorSection,
-} from "@/config/dashboard-nav/creator-nav";
-import type { DashboardNavItem } from "@/components/layout/dashboard/dashboard-nav.types";
-import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
+  DashboardSidebarContent,
+  getDashboardTopbarSearchHref,
+  getDashboardTopbarSearchPlaceholder,
+  getDashboardTopbarSearchValue,
+} from "@/components/dashboard/DashboardSidebarContent";
 import { cn } from "@/lib/utils";
 import { routes } from "@/lib/routes";
-
-type NavKey =
-  | "home"
-  | "library"
-  | "downloads"
-  | "purchases"
-  | "membership"
-  | "settings"
-  | "creator"
-  | "creator-resources"
-  | "creator-earnings";
-
-type NavItem = {
-  label: string;
-  icon?: AppIcon;
-  href: string;
-  exact?: boolean;
-  activeKey?: NavKey;
-};
-
-type NavGroup = {
-  label: string;
-  items: NavItem[];
-};
 
 const DashboardTopbarActions = dynamic(
   () =>
@@ -89,266 +57,20 @@ const DashboardTopbarActions = dynamic(
   },
 );
 
-const navGroups: NavGroup[] = CORE_DASHBOARD_NAV_SECTIONS.map((section) => ({
-  label: section.label,
-  items: section.items,
-}));
-
-function isBaseNavItemActive(item: DashboardNavItem, pathname: string | null) {
-  if (item.exact) {
-    return pathname === item.href;
-  }
-
-  return pathname === item.href || pathname?.startsWith(`${item.href}/`) === true;
-}
-
-function getCreatorNavItemActiveKey(href: string): NavKey | undefined {
-  if (href === routes.dashboardCreatorResources) {
-    return "creator-resources";
-  }
-
-  if (href === routes.dashboardCreatorSales) {
-    return "creator-earnings";
-  }
-
-  if (
-    href === routes.dashboardCreator ||
-    href === routes.dashboardCreatorApply
-  ) {
-    return "creator";
-  }
-
-  return undefined;
-}
-
-function getActiveKey(pathname: string | null): NavKey {
-  if (pathname === routes.dashboardLibrary) return "library";
-  if (pathname === routes.dashboardDownloads) return "downloads";
-  if (pathname === routes.dashboardPurchases) return "purchases";
-  if (pathname === routes.dashboardMembership) return "membership";
-  if (pathname === routes.dashboardSettings) return "settings";
-  if (pathname === routes.dashboardCreatorResources) return "creator-resources";
-  if (pathname?.startsWith(`${routes.dashboardCreatorResources}/`)) {
-    return "creator-resources";
-  }
-  if (pathname === routes.dashboardCreatorAnalytics) return "creator";
-  if (pathname === routes.dashboardCreatorSales) return "creator-earnings";
-  if (pathname === routes.dashboardCreatorPayouts) return "creator-earnings";
-  if (pathname === routes.dashboardCreatorStorefront) return "creator";
-  if (pathname === routes.dashboardCreatorProfile) return "creator";
-  if (pathname === routes.dashboardCreatorSettings) return "creator";
-  if (pathname?.startsWith(routes.dashboardCreator)) return "creator";
-  return "home";
-}
-
-function getDashboardTopbarSearchPlaceholder(pathname: string | null) {
-  switch (getActiveKey(pathname)) {
-    case "downloads":
-      return "Search your library from downloads";
-    case "purchases":
-      return "Search your library from purchases";
-    case "membership":
-      return "Search your library while reviewing plans";
-    case "settings":
-      return "Search your library from settings";
-    case "creator":
-    case "creator-resources":
-    case "creator-earnings":
-      return "Search your library";
-    case "library":
-    case "home":
-    default:
-      return "Search your library";
-  }
-}
-
-function getDashboardTopbarSearchValue(
-  pathname: string | null,
-  searchParams: ReadonlyURLSearchParams,
-) {
-  if (pathname !== routes.dashboardLibrary) {
-    return "";
-  }
-
-  return searchParams.get("q") ?? "";
-}
-
-function getDashboardTopbarSearchHref(input: {
-  pathname: string | null;
-  searchParams: ReadonlyURLSearchParams;
-  query: string;
-}) {
-  const query = input.query.trim();
-
-  if (input.pathname === routes.dashboardLibrary) {
-    const params = new URLSearchParams(input.searchParams.toString());
-
-    if (query) {
-      params.set("q", query);
-    } else {
-      params.delete("q");
-    }
-
-    const nextQuery = params.toString();
-    return nextQuery ? `${routes.dashboardLibrary}?${nextQuery}` : routes.dashboardLibrary;
-  }
-
-  if (!query) {
-    return routes.dashboardLibrary;
-  }
-
-  return `${routes.dashboardLibrary}?q=${encodeURIComponent(query)}`;
-}
-
-function NavigationList({
-  viewer,
-  closeOnNavigate = false,
-}: {
-  viewer: DashboardAppViewer;
-  closeOnNavigate?: boolean;
-}) {
-  const pathname = usePathname();
-  const activeKey = getActiveKey(pathname);
-  const prefetchMode = closeOnNavigate ? "intent" : "viewport";
-  const prefetchScope = closeOnNavigate
-    ? "dashboard-sidebar-drawer"
-    : "dashboard-sidebar-rail";
-  const creatorSection = getDashboardCreatorNavSection({
-    creatorNavMode: viewer.creatorNavMode,
-    creatorPublicHref: viewer.creatorPublicHref,
-  });
-  const creatorGroup = creatorSection
-    ? {
-        ...creatorSection,
-        items: creatorSection.items.map((item) => ({
-          ...item,
-          activeKey: getCreatorNavItemActiveKey(item.href),
-        })),
-      }
-    : null;
-  const groups = insertDashboardCreatorSection(navGroups, creatorGroup);
-
-  return (
-    <nav className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-3 py-5">
-      {groups.map((group) => (
-        <div key={group.label} className="space-y-2">
-          <SidebarSectionLabel className="px-3">
-            {group.label}
-          </SidebarSectionLabel>
-          <div className="space-y-1">
-            {group.items.map((item) => {
-              const isActive = item.activeKey
-                ? item.activeKey === activeKey
-                : isBaseNavItemActive(item, pathname);
-              const link = (
-                <SidebarItem
-                  key={item.label}
-                  active={isActive}
-                  asChild
-                  aria-current={isActive ? "page" : undefined}
-                  icon={item.icon}
-                >
-                  <IntentPrefetchLink
-                    href={item.href}
-                    prefetchLimit={12}
-                    prefetchMode={prefetchMode}
-                    prefetchScope={prefetchScope}
-                  >
-                    {item.label}
-                  </IntentPrefetchLink>
-                </SidebarItem>
-              );
-
-              return closeOnNavigate ? (
-                <DialogPrimitive.Close key={item.label} asChild>
-                  {link}
-                </DialogPrimitive.Close>
-              ) : (
-                link
-              );
-            })}
-          </div>
-        </div>
-      ))}
-    </nav>
-  );
-}
-
-function SidebarIdentity() {
-  return (
-    <div className="border-b border-border-subtle px-5 py-4">
-      <div className="flex items-center">
-        <Logo variant="full" size="navbar" preferRepoAsset className="shrink-0" />
-      </div>
-    </div>
-  );
-}
-
-function SidebarCallout({
-  viewer,
-  closeOnNavigate = false,
-}: {
-  viewer: DashboardAppViewer;
-  closeOnNavigate?: boolean;
-}) {
-  if (viewer.creatorNavMode !== "apply") {
-    return null;
-  }
-
-  const prefetchMode = closeOnNavigate ? "intent" : "viewport";
-  const checklistButton = (
-    <Button className="mt-3" size="sm" variant="quiet" fullWidth asChild>
-      <IntentPrefetchLink
-        href={routes.dashboardCreator}
-        prefetchLimit={4}
-        prefetchMode={prefetchMode}
-        prefetchScope="dashboard-sidebar-callout"
-      >
-        Open checklist
-      </IntentPrefetchLink>
-    </Button>
-  );
-
-  return (
-    <div className="border-t border-border-subtle p-4">
-      <div className="rounded-lg border border-border-subtle bg-card/95 p-4 shadow-card">
-        <Badge variant="featured">Creator-ready</Badge>
-        <p className="mt-3 text-sm font-semibold text-foreground">
-          Start selling resources
-        </p>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">
-          Upload a worksheet pack and track sales from one workspace.
-        </p>
-        {closeOnNavigate ? (
-          <DialogPrimitive.Close asChild>{checklistButton}</DialogPrimitive.Close>
-        ) : (
-          checklistButton
-        )}
-      </div>
-    </div>
-  );
-}
-
-function SidebarContent({
-  viewer,
-  closeOnNavigate = false,
-}: {
-  viewer: DashboardAppViewer;
-  closeOnNavigate?: boolean;
-}) {
-  return (
-    <>
-      <SidebarIdentity />
-      <NavigationList viewer={viewer} closeOnNavigate={closeOnNavigate} />
-      <SidebarCallout viewer={viewer} closeOnNavigate={closeOnNavigate} />
-    </>
-  );
-}
+const DashboardMobileNavigation = dynamic(
+  () =>
+    import("@/components/dashboard/DashboardMobileNavigation").then((module) => ({
+      default: module.DashboardMobileNavigation,
+    })),
+  {
+    ssr: false,
+  },
+);
 
 export function DashboardAppSidebar({ viewer }: { viewer: DashboardAppViewer }) {
   return (
     <aside className="hidden w-72 shrink-0 border-r border-border-subtle bg-card lg:sticky lg:top-0 lg:flex lg:h-dvh lg:self-start lg:flex-col lg:overflow-hidden">
-      <SidebarContent viewer={viewer} />
+      <DashboardSidebarContent viewer={viewer} />
     </aside>
   );
 }
@@ -408,54 +130,43 @@ function DashboardAppTopbarSearch() {
 }
 
 export function DashboardAppTopbar({ viewer }: { viewer: DashboardAppViewer }) {
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [hasOpenedMobileNav, setHasOpenedMobileNav] = useState(false);
+
   return (
-    <DialogPrimitive.Root>
+    <>
       <header className="sticky top-0 z-10 border-b border-border-subtle bg-background/95 px-4 pt-3 pb-3 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
-          <DialogPrimitive.Trigger asChild>
-            <Button
-              aria-label="Open dashboard navigation"
-              className="size-11 lg:hidden"
-              onClick={() => {
-                const activeElement = document.activeElement;
-                if (activeElement instanceof HTMLElement) {
-                  activeElement.blur();
-                }
-              }}
-              size="icon"
-              variant="ghost"
-            >
-              <Menu className="size-5" aria-hidden />
-            </Button>
-          </DialogPrimitive.Trigger>
+          <Button
+            aria-label="Open dashboard navigation"
+            className="size-11 lg:hidden"
+            onClick={() => {
+              const activeElement = document.activeElement;
+              if (activeElement instanceof HTMLElement) {
+                activeElement.blur();
+              }
+
+              setHasOpenedMobileNav(true);
+              setIsMobileNavOpen(true);
+            }}
+            size="icon"
+            variant="ghost"
+          >
+            <Menu className="size-5" aria-hidden />
+          </Button>
 
           <DashboardAppTopbarSearch />
           <DashboardTopbarActions viewer={viewer} />
         </div>
       </header>
 
-      <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-[hsl(var(--card)/0.78)] backdrop-blur-[2px] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 lg:hidden" />
-        <DialogPrimitive.Content className="fixed inset-y-0 left-0 z-50 flex w-[min(20rem,calc(100vw-2rem))] flex-col border-r border-border-subtle bg-card/95 shadow-card-lg outline-none data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left data-[state=open]:animate-in data-[state=open]:slide-in-from-left lg:hidden">
-          <DialogPrimitive.Title className="sr-only">
-            Dashboard navigation
-          </DialogPrimitive.Title>
-          <DialogPrimitive.Description className="sr-only">
-            Navigate between dashboard sections.
-          </DialogPrimitive.Description>
-          <DialogPrimitive.Close asChild>
-            <Button
-              aria-label="Close dashboard navigation"
-              className="absolute right-3 top-3 size-11"
-              size="icon"
-              variant="ghost"
-            >
-              <X className="size-4" aria-hidden />
-            </Button>
-          </DialogPrimitive.Close>
-          <SidebarContent closeOnNavigate viewer={viewer} />
-        </DialogPrimitive.Content>
-      </DialogPrimitive.Portal>
-    </DialogPrimitive.Root>
+      {hasOpenedMobileNav ? (
+        <DashboardMobileNavigation
+          open={isMobileNavOpen}
+          onOpenChange={setIsMobileNavOpen}
+          viewer={viewer}
+        />
+      ) : null}
+    </>
   );
 }
