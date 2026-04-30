@@ -138,6 +138,10 @@ When this file conflicts with code, the code wins.
   proof route: resource-editor helper/callout icons use semantic `primary`
   instead of route-owned brand color, and preview-image validation copy uses
   semantic destructive text instead of route-owned red utilities.
+- `/dashboard/creator/resources/new` also now proves the first live
+  publish/readiness feedback slice: `CreatorPublishReadiness` warning/ready
+  states and the `CreatorPublishSuccessModal` success indicator both ride
+  semantic warning/success families on the real publish flow.
 - The live dashboard settings loading shell now routes its intro back through
   the shared dashboard page-header contract too; any remaining badge-first
   dashboard intro demos should be treated as preview-only exceptions until a

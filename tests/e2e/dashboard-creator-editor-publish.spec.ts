@@ -19,6 +19,17 @@ async function cleanupProbeResources() {
   }
 }
 
+async function resolveUtilityColor(page: import("@playwright/test").Page, className: string) {
+  return page.evaluate((utilityClassName) => {
+    const probe = document.createElement("div");
+    probe.className = utilityClassName;
+    document.body.appendChild(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  }, className);
+}
+
 function createTinyPdfUpload() {
   const pdf = `%PDF-1.4
 1 0 obj
@@ -72,9 +83,17 @@ test("dashboard creator create editor uploads a file and opens publish success m
       page.getByRole("heading", { name: /^New resource$/i }),
     ).toBeVisible();
 
+    const warningColor = await resolveUtilityColor(page, "text-warning-600");
+    const successColor = await resolveUtilityColor(page, "text-success-600");
+
     // The create editor still needs a short hydration settle before local form
     // state and file-upload handlers behave deterministically in browser probes.
     await page.waitForTimeout(5_000);
+
+    const readinessShell = page.getByTestId("creator-publish-readiness-shell");
+    const readinessIcon = page.getByTestId("creator-publish-readiness-icon");
+    await expect(readinessShell).toHaveAttribute("data-state", "incomplete");
+    await expect(readinessIcon).toHaveCSS("color", warningColor);
 
     await page.locator('input[name="title"]').fill(PROBE_TITLE);
     await page
@@ -102,9 +121,7 @@ test("dashboard creator create editor uploads a file and opens publish success m
     await fileInputs.last().setInputFiles(createTinyPdfUpload());
     await expect(page.getByText("dashboard-publish-probe.pdf")).toBeVisible();
 
-    await deliverySection
-      .getByRole("button", { name: "อัปโหลดไฟล์", exact: true })
-      .click();
+    await deliverySection.getByTestId("file-upload-submit").click();
 
     const draftResponse = await draftResponsePromise;
     const uploadResponse = await uploadResponsePromise;
@@ -114,6 +131,8 @@ test("dashboard creator create editor uploads a file and opens publish success m
     await expect(
       page.getByText(/อัปโหลดไฟล์เรียบร้อยแล้ว|File uploaded successfully/i),
     ).toBeVisible();
+    await expect(readinessShell).toHaveAttribute("data-state", "ready");
+    await expect(readinessIcon).toHaveCSS("color", successColor);
 
     const publishButton = page.getByRole("button", { name: /^Publish$/i });
     await expect(publishButton).toBeEnabled();
@@ -135,6 +154,10 @@ test("dashboard creator create editor uploads a file and opens publish success m
     await expect(
       page.getByRole("heading", { name: /Your resource is live/i }),
     ).toBeVisible();
+    await expect(page.getByTestId("creator-publish-success-indicator")).toHaveCSS(
+      "color",
+      successColor,
+    );
   } finally {
     await cleanupProbeResources();
   }
@@ -173,9 +196,7 @@ test("dashboard creator create editor can upload before metadata without validat
     });
 
     await fileInputs.last().setInputFiles(createTinyPdfUpload());
-    await deliverySection
-      .getByRole("button", { name: "อัปโหลดไฟล์", exact: true })
-      .click();
+    await deliverySection.getByTestId("file-upload-submit").click();
 
     const draftResponse = await draftResponsePromise;
     const uploadResponse = await uploadResponsePromise;

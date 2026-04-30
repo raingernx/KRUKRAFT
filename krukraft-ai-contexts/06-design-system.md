@@ -66,6 +66,10 @@ Use this order when DS docs disagree:
   proof route: the editor's helper/callout icons now use semantic `primary`
   instead of route-owned brand color, and preview-image validation copy now
   uses semantic destructive text instead of route-owned red utilities.
+- `/dashboard/creator/resources/new` also now proves the first live
+  publish/readiness feedback slice: `CreatorPublishReadiness` warning/ready
+  states and the `CreatorPublishSuccessModal` success indicator both ride
+  semantic warning/success families on the real publish flow.
 - The live dashboard settings loading shell now reuses the shared dashboard
   page-header intro contract too; remaining badge-first dashboard intro demos
   are preview-only exceptions rather than live route drift.

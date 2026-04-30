@@ -33,6 +33,8 @@ export function CreatorPublishReadiness({
   if (isReady) {
     return (
       <div
+        data-testid="creator-publish-readiness-shell"
+        data-state="ready"
         className={`flex items-center gap-3 rounded-2xl px-4 py-3 ${
           subtle
             ? "border border-border bg-muted"
@@ -40,6 +42,7 @@ export function CreatorPublishReadiness({
         }`}
       >
         <span
+          data-testid="creator-publish-readiness-icon"
           className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${
             subtle ? "bg-background text-success-600" : "bg-card text-success-600"
           }`}
@@ -62,12 +65,15 @@ export function CreatorPublishReadiness({
 
   return (
     <div
+      data-testid="creator-publish-readiness-shell"
+      data-state="incomplete"
       className={`rounded-2xl border px-4 py-3 ${
         subtle ? "border-border bg-muted" : "border-warning-500/25 bg-accent"
       }`}
     >
       <div className="flex items-start gap-3">
         <span
+          data-testid="creator-publish-readiness-icon"
           className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${
             subtle ? "bg-background text-muted-foreground" : "bg-card text-warning-600"
           }`}

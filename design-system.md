@@ -185,6 +185,10 @@ Current runtime contract to mirror:
   proof route: the editor helper/callout icons now use semantic `primary`
   instead of route-owned brand color, and preview-image validation copy now
   uses semantic destructive text instead of route-owned red utility classes.
+- `/dashboard/creator/resources/new` also now proves the first live
+  publish/readiness feedback slice: `CreatorPublishReadiness` warning/ready
+  states and the `CreatorPublishSuccessModal` success indicator both ride
+  semantic warning/success families on the real publish flow.
 - The live dashboard settings loading shell now mirrors the same shared
   dashboard page-header contract as the resolved settings route instead of
   keeping a badge-first intro copy; any remaining badge-led dashboard intro

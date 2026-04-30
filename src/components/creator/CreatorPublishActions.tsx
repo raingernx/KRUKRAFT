@@ -33,13 +33,13 @@ export function CreatorPublishActions({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1">
           {error ? (
-            <p className="text-sm text-danger-700">{error}</p>
+            <p data-testid="creator-publish-actions-status" className="text-sm text-destructive">{error}</p>
           ) : !canPublish ? (
-            <p className="text-xs text-muted-foreground">
+            <p data-testid="creator-publish-actions-status" className="text-xs text-muted-foreground">
               Fill in a title and description to enable publishing.
             </p>
           ) : (
-            <p className="text-xs text-success-600">
+            <p data-testid="creator-publish-actions-status" className="text-xs text-success-600">
               Ready to publish — all required fields are complete.
             </p>
           )}

@@ -113,7 +113,10 @@ export function CreatorPublishSuccessModal({
           {/* ── Success indicator ──────────────────────────────────────── */}
           <div className="flex flex-col items-center text-center">
             <Badge variant="success">Published</Badge>
-            <span className="mt-4 flex h-14 w-14 items-center justify-center rounded-full border border-success-500/25 bg-accent text-success-600">
+            <span
+              data-testid="creator-publish-success-indicator"
+              className="mt-4 flex h-14 w-14 items-center justify-center rounded-full border border-success-500/25 bg-accent text-success-600"
+            >
               <CheckCircle2 className="h-8 w-8" />
             </span>
             <h2 className="mt-4 font-display text-2xl font-semibold tracking-tight text-foreground">
