@@ -3,6 +3,7 @@ import { getAuthTokenSnapshot } from "@/lib/auth/token-snapshot";
 import { resolveDashboardNavState } from "@/lib/dashboard/dashboard-permissions";
 import {
   canAccessCreatorWorkspace,
+  getRoleScopedCreatorAccessState,
   getCreatorAccessState,
 } from "@/services/creator";
 
@@ -11,9 +12,12 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   try {
     const auth = await getAuthTokenSnapshot(req);
-    const creatorAccess = auth.userId
-      ? await getCreatorAccessState(auth.userId).catch(() => null)
-      : null;
+    const roleScopedAccess = getRoleScopedCreatorAccessState(auth.role);
+    const creatorAccess =
+      roleScopedAccess ??
+      (auth.userId
+        ? await getCreatorAccessState(auth.userId).catch(() => null)
+        : null);
     const { creatorNavMode } = resolveDashboardNavState({
       area: "dashboard",
       role: auth.role,

@@ -13,6 +13,7 @@ import {
 } from "@/lib/dashboard/dashboard-permissions";
 import {
   canAccessCreatorWorkspace,
+  getRoleScopedCreatorAccessState,
   getCreatorAccessState,
 } from "@/services/creator";
 
@@ -23,7 +24,9 @@ async function getDashboardAppViewer(): Promise<DashboardAppViewer> {
     auth.email?.trim().split("@")[0] ||
     "Guest preview";
 
-  let creatorEnabled = auth.role === "INSTRUCTOR";
+  const roleScopedAccess = getRoleScopedCreatorAccessState(auth.role);
+
+  let creatorEnabled = canAccessCreatorWorkspace(roleScopedAccess);
   if (!creatorEnabled && auth.userId) {
     const creatorAccess = await getCreatorAccessState(auth.userId).catch(() => null);
     creatorEnabled = canAccessCreatorWorkspace(creatorAccess);

@@ -220,6 +220,36 @@ export function canAccessCreatorWorkspace(
   return Boolean(access && (access.eligible || access.role === "ADMIN"));
 }
 
+export function getRoleScopedCreatorAccessState(
+  role: UserRole | null | undefined,
+): CreatorAccessState | null {
+  if (role === "ADMIN") {
+    return {
+      eligible: true,
+      canCreate: true,
+      role: "ADMIN",
+      resourceCount: 0,
+      creatorEnabled: true,
+      creatorStatus: "ACTIVE",
+      applicationStatus: "APPROVED",
+    };
+  }
+
+  if (role === "INSTRUCTOR") {
+    return {
+      eligible: true,
+      canCreate: true,
+      role: "INSTRUCTOR",
+      resourceCount: 0,
+      creatorEnabled: true,
+      creatorStatus: "ACTIVE",
+      applicationStatus: "APPROVED",
+    };
+  }
+
+  return null;
+}
+
 export interface CreatorMetrics {
   totalDownloads: number;
   totalSales: number;

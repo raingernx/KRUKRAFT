@@ -2,11 +2,19 @@ import { redirect } from "next/navigation";
 
 import { requireSession } from "@/lib/auth/require-session";
 import { routes } from "@/lib/routes";
-import { canAccessCreatorWorkspace, getCreatorAccessState } from "@/services/creator";
+import {
+  canAccessCreatorWorkspace,
+  getCreatorAccessState,
+  getRoleScopedCreatorAccessState,
+} from "@/services/creator";
 
 export async function requireCreatorDashboardAccess(route: string) {
   const sessionState = await requireSession(route);
-  const access = await getCreatorAccessState(sessionState.userId);
+  const roleScopedAccess = getRoleScopedCreatorAccessState(
+    sessionState.session.user.role,
+  );
+  const access =
+    roleScopedAccess ?? (await getCreatorAccessState(sessionState.userId));
 
   const canOpenCreatorFamily =
     sessionState.session.user.role === "ADMIN" ||
