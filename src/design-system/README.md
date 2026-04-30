@@ -134,6 +134,10 @@ When this file conflicts with code, the code wins.
   route: pending, approved, and rejected state panels use semantic
   warning/success/danger emphasis surfaces, and the rejected feedback rail uses
   the same semantic danger family instead of a lighter route-owned alert shell.
+- `/dashboard/creator/resources/*` is now the next live creator color-token
+  proof route: resource-editor helper/callout icons use semantic `primary`
+  instead of route-owned brand color, and preview-image validation copy uses
+  semantic destructive text instead of route-owned red utilities.
 - The live dashboard settings loading shell now routes its intro back through
   the shared dashboard page-header contract too; any remaining badge-first
   dashboard intro demos should be treated as preview-only exceptions until a

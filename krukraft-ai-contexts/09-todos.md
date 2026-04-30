@@ -21,10 +21,10 @@ Parent Plan: `Creator color token normalization`
 > `Dashboard/Admin runtime normalization` is now closed. Shared dashboard/admin header, sidebar-label, and search contracts normalize through one authority, the last live admin tracking hotspot (`/admin/orders`) is route-proved, and the live settings loading intro no longer bypasses the shared dashboard page-header contract.
 
 > [!warning] Active
-> `Creator color token normalization` is now active. The first live proof slice on `/dashboard/creator/apply` is landed, and the next step is inventorying the remaining live creator color/token hotspots before widening into heavier editor or preview-only surfaces.
+> `Creator color token normalization` is now active. The first two live proof slices are landed on `/dashboard/creator/apply` and `/dashboard/creator/resources/*`, and the next step is inventorying the remaining live publish/readiness feedback surfaces before widening into preview-only demos.
 
 > [!todo] Next Up
-> 1. Inventory the remaining live creator color/token hotspots after the apply-route slice, starting with creator resource-editor helper/callout surfaces
+> 1. Inventory live creator publish/readiness feedback surfaces (`CreatorPublishReadiness`, `CreatorPublishActions`, publish-success feedback)
 > 2. Choose one next live creator proof slice from that inventory
 > 3. Keep preview-only creator cards/skeleton demos and broad shell-width/layout work out of scope for this parent plan
 
@@ -70,7 +70,7 @@ Parent Plan: `Creator color token normalization`
 | Admin Edit-Flow Upload/Remove Feedback | Complete | `/admin/resources/[id]` now proves the route-owned remove-file success/error rail, and the close-out audit found no in-scope reason to keep the plan open |
 | Creator Delivery Action Control Styling | Complete | `/dashboard/creator/resources/new` and edit now prove the creator-owned linked-file action cluster on an explicit compact `40px / 8px` posture; close-out audit found no in-scope reason to keep the plan open |
 | Dashboard/Admin Runtime Normalization | Complete | dashboard user-route intros, creator workspace intro, creator resource-form labels, creator settings labels, admin creators/reviews/orders table-summary labels, dashboard/admin search surfaces, and the live settings loading intro now normalize through one authority with no default tracking; remaining dashboard intro exceptions are preview/demo-only |
-| Creator color token normalization | Active | `/dashboard/creator/apply` now uses semantic warning/success/danger emphasis surfaces for pending, approved, and rejected states; next work is inventorying the remaining live creator color drift before widening into heavier editor surfaces |
+| Creator color token normalization | Active | `/dashboard/creator/apply` now proves semantic state panels, and `/dashboard/creator/resources/*` now proves semantic primary helper accents plus semantic destructive preview-URL validation; next work is publish/readiness feedback inventory |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -83,7 +83,7 @@ Parent Plan: `Creator color token normalization`
 ## Progress
 
 Creator color token normalization
-`[███░░░░░░░] 30%`
+`[██████░░░░] 60%`
 
 ```mermaid
 flowchart TB
@@ -173,7 +173,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 2 — Remaining live creator surface inventory
+Phase 4 — Creator publish/readiness feedback inventory
 
 ### Parent Plan
 Creator color token normalization
@@ -198,11 +198,18 @@ Creator color token normalization
   - it does not reopen intro/header normalization on this route
   - it does not widen into preview-only creator demos or skeleton showcases
   - it does not attempt broad creator editor color cleanup in the same patch
-- The current grouped creator color inventory already points to the next likely
-  live hotspot family:
-  - creator resource-editor helper/callout surfaces
-  - creator preview/helper warning surfaces
-  - creator publish/readiness feedback surfaces
+- The next live creator slice is now landed on `/dashboard/creator/resources/*`:
+  - the `Images` and `Buyer file` helper icons now use the semantic `primary`
+    tone instead of route-owned `text-brand-600`
+  - the empty linked-images helper state now uses the same semantic `primary`
+    tone instead of route-owned brand color
+  - explicit image-upload and preview-image validation rails now use semantic
+    destructive copy instead of route-owned red utility text
+- The grouped creator color inventory is now narrower after that slice:
+  - creator publish/readiness feedback surfaces are the next live hotspot
+    family (`CreatorPublishReadiness`, `CreatorPublishActions`,
+    `CreatorPublishSuccessModal`)
+  - preview-only creator cards and demos remain intentionally out of scope
 - Keep these out of scope for the current parent plan until the live creator
   inventory is closed:
   - dashboard/admin shell-width or layout normalization
@@ -210,9 +217,10 @@ Creator color token normalization
   - non-creator DS-family rollouts
 
 ### Goal
-Use `/dashboard/creator/apply` as the first frozen live proof, then widen
-creator color-token normalization one live slice at a time instead of mixing
-color cleanup into unrelated layout, intro, or preview-demo work.
+Keep `/dashboard/creator/apply` and `/dashboard/creator/resources/*` frozen as
+the first live proofs, then choose the next creator color-token slice from live
+publish/readiness feedback surfaces instead of widening into preview-only demos
+or unrelated layout work.
 
 ### Why this is the current phase
 - Creator color drift was the clearest optional follow-up after the closed
@@ -220,9 +228,11 @@ color cleanup into unrelated layout, intro, or preview-demo work.
 - `/dashboard/creator/apply` was the narrowest live creator route where semantic
   warning/success/danger surfaces could be proved without reopening heavier
   editor/upload complexity first.
-- The plan is still in inventory mode after that first slice because the next
-  creator color hotspot should be chosen from live route evidence, not from
-  preview/demo-only surfaces.
+- `CreatorResourceForm` helper/callout surfaces were the next narrow live bucket
+  because they mount on both create/edit routes and had obvious route-owned
+  brand/red drift without reopening upload-widget internals.
+- The next creator color hotspot should now be chosen from live
+  publish/readiness surfaces rather than preview/demo-only surfaces.
 
 ### Definition of Done
 - [x] Open a new active parent plan for creator color token normalization
@@ -234,8 +244,13 @@ color cleanup into unrelated layout, intro, or preview-demo work.
 - [x] Normalize `/dashboard/creator/apply` rejected state and feedback rail onto
   a semantic danger emphasis surface
 - [x] Verify pending/rejected/approved creator apply flows at runtime
-- [ ] Inventory the remaining live creator color/token hotspots
-- [ ] Choose the next live creator proof slice from that inventory
+- [x] Inventory the remaining live creator color/token hotspots
+- [x] Choose the next live creator proof slice from that inventory
+- [x] Normalize live creator resource-editor helper/callout accents onto
+  semantic primary/destructive tokens
+- [x] Verify creator resource-editor helper/callout colors on create/edit routes
+- [ ] Inventory live creator publish/readiness feedback surfaces
+- [ ] Choose the next publish/readiness proof slice
 - [ ] Keep preview-only creator demos and unrelated shell/layout work out of
   scope while the live creator inventory is still open
 
@@ -245,14 +260,16 @@ color cleanup into unrelated layout, intro, or preview-demo work.
 | --- | --- | --- | --- |
 | 0 | Plan open | complete | creator color drift was chosen as the next optional live follow-up after dashboard/admin normalization closed |
 | 1 | Creator apply semantic slice | complete | `/dashboard/creator/apply` now proves semantic warning/success/danger panels and a semantic rejected-feedback rail |
-| 2 | Remaining live creator surface inventory | active | next work is choosing the next live creator hotspot family without widening into preview-only demos |
+| 2 | Remaining live creator surface inventory | complete | live creator inventory narrowed the next hotspot to resource-editor helper/callout surfaces before any preview/demo widening |
+| 3 | Creator resource-editor helper/callout slice | complete | `/dashboard/creator/resources/*` now proves semantic primary helper accents and semantic destructive preview-URL validation |
+| 4 | Creator publish/readiness feedback inventory | active | next work is choosing the next live feedback slice without reopening preview-only demos |
 
 ---
 
 ## Current Goal
 
-1. keep the creator-apply semantic proof slice frozen
-2. inventory the remaining live creator color/token hotspots without wandering into preview-only demos
+1. keep the creator-apply and creator resource-editor color slices frozen
+2. inventory live creator publish/readiness feedback surfaces without wandering into preview-only demos
 3. choose the next live creator proof slice from that grouped evidence
 
 ---
@@ -260,15 +277,18 @@ color cleanup into unrelated layout, intro, or preview-demo work.
 ## In Progress
 
 - [x] Land the first live creator color-token slice on `/dashboard/creator/apply`
-- [ ] Inventory the remaining live creator color/token hotspots
+- [x] Inventory the remaining live creator color/token hotspots
+- [x] Choose the next live creator proof slice from grouped evidence
+- [x] Land the creator resource-editor helper/callout slice on `/dashboard/creator/resources/*`
+- [ ] Inventory live creator publish/readiness feedback surfaces
 - [ ] Choose the next live creator proof slice from grouped evidence
 
 ---
 
 ## Next Up
 
-- [ ] Inventory live creator resource-editor helper/callout surfaces (`CreatorResourceForm`, preview/helper warnings, icon accents)
-- [ ] Inventory live creator publish/readiness feedback surfaces
+- [ ] Inventory live creator publish/readiness feedback surfaces (`CreatorPublishReadiness`, `CreatorPublishActions`, publish-success feedback)
+- [ ] Choose one next live creator proof slice from that inventory
 - [ ] Keep preview-only creator cards/demos out of scope until the live creator inventory is resolved
 
 ---
@@ -367,6 +387,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-30: The first follow-up slice inside `Creator color token normalization` is now closed on `/dashboard/creator/resources/*`. Inventory narrowed the next live hotspot to `CreatorResourceForm` helper/callout surfaces before any preview/demo widening, and the landed patch keeps the slice narrow: the `Images`, linked-images empty state, and `Buyer file` helper icons now use semantic `primary` instead of route-owned brand color, while preview-image validation copy now uses semantic destructive text instead of route-owned red utilities. Runtime proof passed on create and edit routes, so the next in-plan step is inventorying live publish/readiness feedback surfaces.
 - 2026-04-30: Open a new parent plan `Creator color token normalization` instead of jumping into dashboard demo cleanup or shell-width work. The closed dashboard/admin normalization plan stays frozen, and the first narrow live proof route is now `/dashboard/creator/apply`: pending, approved, and rejected state panels now ride semantic warning/success/danger emphasis surfaces, the rejected feedback rail rides the same semantic danger family, and runtime proof passed for all three creator-application states. The next in-plan step is inventorying the remaining live creator color hotspots before choosing a heavier editor or publish/readiness slice.
 - 2026-04-29: `Creator delivery action control styling` is now closed. The landed route-scoped slice keeps the shared widget/upload baselines frozen while proving the remaining creator-owned linked-file controls on `/dashboard/creator/resources/new` and edit: `Clear link`, `Edit`, `Open link`, and the uploaded-file guard `Remove uploaded file` action now all use the explicit compact `40px / 8px` posture, and the linked-file summary/edit/guard shells now share the same `rounded-2xl` route-owned chrome. The close-out audit found no in-scope reason to keep the parent plan open; upload-branch internals stay widget-owned and any later creator-control or untouched DS-family work must open as a separate plan.
 - 2026-04-29: Inventory for `Creator delivery action control styling` is now closed. The route-owned delivery-source toggle and upload wrapper shell were already frozen by the earlier creator upload-controls proof, and the upload-branch actions themselves stay widget-owned inside `FileUploadWidget`. The remaining creator-owned styling drift sits in the external/linked-file branch instead: `Clear link`, `Edit`, `Open link`, and the `Remove uploaded file` guard card/action. Existing hardening coverage already proves those branch semantics, so the first safe proof slice is the creator linked-file action cluster on `/dashboard/creator/resources/new` and `/dashboard/creator/resources/[id]`, while lower-signal upload `400` follow-ups and untouched DS families remain out of scope.

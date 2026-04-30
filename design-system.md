@@ -181,6 +181,10 @@ Current runtime contract to mirror:
   route: pending, approved, and rejected state panels use semantic
   warning/success/danger emphasis surfaces, and the rejected feedback rail uses
   the same semantic danger family rather than a lighter route-owned alert fill.
+- `/dashboard/creator/resources/*` is now the next live creator color-token
+  proof route: the editor helper/callout icons now use semantic `primary`
+  instead of route-owned brand color, and preview-image validation copy now
+  uses semantic destructive text instead of route-owned red utility classes.
 - The live dashboard settings loading shell now mirrors the same shared
   dashboard page-header contract as the resolved settings route instead of
   keeping a badge-first intro copy; any remaining badge-led dashboard intro

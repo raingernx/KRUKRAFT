@@ -974,7 +974,10 @@ export function CreatorResourceForm({
         <div className="space-y-5">
           <div className="rounded-xl border border-border bg-muted p-4 sm:p-5">
             <div className="mb-4 flex items-start gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-background/80 text-brand-600">
+              <div
+                data-testid="creator-editor-images-icon"
+                className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-primary"
+              >
                 <ImagePlus className="h-5 w-5" />
               </div>
               <div className="space-y-1">
@@ -1098,7 +1101,10 @@ export function CreatorResourceForm({
                   ) : (
                     <div className="rounded-xl border border-dashed border-border bg-background px-4 py-5">
                       <div className="flex items-start gap-3">
-                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-shell text-brand-600">
+                        <div
+                          data-testid="creator-editor-linked-images-empty-icon"
+                          className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-shell text-primary"
+                        >
                           <ImagePlus className="h-5 w-5" />
                         </div>
                         <div className="space-y-1">
@@ -1146,11 +1152,11 @@ export function CreatorResourceForm({
                 </div>
               </div>
               {imageUploadError && (
-                <p className="text-xs text-red-600">{imageUploadError}</p>
+                <p className="text-xs text-destructive">{imageUploadError}</p>
               )}
             </div>
             {fieldErrors.previewUrls && (
-              <p className="text-xs text-red-600">{fieldErrors.previewUrls}</p>
+              <p className="text-xs text-destructive">{fieldErrors.previewUrls}</p>
             )}
           </div>
 
@@ -1160,7 +1166,10 @@ export function CreatorResourceForm({
           >
             <div className="rounded-xl border border-border bg-muted p-4 sm:p-5">
               <div className="mb-4 flex items-start gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-background/80 text-brand-600">
+                <div
+                  data-testid="creator-editor-buyer-file-icon"
+                  className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-primary"
+                >
                   <Link2 className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">

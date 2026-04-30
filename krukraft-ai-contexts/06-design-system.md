@@ -62,6 +62,10 @@ Use this order when DS docs disagree:
   route: pending, approved, and rejected panels now use semantic
   warning/success/danger emphasis surfaces, and the rejected feedback rail uses
   the same semantic danger family instead of a route-owned light alert shell.
+- `/dashboard/creator/resources/*` is now the next live creator color-token
+  proof route: the editor's helper/callout icons now use semantic `primary`
+  instead of route-owned brand color, and preview-image validation copy now
+  uses semantic destructive text instead of route-owned red utilities.
 - The live dashboard settings loading shell now reuses the shared dashboard
   page-header intro contract too; remaining badge-first dashboard intro demos
   are preview-only exceptions rather than live route drift.
