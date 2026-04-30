@@ -85,7 +85,8 @@ layer itself is being maintained.
 - `LoadingSkeleton`
 - layout helpers under `src/design-system/layout/*`
 
-The canonical Figma file now covers `Avatar` directly on `DS Primitives`:
+The canonical Figma file now covers `Avatar` and `Switch` directly on
+`DS Primitives`:
 
 - `Avatar / Foundations / Light`
 - `Avatar / Foundations / Dark`
@@ -96,6 +97,12 @@ The canonical Figma file now covers `Avatar` directly on `DS Primitives`:
   in both Figma and runtime code
 - runtime-only `28 / 36 / 72 / 104` mounts remain product-owned posture
   extensions until avatar sizing graduates into a shared token ladder
+- `Switch / Foundations / Light`
+- `Switch / Foundations / Dark`
+- nested `Switch / State` component sets
+- the switch slice locks the current runtime `46×24` track, `20×20` thumb, and
+  checked/unchecked + disabled visual states without inventing a broader
+  control-size ladder around the primitive
 - the fallback shell still carries one explicit Figma token gap:
   a narrow local brand gradient plus proportional initials sizing because the
   canonical file does not yet expose avatar-specific gradient/type tokens

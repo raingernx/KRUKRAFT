@@ -86,6 +86,11 @@ Use this order when DS docs disagree:
   `28 / 36 / 72 / 104` still remain runtime-owned posture extensions, all
   source variants now share the same stroked circular shell posture, and the
   fallback shell keeps one explicit Figma token gap around gradient/type scale.
+- `Switch` now has canonical Figma coverage on `DS Primitives` too:
+  the live state set documents the current runtime `46×24` track, `20×20`
+  thumb, and checked/unchecked + disabled visual states while keeping labels,
+  helper copy, and row shells route-owned composition instead of promoting them
+  into the primitive contract.
 - `RevealImage` is the shared image primitive for already-sized containers; the
   surrounding container should own placeholder/background treatment.
 - `Badge` and `Chip` are now separate DS contracts:

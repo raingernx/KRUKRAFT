@@ -71,13 +71,19 @@ When this file conflicts with code, the code wins.
 Current canonical Figma shared-coverage note:
 
 - `Avatar` is no longer a code-only primitive
+- `Switch` is no longer a code-only primitive
 - the canonical file now has `Avatar / Foundations / Light` and
   `Avatar / Foundations / Dark` on `DS Primitives`
+- the canonical file now has `Switch / Foundations / Light` and
+  `Switch / Foundations / Dark` on `DS Primitives`
 - that slice currently documents the shared `24 / 32 / 40 / 56` ladder plus
   image and fallback states, while `28 / 36 / 72 / 104` remain runtime-owned
   posture extensions
 - image and fallback states now share one stroked circular shell posture across
   the canonical Figma board and runtime primitive
+- the switch slice currently documents the runtime `46×24` track, `20×20`
+  thumb, and checked/unchecked + disabled visual states while keeping labels,
+  helper copy, and row shells route-owned
 
 ### Composed Components
 
