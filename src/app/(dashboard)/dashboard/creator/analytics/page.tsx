@@ -1,4 +1,4 @@
-import { DashboardCreatorAnalyticsContent } from "@/components/dashboard/DashboardSections";
+import { DashboardCreatorAnalyticsContent } from "@/components/dashboard/routes/DashboardCreatorProtectedRoutes";
 import { requireCreatorDashboardAccess } from "@/lib/auth/require-creator-dashboard-access";
 import { routes } from "@/lib/routes";
 import { getDashboardCreatorAnalyticsData } from "@/services/dashboard/creator-analytics.service";
