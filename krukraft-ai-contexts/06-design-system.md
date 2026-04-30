@@ -114,6 +114,11 @@ Use this order when DS docs disagree:
   for now because runtime callers still own the visible shell, crop mode,
   overlay tone, badges, zoom affordances, and other editorial/product-specific
   decoration around the image itself.
+- `ToastProvider` should stay deferred from canonical Figma coverage too. The
+  shared contract is provider behavior more than a static visual shell:
+  queueing, success-dedupe, auto-dismiss timing, persistent warning/error
+  defaults, exit choreography, and mount ownership matter more than capturing a
+  single toast card snapshot on `DS Primitives`.
 - `Badge` and `Chip` are now separate DS contracts:
   - `Badge` stays non-interactive and semantic/status-oriented
   - `Chip` is reserved for interactive filter/removable/token behavior

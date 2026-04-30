@@ -477,6 +477,9 @@ Current canonical Figma shared-coverage note:
   does not expose a bounded shell/size/state ladder of its own, and real
   mounts still let the caller own crop mode, placeholder tone, overlay, and
   surrounding image chrome.
+- The same audit keeps `ToastProvider` intentionally out of canonical Figma
+  coverage too: the runtime contract is provider behavior, queueing, timing,
+  and mount ownership more than a bounded static card shell.
 - `Card` is the calm generic shell card, not a product/marketplace card. The
   current canonical Figma base treats the root shell as `surface` and the
   footer band as `inset`, and runtime `Card.tsx` now follows that surface

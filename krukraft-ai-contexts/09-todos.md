@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Figma heavier primitive follow-ups`
 
 > [!info] Current Phase
-> `Phase 4 — ToastProvider follow-up selection`
+> `Complete`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -30,9 +30,9 @@ Parent Plan: `Figma heavier primitive follow-ups`
 > `Figma shared-component coverage` is now closed. The first heavier primitive slice is landed and verified on `DS Primitives`: `Modal` now has paired light/dark foundation boards plus nested size sets, and the close-out audit found no remaining in-plan omission strong enough to keep this parent plan open.
 
 > [!todo] Next Up
-> - Inventory the shared runtime surface and canonical Figma gap for `ToastProvider`
-> - Decide whether `ToastProvider` needs canonical Figma behavior/pattern coverage or should stay deferred
-> - Keep runtime adoption and unrelated composed/product-bound follow-ups out of scope until the toast-provider decision is resolved
+> - No in-plan work remains
+> - If work continues, open a separate optional follow-up plan
+> - Keep runtime adoption and unrelated composed/product-bound follow-ups out of this closed plan
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow Figma coverage pass and should not silently reopen broad runtime rollout or product-exemplar work.
@@ -79,7 +79,7 @@ Parent Plan: `Figma heavier primitive follow-ups`
 | Creator color token normalization | Complete | `/dashboard/creator/apply`, `/dashboard/creator/resources/*`, and `/dashboard/creator/profile` now prove the main live creator semantic warning/success/danger feedback surfaces, and the close-out audit found no remaining in-scope live slice strong enough to keep the plan open |
 | Creator application semantic cleanup | Complete | route-level inventory on `/dashboard/creator/apply` found no remaining high-signal runtime slice; the form already rides semantic success/danger/muted families closely enough to close the optional follow-up plan |
 | Figma shared-component coverage | Complete | page roles are normalized, `Avatar` and `Switch` are landed, `Modal` now has canonical paired light/dark boards with nested size sets, and the close-out audit found no remaining in-plan blocker |
-| Figma heavier primitive follow-ups | Active | `LoadingSkeleton` shell-only coverage is landed, `RevealImage` is now deliberately deferred as a container-/asset-owned primitive, and the next in-plan question is whether `ToastProvider` needs canonical Figma behavior coverage |
+| Figma heavier primitive follow-ups | Complete | `LoadingSkeleton` shell-only coverage is landed, `RevealImage` is deliberately deferred as a container-/asset-owned helper, and `ToastProvider` is deliberately deferred as a runtime behavior/provider pattern rather than a canonical static Figma primitive |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -92,7 +92,7 @@ Parent Plan: `Figma heavier primitive follow-ups`
 ## Progress
 
 Figma heavier primitive follow-ups
-`[██████░░░░] 60%`
+`[██████████] 100%`
 
 ```mermaid
 flowchart TB
@@ -150,7 +150,7 @@ flowchart TB
     AE1["LoadingSkeleton follow-up inventory<br/>Complete"]
     AE2["LoadingSkeleton shell-only slice<br/>Complete"]
     AE3["RevealImage follow-up selection<br/>Complete"]
-    AE4["ToastProvider follow-up selection<br/>In progress"]
+    AE4["ToastProvider follow-up selection<br/>Complete"]
   end
 
   D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4 --> AD0 --> AD1 --> AD2 --> AD3 --> AD4 --> AD5 --> AD6 --> AE0 --> AE1 --> AE2 --> AE3 --> AE4
@@ -189,7 +189,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 4 — ToastProvider follow-up selection
+Complete
 
 ### Parent Plan
 Figma heavier primitive follow-ups
@@ -260,11 +260,27 @@ Figma heavier primitive follow-ups
   than as a canonical Figma primitive board, because promoting it now would
   mostly duplicate product/container-owned image examples instead of exposing a
   real shared design contract.
+- That `ToastProvider` inventory is now resolved too:
+  - the runtime primitive in `src/design-system/primitives/ToastProvider.tsx`
+    is a global provider + stack manager rather than a bounded static shell
+  - its real contract is behavioral: queueing, dismiss, exit timing,
+    success-dedupe, persistent warning/error defaults, and viewport anchoring
+  - the provider is mounted globally in `src/app/providers.tsx` and again
+    inside `src/features/admin-ux/AdminUXProvider.tsx`, so its most important
+    ownership questions are runtime composition and behavior rather than a
+    canonical visual board
+  - the canonical Figma file still has no `Toast` or `Notification` nodes
+- Therefore `ToastProvider` should stay deferred too:
+  it is better treated as a runtime behavior/pattern topic than a static
+  primitive board on `DS Primitives`, and forcing a Figma slice now would
+  mostly capture one arbitrary visual snapshot instead of the real shared
+  provider contract.
 
 ### Goal
-Use the resolved `RevealImage` decision as the new baseline and decide whether
-`ToastProvider` needs canonical Figma behavior/pattern coverage before this
-parent plan closes or defers cleanly.
+This parent plan is now complete. It proved the only high-signal heavier
+primitive worth landing right now (`LoadingSkeleton`) and resolved the remaining
+`RevealImage` / `ToastProvider` questions explicitly through deliberate defer
+decisions instead of leaving them as silent pending gaps.
 
 ### Why this is the current phase
 - The closed `Modal` slice proved the broader Figma shared-component plan can
@@ -277,7 +293,10 @@ parent plan closes or defers cleanly.
   was whether `RevealImage` behaves like a true reusable primitive or whether
   it stays too container-/asset-owned to justify canonical board coverage.
 - That question is now answered: `RevealImage` stays deferred by design, so the
-  next remaining heavier-primitive decision is `ToastProvider`.
+  next remaining heavier-primitive decision was `ToastProvider`.
+- That question is now answered too: `ToastProvider` stays deferred by design
+  because the shared contract is provider behavior, timing, queueing, and mount
+  ownership more than a stable static visual primitive.
 
 ### Definition of Done
 - [x] Open a new active parent plan for the remaining heavier Figma primitives
@@ -286,7 +305,7 @@ parent plan closes or defers cleanly.
 - [x] Land and verify canonical `LoadingSkeleton` coverage on `DS Primitives`
 - [x] Sync mapping/docs for the landed `LoadingSkeleton` slice in the same session
 - [x] Re-evaluate `RevealImage` as the next heavier primitive only after the `LoadingSkeleton` slice closes
-- [ ] Re-evaluate `ToastProvider` only after `RevealImage` is resolved or explicitly deferred again
+- [x] Re-evaluate `ToastProvider` only after `RevealImage` is resolved or explicitly deferred again
 
 ### Phase Map
 
@@ -296,15 +315,13 @@ parent plan closes or defers cleanly.
 | 1 | LoadingSkeleton follow-up inventory | complete | runtime/code/Figma audit confirms the primitive is shell-only and that current route families own the geometry layered on top |
 | 2 | LoadingSkeleton shell-only slice | complete | paired light/dark foundation boards plus nested `LoadingSkeleton / Shape` sets now prove the shell-only primitive while keeping route-owned loading layouts out of the library |
 | 3 | RevealImage follow-up selection | complete | runtime/code/Figma audit confirms that `RevealImage` stays a code-owned helper for already-sized containers, so canonical Figma coverage should remain deferred instead of promoting product/container-owned image examples into the primitive library |
-| 4 | ToastProvider follow-up selection | in progress | reopen only after the earlier image decision closes cleanly |
+| 4 | ToastProvider follow-up selection | complete | runtime/code/Figma audit confirms that `ToastProvider` is better documented as a runtime behavior/provider pattern than as a canonical static primitive board |
 
 ---
 
 ## Current Goal
 
-Decide whether `ToastProvider` needs canonical Figma behavior/pattern coverage,
-without silently reopening runtime adoption or product-/route-owned follow-up
-work.
+No further in-plan work remains.
 
 ---
 
@@ -318,16 +335,16 @@ work.
 - [x] Keep `RevealImage`, `ToastProvider`, runtime adoption, and unrelated composed shared work out of scope until the loading-skeleton decision is complete
 - [x] Inventory the real shared runtime surface and canonical Figma gap for `RevealImage`
 - [x] Decide whether `RevealImage` should land as a canonical primitive slice or stay deferred
-- [ ] Inventory the shared runtime surface and canonical Figma gap for `ToastProvider`
-- [ ] Decide whether `ToastProvider` needs canonical Figma behavior coverage or should stay deferred
+- [x] Inventory the shared runtime surface and canonical Figma gap for `ToastProvider`
+- [x] Decide whether `ToastProvider` needs canonical Figma behavior coverage or should stay deferred
 
 ---
 
 ## Next Up
 
-- [ ] Inventory the shared runtime surface and canonical Figma gap for `ToastProvider`
-- [ ] Decide whether `ToastProvider` needs canonical Figma behavior/pattern coverage or should stay deferred
-- [ ] Keep runtime adoption and unrelated composed/product-bound follow-ups out of scope until the toast-provider decision is resolved
+- [ ] No in-plan work remains
+- [ ] Open a new optional plan only if the user explicitly chooses a new follow-up
+- [ ] Keep runtime adoption and unrelated composed/product-bound follow-ups out of this closed plan
 
 ---
 
@@ -427,6 +444,7 @@ Add only short, high-signal entries here.
 - 2026-04-30: The first inventory pass for `Figma heavier primitive follow-ups` is now closed. `LoadingSkeleton` is confirmed to be a shell-only primitive in runtime code: `src/design-system/primitives/LoadingSkeleton.tsx` exposes neutral pulse + default rounded posture with caller-owned `className/style`, Storybook only proves example shapes/usages rather than a shared size ladder, and the canonical Figma `DS Primitives` page still has no `Loading`/`Skeleton` nodes at all. The next in-plan slice should therefore stay narrow: paired light/dark `LoadingSkeleton` foundation boards plus a bounded shared shape/source set, not a route-level loading layout ladder.
 - 2026-04-30: Open a new parent plan `Figma heavier primitive follow-ups` after `Figma shared-component coverage` closed. Keep the follow-up order explicit instead of silently reopening the old plan: `LoadingSkeleton` first, then `RevealImage`, then `ToastProvider`. The first required step is a narrow `LoadingSkeleton` inventory pass to separate primitive-owned shell truth from route-owned skeleton geometry before any new board lands.
 - 2026-04-30: `RevealImage` follow-up inventory is now resolved. The runtime helper in `src/design-system/primitives/RevealImage.tsx` only wraps `next/image` for already-sized containers and leaves shell geometry, placeholder/background tone, crop mode, overlay, zoom affordances, badges, and other editorial/product-specific image chrome to callers such as `ResourceGallery`, `ResourceCard`, and `HeroSearch`. Because the canonical Figma file still has no reusable image primitive node beyond avatar-specific image states, the correct plan decision is to defer `RevealImage` from canonical Figma coverage rather than promote product/container-owned image examples into `DS Primitives`.
+- 2026-04-30: `ToastProvider` follow-up inventory is now resolved too. The runtime primitive in `src/design-system/primitives/ToastProvider.tsx` is a provider + queue manager whose real shared contract is behavioral: viewport anchoring, global mount ownership, success-dedupe, auto-dismiss timing, persistent warning/error defaults, and exit choreography. There are still no `Toast` or `Notification` nodes anywhere in the canonical Figma file, and creating a static board now would under-describe the real contract. The correct plan decision is to defer `ToastProvider` from canonical Figma coverage rather than pretend a single toast-card snapshot captures the provider behavior.
 - 2026-04-30: `Figma shared-component coverage` is now closed at `100%`. `DS Primitives` now carries paired `Modal / Foundations / Light` and `Modal / Foundations / Dark` boards plus nested `Modal / Size` sets. The landed slice locks the shared runtime `384 / 448 / 512 / 576` width ladder, centered surface shell, close affordance, and header/body/footer rail structure while keeping route-owned form geometry, overlay tint, portal motion, and button semantics out of the primitive contract. The close-out audit found one explicit Figma-only gap worth preserving rather than silently patching around it: divider rails still bind to `neutral/line` because the canonical file does not yet expose a semantic `border/subtle` variable. Any follow-up for `LoadingSkeleton`, `RevealImage`, `ToastProvider`, or the composed shared set should reopen only as a separate optional parent plan.
 - 2026-04-30: The light neutral inset was tuned again after follow-up review in Figma. The current approved light set is `canvas #FEFDFC`, `shell #FCFBFB`, `surface #F9F7F8`, `inset #F1EFEE`, `line #E5E2E4`, while the dark companion still stays `canvas #111019`, `shell #1B1820`, `surface #19171D`, `inset #282330`, `line #322D39`. This remains a token-truth sync slice only and does not change the active `Figma shared-component coverage` plan ordering.
 - 2026-04-30: The tier 2 primitive inventory inside `Figma shared-component coverage` is now resolved. `Modal` is the chosen first heavier primitive slice because it has the cleanest bounded shared API and shell structure, plus real runtime usage that can be verified without dragging in global-provider fanout (`ToastProvider`), route-owned skeleton geometry (`LoadingSkeleton`), or product/asset-heavy image posture (`RevealImage`). Keep those other tier 2 primitives deferred until the `Modal` slice lands cleanly.

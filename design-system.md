@@ -132,6 +132,10 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   real callers still own shell geometry, crop, placeholder tone, overlay, and
   surrounding image chrome. Treat it as a code-owned helper until a bounded
   shared image contract exists beyond product/container examples.
+- `ToastProvider` remains intentionally outside canonical Figma coverage too:
+  the runtime primitive is a global provider + queue manager whose shared
+  contract is dominated by timing, dismiss behavior, persistent-state defaults,
+  and mount ownership rather than one bounded static visual shell.
 
 ### Control Size Contract
 
