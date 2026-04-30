@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
 ## Plan Snapshot
 
-Parent Plan: `Figma shared-component coverage`
+Parent Plan: `Figma heavier primitive follow-ups`
 
 > [!info] Current Phase
-> `Complete — Figma shared-component coverage close-out`
+> `Phase 1 — LoadingSkeleton follow-up inventory`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -30,7 +30,9 @@ Parent Plan: `Figma shared-component coverage`
 > `Figma shared-component coverage` is now closed. The first heavier primitive slice is landed and verified on `DS Primitives`: `Modal` now has paired light/dark foundation boards plus nested size sets, and the close-out audit found no remaining in-plan omission strong enough to keep this parent plan open.
 
 > [!todo] Next Up
-> No in-plan `Next Up` remains. Any further DS Figma work should open as a separate optional parent plan, with the most likely candidates now being `LoadingSkeleton`, `RevealImage`, or `ToastProvider` as separate heavier-primitive follow-ups.
+> - Inventory the real shared runtime surface and canonical Figma gap for `LoadingSkeleton`
+> - Choose one narrow first `LoadingSkeleton` coverage slice on `DS Primitives`
+> - Keep `RevealImage` and `ToastProvider` deferred until the loading-skeleton slice is resolved
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow Figma coverage pass and should not silently reopen broad runtime rollout or product-exemplar work.
@@ -77,6 +79,7 @@ Parent Plan: `Figma shared-component coverage`
 | Creator color token normalization | Complete | `/dashboard/creator/apply`, `/dashboard/creator/resources/*`, and `/dashboard/creator/profile` now prove the main live creator semantic warning/success/danger feedback surfaces, and the close-out audit found no remaining in-scope live slice strong enough to keep the plan open |
 | Creator application semantic cleanup | Complete | route-level inventory on `/dashboard/creator/apply` found no remaining high-signal runtime slice; the form already rides semantic success/danger/muted families closely enough to close the optional follow-up plan |
 | Figma shared-component coverage | Complete | page roles are normalized, `Avatar` and `Switch` are landed, `Modal` now has canonical paired light/dark boards with nested size sets, and the close-out audit found no remaining in-plan blocker |
+| Figma heavier primitive follow-ups | Active | reopen the Figma coverage track in the explicit user-chosen order `LoadingSkeleton` → `RevealImage` → `ToastProvider`, starting with a narrow inventory of the shared loading primitive contract |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -88,8 +91,8 @@ Parent Plan: `Figma shared-component coverage`
 
 ## Progress
 
-Figma shared-component coverage
-`[██████████] 100%`
+Figma heavier primitive follow-ups
+`[█░░░░░░░░░] 5%`
 
 ```mermaid
 flowchart TB
@@ -143,9 +146,11 @@ flowchart TB
     AD4["Switch coverage on new primitives page<br/>Complete"]
     AD5["Heavier primitive slice selection<br/>Complete"]
     AD6["Modal coverage slice<br/>Complete"]
+    AE0["New heavier follow-up plan open<br/>Complete"]
+    AE1["LoadingSkeleton follow-up inventory<br/>In progress"]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4 --> AD0 --> AD1 --> AD2 --> AD3 --> AD4 --> AD5 --> AD6
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4 --> AD0 --> AD1 --> AD2 --> AD3 --> AD4 --> AD5 --> AD6 --> AE0 --> AE1
 ```
 
 ## Daily Workflow
@@ -181,169 +186,88 @@ Rules:
 ## Current Phase
 
 ### Name
-Complete — Figma shared-component coverage close-out
+Phase 1 — LoadingSkeleton follow-up inventory
 
 ### Parent Plan
-Figma shared-component coverage
+Figma heavier primitive follow-ups
 
 ### Current Status Inside Parent Plan
-- The broad Figma alignment + section-audit work is now a frozen baseline and
-  should not be silently reopened from this narrower follow-up.
-- The canonical Figma file no longer mixes tokens, primitives, and composed
-  boards on one page:
-  - `DS Foundations` now keeps only the 5 true foundation boards
-  - `DS Primitives` now owns the primitive component boards
-  - `DS Components` now owns the composed shared-component boards
-  - `DS Parking / Legacy` now keeps recovered orphan nodes off canonical pages
-  - `Foundation Review` remains review-only
-- The latest repo + Figma audit confirms a focused shared-component gap in the
-  canonical file, and that inventory is now grouped:
-  - tier 1 shared primitives with the safest first-slice profile:
-    `Avatar`, `Switch`
-  - tier 2 heavier shared primitives with wider behavioral or fanout risk:
-    `Modal`, `LoadingSkeleton`, `RevealImage`, `ToastProvider`
-  - tier 3 composed shared components that should wait until the primitive gap
-    shrinks:
-    `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`,
-    `ConfirmDialog`
-- The same audit also confirmed separate classes that are intentionally out of
-  scope for this parent plan:
-  - runtime adoption gaps on already-mapped components like `Button`,
-    `Dropdown`, `DataPanelTable`, and route-owned search overrides
-  - product-bound exemplar gaps like `ResourceCard`, pricing surfaces,
-    `FileUploadWidget`, `NotificationButton`, and `PickerControls`
-- The first narrow primitive slice is now landed:
-  - `Avatar` now has canonical `DS Primitives` coverage through paired
-    `Avatar / Foundations` boards plus nested `Avatar / Size` and
-    `Avatar / Source` sets
-  - the slice locks the shared `24 / 32 / 40 / 56` ladder and the current
-    runtime fallback order without silently pulling in runtime-only
-    `28 / 36 / 72 / 104` posture overrides
-  - it also exposes one explicit Figma token gap instead of hiding it:
-    local avatar gradient/type scaling still stands in until dedicated avatar
-    tokens exist
-- The second narrow primitive slice is now landed too:
-  - `Switch` now has canonical `DS Primitives` coverage through paired
-    `Switch / Foundations` boards plus reusable `Switch / State` sets
-  - the slice locks the current runtime `46×24` track, `20×20` thumb, and
-    checked/unchecked + disabled visual states without inventing a broader
-    control-size ladder around the primitive
-  - it keeps labels, helper copy, and row shells route-owned instead of
-    silently promoting form composition into the primitive contract
-- The heavier primitive inventory is now resolved enough to stop treating tier 2
-  as an open question:
-  - `Modal` is the safest next narrow slice because it has a bounded shared API,
-    explicit shell structure, and clean runtime usage without global provider
-    fanout or product-asset coupling
-  - `LoadingSkeleton` stays lower-signal for now because the shared primitive is
-    tiny while most geometry is route-owned
-  - `RevealImage` stays deferred because the runtime contract is more
-    asset/product-bound than primitive-bound
-  - `ToastProvider` stays deferred because its fanout and global behavior are
-    materially riskier than a bounded visual shell slice
-- The first heavier primitive slice is now landed too:
-  - `Modal` now has canonical `DS Primitives` coverage through paired
-    `Modal / Foundations / Light` and `Modal / Foundations / Dark` boards plus
-    nested `Modal / Size` sets
-  - the slice locks the shared runtime `384 / 448 / 512 / 576` width ladder,
-    centered surface shell, close affordance, and header/body/footer rail
-    structure without pulling route-owned form geometry into the primitive
-    contract
-  - it keeps one explicit Figma-only gap visible instead of silent:
-    divider rails still bind to `neutral/line` because the canonical file does
-    not yet expose a semantic `border/subtle` variable
-- The required close-out audit for this parent plan is now satisfied:
-  - repo mapping/docs and tracker truth are synced to the live Figma nodes
-  - the shared runtime shell and size ladder were checked against
-    `src/design-system/primitives/Modal.tsx`
-  - the real route proof remains `/admin/categories`, which uses the shared
-    `Modal` primitive stack without route-owned shell replacement
-- No additional in-scope work remains under this parent plan. Any follow-up for
-  `LoadingSkeleton`, `RevealImage`, `ToastProvider`, or the composed shared
-  components should open as a separate optional plan instead of keeping this
-  one artificially active.
+- `Figma shared-component coverage` is now closed and acts as the frozen
+  baseline for all narrower Figma follow-ups.
+- The user explicitly chose the next follow-up order instead of reopening the
+  old parent plan:
+  - `LoadingSkeleton`
+  - `RevealImage`
+  - `ToastProvider`
+- This new parent plan stays Figma-first and primitive-scoped:
+  - first confirm the real shared runtime contract and canonical Figma gap for
+    `LoadingSkeleton`
+  - then choose whether the first slice should capture only the primitive shell
+    or a tightly bounded shared layout ladder
+  - only after that inventory is resolved should the plan move on to
+    `RevealImage`, then `ToastProvider`
+- Runtime adoption, product exemplars, and unrelated composed shared components
+  remain out of scope unless a later explicit reprioritization changes that.
 
 ### Goal
-Use the landed `Avatar` + `Switch` slices plus the completed tier 2 inventory
-decision to land canonical `Modal` coverage without reopening runtime adoption
-or jumping early to composed shared components / product exemplars.
+Open a new Figma-only parent plan for the remaining heavier primitives in the
+explicit user-chosen order, starting with a narrow `LoadingSkeleton` inventory
+pass before any new board is landed.
 
 ### Why this is the current phase
-- The repo already has enough evidence to say the next highest-signal DS work
-  is not another runtime tweak; it is missing canonical Figma coverage for
-  shared components that still exist only in code.
-- Opening this as a separate parent plan keeps the sequencing clean:
-  Figma shared-component coverage first, runtime adoption second, and
-  product-bound exemplars later.
-- The page-role cleanup was worth landing before `Avatar` because the canonical
-  file had started to blur foundations, primitive boards, composed boards, and
-  orphan scraps on one page.
-- With `Avatar` and `Switch` now landed, the plan had enough proof to move out
-  of tier 1 and choose deliberately among the heavier primitive gaps instead of
-  guessing from the original grouped inventory.
-- That choice is now made: `Modal` is the first heavier primitive slice because
-  it stays primitive-scoped while still having a meaningful shared shell,
-  explicit subcomponent structure, and real runtime consumers to verify against.
+- The closed `Modal` slice proved the broader Figma shared-component plan can
+  end cleanly without keeping every remaining heavy primitive inside one parent
+  plan forever.
+- `LoadingSkeleton` is the next most pragmatic follow-up because it still lacks
+  canonical Figma coverage, but its shared-vs-route-owned boundary needs to be
+  re-inventoried before landing any board.
+- The user also fixed the order up front, so this plan should not drift into
+  `RevealImage` or `ToastProvider` until the loading-skeleton decision is
+  actually resolved.
 
 ### Definition of Done
-- [x] Open a new active parent plan for missing shared-component Figma coverage
-- [x] Reconfirm the missing shared-component coverage set in canonical Figma
-- [x] Group the missing set into a safe rollout order
-- [x] Choose one narrow first Figma coverage slice, preferring shared
-  primitives before composed components
-- [x] Normalize canonical Figma page roles so `DS Foundations` holds only true
-  foundations again before new shared coverage lands
-- [x] Land and verify that first Figma coverage slice
-- [x] Update the mapping/docs for every newly covered shared component in the
-  same session
-- [x] Confirm the second narrow shared-primitive slice from the remaining tier
-  1 inventory
-- [x] Land and verify that second narrow shared-primitive slice
-- [x] Choose the first heavier primitive slice from tier 2 without reopening
-  runtime adoption or composed shared coverage
-- [x] Land and verify the first heavier primitive slice on `DS Primitives`
+- [x] Open a new active parent plan for the remaining heavier Figma primitives
+- [ ] Inventory the real shared runtime contract and canonical Figma gap for `LoadingSkeleton`
+- [ ] Choose one narrow first `LoadingSkeleton` slice that stays primitive-scoped
+- [ ] Land and verify canonical `LoadingSkeleton` coverage on `DS Primitives`
+- [ ] Sync mapping/docs for the landed `LoadingSkeleton` slice in the same session
+- [ ] Re-evaluate `RevealImage` as the next heavier primitive only after the `LoadingSkeleton` slice closes
+- [ ] Re-evaluate `ToastProvider` only after `RevealImage` is resolved or explicitly deferred again
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Plan open | complete | shared-component Figma coverage was explicitly chosen as the next DS plan after the audit split Figma gaps from runtime adoption gaps |
-| 1 | Shared-component coverage inventory | complete | canonical Figma is still missing the shared primitives/composed set confirmed by the repo + Figma audit |
-| 2 | Canonical page architecture normalization | complete | the canonical file now separates true foundations, primitive boards, composed boards, parking/legacy scraps, and the review surface instead of mixing everything into one page |
-| 3 | Avatar coverage on new primitives page | complete | `Avatar` now lives on `DS Primitives` through paired `Avatar / Foundations` boards plus nested `Avatar / Size` and `Avatar / Source` sets, and the repo mapping/docs are synced to that live coverage |
-| 4 | Switch coverage on new primitives page | complete | `Switch` now lives on `DS Primitives` through paired `Switch / Foundations` boards plus reusable `Switch / State` sets, and the repo mapping/docs are synced to that live coverage |
-| 5 | Heavier primitive slice selection | complete | the tier 2 inventory is now resolved and `Modal` is the chosen first heavier primitive slice because it is the cleanest bounded shared shell among the remaining candidates |
-| 6 | Modal coverage slice | complete | `Modal` now lives on `DS Primitives` through paired light/dark foundation boards plus nested `Modal / Size` sets, and the repo mapping/docs are synced to that live coverage |
+| 0 | Plan open | complete | the previous shared-component parent plan is closed, and this new follow-up plan is opened explicitly in the user-chosen order |
+| 1 | LoadingSkeleton follow-up inventory | in progress | confirm what part of the current runtime skeleton system is truly primitive-owned versus route-owned before any new Figma board lands |
+| 2 | LoadingSkeleton coverage slice | pending | land one narrow canonical board only after the inventory proves a stable primitive contract |
+| 3 | RevealImage follow-up selection | pending | reopen only after the loading-skeleton slice either lands or is deliberately closed/deferred |
+| 4 | ToastProvider follow-up selection | pending | stay deferred until the earlier two heavier primitive decisions are resolved |
 
 ---
 
 ## Current Goal
 
-This parent plan is complete. No in-plan goal remains.
+Lock the next heavier Figma follow-up plan and start the `LoadingSkeleton`
+inventory without silently reopening runtime adoption or jumping ahead to
+`RevealImage` / `ToastProvider`.
 
 ---
 
 ## In Progress
 
-- [x] Open the new parent plan `Figma shared-component coverage`
-- [x] Reconfirm the missing shared-component coverage set in canonical Figma
-- [x] Choose `Avatar` as the first narrow Figma coverage slice from that grouped inventory
-- [x] Split the canonical file into explicit page roles before starting the first new shared-component board
-- [x] Land canonical Figma coverage for `Avatar` on `DS Primitives`
-- [x] Verify `Avatar` coverage against the real runtime size/fallback/image states and sync the mapping/docs in the same session
-- [x] Land canonical Figma coverage for `Switch` on `DS Primitives`
-- [x] Verify `Switch` coverage against the real runtime geometry/states and sync the mapping/docs in the same session
-- [x] Inventory the real runtime surface and canonical Figma gap for the remaining tier 2 primitives: `Modal`, `LoadingSkeleton`, `RevealImage`, `ToastProvider`
-- [x] Choose `Modal` as the safest next heavier primitive slice from tier 2
-- [x] Land canonical Figma coverage for `Modal` on `DS Primitives`
-- [x] Verify the new `Modal` board against the shared runtime shell, size ladder, and real route usage before syncing mapping/docs
-- [x] Keep `LoadingSkeleton`, `RevealImage`, `ToastProvider`, composed shared components, runtime adoption work, and product exemplars out of scope for this parent plan
+- [x] Open the new parent plan `Figma heavier primitive follow-ups`
+- [ ] Inventory the real shared runtime surface and canonical Figma gap for `LoadingSkeleton`
+- [ ] Decide whether the first `LoadingSkeleton` slice should cover only the primitive shell or a bounded shared layout ladder
+- [ ] Keep `RevealImage`, `ToastProvider`, runtime adoption, and unrelated composed shared work out of scope until the loading-skeleton decision is complete
 
 ---
 
 ## Next Up
 
-- [ ] None. This parent plan is closed.
+- [ ] Inventory the real shared runtime surface and canonical Figma gap for `LoadingSkeleton`
+- [ ] Choose one narrow first `LoadingSkeleton` coverage slice on `DS Primitives`
+- [ ] Keep `RevealImage` and `ToastProvider` deferred until the loading-skeleton slice is resolved
 
 ---
 
@@ -440,6 +364,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-30: Open a new parent plan `Figma heavier primitive follow-ups` after `Figma shared-component coverage` closed. Keep the follow-up order explicit instead of silently reopening the old plan: `LoadingSkeleton` first, then `RevealImage`, then `ToastProvider`. The first required step is a narrow `LoadingSkeleton` inventory pass to separate primitive-owned shell truth from route-owned skeleton geometry before any new board lands.
 - 2026-04-30: `Figma shared-component coverage` is now closed at `100%`. `DS Primitives` now carries paired `Modal / Foundations / Light` and `Modal / Foundations / Dark` boards plus nested `Modal / Size` sets. The landed slice locks the shared runtime `384 / 448 / 512 / 576` width ladder, centered surface shell, close affordance, and header/body/footer rail structure while keeping route-owned form geometry, overlay tint, portal motion, and button semantics out of the primitive contract. The close-out audit found one explicit Figma-only gap worth preserving rather than silently patching around it: divider rails still bind to `neutral/line` because the canonical file does not yet expose a semantic `border/subtle` variable. Any follow-up for `LoadingSkeleton`, `RevealImage`, `ToastProvider`, or the composed shared set should reopen only as a separate optional parent plan.
 - 2026-04-30: The light neutral inset was tuned again after follow-up review in Figma. The current approved light set is `canvas #FEFDFC`, `shell #FCFBFB`, `surface #F9F7F8`, `inset #F1EFEE`, `line #E5E2E4`, while the dark companion still stays `canvas #111019`, `shell #1B1820`, `surface #19171D`, `inset #282330`, `line #322D39`. This remains a token-truth sync slice only and does not change the active `Figma shared-component coverage` plan ordering.
 - 2026-04-30: The tier 2 primitive inventory inside `Figma shared-component coverage` is now resolved. `Modal` is the chosen first heavier primitive slice because it has the cleanest bounded shared API and shell structure, plus real runtime usage that can be verified without dragging in global-provider fanout (`ToastProvider`), route-owned skeleton geometry (`LoadingSkeleton`), or product/asset-heavy image posture (`RevealImage`). Keep those other tier 2 primitives deferred until the `Modal` slice lands cleanly.
