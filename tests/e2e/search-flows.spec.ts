@@ -109,9 +109,9 @@ test("resources no-results flow shows recovery actions", async ({ page }) => {
   await expect(page).toHaveURL(/search=zzzznotfound123/);
   await expect(page.getByText("Search results").first()).toBeVisible();
   await expect(page.getByText(/ยังไม่พบผลลัพธ์สำหรับ/).first()).toBeVisible();
-  await expect(page.getByText("Try these searches").first()).toBeVisible();
+  await expect(page.getByText("ลองคำค้นเหล่านี้").first()).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Return to discover" }).first(),
+    page.getByRole("link", { name: "กลับไปหน้าคลัง" }).first(),
   ).toBeVisible();
 
   expect(pageErrors).toEqual([]);

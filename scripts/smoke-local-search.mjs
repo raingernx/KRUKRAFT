@@ -95,7 +95,7 @@ async function main() {
   const noResultsHtml = await readText("/resources?search=zzzznotfound123");
   assertIncludes(
     noResultsHtml,
-    ["Search results", "Try these searches", "ยังไม่พบผลลัพธ์", "Return to discover"],
+    ["Search results", "ลองคำค้นเหล่านี้", "ยังไม่พบผลลัพธ์", "กลับไปหน้าคลัง"],
     "no-results page",
   );
   console.log("[smoke] No-results recovery page OK");
