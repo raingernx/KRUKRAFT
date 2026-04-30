@@ -38,9 +38,7 @@ test("dashboard library toolbar search keeps canonical shared search-input geome
   await loginAsCreator(page, "/dashboard/library");
 
   const searchInput = page.locator('input[name="q"]');
-  const startAdornment = searchInput
-    .locator("xpath=..")
-    .getByTestId("search-input-start-adornment");
+  const startAdornment = page.getByTestId("search-input-start-adornment");
   await expect(searchInput).toBeVisible();
   await expectControlGeometry(searchInput, 40, "8px");
   await expect(startAdornment).toBeVisible();

@@ -1,20 +1,18 @@
 import Link from "next/link";
 
-import { BookOpen, Clock3, FileText } from "@/lib/icons";
+import { BookOpen, Clock3, FileText, Search } from "@/lib/icons";
 import {
   Badge,
   Button,
   Card,
   CardContent,
   EmptyState,
+  Input,
   LoadingSkeleton,
-  SearchInput,
 } from "@/design-system";
 import { DashboardRouteIntro } from "@/components/dashboard/DashboardRouteIntro";
 import { DashboardLibraryResourceCard } from "@/components/dashboard/routes/DashboardLibraryResourceCard";
 import { DashboardPageShell } from "@/components/layout/dashboard/DashboardPageShell";
-import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
-import { ResourceIntentLink } from "@/components/navigation/ResourceIntentLink";
 import type {
   DashboardLibraryData,
   DashboardLibraryFilterKey,
@@ -90,9 +88,7 @@ function DashboardLibraryRecovery({
             <a href={`/api/download/${data.recovery.item.id}`}>Download now</a>
           </Button>
           <Button asChild size="sm" variant="quiet">
-            <ResourceIntentLink href={routes.resource(data.recovery.item.slug)}>
-              View resource
-            </ResourceIntentLink>
+            <Link href={routes.resource(data.recovery.item.slug)}>View resource</Link>
           </Button>
         </div>
       </CardContent>
@@ -120,17 +116,28 @@ function DashboardLibraryToolbar({ data }: { data: DashboardLibraryData }) {
                   Search by title or creator, then narrow by format.
                 </p>
               </div>
-              <SearchInput
-                name="q"
-                defaultValue={data.query}
-                placeholder="Search your library"
-                containerClassName="min-w-0"
-                submitButton={
-                  <Button size="md" type="submit">
-                    Search
-                  </Button>
-                }
-              />
+              <div className="flex w-full items-stretch gap-3">
+                <div className="relative min-w-0 flex-1">
+                  <span
+                    className="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-muted-foreground"
+                    data-testid="search-input-start-adornment"
+                    aria-hidden="true"
+                  >
+                    <Search className="size-4" aria-hidden />
+                  </span>
+                  <Input
+                    type="search"
+                    name="q"
+                    size="md"
+                    defaultValue={data.query}
+                    placeholder="Search your library"
+                    className="pl-10"
+                  />
+                </div>
+                <Button size="md" type="submit">
+                  Search
+                </Button>
+              </div>
             </div>
           </form>
           <div className="space-y-3 xl:max-w-md xl:text-right">
@@ -218,14 +225,7 @@ function DashboardLibraryResults({ data }: { data: DashboardLibraryData }) {
         description="Everything you purchase lands here. Start with a resource from the marketplace."
         action={
           <Button asChild size="sm">
-            <IntentPrefetchLink
-              href={routes.marketplace}
-              prefetchLimit={6}
-              prefetchScope="dashboard-library-empty"
-              resourcesNavigationMode="discover"
-            >
-              Browse resources
-            </IntentPrefetchLink>
+            <Link href={routes.marketplace}>Browse resources</Link>
           </Button>
         }
         className="border-border-subtle py-16"
