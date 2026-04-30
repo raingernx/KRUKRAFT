@@ -80,9 +80,9 @@
     /* ── shadcn/ui v3 design tokens aligned to Krukraft surface system ── */
     color-scheme: light;
     --canvas:                0 0% 100.0%;
-    --shell:                 0 16.7% 97.6%;
-    --surface:               340.0 13.0% 95.5%;
-    --inset:                 10.0 15.0% 92.2%;
+    --shell:                 0 14.3% 98.6%;
+    --surface:               340.0 17.6% 96.7%;
+    --inset:                 10.0 17.6% 93.3%;
     --line:                  320.0 5.5% 89.2%;
     --ink:                   280.0 6.5% 18.0%;
     --ink-muted:             293.3 4.0% 44.5%;

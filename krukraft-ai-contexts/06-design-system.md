@@ -263,9 +263,9 @@ Use this order when DS docs disagree:
     for that posture
   - the canonical Figma training surface is now the `DS Foundations` page
     inside `Krukraft Theme Lab Source-of-Truth`
-  - the current approved neutral direction is a `Paper B`-derived cool-paper
-    light set promoted into the canonical variables:
-    `shell #FAF8F8`, `surface #F5F2F3`, `canvas #FFFFFF`, `inset #EEE9E8`,
+  - the current approved neutral direction is a softened `Paper B`-derived
+    cool-paper light set promoted into the canonical variables:
+    `shell #FCFBFB`, `surface #F8F5F6`, `canvas #FFFFFF`, `inset #F1ECEB`,
     `line #E5E2E4`
   - the current approved dark companion now reads:
     `canvas #111019`, `shell #1B1820`, `surface #19171D`, `inset #282330`,
