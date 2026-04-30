@@ -126,6 +126,8 @@ When this file conflicts with code, the code wins.
 - Shared admin table primitives should preserve DOM attributes on header cells
   so route-level proof hooks and accessibility metadata stay attached without
   forcing routes back to raw `<th>` markup.
+- `/admin/reviews` now rides that same admin-table contract too, and its
+  summary metrics no longer rely on `tracking-tight`.
 - The canonical Figma `DataPanelTable` base now lives in dedicated light/dark
   `DataPanelTable / Foundations` boards, with source sets that stay shell-only
   and prove progressive `actions`, `toolbar`, and `footer` combinations that

@@ -170,6 +170,10 @@ Current runtime contract to mirror:
   `data-testid` and `scope` so runtime proofs and accessibility semantics stay
   attached to the shared contract rather than pushing routes back to bespoke
   `<th>` markup.
+- `/admin/reviews` now follows that same contract: its table headers stay on
+  shared `DataTableHeadCell`, its summary metrics no longer rely on
+  `tracking-tight`, and its fallback-shell eyebrow/title no longer use tracked
+  text either.
 
 ### Treat as product-bound components, not generic library foundations
 

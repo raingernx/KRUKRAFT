@@ -53,6 +53,9 @@ Use this order when DS docs disagree:
 - Shared admin table header cells should keep DOM attributes such as
   `data-testid` and `scope` intact so route-level proofs and accessibility
   semantics do not require raw route-owned `<th>` fallbacks.
+- `/admin/reviews` now uses that same shared admin-table proof surface, its
+  summary metrics no longer rely on `tracking-tight`, and its unavailable-state
+  eyebrow/title no longer use tracked text.
 - `LoadingSkeleton` is the canonical shared skeleton primitive; runtime loading
   shells should stay neutral and structurally close to the resolved UI.
 - `RevealImage` is the shared image primitive for already-sized containers; the

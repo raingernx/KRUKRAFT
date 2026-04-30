@@ -105,20 +105,29 @@ async function AdminReviewsSummary({
     <div className="grid gap-3 md:grid-cols-3">
       <div className="rounded-xl border border-border bg-card p-4 shadow-card">
         <p className="text-sm text-muted-foreground">Total reviews</p>
-        <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+        <p
+          data-testid="admin-reviews-metric-total"
+          className="mt-2 text-2xl font-semibold text-foreground"
+        >
           {reviews.length}
         </p>
       </div>
       <div className="rounded-xl border border-border bg-card p-4 shadow-card">
         <p className="text-sm text-muted-foreground">Visible now</p>
-        <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+        <p
+          data-testid="admin-reviews-metric-visible"
+          className="mt-2 text-2xl font-semibold text-foreground"
+        >
           {visibleCount}
         </p>
         <p className="mt-1 text-xs text-muted-foreground">{hiddenCount} hidden</p>
       </div>
       <div className="rounded-xl border border-border bg-card p-4 shadow-card">
         <p className="text-sm text-muted-foreground">Average rating</p>
-        <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+        <p
+          data-testid="admin-reviews-metric-average"
+          className="mt-2 text-2xl font-semibold text-foreground"
+        >
           {averageRating ? averageRating.toFixed(1) : "—"}
         </p>
       </div>
@@ -141,31 +150,35 @@ async function AdminReviewsResults({
 
   return (
     <DataTable minWidth="min-w-[900px]">
-      <DataTableHeader>
-        <tr>
-          <DataTableHeadCell className="px-2">
+        <DataTableHeader>
+          <tr>
+            <DataTableHeadCell className="px-2" data-testid="admin-reviews-col-resource">
                 Resource
-          </DataTableHeadCell>
-          <DataTableHeadCell className="px-3">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3" data-testid="admin-reviews-col-user">
                 User
-          </DataTableHeadCell>
-          <DataTableHeadCell className="px-3">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3" data-testid="admin-reviews-col-rating">
                 Rating
-          </DataTableHeadCell>
-          <DataTableHeadCell className="px-3">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3" data-testid="admin-reviews-col-review">
                 Review
-          </DataTableHeadCell>
-          <DataTableHeadCell className="px-3">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3" data-testid="admin-reviews-col-created">
                 Created
-          </DataTableHeadCell>
-          <DataTableHeadCell className="px-3">
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3" data-testid="admin-reviews-col-status">
                 Status
-          </DataTableHeadCell>
-          <DataTableHeadCell className="px-3" align="right">
+            </DataTableHeadCell>
+            <DataTableHeadCell
+              className="px-3"
+              align="right"
+              data-testid="admin-reviews-col-actions"
+            >
                 Actions
-          </DataTableHeadCell>
-        </tr>
-      </DataTableHeader>
+            </DataTableHeadCell>
+          </tr>
+        </DataTableHeader>
       <DataTableBody>
         {reviews.length === 0 ? (
           <TableEmptyState message="No reviews yet" />
@@ -229,10 +242,10 @@ function AdminReviewsUnavailableState() {
   return (
     <div className="rounded-2xl border border-border bg-card px-6 py-10 text-center shadow-card">
       <div className="space-y-3">
-        <p className="font-ui text-caption tracking-[0.12em] text-primary">
+        <p className="font-ui text-caption text-primary">
           Reviews temporarily unavailable
         </p>
-        <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground">
+        <h2 className="font-display text-2xl font-semibold text-foreground">
           This moderation view could not refresh right now.
         </h2>
         <p className="mx-auto max-w-2xl text-small leading-6 text-muted-foreground">
