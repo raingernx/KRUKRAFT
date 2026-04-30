@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Creator color token normalization`
 
 > [!info] Current Phase
-> `Phase 2 — Remaining live creator surface inventory`
+> `Phase 7 — Creator profile feedback proof selection`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -21,11 +21,11 @@ Parent Plan: `Creator color token normalization`
 > `Dashboard/Admin runtime normalization` is now closed. Shared dashboard/admin header, sidebar-label, and search contracts normalize through one authority, the last live admin tracking hotspot (`/admin/orders`) is route-proved, and the live settings loading intro no longer bypasses the shared dashboard page-header contract.
 
 > [!warning] Active
-> `Creator color token normalization` is now active. The first three live proof slices are landed on `/dashboard/creator/apply` and `/dashboard/creator/resources/*`, and the next step is inventorying the remaining live creator preview/helper and account/application feedback surfaces before widening into preview-only demos.
+> `Creator color token normalization` is now active. The first three live proof slices are landed on `/dashboard/creator/apply` and `/dashboard/creator/resources/*`, the remaining named preview/helper surfaces have now been inventoried, and the next live proof target is `CreatorProfileForm` on `/dashboard/creator/profile`.
 
 > [!todo] Next Up
-> 1. Inventory live creator preview/helper warning surfaces (`CreatorResourcePreview`, adjacent editor helper hints)
-> 2. Inventory live creator account/application feedback surfaces (`CreatorProfileForm`, `CreatorApplicationForm`)
+> 1. Land + verify the `CreatorProfileForm` feedback/status slice on `/dashboard/creator/profile`
+> 2. Run a narrow close-out inventory on the remaining in-scope live creator preview/account surfaces after that proof lands
 > 3. Keep preview-only creator cards/skeleton demos and broad shell-width/layout work out of scope for this parent plan
 
 > [!abstract] Partial
@@ -70,7 +70,7 @@ Parent Plan: `Creator color token normalization`
 | Admin Edit-Flow Upload/Remove Feedback | Complete | `/admin/resources/[id]` now proves the route-owned remove-file success/error rail, and the close-out audit found no in-scope reason to keep the plan open |
 | Creator Delivery Action Control Styling | Complete | `/dashboard/creator/resources/new` and edit now prove the creator-owned linked-file action cluster on an explicit compact `40px / 8px` posture; close-out audit found no in-scope reason to keep the plan open |
 | Dashboard/Admin Runtime Normalization | Complete | dashboard user-route intros, creator workspace intro, creator resource-form labels, creator settings labels, admin creators/reviews/orders table-summary labels, dashboard/admin search surfaces, and the live settings loading intro now normalize through one authority with no default tracking; remaining dashboard intro exceptions are preview/demo-only |
-| Creator color token normalization | Active | `/dashboard/creator/apply` now proves semantic state panels, `/dashboard/creator/resources/*` now proves semantic primary helper accents + destructive validation, and the publish/readiness feedback slice now proves semantic warning/success feedback on the live create flow; next work is preview/helper + account/application inventory |
+| Creator color token normalization | Active | `/dashboard/creator/apply` now proves semantic state panels, `/dashboard/creator/resources/*` now proves semantic primary helper accents + destructive validation, and the publish/readiness slice is frozen; remaining live preview/helper inventory found no higher-signal live proof than `CreatorProfileForm` |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -83,7 +83,7 @@ Parent Plan: `Creator color token normalization`
 ## Progress
 
 Creator color token normalization
-`[████████░░] 80%`
+`[████████▓░] 85%`
 
 ```mermaid
 flowchart TB
@@ -173,7 +173,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 6 — Remaining live creator preview/account inventory
+Phase 7 — Creator profile feedback proof selection
 
 ### Parent Plan
 Creator color token normalization
@@ -211,11 +211,17 @@ Creator color token normalization
   - `CreatorPublishSuccessModal` now proves its success indicator through the
     real publish flow instead of preview-only assumptions
 - The grouped creator color inventory is now narrower after that slice:
-  - creator preview/helper warning surfaces are the next live hotspot family
-    (`CreatorResourcePreview`, adjacent editor helper hints)
-  - creator account/application feedback surfaces are the next live hotspot
-    family (`CreatorProfileForm`, `CreatorApplicationForm`)
-  - preview-only creator cards and demos remain intentionally out of scope
+  - `CreatorResourcePreview` remains a live shared preview surface, but its
+    warning/muted hints already ride semantic token families
+  - the heavier amber helper cards that looked like the next hotspot
+    (`CreatorResourceHelperCard`, `CreatorQuickTipsCard`) are not live route
+    mounts, so they stay out of scope for this parent plan
+  - `CreatorApplicationForm` already rides semantic danger/success/muted
+    feedback families closely enough that it is not the next high-signal live
+    proof target
+  - `CreatorProfileForm` is now the highest-signal remaining live
+    account/application hotspot because it still owns the densest visible
+    feedback/status surface cluster on `/dashboard/creator/profile`
 - Keep these out of scope for the current parent plan until the live creator
   inventory is closed:
   - dashboard/admin shell-width or layout normalization
@@ -224,9 +230,9 @@ Creator color token normalization
 
 ### Goal
 Keep `/dashboard/creator/apply` and `/dashboard/creator/resources/*` frozen as
-the first live proofs, then choose the next creator color-token slice from the
-remaining live preview/helper and account/application surfaces instead of
-widening into preview-only demos or unrelated layout work.
+the first live proofs, use the completed inventory to land the next
+high-signal live creator color slice on `/dashboard/creator/profile`, and keep
+preview-only demos and unrelated layout work out of scope.
 
 ### Why this is the current phase
 - Creator color drift was the clearest optional follow-up after the closed
@@ -238,8 +244,13 @@ widening into preview-only demos or unrelated layout work.
   because they mount on both create/edit routes and had obvious route-owned
   brand/red drift without reopening upload-widget internals.
 - Live publish/readiness feedback is now proved on the real create flow, so the
-  next creator color hotspot should come from remaining live preview/helper or
-  account/application surfaces rather than preview/demo-only surfaces.
+  next creator color hotspot needed to come from remaining live preview/helper
+  or account/application surfaces rather than preview/demo-only surfaces.
+- That inventory is now done:
+  - the named preview/helper candidates are either already semantic
+    (`CreatorResourcePreview`) or not live route mounts
+  - `CreatorApplicationForm` is already close enough to the semantic baseline
+  - `CreatorProfileForm` is therefore the next high-signal live proof target
 
 ### Definition of Done
 - [x] Open a new active parent plan for creator color token normalization
@@ -260,8 +271,11 @@ widening into preview-only demos or unrelated layout work.
 - [x] Choose the next publish/readiness proof slice
 - [x] Prove live creator publish/readiness warning and success-modal feedback on
   the create flow
-- [ ] Inventory remaining live creator preview/helper warning surfaces
-- [ ] Inventory remaining live creator account/application feedback surfaces
+- [x] Inventory remaining live creator preview/helper warning surfaces
+- [x] Inventory remaining live creator account/application feedback surfaces
+- [ ] Choose the next live creator proof slice from the remaining preview/account inventory
+- [ ] Normalize `CreatorProfileForm` feedback/status surfaces onto semantic token families
+- [ ] Verify the `CreatorProfileForm` slice at runtime on `/dashboard/creator/profile`
 - [ ] Keep preview-only creator demos and unrelated shell/layout work out of
   scope while the live creator inventory is still open
 
@@ -275,15 +289,16 @@ widening into preview-only demos or unrelated layout work.
 | 3 | Creator resource-editor helper/callout slice | complete | `/dashboard/creator/resources/*` now proves semantic primary helper accents and semantic destructive preview-URL validation |
 | 4 | Creator publish/readiness feedback inventory | complete | live publish/readiness inventory narrowed the slice to create-flow readiness/actions/modal feedback before any preview/demo widening |
 | 5 | Creator publish/readiness proof slice | complete | `/dashboard/creator/resources/new` now proves warning-state readiness, ready-state semantic success, and the publish-success indicator on the real publish flow |
-| 6 | Remaining live creator preview/account inventory | active | next work is choosing the next live preview/helper or account/application hotspot without reopening preview-only demos |
+| 6 | Remaining live creator preview/account inventory | complete | preview/helper named hotspots narrowed further: `CreatorResourcePreview` is already semantic, helper cards are not live mounts, and `CreatorApplicationForm` is not the next high-signal target |
+| 7 | Creator profile feedback proof selection | active | next work is landing a narrow semantic feedback/status slice on `/dashboard/creator/profile` before any plan close-out |
 
 ---
 
 ## Current Goal
 
 1. keep the creator-apply, creator resource-editor, and creator publish/readiness slices frozen
-2. inventory the remaining live creator preview/helper and account/application feedback surfaces without wandering into preview-only demos
-3. choose the next live creator proof slice from that grouped evidence
+2. keep the completed preview/helper + account/application inventory frozen as the routing evidence for the next slice choice
+3. land the next live creator proof slice on `/dashboard/creator/profile` without wandering into preview-only demos
 
 ---
 
@@ -296,15 +311,17 @@ widening into preview-only demos or unrelated layout work.
 - [x] Inventory live creator publish/readiness feedback surfaces
 - [x] Choose the next live creator proof slice from grouped evidence
 - [x] Land the creator publish/readiness feedback slice on the live create flow
-- [ ] Inventory remaining live creator preview/helper warning surfaces
-- [ ] Inventory remaining live creator account/application feedback surfaces
+- [x] Inventory remaining live creator preview/helper warning surfaces
+- [x] Inventory remaining live creator account/application feedback surfaces
+- [ ] Choose the next live creator proof slice from the remaining preview/account inventory
+- [ ] Land the `CreatorProfileForm` feedback/status slice on `/dashboard/creator/profile`
 
 ---
 
 ## Next Up
 
-- [ ] Inventory live creator preview/helper warning surfaces (`CreatorResourcePreview`, adjacent editor helper hints)
-- [ ] Inventory live creator account/application feedback surfaces (`CreatorProfileForm`, `CreatorApplicationForm`)
+- [ ] Land + verify the `CreatorProfileForm` feedback/status slice on `/dashboard/creator/profile`
+- [ ] Run a narrow close-out inventory on the remaining in-scope live creator preview/account surfaces
 - [ ] Keep preview-only creator cards/demos out of scope until the live creator inventory is resolved
 
 ---
@@ -403,6 +420,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-30: The remaining live preview/account inventory inside `Creator color token normalization` is now narrowed enough to choose the next proof target. `CreatorResourcePreview` stays live but already rides semantic warning/muted token families, while the amber-heavy `CreatorResourceHelperCard` and `CreatorQuickTipsCard` do not currently mount on live routes and therefore stay out of scope for this parent plan. `CreatorApplicationForm` is already close enough to the semantic baseline that it is not the next high-signal target. The next in-plan slice is now `CreatorProfileForm` on `/dashboard/creator/profile`, where the densest remaining live feedback/status cluster still lives.
 - 2026-04-30: The next live slice inside `Creator color token normalization` is now closed on the real creator publish flow. Inventory narrowed the publish/readiness bucket to `CreatorPublishReadiness`, `CreatorPublishActions`, and `CreatorPublishSuccessModal` on `/dashboard/creator/resources/new`, and the landed proof now confirms the semantic warning/success core of that flow: incomplete readiness stays on the warning family, the ready-state flips to the success family after file upload, and the publish-success modal indicator keeps the same success family after the resource goes live. `CreatorPublishActions` now exposes a stable route-level status hook and keeps its error copy on semantic destructive text, but that status copy is not the canonical proof surface for this slice. With that slice frozen, the next in-plan work is inventorying the remaining live preview/helper and account/application feedback surfaces.
 - 2026-04-30: The first follow-up slice inside `Creator color token normalization` is now closed on `/dashboard/creator/resources/*`. Inventory narrowed the next live hotspot to `CreatorResourceForm` helper/callout surfaces before any preview/demo widening, and the landed patch keeps the slice narrow: the `Images`, linked-images empty state, and `Buyer file` helper icons now use semantic `primary` instead of route-owned brand color, while preview-image validation copy now uses semantic destructive text instead of route-owned red utilities. Runtime proof passed on create and edit routes, so the next in-plan step is inventorying live publish/readiness feedback surfaces.
 - 2026-04-30: Open a new parent plan `Creator color token normalization` instead of jumping into dashboard demo cleanup or shell-width work. The closed dashboard/admin normalization plan stays frozen, and the first narrow live proof route is now `/dashboard/creator/apply`: pending, approved, and rejected state panels now ride semantic warning/success/danger emphasis surfaces, the rejected feedback rail rides the same semantic danger family, and runtime proof passed for all three creator-application states. The next in-plan step is inventorying the remaining live creator color hotspots before choosing a heavier editor or publish/readiness slice.
