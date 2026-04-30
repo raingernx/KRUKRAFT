@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -37,9 +38,10 @@ export default function RootLayout({
       className="min-h-screen bg-background"
       suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-      </head>
+      <head />
+      <Script id="theme-init" strategy="beforeInteractive">
+        {THEME_INIT_SCRIPT}
+      </Script>
       <body
         className={`${fontVariables} min-h-screen bg-background font-sans text-foreground antialiased`.trim()}
       >
