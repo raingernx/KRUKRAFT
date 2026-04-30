@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Figma heavier primitive follow-ups`
 
 > [!info] Current Phase
-> `Phase 1 — LoadingSkeleton follow-up inventory`
+> `Phase 2 — LoadingSkeleton shell-only slice`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -30,8 +30,8 @@ Parent Plan: `Figma heavier primitive follow-ups`
 > `Figma shared-component coverage` is now closed. The first heavier primitive slice is landed and verified on `DS Primitives`: `Modal` now has paired light/dark foundation boards plus nested size sets, and the close-out audit found no remaining in-plan omission strong enough to keep this parent plan open.
 
 > [!todo] Next Up
-> - Inventory the real shared runtime surface and canonical Figma gap for `LoadingSkeleton`
-> - Choose one narrow first `LoadingSkeleton` coverage slice on `DS Primitives`
+> - Land canonical `LoadingSkeleton` coverage for the shared shell-only primitive on `DS Primitives`
+> - Verify that slice against the runtime primitive, Storybook shapes, and representative loading families without promoting route-owned geometry
 > - Keep `RevealImage` and `ToastProvider` deferred until the loading-skeleton slice is resolved
 
 > [!abstract] Partial
@@ -79,7 +79,7 @@ Parent Plan: `Figma heavier primitive follow-ups`
 | Creator color token normalization | Complete | `/dashboard/creator/apply`, `/dashboard/creator/resources/*`, and `/dashboard/creator/profile` now prove the main live creator semantic warning/success/danger feedback surfaces, and the close-out audit found no remaining in-scope live slice strong enough to keep the plan open |
 | Creator application semantic cleanup | Complete | route-level inventory on `/dashboard/creator/apply` found no remaining high-signal runtime slice; the form already rides semantic success/danger/muted families closely enough to close the optional follow-up plan |
 | Figma shared-component coverage | Complete | page roles are normalized, `Avatar` and `Switch` are landed, `Modal` now has canonical paired light/dark boards with nested size sets, and the close-out audit found no remaining in-plan blocker |
-| Figma heavier primitive follow-ups | Active | reopen the Figma coverage track in the explicit user-chosen order `LoadingSkeleton` → `RevealImage` → `ToastProvider`, starting with a narrow inventory of the shared loading primitive contract |
+| Figma heavier primitive follow-ups | Active | `LoadingSkeleton` inventory is now resolved: the primitive is a shell-only pulse block with route-owned geometry, so the next in-plan work is landing narrow canonical shell coverage before reopening `RevealImage` or `ToastProvider` |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -92,7 +92,7 @@ Parent Plan: `Figma heavier primitive follow-ups`
 ## Progress
 
 Figma heavier primitive follow-ups
-`[█░░░░░░░░░] 5%`
+`[██░░░░░░░░] 20%`
 
 ```mermaid
 flowchart TB
@@ -147,10 +147,11 @@ flowchart TB
     AD5["Heavier primitive slice selection<br/>Complete"]
     AD6["Modal coverage slice<br/>Complete"]
     AE0["New heavier follow-up plan open<br/>Complete"]
-    AE1["LoadingSkeleton follow-up inventory<br/>In progress"]
+    AE1["LoadingSkeleton follow-up inventory<br/>Complete"]
+    AE2["LoadingSkeleton shell-only slice<br/>In progress"]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4 --> AD0 --> AD1 --> AD2 --> AD3 --> AD4 --> AD5 --> AD6 --> AE0 --> AE1
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4 --> AD0 --> AD1 --> AD2 --> AD3 --> AD4 --> AD5 --> AD6 --> AE0 --> AE1 --> AE2
 ```
 
 ## Daily Workflow
@@ -186,7 +187,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 1 — LoadingSkeleton follow-up inventory
+Phase 2 — LoadingSkeleton shell-only slice
 
 ### Parent Plan
 Figma heavier primitive follow-ups
@@ -208,27 +209,45 @@ Figma heavier primitive follow-ups
     `RevealImage`, then `ToastProvider`
 - Runtime adoption, product exemplars, and unrelated composed shared components
   remain out of scope unless a later explicit reprioritization changes that.
+- That inventory is now resolved:
+  - the runtime primitive in `src/design-system/primitives/LoadingSkeleton.tsx`
+    exposes only one shared shell contract: `animate-pulse`, neutral fill,
+    default rounded corners, plus caller-owned `className`/`style`
+  - Storybook currently proves shapes and sample usages (`line`, `bar`,
+    `circle`, `pill`, `content block`, `table row`, `dark surface`) but not a
+    variant API or a canonical size ladder
+  - route families across dashboard, admin, creator, and public surfaces all
+    assemble their own geometry with raw `className` width/height/radius values
+    on top of that primitive
+  - the canonical Figma file confirms the gap is still total: `DS Primitives`
+    currently has 20 top-level boards and no node whose name contains
+    `Loading` or `Skeleton`
+- Therefore the first in-plan slice should stay shell-only:
+  paired light/dark foundation boards plus a bounded source/shape set that
+  proves the primitive shell postures without pretending route-owned layout
+  stacks are part of the primitive contract.
 
 ### Goal
-Open a new Figma-only parent plan for the remaining heavier primitives in the
-explicit user-chosen order, starting with a narrow `LoadingSkeleton` inventory
-pass before any new board is landed.
+Use the resolved `LoadingSkeleton` inventory to land one narrow canonical
+shell-only slice on `DS Primitives` before reopening `RevealImage` or
+`ToastProvider`.
 
 ### Why this is the current phase
 - The closed `Modal` slice proved the broader Figma shared-component plan can
   end cleanly without keeping every remaining heavy primitive inside one parent
   plan forever.
-- `LoadingSkeleton` is the next most pragmatic follow-up because it still lacks
-  canonical Figma coverage, but its shared-vs-route-owned boundary needs to be
-  re-inventoried before landing any board.
-- The user also fixed the order up front, so this plan should not drift into
-  `RevealImage` or `ToastProvider` until the loading-skeleton decision is
-  actually resolved.
+- `LoadingSkeleton` still lacked canonical Figma coverage, so the first thing
+  that mattered was proving where the primitive boundary actually stops.
+- That proof now exists: the primitive is shell-only, while almost all visible
+  skeleton geometry is route-owned composition layered on top.
+- With that ambiguity closed, the plan should move forward by landing only the
+  shell-level canonical coverage, not by inventing a fake global skeleton
+  ladder from disparate route examples.
 
 ### Definition of Done
 - [x] Open a new active parent plan for the remaining heavier Figma primitives
-- [ ] Inventory the real shared runtime contract and canonical Figma gap for `LoadingSkeleton`
-- [ ] Choose one narrow first `LoadingSkeleton` slice that stays primitive-scoped
+- [x] Inventory the real shared runtime contract and canonical Figma gap for `LoadingSkeleton`
+- [x] Choose one narrow first `LoadingSkeleton` slice that stays primitive-scoped
 - [ ] Land and verify canonical `LoadingSkeleton` coverage on `DS Primitives`
 - [ ] Sync mapping/docs for the landed `LoadingSkeleton` slice in the same session
 - [ ] Re-evaluate `RevealImage` as the next heavier primitive only after the `LoadingSkeleton` slice closes
@@ -239,8 +258,8 @@ pass before any new board is landed.
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
 | 0 | Plan open | complete | the previous shared-component parent plan is closed, and this new follow-up plan is opened explicitly in the user-chosen order |
-| 1 | LoadingSkeleton follow-up inventory | in progress | confirm what part of the current runtime skeleton system is truly primitive-owned versus route-owned before any new Figma board lands |
-| 2 | LoadingSkeleton coverage slice | pending | land one narrow canonical board only after the inventory proves a stable primitive contract |
+| 1 | LoadingSkeleton follow-up inventory | complete | runtime/code/Figma audit confirms the primitive is shell-only and that current route families own the geometry layered on top |
+| 2 | LoadingSkeleton shell-only slice | in progress | land one narrow canonical board that proves the neutral pulse shell + bounded shape postures without promoting route-owned layout stacks |
 | 3 | RevealImage follow-up selection | pending | reopen only after the loading-skeleton slice either lands or is deliberately closed/deferred |
 | 4 | ToastProvider follow-up selection | pending | stay deferred until the earlier two heavier primitive decisions are resolved |
 
@@ -248,25 +267,27 @@ pass before any new board is landed.
 
 ## Current Goal
 
-Lock the next heavier Figma follow-up plan and start the `LoadingSkeleton`
-inventory without silently reopening runtime adoption or jumping ahead to
-`RevealImage` / `ToastProvider`.
+Land the first shell-only `LoadingSkeleton` canonical coverage slice without
+silently reopening runtime adoption, route-owned loading geometry, or jumping
+ahead to `RevealImage` / `ToastProvider`.
 
 ---
 
 ## In Progress
 
 - [x] Open the new parent plan `Figma heavier primitive follow-ups`
-- [ ] Inventory the real shared runtime surface and canonical Figma gap for `LoadingSkeleton`
-- [ ] Decide whether the first `LoadingSkeleton` slice should cover only the primitive shell or a bounded shared layout ladder
+- [x] Inventory the real shared runtime surface and canonical Figma gap for `LoadingSkeleton`
+- [x] Decide that the first `LoadingSkeleton` slice should cover only the primitive shell plus bounded shared shape postures, not a route-level layout ladder
+- [ ] Land canonical `LoadingSkeleton` coverage on `DS Primitives`
+- [ ] Verify the board against the runtime primitive, Storybook shapes, and representative route-family usage before syncing docs
 - [ ] Keep `RevealImage`, `ToastProvider`, runtime adoption, and unrelated composed shared work out of scope until the loading-skeleton decision is complete
 
 ---
 
 ## Next Up
 
-- [ ] Inventory the real shared runtime surface and canonical Figma gap for `LoadingSkeleton`
-- [ ] Choose one narrow first `LoadingSkeleton` coverage slice on `DS Primitives`
+- [ ] Land canonical `LoadingSkeleton` coverage for the shared shell-only primitive on `DS Primitives`
+- [ ] Verify that slice against the runtime primitive, Storybook shapes, and representative loading families without promoting route-owned geometry
 - [ ] Keep `RevealImage` and `ToastProvider` deferred until the loading-skeleton slice is resolved
 
 ---
@@ -364,6 +385,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-04-30: The first inventory pass for `Figma heavier primitive follow-ups` is now closed. `LoadingSkeleton` is confirmed to be a shell-only primitive in runtime code: `src/design-system/primitives/LoadingSkeleton.tsx` exposes neutral pulse + default rounded posture with caller-owned `className/style`, Storybook only proves example shapes/usages rather than a shared size ladder, and the canonical Figma `DS Primitives` page still has no `Loading`/`Skeleton` nodes at all. The next in-plan slice should therefore stay narrow: paired light/dark `LoadingSkeleton` foundation boards plus a bounded shared shape/source set, not a route-level loading layout ladder.
 - 2026-04-30: Open a new parent plan `Figma heavier primitive follow-ups` after `Figma shared-component coverage` closed. Keep the follow-up order explicit instead of silently reopening the old plan: `LoadingSkeleton` first, then `RevealImage`, then `ToastProvider`. The first required step is a narrow `LoadingSkeleton` inventory pass to separate primitive-owned shell truth from route-owned skeleton geometry before any new board lands.
 - 2026-04-30: `Figma shared-component coverage` is now closed at `100%`. `DS Primitives` now carries paired `Modal / Foundations / Light` and `Modal / Foundations / Dark` boards plus nested `Modal / Size` sets. The landed slice locks the shared runtime `384 / 448 / 512 / 576` width ladder, centered surface shell, close affordance, and header/body/footer rail structure while keeping route-owned form geometry, overlay tint, portal motion, and button semantics out of the primitive contract. The close-out audit found one explicit Figma-only gap worth preserving rather than silently patching around it: divider rails still bind to `neutral/line` because the canonical file does not yet expose a semantic `border/subtle` variable. Any follow-up for `LoadingSkeleton`, `RevealImage`, `ToastProvider`, or the composed shared set should reopen only as a separate optional parent plan.
 - 2026-04-30: The light neutral inset was tuned again after follow-up review in Figma. The current approved light set is `canvas #FEFDFC`, `shell #FCFBFB`, `surface #F9F7F8`, `inset #F1EFEE`, `line #E5E2E4`, while the dark companion still stays `canvas #111019`, `shell #1B1820`, `surface #19171D`, `inset #282330`, `line #322D39`. This remains a token-truth sync slice only and does not change the active `Figma shared-component coverage` plan ordering.
