@@ -19,7 +19,7 @@ Use these as the fixed inputs for the current study round:
   - `inset #EEE9E8`
   - `line #E5E2E4`
 - primary: `#5144ED`
-- support accents: `Rust #E77661` and `Sand #E1C9A9`
+- support accents: `Rust #DB3A1C` and `Sand #E59C46`
 
 Do not reopen these choices while the goal is still building foundation
 evidence.

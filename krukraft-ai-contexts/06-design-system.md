@@ -271,8 +271,8 @@ Use this order when DS docs disagree:
     `canvas #111019`, `shell #1B1820`, `surface #19171D`, `inset #282330`,
     `line #322D39`
   - the current approved primary accent is `#5144ED`
-  - the current approved support accents are `Rust #E77661` and
-    `Sand #E1C9A9`; they stay support-only and do not replace the
+  - the current approved support accents are `Rust #DB3A1C` and
+    `Sand #E59C46`; they stay support-only and do not replace the
     primary/action role
   - `src/design-system/foundation-study-checklist.md` is now the dedicated
     checklist artifact for the `Figma foundation first` phase

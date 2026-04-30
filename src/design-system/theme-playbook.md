@@ -136,12 +136,12 @@ Do not use brand accents as substitutes for:
 ### Current Training Decision
 
 - approved neutral direction: `Paper B`
-- approved primary accent: `#4338CA`
-- approved support accents: `Rust` and `Sand`
+- approved primary accent: `#5144ED`
+- approved support accents: `Rust #DB3A1C` and `Sand #E59C46`
 - current posture:
   - keep the base neutral family restrained and paper-led
-  - let `#4338CA` carry the main brand/action identity
-  - let `Rust` and `Sand` stay support-only, not co-primary
+  - let `#5144ED` carry the main brand/action identity
+  - let `Rust #DB3A1C` and `Sand #E59C46` stay support-only, not co-primary
 - implication:
   - keep the app clean and restrained through `Paper B`
   - let the main brand accent stay cooler and more decisive than the warm
