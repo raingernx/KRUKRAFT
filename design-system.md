@@ -417,21 +417,24 @@ At a high level:
 
 - the canonical Figma file is now `Krukraft Theme Lab Source-of-Truth`, not the
   older `Krukraft Design System` file previously referenced in repo docs
-- the current canonical file has two audited pages:
-  - `DS Foundations` (`13:20`) is the true base page and now holds `21`
-    top-level frames spanning typography, color primitives, spacing/radius,
-    `Button`, `Input / Search`, `Card`, `Dropdown`, `Surface`, `Badge`,
-    `FormSection`, and `DataPanelTable`
-  - `Foundation Review` (`371:29`) is a review-only page with one current
+- the current canonical file now separates page roles explicitly:
+  - `DS Foundations` (`13:20`) is the true base page and now holds only `5`
+    top-level foundation frames: typography, color primitives, and
+    spacing/radius
+  - `DS Primitives` (`1037:312`) now holds `14` primitive component boards for
+    `Button`, `Input / Search`, `Card`, `Dropdown`, `Badge`, `Select`, and
+    `Textarea`
+  - `DS Components` (`1037:313`) now holds `6` composed shared-component boards
+    for `Surface`, `FormSection`, and `DataPanelTable`
+  - `DS Parking / Legacy` (`1037:314`) is a non-canonical parking page for
+    recovered orphan nodes that must stay off the live library pages
+  - `Foundation Review` (`1041:312`) remains a review-only page with one
     top-level frame, not a reusable component library source
 - `DS Foundations` is now the stronger token-bound page:
-  - the latest page inventory found `1045/1047` text nodes bound to
-    `font/family/base`
-  - `1045/1047` text nodes with text-fill binding
-  - `1614` bound fills, `2` local fills, and `441` bound strokes with `0`
-    local strokes
-  - the two current text/fill exceptions are the `Showing latest 2 entries`
-    footer-note copies inside `DataPanelTable`
+  - the older page-wide counts from the all-in-one foundations page are now
+    obsolete after the 2026-04-30 page-role split
+  - treat section-level audits, not frozen old page totals, as the source of
+    truth going forward
   - the latest foundations re-audit also corrected the radius reading: the
     audited typography, color, and spacing/radius boards bind radius through
     per-corner variables, so those boards should not be treated as local-radius

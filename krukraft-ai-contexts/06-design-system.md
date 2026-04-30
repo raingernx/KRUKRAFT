@@ -663,18 +663,21 @@ Use this order when DS docs disagree:
     primitives
   - a full-canvas audit of the canonical Figma file was rerun on `2026-04-27`
     and the repo context is now synced to that file as the base:
-    - the file currently has exactly two pages: `DS Foundations` and
-      `Foundation Review`
-    - a 2026-04-28 page inventory refresh now shows `DS Foundations` with
-      21 top-level frames spanning typography, colors, spacing/radius,
-      `Button`, `Input / Search`, `Card`, `Dropdown`, `Surface`, `Badge`,
-      `FormSection`, and `DataPanelTable`
+    - the file now separates page roles explicitly instead of mixing every
+      board into one foundation page:
+      `DS Foundations`, `DS Primitives`, `DS Components`,
+      `DS Parking / Legacy`, and `Foundation Review`
+    - `DS Foundations` now keeps only the 5 token-bound foundation boards
+      (typography, colors, spacing/radius)
+    - `DS Primitives` now holds the primitive component boards
+    - `DS Components` now holds the composed shared-component boards
+    - `DS Parking / Legacy` intentionally keeps recovered orphan nodes off the
+      canonical library pages
     - `Foundation Review` is review-only and should not be treated as a
       reusable library source
-    - page-wide, `DS Foundations` now keeps `1045/1047` text nodes bound to
-      `font/family/base` and `1045/1047` text nodes bound to text-fill
-      variables; the two live exceptions are the `Showing latest 2 entries`
-      footer-note copies inside the `DataPanelTable` foundations
+    - the older page-wide counts from the pre-split all-in-one `DS Foundations`
+      page are now obsolete; use section-level audits and page-role ownership
+      instead of frozen aggregate totals going forward
     - the remaining local styling debt is now narrow and explicit:
       wrapper/study-scene radius values inside `Button`, `Input / Search`,
       `Card`, `Dropdown`, and `Surface`, plus the already-known token gaps for
