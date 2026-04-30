@@ -1,16 +1,15 @@
-import { Badge, LoadingSkeleton, Surface } from "@/design-system";
+import { LoadingSkeleton, Surface } from "@/design-system";
 import { DashboardPageShell } from "@/components/layout/dashboard/DashboardPageShell";
+import { DashboardPageHeader } from "@/components/layout/dashboard/DashboardPageHeader";
 
 export function DashboardSettingsIntroContent() {
   return (
     <section className="border-b border-border-subtle pb-6">
-      <Badge variant="info">Settings</Badge>
-      <h1 className="mt-3 text-balance font-ui text-3xl font-semibold text-foreground">
-        Account settings
-      </h1>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-        Update your profile, appearance, notifications, and account controls from one protected dashboard page.
-      </p>
+      <DashboardPageHeader
+        eyebrow="Settings"
+        title="Account settings"
+        description="Update your profile, appearance, notifications, and account controls from one protected dashboard page."
+      />
     </section>
   );
 }

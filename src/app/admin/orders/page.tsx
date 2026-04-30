@@ -51,21 +51,30 @@ async function AdminOrdersResultsSection({
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         <Card className="p-4">
           <p className="font-ui text-caption text-muted-foreground">Total revenue</p>
-          <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+          <p
+            data-testid="admin-orders-metric-revenue"
+            className="mt-2 text-2xl font-semibold text-foreground"
+          >
             {formatPrice(totalRevenue / 100)}
           </p>
         </Card>
 
         <Card className="p-4">
           <p className="font-ui text-caption text-muted-foreground">Orders today</p>
-          <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+          <p
+            data-testid="admin-orders-metric-today"
+            className="mt-2 text-2xl font-semibold text-foreground"
+          >
             {formatNumber(ordersToday)}
           </p>
         </Card>
 
         <Card className="p-4">
           <p className="font-ui text-caption text-muted-foreground">Average order value</p>
-          <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+          <p
+            data-testid="admin-orders-metric-average"
+            className="mt-2 text-2xl font-semibold text-foreground"
+          >
             {formatPrice(averageOrderValue / 100)}
           </p>
         </Card>
@@ -74,12 +83,24 @@ async function AdminOrdersResultsSection({
       <DataTable minWidth="min-w-[900px]">
         <DataTableHeader>
           <tr>
-            <DataTableHeadCell className="px-2">Order ID</DataTableHeadCell>
-            <DataTableHeadCell className="px-3">User</DataTableHeadCell>
-            <DataTableHeadCell className="px-3">Resource</DataTableHeadCell>
-            <DataTableHeadCell className="px-3">Price</DataTableHeadCell>
-            <DataTableHeadCell className="px-3">Status</DataTableHeadCell>
-            <DataTableHeadCell className="px-3">Created</DataTableHeadCell>
+            <DataTableHeadCell className="px-2" data-testid="admin-orders-col-id">
+              Order ID
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3" data-testid="admin-orders-col-user">
+              User
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3" data-testid="admin-orders-col-resource">
+              Resource
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3" data-testid="admin-orders-col-price">
+              Price
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3" data-testid="admin-orders-col-status">
+              Status
+            </DataTableHeadCell>
+            <DataTableHeadCell className="px-3" data-testid="admin-orders-col-created">
+              Created
+            </DataTableHeadCell>
           </tr>
         </DataTableHeader>
         <DataTableBody>

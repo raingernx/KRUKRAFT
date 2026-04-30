@@ -56,6 +56,11 @@ Use this order when DS docs disagree:
 - `/admin/reviews` now uses that same shared admin-table proof surface, its
   summary metrics no longer rely on `tracking-tight`, and its unavailable-state
   eyebrow/title no longer use tracked text.
+- `/admin/orders` now uses that same shared admin-table proof surface, and its
+  summary metrics no longer rely on `tracking-tight`.
+- The live dashboard settings loading shell now reuses the shared dashboard
+  page-header intro contract too; remaining badge-first dashboard intro demos
+  are preview-only exceptions rather than live route drift.
 - `LoadingSkeleton` is the canonical shared skeleton primitive; runtime loading
   shells should stay neutral and structurally close to the resolved UI.
 - `RevealImage` is the shared image primitive for already-sized containers; the

@@ -128,6 +128,12 @@ When this file conflicts with code, the code wins.
   forcing routes back to raw `<th>` markup.
 - `/admin/reviews` now rides that same admin-table contract too, and its
   summary metrics no longer rely on `tracking-tight`.
+- `/admin/orders` now rides that same admin-table contract too, and its summary
+  metrics no longer rely on `tracking-tight`.
+- The live dashboard settings loading shell now routes its intro back through
+  the shared dashboard page-header contract too; any remaining badge-first
+  dashboard intro demos should be treated as preview-only exceptions until a
+  separate demo cleanup pass is chosen.
 - The canonical Figma `DataPanelTable` base now lives in dedicated light/dark
   `DataPanelTable / Foundations` boards, with source sets that stay shell-only
   and prove progressive `actions`, `toolbar`, and `footer` combinations that

@@ -174,6 +174,14 @@ Current runtime contract to mirror:
   shared `DataTableHeadCell`, its summary metrics no longer rely on
   `tracking-tight`, and its fallback-shell eyebrow/title no longer use tracked
   text either.
+- `/admin/orders` now follows that same contract too: its summary metrics no
+  longer rely on `tracking-tight`, and its table headers now prove the shared
+  `DataTableHeadCell` contract through route-level hooks.
+- The live dashboard settings loading shell now mirrors the same shared
+  dashboard page-header contract as the resolved settings route instead of
+  keeping a badge-first intro copy; any remaining badge-led dashboard intro
+  demos should be treated as preview-only exceptions until a separate cleanup
+  pass is explicitly chosen.
 
 ### Treat as product-bound components, not generic library foundations
 
