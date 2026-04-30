@@ -1,4 +1,4 @@
-import { DashboardHomeContent } from "@/components/dashboard/DashboardSections";
+import { DashboardHomeContent } from "@/components/dashboard/routes/DashboardHomeRoute";
 import { requireSession } from "@/lib/auth/require-session";
 import { routes } from "@/lib/routes";
 import { getDashboardHomeData } from "@/services/dashboard/home.service";
