@@ -260,8 +260,8 @@ Composed shared-component coverage
   - the bounded shared contract is now frozen as eyebrow, title, description,
     alignment, and the optional trailing actions slot through
     `default | centered | with-actions | minimal`
-  - action visuals remain illustrative slot examples instead of
-    component-owned button recipes
+  - action slots now use neutral placeholders instead of invented CTA
+    examples or component-owned button recipes
 - The plan-level close-out audit is now resolved:
   - `Pagination` remains better treated as an optional follow-up because its
     visual contract is still entangled with existing `Button` recipe work and
@@ -433,7 +433,8 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
-- 2026-05-01: `SectionHeader` eyebrow tracking has now been normalized back out of both runtime and canonical Figma coverage. The shared contract remains eyebrow, title, description, alignment, and the optional trailing actions slot through `default | centered | with-actions | minimal`, while action visuals stay illustrative slot examples instead of component-owned button recipes.
+- 2026-05-01: `EmptyState` and `SectionHeader` canonical boards now use neutral slot placeholders instead of invented icon/CTA examples. The shared contracts stay bounded to shell structure and slot order only; if a canonical DS-backed example is not already present in the file, the board should prove the slot with a neutral placeholder instead of faking final product UI.
+- 2026-05-01: `SectionHeader` eyebrow tracking has now been normalized back out of both runtime and canonical Figma coverage. The shared contract remains eyebrow, title, description, alignment, and the optional trailing actions slot through `default | centered | with-actions | minimal`, while action slots stay neutral placeholders instead of component-owned button recipes.
 - 2026-05-01: `Composed shared-component coverage` is now closed at `100%`. `SectionHeader` is landed as the second composed slice on `DS Components` through paired light/dark foundation boards plus nested light/dark source sets. The frozen contract is intentionally narrow: eyebrow, title, description, alignment, and the optional trailing actions slot through `default | centered | with-actions | minimal`. The close-out audit then deferred `Pagination`, `RowActions`, and `ConfirmDialog` as optional follow-ups because they remain more entangled with button recipes, table-density rollout work, or modal/async behavior than this parent plan should absorb.
 - 2026-04-30: The follow-up selection after `EmptyState` is now resolved. `SectionHeader` is the chosen next composed slice because it stays shell-bounded, has Storybook proof, and has broad live route usage without inheriting the denser button-recipe/table fanout that still surrounds `Pagination` and `RowActions`. `ConfirmDialog` stays behind it because it still overlaps the already-landed `Modal` contract and async behavior concerns while lacking a dedicated story surface.
 - 2026-04-30: `EmptyState` is now landed as the first composed shared-component slice. `DS Components` now contains paired `EmptyState / Foundations / Light` and `EmptyState / Foundations / Dark` boards plus nested light/dark `EmptyState / Variant / Source` sets. The frozen contract is intentionally narrow: centered stack rhythm, dashed rounded container posture, and the shared `icon -> title -> description -> action` slot order proven through `default` and `minimal` variants. The explicit Figma-only gap is preserved instead of hidden: runtime asks for `border-border-subtle`, but the canonical file still lacks a semantic `border/subtle` variable, so the dashed rail currently binds to `border/default`.

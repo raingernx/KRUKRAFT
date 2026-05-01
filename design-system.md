@@ -64,6 +64,19 @@ layer itself is being maintained.
 
 ## Figma Ownership Rules
 
+### Canonical Slot Proofs
+
+In canonical DS/component boards, slot proofs must use one of these two paths
+only:
+
+- a DS-backed component or recipe that already exists in the file
+- a neutral placeholder that is clearly labeled as a slot
+
+Do not invent fake CTA buttons, fake icons, or product-looking example chrome
+just to make a board feel complete. If the canonical file does not already have
+the right DS-backed example, leave the slot as a neutral placeholder instead of
+drawing a fake final UI.
+
 ### Treat as generic design-system library components
 
 - `Button`
@@ -149,8 +162,8 @@ The canonical Figma file now also covers `EmptyState` directly on
 - the current source pair proves `variant=default` and `variant=minimal`
   without promoting route-owned empty-state copy, business CTAs, or product
   illustrations into the composed contract
-- icon and action visuals on the board are illustrative slot examples, not
-  primitive-owned treatments
+- icon and action slots on the board now use neutral placeholders instead of
+  invented product examples or primitive-owned treatments
 - the current Figma-only gap is explicit here too:
   runtime asks for `border-border-subtle`, but the canonical file still lacks
   a semantic `border/subtle` variable, so the dashed rail currently binds to
@@ -169,8 +182,8 @@ The canonical Figma file now also covers `SectionHeader` directly on
   `default`, `centered`, `with-actions`, and `minimal`
 - hero backdrops, route-specific page-width choices, and live CTA semantics
   stay route-owned instead of becoming part of the composed contract
-- action visuals on the board are illustrative slot examples, not
-  component-owned button recipes
+- action slots on the board now use neutral placeholders instead of invented
+  CTA examples or component-owned button recipes
 
 ### Control Size Contract
 

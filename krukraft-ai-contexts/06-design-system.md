@@ -122,8 +122,9 @@ Use this order when DS docs disagree:
   `default | centered | with-actions | minimal` source set. The shared
   contract is eyebrow, title, description, alignment, and an optional trailing
   actions slot; route-owned backdrops, page-width choices, and live CTA
-  semantics remain outside the composed contract. Action visuals on the board
-  remain illustrative slot examples instead of component-owned button recipes.
+  semantics remain outside the composed contract. Action slots on the board
+  now use neutral placeholders instead of invented CTA examples or
+  component-owned button recipes.
 - `RevealImage` is the shared image primitive for already-sized containers; the
   surrounding container should own placeholder/background treatment. The
   2026-04-30 heavier-primitive follow-up audit now locks one more boundary

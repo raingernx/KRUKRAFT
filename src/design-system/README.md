@@ -232,8 +232,8 @@ Current canonical Figma shared-coverage note:
   alignment, and the optional trailing actions slot through a `default`,
   `centered`, `with-actions`, and `minimal` source set while keeping route
   backdrops, page-width choices, and live CTA semantics out of the contract.
-- Action visuals on that board remain illustrative slot examples instead of
-  component-owned button recipes.
+- Action slots on that board now use neutral placeholders instead of invented
+  CTA examples or component-owned button recipes.
 
 ## Current Implementation Rules
 
