@@ -222,7 +222,7 @@ export function FileUploadWidget({
             className="flex items-center gap-3 rounded-2xl"
           >
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-card">
-              <FileText className="h-4 w-4 text-brand-600" />
+              <FileText className="h-4 w-4 text-primary" />
             </span>
             <div className="min-w-0 flex-1">
               <p className="flex items-center gap-2 truncate text-[13px] font-medium text-foreground">
@@ -342,7 +342,7 @@ export function FileUploadWidget({
               tone="info"
               className="flex items-center gap-2 rounded-2xl"
             >
-              <FileText className="h-4 w-4 shrink-0 text-brand-600" />
+              <FileText className="h-4 w-4 shrink-0 text-primary" />
               <p className="min-w-0 flex-1 truncate text-[13px] text-foreground">
                 {selectedFile.name}{" "}
                 <span className="text-muted-foreground">

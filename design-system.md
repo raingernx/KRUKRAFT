@@ -157,6 +157,11 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
     `fg/on-fill-light`
   - bounded context ladder:
     `dense row action`, `default UI`, `support action`, `section support`
+- the first runtime cleanup pass after that foundations slice should stay
+  narrow too:
+  shared upload/picker surfaces may use semantic `primary` emphasis when they
+  need a stronger icon tone, but they should not keep reaching for `brand-*`
+  aliases directly
 - glyph choice remains product-owned and should keep flowing through the
   repo-owned `@/lib/icons` adapter instead of turning the canonical file into a
   copied Phosphor library dump

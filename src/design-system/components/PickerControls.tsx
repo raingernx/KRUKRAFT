@@ -16,7 +16,7 @@ export type PickerActionTone = "default" | "danger" | "muted";
 export type PickerActionStyle = "outline" | "dashed";
 
 const pickerActionToneClasses: Record<PickerActionTone, string> = {
-  default: "text-muted-foreground hover:text-brand-600",
+  default: "text-muted-foreground hover:text-primary",
   danger: "text-danger-600 hover:text-danger-700 hover:border-danger-300 hover:bg-danger-50",
   muted: "text-muted-foreground hover:text-foreground",
 };
@@ -57,7 +57,7 @@ export type PickerIconTone = "default" | "danger" | "info";
 const pickerIconToneClasses: Record<PickerIconTone, string> = {
   default: "text-muted-foreground hover:bg-muted hover:text-foreground",
   danger: "text-muted-foreground hover:bg-accent hover:text-danger-600",
-  info: "text-brand-600 hover:bg-accent hover:text-brand-700",
+  info: "text-primary hover:bg-accent hover:text-primary",
 };
 
 export interface PickerIconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
