@@ -117,9 +117,9 @@ Use this order when DS docs disagree:
   rhythm, dashed rounded container posture, and the `icon -> title ->
   description -> action` slot order; business copy, final CTA semantics, and
   route-owned illustrations remain outside the composed contract. Icon
-  examples stay neutral placeholders, while the action lane now reuses a
-  shared `Button size="sm" variant="soft"` example with a generic `Soft action`
-  label.
+  examples now reuse shared `Phosphor light` instances too, while the action
+  lane reuses a shared `Button size="sm" variant="soft"` example with a
+  generic `Soft action` label.
   The current
   Figma-only gap is explicit instead of silent here as well: runtime uses
   `border-border-subtle`, but canonical Figma still lacks a semantic

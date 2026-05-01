@@ -182,10 +182,10 @@ The canonical Figma file now also covers `EmptyState` directly on
 - the current source pair proves `variant=default` and `variant=minimal`
   without promoting route-owned empty-state copy, business CTAs, or product
   illustrations into the composed contract
-- icon examples on the board stay neutral placeholders, while the action lane
-  now reuses a shared `Button size="sm" variant="soft"` example with a
-  generic `Soft action` label so the CTA stays softer than the message shell
-  without dropping all the way to the quieter fill posture
+- icon examples on the board now reuse shared `Phosphor light` instances too,
+  while the action lane reuses a shared `Button size="sm" variant="soft"`
+  example with a generic `Soft action` label so the CTA stays softer than the
+  message shell without dropping all the way to the quieter fill posture
 - the current Figma-only gap is explicit here too:
   runtime asks for `border-border-subtle`, but the canonical file still lacks
   a semantic `border/subtle` variable, so the dashed rail currently binds to
