@@ -7,7 +7,6 @@ import Link from "next/link";
 
 import { Badge, Button, RowActions, RowActionButton } from "@/design-system";
 import { routes } from "@/lib/routes";
-import { cn } from "@/lib/utils";
 
 type VersionUser = {
   id: string;
@@ -196,7 +195,6 @@ export function ResourceVersionsClient({
                         <RowActionButton
                           type="button"
                           size="md"
-                          variant="quiet"
                           onClick={() => handleDownload(v.id)}
                         >
                           <Download className="h-3.5 w-3.5" />
@@ -206,9 +204,7 @@ export function ResourceVersionsClient({
                           <RowActionButton
                             type="button"
                             size="md"
-                            variant="ghost"
                             tone="muted"
-                            className={cn("text-muted-foreground hover:text-foreground")}
                             loading={rollbackLoadingId === v.id}
                             onClick={() => handleRollback(v.id)}
                           >

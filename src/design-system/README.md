@@ -425,7 +425,8 @@ Current canonical Figma shared-coverage note:
       `Restore / Delete` pair because the row stays action-light and table-like
     - `/admin/resources/[id]/versions`: adopt `RowActionButton size="md"` for
       `Download / Rollback` because the action cell stays a simple two-action
-      version-history surface
+      version-history surface, and keep that route on the row-action
+      `default / muted` ladder instead of older `quiet / ghost` overrides
     - `/admin/resources` main table stays out of scope because its publish /
       restore / edit / menu cluster is denser and not yet justified for the
       larger posture

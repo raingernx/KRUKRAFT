@@ -450,6 +450,9 @@ Use this order when DS docs disagree:
         - `/admin/reviews`
         - `/admin/resources/trash`
         - `/admin/resources/[id]/versions`
+        - the versions route now also uses the row-action
+          `default / muted` ladder directly instead of keeping older
+          `quiet / ghost` button overrides
         all now opt into `RowActionButton size="md"` after route proof
       - dense holdouts still remain out of scope on purpose:
         - `/admin/tags`

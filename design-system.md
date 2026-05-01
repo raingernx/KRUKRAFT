@@ -253,6 +253,9 @@ Current runtime contract to mirror:
       `/admin/resources/[id]/versions` now opt into `RowActionButton size="md"`
       because each surface behaves like a light table-action column rather than
       a dense multi-action editor cluster
+    - `/admin/resources/[id]/versions` now also drops the older
+      `quiet / ghost` button overrides and rides the row-action
+      `default / muted` ladder directly
     - `/admin/resources` main table still stays out of scope because its
       publish/restore/edit/menu cluster is denser and would need a separate
       rollout decision
