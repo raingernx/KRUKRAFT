@@ -143,6 +143,9 @@ Use this order when DS docs disagree:
   inventing a new runtime interpretation: `bg/surface + border/default +
   fg/default` at rest, `bg/inset` on hover/pressed, and `fg/subtle` on
   disabled.
+  `quiet` now keeps its own `action/quiet-border` semantic stroke derived from
+  `primary/lift` instead of borrowing the neutral `border/default` rail, and
+  runtime mirrors that through `primary-quiet-border`.
   The remaining button adoption gap is size-only: Figma still trials `sm=36`
   while runtime stays on the existing `sm=32` ladder.
 - `RevealImage` is the shared image primitive for already-sized containers; the

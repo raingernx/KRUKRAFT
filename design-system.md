@@ -215,7 +215,9 @@ Current runtime contract to mirror:
   - default density resolution: `comfortable -> md`, `compact -> sm`
 - The canonical Figma `Button / Foundations` boards now keep both `ghost` and
   a bounded neutral `soft` tone, and runtime `Button` now matches that tone
-  directly through the approved `primary | quiet | soft | ghost` family. The
+  directly through the approved `primary | quiet | soft | ghost` family.
+  `quiet` now keeps a dedicated primary-family border derived from
+  `primary/lift` instead of borrowing the generic `border/default` rail. The
   remaining adoption gap is the Figma-side `sm=36` step on the
   `Button / Size` boards; keep the current runtime size ladder until a
   deliberate button-size adoption pass decides whether that `36px` step should
