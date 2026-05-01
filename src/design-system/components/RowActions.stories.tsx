@@ -87,11 +87,11 @@ export const InTableCell: Story = {
         </div>
         <p className="text-sm text-muted-foreground">Draft</p>
         <RowActions>
-          <RowActionButton tone="muted">
+          <RowActionButton size="md" tone="muted">
             <Pencil className="size-3.5" />
             Edit
           </RowActionButton>
-          <RowActionMenuTrigger>
+          <RowActionMenuTrigger size="md">
             <MoreHorizontal className="size-3.5" />
           </RowActionMenuTrigger>
         </RowActions>

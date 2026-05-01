@@ -393,9 +393,11 @@ Current canonical Figma shared-coverage note:
     a dedicated `RowAction / State` set sourced from the live `Edit / Open`
     posture, and the live recipe card keeps both an `Edit / Open` example row
     and that same `Default / Hover / Focus / Pressed / Disabled` state strip.
-    The first runtime adoption slice now mirrors that posture through
-    `RowActionButton size="md"` while still leaving the existing compact `sm`
-    helper posture available for narrower table/admin surfaces
+    Runtime now mirrors that state ladder directly too: transparent rest shell
+    on `border/default`, `bg/inset` on hover/pressed, `border primary` on
+    focus, and `fg/subtle` on disabled while still leaving the existing compact
+    `sm` helper posture available for narrower table/admin surfaces and the
+    wider `md` posture available for spaced table-action columns
   - `pagination item`: recipe, not a new family; page navigation should stay a
     `Pagination` pattern with `default`, `current`, and `disabled` states
     instead of creating a separate button tone. The current Figma recipe keeps

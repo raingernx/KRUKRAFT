@@ -25,13 +25,13 @@ export interface RowActionButtonProps extends ButtonProps {
 
 const toneClasses: Record<RowActionTone, string> = {
   default:
-    "border-border-strong bg-transparent text-foreground hover:border-border-strong hover:bg-muted/40 hover:text-foreground",
+    "border-border bg-transparent text-foreground hover:border-border hover:bg-inset hover:text-foreground active:border-border active:bg-inset active:text-foreground disabled:border-border disabled:bg-transparent disabled:text-ink-subtle",
   danger:
-    "border-danger-200 bg-transparent text-danger-600 hover:bg-danger-50 hover:text-danger-700",
+    "border-danger-200 bg-transparent text-danger-600 hover:border-danger-200 hover:bg-danger-50 hover:text-danger-700 active:border-danger-200 active:bg-danger-50 active:text-danger-700 disabled:border-danger-100 disabled:bg-transparent disabled:text-danger-300",
   success:
-    "border-emerald-200 bg-transparent text-emerald-700 hover:bg-emerald-50 hover:text-emerald-700",
+    "border-emerald-200 bg-transparent text-emerald-700 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 active:border-emerald-200 active:bg-emerald-50 active:text-emerald-700 disabled:border-emerald-100 disabled:bg-transparent disabled:text-emerald-300",
   muted:
-    "border-border-strong bg-transparent text-muted-foreground hover:border-border-strong hover:bg-muted/40 hover:text-foreground",
+    "border-border bg-transparent text-muted-foreground hover:border-border hover:bg-inset hover:text-foreground active:border-border active:bg-inset active:text-foreground disabled:border-border disabled:bg-transparent disabled:text-ink-subtle",
 };
 
 const rowActionSizeClasses = {
@@ -72,6 +72,8 @@ export function RowActionButton({
       size={resolvedSize}
       className={cn(
         resolvedSizeClass,
+        (variant === "outline" || variant == null) &&
+          "focus-visible:border-2 focus-visible:border-primary focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0",
         iconOnly &&
           (resolvedSize === "md" || resolvedSize === "lg"
             ? "size-10 px-0"

@@ -427,7 +427,9 @@ Use this order when DS docs disagree:
         narrow on purpose:
         - `RowActionButton size="md"` mirrors the 40px rounded-rect table
           action recipe while compact `sm` stays available for smaller admin
-          surfaces
+          surfaces, and the helper now follows the same
+          `default|hover|focus|pressed|disabled` ladder as Figma instead of
+          piggybacking on the older generic outline hover treatment
       - `PaginationButton size="md"` mirrors the matching page-item recipe,
         now supports `asChild`, and is live in the dashboard creator
         resources pagination flow

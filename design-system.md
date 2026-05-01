@@ -233,6 +233,9 @@ Current runtime contract to mirror:
   - the first runtime adoption slice now mirrors that recipe without
     widening the whole button family:
     - `RowActionButton size="md"` carries the 40px rounded-rect posture
+      and now follows the same row-action state ladder as Figma:
+      transparent rest shell on `border/default`, `bg/inset` on
+      hover/pressed, `border primary` on focus, and `fg/subtle` on disabled
     - `PaginationButton size="md"` carries the matching page-item posture and
       now supports `asChild` for route-owned link pagination
     - dashboard creator-resources `DataPanelTable` is the first live consumer;
