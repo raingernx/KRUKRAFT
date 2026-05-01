@@ -223,6 +223,19 @@ Current canonical Figma shared-coverage note:
   runtime `EmptyState` uses `border-border-subtle`, but canonical Figma still
   lacks a semantic `border/subtle` variable, so the dashed rail currently
   binds to `border/default`.
+- `SectionHeader` is no longer a code-only composed component either:
+  the canonical file now has `SectionHeader / Foundations / Light` and
+  `SectionHeader / Foundations / Dark` on `DS Components`, plus paired
+  `SectionHeader / Variant / Source` light/dark sets that lock the bounded
+  intro-shell contract only.
+- That composed slice currently documents eyebrow, title, description,
+  alignment, and the optional trailing actions slot through a `default`,
+  `centered`, `with-actions`, and `minimal` source set while keeping route
+  backdrops, page-width choices, and live CTA semantics out of the contract.
+- The current Figma-only gap is explicit here too:
+  eyebrow tracking still stays local because canonical Figma does not yet
+  expose a reusable tracking variable, and action visuals remain illustrative
+  slot examples instead of component-owned button recipes.
 
 ## Current Implementation Rules
 

@@ -78,9 +78,9 @@ layer itself is being maintained.
 - `Modal`
 - `EmptyState`
 - `DataPanelTable`
+- `SectionHeader`
 - `FormSection`
 - `Pagination`
-- `SectionHeader`
 - `RowActions`
 - `LoadingSkeleton`
 - layout helpers under `src/design-system/layout/*`
@@ -155,6 +155,25 @@ The canonical Figma file now also covers `EmptyState` directly on
   runtime asks for `border-border-subtle`, but the canonical file still lacks
   a semantic `border/subtle` variable, so the dashed rail currently binds to
   `border/default`
+
+The canonical Figma file now also covers `SectionHeader` directly on
+`DS Components`:
+
+- `SectionHeader / Foundations / Light`
+- `SectionHeader / Foundations / Dark`
+- nested `SectionHeader / Variant / Source` light/dark component sets
+- the composed slice locks the bounded shared shell only:
+  eyebrow, title, description, alignment, and the optional trailing actions
+  slot
+- the current source pair grows into a bounded four-state proof:
+  `default`, `centered`, `with-actions`, and `minimal`
+- hero backdrops, route-specific page-width choices, and live CTA semantics
+  stay route-owned instead of becoming part of the composed contract
+- action visuals on the board are illustrative slot examples, not
+  component-owned button recipes
+- the current Figma-only gap is explicit here too:
+  eyebrow tracking still stays local because the canonical file does not yet
+  expose a reusable tracking variable
 
 ### Control Size Contract
 

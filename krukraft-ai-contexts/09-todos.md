@@ -7,7 +7,7 @@ Use this file as the single source of truth for active implementation state.
 Parent Plan: `Composed shared-component coverage`
 
 > [!info] Current Phase
-> `Phase 4 — SectionHeader coverage slice`
+> `Phase 5 — Close-out / defer decision`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -29,10 +29,13 @@ Parent Plan: `Composed shared-component coverage`
 > [!success] Completed
 > `Figma shared-component coverage` is now closed. The first heavier primitive slice is landed and verified on `DS Primitives`: `Modal` now has paired light/dark foundation boards plus nested size sets, and the close-out audit found no remaining in-plan omission strong enough to keep this parent plan open.
 
+> [!success] Completed
+> `Composed shared-component coverage` is now closed. `DS Components` now carries paired light/dark canonical boards for both `EmptyState` and `SectionHeader`, and the close-out audit found no remaining in-scope omission strong enough to keep this parent plan open. `Pagination`, `RowActions`, and `ConfirmDialog` remain explicit optional follow-ups because they are still more entangled with button recipes, table-density rollout work, or modal/async behavior than this composed-coverage pass should absorb.
+
 > [!todo] Next Up
-> - Land canonical `SectionHeader` coverage on `DS Components`
-> - Verify the slice against runtime `SectionHeader`, Storybook, and representative route-family usage
-> - Keep `Pagination`, `RowActions`, `ConfirmDialog`, runtime adoption, and product-bound exemplar work out of scope until the `SectionHeader` slice closes
+> - No in-plan `Next Up` remains; this parent plan is complete
+> - Open a separate optional parent plan only if the user explicitly reprioritizes `Pagination`, `RowActions`, `ConfirmDialog`, or another DS/Figma bucket
+> - Keep runtime adoption and product-bound exemplar work out of scope unless a new plan is opened
 
 > [!abstract] Partial
 > The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow Figma coverage pass and should not silently reopen broad runtime rollout or product-exemplar work.
@@ -80,7 +83,7 @@ Parent Plan: `Composed shared-component coverage`
 | Creator application semantic cleanup | Complete | route-level inventory on `/dashboard/creator/apply` found no remaining high-signal runtime slice; the form already rides semantic success/danger/muted families closely enough to close the optional follow-up plan |
 | Figma shared-component coverage | Complete | page roles are normalized, `Avatar` and `Switch` are landed, `Modal` now has canonical paired light/dark boards with nested size sets, and the close-out audit found no remaining in-plan blocker |
 | Figma heavier primitive follow-ups | Complete | `LoadingSkeleton` shell-only coverage is landed, `RevealImage` is deliberately deferred as a container-/asset-owned helper, and `ToastProvider` is deliberately deferred as a runtime behavior/provider pattern rather than a canonical static Figma primitive |
-| Composed shared-component coverage | Active | `EmptyState` is now frozen as the first composed baseline, and `SectionHeader` is the chosen next slice because it stays bounded, story-backed, and lower-risk than the remaining recipe-heavy or behavior-heavy candidates |
+| Composed shared-component coverage | Complete | `EmptyState` and `SectionHeader` are now both landed on `DS Components`; the close-out audit defers `Pagination`, `RowActions`, and `ConfirmDialog` as lower-signal optional follow-ups instead of keeping the parent plan open |
 | Route Rollout Audit | Complete | the first proof route (`dashboard navigation + library`) passed runtime verification and the optional rollout audit closed cleanly |
 | Legacy DS Cleanup | Complete | `secondary -> quiet`, outline inventory, and search-shell decision closed cleanly |
 | Admin / Settings Rollout Audit | Complete | `/dashboard/settings`, `/admin/users`, `/admin/settings`, and `admin/resources` passed runtime proof |
@@ -93,7 +96,7 @@ Parent Plan: `Composed shared-component coverage`
 ## Progress
 
 Composed shared-component coverage
-`[██████░░░░] 60%`
+`[██████████] 100%`
 
 ```mermaid
 flowchart TB
@@ -156,10 +159,11 @@ flowchart TB
     AF1["Composed shared-component inventory<br/>Complete"]
     AF2["EmptyState coverage slice<br/>Complete"]
     AF3["Remaining composed follow-up selection<br/>Complete"]
-    AF4["SectionHeader coverage slice<br/>In progress"]
+    AF4["SectionHeader coverage slice<br/>Complete"]
+    AF5["Close-out / defer decision<br/>Complete"]
   end
 
-  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4 --> AD0 --> AD1 --> AD2 --> AD3 --> AD4 --> AD5 --> AD6 --> AE0 --> AE1 --> AE2 --> AE3 --> AE4 --> AF0 --> AF1 --> AF2 --> AF3 --> AF4
+  D1 --> D2 --> T0 --> R1 --> R2 --> R3 --> R4 --> L1 --> L2 --> L3 --> L4 --> L5 --> A1 --> A2 --> A3 --> M1 --> M2 --> M3 --> H1 --> H2 --> H3 --> W0 --> W1 --> W2 --> W3 --> W4 --> S0 --> S1 --> S2 --> S3 --> F0 --> F1 --> F2 --> F3 --> F4 --> U0 --> U1 --> U2 --> U3 --> U4 --> V0 --> V1 --> V2 --> V3 --> V4 --> X0 --> X1 --> X2 --> X3 --> X4 --> Y0 --> Y1 --> Y2 --> Y3 --> Y4 --> Z0 --> Z1 --> Z2 --> Z3 --> Z4 --> AA0 --> AA1 --> AA2 --> AA3 --> AA4 --> AB0 --> AB1 --> AB2 --> AB3 --> AB4 --> AC0 --> AC1 --> AC2 --> AC3 --> AC4 --> AD0 --> AD1 --> AD2 --> AD3 --> AD4 --> AD5 --> AD6 --> AE0 --> AE1 --> AE2 --> AE3 --> AE4 --> AF0 --> AF1 --> AF2 --> AF3 --> AF4 --> AF5
 ```
 
 ## Daily Workflow
@@ -195,7 +199,7 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 4 — SectionHeader coverage slice
+Phase 5 — Close-out / defer decision
 
 ### Parent Plan
 Composed shared-component coverage
@@ -249,20 +253,41 @@ Composed shared-component coverage
     async behavior concerns while lacking its own story surface
   - `Pagination` and `RowActions` remain deferred because both are tightly
     coupled to existing button recipe and table-density rollout decisions
+- That second composed slice is now landed on `DS Components` too:
+  - `SectionHeader / Foundations / Light`
+  - `SectionHeader / Foundations / Dark`
+  - nested light/dark `SectionHeader / Variant / Source` sets
+  - the bounded shared contract is now frozen as eyebrow, title, description,
+    alignment, and the optional trailing actions slot through
+    `default | centered | with-actions | minimal`
+  - the explicit Figma-only gap is preserved instead of hidden:
+    eyebrow tracking still stays local because the canonical file does not yet
+    expose a reusable tracking variable, and action visuals remain
+    illustrative slot examples instead of component-owned button recipes
+- The plan-level close-out audit is now resolved:
+  - `Pagination` remains better treated as an optional follow-up because its
+    visual contract is still entangled with existing `Button` recipe work and
+    live pagination rollout decisions
+  - `RowActions` remains better treated as an optional follow-up because its
+    visual contract is still entangled with tone, density, and table-action
+    rollout decisions
+  - `ConfirmDialog` remains better treated as an optional follow-up because it
+    still overlaps the already-landed `Modal` shell and async behavior without
+    a dedicated Storybook surface
+- Therefore no remaining in-scope omission is strong enough to keep this
+  parent plan open.
 
 ### Goal
-Land canonical `SectionHeader` coverage as the next composed shared-component
-slice without silently reopening runtime adoption, table recipe work, or
-product-bound exemplar surfaces.
+Close the composed shared-component coverage plan cleanly now that the two
+highest-signal bounded slices are landed and the remaining candidates are
+explicitly deferred.
 
 ### Why this is the current phase
 - The primitive-first Figma coverage pass is now closed cleanly.
-- The first composed slice is now landed too, so the plan can move forward
-  instead of staying parked on `EmptyState`.
-- The remaining composed set is no longer equally ambiguous:
-  `SectionHeader` is the safest next Figma slice because it stays bounded,
-  story-backed, and runtime-proved without inheriting the heavier recipe or
-  behavior fanout that still surrounds the others.
+- The two bounded composed slices with the strongest signal are now both
+  landed on `DS Components`.
+- The remaining candidates are still lower-signal or more entangled with
+  existing runtime rollout work than this parent plan should absorb.
 
 ### Definition of Done
 - [x] Open a new active parent plan for the remaining composed shared set
@@ -271,9 +296,9 @@ product-bound exemplar surfaces.
 - [x] Land and verify that first canonical composed-component slice
 - [x] Sync mapping/docs for the landed composed slice in the same session
 - [x] Choose the next narrow composed-component slice after `EmptyState`
-- [ ] Land and verify canonical `SectionHeader` coverage
-- [ ] Sync mapping/docs for the landed `SectionHeader` slice in the same session
-- [ ] Close the parent plan or defer remaining composed items explicitly after the chosen slice resolves
+- [x] Land and verify canonical `SectionHeader` coverage
+- [x] Sync mapping/docs for the landed `SectionHeader` slice in the same session
+- [x] Close the parent plan or defer remaining composed items explicitly after the chosen slice resolves
 
 ### Phase Map
 
@@ -283,15 +308,15 @@ product-bound exemplar surfaces.
 | 1 | Composed shared-component inventory | complete | runtime/story/Figma audit now resolves the ownership question across `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`, and `ConfirmDialog` |
 | 2 | EmptyState coverage slice | complete | canonical `EmptyState` coverage is now landed on `DS Components` and synced through the Figma registry plus DS docs |
 | 3 | Remaining composed follow-up selection | complete | `SectionHeader` is the chosen next slice; `Pagination`, `RowActions`, and `ConfirmDialog` stay deferred until that slice resolves |
-| 4 | SectionHeader coverage slice | in progress | land canonical `SectionHeader` coverage on `DS Components` and sync the registry/docs in the same session |
-| 5 | Close-out / defer decision | pending | close the parent plan or defer remaining composed items explicitly after the chosen slices resolve |
+| 4 | SectionHeader coverage slice | complete | canonical `SectionHeader` coverage is now landed on `DS Components` and synced through the Figma registry plus DS docs |
+| 5 | Close-out / defer decision | complete | the close-out audit defers `Pagination`, `RowActions`, and `ConfirmDialog` as optional follow-ups and closes the parent plan at `100%` |
 
 ---
 
 ## Current Goal
 
-Land canonical `SectionHeader` coverage as the next composed shared-component
-slice.
+No active in-plan implementation remains. Open a separate optional follow-up
+plan only if the user explicitly reprioritizes another composed/shared bucket.
 
 ---
 
@@ -303,16 +328,17 @@ slice.
 - [x] Land canonical `EmptyState` coverage on `DS Components`
 - [x] Verify the `EmptyState` slice against runtime component, Storybook, and representative route-family usage
 - [x] Decide whether `SectionHeader`, `Pagination`, `RowActions`, or `ConfirmDialog` should be the next narrow composed slice
-- [ ] Land canonical `SectionHeader` coverage on `DS Components`
-- [ ] Verify the `SectionHeader` slice against runtime component, Storybook, and representative route-family usage
+- [x] Land canonical `SectionHeader` coverage on `DS Components`
+- [x] Verify the `SectionHeader` slice against runtime component, Storybook, and representative route-family usage
+- [x] Defer `Pagination`, `RowActions`, and `ConfirmDialog` explicitly instead of keeping the parent plan open
 
 ---
 
 ## Next Up
 
-- [ ] Land canonical `SectionHeader` coverage on `DS Components`
-- [ ] Verify the slice against runtime `SectionHeader`, Storybook, and representative route-family usage
-- [ ] Keep `Pagination`, `RowActions`, `ConfirmDialog`, runtime adoption, and product-bound exemplar work out of scope until the `SectionHeader` slice closes
+- [ ] No in-plan `Next Up` remains; this parent plan is complete
+- [ ] Open a separate optional parent plan only if the user explicitly reprioritizes `Pagination`, `RowActions`, `ConfirmDialog`, or another DS/Figma bucket
+- [ ] Keep runtime adoption and product-bound exemplar work out of scope unless a new plan is opened
 
 ---
 
@@ -409,6 +435,7 @@ Run these before claiming the active reference-audit or DS alignment slice is co
 
 Add only short, high-signal entries here.
 
+- 2026-05-01: `Composed shared-component coverage` is now closed at `100%`. `SectionHeader` is landed as the second composed slice on `DS Components` through paired light/dark foundation boards plus nested light/dark source sets. The frozen contract is intentionally narrow: eyebrow, title, description, alignment, and the optional trailing actions slot through `default | centered | with-actions | minimal`. The explicit Figma-only gap is preserved instead of hidden: eyebrow tracking still stays local because the canonical file does not yet expose a reusable tracking variable, and the action visuals remain illustrative slot examples instead of component-owned button recipes. The close-out audit then deferred `Pagination`, `RowActions`, and `ConfirmDialog` as optional follow-ups because they remain more entangled with button recipes, table-density rollout work, or modal/async behavior than this parent plan should absorb.
 - 2026-04-30: The follow-up selection after `EmptyState` is now resolved. `SectionHeader` is the chosen next composed slice because it stays shell-bounded, has Storybook proof, and has broad live route usage without inheriting the denser button-recipe/table fanout that still surrounds `Pagination` and `RowActions`. `ConfirmDialog` stays behind it because it still overlaps the already-landed `Modal` contract and async behavior concerns while lacking a dedicated story surface.
 - 2026-04-30: `EmptyState` is now landed as the first composed shared-component slice. `DS Components` now contains paired `EmptyState / Foundations / Light` and `EmptyState / Foundations / Dark` boards plus nested light/dark `EmptyState / Variant / Source` sets. The frozen contract is intentionally narrow: centered stack rhythm, dashed rounded container posture, and the shared `icon -> title -> description -> action` slot order proven through `default` and `minimal` variants. The explicit Figma-only gap is preserved instead of hidden: runtime asks for `border-border-subtle`, but the canonical file still lacks a semantic `border/subtle` variable, so the dashed rail currently binds to `border/default`.
 - 2026-04-30: The first inventory pass for `Composed shared-component coverage` is now resolved. `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`, and `ConfirmDialog` all exist in runtime code, but only some have bounded story coverage and none are verified in the current canonical Figma file. `EmptyState` is the chosen first slice because it has the cleanest shell-level contract (icon, title, description, action slot, dashed container posture), one simple Storybook surface, and broad live route usage without inheriting modal behavior (`ConfirmDialog`) or recipe/table fanout (`Pagination`, `RowActions`). `SectionHeader` stays deferred behind that slice because it still overlaps route-owned intro/header duplicates and typography decisions more than the others.
