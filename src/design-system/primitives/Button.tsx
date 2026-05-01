@@ -11,7 +11,7 @@ const buttonVariants = cva(
     "rounded-[var(--radius-pill)] border border-transparent bg-clip-padding",
     "font-ui text-sm font-semibold whitespace-nowrap",
     "shadow-none transition-[background-color,border-color,color,box-shadow] outline-none select-none",
-    "focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    "focus-visible:border-2 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
     "disabled:pointer-events-none disabled:shadow-none",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   ].join(" "),
@@ -23,7 +23,7 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-pressed disabled:bg-muted disabled:text-muted-foreground",
         quiet:
-          "border-border-quiet bg-primary-quiet text-primary-quiet-foreground hover:bg-primary-quiet active:bg-primary-quiet focus-visible:border-ring disabled:border-border disabled:bg-muted disabled:text-muted-foreground",
+          "border-border-quiet bg-primary-quiet text-primary-quiet-foreground hover:bg-primary-quiet active:bg-primary-quiet disabled:border-border disabled:bg-muted disabled:text-muted-foreground",
         soft:
           "border-primary-soft-border bg-primary-soft text-primary-soft-foreground hover:bg-primary-soft-hover active:bg-primary-soft-pressed disabled:border-primary-soft-border disabled:bg-primary-soft disabled:text-primary-soft-disabled-foreground",
         secondary:

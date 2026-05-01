@@ -218,9 +218,9 @@ Current runtime contract to mirror:
   directly through the approved `primary | quiet | soft | ghost` family.
   `quiet` now keeps a dedicated `border/quiet` stroke derived from
   `primary/lift` instead of borrowing the generic `border/default` rail, but
-  its focus state intentionally promotes the stroke to semantic `focus/ring`
-  instead of staying on the quieter rest rail. The remaining adoption gap is
-  the Figma-side `sm=36` step on the
+  the shared button focus posture intentionally promotes the stroke to
+  semantic `focus/ring` at `2px` instead of staying on the quieter rest rail.
+  The remaining adoption gap is the Figma-side `sm=36` step on the
   `Button / Size` boards; keep the current runtime size ladder until a
   deliberate button-size adoption pass decides whether that `36px` step should
   graduate into code too.
