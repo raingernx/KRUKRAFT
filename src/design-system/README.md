@@ -133,6 +133,10 @@ Current canonical Figma shared-coverage note:
   admin resource picker surfaces (`PreviewImageSortableList`,
   `UserSearchSelect`) now use semantic `primary` and `ring` emphasis instead
   of direct `brand-*` aliases
+- the next marketplace follow-up after that stays equally narrow:
+  `HeroSearch` overlay affordances now use semantic `primary` emphasis for
+  browse icons, fallback file glyphs, and bottom CTA text instead of direct
+  `brand-*` aliases
 
 ### Composed Components
 

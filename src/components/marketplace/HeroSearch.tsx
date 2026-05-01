@@ -589,7 +589,7 @@ export function HeroSearch({
                     onClick={() => navigateToHref(href)}
                     className="flex items-center gap-2 rounded-2xl border border-border bg-muted px-3 py-3 text-left text-sm font-medium text-foreground transition hover:border-primary/20 hover:bg-card"
                   >
-                    <Icon className="h-4 w-4 shrink-0 text-brand-600" />
+                    <Icon className="h-4 w-4 shrink-0 text-primary" />
                     <span>{label}</span>
                   </button>
                 ))}
@@ -637,7 +637,7 @@ export function HeroSearch({
           <button
             type="button"
             onClick={() => navigateToSearchQuery(value)}
-            className="flex w-full items-center justify-center gap-2 border-t border-border/70 px-4 py-3 text-sm font-semibold text-brand-700 transition hover:bg-muted"
+            className="flex w-full items-center justify-center gap-2 border-t border-border/70 px-4 py-3 text-sm font-semibold text-primary transition hover:bg-muted"
           >
             <Search className="h-4 w-4" />
             ดูผลลัพธ์ทั้งหมด
@@ -699,7 +699,7 @@ export function HeroSearch({
                     className="rounded-xl object-cover"
                   />
                 ) : (
-                  <FileText className="h-4 w-4 text-brand-500" aria-hidden />
+                  <FileText className="h-4 w-4 text-primary" aria-hidden />
                 )}
               </div>
 
@@ -735,7 +735,7 @@ export function HeroSearch({
         <button
           type="button"
           onClick={() => navigateToSearchQuery(value)}
-          className="flex w-full items-center justify-center gap-2 border-t border-border/70 px-4 py-3 text-sm font-semibold text-brand-700 transition hover:bg-muted"
+          className="flex w-full items-center justify-center gap-2 border-t border-border/70 px-4 py-3 text-sm font-semibold text-primary transition hover:bg-muted"
         >
           <Search className="h-4 w-4" />
           ดูผลลัพธ์ทั้งหมดสำหรับ “{value.trim()}”
