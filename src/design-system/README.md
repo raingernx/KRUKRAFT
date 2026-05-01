@@ -365,10 +365,10 @@ Current canonical Figma shared-coverage note:
   - default resolution: `comfortable -> md`, `compact -> sm`
 - The bounded neutral `soft` tone is now part of the approved runtime
   `Button` ladder too. It follows the canonical Figma state contract directly:
-  `bg/inset + border/default + fg/default` at rest, `bg/surface` on hover, and
-  `fg/subtle` on disabled while keeping the same pill geometry as the rest of
-  the family. The remaining adoption candidate is the Figma-side `sm=36` size
-  step, not the `soft` tone itself.
+  `bg/surface + border/default + fg/default` at rest, `bg/inset` on
+  hover/pressed, and `fg/subtle` on disabled while keeping the same pill
+  geometry as the rest of the family. The remaining adoption candidate is the
+  Figma-side `sm=36` size step, not the `soft` tone itself.
 - Use this decision rule when evaluating new button-looking surfaces:
   - `variant`: promote only when the posture is meant to work across multiple
     contexts as part of the core family

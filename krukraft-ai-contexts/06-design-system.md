@@ -133,8 +133,9 @@ Use this order when DS docs disagree:
 - `Button` runtime now mirrors the canonical Figma tone family too:
   `primary | quiet | soft | ghost` are all live in `Button.tsx`. The newly
   adopted `soft` variant follows the Figma state contract directly instead of
-  inventing a new runtime interpretation: `bg/inset + border/default +
-  fg/default` at rest, `bg/surface` on hover, and `fg/subtle` on disabled.
+  inventing a new runtime interpretation: `bg/surface + border/default +
+  fg/default` at rest, `bg/inset` on hover/pressed, and `fg/subtle` on
+  disabled.
   The remaining button adoption gap is size-only: Figma still trials `sm=36`
   while runtime stays on the existing `sm=32` ladder.
 - `RevealImage` is the shared image primitive for already-sized containers; the
