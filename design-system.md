@@ -186,7 +186,10 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   and `NotificationItem / Foundations / Dark` boards plus light/dark
   `NotificationItem / Variant / Source` sets. The board owns only the compact
   status shell, icon wrapper, title/body rhythm, optional inline action lane,
-  and dismiss affordance. Bell dropdown behavior, unread counts, stack order,
+  and dismiss affordance. The current runtime now mirrors that bounded shell
+  directly too: `8px` shell radius, `20px` status glyphs inside `32px`
+  wrappers, and the compact inline dismiss affordance instead of the older
+  absolute close button. Bell dropdown behavior, unread counts, stack order,
   and queue timing remain runtime-owned and should not be promoted into this
   board
 - glyph choice remains product-owned and should keep flowing through the

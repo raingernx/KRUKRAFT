@@ -1,5 +1,5 @@
 "use client";
-import { CheckCircle2, Info, AlertCircle, AlertTriangle } from "@/lib/icons";
+import { CheckCircle2, Info, AlertCircle, AlertTriangle, X } from "@/lib/icons";
 
 import type { Notification, NotificationType } from "@/features/admin-ux/types";
 
@@ -10,6 +10,8 @@ interface NotificationItemProps {
 
 export function NotificationItem({ notification, onDismiss }: NotificationItemProps) {
   const { id, type, message, description, actionLabel, onAction } = notification;
+  const hasAction = Boolean(actionLabel && onAction);
+  const contentGapClass = hasAction || type !== "success" ? "gap-1" : "gap-2";
 
   const iconConfig: Record<
     NotificationType,
@@ -39,28 +41,28 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
   const Icon = iconConfig[type].Icon;
 
   return (
-    <div className="pointer-events-auto relative flex min-w-[260px] max-w-[340px] animate-fade-up items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 motion-reduce:animate-none">
-        <div
-          className={[
-            "flex h-8 w-8 items-center justify-center rounded-full text-xs",
-            iconConfig[type].wrapperClass,
+    <div className="pointer-events-auto flex w-[min(325px,calc(100vw-3rem))] animate-fade-up items-start gap-3 rounded-sm border border-border bg-card p-3 motion-reduce:animate-none">
+      <div
+        className={[
+          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
+          iconConfig[type].wrapperClass,
         ].join(" ")}
       >
-        <Icon className="h-4 w-4" />
+        <Icon className="h-5 w-5" />
       </div>
-      <div className="flex flex-1 flex-col gap-1 pr-6">
-        <div className="flex items-center justify-between gap-4">
+      <div className={["min-w-0 flex-1 flex flex-col", contentGapClass].join(" ")}>
+        <div className={["flex w-full items-start", hasAction ? "gap-3" : "gap-0"].join(" ")}>
           <div className="min-w-0 flex-1">
-            <p className="text-small font-medium leading-snug text-foreground">
+            <p className="text-small font-medium text-foreground">
               {message}
             </p>
             {description && (
-              <p className="mt-0.5 text-caption leading-snug text-muted-foreground">
+              <p className="text-caption text-muted-foreground">
                 {description}
               </p>
             )}
           </div>
-          {actionLabel && onAction && (
+          {hasAction && actionLabel && onAction && (
             <button
               type="button"
               onClick={() => {
@@ -77,12 +79,10 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
       <button
         type="button"
         onClick={() => onDismiss(id)}
-        className="absolute right-2 top-[13px] flex h-7 w-7 items-center justify-center rounded-full pb-0.5 text-[14px] text-muted-foreground hover:bg-accent hover:text-foreground"
+        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground"
         aria-label="Dismiss notification"
       >
-        <span className="inline-flex h-5 w-5 items-center justify-center text-[24px] leading-none">
-          ×
-        </span>
+        <X className="h-4 w-4" />
       </button>
     </div>
   );

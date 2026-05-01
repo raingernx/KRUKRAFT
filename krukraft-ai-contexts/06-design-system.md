@@ -529,13 +529,17 @@ Use this order when DS docs disagree:
         `DS Components` carries paired `NotificationItem / Foundations / Light`
         (`1403:74`) and `NotificationItem / Foundations / Dark` (`1403:99`)
         boards plus light/dark `NotificationItem / Variant / Source` sets
-        (`1409:160`, `1409:162`). The board proves wrapper posture,
+        (`1409:160`, `1435:2289`). The board proves wrapper posture,
         `success | info | warning | error`, optional inline action labels, and
-        the dismiss affordance only; bell-dropdown behavior, unread counts,
-        stack order, and queue timing remain runtime-owned. The current
-        explicit Figma-only gap is narrow: info wrappers still reuse
-        `primary/mist + primary/base` because the canonical variable file does
-        not yet expose dedicated support/info semantics
+        the dismiss affordance only. The refined compact shell is now the
+        active contract on both sides: `8px` shell radius, `32px` status
+        wrappers with `20px` Phosphor-light glyphs, and the compact inline
+        dismiss affordance instead of the older absolute close button.
+        Bell-dropdown behavior, unread counts, stack order, and queue timing
+        remain runtime-owned. The current explicit Figma-only gap is narrow:
+        info wrappers still reuse `primary/mist + primary/base` because the
+        canonical variable file does not yet expose dedicated support/info
+        semantics
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared
