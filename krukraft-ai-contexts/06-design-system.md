@@ -506,6 +506,10 @@ Use this order when DS docs disagree:
         narrowed too: shared upload/picker/dropzone surfaces use semantic
         `primary` emphasis instead of direct `brand-*` aliases when they need
         stronger icon or border emphasis
+      - the next product-bound follow-up after that shared pass is narrow too:
+        admin resource picker surfaces (`PreviewImageSortableList`,
+        `UserSearchSelect`) now use semantic `primary`/`ring` emphasis instead
+        of direct `brand-*` aliases
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared

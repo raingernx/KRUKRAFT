@@ -95,7 +95,7 @@ export function UserSearchSelect({
         type="button"
         id={id}
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between rounded-xl border border-border bg-background px-3 py-2.5 text-left text-[13px] text-foreground shadow-sm transition hover:border-primary/20 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+        className="flex w-full items-center justify-between rounded-xl border border-border bg-background px-3 py-2.5 text-left text-[13px] text-foreground shadow-sm transition hover:border-primary/20 focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring/20"
         aria-haspopup="listbox"
         aria-expanded={open}
       >
@@ -111,7 +111,7 @@ export function UserSearchSelect({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={placeholder}
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-[13px] text-foreground outline-none placeholder:text-muted-foreground focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-[13px] text-foreground outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring/20"
               autoFocus
             />
           </div>
@@ -121,7 +121,7 @@ export function UserSearchSelect({
               type="button"
               onClick={handleSelectCurrentUser}
               className={`flex w-full flex-col items-start px-3 py-2 text-left text-[13px] transition ${
-                value === "" ? "bg-brand-50 text-brand-800" : "text-foreground hover:bg-muted"
+                value === "" ? "bg-primary-50 text-primary-800" : "text-foreground hover:bg-muted"
               }`}
             >
               <span className="font-medium">Current user</span>
@@ -143,7 +143,7 @@ export function UserSearchSelect({
                     role="option"
                     onClick={() => handleSelectUser(user)}
                     className={`flex w-full flex-col items-start px-3 py-2 text-left text-[13px] transition ${
-                      value === user.id ? "bg-brand-50 text-brand-800" : "text-foreground hover:bg-muted"
+                      value === user.id ? "bg-primary-50 text-primary-800" : "text-foreground hover:bg-muted"
                     }`}
                   >
                     <span className="font-medium">{user.name || "No name"}</span>

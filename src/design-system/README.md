@@ -129,6 +129,10 @@ Current canonical Figma shared-coverage note:
   narrow: shared upload/picker/dropzone surfaces now use semantic `primary`
   emphasis instead of `brand-*` aliases when they need stronger icon or border
   emphasis
+- the next product-bound follow-up after that shared pass is narrow too:
+  admin resource picker surfaces (`PreviewImageSortableList`,
+  `UserSearchSelect`) now use semantic `primary` and `ring` emphasis instead
+  of direct `brand-*` aliases
 
 ### Composed Components
 

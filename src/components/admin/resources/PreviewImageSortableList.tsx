@@ -54,7 +54,7 @@ function SortableItem({ id, index, url, onRemove, onSetCover }: SortableItemProp
     <div
       ref={setNodeRef}
       style={style}
-      className={isDragging ? "ring-2 ring-brand-400 rounded-xl" : undefined}
+      className={isDragging ? "rounded-xl ring-2 ring-primary/30" : undefined}
     >
       <PreviewCard className="flex items-center gap-3 border-border bg-shell px-3 py-2 shadow-sm transition">
       <button
@@ -81,12 +81,12 @@ function SortableItem({ id, index, url, onRemove, onSetCover }: SortableItemProp
       <div className="min-w-0 flex-1">
         <p className="truncate text-[12px] text-foreground">{url}</p>
         {index === 0 ? (
-          <p className="text-[11px] font-medium text-brand-600">Cover</p>
+          <p className="text-[11px] font-medium text-primary">Cover</p>
         ) : onSetCover ? (
           <button
             type="button"
             onClick={() => onSetCover(index)}
-            className="text-[11px] text-brand-600 hover:underline"
+            className="text-[11px] text-primary hover:underline"
           >
             Set as cover
           </button>

@@ -162,6 +162,10 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   shared upload/picker/dropzone surfaces may use semantic `primary` emphasis
   when they need stronger icon or border emphasis, but they should not keep
   reaching for `brand-*` aliases directly
+- the next product-bound follow-up after that shared pass should stay narrow
+  too:
+  admin resource picker surfaces may use semantic `primary` and `ring`
+  emphasis, but they should not keep reaching for `brand-*` aliases directly
 - glyph choice remains product-owned and should keep flowing through the
   repo-owned `@/lib/icons` adapter instead of turning the canonical file into a
   copied Phosphor library dump
