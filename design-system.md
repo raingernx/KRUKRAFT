@@ -220,11 +220,13 @@ Current runtime contract to mirror:
   - table row actions, pagination items, and panel CTAs should start life as
     recipes on top of `outline` / `ghost` / future `soft` posture rather than
     immediately becoming new top-level variants
-  - the current Figma recipe direction now locks `DataPanelTable` row actions
-    and pagination items to a rounded-rect `radius/sm (8px)` shape instead of
-    the pill geometry used by the core family, and the row-action recipe card
-    now keeps both an `Edit / Open` example row and a compact state strip so
-    the posture and its states stay visible together
+  - the current Figma recipe direction now locks `DataPanelTable` row actions,
+    pagination items, and panel CTAs to a rounded-rect `radius/sm (8px)`
+    shape instead of the pill geometry used by the core family; row actions
+    and pagination stay outline-adjacent while panel CTAs use the calmer
+    bounded-neutral `soft` tone, and the row-action recipe card now keeps both
+    an `Edit / Open` example row and a compact state strip so the posture and
+    its states stay visible together
   - the first runtime adoption slice now mirrors that recipe without
     widening the whole button family:
     - `RowActionButton size="md"` carries the 40px rounded-rect posture
@@ -482,10 +484,12 @@ For reusable Figma component sets:
   combinatorially exhaustive: it proves the shell combinations for
   `actions`, `toolbar`, and `footer`, while columns, table-head fills, row
   rendering, empty-state content, and business actions stay route-owned.
-- Treat the bordered action controls shown with `DataPanelTable` as a recipe
-  posture, not as a new button family: row actions and pagination items should
-  use the same rounded-rect `radius/sm (8px)` shape in Figma before any
-  broader button-shape adoption is considered.
+- Treat the action controls shown with `DataPanelTable` as a recipe posture,
+  not as a new button family: row actions, pagination items, and panel CTAs
+  should use the same rounded-rect `radius/sm (8px)` shape in Figma before
+  any broader button-shape adoption is considered. Keep row actions and
+  pagination outline-adjacent; use the quieter bounded-neutral `soft` tone for
+  table-shell panel CTAs instead of primary pill emphasis.
 - The current footer proof point should stay close to runtime usage too: use a
   muted metadata-note footer before inventing CTA-heavy footer recipes.
 - The current canonical `DataPanelTable` board also keeps its token debt
@@ -567,8 +571,8 @@ At a high level:
     `Row action` keeps an `Edit / Open` example row plus a compact
     `Default|Hover|Focus|Pressed|Disabled` state strip, `Pagination item`
     shares the same rounded-rect `radius/sm (8px)` geometry, and `Panel CTA`
-    stays on the bounded-neutral pill candidate instead of inheriting the
-    rounded-rect table posture
+    now follows the same rounded-rect table posture on the bounded-neutral
+    `soft` tone instead of staying on the older primary-pill candidate
   - the latest `Input / Search` re-audit also confirmed that both
     `Input / State` / `SearchInput / State` and `Input / Size` /
     `SearchInput / Size` now use `radius/sm = 8px` across light and dark; repo

@@ -417,8 +417,9 @@ Use this order when DS docs disagree:
         `Edit / Open` example row and a compact state strip so the recipe
         posture and `default|hover|focus|pressed|disabled` behavior stay
         visible together, while `Pagination item` mirrors the same rounded-rect
-        `radius/sm (8px)` shape and `Panel CTA` intentionally stays on the
-        bounded-neutral pill candidate
+        `radius/sm (8px)` shape and `Panel CTA` now follows that same rounded-
+        rect table posture on the bounded-neutral `soft` tone instead of the
+        older primary-pill candidate
       - the first runtime adoption slice is now in code too, but still kept
         narrow on purpose:
         - `RowActionButton size="md"` mirrors the 40px rounded-rect table

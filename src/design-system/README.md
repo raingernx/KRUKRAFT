@@ -432,9 +432,11 @@ Current canonical Figma shared-coverage note:
     - `CreatorResourceStatusButton` is now an explicit compact holdout too;
       it passes `size="sm"` in code even though no live route mount was found
       during the rollout audit
-  - `panel CTA`: recipe first, usually outline-derived; if the bounded neutral
-    posture spreads across multiple non-table contexts, reopen it as a real
-    `soft` adoption decision instead of sneaking it into `ghost`
+  - `panel CTA`: recipe first; inside `DataPanelTable` and similar table shells
+    it now defaults to the bounded-neutral `soft + radius/sm (8px)` posture so
+    it stays visible without competing with row controls or page-level CTAs.
+    Reopen it as a broader recipe or family decision only if that same posture
+    spreads beyond table shells
 - If the button ladder is deliberately reopened later, the current recommended
   promotion path is:
   - keep `xs = 32`
