@@ -114,7 +114,8 @@ Use this order when DS docs disagree:
   description -> action` slot order; business copy, final CTA semantics, and
   route-owned illustrations remain outside the composed contract. Icon
   examples stay neutral placeholders, while the action lane now reuses a
-  shared `Button size="sm"` example with a generic `Primary action` label.
+  shared `Button size="sm" variant="quiet"` example with a generic `Quiet action`
+  label.
   The current
   Figma-only gap is explicit instead of silent here as well: runtime uses
   `border-border-subtle`, but canonical Figma still lacks a semantic
