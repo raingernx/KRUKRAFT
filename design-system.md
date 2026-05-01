@@ -181,6 +181,14 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   `success | info | warning | error`; append
   `?scenario=success|info|warning|error|all` when the proof should fire on
   load instead of relying on manual clicking
+- canonical Figma coverage should stay equally narrow:
+  `DS Components` now carries paired `NotificationItem / Foundations / Light`
+  and `NotificationItem / Foundations / Dark` boards plus light/dark
+  `NotificationItem / Variant / Source` sets. The board owns only the compact
+  status shell, icon wrapper, title/body rhythm, optional inline action lane,
+  and dismiss affordance. Bell dropdown behavior, unread counts, stack order,
+  and queue timing remain runtime-owned and should not be promoted into this
+  board
 - glyph choice remains product-owned and should keep flowing through the
   repo-owned `@/lib/icons` adapter instead of turning the canonical file into a
   copied Phosphor library dump

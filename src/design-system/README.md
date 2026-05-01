@@ -146,6 +146,13 @@ Current canonical Figma shared-coverage note:
   one bounded trigger surface so `success | info | warning | error` can be
   browser-verified without mutating real admin data; append
   `?scenario=success|info|warning|error|all` to autofire a proof state on load
+- canonical Figma coverage now mirrors only the bounded item shell:
+  `DS Components` carries `NotificationItem / Foundations / Light` and
+  `NotificationItem / Foundations / Dark` plus nested light/dark
+  `NotificationItem / Variant / Source` sets that lock the compact status
+  shell, icon wrapper, title/body rhythm, optional inline action lane, and
+  dismiss affordance without pretending that bell-dropdown behavior, stack
+  ordering, unread counts, or queue timing belong to the same board
 
 ### Composed Components
 
@@ -198,6 +205,11 @@ Current canonical Figma shared-coverage note:
 - `FileUploadWidget`, `NotificationButton`, `PriceBadge`, `PriceLabel`, and
   `PickerControls` also belong to `@/design-system/product`; they stay reusable
   but remain more workflow-bound than true primitives.
+- `NotificationItem` now has canonical Figma coverage as a bounded admin
+  status shell, but it remains owned by `src/components/admin/NotificationItem.tsx`
+  rather than becoming a new `@/design-system` export. Treat the board as
+  handoff proof for the item surface only; bell/stack behavior stays runtime-
+  owned.
 - `DataPanelTable` is the reusable dashboard/admin shell for
   title/description/actions + optional toolbar + table/empty-state content.
   Keep data fetching, column schema, row rendering, and business actions
