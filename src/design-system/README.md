@@ -246,7 +246,7 @@ Current canonical Figma shared-coverage note:
 - The eyebrow examples now sit on the shared `badge` size contract (`12/16`)
   instead of the larger label-sized posture, and runtime `SectionHeader`
   mirrors that by using `text-badge` for the eyebrow copy.
-- The `with-actions` proof now reuses shared `Button size="sm"` examples from
+- The `with-actions` proof now reuses shared `Button size="md"` examples from
   the canonical button family instead of invented CTA chrome or placeholder
   pills; the labels stay generic so the composed contract still proves layout
   posture rather than route-owned semantics.

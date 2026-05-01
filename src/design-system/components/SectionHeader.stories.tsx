@@ -62,10 +62,10 @@ export const WithActions: Story = {
         description="Action slots should sit cleanly beside the copy block without collapsing hierarchy."
         actions={
           <div className="flex gap-2">
-            <Button size="sm" variant="quiet">
+            <Button size="md" variant="quiet">
               Quiet action
             </Button>
-            <Button size="sm">Primary action</Button>
+            <Button size="md">Primary action</Button>
           </div>
         }
       />

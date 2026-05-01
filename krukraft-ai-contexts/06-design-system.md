@@ -134,7 +134,7 @@ Use this order when DS docs disagree:
   the shared `badge` size contract (`12/16`) and runtime `SectionHeader`
   mirrors that through `text-badge`, so the context label steps back from the
   title without inventing a new typography family. The `with-actions` proof now
-  reuses shared `Button size="sm"` examples with generic `Quiet action` /
+  reuses shared `Button size="md"` examples with generic `Quiet action` /
   `Primary action` labels, so the board stays DS-backed without inventing
   route-specific CTA semantics.
 - `Button` runtime now mirrors the canonical Figma tone family too:
