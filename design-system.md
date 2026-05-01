@@ -163,9 +163,9 @@ The canonical Figma file now also covers `EmptyState` directly on
   without promoting route-owned empty-state copy, business CTAs, or product
   illustrations into the composed contract
 - icon examples on the board stay neutral placeholders, while the action lane
-  now reuses a shared `Button size="sm" variant="quiet"` example with a
-  generic `Quiet action` label so the CTA stays softer than the message shell
-  instead of inventing route-specific CTA semantics or fake product UI
+  now reuses a shared `Button size="sm" variant="soft"` example with a
+  generic `Soft action` label so the CTA stays softer than the message shell
+  without dropping all the way to the quieter fill posture
 - the current Figma-only gap is explicit here too:
   runtime asks for `border-border-subtle`, but the canonical file still lacks
   a semantic `border/subtle` variable, so the dashed rail currently binds to
@@ -207,16 +207,16 @@ Current runtime contract to mirror:
   - `icon`: square icon-only affordance
   - default density resolution: `comfortable -> md`, `compact -> sm`
 - The canonical Figma `Button / Foundations` boards now keep both `ghost` and
-  a bounded neutral `soft` tone, and they trial `sm=36` on the
-  `Button / Size` boards, but that extra `soft` posture is still Figma-first
-  only. Keep runtime `Button` on the approved `primary | quiet | ghost`
-  family and current size ladder until a deliberate button-size adoption pass
-  decides whether `soft` and `sm=36` should graduate into code.
+  a bounded neutral `soft` tone, and runtime `Button` now matches that tone
+  directly through the approved `primary | quiet | soft | ghost` family. The
+  remaining adoption gap is the Figma-side `sm=36` step on the
+  `Button / Size` boards; keep the current runtime size ladder until a
+  deliberate button-size adoption pass decides whether that `36px` step should
+  graduate into code too.
 - Use the current button decision table when mapping Figma posture into DS:
-  - `primary`, `quiet`, and `ghost` are the approved runtime family
+  - `primary`, `quiet`, `soft`, and `ghost` are the approved runtime family
   - `outline` remains the bordered fallback and should absorb most existing
     table / inline management actions before a new family member is invented
-  - `soft` is a Figma-first bounded neutral candidate, not approved runtime
   - table row actions, pagination items, and panel CTAs should start life as
     recipes on top of `outline` / `ghost` / future `soft` posture rather than
     immediately becoming new top-level variants
@@ -502,9 +502,10 @@ For reusable Figma component sets:
     shared semantic token
 - The earlier `ghost action` footer study has now been folded into the Figma
   button source as a bounded neutral `soft` direction that sits beside
-  `ghost`, not on top of it. Treat that move as Figma-first only for now: it
-  should not be read as a runtime `ghost` recipe replacement or a finished
-  button-ladder decision until a dedicated adoption pass lands.
+  `ghost`, not on top of it. That move is no longer Figma-only: runtime now
+  adopts `soft` as a real shared tone too. The remaining open decision is the
+  Figma `sm=36` size trial, not whether the `soft` tone itself belongs in the
+  shared family.
 
 ## Figma Implementation Fidelity Workflow
 

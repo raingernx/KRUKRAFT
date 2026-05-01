@@ -24,6 +24,8 @@ const buttonVariants = cva(
           "bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-pressed disabled:bg-muted disabled:text-muted-foreground",
         quiet:
           "bg-primary-quiet text-primary-quiet-foreground hover:bg-primary-quiet active:bg-primary-quiet disabled:bg-muted disabled:text-muted-foreground",
+        soft:
+          "border-primary-soft-border bg-primary-soft text-primary-soft-foreground hover:bg-primary-soft-hover active:bg-primary-soft-pressed disabled:border-primary-soft-border disabled:bg-primary-soft disabled:text-primary-soft-disabled-foreground",
         secondary:
           "bg-primary-quiet text-primary-quiet-foreground hover:bg-primary-quiet active:bg-primary-quiet disabled:bg-muted disabled:text-muted-foreground",
         outline:
@@ -67,6 +69,7 @@ type PrimitiveButtonProps = React.ComponentProps<"button"> &
 export type ButtonVariant =
   | "primary"
   | "quiet"
+  | "soft"
   | "secondary"
   | "outline"
   | "ghost"

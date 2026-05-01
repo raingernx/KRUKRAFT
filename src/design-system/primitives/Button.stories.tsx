@@ -27,6 +27,7 @@ export const Variants: Story = {
         <div className="flex flex-wrap items-center gap-3">
           <Button variant="primary">Primary</Button>
           <Button variant="quiet">Quiet</Button>
+          <Button variant="soft">Soft</Button>
           <Button variant="ghost">Ghost</Button>
         </div>
       </div>
@@ -59,7 +60,7 @@ export const WithIcons: Story = {
 export const Density: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">
-      <Button size="sm" variant="quiet">Quiet action</Button>
+      <Button size="sm" variant="soft">Soft action</Button>
       <Button size="md">Primary action</Button>
       <Button size="lg" variant="ghost">
         Ghost action
@@ -73,6 +74,7 @@ export const States: Story = {
     <div className="flex flex-wrap items-center gap-3">
       <Button variant="primary">Primary</Button>
       <Button variant="quiet">Quiet</Button>
+      <Button variant="soft">Soft</Button>
       <Button variant="ghost">Ghost</Button>
       <Button disabled>Disabled</Button>
       <Button loading>Loading</Button>

@@ -220,9 +220,9 @@ Current canonical Figma shared-coverage note:
   keeping business copy, live CTA semantics, and route-owned illustrations out
   of the contract.
 - Icon examples on that board stay neutral placeholders, while the action lane
-  now reuses a shared `Button size="sm" variant="quiet"` example with a generic
-  `Quiet action` label so the CTA posture stays intentionally subordinate to
-  the empty-state message.
+  now reuses a shared `Button size="sm" variant="soft"` example with a generic
+  `Soft action` label so the CTA posture stays intentionally subordinate to
+  the empty-state message without disappearing as much as the quieter fill.
 - The current Figma-only gap is explicit:
   runtime `EmptyState` uses `border-border-subtle`, but canonical Figma still
   lacks a semantic `border/subtle` variable, so the dashed rail currently
@@ -244,16 +244,16 @@ Current canonical Figma shared-coverage note:
 ## Current Implementation Rules
 
 - `Button` is now the first themed runtime slice. Treat `primary`, `quiet`,
-  and `ghost` as the canonical family for new work.
+  `soft`, and `ghost` as the canonical family for new work.
 - `Button` should read as one pill-shaped family across sizes, icons, and
   disabled/loading states rather than separate button recipes per surface.
-- The canonical Figma `Button / Foundations` boards now go further than the
-  current runtime contract: light/dark source sets currently show
-  `primary | quiet | ghost | soft`, the state matrices explicitly separate
-  airy `ghost` from bounded-neutral `soft`, and the Figma `Button / Size`
-  boards now trial `sm=36` while runtime still stays at `32`. Until runtime
-  adopts that behavior, treat the Figma board as the source base and
-  `Button.tsx` as the adoption gap.
+- The canonical Figma `Button / Foundations` boards still go further than the
+  current runtime size contract: light/dark source sets and the runtime family
+  now both cover `primary | quiet | soft | ghost`, and the state matrices
+  explicitly separate airy `ghost` from bounded-neutral `soft`, but the Figma
+  `Button / Size` boards still trial `sm=36` while runtime stays at `32`.
+  Treat that size step as the remaining adoption gap, not the soft tone
+  itself.
 - `secondary` remains a compatibility alias for quiet-style usage, and
   `outline` remains available for legacy surfaces that still depend on
   explicit borders.
@@ -363,12 +363,12 @@ Current canonical Figma shared-coverage note:
   - `lg`: `h-12`, `px-8`, body/sm text
   - `icon`: square icon affordance only, not a text-button recipe
   - default resolution: `comfortable -> md`, `compact -> sm`
-- The bounded neutral `soft` tone now exists in the canonical Figma
-  `Button / Foundations` boards alongside the canonical `ghost` tone, and the
-  earlier `36px` footer action study has been folded into that Figma-first
-  direction, but it is intentionally not part of the approved runtime
-  `Button` ladder yet. Treat `soft` and Figma-side `sm=36` as adoption
-  candidates, not as a silent DS contract change.
+- The bounded neutral `soft` tone is now part of the approved runtime
+  `Button` ladder too. It follows the canonical Figma state contract directly:
+  `bg/inset + border/default + fg/default` at rest, `bg/surface` on hover, and
+  `fg/subtle` on disabled while keeping the same pill geometry as the rest of
+  the family. The remaining adoption candidate is the Figma-side `sm=36` size
+  step, not the `soft` tone itself.
 - Use this decision rule when evaluating new button-looking surfaces:
   - `variant`: promote only when the posture is meant to work across multiple
     contexts as part of the core family
@@ -377,11 +377,11 @@ Current canonical Figma shared-coverage note:
 - Current Krukraft button decision table:
   - `primary`: canonical high-emphasis CTA variant
   - `quiet`: canonical low-contrast filled secondary variant
+  - `soft`: canonical bounded-neutral action variant that keeps more presence
+    than `quiet` without competing with `primary`
   - `ghost`: canonical airy low-emphasis action variant
   - `outline`: legacy bordered variant; keep available for existing surfaces
     and evaluate new bordered patterns against it first
-  - `soft`: Figma-first bounded neutral candidate beside `ghost`; do not treat
-    it as approved runtime family yet
   - `row action`: recipe, not a new family; derive from `outline` or a future
     outline-adjacent variant for dense table/action columns. In the canonical
     Figma file this now means the `DataPanelTable`-style rounded-rect posture:

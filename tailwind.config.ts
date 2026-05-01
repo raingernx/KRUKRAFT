@@ -47,11 +47,17 @@ const config: Config = {
         "on-fill-dark": "hsl(var(--on-fill-dark))",
         "on-fill-light": "hsl(var(--on-fill-light))",
         "primary-quiet-foreground": "hsl(var(--primary-quiet-foreground))",
+        "primary-soft-foreground": "hsl(var(--primary-soft-foreground))",
+        "primary-soft-disabled-foreground": "hsl(var(--primary-soft-disabled-foreground))",
+        "primary-soft-border": "hsl(var(--primary-soft-border))",
         "action-ghost-foreground": "hsl(var(--action-ghost-foreground))",
         "danger-text": "hsl(var(--danger-text))",
         "primary-hover": "hsl(var(--primary-hover))",
         "primary-pressed": "hsl(var(--primary-pressed))",
         "primary-quiet": "hsl(var(--primary-quiet))",
+        "primary-soft": "hsl(var(--primary-soft))",
+        "primary-soft-hover": "hsl(var(--primary-soft-hover))",
+        "primary-soft-pressed": "hsl(var(--primary-soft-pressed))",
         "action-ghost": "hsl(var(--action-ghost))",
 
         primary: {

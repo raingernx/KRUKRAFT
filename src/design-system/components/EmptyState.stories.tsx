@@ -21,6 +21,6 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     icon: <BookOpen className="h-6 w-6 text-zinc-400" />,
-    action: <Button size="sm" variant="quiet">Quiet action</Button>,
+    action: <Button size="sm" variant="soft">Soft action</Button>,
   },
 };

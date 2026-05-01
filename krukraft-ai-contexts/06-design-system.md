@@ -114,7 +114,7 @@ Use this order when DS docs disagree:
   description -> action` slot order; business copy, final CTA semantics, and
   route-owned illustrations remain outside the composed contract. Icon
   examples stay neutral placeholders, while the action lane now reuses a
-  shared `Button size="sm" variant="quiet"` example with a generic `Quiet action`
+  shared `Button size="sm" variant="soft"` example with a generic `Soft action`
   label.
   The current
   Figma-only gap is explicit instead of silent here as well: runtime uses
@@ -130,6 +130,13 @@ Use this order when DS docs disagree:
   reuses shared `Button size="sm"` examples with generic `Quiet action` /
   `Primary action` labels, so the board stays DS-backed without inventing
   route-specific CTA semantics.
+- `Button` runtime now mirrors the canonical Figma tone family too:
+  `primary | quiet | soft | ghost` are all live in `Button.tsx`. The newly
+  adopted `soft` variant follows the Figma state contract directly instead of
+  inventing a new runtime interpretation: `bg/inset + border/default +
+  fg/default` at rest, `bg/surface` on hover, and `fg/subtle` on disabled.
+  The remaining button adoption gap is size-only: Figma still trials `sm=36`
+  while runtime stays on the existing `sm=32` ladder.
 - `RevealImage` is the shared image primitive for already-sized containers; the
   surrounding container should own placeholder/background treatment. The
   2026-04-30 heavier-primitive follow-up audit now locks one more boundary
@@ -391,9 +398,9 @@ Use this order when DS docs disagree:
       canonical Figma `Button / Foundations` boards as a bounded neutral
       `soft` tone that sits beside `ghost`, plus a Figma-first `sm=36` size
       step:
-      - runtime should still stay on the locked `primary | quiet | ghost`
-        family and current size ladder until a separate button-ladder decision
-        lands
+      - runtime now matches the locked `primary | quiet | soft | ghost`
+        family and still keeps the current size ladder until a separate
+        button-ladder decision lands
       - the first impact audit says a future promotion should likely trial
         `xs=32 / sm=36 / md=40 / lg=48`, keep
         `density=\"compact\" -> xs` during the first runtime proof, and leave
