@@ -824,6 +824,9 @@ Use this order when DS docs disagree:
     the progressive `actions`, `toolbar`, and `footer` combinations without
     pretending to own column schemas, table-head semantics, row rendering, or
     business actions
+  - the live light/dark `DataPanelTable` source sets now reuse the shared
+    `RowAction / State` default instances directly for row-action lanes rather
+    than keeping generic quiet button placeholders there
   - after the first landing pass, the source set was tightened again to match
     repo usage more literally: the fourth variant is now
     `actions=true, toolbar=false, footer=true`, and the footer proof point is a

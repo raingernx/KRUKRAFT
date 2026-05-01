@@ -483,6 +483,10 @@ For reusable Figma component sets:
   `DataPanelTable / Foundations / Light` and `DataPanelTable / Foundations / Dark`,
   with source sets that stay intentionally shell-scoped instead of pretending to
   own every table schema.
+- Those live light/dark source sets now reuse the shared `RowAction / State`
+  default instances directly in their row-action lanes instead of generic
+  quiet button placeholders, so the composed shell and the bounded row-action
+  family read from the same canonical source.
 - Keep the current `DataPanelTable` source set progressive rather than
   combinatorially exhaustive: it proves the shell combinations for
   `actions`, `toolbar`, and `footer`, while columns, table-head fills, row
