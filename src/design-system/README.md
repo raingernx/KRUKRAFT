@@ -74,6 +74,8 @@ Current canonical Figma shared-coverage note:
 - `Switch` is no longer a code-only primitive
 - `Modal` is no longer a code-only primitive
 - `LoadingSkeleton` is no longer a code-only primitive
+- icon usage is no longer undocumented in Figma even though there is still no
+  standalone `Icon` primitive component in code
 - the canonical file now has `Avatar / Foundations / Light` and
   `Avatar / Foundations / Dark` on `DS Primitives`
 - the canonical file now has `Switch / Foundations / Light` and
@@ -108,6 +110,21 @@ Current canonical Figma shared-coverage note:
   there is still no dedicated semantic `bg/muted` variable in the canonical
   file, so the light board binds shell fills to `bg/inset` while the dark board
   binds them to `border/default` to mirror the current runtime aliasing
+- the canonical file now also has `Icon / Foundations / Light` and
+  `Icon / Foundations / Dark` on `DS Primitives`
+- that icon slice is usage-only on purpose:
+  it documents the shared `@/lib/icons` adapter contract rather than creating
+  a new icon primitive or dumping the whole Phosphor catalog into the
+  source-of-truth file
+- the current icon contract is:
+  - family source: `Phosphor`
+  - default weight: `light`
+  - core size ladder: `14 / 16 / 20 / 24`
+  - core semantic tones:
+    `fg/default`, `fg/muted`, `fg/subtle`, `fg/on-fill-dark`,
+    `fg/on-fill-light`
+  - bounded contexts:
+    `dense row action`, `default UI`, `support action`, `section support`
 
 ### Composed Components
 
@@ -250,6 +267,10 @@ Current canonical Figma shared-coverage note:
   the canonical button family instead of invented CTA chrome or placeholder
   pills; the labels stay generic so the composed contract still proves layout
   posture rather than route-owned semantics.
+- `src/lib/icons.tsx` is the canonical runtime adapter for shared icons.
+  Keep glyph choice product-owned, but treat family (`Phosphor`) and default
+  weight (`light`) as a shared DS contract now that the Figma icon foundations
+  board documents the matching size/tone/context ladder.
 
 ## Current Implementation Rules
 

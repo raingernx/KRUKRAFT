@@ -483,6 +483,25 @@ Use this order when DS docs disagree:
         `dashboard` (~60 `size=\"sm\"` button usages) and `admin` (~34), while
         live `density=\"compact\"` usage is still narrow (`public-resources`
         3, `creator` 1)
+    - the next narrow foundations follow-up is now landed too:
+      - `DS Primitives` carries paired `Icon / Foundations / Light` and
+        `Icon / Foundations / Dark` usage boards
+      - the icon slice intentionally locks only the shared adapter contract
+        rather than creating a new glyph catalog or standalone `Icon` primitive
+      - runtime truth is already anchored in `src/lib/icons.tsx`, so the board
+        documents that same contract explicitly:
+        - source family: `Phosphor`
+        - default weight: `light`
+        - shared size ladder: `14 / 16 / 20 / 24`
+        - semantic tones:
+          `fg/default`, `fg/muted`, `fg/subtle`, `fg/on-fill-dark`,
+          `fg/on-fill-light`
+        - bounded contexts:
+          `dense row action`, `default UI`, `support action`,
+          `section support`
+      - glyph choice stays product-owned; the canonical file proves usage rules
+        only and should not be expanded into a copied icon catalog from the
+        external Phosphor library file
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared

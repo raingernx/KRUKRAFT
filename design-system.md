@@ -144,6 +144,22 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   lacks a dedicated semantic `bg/muted` variable, so the light board binds the
   shell fill to `bg/inset` and the dark board binds it to `border/default` to
   mirror the current runtime aliasing
+- `Icon / Foundations / Light`
+- `Icon / Foundations / Dark`
+- the icon slice is intentionally a usage/foundations board, not a new glyph
+  catalog or a standalone `Icon` primitive family
+- it locks the shared runtime adapter contract instead:
+  - source family: `Phosphor`
+  - default weight: `light`
+  - shared size ladder: `14 / 16 / 20 / 24`
+  - semantic tone ladder:
+    `fg/default`, `fg/muted`, `fg/subtle`, `fg/on-fill-dark`,
+    `fg/on-fill-light`
+  - bounded context ladder:
+    `dense row action`, `default UI`, `support action`, `section support`
+- glyph choice remains product-owned and should keep flowing through the
+  repo-owned `@/lib/icons` adapter instead of turning the canonical file into a
+  copied Phosphor library dump
 - `RevealImage` remains intentionally outside canonical Figma coverage for now:
   the runtime helper only wraps `next/image` for already-sized containers, and
   real callers still own shell geometry, crop, placeholder tone, overlay, and
