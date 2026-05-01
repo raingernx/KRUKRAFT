@@ -131,7 +131,7 @@ export function ImageDropzone({
   const borderColor = isDragReject
     ? "border-red-300"
     : isDragActive
-      ? "border-brand-400"
+      ? "border-primary/30"
       : "border-border";
 
   const bgColor = isDragActive ? "bg-muted" : "bg-shell";
@@ -173,7 +173,7 @@ export function ImageDropzone({
             event.target.value = "";
           }}
         />
-        <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-muted text-brand-600">
+        <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-muted text-primary">
           {isDragActive ? (
             <UploadCloud className="h-5 w-5" />
           ) : (

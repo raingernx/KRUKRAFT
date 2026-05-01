@@ -126,9 +126,9 @@ Current canonical Figma shared-coverage note:
   - bounded contexts:
     `dense row action`, `default UI`, `support action`, `section support`
 - the first runtime cleanup pass after that foundations slice is intentionally
-  narrow: shared upload/picker surfaces now use semantic `primary` icon
-  emphasis instead of `brand-*` aliases when they need a stronger-than-muted
-  icon tone
+  narrow: shared upload/picker/dropzone surfaces now use semantic `primary`
+  emphasis instead of `brand-*` aliases when they need stronger icon or border
+  emphasis
 
 ### Composed Components
 

@@ -145,9 +145,11 @@ export function PickerDropzoneShell({
         reject
           ? "border-red-300"
           : active
-            ? "border-brand-400 bg-muted"
+            ? "border-primary/30 bg-muted"
             : "border-border-subtle bg-card",
-        disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:border-brand-400 hover:bg-muted",
+        disabled
+          ? "cursor-not-allowed opacity-60"
+          : "cursor-pointer hover:border-primary/20 hover:bg-muted",
         className,
       )}
       {...props}

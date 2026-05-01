@@ -503,9 +503,9 @@ Use this order when DS docs disagree:
         only and should not be expanded into a copied icon catalog from the
         external Phosphor library file
       - the first runtime cleanup pass after that foundations slice is now
-        narrowed too: shared upload/picker surfaces use semantic `primary`
-        icon emphasis instead of direct `brand-*` aliases when they need a
-        stronger-than-muted icon tone
+        narrowed too: shared upload/picker/dropzone surfaces use semantic
+        `primary` emphasis instead of direct `brand-*` aliases when they need
+        stronger icon or border emphasis
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared

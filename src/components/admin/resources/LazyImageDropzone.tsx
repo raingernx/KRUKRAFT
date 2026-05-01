@@ -34,7 +34,7 @@ function ImageDropzoneShellContent({
 }) {
   return (
     <>
-      <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-muted text-brand-600">
+      <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-muted text-primary">
         <ImagePlus className="h-5 w-5" />
       </div>
       <p className="font-medium text-foreground">{helpText}</p>
