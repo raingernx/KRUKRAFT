@@ -224,9 +224,11 @@ Current runtime contract to mirror:
     pagination items, and panel CTAs to a rounded-rect `radius/sm (8px)`
     shape instead of the pill geometry used by the core family; row actions
     and pagination stay outline-adjacent while panel CTAs use the calmer
-    bounded-neutral `soft` tone, and the row-action recipe card now keeps both
-    an `Edit / Open` example row and a compact state strip so the posture and
-    its states stay visible together
+    bounded-neutral `soft` tone, and row-action proof now lives in both places
+    that matter: `Button States` carries a quiet-state companion beside the
+    core matrix, while the row-action recipe card keeps both an `Edit / Open`
+    example row and that same quiet-state proof so the posture and its states
+    stay visible together
   - the first runtime adoption slice now mirrors that recipe without
     widening the whole button family:
     - `RowActionButton size="md"` carries the 40px rounded-rect posture
