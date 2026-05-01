@@ -171,9 +171,6 @@ The canonical Figma file now also covers `SectionHeader` directly on
   stay route-owned instead of becoming part of the composed contract
 - action visuals on the board are illustrative slot examples, not
   component-owned button recipes
-- the current Figma-only gap is explicit here too:
-  eyebrow tracking still stays local because the canonical file does not yet
-  expose a reusable tracking variable
 
 ### Control Size Contract
 

@@ -232,10 +232,8 @@ Current canonical Figma shared-coverage note:
   alignment, and the optional trailing actions slot through a `default`,
   `centered`, `with-actions`, and `minimal` source set while keeping route
   backdrops, page-width choices, and live CTA semantics out of the contract.
-- The current Figma-only gap is explicit here too:
-  eyebrow tracking still stays local because canonical Figma does not yet
-  expose a reusable tracking variable, and action visuals remain illustrative
-  slot examples instead of component-owned button recipes.
+- Action visuals on that board remain illustrative slot examples instead of
+  component-owned button recipes.
 
 ## Current Implementation Rules
 

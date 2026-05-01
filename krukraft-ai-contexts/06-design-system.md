@@ -122,11 +122,8 @@ Use this order when DS docs disagree:
   `default | centered | with-actions | minimal` source set. The shared
   contract is eyebrow, title, description, alignment, and an optional trailing
   actions slot; route-owned backdrops, page-width choices, and live CTA
-  semantics remain outside the composed contract. The current Figma-only gap
-  is explicit instead of silent here too: eyebrow tracking still stays local
-  because the canonical file does not yet expose a reusable tracking variable,
-  and the action visuals remain illustrative slot examples instead of
-  component-owned button recipes.
+  semantics remain outside the composed contract. Action visuals on the board
+  remain illustrative slot examples instead of component-owned button recipes.
 - `RevealImage` is the shared image primitive for already-sized containers; the
   surrounding container should own placeholder/background treatment. The
   2026-04-30 heavier-primitive follow-up audit now locks one more boundary
