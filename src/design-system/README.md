@@ -258,7 +258,10 @@ Current canonical Figma shared-coverage note:
 - `quiet` now uses a family-owned border instead of borrowing the neutral
   `border/default` rail: canonical Figma binds it to `border/quiet`
   derived from `primary/lift`, and runtime mirrors that through the
-  `border-quiet` token.
+  `border-quiet` token. The one intentional exception is keyboard focus:
+  `quiet` promotes the stroke to semantic `ring` / `focus/ring` so the focus
+  state reads as an accessibility affordance rather than just a tonal rest
+  shell.
 - `Button` should read as one pill-shaped family across sizes, icons, and
   disabled/loading states rather than separate button recipes per surface.
 - The canonical Figma `Button / Foundations` boards still go further than the

@@ -145,7 +145,9 @@ Use this order when DS docs disagree:
   disabled.
   `quiet` now keeps its own `border/quiet` semantic stroke derived from
   `primary/lift` instead of borrowing the neutral `border/default` rail, and
-  runtime mirrors that through `border-quiet`.
+  runtime mirrors that through `border-quiet`. Its focus state is the
+  intentional exception: both Figma and runtime now promote quiet focus to the
+  semantic `focus/ring` border instead of leaving it on the quieter rest rail.
   The remaining button adoption gap is size-only: Figma still trials `sm=36`
   while runtime stays on the existing `sm=32` ladder.
 - `RevealImage` is the shared image primitive for already-sized containers; the
