@@ -1,7 +1,7 @@
 "use client";
-import { CheckCircle2, Info, AlertCircle } from "@/lib/icons";
+import { CheckCircle2, Info, AlertCircle, AlertTriangle } from "@/lib/icons";
 
-import type { Notification } from "@/features/admin-ux/types";
+import type { Notification, NotificationType } from "@/features/admin-ux/types";
 
 interface NotificationItemProps {
   notification: Notification;
@@ -11,30 +11,39 @@ interface NotificationItemProps {
 export function NotificationItem({ notification, onDismiss }: NotificationItemProps) {
   const { id, type, message, description, actionLabel, onAction } = notification;
 
-  const iconConfig =
-    type === "success"
-      ? {
-          Icon: CheckCircle2,
-          wrapperClass: "bg-emerald-50 text-emerald-600",
-        }
-      : type === "error"
-        ? {
-            Icon: AlertCircle,
-            wrapperClass: "bg-red-50 text-red-600",
-          }
-        : {
-            Icon: Info,
-            wrapperClass: "bg-primary-50 text-primary-600",
-          };
+  const iconConfig: Record<
+    NotificationType,
+    {
+      Icon: React.ComponentType<{ className?: string }>;
+      wrapperClass: string;
+    }
+  > = {
+    success: {
+      Icon: CheckCircle2,
+      wrapperClass: "bg-success-50 text-success-600",
+    },
+    info: {
+      Icon: Info,
+      wrapperClass: "bg-info-50 text-info-600",
+    },
+    warning: {
+      Icon: AlertTriangle,
+      wrapperClass: "bg-warning-50 text-warning-600",
+    },
+    error: {
+      Icon: AlertCircle,
+      wrapperClass: "bg-danger-50 text-danger-600",
+    },
+  };
 
-  const Icon = iconConfig.Icon;
+  const Icon = iconConfig[type].Icon;
 
   return (
     <div className="pointer-events-auto relative flex min-w-[260px] max-w-[340px] animate-fade-up items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 motion-reduce:animate-none">
-      <div
-        className={[
-          "flex h-8 w-8 items-center justify-center rounded-full text-xs",
-          iconConfig.wrapperClass,
+        <div
+          className={[
+            "flex h-8 w-8 items-center justify-center rounded-full text-xs",
+            iconConfig[type].wrapperClass,
         ].join(" ")}
       >
         <Icon className="h-4 w-4" />
@@ -58,7 +67,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
                 onAction();
                 onDismiss(id);
               }}
-              className="shrink-0 font-ui text-caption font-medium text-primary-700 hover:underline"
+              className="shrink-0 font-ui text-caption font-medium text-primary hover:underline"
             >
               {actionLabel}
             </button>

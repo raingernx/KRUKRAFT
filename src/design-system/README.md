@@ -137,6 +137,10 @@ Current canonical Figma shared-coverage note:
   `HeroSearch` overlay affordances now use semantic `primary` emphasis for
   browse icons, fallback file glyphs, and bottom CTA text instead of direct
   `brand-*` aliases
+- the next admin status-tone follow-up after that is narrow too:
+  `NotificationItem` now maps `success | info | warning | error` explicitly to
+  semantic status tokens instead of mixing `emerald/red/primary` classes and
+  silently collapsing `warning` into the `info` posture
 
 ### Composed Components
 

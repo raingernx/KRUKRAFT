@@ -170,6 +170,10 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   `HeroSearch` overlay affordances may use semantic `primary` emphasis for
   browse icons, fallback file glyphs, and bottom CTA text, but they should not
   keep reaching for `brand-*` aliases directly
+- the next admin status-tone follow-up after that should stay narrow too:
+  `NotificationItem` should map `success | info | warning | error` explicitly
+  to semantic status tokens rather than mixing `emerald/red/primary` classes or
+  silently collapsing `warning` into the `info` posture
 - glyph choice remains product-owned and should keep flowing through the
   repo-owned `@/lib/icons` adapter instead of turning the canonical file into a
   copied Phosphor library dump

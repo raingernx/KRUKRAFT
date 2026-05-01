@@ -514,6 +514,11 @@ Use this order when DS docs disagree:
         `HeroSearch` overlay affordances now use semantic `primary` emphasis
         for browse icons, fallback file glyphs, and bottom CTA text instead of
         direct `brand-*` aliases
+      - the next admin status-tone follow-up after that is narrow too:
+        `NotificationItem` now maps `success | info | warning | error`
+        explicitly to semantic status tokens instead of mixing
+        `emerald/red/primary` classes or silently collapsing `warning` into
+        the `info` posture
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared
