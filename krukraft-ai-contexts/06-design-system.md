@@ -536,10 +536,9 @@ Use this order when DS docs disagree:
         wrappers with `20px` Phosphor-light glyphs, and the compact inline
         dismiss affordance instead of the older absolute close button.
         Bell-dropdown behavior, unread counts, stack order, and queue timing
-        remain runtime-owned. The current explicit Figma-only gap is narrow:
-        info wrappers still reuse `primary/mist + primary/base` because the
-        canonical variable file does not yet expose dedicated support/info
-        semantics
+        remain runtime-owned. The canonical file now also carries dedicated
+        `support/info/soft` and `support/info/base` variables, so the info
+        wrapper and glyph posture no longer borrow the primary family
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared
@@ -848,6 +847,10 @@ Use this order when DS docs disagree:
       `Color Primitives / Dark` through dedicated `Success` and `Warning`
       cards, and the support family now extends to `base / dust / soft` in the
       canonical primitive collection instead of stopping at two status steps
+    - the 2026-05-01 notification follow-up extends that same support-status
+      family again with dedicated `support/info/*` primitives so `NotificationItem`
+      info wrappers and glyphs can stay semantic instead of borrowing
+      `primary/*`
     - the 2026-04-28 badge follow-up tuning now keeps `warning` and
       `featured` intentionally distinct in the canonical base:
       `warning` stays crisp on `bg/inset` through
