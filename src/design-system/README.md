@@ -94,6 +94,10 @@ Current canonical Figma shared-coverage note:
   width ladder, centered surface shell, close affordance, and the shared
   header/body/footer rail structure while keeping overlay tint, portal motion,
   and footer button semantics runtime-owned
+- the 2026-05-01 Figma re-audit confirms the refreshed modal boards still prove
+  that same bounded shell contract; the dark size set now lives under the
+  current live ids and the visible confirm/cancel pair remains illustrative
+  board content rather than primitive-owned button semantics
 - the modal board also makes the current divider-token gap explicit:
   the canonical file still lacks a semantic `border/subtle` variable, so the
   proof boards bind divider rails to `neutral/line` intentionally

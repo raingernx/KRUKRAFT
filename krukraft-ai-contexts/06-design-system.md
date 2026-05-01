@@ -98,7 +98,11 @@ Use this order when DS docs disagree:
   primitive contract. The current Figma-only gap is explicit instead of silent:
   divider rails still bind to `neutral/line` because the canonical file does
   not yet expose a semantic `border/subtle` variable, while overlay tint,
-  portal motion, and button semantics stay runtime-owned.
+  portal motion, and button semantics stay runtime-owned. The 2026-05-01
+  re-audit also confirms a user-led visual refresh on the light/dark boards did
+  not widen the primitive contract: the live dark size set now sits under the
+  refreshed ids, and the visible confirm/cancel pair remains illustrative shell
+  proof rather than primitive-owned button semantics.
 - `LoadingSkeleton` now has canonical Figma coverage on `DS Primitives` too:
   the live boards document only the shell-level primitive plus a bounded
   `line | bar | circle | pill` posture set. Content-block, table-row, hero,

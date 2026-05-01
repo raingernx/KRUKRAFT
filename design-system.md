@@ -123,6 +123,10 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
 - the modal slice locks the shared runtime `384 / 448 / 512 / 576` width
   ladder, centered surface shell, close affordance, and header/body/footer rail
   structure without promoting route-owned form geometry into the primitive
+- the 2026-05-01 re-audit confirms a user-led visual refresh on the light/dark
+  boards preserved that same bounded contract; the live dark size set now sits
+  under refreshed ids while the board-level confirm/cancel pair remains an
+  illustrative shell example rather than primitive-owned button semantics
 - the current Figma-only gap is explicit: divider rails still bind to
   `neutral/line` because the canonical file does not yet expose a separate
   semantic `border/subtle` variable, while overlay tint, portal motion, and
