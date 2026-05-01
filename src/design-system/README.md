@@ -219,6 +219,9 @@ Current canonical Figma shared-coverage note:
   action` slot order through a `default` and `minimal` source pair while
   keeping business copy, live CTA semantics, and route-owned illustrations out
   of the contract.
+- Icon examples on that board stay neutral placeholders, while the action lane
+  now reuses a shared `Button size="sm"` example with a generic `Primary action`
+  label instead of a fake route-specific CTA.
 - The current Figma-only gap is explicit:
   runtime `EmptyState` uses `border-border-subtle`, but canonical Figma still
   lacks a semantic `border/subtle` variable, so the dashed rail currently

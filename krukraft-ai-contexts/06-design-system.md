@@ -112,7 +112,10 @@ Use this order when DS docs disagree:
   `default | minimal` source set. The shared contract is the centered stack
   rhythm, dashed rounded container posture, and the `icon -> title ->
   description -> action` slot order; business copy, final CTA semantics, and
-  route-owned illustrations remain outside the composed contract. The current
+  route-owned illustrations remain outside the composed contract. Icon
+  examples stay neutral placeholders, while the action lane now reuses a
+  shared `Button size="sm"` example with a generic `Primary action` label.
+  The current
   Figma-only gap is explicit instead of silent here as well: runtime uses
   `border-border-subtle`, but canonical Figma still lacks a semantic
   `border/subtle` variable, so the dashed rail currently binds to

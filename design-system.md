@@ -162,8 +162,9 @@ The canonical Figma file now also covers `EmptyState` directly on
 - the current source pair proves `variant=default` and `variant=minimal`
   without promoting route-owned empty-state copy, business CTAs, or product
   illustrations into the composed contract
-- icon and action slots on the board now use neutral placeholders instead of
-  invented product examples or primitive-owned treatments
+- icon examples on the board stay neutral placeholders, while the action lane
+  now reuses a shared `Button size="sm"` example with a generic label instead
+  of inventing route-specific CTA semantics or fake product UI
 - the current Figma-only gap is explicit here too:
   runtime asks for `border-border-subtle`, but the canonical file still lacks
   a semantic `border/subtle` variable, so the dashed rail currently binds to
