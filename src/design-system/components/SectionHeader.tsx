@@ -31,7 +31,7 @@ export function SectionHeader({
     >
       <div className={cn("flex flex-col gap-2", alignClass)}>
         {eyebrow ? (
-          <p className="font-ui text-caption text-muted-foreground">
+          <p className="font-ui text-badge text-muted-foreground">
             {eyebrow}
           </p>
         ) : null}

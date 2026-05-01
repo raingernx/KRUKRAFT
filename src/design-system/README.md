@@ -243,6 +243,9 @@ Current canonical Figma shared-coverage note:
   alignment, and the optional trailing actions slot through a `default`,
   `centered`, `with-actions`, and `minimal` source set while keeping route
   backdrops, page-width choices, and live CTA semantics out of the contract.
+- The eyebrow examples now sit on the shared `badge` size contract (`12/16`)
+  instead of the larger label-sized posture, and runtime `SectionHeader`
+  mirrors that by using `text-badge` for the eyebrow copy.
 - The `with-actions` proof now reuses shared `Button size="sm"` examples from
   the canonical button family instead of invented CTA chrome or placeholder
   pills; the labels stay generic so the composed contract still proves layout

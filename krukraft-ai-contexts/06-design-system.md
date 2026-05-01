@@ -130,7 +130,10 @@ Use this order when DS docs disagree:
   `default | centered | with-actions | minimal` source set. The shared
   contract is eyebrow, title, description, alignment, and an optional trailing
   actions slot; route-owned backdrops, page-width choices, and live CTA
-  semantics remain outside the composed contract. The `with-actions` proof now
+  semantics remain outside the composed contract. The eyebrow examples now use
+  the shared `badge` size contract (`12/16`) and runtime `SectionHeader`
+  mirrors that through `text-badge`, so the context label steps back from the
+  title without inventing a new typography family. The `with-actions` proof now
   reuses shared `Button size="sm"` examples with generic `Quiet action` /
   `Primary action` labels, so the board stays DS-backed without inventing
   route-specific CTA semantics.

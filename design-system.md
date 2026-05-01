@@ -186,6 +186,9 @@ The canonical Figma file now also covers `SectionHeader` directly on
   slot
 - the current source pair grows into a bounded four-state proof:
   `default`, `centered`, `with-actions`, and `minimal`
+- eyebrow examples now bind the shared `badge` size contract (`12/16`) rather
+  than the larger label-sized posture so the context label steps back from the
+  title without opening a new typography family
 - hero backdrops, route-specific page-width choices, and live CTA semantics
   stay route-owned instead of becoming part of the composed contract
 - the `with-actions` lane now reuses shared `Button size="sm"` examples from
