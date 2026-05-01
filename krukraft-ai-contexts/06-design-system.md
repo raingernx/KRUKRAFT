@@ -414,12 +414,12 @@ Use this order when DS docs disagree:
         `row action` and `pagination item` to a rounded-rect
         `radius/sm (8px)` recipe shape instead of the pill geometry used by
         the core family
-      - `Button States` now carries a dedicated `row action state proof`
-        companion that reuses the canonical quiet-state instances, and the
+      - `Button States` now carries a dedicated `RowAction / State`
+        companion sourced from the live `Edit / Open` posture, and the
         `Button recipes` row-action card now shows both the live
-        `Edit / Open` example row and that same quiet-state proof so the
-        recipe posture and `default|hover|focus|pressed|disabled` behavior
-        stay visible together, while `Pagination item` mirrors the same
+        `Edit / Open` example row and that same `default|hover|focus|pressed|disabled`
+        row-action state strip so the recipe posture and behavior stay visible
+        together, while `Pagination item` mirrors the same
         rounded-rect `radius/sm (8px)` shape and `Panel CTA` now follows that same rounded-
         rect table posture on the bounded-neutral `soft` tone instead of the
         older primary-pill candidate

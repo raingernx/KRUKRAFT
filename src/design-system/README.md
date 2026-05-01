@@ -382,14 +382,15 @@ Current canonical Figma shared-coverage note:
   - `ghost`: canonical airy low-emphasis action variant
   - `outline`: legacy bordered variant; keep available for existing surfaces
     and evaluate new bordered patterns against it first
-  - `row action`: recipe, not a new family; derive from `outline` or a future
-    outline-adjacent variant for dense table/action columns. In the canonical
-    Figma file this now means the `DataPanelTable`-style rounded-rect posture:
-    40px height with `radius/sm (8px)`, not the global pill shape; `Button States`
-    now carries a dedicated row-action proof companion that reuses canonical
-    quiet-state instances, and the live recipe card keeps both an `Edit / Open`
-    example row and that same `Default / Hover / Focus / Pressed / Disabled`
-    proof. The first runtime adoption slice now mirrors that posture through
+  - `row action`: dedicated table-action family on top of the shared button
+    base; keep it scoped to dense table/action columns instead of treating it
+    as a generic top-level tone. In the canonical Figma file this now means
+    the `DataPanelTable`-style rounded-rect posture: 40px height with
+    `radius/sm (8px)`, not the global pill shape. `Button States` now carries
+    a dedicated `RowAction / State` set sourced from the live `Edit / Open`
+    posture, and the live recipe card keeps both an `Edit / Open` example row
+    and that same `Default / Hover / Focus / Pressed / Disabled` state strip.
+    The first runtime adoption slice now mirrors that posture through
     `RowActionButton size="md"` while still leaving the existing compact `sm`
     helper posture available for narrower table/admin surfaces
   - `pagination item`: recipe, not a new family; page navigation should stay a
