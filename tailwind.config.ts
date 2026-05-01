@@ -46,7 +46,7 @@ const config: Config = {
         "ink-subtle": "hsl(var(--ink-subtle))",
         "on-fill-dark": "hsl(var(--on-fill-dark))",
         "on-fill-light": "hsl(var(--on-fill-light))",
-        "primary-quiet-border": "hsl(var(--primary-quiet-border))",
+        "border-quiet": "hsl(var(--border-quiet))",
         "primary-quiet-foreground": "hsl(var(--primary-quiet-foreground))",
         "primary-soft-foreground": "hsl(var(--primary-soft-foreground))",
         "primary-soft-disabled-foreground": "hsl(var(--primary-soft-disabled-foreground))",

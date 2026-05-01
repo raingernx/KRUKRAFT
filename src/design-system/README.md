@@ -256,9 +256,9 @@ Current canonical Figma shared-coverage note:
 - `Button` is now the first themed runtime slice. Treat `primary`, `quiet`,
   `soft`, and `ghost` as the canonical family for new work.
 - `quiet` now uses a family-owned border instead of borrowing the neutral
-  `border/default` rail: canonical Figma binds it to `action/quiet-border`
+  `border/default` rail: canonical Figma binds it to `border/quiet`
   derived from `primary/lift`, and runtime mirrors that through the
-  `primary-quiet-border` token.
+  `border-quiet` token.
 - `Button` should read as one pill-shaped family across sizes, icons, and
   disabled/loading states rather than separate button recipes per surface.
 - The canonical Figma `Button / Foundations` boards still go further than the

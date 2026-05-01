@@ -216,7 +216,7 @@ Current runtime contract to mirror:
 - The canonical Figma `Button / Foundations` boards now keep both `ghost` and
   a bounded neutral `soft` tone, and runtime `Button` now matches that tone
   directly through the approved `primary | quiet | soft | ghost` family.
-  `quiet` now keeps a dedicated primary-family border derived from
+  `quiet` now keeps a dedicated `border/quiet` stroke derived from
   `primary/lift` instead of borrowing the generic `border/default` rail. The
   remaining adoption gap is the Figma-side `sm=36` step on the
   `Button / Size` boards; keep the current runtime size ladder until a
