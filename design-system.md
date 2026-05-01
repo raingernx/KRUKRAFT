@@ -182,8 +182,9 @@ The canonical Figma file now also covers `SectionHeader` directly on
   `default`, `centered`, `with-actions`, and `minimal`
 - hero backdrops, route-specific page-width choices, and live CTA semantics
   stay route-owned instead of becoming part of the composed contract
-- action slots on the board now use neutral placeholders instead of invented
-  CTA examples or component-owned button recipes
+- the `with-actions` lane now reuses shared `Button size="sm"` examples from
+  the canonical button family with generic labels, so the board proves a real
+  DS-backed action cluster without inventing route-specific CTA semantics
 
 ### Control Size Contract
 
