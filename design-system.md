@@ -174,6 +174,13 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   `NotificationItem` should map `success | info | warning | error` explicitly
   to semantic status tokens rather than mixing `emerald/red/primary` classes or
   silently collapsing `warning` into the `info` posture
+- once that mapping is landed, non-production runtime proof should reuse a
+  bounded harness rather than mutate live admin data ad hoc:
+  `/dev/notifications` is now the repo-owned route for browser proof of the
+  shared notification stack and bell surfaces across
+  `success | info | warning | error`; append
+  `?scenario=success|info|warning|error|all` when the proof should fire on
+  load instead of relying on manual clicking
 - glyph choice remains product-owned and should keep flowing through the
   repo-owned `@/lib/icons` adapter instead of turning the canonical file into a
   copied Phosphor library dump

@@ -519,6 +519,12 @@ Use this order when DS docs disagree:
         explicitly to semantic status tokens instead of mixing
         `emerald/red/primary` classes or silently collapsing `warning` into
         the `info` posture
+      - that notification family now also has a non-production runtime proof
+        surface: `/dev/notifications` mounts the shared notification stack and
+        bell with bounded trigger buttons so browser verification does not need
+        to mutate real admin records, and
+        `?scenario=success|info|warning|error|all` can autofire a proof state
+        on load when click automation is inconvenient
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared

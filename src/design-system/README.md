@@ -141,6 +141,11 @@ Current canonical Figma shared-coverage note:
   `NotificationItem` now maps `success | info | warning | error` explicitly to
   semantic status tokens instead of mixing `emerald/red/primary` classes and
   silently collapsing `warning` into the `info` posture
+- non-production runtime proof now has a dedicated harness too:
+  `/dev/notifications` mounts the shared notification stack and bell against
+  one bounded trigger surface so `success | info | warning | error` can be
+  browser-verified without mutating real admin data; append
+  `?scenario=success|info|warning|error|all` to autofire a proof state on load
 
 ### Composed Components
 

@@ -4,9 +4,15 @@ import { useState } from "react";
 import { NotificationButton } from "@/design-system/product";
 import { useNotifications } from "./useNotifications";
 
-export function NotificationBell() {
+interface NotificationBellProps {
+  defaultOpen?: boolean;
+}
+
+export function NotificationBell({
+  defaultOpen = false,
+}: NotificationBellProps = {}) {
   const { notifications, unreadCount, markAllAsRead } = useNotifications();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
 
   const hasUnread = unreadCount > 0;
 

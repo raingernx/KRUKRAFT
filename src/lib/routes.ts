@@ -48,6 +48,7 @@ export const routes = {
   privacy: "/privacy",
   terms: "/terms",
   cookies: "/cookies",
+  devNotifications: "/dev/notifications",
 
   marketplaceCategory: (category?: string | null) =>
     category ? `/resources?category=${encodeURIComponent(category)}` : "/resources",
