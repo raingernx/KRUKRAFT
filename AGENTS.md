@@ -518,6 +518,9 @@ For non-trivial Figma-to-code work, follow this order:
 1. lock one canonical frame or variant
 2. inspect the structured metadata/JSON for that node and write a numeric
    contract before mapping anything into code
+   the contract must be written or refreshed in
+   `docs/figma-numeric-contracts.md` during the same work session for
+   non-trivial Figma-to-code implementation
 3. inspect the important child nodes and the surrounding section shell
 4. verify whether the design is using semantic tokens, primitive tokens, or
    local overrides
@@ -530,6 +533,10 @@ For non-trivial Figma-to-code work, follow this order:
    a bounded harness or proof surface when one exists
 10. compare back to the same canonical Figma frame before closing, without
    treating screenshot similarity alone as proof of a correct implementation
+
+For non-trivial Figma-to-code implementation work, a stale or missing contract
+entry in `docs/figma-numeric-contracts.md` means the task is not complete yet,
+even if the code looks visually close.
 
 ## UI Hierarchy And Anti-Nesting Rules
 

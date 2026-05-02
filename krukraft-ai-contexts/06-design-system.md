@@ -44,7 +44,8 @@ Use this order when DS docs disagree:
   authoritative proof of `radius/sm`.
 - `docs/figma-numeric-contracts.md` is now the reusable repo-owned template for
   that workflow, seeded first with `NotificationItem`, `SectionHeader`, and
-  `EmptyState`.
+  `EmptyState`, and non-trivial Figma-to-code implementation should refresh
+  the relevant contract block there before the task is treated as complete.
 - The DS is organized under:
   - `src/design-system/tokens/*`
   - `src/design-system/primitives/*`

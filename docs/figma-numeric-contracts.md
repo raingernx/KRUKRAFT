@@ -6,6 +6,12 @@ Figma-to-code implementation work.
 Use it when a component, shell, or variant needs high-fidelity translation from
 the canonical Figma file into runtime code.
 
+## Required Usage
+
+For non-trivial Figma-to-code implementation work, the relevant contract block
+in this file must be created or refreshed before closing the task. Treat a
+missing or stale block as implementation debt, not optional documentation.
+
 ## Workflow
 
 1. Lock one canonical node or variant.

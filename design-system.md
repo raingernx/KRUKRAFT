@@ -47,6 +47,9 @@ Numeric contract template:
 - use this file when a Figma-backed component needs a metadata-first
   implementation pass with explicit width/type/gap/dismiss numbers before code
   changes
+- for non-trivial Figma-to-code implementation, refresh the relevant contract
+  block in this file before or alongside the runtime patch; do not treat the
+  contract doc as optional after-the-fact notes
 
 Do not use `src/components/ui/*` as the default design-system source. Those
 files are compatibility shims or implementation details unless the primitive
