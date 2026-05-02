@@ -153,10 +153,11 @@ Current canonical Figma shared-coverage note:
   shell, icon wrapper, title/body rhythm, optional inline action lane, and
   dismiss affordance without pretending that bell-dropdown behavior, stack
   ordering, unread counts, or queue timing belong to the same board. The
-  current runtime now mirrors that bounded shell too: a compact `232px` item
-  width, `14/20` title copy, `12/16` secondary copy plus inline action text,
+  current runtime now mirrors that bounded shell too: a compact `325px` item
+  width, `18/30` title copy, `14/20` secondary copy plus inline action text,
   `8px` shell radius, `20px` status glyphs inside `32px` wrappers, and the
-  compact inline dismiss affordance instead of the older absolute close button
+  compact inline `20px` dismiss affordance instead of the older absolute close
+  button
 
 ### Composed Components
 

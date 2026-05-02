@@ -187,12 +187,12 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   `NotificationItem / Variant / Source` sets. The board owns only the compact
   status shell, icon wrapper, title/body rhythm, optional inline action lane,
   and dismiss affordance. The current runtime now mirrors that bounded shell
-  directly too: a compact `232px` item width, `14/20` title copy, `12/16`
+  directly too: a compact `325px` item width, `18/30` title copy, `14/20`
   secondary copy plus inline action text, `8px` shell radius, `20px` status
-  glyphs inside `32px` wrappers, and the compact inline dismiss affordance
-  instead of the older absolute close button. Bell dropdown behavior, unread
-  counts, stack order, and queue timing remain runtime-owned and should not be
-  promoted into this board
+  glyphs inside `32px` wrappers, and the compact inline `20px` dismiss
+  affordance instead of the older absolute close button. Bell dropdown
+  behavior, unread counts, stack order, and queue timing remain runtime-owned
+  and should not be promoted into this board
 - glyph choice remains product-owned and should keep flowing through the
   repo-owned `@/lib/icons` adapter instead of turning the canonical file into a
   copied Phosphor library dump

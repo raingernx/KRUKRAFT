@@ -11,7 +11,7 @@ interface NotificationItemProps {
 export function NotificationItem({ notification, onDismiss }: NotificationItemProps) {
   const { id, type, message, description, actionLabel, onAction } = notification;
   const hasAction = Boolean(actionLabel && onAction);
-  const contentGapClass = hasAction || type !== "success" ? "gap-1" : "gap-1.5";
+  const contentGapClass = hasAction || type !== "success" ? "gap-1" : "gap-2";
 
   const iconConfig: Record<
     NotificationType,
@@ -41,7 +41,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
   const Icon = iconConfig[type].Icon;
 
   return (
-    <div className="pointer-events-auto flex w-[min(232px,calc(100vw-3rem))] animate-fade-up items-start gap-3 rounded-sm border border-border bg-card p-3 motion-reduce:animate-none">
+    <div className="pointer-events-auto flex w-[min(325px,calc(100vw-3rem))] animate-fade-up items-start gap-3 rounded-sm border border-border bg-card p-3 motion-reduce:animate-none">
       <div
         className={[
           "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
@@ -51,13 +51,13 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
         <Icon className="h-5 w-5" />
       </div>
       <div className={["min-w-0 flex-1 flex flex-col", contentGapClass].join(" ")}>
-        <div className={["flex w-full items-start", hasAction ? "gap-2" : "gap-0"].join(" ")}>
+        <div className={["flex w-full items-start", hasAction ? "gap-3" : "gap-0"].join(" ")}>
           <div className="min-w-0 flex-1">
-            <p className="text-small font-medium text-foreground">
+            <p className="text-h3 text-foreground">
               {message}
             </p>
             {description && (
-              <p className="text-badge font-normal text-muted-foreground">
+              <p className="text-small text-muted-foreground">
                 {description}
               </p>
             )}
@@ -69,7 +69,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
                 onAction();
                 onDismiss(id);
               }}
-              className="shrink-0 font-ui text-badge font-medium text-primary hover:underline"
+              className="shrink-0 font-ui text-caption font-medium text-primary hover:underline"
             >
               {actionLabel}
             </button>
@@ -82,7 +82,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
         className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground"
         aria-label="Dismiss notification"
       >
-        <X className="h-3.5 w-3.5" />
+        <X className="h-4 w-4" />
       </button>
     </div>
   );
