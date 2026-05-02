@@ -154,10 +154,13 @@ Current canonical Figma shared-coverage note:
   dismiss affordance without pretending that bell-dropdown behavior, stack
   ordering, unread counts, or queue timing belong to the same board. The
   current runtime now mirrors that bounded shell too: a compact `325px` item
-  width, `18/30` title copy, `14/20` secondary copy plus inline action text,
-  `8px` shell radius, `20px` status glyphs inside `32px` wrappers, and the
-  compact inline `20px` dismiss affordance instead of the older absolute close
-  button
+  width, shared `text-title-sm` (`16/24`) title copy, `14/20` secondary copy
+  plus inline action text, `8px` shell radius, `20px` status glyphs inside
+  `32px` wrappers, and the compact inline `20px` dismiss affordance instead of
+  the older absolute close button. The canonical Figma source set should bind
+  that title copy through dedicated `type/title-sm/size` +
+  `type/title-sm/line` variables instead of leaving local `16/24` overrides in
+  place
 - metadata-first implementation work should now start from
   `docs/figma-numeric-contracts.md`, which holds the reusable numeric-contract
   template plus seeded `NotificationItem`, `SectionHeader`, and `EmptyState`

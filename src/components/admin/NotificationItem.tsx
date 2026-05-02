@@ -53,7 +53,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
       <div className={["min-w-0 flex-1 flex flex-col", contentGapClass].join(" ")}>
         <div className={["flex w-full items-start", hasAction ? "gap-3" : "gap-0"].join(" ")}>
           <div className="min-w-0 flex-1">
-            <p className="text-h3 text-foreground">
+            <p className="text-title-sm text-foreground">
               {message}
             </p>
             {description && (

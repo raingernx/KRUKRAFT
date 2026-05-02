@@ -100,7 +100,7 @@ Copy this block before implementing a new Figma-backed component.
 - Dismiss icon: `16 x 16`
 
 #### Typography
-- Title: `18/30`, semibold
+- Title: `16/24`, semibold via shared `title-sm` token
 - Description: `14/20`, regular
 - Action: `14/20`, semibold
 
