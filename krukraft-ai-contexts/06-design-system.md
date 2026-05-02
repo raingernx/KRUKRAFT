@@ -580,9 +580,11 @@ Use this order when DS docs disagree:
       - the next bounded admin-picker follow-up is now live as well:
         `DS Components` carries paired `PickerControls / Foundations / Light`
         (`1498:194`) and `PickerControls / Foundations / Dark` (`1498:257`)
-        boards. The board owns only the shared action-row posture, compact
-        preview/media shells, and `default|active|reject` dropzone states that
+        boards. The board now proves the bounded admin `images branch` first,
+        then the shared action-row posture, compact preview/media shells, and
+        `default|active|reject` dropzone states that
         `src/design-system/components/PickerControls.tsx` actually exports;
+        the nested `Image links` editor is shown there as context only, while
         upload progress, selected-file metadata, and async workflow messaging
         remain runtime-owned. The current token gaps stay explicit instead of
         silent: runtime still uses stronger border aliases plus local

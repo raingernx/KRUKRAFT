@@ -222,10 +222,11 @@ Current canonical Figma shared-coverage note:
   shell and unread-count posture. Bell dropdown behavior, unread transitions,
   and notification-row rendering stay runtime-owned.
 - `PickerControls` now also has canonical Figma coverage as a bounded admin
-  picker export on `DS Components`, but the board owns only shared action-row
-  posture, compact preview/media shells, and `default|active|reject` dropzone
-  states. Upload progress, selected-file metadata, and async workflow copy stay
-  runtime-owned.
+  picker export on `DS Components`, and the board now proves the bounded admin
+  `images branch` first, then the shared action-row posture, compact
+  preview/media shells, and `default|active|reject` dropzone states. The
+  nested `Image links` editor stays context-only there, while upload progress,
+  selected-file metadata, and async workflow copy remain runtime-owned.
 - `NotificationItem` now has canonical Figma coverage as a bounded admin
   status shell, but it remains owned by `src/components/admin/NotificationItem.tsx`
   rather than becoming a new `@/design-system` export. Treat the board as

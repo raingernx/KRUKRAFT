@@ -218,6 +218,7 @@ Copy this block before implementing a new Figma-backed component.
   - dark board `1498:257`
 - Runtime owner: `src/design-system/components/PickerControls.tsx`
 - Variants in scope:
+  - composed `images branch`
   - action row
   - preview + media shell
   - dropzone `default|active|reject`
@@ -240,24 +241,31 @@ Copy this block before implementing a new Figma-backed component.
 - Dropzone copy stack gap: `4`
 
 #### DOM Sibling Structure
-- Parent stack: board owns three sibling sections in order:
-  `action row` -> `preview + media` -> `dropzone states`
+- Parent stack: board owns four sibling sections in order:
+  `composed images branch` -> `action row` -> `preview + media` ->
+  `dropzone states`
 - Child order:
+  - composed images branch = `images header` sibling with `dropzone shell`
+    sibling with nested `image links context block`
   - action row = three sibling buttons
   - preview row = `preview card` sibling with `media preview`
   - dropzone row = `default` sibling with `active` sibling with `reject`
 - Sibling groups:
+  - the nested `image links` block inside the composed branch stays a context
+    sibling under the branch shell, not a promoted DS primitive on its own
   - preview filename/meta copy stays separate from icon-action cluster
   - media preview stays a sibling of preview card, not nested under it
   - each dropzone state stays a sibling card, not one shared card with nested
     state rows
 - Gap owner:
+  - composed branch wrapper owns `16`, with the nested content stack owning `12`
   - section wrapper owns `12`
   - row wrappers own `8|24|16` depending on section
   - internal preview/dropzone copy stacks own `4`
 - Notes on nodes that must stay separate: do not merge upload-state copy or
   route-owned file metadata into the bounded shells; the board owns posture,
-  not workflow state
+  not workflow state. The nested `Image links` editor remains context-only
+  until a bounded editor contract exists.
 
 #### Typography
 - Section labels: `14/20`, semibold caption scale
@@ -268,6 +276,11 @@ Copy this block before implementing a new Figma-backed component.
 - Dropzone helper: `12/16`, regular
 
 #### Variant Rules
+- Composed images branch:
+  - promote the outer `Images` shell, dropzone posture, and nested empty-state
+    context from the creator-resource route
+  - keep the nested `Image links` editor as context only; do not treat it as a
+    promoted shared control yet
 - Action row:
   - `Upload image` = neutral outline
   - `Choose from gallery` = muted outline
