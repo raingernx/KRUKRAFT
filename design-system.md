@@ -209,6 +209,15 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   `type/title-sm/size` + `type/title-sm/line` variables instead of local
   `16/24` overrides. Bell dropdown behavior, unread counts, stack order, and
   queue timing remain runtime-owned and should not be promoted into this board
+- the same narrow rule now applies to the product-bound bell trigger too:
+  `DS Components` carries paired `NotificationButton / Foundations / Light`
+  (`1489:194`) and `NotificationButton / Foundations / Dark` (`1489:284`)
+  boards plus light/dark `NotificationButton / Variant / Source` sets
+  (`1496:72`, `1496:143`). That board owns only the compact `40px` bell shell,
+  the `20px` Phosphor-light bell glyph, and the sibling unread-badge posture
+  for `count=0|3|9+`. Bell dropdown behavior, unread transitions, and
+  notification-row rendering remain runtime-owned and should not be promoted
+  into this board either
 - glyph choice remains product-owned and should keep flowing through the
   repo-owned `@/lib/icons` adapter instead of turning the canonical file into a
   copied Phosphor library dump

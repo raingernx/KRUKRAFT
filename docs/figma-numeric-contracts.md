@@ -148,6 +148,67 @@ Copy this block before implementing a new Figma-backed component.
 - Figma screenshot: `NotificationItem / Variant / Source` dark set `1435:2289`
 - Runtime proof route/harness: `/dev/notifications?scenario=all`
 
+### NotificationButton
+
+- Scope: bounded bell/count trigger only, not dropdown panel or notification-row
+  behavior
+- Canonical nodes:
+  - light board `1489:194`
+  - dark board `1489:284`
+  - light source set `1496:72`
+  - dark source set `1496:143`
+- Runtime owner: `src/design-system/components/NotificationButton.tsx`
+- Variants in scope: `count=0|3|9+`
+
+#### Shell
+- Width:
+  - `count=0` `40`
+  - `count=3|9+` `44`
+- Height:
+  - `count=0` `40`
+  - `count=3|9+` `44`
+- Button shell: `40 x 40`
+- Badge:
+  - `3` = `20 x 20`
+  - `9+` = `24 x 20`
+- Radius: pill / full circle
+- Border: current Figma uses `border/default`; runtime uses `border-border-strong`
+- Background: `bg/shell`
+
+#### Child Geometry
+- Bell glyph: `20 x 20`
+- Badge sits above top-right of the button shell
+
+#### DOM Sibling Structure
+- Parent stack: one relative wrapper only
+- Child order: `button shell` -> optional `badge`
+- Sibling groups:
+  - badge is a sibling of the button shell
+  - bell icon is a child of the button shell
+- Gap owner: none; badge position is absolute/overlayed, not flex-gap driven
+- Notes on nodes that must stay separate: do not fold unread badge into the
+  bell icon lane or into the bell button's inline content row
+
+#### Typography
+- Badge count: `12/16`, semibold
+
+#### Variant Rules
+- `count=0`: shell only
+- `count=3`: shell + compact unread badge
+- `count=9+`: shell + overflow unread badge
+
+#### Runtime Notes
+- Parent-owned: open/closed state and placement in topbar shells
+- Route-owned: bell dropdown content, unread transitions, notification rows
+- Known token gaps:
+  - canonical Figma still lacks `border/strong`
+  - unread badge still lacks a dedicated semantic beyond `state/danger-fill`
+
+#### Proof
+- Figma screenshot: `NotificationButton / Variant / Source` dark set `1496:143`
+- Runtime proof: `NotificationButton` Storybook counts and `NotificationBell`
+  topbar usage
+
 ### SectionHeader
 
 - Scope: bounded intro shell only, not page-width shell or route-specific CTA

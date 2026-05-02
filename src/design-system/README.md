@@ -217,6 +217,10 @@ Current canonical Figma shared-coverage note:
 - `FileUploadWidget`, `NotificationButton`, `PriceBadge`, `PriceLabel`, and
   `PickerControls` also belong to `@/design-system/product`; they stay reusable
   but remain more workflow-bound than true primitives.
+- `NotificationButton` now also has canonical Figma coverage as a bounded
+  product export on `DS Components`, but the board owns only the compact bell
+  shell and unread-count posture. Bell dropdown behavior, unread transitions,
+  and notification-row rendering stay runtime-owned.
 - `NotificationItem` now has canonical Figma coverage as a bounded admin
   status shell, but it remains owned by `src/components/admin/NotificationItem.tsx`
   rather than becoming a new `@/design-system` export. Treat the board as

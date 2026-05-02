@@ -564,6 +564,19 @@ Use this order when DS docs disagree:
         wrapper and glyph posture no longer borrow the primary family, and the
         compact title rung should bind through dedicated `type/title-sm/size` +
         `type/title-sm/line` variables instead of local `16/24` overrides
+      - the next bounded product-export follow-up is now live too:
+        `DS Components` carries paired `NotificationButton / Foundations /
+        Light` (`1489:194`) and `NotificationButton / Foundations / Dark`
+        (`1489:284`) boards plus light/dark
+        `NotificationButton / Variant / Source` sets (`1496:72`, `1496:143`).
+        The board owns only the compact `40px` bell shell, the `20px`
+        Phosphor-light bell glyph, and the sibling unread-badge posture for
+        `count=0|3|9+`; bell dropdown behavior, unread transitions, and
+        notification-row rendering remain runtime-owned. The current token gaps
+        stay explicit instead of silent: runtime still uses
+        `border-border-strong` and a hardcoded unread red, while canonical
+        Figma currently binds the shell to `border/default` and the badge to
+        `state/danger-fill`
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared
