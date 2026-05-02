@@ -594,6 +594,14 @@ Use this order when DS docs disagree:
         danger/red emphasis in some picker states, while canonical Figma
         currently stays on `border/default`, `primary/base`, and
         `state/danger-*` bindings
+      - `FileUploadWidget` now has canonical Figma coverage too:
+        `DS Components` carries paired `FileUploadWidget / Foundations /
+        Light` (`1558:270`) and `FileUploadWidget / Foundations / Dark`
+        (`1558:295`) boards. The current board proves one narrow bounded
+        upload-branch shell only: shared dropzone posture, helper-copy rhythm,
+        and disabled CTA treatment for the buyer-file branch. Upload progress,
+        validation, upload-result states, and selected-file metadata stay
+        runtime-owned and remain outside the canonical board for now
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared

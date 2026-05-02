@@ -310,6 +310,64 @@ Copy this block before implementing a new Figma-backed component.
 - Runtime proof: `PickerControls` Storybook stories and admin resource/settings
   consumers
 
+### FileUploadWidget
+
+- Scope: bounded buyer-file upload shell only, not upload progress,
+  validation, upload-result states, or selected-file metadata
+- Canonical nodes:
+  - light board `1558:270`
+  - dark board `1558:295`
+- Runtime owner: `src/design-system/components/FileUploadWidget.tsx`
+- Variants in scope: one bounded `upload branch` shell
+
+#### Shell
+- Branch width: `642`
+- Branch height: `208`
+- Dropzone shell: `642 x 152`
+- CTA row: `642 x 40`
+- Branch gap: `16`
+
+#### Child Geometry
+- Upload icon: `20 x 20`
+- Primary helper copy: `14/20`
+- Secondary helper lines: `11/20`
+- CTA icon: `16 x 16`
+- CTA label: `14/20`
+
+#### DOM Sibling Structure
+- Parent stack: one vertical branch only
+- Child order: `dropzone shell` -> `disabled CTA`
+- Sibling groups:
+  - helper-copy lines remain separate inside the dropzone shell
+  - CTA stays a sibling below the shell, not nested into the shell copy stack
+- Gap owner:
+  - branch owns the `16` gap between dropzone and CTA
+- Notes on nodes that must stay separate: keep upload-state results,
+  validation messages, and selected-file summary rows outside this bounded
+  shell contract
+
+#### Typography
+- Primary helper copy: `14/20`, medium
+- Secondary helper copy: `11/20`, regular
+- CTA label: `14/20`, regular
+
+#### Variant Rules
+- current canonical scope proves only the idle buyer-file upload branch with
+  disabled CTA posture
+
+#### Runtime Notes
+- Parent-owned: upload progress, success/error messaging, selected-file summary
+- Route-owned: admin workflow hooks and delivery-branch orchestration
+- Known token gaps: none on the current Figma shell; canonical board stays
+  narrow specifically to avoid smuggling broader workflow state into the
+  product export
+
+#### Proof
+- Figma screenshot:
+  - `FileUploadWidget / Foundations / Light` `1558:270`
+  - `FileUploadWidget / Foundations / Dark` `1558:295`
+- Runtime proof: bounded `FileUploadWidget` usage plus uploader route harnesses
+
 ### SectionHeader
 
 - Scope: bounded intro shell only, not page-width shell or route-specific CTA

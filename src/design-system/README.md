@@ -221,6 +221,11 @@ Current canonical Figma shared-coverage note:
   product export on `DS Components`, but the board owns only the compact bell
   shell and unread-count posture. Bell dropdown behavior, unread transitions,
   and notification-row rendering stay runtime-owned.
+- `FileUploadWidget` now also has canonical Figma coverage as a bounded
+  product export on `DS Components`. The current board proves one narrow
+  upload-branch shell only: shared dropzone posture, helper-copy rhythm, and
+  disabled CTA treatment. Progress, validation, upload-result states, and
+  selected-file metadata stay runtime-owned.
 - `PickerControls` now also has canonical Figma coverage as a bounded admin
   picker export on `DS Components`, and the board now proves the bounded admin
   `images branch` first, then the shared action-row posture, compact

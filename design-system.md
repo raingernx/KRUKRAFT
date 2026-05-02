@@ -232,6 +232,14 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   stronger border aliases plus local danger/red emphasis in some picker states,
   while canonical Figma currently stays on `border/default`, `primary/base`,
   and `state/danger-*` bindings
+- the same bounded rule now applies to `FileUploadWidget` too:
+  `DS Components` now carries paired `FileUploadWidget / Foundations / Light`
+  (`1558:270`) and `FileUploadWidget / Foundations / Dark` (`1558:295`)
+  boards. That board currently proves one narrow upload-branch shell only:
+  shared dropzone posture, helper-copy rhythm, and disabled CTA treatment for
+  the buyer-file branch. Upload progress, validation, upload-result states, and
+  selected-file metadata remain runtime-owned and should not be promoted into
+  this board yet
 - glyph choice remains product-owned and should keep flowing through the
   repo-owned `@/lib/icons` adapter instead of turning the canonical file into a
   copied Phosphor library dump
