@@ -272,3 +272,206 @@ Copy this block before implementing a new Figma-backed component.
 #### Proof
 - Figma screenshot: `EmptyState / Variant / Source` dark set `1276:302`
 - Runtime proof: Storybook `EmptyState` stories or bounded DS consumer
+
+### Surface
+
+- Scope: bounded shared shell only, not route-owned content composition
+- Canonical nodes:
+  - light board `575:144`
+  - dark board `627:633`
+  - light source `575:157`
+  - dark source `627:646`
+- Runtime owner: `src/design-system/components/Surface.tsx`
+- Variants in scope: `panel | subtle | muted`
+
+#### Shell
+- Width: parent-owned
+- Height: content-owned
+- Padding: parent-owned
+- Gap: parent-owned
+- Radius:
+  - `panel` `16`
+  - `subtle` `12`
+  - `muted` `12`
+- Border: `1`
+- Background:
+  - `panel` semantic card shell
+  - `subtle` semantic card shell
+  - `muted` semantic muted shell
+
+#### Child Geometry
+- No owned child geometry; `Surface` is a shell wrapper only
+
+#### DOM Sibling Structure
+- Parent stack: none owned by `Surface`; layout stays with the caller
+- Child order: route-owned
+- Sibling groups: route-owned
+- Gap owner: route-owned
+- Notes on nodes that must stay separate: do not let `Surface` absorb child
+  spacing or section rhythm that belongs to composed shells such as
+  `FormSection` or `DataPanelTable`
+
+#### Typography
+- Title: parent-owned
+- Description: parent-owned
+- Action: parent-owned
+- Eyebrow/label: parent-owned
+
+#### Variant Rules
+- `panel`: strongest bordered shell with shadow
+- `subtle`: calmer bordered shell without shadow
+- `muted`: quieter muted background shell without shadow
+
+#### Runtime Notes
+- Parent-owned: all interior spacing, headings, actions, and dividers
+- Route-owned: content hierarchy and business affordances
+- Known token gaps: hierarchy study copy in Figma still mentions older token-gap
+  guidance more broadly than the live nodes now prove
+
+#### Proof
+- Figma screenshot: `Surface / Variant / Source` dark set `627:646`
+- Runtime proof: any bounded DS consumer using the shared shell
+
+### FormSection
+
+- Scope: composed form shell only, not field-row layout or workflow-specific
+  CTA semantics
+- Canonical nodes:
+  - light board `759:251`
+  - dark board `746:275`
+- Runtime owner: `src/design-system/components/FormSection.tsx`
+- Variants in scope: `flat | card`
+
+#### Shell
+- Width: parent-owned
+- Height: content-owned
+- Padding:
+  - `flat` none on outer shell
+  - `card` inherited from shared `Card`
+- Gap:
+  - `flat` root stack `20`
+  - `flat` header stack `6`
+  - `card` inherited from shared `Card` + `CardHeader`
+- Radius:
+  - `flat` none
+  - `card` inherited from shared `Card`
+- Border:
+  - `flat` bottom divider only
+  - `card` inherited from shared `Card`
+- Background:
+  - `flat` transparent
+  - `card` inherited from shared `Card`
+
+#### Child Geometry
+- Header contains `title` and optional `description`
+- Content stays in its own sibling block below header
+- Footer stays in its own sibling block below content when present
+
+#### DOM Sibling Structure
+- Parent stack: one vertical root stack per variant
+- Child order: `header` -> `content` -> optional `footer`
+- Sibling groups:
+  - `title` and `description` are siblings inside `header`
+  - `content` is a sibling of `header`, not nested under `description`
+  - `footer` is a sibling of both `header` and `content`
+- Gap owner:
+  - root section owns shell-level spacing between header/content/footer
+  - header owns `title -> description`
+- Notes on nodes that must stay separate: do not collapse `children` into the
+  same wrapper as the header copy or footer actions, or the flat/card section
+  rhythm will drift from Figma
+
+#### Typography
+- Title: local `16/20`, semibold in current Figma/runtime
+- Description: `14/20`
+- Action: footer-owned, route-owned
+- Eyebrow/label: none owned by `FormSection`
+
+#### Variant Rules
+- `flat`: divider-led section with transparent shell
+- `card`: delegates shell posture to shared `Card`
+
+#### Runtime Notes
+- Parent-owned: actual field grid, submit controls, validation layout
+- Route-owned: footer action semantics and any helper rows inside `children`
+- Known token gaps: current canonical file still keeps explicit local gaps for
+  `16/20` title, `14/20` labels, `20px` card padding, and `border/subtle`
+  semantics
+
+#### Proof
+- Figma screenshot: `FormSection / Variant / Source` dark board `746:275`
+- Runtime proof: bounded settings/admin forms using the shared component
+
+### DataPanelTable
+
+- Scope: bounded dashboard/admin table shell only, not row schema, empty-copy
+  ownership, or business actions
+- Canonical nodes:
+  - light board `813:174`
+  - dark board `813:227`
+  - light source `813:545`
+  - dark source `1276:78`
+- Runtime owner: `src/design-system/components/DataPanelTable.tsx`
+- Variants in scope:
+  - `actions=false, toolbar=false, footer=false`
+  - `actions=true, toolbar=false, footer=false`
+  - `actions=true, toolbar=true, footer=false`
+  - `actions=true, toolbar=false, footer=true`
+
+#### Shell
+- Width: parent-owned
+- Height: content-owned
+- Padding:
+  - header `20 x 20`
+  - body `0`
+  - footer inherited from shared `CardFooter`
+- Gap:
+  - card root `0`
+  - header column `16`
+  - top row `12`
+  - actions lane `12`
+- Radius: inherited from shared `Card`
+- Border: inherited from shared `Card`; header adds bottom divider
+- Background: inherited from shared `Card`
+
+#### Child Geometry
+- Header owns intro copy, optional actions, and optional toolbar
+- Body is a dedicated sibling block below header
+- Footer is a dedicated sibling block below body when present
+
+#### DOM Sibling Structure
+- Parent stack: shared `Card` root with three vertical siblings
+- Child order: `header` -> `body` -> optional `footer`
+- Sibling groups:
+  - inside `header`, `top row` and optional `toolbar` are siblings
+  - inside `top row`, `copy block` and optional `actions lane` are siblings
+  - inside `copy block`, `title` and `description` stay separate
+- Gap owner:
+  - `Card` root owns zero gap so header/body/footer seams stay tight
+  - header column owns `top row -> toolbar`
+  - top row owns `copy block -> actions lane`
+- Notes on nodes that must stay separate: do not merge `description` into
+  `title`, and do not place `toolbar` inside the same wrapper as the title copy
+  or the Figma header rhythm and divider posture will drift
+
+#### Typography
+- Title: shared `CardTitle`
+- Description: `14/20`
+- Action: shared button or row-action family, route-owned semantics
+- Eyebrow/label: none owned by `DataPanelTable`
+
+#### Variant Rules
+- `actions` toggles the trailing actions lane only
+- `toolbar` inserts a divided sibling row below header copy
+- `footer` inserts a dedicated footer sibling below body
+
+#### Runtime Notes
+- Parent-owned: actual table rows, schema, badges, pagination labels, and empty
+  copy
+- Route-owned: business action labels and row rendering
+- Known token gaps: canonical Figma still keeps explicit local type recipes and
+  lacks semantic `border/subtle` for some shell rails
+
+#### Proof
+- Figma screenshot: `DataPanelTable / Variant / Source` dark set `1276:78`
+- Runtime proof: bounded admin/dashboard table surfaces using the shared shell
