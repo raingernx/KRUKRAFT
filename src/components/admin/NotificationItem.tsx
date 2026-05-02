@@ -53,14 +53,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
       <div className={["min-w-0 flex-1 flex flex-col", contentGapClass].join(" ")}>
         <div className={["flex w-full items-start", hasAction ? "gap-3" : "gap-0"].join(" ")}>
           <div className="min-w-0 flex-1">
-            <p className="text-title-sm text-foreground">
-              {message}
-            </p>
-            {description && (
-              <p className="text-small text-muted-foreground">
-                {description}
-              </p>
-            )}
+            <p className="text-title-sm text-foreground">{message}</p>
           </div>
           {hasAction && actionLabel && onAction && (
             <button
@@ -75,6 +68,11 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
             </button>
           )}
         </div>
+        {description && (
+          <p className="text-small text-muted-foreground">
+            {description}
+          </p>
+        )}
       </div>
       <button
         type="button"
