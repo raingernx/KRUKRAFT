@@ -166,6 +166,25 @@ Copy this block before implementing a new Figma-backed component.
 - Description max width: runtime `max-w-xl`
 - Actions lane: shared `Button size=md` examples in Figma proof only
 
+#### DOM Sibling Structure
+- Parent stack:
+  - mobile/default uses one vertical root stack
+  - desktop `with-actions` uses a row split between `copy stack` and
+    `actions lane`
+- Child order: inside `copy stack`, `eyebrow` comes before `title`, and
+  `title` comes before `description`
+- Sibling groups:
+  - `eyebrow`, `title`, and `description` stay as siblings in one copy stack
+  - `actions lane` is a sibling of `copy stack`, not a child of `title` or
+    `description`
+- Gap owner:
+  - root owns shell-level gap between copy and actions
+  - copy stack owns `8`
+  - actions lane owns button-to-button spacing, not the copy stack
+- Notes on nodes that must stay separate: do not collapse `description` into
+  the heading node or nest the action cluster under the title block, or the
+  Figma split between copy rhythm and trailing controls will drift
+
 #### Typography
 - Eyebrow: `12/16` badge scale
 - Title: shared `h2` scale (`32/40`)
@@ -213,6 +232,21 @@ Copy this block before implementing a new Figma-backed component.
   - icon -> title `12`
   - title -> description `4`
   - description -> action `16`
+
+#### DOM Sibling Structure
+- Parent stack: one centered vertical shell stack
+- Child order: `icon` -> `title` -> `description` -> `action`
+- Sibling groups:
+  - `title` and `description` should stay as siblings, not one nested text
+    block
+  - `action` stays a sibling below copy, not inside the description wrapper
+- Gap owner:
+  - outer shell owns the full vertical rhythm in `default`
+  - `minimal` keeps the same order but removes optional nodes instead of
+    inventing a second wrapper hierarchy
+- Notes on nodes that must stay separate: do not merge the copy nodes into one
+  rich-text block if the design expects the `title -> description` gap to stay
+  independently tunable
 
 #### Typography
 - Title: `16/24`, semibold
