@@ -226,6 +226,12 @@ Current canonical Figma shared-coverage note:
   upload-branch shell only: shared dropzone posture, helper-copy rhythm, and
   disabled CTA treatment. Progress, validation, upload-result states, and
   selected-file metadata stay runtime-owned.
+- `Delivery method toggle` now also has canonical Figma coverage as a bounded
+  creator delivery control on `DS Components`, but it remains route-owned
+  inside `src/components/creator/CreatorResourceForm.tsx` rather than becoming
+  a new DS barrel export. The board owns only the segmented toggle shell,
+  helper-copy pairing, and active/inactive posture; upload/link branches and
+  validation/file workflow stay runtime-owned.
 - `PickerControls` now also has canonical Figma coverage as a bounded admin
   picker export on `DS Components`, and the board now proves the bounded admin
   `images branch` first, then the shared action-row posture, compact
@@ -408,7 +414,9 @@ Current canonical Figma shared-coverage note:
   side effects remain route-owned behavior. The next creator upload follow-up
   is now closed too: the route-owned delivery-source toggle plus the upload
   branch wrapper shell on `/dashboard/creator/resources/new` and edit are now
-  proved at runtime. The next creator-owned control-styling follow-up is now
+  proved at runtime, and canonical Figma now mirrors that split with a bounded
+  `Delivery method toggle / Foundations` board beside `FileUploadWidget /
+  Foundations`. The next creator-owned control-styling follow-up is now
   closed too: the external-file action cluster (`Clear link`, `Edit`,
   `Open link`, and the uploaded-file guard action) now uses the explicit
   compact `40px / 8px` route-owned posture on `/dashboard/creator/resources/new`

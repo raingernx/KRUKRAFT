@@ -240,6 +240,13 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   the buyer-file branch. Upload progress, validation, upload-result states, and
   selected-file metadata remain runtime-owned and should not be promoted into
   this board yet
+- the same bounded rule now applies to the creator delivery-source control too:
+  `DS Components` now carries paired `Delivery method toggle / Foundations /
+  Light` (`1562:2`) and `Delivery method toggle / Foundations / Dark`
+  (`1562:25`) boards. That board proves only the segmented toggle shell,
+  compact helper-copy pairing, and active/inactive posture for the buyer-file
+  source switch. Upload/link branches, validation copy, and downstream file
+  workflow stay route-owned and should not be smuggled into this board
 - glyph choice remains product-owned and should keep flowing through the
   repo-owned `@/lib/icons` adapter instead of turning the canonical file into a
   copied Phosphor library dump
@@ -802,7 +809,10 @@ At a high level:
       - the creator upload-controls follow-up is now closed too:
         `/dashboard/creator/resources/new` and edit prove the creator-owned
         delivery-source toggle plus the upload-branch wrapper shell without
-        widening shared `FileUploadWidget` internals
+        widening shared `FileUploadWidget` internals; canonical Figma now
+        mirrors that split too by giving the toggle its own bounded
+        `Delivery method toggle / Foundations` boards while keeping the upload
+        branch on `FileUploadWidget / Foundations`
       - the next creator-owned control-styling follow-up is now closed too:
         `/dashboard/creator/resources/new` and edit prove the external-file
         action cluster (`Clear link`, `Edit`, `Open link`, and the

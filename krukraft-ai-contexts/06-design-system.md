@@ -602,6 +602,14 @@ Use this order when DS docs disagree:
         and disabled CTA treatment for the buyer-file branch. Upload progress,
         validation, upload-result states, and selected-file metadata stay
         runtime-owned and remain outside the canonical board for now
+      - the creator delivery-source control now has canonical Figma coverage
+        too: `DS Components` carries paired
+        `Delivery method toggle / Foundations / Light` (`1562:2`) and
+        `Delivery method toggle / Foundations / Dark` (`1562:25`) boards.
+        The board stays intentionally narrow and proves only the segmented
+        shell, helper-copy pairing, and active/inactive posture of the
+        buyer-file source toggle. Upload/link branches plus validation/file
+        workflow remain route-owned
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared
@@ -699,7 +707,8 @@ Use this order when DS docs disagree:
       - the remaining delivery/upload zone stays deferred after that:
         `FileUploadWidget` plus the delivery-source toggle remain
         product-owned delivery controls outside the shared field-shell
-        contract
+        contract, even though both now have bounded canonical Figma boards for
+        their narrow shell-level contracts
     - `Input / Size` and `SearchInput / Size` light/dark now exist as explicit
       component sets for the shared field ladder
     - runtime code still carries an older larger comfortable-radius branch for
