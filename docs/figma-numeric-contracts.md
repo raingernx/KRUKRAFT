@@ -876,3 +876,223 @@ Copy this block before implementing a new Figma-backed component.
 #### Proof
 - Figma screenshot: `Card / Size / Source / Dark` `726:171`
 - Runtime proof: bounded DS card consumers
+
+### Modal
+
+- Scope: bounded modal shell only, not bell/list overlays or route-specific
+  form content
+- Canonical nodes:
+  - light board `1146:246`
+  - dark board `1154:246`
+  - light size set `1146:352`
+  - dark size set `1276:1255`
+- Runtime owner: `src/design-system/primitives/Modal.tsx`
+- Variants in scope: `size=sm|md|lg|xl`
+
+#### Shell
+- Width ladder:
+  - `sm` `384`
+  - `md` `448`
+  - `lg` `512`
+  - `xl` `576`
+- Height: content-owned
+- Radius: `16`
+- Border: `1`
+- Background: semantic card shell
+- Header padding: `20 x 16`
+- Body padding: `20 x 16`
+- Footer padding: `20 x 12`
+
+#### Child Geometry
+- Overlay fills the viewport
+- Content is centered shell
+- Close affordance sits in top-right shell corner
+- Header, body, and footer are separate rails
+
+#### DOM Sibling Structure
+- Parent stack: portal contains `overlay` and `content` as siblings
+- Child order inside `content`: optional `header` -> `body` -> optional `footer`
+- Sibling groups:
+  - `title` and `description` are siblings inside `header`
+  - `footer` is a sibling rail below `body`
+  - close button is its own overlayed sibling inside `content`
+- Gap owner:
+  - content root owns shell rail order
+  - header owns `title -> description`
+  - footer owns action-to-action gap
+- Notes on nodes that must stay separate: do not merge footer actions into body
+  or collapse close affordance into header copy
+
+#### Typography
+- Title: `16/20`, semibold
+- Description: `14/20`
+- Action: shared button typography
+
+#### Variant Rules
+- size variants only change width ladder
+- overlay tint, portal motion, and escape behavior stay runtime-owned
+
+#### Runtime Notes
+- Parent-owned: route content, validation, actual CTA semantics
+- Route-owned: form layout and dialog workflow logic
+- Known token gaps: canonical Figma still uses `neutral/line` for divider rails
+  because `border/subtle` is not exposed there yet
+
+#### Proof
+- Figma screenshot: `Modal / Foundations / Dark` `1154:246`
+- Runtime proof: bounded admin dialog consumers
+
+### Avatar
+
+- Scope: shared avatar shell and fallback ladder only
+- Canonical nodes:
+  - light board `1063:246`
+  - dark board `1063:367`
+  - light size/source `1063:317`, `1063:366`
+  - dark size/source `1063:438`, `1063:487`
+- Runtime owner: `src/design-system/primitives/Avatar.tsx`
+- Variants in scope: image | initials fallback, size ladder `24|32|40|56`
+
+#### Shell
+- Width/height ladder:
+  - `24`
+  - `32`
+  - `40`
+  - `56`
+- Radius: full circle
+- Border/ring: stroked circular shell
+- Background: fallback shell family-owned
+
+#### Child Geometry
+- Image fills the circular shell
+- Fallback initials sit centered in same shell
+
+#### DOM Sibling Structure
+- Parent stack: single shell only
+- Child order:
+  - either image node
+  - or fallback text node
+- Sibling groups: none; image and fallback are mutually exclusive
+- Gap owner: none
+- Notes on nodes that must stay separate: keep fallback text as a direct child
+  of shell so it inherits circular clipping and centered posture
+
+#### Typography
+- Fallback initials: size proportional to avatar size, semibold
+
+#### Variant Rules
+- source priority: image -> name initials -> email initials -> explicit initials
+  -> anonymous default
+- image and fallback share the same shell radius and stroke posture
+
+#### Runtime Notes
+- Parent-owned: surrounding layout and any presence badge
+- Route-owned: actual image source and alt/copy context
+- Known token gaps: runtime still supports extra mounts outside canonical Figma
+  ladder and keeps fallback gradient/type sizing locally
+
+#### Proof
+- Figma screenshot: `Avatar / Foundations / Dark` `1063:367`
+- Runtime proof: bounded DS or app consumers using shared avatar shell
+
+### LoadingSkeleton
+
+- Scope: neutral loading primitive only, not feature-specific skeleton layouts
+- Canonical nodes:
+  - light board `1170:246`
+  - dark board `1170:272`
+  - light shape set `1170:302`
+  - dark shape set `1170:307`
+- Runtime owner: `src/design-system/primitives/LoadingSkeleton.tsx`
+- Variants in scope: `line | bar | circle | pill`
+
+#### Shell
+- Width: caller-owned
+- Height: caller-owned
+- Radius:
+  - `line` subtle rounded
+  - `bar` small rounded
+  - `circle` full
+  - `pill` full
+- Background: neutral skeleton fill
+
+#### Child Geometry
+- No children; primitive is one painted shape
+
+#### DOM Sibling Structure
+- Parent stack: none owned
+- Child order: none
+- Sibling groups: none
+- Gap owner: parent layout owns all spacing between skeleton rows/blocks
+- Notes on nodes that must stay separate: do not turn this primitive into a
+  full layout block; feature shells own structure
+
+#### Typography
+- none
+
+#### Variant Rules
+- primitive proves shape posture only, not composed layout groups
+
+#### Runtime Notes
+- Parent-owned: exact width/height and arrangement
+- Route-owned: skeleton grouping for each feature
+- Known token gaps: canonical Figma still aliases to broader neutral tokens
+  because dedicated `bg/muted` semantic is not fully exposed there
+
+#### Proof
+- Figma screenshot: `LoadingSkeleton / Foundations / Dark` `1170:272`
+- Runtime proof: bounded loading states that use the primitive
+
+### Icon
+
+- Scope: icon adapter contract only, not full glyph catalog
+- Canonical nodes:
+  - light board `1377:280`
+  - dark board `1377:394`
+- Runtime owner: `src/lib/icons.tsx`
+- Variants in scope: size ladder `14|16|20|24`, semantic tone ladder, Phosphor
+  light weight
+
+#### Shell
+- Width/height ladder:
+  - `14`
+  - `16`
+  - `20`
+  - `24`
+- Radius: none owned by icon itself
+- Border: none owned by icon itself
+- Background: none owned by icon itself
+
+#### Child Geometry
+- Single SVG glyph only
+
+#### DOM Sibling Structure
+- Parent stack: none owned
+- Child order: single SVG
+- Sibling groups: none
+- Gap owner: caller-owned
+- Notes on nodes that must stay separate: icon-only controls or wrappers belong
+  to other contracts, not to the icon adapter
+
+#### Typography
+- none
+
+#### Variant Rules
+- default family source: `Phosphor`
+- default weight: `light`
+- semantic tones:
+  - `fg/default`
+  - `fg/muted`
+  - `fg/subtle`
+  - `fg/on-fill-dark`
+  - `fg/on-fill-light`
+
+#### Runtime Notes
+- Parent-owned: glyph choice, surrounding container, emphasis level
+- Route-owned: status/product-specific icon choice
+- Known token gaps: none for adapter contract; glyph catalog remains intentionally
+  out of scope
+
+#### Proof
+- Figma screenshot: `Icon / Foundations / Dark` `1377:394`
+- Runtime proof: adapter usage via shared DS and app consumers
