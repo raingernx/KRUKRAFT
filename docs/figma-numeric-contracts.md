@@ -383,7 +383,7 @@ Copy this block before implementing a new Figma-backed component.
   - light source `1192:196`
   - dark source `1276:302`
 - Runtime owner: `src/design-system/components/EmptyState.tsx`
-- Variants in scope: `default | minimal`
+- Variants in scope: `default | minimal | compact-admin`
 
 #### Shell
 - Width: parent-owned
@@ -400,6 +400,13 @@ Copy this block before implementing a new Figma-backed component.
   - icon -> title `12`
   - title -> description `4`
   - description -> action `16`
+- `compact-admin`:
+  - shell `650 x 82`
+  - shell padding `21 / 17 / 1 / 17`
+  - row `616 x 40`
+  - icon wrapper `40 x 40`
+  - icon `20 x 20`
+  - copy stack width `389`
 
 #### DOM Sibling Structure
 - Parent stack: one centered vertical shell stack
@@ -412,6 +419,8 @@ Copy this block before implementing a new Figma-backed component.
   - outer shell owns the full vertical rhythm in `default`
   - `minimal` keeps the same order but removes optional nodes instead of
     inventing a second wrapper hierarchy
+  - `compact-admin` swaps to a tighter horizontal row:
+    `icon wrapper` sibling with `copy stack`
 - Notes on nodes that must stay separate: do not merge the copy nodes into one
   rich-text block if the design expects the `title -> description` gap to stay
   independently tunable
@@ -420,10 +429,15 @@ Copy this block before implementing a new Figma-backed component.
 - Title: `16/24`, semibold
 - Description: `14/20`
 - Action example: shared `Button size=sm`
+- `compact-admin` title: `14/20`, medium
+- `compact-admin` description: `12/16`, regular
 
 #### Variant Rules
 - `default`: full stack `icon -> title -> description -> action`
 - `minimal`: proves collapse without inventing new product chrome
+- `compact-admin`: proves the tighter inline empty posture from the creator
+  `Image links` branch without carrying the route-owned editor CTA row or bulk
+  paste workflow into the shared contract
 
 #### Runtime Notes
 - Parent-owned: final illustration choice and business CTA semantics

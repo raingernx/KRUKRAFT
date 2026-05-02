@@ -254,9 +254,11 @@ The canonical Figma file now also covers `EmptyState` directly on
 - the composed slice locks the bounded shared shell only:
   centered stack rhythm, dashed rounded container posture, and the shared
   `icon -> title -> description -> action` slot order
-- the current source pair proves `variant=default` and `variant=minimal`
-  without promoting route-owned empty-state copy, business CTAs, or product
-  illustrations into the composed contract
+- the current source set now proves `variant=default`, `variant=minimal`, and
+  `variant=compact-admin`
+- `compact-admin` promotes the tighter inline empty posture from the creator
+  `Image links` branch into the canonical shell contract without dragging the
+  rest of the route-owned editor workflow into `EmptyState`
 - icon examples on the board now reuse shared `Phosphor light` instances too,
   while the action lane reuses a shared `Button size="sm" variant="soft"`
   example with a generic `Soft action` label so the CTA stays softer than the

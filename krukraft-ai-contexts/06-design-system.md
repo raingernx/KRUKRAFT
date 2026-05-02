@@ -134,13 +134,16 @@ Use this order when DS docs disagree:
   them to `border/default` to mirror the current runtime aliasing.
 - `EmptyState` now has canonical Figma coverage on `DS Components` too:
   the live boards document the bounded composed shell only through a paired
-  `default | minimal` source set. The shared contract is the centered stack
-  rhythm, dashed rounded container posture, and the `icon -> title ->
-  description -> action` slot order; business copy, final CTA semantics, and
-  route-owned illustrations remain outside the composed contract. Icon
-  examples now reuse shared `Phosphor light` instances too, while the action
-  lane reuses a shared `Button size="sm" variant="soft"` example with a
-  generic `Soft action` label.
+  `default | minimal | compact-admin` source set. The shared contract is the
+  centered stack rhythm, dashed rounded container posture, and the
+  `icon -> title -> description -> action` slot order; business copy, final
+  CTA semantics, and route-owned illustrations remain outside the composed
+  contract. The new `compact-admin` variant promotes the tighter inline empty
+  posture from the creator-side `Image links` branch without pulling the full
+  editor workflow into `EmptyState`. Icon examples now reuse shared
+  `Phosphor light` instances too, while the action lane reuses a shared
+  `Button size="sm" variant="soft"` example with a generic `Soft action`
+  label.
   The current
   Figma-only gap is explicit instead of silent here as well: runtime uses
   `border-border-subtle`, but canonical Figma still lacks a semantic

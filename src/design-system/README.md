@@ -295,9 +295,12 @@ Current canonical Figma shared-coverage note:
   shell only.
 - That composed slice currently documents the centered stack rhythm, dashed
   rounded container posture, and the shared `icon | title | description |
-  action` slot order through a `default` and `minimal` source pair while
-  keeping business copy, live CTA semantics, and route-owned illustrations out
-  of the contract.
+  action` slot order through `default`, `minimal`, and `compact-admin`
+  variants while keeping broader editor workflow, business copy, live CTA
+  semantics, and route-owned illustrations out of the contract.
+- `compact-admin` now captures the tighter inline empty posture promoted from
+  the creator-side `Image links` branch without pulling the full editor shell
+  into the shared `EmptyState` family.
 - Icon examples on that board now reuse shared `Phosphor light` instances too,
   while the action lane reuses a shared `Button size="sm" variant="soft"`
   example with a generic `Soft action` label so the CTA posture stays
