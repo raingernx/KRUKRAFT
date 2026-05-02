@@ -22,19 +22,19 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
   > = {
     success: {
       Icon: CheckCircle2,
-      wrapperClass: "bg-success-50 text-success-600",
+      wrapperClass: "bg-[#D9F4E8] text-[#10B981] dark:bg-[#123D2C] dark:text-[#02B567]",
     },
     info: {
       Icon: Info,
-      wrapperClass: "bg-info-50 text-info-600",
+      wrapperClass: "bg-[#EFF6FF] text-[#2563EB] dark:bg-[#172554] dark:text-[#60A5FA]",
     },
     warning: {
       Icon: AlertTriangle,
-      wrapperClass: "bg-warning-50 text-warning-600",
+      wrapperClass: "bg-[#FCE7D8] text-[#F5700B] dark:bg-[#4B2A15] dark:text-[#DF5D05]",
     },
     error: {
       Icon: AlertCircle,
-      wrapperClass: "bg-danger-50 text-danger-600",
+      wrapperClass: "bg-[#FFEFEB] text-[#DB3A1C] dark:bg-[#321B17] dark:text-[#E84729]",
     },
   };
 
@@ -69,7 +69,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
                 onAction();
                 onDismiss(id);
               }}
-              className="shrink-0 font-ui text-caption font-medium text-primary hover:underline"
+              className="shrink-0 font-ui text-caption font-semibold text-primary hover:underline"
             >
               {actionLabel}
             </button>
