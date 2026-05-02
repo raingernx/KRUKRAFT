@@ -12,8 +12,10 @@ the canonical Figma file into runtime code.
 2. Pull structured Figma metadata/JSON for that exact node before editing code.
 3. Write a numeric contract from that metadata.
 4. Map the contract into code.
-5. Verify with runtime screenshot QA against the same node or variant.
-6. Only then sync handoff docs/context if the implementation truth changed.
+5. Verify that token-sensitive utilities resolve to the intended computed CSS
+   values in runtime instead of trusting similar class names.
+6. Verify with runtime screenshot QA against the same node or variant.
+7. Only then sync handoff docs/context if the implementation truth changed.
 
 ## Template
 

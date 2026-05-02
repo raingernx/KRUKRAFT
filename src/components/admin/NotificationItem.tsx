@@ -41,7 +41,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
   const Icon = iconConfig[type].Icon;
 
   return (
-    <div className="pointer-events-auto flex w-[min(325px,calc(100vw-3rem))] animate-fade-up items-start gap-3 rounded-sm border border-border bg-card p-3 motion-reduce:animate-none">
+    <div className="pointer-events-auto flex w-[min(325px,calc(100vw-3rem))] animate-fade-up items-start gap-3 rounded-[var(--radius-sm)] border border-border bg-card p-3 motion-reduce:animate-none">
       <div
         className={[
           "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",

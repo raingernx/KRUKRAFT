@@ -36,6 +36,9 @@ Use this order when DS docs disagree:
 - Non-trivial Figma-to-code work should now start from structured node
   metadata/JSON plus a written numeric contract for the chosen canonical node
   or variant, not from screenshot interpretation alone.
+- Token-sensitive utility names that look similar to DS tokens must still be
+  checked against computed runtime values; names like `rounded-sm` are not
+  authoritative proof of `radius/sm`.
 - `docs/figma-numeric-contracts.md` is now the reusable repo-owned template for
   that workflow, seeded first with `NotificationItem`, `SectionHeader`, and
   `EmptyState`.

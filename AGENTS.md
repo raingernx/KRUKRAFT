@@ -478,6 +478,10 @@ Treat Figma work as structured system work, not as ad-hoc drawing.
 - before changing code for a Figma-backed component, write down a numeric
   contract from the chosen node or variant at minimum for width, height,
   padding, gap, type scale, line-height, icon size, and dismiss/action sizes
+- do not assume a utility name such as `rounded-sm`, `text-sm`, or `gap-3`
+  matches the DS token with a similar name; for token-sensitive work, verify
+  the real computed CSS value or the actual runtime token mapping before
+  claiming parity
 - use `Frame` for layout containers and `Rectangle` or other shapes only for
   visual objects such as swatches, dividers, fills, or artwork
 - one Figma write should change one block or section only; verify that block
