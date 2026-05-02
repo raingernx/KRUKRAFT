@@ -41,6 +41,13 @@ Validation:
 - `npm run figma-map:check`
 - `npm run tokens:audit`
 
+Numeric contract template:
+
+- `docs/figma-numeric-contracts.md`
+- use this file when a Figma-backed component needs a metadata-first
+  implementation pass with explicit width/type/gap/dismiss numbers before code
+  changes
+
 Do not use `src/components/ui/*` as the default design-system source. Those
 files are compatibility shims or implementation details unless the primitive
 layer itself is being maintained.

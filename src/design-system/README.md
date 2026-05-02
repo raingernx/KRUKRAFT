@@ -158,6 +158,10 @@ Current canonical Figma shared-coverage note:
   `8px` shell radius, `20px` status glyphs inside `32px` wrappers, and the
   compact inline `20px` dismiss affordance instead of the older absolute close
   button
+- metadata-first implementation work should now start from
+  `docs/figma-numeric-contracts.md`, which holds the reusable numeric-contract
+  template plus seeded `NotificationItem`, `SectionHeader`, and `EmptyState`
+  examples for like-for-like Figma-to-code passes
 
 ### Composed Components
 
