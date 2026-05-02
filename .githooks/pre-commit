@@ -2,3 +2,4 @@
 set -eu
 
 npm run context:check:staged:strict
+npm run figma-contracts:check:staged:strict

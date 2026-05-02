@@ -50,6 +50,10 @@ Numeric contract template:
 - for non-trivial Figma-to-code implementation, refresh the relevant contract
   block in this file before or alongside the runtime patch; do not treat the
   contract doc as optional after-the-fact notes
+- repo checks now enforce this for tracked runtime owners:
+  - `npm run figma-contracts:check`
+  - `npm run figma-contracts:check:staged`
+  - `npm run figma-contracts:check:staged:strict`
 
 Do not use `src/components/ui/*` as the default design-system source. Those
 files are compatibility shims or implementation details unless the primitive

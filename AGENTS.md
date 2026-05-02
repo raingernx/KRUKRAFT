@@ -538,6 +538,16 @@ For non-trivial Figma-to-code implementation work, a stale or missing contract
 entry in `docs/figma-numeric-contracts.md` means the task is not complete yet,
 even if the code looks visually close.
 
+Repo-owned enforcement now exists for tracked Figma-backed runtime owners:
+
+- `npm run figma-contracts:check`
+- `npm run figma-contracts:check:staged`
+- `npm run figma-contracts:check:staged:strict`
+
+The staged strict check fails when a tracked runtime owner from
+`docs/figma-numeric-contracts.md` changes without the contract doc being
+updated in the same change set.
+
 ## UI Hierarchy And Anti-Nesting Rules
 
 When editing UI structure, agents must prefer visual hierarchy over box stacking.

@@ -46,6 +46,14 @@ Use this order when DS docs disagree:
   that workflow, seeded first with `NotificationItem`, `SectionHeader`, and
   `EmptyState`, and non-trivial Figma-to-code implementation should refresh
   the relevant contract block there before the task is treated as complete.
+- tracked Figma-backed runtime owners now also have a repo-owned enforcement
+  path:
+  - `npm run figma-contracts:check`
+  - `npm run figma-contracts:check:staged`
+  - `npm run figma-contracts:check:staged:strict`
+  The staged strict variant fails when one of those runtime-owner files changes
+  without `docs/figma-numeric-contracts.md` being updated in the same change
+  set.
 - The DS is organized under:
   - `src/design-system/tokens/*`
   - `src/design-system/primitives/*`
