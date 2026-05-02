@@ -11,11 +11,12 @@ the canonical Figma file into runtime code.
 1. Lock one canonical node or variant.
 2. Pull structured Figma metadata/JSON for that exact node before editing code.
 3. Write a numeric contract from that metadata.
-4. Map the contract into code.
-5. Verify that token-sensitive utilities resolve to the intended computed CSS
+4. Write the DOM sibling structure from that metadata before editing code.
+5. Map the contract into code.
+6. Verify that token-sensitive utilities resolve to the intended computed CSS
    values in runtime instead of trusting similar class names.
-6. Verify with runtime screenshot QA against the same node or variant.
-7. Only then sync handoff docs/context if the implementation truth changed.
+7. Verify with runtime screenshot QA against the same node or variant.
+8. Only then sync handoff docs/context if the implementation truth changed.
 
 ## Template
 
@@ -43,6 +44,13 @@ Copy this block before implementing a new Figma-backed component.
 - Icon:
 - Content width:
 - Dismiss/action wrapper:
+
+#### DOM Sibling Structure
+- Parent stack:
+- Child order:
+- Sibling groups:
+- Gap owner:
+- Notes on nodes that must stay separate:
 
 #### Typography
 - Title:
@@ -98,6 +106,18 @@ Copy this block before implementing a new Figma-backed component.
 - Content width: `223`
 - Dismiss wrapper: `20 x 20`
 - Dismiss icon: `16 x 16`
+
+#### DOM Sibling Structure
+- Parent stack: outer shell row contains `icon wrapper`, `content`, `dismiss`
+- Child order: inside `content`, `top row` comes before `description`
+- Sibling groups: `title` and `action` are siblings inside `top row`;
+  `description` is a sibling of `top row`, not a child of `title`
+- Gap owner:
+  - shell row owns `12`
+  - content column owns `4` or `8` depending on variant
+  - top row owns `12` when action exists
+- Notes on nodes that must stay separate: do not collapse `description` into
+  the same DOM block as `title`, or the Figma content-stack gap will disappear
 
 #### Typography
 - Title: `16/24`, semibold via shared `title-sm` token

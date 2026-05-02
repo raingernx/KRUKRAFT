@@ -882,6 +882,9 @@ At a high level:
 - Write a numeric contract from that metadata before implementation at minimum
   for width, height, padding, gap, title/body/action type scale, line-height,
   icon size, and dismiss size.
+- When spacing depends on auto-layout hierarchy, write the DOM sibling
+  structure explicitly too: parent stack, child order, sibling groups, and
+  which node actually owns each gap.
 - Do not let screenshot reading outrank structured node data during the mapping
   step; use screenshots to validate the rendered result after the numeric
   contract is already mapped into code.

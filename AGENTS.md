@@ -521,12 +521,14 @@ For non-trivial Figma-to-code work, follow this order:
 3. inspect the important child nodes and the surrounding section shell
 4. verify whether the design is using semantic tokens, primitive tokens, or
    local overrides
-5. map the numeric contract, tokens, and layout into code
-6. update loading or skeleton UI to the same geometry when needed
-7. run static checks
-8. verify the route or component at runtime when practical, preferably through
+5. write the DOM sibling structure explicitly when spacing depends on
+   auto-layout hierarchy, such as top-row vs description, before editing code
+6. map the numeric contract, tokens, and layout into code
+7. update loading or skeleton UI to the same geometry when needed
+8. run static checks
+9. verify the route or component at runtime when practical, preferably through
    a bounded harness or proof surface when one exists
-9. compare back to the same canonical Figma frame before closing, without
+10. compare back to the same canonical Figma frame before closing, without
    treating screenshot similarity alone as proof of a correct implementation
 
 ## UI Hierarchy And Anti-Nesting Rules
