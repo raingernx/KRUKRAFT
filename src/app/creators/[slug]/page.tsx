@@ -154,7 +154,7 @@ export default async function CreatorPublicProfilePage({
                         <Badge variant={isActive ? "success" : "neutral"}>
                           {isActive ? (
                             <>
-                              <BadgeCheck className="size-3.5" />
+                              <BadgeCheck />
                               Active creator
                             </>
                           ) : (

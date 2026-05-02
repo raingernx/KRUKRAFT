@@ -158,7 +158,7 @@ function MembershipItem({
           </span>
           <Badge
             variant="featured"
-            className="shrink-0 px-1.5 py-0 text-[10px] leading-4"
+            className="shrink-0"
           >
             Plans
           </Badge>

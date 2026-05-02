@@ -161,19 +161,23 @@ Use this order when DS docs disagree:
   reuses shared `Button size="md"` examples with generic `Quiet action` /
   `Primary action` labels, so the board stays DS-backed without inventing
   route-specific CTA semantics.
-- `Button` runtime now mirrors the canonical Figma tone family too:
-  `primary | quiet | soft | ghost` are all live in `Button.tsx`. The newly
-  adopted `soft` variant follows the Figma state contract directly instead of
-  inventing a new runtime interpretation: `bg/surface + border/default +
-  fg/default` at rest, `bg/inset` on hover/pressed, and `fg/subtle` on
-  disabled.
+- `Button` runtime now mirrors the canonical Figma tone family directly:
+  `primary | quiet | soft | tertiary` are live in `Button.tsx`, while `ghost`
+  remains only as a compatibility alias. The adopted `soft` variant follows
+  the Figma state contract directly instead of inventing a new runtime
+  interpretation: `bg/surface + border/default + fg/default` at rest,
+  `bg/inset` on hover/pressed, and `fg/subtle` on disabled.
   `quiet` now keeps its own `border/quiet` semantic stroke derived from
   `primary/lift` instead of borrowing the neutral `border/default` rail, and
   runtime mirrors that through `border-quiet`. Shared button focus now uses a
   `2px` semantic `focus/ring` stroke in both Figma and runtime instead of
   leaving focus states on their quieter rest rails.
-  The remaining button adoption gap is size-only: Figma still trials `sm=36`
-  while runtime stays on the existing `sm=32` ladder.
+  The latest Figma-only follow-up also closes the old tertiary-icon drift:
+  `Button / Icon` now keeps the `tertiary` glyph fill and stroke on the same
+  neutral token as the label in both light and dark boards instead of leaving
+  a stale local accent on the icon rail.
+  The older size gap is closed too: runtime now uses the same `sm=36` ladder
+  as the canonical Figma board.
 - `RevealImage` is the shared image primitive for already-sized containers; the
   surrounding container should own placeholder/background treatment. The
   2026-04-30 heavier-primitive follow-up audit now locks one more boundary
@@ -396,8 +400,12 @@ Use this order when DS docs disagree:
     `Surface / Variant / Source` plus hierarchy nodes keep all painted
     fills/strokes token-bound
   - the remaining live `Surface` debt is now narrow:
-    - only the hierarchy `shell zone` still keeps local `20` radius
     - the dark source/hierarchy ids are `627:633` and `627:646`
+    - the hierarchy demo now mirrors the source-set shell ladder directly:
+      `panel = bg/surface`, `subtle = bg/canvas`, `muted = bg/inset`, and the
+      inner surfaces now all sit on `16px` radius too, while the broader
+      `shell zone` now binds `radius/lg (24px)` instead of keeping the older
+      local `20` radius
     - the board copy itself is now partially stale because it still describes a
       broader token-gap story than the live subtle/muted/popover/support nodes
       actually exhibit
@@ -427,21 +435,19 @@ Use this order when DS docs disagree:
       there is no remaining non-zero local radius debt in the live
       `Button / State` / `Button / Size` / `Button / Icon` component sets, and
       the old dark subtitle line that said `light recipe` is gone
-    - that same button re-audit also confirmed a live adoption gap: canonical
-      Figma now separates airy `ghost` from bounded-neutral `soft` and changes
-      `quiet` / `ghost` / `soft` behavior by state more explicitly than the
-      current runtime `Button.tsx` recipe does
+    - that same button re-audit originally exposed a live adoption gap:
+      canonical Figma replaced airy `ghost` with text-first neutral
+      `tertiary` and changed `quiet` / `tertiary` / `soft` behavior by state
+      more explicitly than the earlier runtime `Button.tsx` recipe did
     - the 2026-04-28 follow-up study has now been folded back into the
       canonical Figma `Button / Foundations` boards as a bounded neutral
-      `soft` tone that sits beside `ghost`, plus a Figma-first `sm=36` size
-      step:
-      - runtime now matches the locked `primary | quiet | soft | ghost`
-        family and still keeps the current size ladder until a separate
-        button-ladder decision lands
-      - the first impact audit says a future promotion should likely trial
-        `xs=32 / sm=36 / md=40 / lg=48`, keep
-        `density=\"compact\" -> xs` during the first runtime proof, and leave
-        `Input` / `SearchInput` on the existing field ladder for now
+      `soft` tone that now sits beside text-first `tertiary`, plus a
+      Figma-first `sm=36` size step
+    - that follow-up is now landed in runtime too:
+      - runtime now exposes `primary | quiet | soft | tertiary`
+      - `ghost` remains only as a compatibility alias
+      - runtime now uses the same `xs=32 / sm=36 / md=40 / lg=48` ladder for
+        the shared primitive family
       - the new button decision rule is now explicit too: table row actions,
         pagination items, and panel CTAs should stay recipes first, not new
         family members; evaluate them against `outline` and the Figma-first
@@ -488,7 +494,7 @@ Use this order when DS docs disagree:
         - `/admin/resources/[id]/versions`
         - the versions route now also uses the row-action
           `default / muted` ladder directly instead of keeping older
-          `quiet / ghost` button overrides
+          `quiet / tertiary` button overrides
         all now opt into `RowActionButton size="md"` after route proof
       - dense holdouts still remain out of scope on purpose:
         - `/admin/tags`
@@ -749,6 +755,9 @@ Use this order when DS docs disagree:
     and the `Spacing + Radius / Primitives` board mirrors that addition; repo
     runtime token files still do not expose `radius/xs`, so this is currently a
     Figma-first token addition rather than a fully adopted code/runtime token
+  - the shared radius scale now also includes `radius/sm+ = 12px` between
+    `radius/sm` and `radius/md`; this rung is mirrored in repo runtime tokens
+    without redefining the existing `sm/md/lg/xl` ladder
   - a 2026-04-28 foundations re-audit of `Typography`, `Color Primitives`, and
     `Spacing + Radius / Primitives` corrected an earlier false-positive radius
     reading too:
@@ -927,11 +936,20 @@ Use this order when DS docs disagree:
       `featured` intentionally distinct in the canonical base:
       `warning` stays crisp on `bg/inset` through
       `support/warning/base|dust`, while `featured` now uses
-      `accent/sand/wash` fill with `accent/sand/base` border/text as the softer
-      editorial highlight posture across light/dark
-    - the live dark badge source set also drifted from the initial landing id
-      and now lives at `746:208`; repo mapping must follow that node instead of
-      the older `736:206` reference
+      `accent/sand/wash` fill with `accent/sand/dust` stroke and
+      `accent/sand/base` text as the softer editorial highlight posture across
+      light/dark
+    - runtime `Badge.tsx` now consumes that featured sand family directly too,
+      via `accent-50` fill, `accent-300` stroke, and `accent-200` text instead
+      of the older yellow alias classes
+    - runtime `Badge.tsx` also now uses dedicated theme-aware vars for
+      `support/info/*`, `support/success/*`, `support/warning/*`, and
+      `state/danger/*`, so the shared badge primitive can follow the canonical
+      light/dark Figma ladders instead of borrowing generic light-only status
+      scales
+    - the live dark badge source set also drifted from the initial landing ids
+      and now lives at `1494:1803`; repo mapping must follow that node instead
+      of the older `746:208` / `736:206` references
     - the 2026-04-29 badge residual cleanup closes the last live badge
       Figma gaps too:
       - the seven badge labels now bind to dedicated `type/badge/size` and
@@ -943,6 +961,12 @@ Use this order when DS docs disagree:
       runtime-only badge aliases have been remapped off the live app surface
       and removed from the shared primitive contract instead of lingering as
       extra non-canonical variants
+    - the next runtime cleanup also normalizes badge sizing back to that same
+      canonical Figma recipe instead of inventing route-local mini/large chips:
+      shared badge consumers now default to the live `24px` shell with
+      `text-badge` `12/16`, `space/8` horizontal padding, and the default icon
+      ladder unless a future explicit badge-size family is introduced in the
+      canonical file first
     - `Foundation Review` still has text-fill binding but not font-family
       binding on its current text nodes, so it should be treated as a review
       artifact rather than a token-parity proof page
@@ -955,14 +979,19 @@ Use this order when DS docs disagree:
   - that `FormSection` source set intentionally stays narrow to the runtime
     contract: `flat` for divider-first settings/admin sections, `card` for
     bounded secondary shells
-  - the 2026-04-28 shared-component re-audit keeps the remaining live
-    `FormSection` debt explicit instead of hidden:
-    - section titles still use local `16/20`
-    - field labels still use local `14/20`
-    - `card` still keeps local `20px` padding
-    - `flat` still keeps the local `6px` header gap
-    - divider/footer separators still rely on `border/default` until a
-      dedicated `border/subtle` semantic exists
+  - the foundations boards now also add usage-only optional-structure proofs
+    for `flat / no-description` and `card / no-footer`; this closes the old
+    proof gap around optional header/footer structure without inventing new
+    variants
+  - the 2026-05-02 follow-up then finishes the live Figma binding pass too:
+    all paints, text props, radius, and spacing on the active boards now bind
+    cleanly, and the former local `16/20`, `14/20`, `6px`, and `20px` values
+    are normalized onto the nearest shared tokens (`type/label`, `space/8`,
+    `space/24`) instead of staying unbound
+  - the remaining explicit `FormSection` gap is parity plus semantics rather
+    than binding debt: runtime still carries narrower literal geometry in
+    places, and divider/footer separators still rely on `border/default` until
+    a dedicated `border/subtle` semantic exists
     - the current dark source set now lives at `746:275` instead of the older
       `759:252` id
   - `DataPanelTable` is now landed in the canonical file too through dedicated

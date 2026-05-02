@@ -168,7 +168,7 @@ export function ProfileSettings({
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <p className="text-sm font-semibold text-foreground">Profile photo</p>
-                <Badge variant="info" className="px-2 py-0 text-[10px] leading-5">
+                <Badge variant="info">
                   {photoSourceLabel}
                 </Badge>
               </div>

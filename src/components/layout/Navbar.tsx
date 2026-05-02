@@ -768,7 +768,7 @@ function NavbarInner({
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-2">
                       <span className="text-sm font-semibold text-foreground">Membership</span>
-                      <Badge variant="featured" className="px-1.5 py-0 text-[10px] leading-4">
+                      <Badge variant="featured">
                         Plans
                       </Badge>
                     </span>

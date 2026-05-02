@@ -309,7 +309,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
       <div className="relative rounded-2xl border border-border bg-secondary px-5 py-4 shadow-card">
         <Badge
           variant={form.creatorStatus === "ACTIVE" ? "success" : "warning"}
-          className="absolute right-4 top-4 h-fit w-fit px-2.5 py-1 font-semibold"
+          className="absolute right-4 top-4 h-fit w-fit"
         >
           {form.creatorStatus === "ACTIVE" ? "Active" : "Paused"}
         </Badge>
@@ -611,7 +611,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                       <div className="relative rounded-2xl border border-border bg-shell p-4">
                         <Badge
                           variant={hasSavedPublicProfile ? "success" : "neutral"}
-                          className="absolute right-4 top-4 h-fit w-fit px-2.5 py-1 font-semibold"
+                          className="absolute right-4 top-4 h-fit w-fit"
                         >
                           {hasSavedPublicProfile ? "Live" : "Pending"}
                         </Badge>

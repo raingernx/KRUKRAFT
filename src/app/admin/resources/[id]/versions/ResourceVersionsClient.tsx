@@ -161,7 +161,7 @@ export function ResourceVersionsClient({
                       <div className="inline-flex items-center gap-2">
                         <span>v{v.version}</span>
                         {isCurrent && (
-                          <Badge variant="success" className="text-[11px]">
+                          <Badge variant="success">
                             Current
                           </Badge>
                         )}
