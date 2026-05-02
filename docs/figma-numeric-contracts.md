@@ -475,3 +475,404 @@ Copy this block before implementing a new Figma-backed component.
 #### Proof
 - Figma screenshot: `DataPanelTable / Variant / Source` dark set `1276:78`
 - Runtime proof: bounded admin/dashboard table surfaces using the shared shell
+
+### Button
+
+- Scope: shared button primitive only, not route-owned CTA semantics or table
+  business-action labels
+- Canonical nodes:
+  - state sets `746:510`, `1276:619`
+  - size sets `553:167`, `746:598`
+  - icon sets `259:92`, `746:635`
+- Runtime owner: `src/design-system/primitives/Button.tsx`
+- Variants in scope: `primary | quiet | soft | ghost`, shared size ladder,
+  icon posture, focus posture
+
+#### Shell
+- Width: content-owned except icon sizes
+- Height:
+  - `xs` `32`
+  - `sm` `36` in Figma trial, runtime currently `32`
+  - `md` `40`
+  - `lg` `48`
+- Padding: variant- and size-owned
+- Gap: icon/text `8`
+- Radius:
+  - default button family `pill`
+  - compact/recipe-specific row-action posture handled outside primitive
+- Border:
+  - default transparent
+  - `quiet` uses `border/quiet`
+  - `soft` uses `primary-soft-border`
+- Background: family-owned by variant
+
+#### Child Geometry
+- Label and optional icons live in one inline row
+- Shared icon size target: `16`
+- Loading spinner replaces left icon slot
+
+#### DOM Sibling Structure
+- Parent stack: one inline-flex row
+- Child order: optional `loading/left icon` -> `label` -> optional `right icon`
+- Sibling groups: icons stay siblings of label, not nested inside text wrapper
+- Gap owner: button root owns icon/text spacing
+- Notes on nodes that must stay separate: do not collapse left/right icons into
+  pseudo-elements when the design expects real icon slots and loading swaps
+
+#### Typography
+- Title: none
+- Description: none
+- Action: shared button label `text-sm` / `text-caption` depending on size
+- Eyebrow/label: label stays semibold
+
+#### Variant Rules
+- `quiet`: filled tonal shell with `border/quiet` and `focus/ring` at `2px`
+- `soft`: bordered rounded-rect calmer CTA family with lighter rest state
+- `ghost`: airy wash posture
+- `row action` and `pagination` remain recipe/family contracts outside base
+  `Button`
+
+#### Runtime Notes
+- Parent-owned: surrounding layout, CTA grouping, route labels
+- Route-owned: business semantics and icon choice
+- Known token gaps: runtime `sm` ladder still differs from Figma `36px` trial
+
+#### Proof
+- Figma screenshot: `Button / State` dark set `1276:619`
+- Runtime proof: Storybook button stories and shared consumers
+
+### Badge
+
+- Scope: non-interactive status/label primitive only
+- Canonical nodes:
+  - light source `736:178`
+  - dark source `746:208`
+- Runtime owner: `src/design-system/primitives/Badge.tsx`
+- Variants in scope:
+  `neutral | info | success | warning | featured | destructive | outline`
+
+#### Shell
+- Width: content-owned
+- Height: content-owned
+- Padding: `8 x 2` equivalent compact pill
+- Gap: icon/text `4`
+- Radius: full pill
+- Border: variant-owned, often transparent or soft semantic stroke
+- Background: variant-owned
+
+#### Child Geometry
+- Optional icon `12`
+- Label sits centered in one inline row
+
+#### DOM Sibling Structure
+- Parent stack: one inline-flex row
+- Child order: optional icon -> label
+- Sibling groups: icon and label are direct siblings
+- Gap owner: badge root owns icon/text gap
+- Notes on nodes that must stay separate: do not turn badge copy into a nested
+  wrapper that changes the compact pill height
+
+#### Typography
+- Action/label: `text-badge` (`12/16`)
+
+#### Variant Rules
+- `warning` stays on inset-style shell, not generic yellow chip
+- `featured` keeps editorial sand family
+- `outline` remains transparent shell with stronger stroke
+
+#### Runtime Notes
+- Parent-owned: placement and surrounding density
+- Route-owned: icon choice and copy
+- Known token gaps: none for current bounded primitive contract
+
+#### Proof
+- Figma screenshot: `Badge / Variant / Source / Dark` `746:208`
+- Runtime proof: Storybook or any DS consumer using shared badges
+
+### Input
+
+- Scope: shared text-field shell only, not search-specific affordances
+- Canonical nodes:
+  - light state `432:218`
+  - dark state `548:134`
+  - light size `627:780`
+  - dark size `627:804`
+- Runtime owner: `src/design-system/primitives/Input.tsx`
+- Variants in scope: state + size ladder with optional adornments
+
+#### Shell
+- Width: `100%`
+- Height:
+  - `sm` `32`
+  - `md` `40`
+  - `lg` `48`
+  - `field` `56`
+- Padding:
+  - no adornment `12/16` horizontal depending on size
+  - start/end adornment widths `36/40/44`
+- Gap: wrapper `4` to hint/error copy
+- Radius: `8`
+- Border: shared field shell
+- Background: shared field shell
+
+#### Child Geometry
+- Optional start adornment lane on left
+- Input text field in center
+- Optional end adornment lane on right
+- Hint/error copy below shell
+
+#### DOM Sibling Structure
+- Parent stack: outer vertical stack `shell -> hint/error`
+- Child order:
+  - without adornments: `input` -> optional `hint/error`
+  - with adornments: `relative shell` containing start/input/end -> optional
+    `hint/error`
+- Sibling groups:
+  - hint and error are sibling outputs below shell, never inside it
+  - adornments remain siblings of the input element inside the relative shell
+- Gap owner:
+  - outer wrapper owns shell-to-caption gap
+  - relative shell owns no flex gap; absolute adornment lanes own placement
+- Notes on nodes that must stay separate: do not nest hint/error copy inside
+  the shell wrapper or the field-caption rhythm will drift from Figma
+
+#### Typography
+- Field text: `14/20`
+- Hint/error: `12/16`
+
+#### Variant Rules
+- state matrix proves rest/hover/focus/disabled/error posture
+- size matrix proves shell heights; captions remain outside the shell
+
+#### Runtime Notes
+- Parent-owned: labels and grid layout
+- Route-owned: actual adornment icons and validation copy
+- Known token gaps: Figma wrappers still carry explicit local component-set
+  radius debt outside the live shell itself
+
+#### Proof
+- Figma screenshot: `Input / State` dark set `548:134`
+- Runtime proof: bounded admin/settings form routes using shared field shell
+
+### SearchInput
+
+- Scope: shared search field primitive only, excluding product-owned hero shell
+  semantics beyond the explicit `hero` variant
+- Canonical nodes:
+  - light state `432:276`
+  - dark state `548:166`
+  - light size `627:821`
+  - dark size `627:842`
+- Runtime owner: `src/design-system/primitives/SearchInput.tsx`
+- Variants in scope: `default | hero`
+
+#### Shell
+- Width: `100%`
+- Height:
+  - `default` shared field ladder
+  - `hero` route-owned `40`/responsive product posture
+- Padding: search-specific left/right reserves for icon and clear/loading lane
+- Gap: outer submit split `12` when submit button is present
+- Radius:
+  - `default` `8`
+  - `hero` route-owned rounded hero shell
+- Border: shared field shell for `default`
+- Background: shared field shell for `default`
+
+#### Child Geometry
+- Leading search icon
+- Input field
+- Trailing clear/loading/end adornment lane
+- Optional submit button as sibling outside field shell
+
+#### DOM Sibling Structure
+- Parent stack:
+  - base case is one relative shell
+  - submit case is one row with `input shell` and `submit button`
+- Child order: search icon -> input -> trailing adornment within shell
+- Sibling groups:
+  - clear/loading indicator is a sibling of the input, not nested in text block
+  - submit button is a sibling of the entire shell, not a child of it
+- Gap owner:
+  - relative shell owns icon/input overlay placement
+  - outer row owns shell-to-submit gap
+- Notes on nodes that must stay separate: do not merge clear/loading behavior
+  into the same DOM slot as the submit button
+
+#### Typography
+- Field text: `14/20` default; hero remains product-owned
+- Clear action: current runtime compact action label/icon lane
+
+#### Variant Rules
+- `default` stays on shared search field shell
+- `hero` stays as explicit product override within the primitive
+
+#### Runtime Notes
+- Parent-owned: labels and surrounding toolbar/hero layout
+- Route-owned: hero copy, submit button semantics, and marketplace chrome
+- Known token gaps: public `/resources` hero search remains intentionally
+  route-owned beyond the shared default shell
+
+#### Proof
+- Figma screenshot: `SearchInput / State` dark set `548:166`
+- Runtime proof: `/dashboard/library`, admin search mounts, and `/resources`
+  hero search as bounded override
+
+### Select
+
+- Scope: shared field-shell select only, not option-list or route-specific
+  filtering UX
+- Canonical nodes:
+  - light board `994:342`
+  - dark board `994:366`
+  - light source `994:519`
+  - dark source `994:543`
+- Runtime owner: `src/design-system/primitives/Select.tsx`
+- Variants in scope: state + size ladder
+
+#### Shell
+- Width: `100%`
+- Height:
+  - `sm` `32`
+  - `md` `40`
+  - `lg` `48`
+  - `field` `56`
+- Padding: field-shell horizontal padding plus caret reserve
+- Gap: wrapper `4` to hint/error copy
+- Radius: `8`
+- Border: shared field shell
+- Background: shared field shell
+
+#### Child Geometry
+- Native select shell
+- Built-in caret affordance remains part of the field shell contract
+- Hint/error copy below shell
+
+#### DOM Sibling Structure
+- Parent stack: outer vertical stack `select shell -> hint/error`
+- Child order: `select` -> optional `hint/error`
+- Sibling groups: captions stay outside the select shell
+- Gap owner: outer wrapper owns shell-to-caption gap
+- Notes on nodes that must stay separate: do not fold helper/error copy into
+  the same wrapper as the select element
+
+#### Typography
+- Field text: `14/20`
+- Hint/error: `12/16`
+
+#### Variant Rules
+- state matrix proves shell posture only
+- size matrix follows shared field heights
+
+#### Runtime Notes
+- Parent-owned: option content and labels
+- Route-owned: actual option list and business filtering behavior
+- Known token gaps: none called out beyond broader shared field-shell token
+  stories
+
+#### Proof
+- Figma screenshot: `Select / Foundations / Dark` `994:366`
+- Runtime proof: `/admin/settings` and low-risk admin filter routes
+
+### Textarea
+
+- Scope: shared multiline field shell only
+- Canonical nodes:
+  - light board `1019:386`
+  - dark board `1019:507`
+- Runtime owner: `src/design-system/primitives/Textarea.tsx`
+- Variants in scope: state matrix only
+
+#### Shell
+- Width: `100%`
+- Min height: `120`
+- Padding: `16`
+- Gap: wrapper `4` to hint/error copy
+- Radius: `8`
+- Border: shared field shell
+- Background: shared field shell
+
+#### Child Geometry
+- Multiline text shell
+- Hint/error copy below shell
+
+#### DOM Sibling Structure
+- Parent stack: outer vertical stack `textarea -> hint/error`
+- Child order: `textarea` -> optional `hint/error`
+- Sibling groups: captions stay as siblings below shell
+- Gap owner: outer wrapper owns shell-to-caption gap
+- Notes on nodes that must stay separate: do not wrap footer copy inside the
+  textarea shell
+
+#### Typography
+- Field text: `14/20`
+- Hint/error: `12/16`
+
+#### Variant Rules
+- canonical Figma proves state posture, not a fabricated size ladder
+
+#### Runtime Notes
+- Parent-owned: labels, row counts, counters, long-form workflow chrome
+- Route-owned: resize expectations and prompt-specific copy
+- Known token gaps: none beyond shared field-shell stories
+
+#### Proof
+- Figma screenshot: `Textarea / Foundations / Dark` `1019:507`
+- Runtime proof: bounded admin/settings and admin/resources multiline surfaces
+
+### Card
+
+- Scope: shared card primitive only, not nested product-specific card layouts
+- Canonical nodes:
+  - light board `439:303`
+  - dark board `726:171`
+- Runtime owner: `src/design-system/primitives/Card.tsx`
+- Variants in scope: `size=default|sm`, header/content/footer shell posture
+
+#### Shell
+- Width: parent-owned
+- Height: content-owned
+- Gap:
+  - `default` `16`
+  - `sm` `12`
+- Radius: `12`
+- Border: `1` subtle shell
+- Background: semantic surface shell
+
+#### Child Geometry
+- Header `px 20 pt 20` (`sm` `16/16`)
+- Content `px 20` (`sm` `16`)
+- Footer `px 20 py 12` (`sm` `16/10`)
+- Optional action lane in header grid
+
+#### DOM Sibling Structure
+- Parent stack: one vertical root stack
+- Child order: optional `header` -> optional `content` -> optional `footer`
+- Sibling groups:
+  - `title`, `description`, and optional `action` stay inside `header`
+  - `footer` is a sibling of header/content, not nested under content
+- Gap owner:
+  - card root owns vertical section gap
+  - header owns `title -> description`
+  - footer owns its own internal row layout
+- Notes on nodes that must stay separate: do not flatten footer into content or
+  the inset footer rail from Figma will disappear
+
+#### Typography
+- Title: `16/20`, semibold (`sm` can step down to `14/20`)
+- Description: `14/20`
+- Action: parent-owned
+
+#### Variant Rules
+- `default`: full roomy card shell
+- `sm`: tighter shell with reduced gaps and padding
+
+#### Runtime Notes
+- Parent-owned: actual child layouts and any nested semantic zones
+- Route-owned: business actions and imagery behavior
+- Known token gaps: current Figma still carries some local type/padding studies
+  as explicit debt rather than fully semanticized tokens
+
+#### Proof
+- Figma screenshot: `Card / Size / Source / Dark` `726:171`
+- Runtime proof: bounded DS card consumers
