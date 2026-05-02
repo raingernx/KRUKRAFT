@@ -472,6 +472,12 @@ files as implementation details only.
 Treat Figma work as structured system work, not as ad-hoc drawing.
 
 - do not claim or assume 1:1 fidelity from screenshots alone
+- for non-trivial Figma-to-code work, do not derive implementation from the
+  screenshot first; inspect structured node metadata/JSON from the canonical
+  node before writing code
+- before changing code for a Figma-backed component, write down a numeric
+  contract from the chosen node or variant at minimum for width, height,
+  padding, gap, type scale, line-height, icon size, and dismiss/action sizes
 - use `Frame` for layout containers and `Rectangle` or other shapes only for
   visual objects such as swatches, dividers, fills, or artwork
 - one Figma write should change one block or section only; verify that block
@@ -493,6 +499,9 @@ Treat Figma work as structured system work, not as ad-hoc drawing.
   not exist yet, call that out explicitly as a token gap and keep any remaining
   local override narrow and intentional instead of leaving silent manual values
 - preserve local overrides until the pattern is proven reusable
+- before calling a runtime mismatch “not like Figma,” verify that the compared
+  surfaces are the same scope, such as item shell vs stack layout vs bell list,
+  instead of mixing bounded component proof with a larger product surface
 - map Figma fill/stretch behavior to the correct CSS layout mechanism instead
   of defaulting to content-driven sizing
 - when Figma uses imagery, do not silently substitute or omit it without
@@ -503,14 +512,17 @@ Treat Figma work as structured system work, not as ad-hoc drawing.
 For non-trivial Figma-to-code work, follow this order:
 
 1. lock one canonical frame or variant
-2. inspect the important child nodes and the surrounding section shell
-3. verify whether the design is using semantic tokens, primitive tokens, or
+2. inspect the structured metadata/JSON for that node and write a numeric
+   contract before mapping anything into code
+3. inspect the important child nodes and the surrounding section shell
+4. verify whether the design is using semantic tokens, primitive tokens, or
    local overrides
-4. map tokens and layout into code
-5. update loading or skeleton UI to the same geometry when needed
-6. run static checks
-7. verify the route or component at runtime when practical
-8. compare back to the same canonical Figma frame before closing, without
+5. map the numeric contract, tokens, and layout into code
+6. update loading or skeleton UI to the same geometry when needed
+7. run static checks
+8. verify the route or component at runtime when practical, preferably through
+   a bounded harness or proof surface when one exists
+9. compare back to the same canonical Figma frame before closing, without
    treating screenshot similarity alone as proof of a correct implementation
 
 ## UI Hierarchy And Anti-Nesting Rules

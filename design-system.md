@@ -868,6 +868,17 @@ At a high level:
 - Use product or workflow pages for product-bound exports and flow exemplars.
 - Prefer proving DS-backed composition on the owning page inside the DS file
   rather than drawing detached exploration mocks.
+- For non-trivial Figma-to-code work, lock one canonical node or variant and
+  extract structured metadata/JSON from that exact node before editing code.
+- Write a numeric contract from that metadata before implementation at minimum
+  for width, height, padding, gap, title/body/action type scale, line-height,
+  icon size, and dismiss size.
+- Do not let screenshot reading outrank structured node data during the mapping
+  step; use screenshots to validate the rendered result after the numeric
+  contract is already mapped into code.
+- Before calling a runtime result “not like Figma,” confirm that the compared
+  surfaces are the same scope, such as bounded item shell vs stack layout vs
+  bell list.
 - Treat overflow, clipping, and frame escape as failures during Figma work:
   verify one block at a time with metadata and screenshot before moving to the
   next block, and do not close the task while any child unintentionally exceeds

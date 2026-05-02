@@ -33,6 +33,9 @@ Use this order when DS docs disagree:
 - App and feature code should import DS-covered surfaces from `@/design-system`.
 - Product-bound DS exports should come from `@/design-system/product`.
 - `src/components/ui/*` is a transitional primitive layer for maintenance only.
+- Non-trivial Figma-to-code work should now start from structured node
+  metadata/JSON plus a written numeric contract for the chosen canonical node
+  or variant, not from screenshot interpretation alone.
 - The DS is organized under:
   - `src/design-system/tokens/*`
   - `src/design-system/primitives/*`
