@@ -218,6 +218,18 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
   for `count=0|3|9+`. Bell dropdown behavior, unread transitions, and
   notification-row rendering remain runtime-owned and should not be promoted
   into this board either
+- the same bounded rule now applies to the admin picker family:
+  `DS Components` carries paired `PickerControls / Foundations / Light`
+  (`1498:194`) and `PickerControls / Foundations / Dark` (`1498:257`) boards.
+  That board owns only the shared action-row posture, compact preview/media
+  shells, and `default|active|reject` dropzone states that
+  `src/design-system/components/PickerControls.tsx` actually exports. Upload
+  progress, selected-file metadata, and async workflow messaging remain
+  runtime-owned and should not be promoted into this board. The current token
+  gaps stay explicit instead of silent: runtime still uses stronger border
+  aliases plus local danger/red emphasis in some picker states, while canonical
+  Figma currently stays on `border/default`, `primary/base`, and
+  `state/danger-*` bindings
 - glyph choice remains product-owned and should keep flowing through the
   repo-owned `@/lib/icons` adapter instead of turning the canonical file into a
   copied Phosphor library dump

@@ -577,6 +577,18 @@ Use this order when DS docs disagree:
         `border-border-strong` and a hardcoded unread red, while canonical
         Figma currently binds the shell to `border/default` and the badge to
         `state/danger-fill`
+      - the next bounded admin-picker follow-up is now live as well:
+        `DS Components` carries paired `PickerControls / Foundations / Light`
+        (`1498:194`) and `PickerControls / Foundations / Dark` (`1498:257`)
+        boards. The board owns only the shared action-row posture, compact
+        preview/media shells, and `default|active|reject` dropzone states that
+        `src/design-system/components/PickerControls.tsx` actually exports;
+        upload progress, selected-file metadata, and async workflow messaging
+        remain runtime-owned. The current token gaps stay explicit instead of
+        silent: runtime still uses stronger border aliases plus local
+        danger/red emphasis in some picker states, while canonical Figma
+        currently stays on `border/default`, `primary/base`, and
+        `state/danger-*` bindings
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
       `SearchInput / Size` were re-audited on 2026-04-27 and now use
       `radius/sm (8px)` consistently across light/dark while keeping the shared

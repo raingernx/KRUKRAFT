@@ -209,6 +209,94 @@ Copy this block before implementing a new Figma-backed component.
 - Runtime proof: `NotificationButton` Storybook counts and `NotificationBell`
   topbar usage
 
+### PickerControls
+
+- Scope: bounded admin picker shell family only, not upload-progress copy,
+  selected-file business metadata, or async workflow messaging
+- Canonical nodes:
+  - light board `1498:194`
+  - dark board `1498:257`
+- Runtime owner: `src/design-system/components/PickerControls.tsx`
+- Variants in scope:
+  - action row
+  - preview + media shell
+  - dropzone `default|active|reject`
+
+#### Shell
+- Board shell: product-bound exemplar only
+- Action row gap: `8`
+- Preview row gap: `24`
+- Dropzone row gap: `16`
+- Action button height: `36`
+- Preview card: `440 x 72`, radius `16`
+- Media preview: `224 x 160`, radius `8`
+- Dropzone shell: `400 x 120`, radius `16`
+
+#### Child Geometry
+- Action icon: `16 x 16`
+- Preview icon buttons: `28 x 28`
+- Preview filename/meta copy stack gap: `4`
+- Dropzone upload icon: `20 x 20`
+- Dropzone copy stack gap: `4`
+
+#### DOM Sibling Structure
+- Parent stack: board owns three sibling sections in order:
+  `action row` -> `preview + media` -> `dropzone states`
+- Child order:
+  - action row = three sibling buttons
+  - preview row = `preview card` sibling with `media preview`
+  - dropzone row = `default` sibling with `active` sibling with `reject`
+- Sibling groups:
+  - preview filename/meta copy stays separate from icon-action cluster
+  - media preview stays a sibling of preview card, not nested under it
+  - each dropzone state stays a sibling card, not one shared card with nested
+    state rows
+- Gap owner:
+  - section wrapper owns `12`
+  - row wrappers own `8|24|16` depending on section
+  - internal preview/dropzone copy stacks own `4`
+- Notes on nodes that must stay separate: do not merge upload-state copy or
+  route-owned file metadata into the bounded shells; the board owns posture,
+  not workflow state
+
+#### Typography
+- Section labels: `14/20`, semibold caption scale
+- Action labels: `14/20`, semibold caption scale
+- Preview filename: `14/20`, semibold
+- Preview meta: `14/20`, regular
+- Dropzone title: `14/20`, semibold
+- Dropzone helper: `12/16`, regular
+
+#### Variant Rules
+- Action row:
+  - `Upload image` = neutral outline
+  - `Choose from gallery` = muted outline
+  - `Remove image` = dashed danger outline
+- Preview shell:
+  - preview card stays compact and horizontal
+  - media preview stays neutral, centered, and empty-placeholder friendly
+- Dropzone:
+  - `default` = neutral dashed border
+  - `active` = `primary/base` border + inset fill
+  - `reject` = `state/danger-stroke` dashed border
+
+#### Runtime Notes
+- Parent-owned: upload progress, selected-file metadata, async workflow copy,
+  disabled/loading behavior outside the bounded shells
+- Route-owned: real file names, image/media assets, admin form orchestration
+- Known token gaps:
+  - runtime still uses stronger border aliases in some picker states
+  - runtime still uses local danger/red emphasis in some picker states
+  - canonical Figma currently stays on `border/default`, `primary/base`, and
+    `state/danger-*`
+
+#### Proof
+- Figma screenshot:
+  - `PickerControls / Foundations / Light` `1498:194`
+  - `PickerControls / Foundations / Dark` `1498:257`
+- Runtime proof: `PickerControls` Storybook stories and admin resource/settings
+  consumers
+
 ### SectionHeader
 
 - Scope: bounded intro shell only, not page-width shell or route-specific CTA
