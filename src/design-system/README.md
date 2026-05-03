@@ -740,10 +740,17 @@ Current canonical Figma shared-coverage note:
   now normalize into the shared default shell instead of widening the DS size
   contract prematurely.
 - `PillLink` is now a separate narrow DS primitive for section-header browse
-  actions such as `View all` and `Browse everything`. Keep it scoped to
-  section-header secondary navigation for now: runtime owners on
-  `ResourcesPageContent` and `ResourcesDiscoverPersonalizedSection` now reuse
-  the shared `src/design-system/primitives/PillLink.tsx` contract, while
+  actions such as `View all` and `Browse everything`.
+- Canonical Figma coverage now exists for that slice too:
+  `DS Primitives` carries `PillLink / Foundations / Light` and
+  `PillLink / Foundations / Dark`, while runtime mirrors the same bounded
+  family through `src/design-system/primitives/PillLink.tsx`.
+- The current `PillLink / Foundations` slice stays intentionally narrow:
+  it proves `section-header pill-link` only, with `default`, `hover`,
+  `focus-visible`, and `disabled` states on the compact `32px` shell.
+- Keep `PillLink` scoped to section-header secondary navigation for now:
+  runtime owners on `ResourcesPageContent` and
+  `ResourcesDiscoverPersonalizedSection` now reuse the shared contract, while
   empty-state pill links and card-footer text CTAs remain route-owned until
   they are intentionally promoted or split into their own family.
 - Hero surfaces are not generic `card` surfaces. Use the hero semantic layer

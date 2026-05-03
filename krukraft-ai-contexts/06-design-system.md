@@ -217,11 +217,16 @@ Use this order when DS docs disagree:
 - The current contract intentionally keeps one `40px` chip family only;
   compact admin pills should normalize into that shell instead of becoming a
   second canonical chip-size ladder.
-- `PillLink` is now the next narrow DS runtime slice after `Chip`, but it is
-  intentionally smaller in scope: use
-  `src/design-system/primitives/PillLink.tsx` only for section-header browse
-  actions such as `View all` and `Browse everything`. The current runtime
-  owners are `ResourcesPageContent` and
+- `PillLink` is now the next narrow DS slice after `Chip`, and canonical
+  Figma coverage exists for it too: `DS Primitives` now carries paired
+  `PillLink / Foundations / Light` (`1842:392`) and
+  `PillLink / Foundations / Dark` (`1842:450`) boards.
+- The current foundations slice stays intentionally narrow:
+  it proves `section-header pill-link` only, with `default`, `hover`,
+  `focus-visible`, and `disabled` states on the compact `32px` shell.
+- Use `src/design-system/primitives/PillLink.tsx` only for section-header
+  browse actions such as `View all` and `Browse everything`. The current
+  runtime owners are `ResourcesPageContent` and
   `ResourcesDiscoverPersonalizedSection`, while empty-state pill links,
   card-footer text CTAs, and read-only tokens stay outside this primitive
   until a separate family decision is made.
