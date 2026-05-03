@@ -790,12 +790,16 @@ Current canonical Figma shared-coverage note:
   metadata tokens such as `Test Prep learners` and `Self-paced revision`.
 - The current canonical foundations boards now live at light `1863:416` and
   dark `1863:442`, with `ReadOnlyToken / Content metadata / Source` proving
-  the bounded `34px` shell (`padding 6/12`, `bg/inset`, `border/default`,
-  `type/label` semibold text, no icon).
+  the bounded `34px` shell (`space/12` currently bound on all four sides,
+  `bg/inset`, `border/default`, `type/label` semibold text, no icon).
 - Keep this family intentionally narrow: runtime adoption starts on the
   resource-detail identity-target lane only, while creator-form context
   labels, badges, chips, and pill-links remain outside this family until those
   postures are audited on their own terms.
+- The 2026-05-03 board re-audit closed the remaining binding debt on
+  `ReadOnlyToken`: light/dark source nodes now bind shell spacing plus color
+  and type variables completely. The remaining mismatch is runtime parity, not
+  a missing Figma variable binding.
 - Hero surfaces are not generic `card` surfaces. Use the hero semantic layer
   (`heroBackground`, `heroPanel`, `heroChip`, and related roles) instead of
   rebinding hero UI to default card tokens.

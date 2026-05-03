@@ -263,12 +263,16 @@ Use this order when DS docs disagree:
   `Test Prep learners` and `Self-paced revision`.
 - The current canonical foundations boards now live at light `1863:416` and
   dark `1863:442`, with `ReadOnlyToken / Content metadata / Source` proving
-  the bounded `34px` shell (`padding 6/12`, `bg/inset`, `border/default`,
-  `type/label` semibold text, no icon).
+  the bounded `34px` shell (`space/12` currently bound on all four sides,
+  `bg/inset`, `border/default`, `type/label` semibold text, no icon).
 - Current runtime adoption still starts on the resource-detail identity-target
   lane. Keep this family intentionally separate from badges, chips,
   pill-links, and creator-form context labels until those postures are audited
   on their own terms.
+- The 2026-05-03 board re-audit closes the Figma-side binding debt for this
+  slice: light/dark source nodes now bind shell spacing together with the
+  existing color and type variables. Any remaining gap is runtime parity, not
+  missing Figma bindings.
 - Dark-shell selected rows, chips, and feedback states should use theme-aware
   emphasis surfaces rather than fixed light-only `*-50` fills.
 - Hero surfaces are not generic `card` surfaces; they should use the hero

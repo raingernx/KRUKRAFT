@@ -416,9 +416,9 @@ Copy this block before implementing a new Figma-backed component.
   - padding `12`
   - gap `12`
 - Padding:
-  - top `6`
+  - top `12`
   - right `12`
-  - bottom `6`
+  - bottom `12`
   - left `12`
 - Gap: `0`
 - Radius: pill / full
@@ -455,6 +455,10 @@ Copy this block before implementing a new Figma-backed component.
 - Route-owned: final content metadata copy such as `Test Prep learners` and
   `Self-paced revision`
 - Known token gaps: none for the current bounded shell
+- Figma QA note: the live source nodes `1863:433` and `1863:459` now bind
+  `space/12` on all four shell sides alongside the color and `type/label`
+  variables. Runtime still keeps the earlier narrower vertical padding, so the
+  current gap is implementation parity rather than unbound-token debt.
 
 #### Proof
 - Figma screenshot:

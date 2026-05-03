@@ -669,12 +669,16 @@ For reusable Figma component sets:
   tokens such as `Test Prep learners` and `Self-paced revision`.
 - The current canonical boards now live at light `1863:416` and dark
   `1863:442`, with `ReadOnlyToken / Content metadata / Source` proving the
-  bounded `34px` shell (`padding 6/12`, `bg/inset`, `border/default`,
-  `type/label` semibold text, no icon).
+  bounded `34px` shell (`space/12` currently bound on all four sides,
+  `bg/inset`, `border/default`, `type/label` semibold text, no icon).
 - Keep it scoped to read-only content metadata only:
   runtime adoption starts on the resource-detail identity-target lane, while
   creator-form context labels, badges, chips, and pill-links remain outside
   this family until those postures are promoted intentionally.
+- The 2026-05-03 re-audit closes the Figma-side binding debt for this slice:
+  light/dark source nodes now bind shell spacing and all painted/text
+  properties to DS variables. Any remaining drift is runtime parity rather
+  than missing Figma token binding.
 - The 2026-04-29 badge residual cleanup closed the last canonical badge-board
   gaps too: the light/dark `Badge / Variant / Source` wrappers now sit at
   `cornerRadius=0`, and the seven badge labels now bind to dedicated
