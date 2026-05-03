@@ -647,15 +647,24 @@ For reusable Figma component sets:
   section-header secondary-navigation affordance only. Do not pull
   empty-state pill links, card-footer text CTAs, or read-only tokens into this
   primitive until those families are audited on their own terms.
-- `EmptyStatePillLink` is now a separate runtime-first primitive for
-  empty-state browse/recovery actions such as `Clear filters` and
+- `EmptyStatePillLink` is now a separate DS primitive for empty-state
+  browse/recovery actions such as `Clear filters` and
   `Explore all resources`.
-- Keep it scoped to bordered `40px` empty-state secondary actions for now:
+- Canonical Figma coverage now exists for that slice too:
+  `DS Primitives` carries `EmptyStatePillLink / Foundations / Light` and
+  `EmptyStatePillLink / Foundations / Dark`, while runtime mirrors the same
+  bounded family through `src/design-system/primitives/EmptyStatePillLink.tsx`.
+- The current foundations slice stays intentionally narrow:
+  it proves one bordered `40px` empty-state shell only, with `default`,
+  `hover`, `focus-visible`, and `disabled` states.
+- The current canonical source sets now live at light `1854:432` and dark
+  `1854:474`, with `Explore all resources` as the bounded label, no trailing
+  icon, and shell geometry locked to `padding 8/16`, `height 40`, and
+  `border/default` rest posture with `focus/ring 2px` on focus.
+- Keep `EmptyStatePillLink` scoped to empty-state secondary actions only:
   runtime owners on `ResourceGrid` and `categories/[slug]` now reuse the same
-  shell, while section-header browse links stay on `PillLink` and error/retry
-  action pairs remain on `Button`. Canonical Figma coverage does not exist yet,
-  so this slice should stay marked `pending-figma` until an empty-state
-  foundations board is promoted intentionally.
+  contract, while section-header browse links stay on `PillLink` and
+  retry/error pairs remain on `Button`.
 - The 2026-04-29 badge residual cleanup closed the last canonical badge-board
   gaps too: the light/dark `Badge / Variant / Source` wrappers now sit at
   `cornerRadius=0`, and the seven badge labels now bind to dedicated

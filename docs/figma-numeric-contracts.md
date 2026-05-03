@@ -297,6 +297,100 @@ Copy this block before implementing a new Figma-backed component.
   - `PillLink / Foundations / Dark` `1842:450`
 - Runtime proof route/harness: `/resources`
 
+### EmptyStatePillLink
+
+- Scope: bounded empty-state browse/recovery shell only, not section-header
+  browse links, retry/error button pairs, card-footer text CTAs, or read-only
+  token pills
+- Canonical nodes:
+  - light board `1854:416`
+  - dark board `1854:458`
+  - light source set `1854:432`
+  - dark source set `1854:474`
+- Runtime owner: `src/design-system/primitives/EmptyStatePillLink.tsx`
+- Variants in scope: `state=default|hover|focus-visible|disabled`
+
+#### Shell
+- Width: hug by content
+- Height: `40`
+- Usage card shell:
+  - padding `24`
+  - gap `8`
+  - radius `24`
+- Variants card shell:
+  - padding `32`
+  - gap `24`
+  - radius `24`
+- Source-set shell:
+  - padding `12`
+  - gap `12`
+- Padding:
+  - top `8`
+  - right `16`
+  - bottom `8`
+  - left `16`
+- Gap: `0`
+- Radius: pill / full
+- Border:
+  - default `border/default` at `1px`
+  - hover `border/default` at `1px`
+  - focus-visible `focus/ring` at `2px`
+  - disabled `border/default` at `1px`
+- Background:
+  - default `bg/canvas`
+  - hover `bg/inset`
+  - focus-visible `bg/canvas`
+  - disabled `bg/canvas`
+
+#### Child Geometry
+- Label: `Explore all resources`
+- No trailing icon in the canonical bounded shell
+
+#### DOM Sibling Structure
+- Parent stack: one inline row only
+- Child order: `label` only
+- Sibling groups: none
+- Gap owner: none; shell is single-label only
+- Notes on nodes that must stay separate: do not fold retry/error actions into
+  this primitive; those remain `Button`-owned. Do not stretch this shell back
+  into section-header browse posture; that remains `PillLink`-owned.
+
+#### Typography
+- Label: `text-small`, medium, `20` line-height
+
+#### Variant Rules
+- default:
+  - fill `bg/canvas`
+  - stroke `border/default`
+  - text `fg/default`
+- hover:
+  - fill `bg/inset`
+  - stroke `border/default`
+  - text `fg/default`
+- focus-visible:
+  - fill `bg/canvas`
+  - stroke `focus/ring` at `2px`
+  - text `fg/default`
+- disabled:
+  - fill `bg/canvas`
+  - stroke `border/default`
+  - text `fg/subtle`
+
+#### Runtime Notes
+- Parent-owned: empty-state card shell, iconography, descriptive copy, and
+  spacing above the action lane
+- Route-owned: final action copy such as `Clear filters` or
+  `Explore all resources`
+- Known token gaps: none for the current bounded shell
+
+#### Proof
+- Figma screenshot:
+  - `EmptyStatePillLink / Foundations / Light` `1854:416`
+  - `EmptyStatePillLink / Foundations / Dark` `1854:458`
+- Runtime proof route/harness:
+  - `/resources`
+  - `/categories/mathematics`
+
 ### PickerControls
 
 - Scope: bounded admin picker shell family only, not upload-progress copy,

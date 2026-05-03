@@ -767,13 +767,24 @@ Current canonical Figma shared-coverage note:
   `ResourcesDiscoverPersonalizedSection` now reuse the shared contract, while
   empty-state pill links and card-footer text CTAs remain route-owned until
   they are intentionally promoted or split into their own family.
-- `EmptyStatePillLink` is now a separate runtime-first DS primitive for
-  empty-state browse/recovery actions such as `Clear filters` and
+- `EmptyStatePillLink` is now a separate DS primitive for empty-state
+  browse/recovery actions such as `Clear filters` and
   `Explore all resources`.
-- Its current scope is intentionally narrow and still `pending-figma`:
+- Canonical Figma coverage now exists for that slice too:
+  `DS Primitives` carries `EmptyStatePillLink / Foundations / Light` and
+  `EmptyStatePillLink / Foundations / Dark`, while runtime mirrors the same
+  bounded family through `src/design-system/primitives/EmptyStatePillLink.tsx`.
+- The current `EmptyStatePillLink / Foundations` slice stays intentionally
+  narrow: it proves one bordered `40px` empty-state shell only, with
+  `default`, `hover`, `focus-visible`, and `disabled` states.
+- The current canonical source sets now live at light `1854:432` and dark
+  `1854:474`, with `Explore all resources` as the bounded label, no trailing
+  icon, and shell geometry locked to `padding 8/16`, `height 40`, and
+  `border/default` rest posture with `focus/ring 2px` on focus.
+- Keep `EmptyStatePillLink` scoped to empty-state secondary actions only:
   runtime owners on `ResourceGrid` and `categories/[slug]` now reuse the same
-  bordered `40px` pill shell, while section-header browse links stay on the
-  smaller `PillLink` family and error/retry button pairs remain on `Button`.
+  contract, while section-header browse links stay on `PillLink` and
+  retry/error pairs remain on `Button`.
 - Hero surfaces are not generic `card` surfaces. Use the hero semantic layer
   (`heroBackground`, `heroPanel`, `heroChip`, and related roles) instead of
   rebinding hero UI to default card tokens.

@@ -242,14 +242,22 @@ Use this order when DS docs disagree:
   `ResourcesDiscoverPersonalizedSection`, while empty-state pill links,
   card-footer text CTAs, and read-only tokens stay outside this primitive
   until a separate family decision is made.
-- `EmptyStatePillLink` is now the next runtime-first slice after `PillLink`:
-  it covers bordered `40px` empty-state browse/recovery actions such as
-  `Clear filters` and `Explore all resources`.
-- Current runtime owners are `ResourceGrid` and `categories/[slug]`. Keep this
-  family intentionally separate from `PillLink`: header browse links stay on
-  the compact `32px` shell, while empty-state actions keep the larger bordered
-  shell. Canonical Figma coverage does not exist yet, so map this slice as
-  `pending-figma` until a dedicated empty-state foundations board is promoted.
+- `EmptyStatePillLink` is now the next narrow DS slice after `PillLink`, and
+  canonical Figma coverage exists for it too: `DS Primitives` now carries
+  paired `EmptyStatePillLink / Foundations / Light` (`1854:416`) and
+  `EmptyStatePillLink / Foundations / Dark` (`1854:458`) boards.
+- The current foundations slice stays intentionally narrow:
+  it proves one bordered `40px` empty-state shell only, with `default`,
+  `hover`, `focus-visible`, and `disabled` states.
+- The current canonical source sets now live at light `1854:432` and dark
+  `1854:474`, with `Explore all resources` as the bounded label, no trailing
+  icon, and shell geometry locked to `padding 8/16`, `height 40`, and
+  `border/default` rest posture with `focus/ring 2px` on focus.
+- Use `src/design-system/primitives/EmptyStatePillLink.tsx` only for
+  empty-state secondary actions such as `Clear filters` and
+  `Explore all resources`. The current runtime owners are `ResourceGrid` and
+  `categories/[slug]`, while section-header browse links stay on `PillLink`
+  and retry/error pairs stay on `Button`.
 - Dark-shell selected rows, chips, and feedback states should use theme-aware
   emphasis surfaces rather than fixed light-only `*-50` fills.
 - Hero surfaces are not generic `card` surfaces; they should use the hero
