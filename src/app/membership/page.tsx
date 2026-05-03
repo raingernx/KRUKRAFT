@@ -2,6 +2,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { MarketplaceNavbarSearch } from "@/components/marketplace/MarketplaceNavbarSearch";
 import { MembershipPageClient } from "@/components/membership/MembershipPageClient";
 import { PageContainer } from "@/design-system";
+import { env } from "@/env";
 
 export default function MembershipPage() {
   return (
@@ -9,7 +10,7 @@ export default function MembershipPage() {
       <Navbar headerSearch={<MarketplaceNavbarSearch />} />
       <main className="flex-1">
         <PageContainer className="py-12 sm:py-14 lg:py-16">
-          <MembershipPageClient />
+          <MembershipPageClient teamPlanEnabled={env.teamPlansConfigured} />
         </PageContainer>
       </main>
     </div>

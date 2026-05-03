@@ -454,10 +454,13 @@ This separation exists to avoid Prisma build-time warnings and DB dependency in 
   rest of the public marketplace family: `src/app/membership/page.tsx` stays a
   thin server wrapper that mounts the marketplace navbar and page container,
   while `src/components/membership/MembershipPageClient.tsx` owns the billing
-  toggle, `Free / Pro / Team` pricing cards, and FAQ card. The `Pro` and
-  `Team` CTAs now both own Stripe checkout on the route, and anonymous checkout
+  toggle, pricing cards, and FAQ card. `Pro` CTAs always stay available, while
+  the `Team` tier is now optional-config: if the paired `STRIPE_TEAM_*` price
+  IDs are absent, the server wrapper suppresses the team pricing tier and its
+  FAQ entry instead of failing the route at build time. Anonymous checkout
   attempts still redirect through `routes.loginWithNext(...)` before calling
-  `/api/stripe/checkout`.
+  `/api/stripe/checkout`, and direct team-plan checkout still returns a config
+  error when live team Stripe price IDs are missing.
 - local dev/HMR-only transient auth-viewer network failures now resolve back to the signed-out snapshot without logging noisy `[AUTH_VIEWER_HOOK] Failed to fetch` errors, while non-transient and production failures still log normally
 - public navbar auth fetches now defer to browser idle time by default and warm early on hover/focus/menu interaction, reducing eager post-hydration auth work on anonymous traffic without reintroducing root-layout session reads
 - pricing and purchase CTA buttons also defer auth-viewer fetches to idle time, then explicitly prime the same request on interaction so clicks do not block on a stale eager probe

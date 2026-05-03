@@ -12,6 +12,9 @@ import { PageContent } from "@/design-system";
 import { routes } from "@/lib/routes";
 
 type BillingInterval = "monthly" | "annual";
+type MembershipPageClientProps = {
+  teamPlanEnabled?: boolean;
+};
 
 const membershipFaq = [
   {
@@ -91,13 +94,22 @@ function BillingToggle({
   );
 }
 
-export function MembershipPageClient() {
+export function MembershipPageClient({
+  teamPlanEnabled = true,
+}: MembershipPageClientProps) {
   const [billing, setBilling] = useState<BillingInterval>("annual");
   const platform = usePlatformConfig();
+  const visibleFaq = useMemo(
+    () =>
+      membershipFaq.filter(
+        (item) => teamPlanEnabled || item.question !== "How do team plans work?",
+      ),
+    [teamPlanEnabled],
+  );
   const faqColumns = useMemo(() => {
-    const midpoint = Math.ceil(membershipFaq.length / 2);
-    return [membershipFaq.slice(0, midpoint), membershipFaq.slice(midpoint)];
-  }, []);
+    const midpoint = Math.ceil(visibleFaq.length / 2);
+    return [visibleFaq.slice(0, midpoint), visibleFaq.slice(midpoint)];
+  }, [visibleFaq]);
 
   const tiers = useMemo<PricingTier[]>(
     () => [
@@ -128,21 +140,32 @@ export function MembershipPageClient() {
           "Priority support",
         ],
       },
-      {
-        id: "team",
-        name: "Team",
-        price: { monthly: 790, annual: 590 },
-        description: "For teams",
-        cta: "Choose Team",
-        stripePlan: { monthly: "team_monthly", annual: "team_annual" },
-        features: [
-          "Shared seats",
-          "Centralized billing",
-          "Guided onboarding",
-        ],
-      },
+      ...(teamPlanEnabled
+        ? [
+            {
+              id: "team",
+              name: "Team",
+              price: { monthly: 790, annual: 590 },
+              description: "For teams",
+              cta: "Choose Team",
+              stripePlan: { monthly: "team_monthly", annual: "team_annual" },
+              features: [
+                "Shared seats",
+                "Centralized billing",
+                "Guided onboarding",
+              ],
+            },
+          ]
+        : []),
     ],
-    [],
+    [teamPlanEnabled],
+  );
+  const visibleTiers = useMemo(
+    () =>
+      teamPlanEnabled
+        ? tiers
+        : tiers.filter((tier) => tier.id !== "team"),
+    [teamPlanEnabled, tiers],
   );
   return (
     <PageContent className="space-y-14 lg:space-y-16">
@@ -159,13 +182,17 @@ export function MembershipPageClient() {
 
       <section className="mx-auto max-w-6xl" id="pricing-cards">
         <div className="grid grid-cols-1 divide-y divide-border-subtle xl:grid-cols-3 xl:divide-x xl:divide-y-0">
-          {tiers.map((tier, index) => (
+          {visibleTiers.map((tier, index) => (
             <PricingCard
               key={tier.id}
               tier={tier}
               billing={billing}
               columnPosition={
-                index === 0 ? "start" : index === tiers.length - 1 ? "end" : "middle"
+                index === 0
+                  ? "start"
+                  : index === visibleTiers.length - 1
+                    ? "end"
+                    : "middle"
               }
             />
           ))}

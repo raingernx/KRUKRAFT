@@ -22,12 +22,8 @@ const EnvSchema = z
     STRIPE_PRO_ANNUAL_PRICE_ID: z
       .string()
       .min(1, "STRIPE_PRO_ANNUAL_PRICE_ID is required"),
-    STRIPE_TEAM_MONTHLY_PRICE_ID: z
-      .string()
-      .min(1, "STRIPE_TEAM_MONTHLY_PRICE_ID is required"),
-    STRIPE_TEAM_ANNUAL_PRICE_ID: z
-      .string()
-      .min(1, "STRIPE_TEAM_ANNUAL_PRICE_ID is required"),
+    STRIPE_TEAM_MONTHLY_PRICE_ID: z.string().min(1).optional(),
+    STRIPE_TEAM_ANNUAL_PRICE_ID: z.string().min(1).optional(),
     XENDIT_SECRET_KEY: z.string().min(1).optional(),
     XENDIT_WEBHOOK_TOKEN: z.string().min(1).optional(),
     R2_ENDPOINT: z.string().url().optional(),
@@ -68,6 +64,19 @@ const EnvSchema = z
       addGroupedIssue(
         ["XENDIT_SECRET_KEY", "XENDIT_WEBHOOK_TOKEN"],
         "Xendit requires both XENDIT_SECRET_KEY and XENDIT_WEBHOOK_TOKEN.",
+      );
+    }
+
+    const hasTeamStripe =
+      Boolean(value.STRIPE_TEAM_MONTHLY_PRICE_ID) ||
+      Boolean(value.STRIPE_TEAM_ANNUAL_PRICE_ID);
+    if (
+      hasTeamStripe &&
+      (!value.STRIPE_TEAM_MONTHLY_PRICE_ID || !value.STRIPE_TEAM_ANNUAL_PRICE_ID)
+    ) {
+      addGroupedIssue(
+        ["STRIPE_TEAM_MONTHLY_PRICE_ID", "STRIPE_TEAM_ANNUAL_PRICE_ID"],
+        "Team memberships require both STRIPE_TEAM_MONTHLY_PRICE_ID and STRIPE_TEAM_ANNUAL_PRICE_ID.",
       );
     }
 
@@ -114,6 +123,9 @@ export const env = {
   ...data,
   directUrlConfigured: Boolean(data.DIRECT_URL),
   googleOAuthConfigured: Boolean(data.GOOGLE_CLIENT_ID && data.GOOGLE_CLIENT_SECRET),
+  teamPlansConfigured: Boolean(
+    data.STRIPE_TEAM_MONTHLY_PRICE_ID && data.STRIPE_TEAM_ANNUAL_PRICE_ID,
+  ),
   xenditConfigured: Boolean(data.XENDIT_SECRET_KEY && data.XENDIT_WEBHOOK_TOKEN),
   r2Configured: Boolean(
     data.R2_ENDPOINT &&

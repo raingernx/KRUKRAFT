@@ -262,3 +262,8 @@ UPSTASH_REDIS_REST_TOKEN
 ---
 
 *Refreshed against the repo state on 2026-04-05.*
+- Stripe environment contract now treats `Pro` prices as required and `Team`
+  prices as an optional paired configuration: if
+  `STRIPE_TEAM_MONTHLY_PRICE_ID` and `STRIPE_TEAM_ANNUAL_PRICE_ID` are both
+  absent, the public membership route still builds and simply suppresses the
+  `Team` tier instead of crashing the whole app at boot/build time
