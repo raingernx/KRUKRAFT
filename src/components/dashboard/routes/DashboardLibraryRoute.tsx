@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   chipVariants,
+  emptyStatePillLinkVariants,
   EmptyState,
   Input,
   LoadingSkeleton,
@@ -238,9 +239,12 @@ function DashboardLibraryResults({ data }: { data: DashboardLibraryData }) {
         title="No matching resources"
         description="Try another keyword or clear the current filter."
         action={
-          <Button asChild size="sm" variant="quiet">
-            <Link href={getDashboardLibraryHref({ payment })}>Clear filters</Link>
-          </Button>
+          <Link
+            href={getDashboardLibraryHref({ payment })}
+            className={emptyStatePillLinkVariants()}
+          >
+            Clear filters
+          </Link>
         }
         className="border-border-subtle py-16"
       />

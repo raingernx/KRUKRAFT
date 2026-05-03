@@ -12,6 +12,7 @@ import {
   Card,
   CardContent,
   DataPanelTable,
+  emptyStatePillLinkVariants,
   EmptyState,
   LoadingSkeleton,
   PaginationButton,
@@ -218,11 +219,12 @@ export function DashboardCreatorResourcesContent({
                   title="No matching resources"
                   description="Try another status, pricing, or sort option."
                   action={
-                    <Button asChild size="sm" variant="quiet">
-                      <Link href={getDashboardCreatorResourcesHref()}>
-                        Clear filters
-                      </Link>
-                    </Button>
+                    <Link
+                      href={getDashboardCreatorResourcesHref()}
+                      className={emptyStatePillLinkVariants()}
+                    >
+                      Clear filters
+                    </Link>
                   }
                   className="border-border-subtle py-16"
                 />
