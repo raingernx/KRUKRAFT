@@ -923,18 +923,28 @@ At a high level:
       - shared `Select` defaults to `md`
       - explicit `field` is now reserved for editor-grade forms such as
         admin/creator resource authoring
-      - admin filters, settings rows, profile controls, and low-risk toolbar
-        filters now fall back to that shared default `md` shell
+      - admin filters, profile controls, and low-risk toolbar filters still
+        fall back to that shared default `md` shell
+      - `/admin/settings` is now treated as a primary form surface and its
+        `Input` / `Select` controls opt into explicit `field`
     - `Textarea / Foundations / Light` and `Textarea / Foundations / Dark` now
       live under `1019:312` and `1019:433`
     - the verified reusable nodes are `Textarea / State`
       (`1019:386`, `1019:507`)
-    - the canonical `Textarea` contract reuses the same quiet field-shell
-      target and helper/error posture, but keeps rows, counters, max length,
-      and resize behavior route-owned instead of inventing a fake size ladder
+    - the canonical `Textarea` contract now reuses the same padding and
+      hover/focus fill recipe as `Input / Search`, but keeps its own multiline
+      shell shape:
+      - shell corners bind `radius/md (16px)` instead of pill
+      - all four paddings bind `space/24`
+      - hover/focus fills bind `bg/inset`
+      - source-set wrappers now use `radius/xs` and `space/12`
+    - rows, counters, max length, and resize behavior remain route-owned
+      instead of being promoted into a fake size ladder
     - the first runtime parity slice is now live too:
       - `Select.tsx` now follows the canonical pill shell at runtime
-      - `Textarea.tsx` now keeps the same `8px` target while preserving
+      - `Textarea.tsx` now follows the refreshed multiline shell too:
+        `radius-md`, `24px` all-side padding, locked `14/20` field
+        typography, and `space-y-2` to helper/error copy while preserving
         route-owned rows / counter / resize behavior
       - `/admin/settings` is the first proved route family because it mounts
         `Input`, `Select`, and `Textarea` together without product-owned search

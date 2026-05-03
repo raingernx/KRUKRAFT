@@ -499,6 +499,7 @@ export function AdminSettingsClient({
               Platform Name
             </label>
             <Input
+              size="field"
               id="platformName"
               name="platformName"
               value={settings.platformName}
@@ -510,6 +511,7 @@ export function AdminSettingsClient({
               Short Name
             </label>
             <Input
+              size="field"
               id="platformShortName"
               name="platformShortName"
               value={settings.platformShortName}
@@ -521,6 +523,7 @@ export function AdminSettingsClient({
               Support Email
             </label>
             <Input
+              size="field"
               id="supportEmail"
               type="email"
               name="supportEmail"
@@ -548,6 +551,7 @@ export function AdminSettingsClient({
               Site URL
             </label>
             <Input
+              size="field"
               id="siteUrl"
               name="siteUrl"
               value={settings.siteUrl}
@@ -563,6 +567,7 @@ export function AdminSettingsClient({
               Default Currency
             </label>
             <Select
+              size="field"
               id="defaultCurrency"
               name="defaultCurrency"
               value={settings.defaultCurrency}
@@ -578,6 +583,7 @@ export function AdminSettingsClient({
               Timezone
             </label>
             <Select
+              size="field"
               id="timezone"
               name="timezone"
               value={settings.timezone}
@@ -598,6 +604,7 @@ export function AdminSettingsClient({
               Currency Display Format
             </label>
             <Select
+              size="field"
               id="currencyDisplayFormat"
               name="currencyDisplayFormat"
               value={settings.currencyDisplayFormat}
@@ -619,6 +626,7 @@ export function AdminSettingsClient({
               Default Language
             </label>
             <Select
+              size="field"
               id="defaultLanguage"
               name="defaultLanguage"
               value={settings.defaultLanguage}
@@ -775,6 +783,7 @@ export function AdminSettingsClient({
               Default Commission (%)
             </label>
             <Input
+              size="field"
               id="defaultCommission"
               name="defaultCommission"
               type="number"
@@ -789,6 +798,7 @@ export function AdminSettingsClient({
               Minimum Resource Price
             </label>
             <Input
+              size="field"
               id="minPrice"
               name="minPrice"
               type="number"
@@ -815,6 +825,7 @@ export function AdminSettingsClient({
               Payment Provider
             </label>
             <Select
+              size="field"
               id="paymentProvider"
               name="paymentProvider"
               value={settings.paymentProvider}
@@ -835,6 +846,7 @@ export function AdminSettingsClient({
                   Stripe Public Key
                 </label>
                 <Input
+                  size="field"
                   id="stripePublicKey"
                   name="stripePublicKey"
                   value={settings.stripePublicKey}
@@ -850,6 +862,7 @@ export function AdminSettingsClient({
                   Stripe Secret Key
                 </label>
                 <Input
+                  size="field"
                   id="stripeSecretKey"
                   name="stripeSecretKey"
                   type="password"
@@ -866,6 +879,7 @@ export function AdminSettingsClient({
                   Webhook Secret
                 </label>
                 <Input
+                  size="field"
                   id="stripeWebhookSecret"
                   name="stripeWebhookSecret"
                   type="password"
@@ -887,6 +901,7 @@ export function AdminSettingsClient({
                   PromptPay QR ID
                 </label>
                 <Input
+                  size="field"
                   id="promptpayQrId"
                   name="promptpayQrId"
                   value={settings.promptpayQrId}
@@ -902,6 +917,7 @@ export function AdminSettingsClient({
                   PromptPay Phone Number
                 </label>
                 <Input
+                  size="field"
                   id="promptpayPhoneNumber"
                   name="promptpayPhoneNumber"
                   value={settings.promptpayPhoneNumber}
@@ -927,6 +943,7 @@ export function AdminSettingsClient({
                 Max File Size (MB)
               </label>
               <Input
+                size="field"
                 id="maxFileSizeMb"
                 name="maxFileSizeMb"
                 type="number"
@@ -943,6 +960,7 @@ export function AdminSettingsClient({
                 Storage Provider
               </label>
               <Select
+                size="field"
                 id="storageProvider"
                 name="storageProvider"
                 value={settings.storageProvider}
@@ -961,6 +979,7 @@ export function AdminSettingsClient({
               Allowed File Types
             </label>
             <Input
+              size="field"
               id="allowedFileTypes"
               name="allowedFileTypes"
               placeholder="e.g. pdf, docx, pptx, xlsx, zip"
@@ -986,6 +1005,7 @@ export function AdminSettingsClient({
               Sender Name
             </label>
             <Input
+              size="field"
               id="emailSenderName"
               name="emailSenderName"
               value={settings.emailSenderName}
@@ -1000,6 +1020,7 @@ export function AdminSettingsClient({
               SMTP Host
             </label>
             <Input
+              size="field"
               id="smtpHost"
               name="smtpHost"
               value={settings.smtpHost}
@@ -1011,6 +1032,7 @@ export function AdminSettingsClient({
               SMTP Port
             </label>
             <Input
+              size="field"
               id="smtpPort"
               name="smtpPort"
               type="number"
@@ -1027,6 +1049,7 @@ export function AdminSettingsClient({
               SMTP Username
             </label>
             <Input
+              size="field"
               id="smtpUsername"
               name="smtpUsername"
               value={settings.smtpUsername}
@@ -1041,6 +1064,7 @@ export function AdminSettingsClient({
               SMTP Password
             </label>
             <Input
+              size="field"
               id="smtpPassword"
               name="smtpPassword"
               type="password"
@@ -1056,6 +1080,7 @@ export function AdminSettingsClient({
               From Email
             </label>
             <Input
+              size="field"
               id="smtpFromEmail"
               name="smtpFromEmail"
               type="email"
@@ -1078,6 +1103,7 @@ export function AdminSettingsClient({
               Default Meta Title
             </label>
             <Input
+              size="field"
               id="defaultMetaTitle"
               name="defaultMetaTitle"
               value={settings.defaultMetaTitle}
@@ -1114,6 +1140,7 @@ export function AdminSettingsClient({
               Open Graph Site Name
             </label>
             <Input
+              size="field"
               id="ogSiteName"
               name="ogSiteName"
               value={settings.ogSiteName}
@@ -1132,6 +1159,7 @@ export function AdminSettingsClient({
               OpenGraph Image URL
             </label>
             <Input
+              size="field"
               id="seoOpenGraphImageUrl"
               name="seoOpenGraphImageUrl"
               value={settings.seoOpenGraphImageUrl}
@@ -1150,6 +1178,7 @@ export function AdminSettingsClient({
               Twitter Card Image
             </label>
             <Input
+              size="field"
               id="seoTwitterCardImageUrl"
               name="seoTwitterCardImageUrl"
               value={settings.seoTwitterCardImageUrl}

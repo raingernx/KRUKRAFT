@@ -24,16 +24,12 @@ type ThemeProviderProps = {
 };
 
 export function ThemeProvider({ children, initialTheme = "system" }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(initialTheme);
+  const [theme, setThemeState] = useState<Theme>(() => readStoredTheme() ?? initialTheme);
 
   useEffect(() => {
     const storedTheme = readStoredTheme();
-
-    if (!storedTheme || storedTheme === initialTheme) {
-      return;
-    }
-
-    setThemeState(storedTheme);
+    const nextTheme = storedTheme ?? initialTheme;
+    setThemeState((currentTheme) => (currentTheme === nextTheme ? currentTheme : nextTheme));
   }, [initialTheme]);
 
   useLayoutEffect(() => {

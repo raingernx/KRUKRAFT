@@ -280,9 +280,10 @@ Use this order when DS docs disagree:
 - `boneyard-js` is optional capture tooling for generated skeletons under
   `src/bones`; it supplements the repo's loading/fallback parity rules and does
   not replace route-owned loading, empty, or error states.
-- `ThemeProvider` now boots with a stable `initialTheme` first and only syncs
-  `localStorage` after mount so client-only stored theme choices do not cause
-  hydration mismatches in shared chrome such as `ThemeSwitcher`.
+- `ThemeProvider` now boots from the stored client theme when one exists and
+  avoids clobbering the `beforeInteractive` theme-init result on mount, so a
+  persisted dark choice does not bounce through light mode before shared chrome
+  such as `ThemeSwitcher` settles.
 - Token migration contract is now locked before any real token re-skin pass:
   - `brand` is the primitive hue family
   - `primary` is the semantic action role
@@ -802,23 +803,32 @@ Use this order when DS docs disagree:
         - shared `Select` defaults to `md`
         - explicit `field` is now reserved for editor-grade forms such as
           admin/creator resource authoring
-        - admin filters, settings rows, profile controls, and low-risk toolbar
-          filters now fall back to that shared default `md` shell
+        - admin filters, profile controls, and low-risk toolbar filters now
+          fall back to that shared default `md` shell
+        - `/admin/settings` is now treated as a primary form surface, so its
+          `Input` / `Select` controls opt into explicit `field`
       - `Textarea / Foundations / Light` (`1019:312`) and
         `Textarea / Foundations / Dark` (`1019:433`) are now live too
       - the verified reusable nodes are `Textarea / State`
         (`1019:386`, `1019:507`)
-      - the canonical `Textarea` contract keeps the same quiet field-shell
-        target and helper/error posture, but leaves rows, counters, max
-        length, and resize behavior route-owned instead of inventing a size
-        ladder
+      - the canonical `Textarea` contract now mirrors the `Input / Search`
+        shell recipe for padding and hover/focus fill while keeping a distinct
+        multiline shape:
+        - shell corners bind `radius/md (16px)`
+        - all four paddings bind `space/24`
+        - hover/focus fills bind `bg/inset`
+        - source-set wrappers now use `radius/xs` with `space/12` gap
+      - rows, counters, max length, and resize behavior remain route-owned
+        instead of being promoted into a size ladder
     - the first runtime parity slice is now live too:
       - `Select.tsx` follows the canonical pill shell at runtime
-      - `Textarea.tsx` keeps the same `8px` target without widening
-          route-owned rows / counter / resize behavior
+      - `Textarea.tsx` now follows the refreshed multiline shell at runtime
+        with `radius-md`, `24px` all-side padding, locked `14/20` field
+        typography, and `space-y-2` to helper/error copy without widening
+        route-owned rows / counter / resize behavior
       - `/admin/settings` is the first proved route family because it mounts
-          `Input`, `Select`, and `Textarea` together without product-owned
-          search overrides
+        `Input`, `Select`, and `Textarea` together without product-owned
+        search overrides
       - `/admin/resources` is now the first widened follow-up family: shared
         `Select` shells cover the resource form, listing filters, and
         move-category modal, while the bulk-upload textarea keeps the same

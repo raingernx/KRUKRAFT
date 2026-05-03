@@ -1280,6 +1280,10 @@ Copy this block before implementing a new Figma-backed component.
   shell.
 - The shared `Input` API now matches that reduced story directly: `md` is the
   default shell and `field` stays as the only taller explicit size.
+- Runtime proof note: `/admin/settings` now treats single-line controls as a
+  primary form surface and opts them into explicit `field`, while filters,
+  toolbar controls, and lighter settings/profile fragments still stay on
+  shared default `md`.
 
 #### Proof
 - Figma screenshot:
@@ -1478,27 +1482,33 @@ Copy this block before implementing a new Figma-backed component.
   authoring forms.
 - Runtime caret note: the select now renders a shared `ChevronDown` sibling
   icon in `fg/subtle` instead of the older hardcoded CSS background arrow.
-- Runtime proof note: settings rows, admin filters, `admin/orders`, and
-  `creator/profile` now fall back to the shared default `md` shell, while
-  admin/creator resource authoring keeps explicit `field`.
+- Runtime proof note: `/admin/settings` is now treated as a primary form
+  surface and opts `Input`/`Select` controls into explicit `field`, while
+  admin filters, `admin/orders`, and `creator/profile` remain on the shared
+  default `md` shell and admin/creator resource authoring keeps explicit
+  `field`.
 
 ### Textarea
 
 - Scope: shared multiline field shell only
 - Canonical nodes:
-  - light board `1019:386`
-  - dark board `1019:507`
+  - light board `1019:312`
+  - dark board `1019:433`
+  - light state set `1019:386`
+  - dark state set `1019:507`
 - Runtime owner: `src/design-system/primitives/Textarea.tsx`
 - Variants in scope: state matrix only
 
 #### Shell
 - Width: `100%`
 - Min height: `120`
-- Padding: `16`
-- Gap: wrapper `4` to hint/error copy
-- Radius: `8`
+- Padding: `24` all sides
+- Gap: wrapper `8` to hint/error copy in runtime; source-set wrapper `12`
+- Radius: `16`
 - Border: shared field shell
-- Background: shared field shell
+- Background:
+  - `default`, `filled`, `error`, `read-only`, `disabled` = shared field shell
+  - `hover`, `focus` = `bg/inset`
 
 #### Child Geometry
 - Multiline text shell
@@ -1523,9 +1533,15 @@ Copy this block before implementing a new Figma-backed component.
 - Parent-owned: labels, row counts, counters, long-form workflow chrome
 - Route-owned: resize expectations and prompt-specific copy
 - Known token gaps: none beyond shared field-shell stories
+- Figma now follows the Input-like shell recipe for padding and hover/focus fill,
+  but keeps `radius/md (16px)` instead of pill.
+- Runtime now matches that shell contract directly:
+  `Textarea.tsx` uses `rounded-[var(--radius-md)]`, `px-6 py-6`, locked
+  `text-sm leading-5` field typography, and wrapper `space-y-2` while still
+  leaving rows, counters, and resize behavior route-owned.
 
 #### Proof
-- Figma screenshot: `Textarea / Foundations / Dark` `1019:507`
+- Figma screenshot: `Textarea / Foundations / Dark` `1019:433`
 - Runtime proof: bounded admin/settings and admin/resources multiline surfaces
 
 ### Card

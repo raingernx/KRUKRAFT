@@ -412,8 +412,12 @@ Current canonical Figma shared-coverage note:
   shell without reopening creator-owned forms. The latest size-policy cleanup
   now aligns runtime with the canonical two-size story too: shared `Select`
   defaults to `md`, while `field` remains explicit-only for editor-grade
-  forms. `/dashboard/creator/profile` now follows that shared default `md`
-  shell, and the next creator-owned widened slice remains the metadata zone of
+  forms. The next surface-policy follow-up is now landed too:
+  `/admin/settings` is treated as a primary form surface, so its
+  `Input`/`Select` owners now opt into explicit `field` shells instead of the
+  older compact settings-row `md` posture. `/dashboard/creator/profile` still
+  follows the shared default `md` shell, and the next creator-owned widened
+  slice remains the metadata zone of
   `/dashboard/creator/resources/*`:
   the 2026-05-03 Figma audit also closes the exact-match radius binding debt
   on the boards themselves: usage cards and component-set cards now bind
@@ -436,12 +440,19 @@ Current canonical Figma shared-coverage note:
   route-owned for now.
 - `Textarea` now has matching light/dark `Textarea / Foundations` boards plus
   dedicated `Textarea / State` sets in the canonical file. The multiline
-  contract intentionally keeps the same quiet field shell target and
-  `radius/sm (8px)` geometry, but it does not invent a reusable size ladder:
-  rows, counters, resize behavior, and long-form affordances stay route-owned.
-  `/admin/settings` is also the first proved runtime route family: shared
-  `Textarea.tsx` now keeps the same `8px` radius target there while rows and
-  route-specific long-form behavior remain route-owned. The first widened
+  contract now reuses the same padding and hover/focus fill recipe as
+  `Input / Search`, but switches the shell itself to `radius/md (16px)` instead
+  of pill and still does not invent a reusable size ladder: rows, counters,
+  resize behavior, and long-form affordances stay route-owned. The current
+  canonical state sets now bind `space/24` on all four sides, `bg/inset` on
+  hover/focus, and `radius/xs + gap 12` on the source-set wrappers. Runtime
+  now matches that shell contract too: shared `Textarea.tsx` uses
+  `radius-md`, `24px` all-side padding, locked `14/20` field typography, and
+  `space-y-2` to helper/error copy while still leaving row count, resize
+  posture, and long-form workflow chrome route-owned. `/admin/settings`
+  remains the first proved runtime route family
+  while rows
+  and route-specific long-form behavior stay route-owned. The first widened
   follow-up family is now `admin/resources`, where the main resource form and
   bulk-upload editor both keep the same shell/radius target while the JSON
   editor remains route-owned through color and monospace overrides only. The

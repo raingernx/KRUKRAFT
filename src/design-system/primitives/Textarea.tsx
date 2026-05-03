@@ -28,14 +28,14 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(function T
       .join(" ") || undefined
 
   return (
-    <div className="w-full space-y-1">
+    <div className="w-full space-y-2">
       <textarea
         ref={ref}
         id={textareaId}
         data-slot="textarea"
         className={cn(
           fieldInputBaseClassName,
-          "h-auto min-h-[120px] resize-y rounded-[var(--radius-sm)] px-4 py-4",
+          "h-auto min-h-[120px] resize-y rounded-[var(--radius-md)] px-6 py-6 text-sm leading-5",
           "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/18",
           className,
         )}
