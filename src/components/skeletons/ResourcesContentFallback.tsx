@@ -21,7 +21,7 @@ const listingCardFixtures: ResourceCardResource[] = [
     thumbnailUrl: BONES_PREVIEW_IMAGE,
     author: { name: "Kru Craft" },
     category: { name: "Science", slug: "science" },
-    highlightBadge: "Trending this week",
+    highlightBadge: "Trending",
   },
   {
     id: "listing-resource-2",

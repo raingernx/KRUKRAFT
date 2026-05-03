@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Check } from "@/lib/icons";
-import { Button } from "@/design-system";
+import { Badge, Button } from "@/design-system";
 import { routes } from "@/lib/routes";
 import { getBuildSafePlatformConfig } from "@/services/platform";
 
@@ -41,17 +41,23 @@ export async function CreatorCTA() {
             <Button asChild size="lg" className="bg-brand-600 text-white hover:bg-brand-700">
               <Link href={routes.membership}>Start selling</Link>
             </Button>
-            <Button asChild size="lg" variant="outline">
+            <Button asChild size="lg" variant="quiet">
               <Link href={routes.membership}>Learn more</Link>
             </Button>
           </div>
           <div className="flex flex-wrap gap-2 pt-1">
-            <span className="inline-flex items-center rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
+            <Badge
+              variant="outline"
+              className="border-border bg-background text-muted-foreground shadow-sm"
+            >
               Trusted by 12,000+ educators
-            </span>
-            <span className="inline-flex items-center rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
+            </Badge>
+            <Badge
+              variant="outline"
+              className="border-border bg-background text-muted-foreground shadow-sm"
+            >
               Creator-first payouts
-            </span>
+            </Badge>
           </div>
         </div>
         <div className="flex items-center justify-center">

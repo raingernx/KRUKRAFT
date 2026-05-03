@@ -27,12 +27,13 @@
   --color-info-strong: #2563EB;
   --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
-  --font-heading: var(--font-noto-sans-thai), system-ui, sans-serif;
-  --font-body: var(--font-noto-sans-thai), system-ui, sans-serif;
-  --font-ui: var(--font-noto-sans-thai), system-ui, sans-serif;
+  --font-heading: var(--font-ibm-plex-sans-thai), system-ui, sans-serif;
+  --font-body: var(--font-ibm-plex-sans-thai), system-ui, sans-serif;
+  --font-ui: var(--font-ibm-plex-sans-thai), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --radius-sm: 0.5rem;
+  --radius-sm-plus: 0.75rem;
   --radius-md: 1rem;
   --radius-lg: 1.5rem;
   --radius-xl: 2rem;
@@ -117,6 +118,21 @@
     --on-fill-dark:          30.0 50.0% 99.2%;
     --on-fill-light:         280.0 6.5% 18.0%;
     --danger-text:           0 73.7% 49.0%;
+    --support-info-soft:     #eff6ff;
+    --support-info-base:     #2563eb;
+    --support-info-dust:     #1d4ed8;
+    --support-success-soft:  #d9f4e8;
+    --support-success-base:  #10b981;
+    --support-success-dust:  #047857;
+    --support-warning-soft:  #fce7d8;
+    --support-warning-base:  #f5700b;
+    --support-warning-dust:  #ea761d;
+    --accent-sand-wash:      #fdf3e6;
+    --accent-sand-base:      #e59c46;
+    --accent-sand-dust:      #f1c188;
+    --state-danger-fill:     #ffefeb;
+    --state-danger-stroke:   #e86f57;
+    --state-danger-text:     #db3a1c;
 
     --secondary:             var(--inset);
     --secondary-foreground:  var(--ink);
@@ -193,6 +209,21 @@
     --on-fill-dark:          282.9 28.0% 95.1%;
     --on-fill-light:         246.7 22.0% 8.0%;
     --danger-text:           0 83.2% 67.8%;
+    --support-info-soft:     #172554;
+    --support-info-base:     #60a5fa;
+    --support-info-dust:     #93c5fd;
+    --support-success-soft:  #123d2c;
+    --support-success-base:  #02b567;
+    --support-success-dust:  #21cd83;
+    --support-warning-soft:  #4b2a15;
+    --support-warning-base:  #e05d05;
+    --support-warning-dust:  #f48515;
+    --accent-sand-wash:      #382815;
+    --accent-sand-base:      #d29043;
+    --accent-sand-dust:      #885e30;
+    --state-danger-fill:     #321b17;
+    --state-danger-stroke:   #8a3221;
+    --state-danger-text:     #e84729;
 
     --secondary:             var(--line);
     --secondary-foreground:  var(--ink);

@@ -11,6 +11,7 @@ import {
   Sparkles,
   Star,
 } from "@/lib/icons";
+import { Badge } from "@/design-system";
 import { PriceLabel } from "@/design-system/product";
 import { BuyButton } from "@/components/resources/BuyButton";
 import { PendingPurchasePoller } from "@/components/checkout/PendingPurchasePoller";
@@ -118,6 +119,23 @@ export function ResourceDetailPurchaseCardClient({
     : contextViewer;
   const isFree = resource.isFree || resource.price === 0;
   const isOwned = viewer.isOwned;
+  const purchaseBadge = isOwned
+    ? {
+        label: "In your library",
+        variant: "outline" as const,
+        className: "border-primary-100 bg-primary-50/95 text-primary-700",
+      }
+    : isFree
+      ? {
+          label: "Free to keep",
+          variant: "info" as const,
+          className: "",
+        }
+      : {
+          label: "One-time purchase",
+          variant: "neutral" as const,
+          className: "",
+        };
   const isPendingPurchase =
     isReturningFromCheckout && (!viewer.isReady || (viewer.authenticated && !isOwned));
   const hasReviews =
@@ -152,9 +170,12 @@ export function ResourceDetailPurchaseCardClient({
         </p>
 
         <div className="space-y-3">
-          <span className="inline-flex items-center rounded-full border border-border-strong bg-secondary px-2.5 py-1 text-caption font-semibold text-secondary-foreground">
-            {isOwned ? "In your library" : isFree ? "Free to keep" : "One-time purchase"}
-          </span>
+          <Badge
+            variant={purchaseBadge.variant}
+            className={purchaseBadge.className}
+          >
+            {purchaseBadge.label}
+          </Badge>
           <p className="max-w-sm text-small leading-6 text-muted-foreground">
             {isOwned
               ? "Your download is ready whenever you need it."

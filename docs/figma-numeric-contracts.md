@@ -847,7 +847,10 @@ Copy this block before implementing a new Figma-backed component.
 
 #### Proof
 - Figma screenshot: `Badge / Variant / Source / Dark` `1494:1803`
-- Runtime proof: Storybook or any DS consumer using shared badges
+- Runtime proof:
+  - Storybook shared badge states
+  - resource cards / discover hero pills / resource detail status labels now
+    route through the shared primitive instead of local rounded-pill shells
 
 ### Input
 

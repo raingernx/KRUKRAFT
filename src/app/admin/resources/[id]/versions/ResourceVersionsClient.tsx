@@ -107,7 +107,7 @@ export function ResourceVersionsClient({
       <div className="flex items-center justify-between px-5 py-3">
         <Button
           asChild
-          variant="ghost"
+          variant="tertiary"
           size="sm"
           className="text-xs text-muted-foreground hover:text-foreground"
         >

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Badge } from "@/design-system";
 import { Star } from "@/lib/icons";
 import { formatNumber } from "@/lib/format";
 
@@ -53,9 +54,9 @@ export function ResourceHeader({
 
       <div className="space-y-2.5">
         {featured && (
-          <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-caption font-semibold text-amber-700">
+          <Badge variant="featured">
             Featured
-          </span>
+          </Badge>
         )}
         <h1 className="max-w-3xl font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           {title}

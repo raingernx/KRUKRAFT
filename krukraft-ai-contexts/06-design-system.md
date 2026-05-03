@@ -1000,6 +1000,10 @@ Use this order when DS docs disagree:
       top-left status proves `Owned`, `New`, and `Featured`, while top-right
       highlight proves `Trending` plus one generic highlight posture
       (`Recommended`)
+    - the follow-up runtime adoption pass now pulls the matching
+      resource/discover/detail pills back onto shared `Badge` too, so
+      `Owned`, `New`, `Featured`, `Trending`, `Verified buyer`, and purchase
+      status labels no longer depend on route-local rounded-pill recipes
     - `Foundation Review` still has text-fill binding but not font-family
       binding on its current text nodes, so it should be treated as a review
       artifact rather than a token-parity proof page

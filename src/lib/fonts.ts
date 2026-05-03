@@ -1,16 +1,16 @@
 import { GeistMono } from "geist/font/mono";
-import { Noto_Sans_Thai } from "next/font/google";
+import { IBM_Plex_Sans_Thai } from "next/font/google";
 
-const notoSansThai = Noto_Sans_Thai({
+const ibmPlexSansThai = IBM_Plex_Sans_Thai({
   subsets: ["thai", "latin"],
   display: "swap",
-  variable: "--font-noto-sans-thai",
+  variable: "--font-ibm-plex-sans-thai",
   weight: ["400", "600"],
 });
 
 export const fontVariables = [
   GeistMono.variable,
-  notoSansThai.variable,
+  ibmPlexSansThai.variable,
 ].join(" ");
 
 export const fontVariableFallbacks: Record<string, string> = {};

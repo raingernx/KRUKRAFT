@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { Download, ExternalLink, Eye, FileText } from "@/lib/icons";
-import { Button } from "@/design-system";
+import { Badge, Button } from "@/design-system";
 import type { DashboardLibraryItem } from "@/services/dashboard/library.service";
 import { isPreviewSupported } from "@/lib/preview/previewPolicy";
 import { routes } from "@/lib/routes";
@@ -63,9 +63,12 @@ export function DashboardLibraryResourceCard({
           </div>
         )}
 
-        <span className="absolute left-3 top-3 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-caption font-medium text-primary">
+        <Badge
+          variant="outline"
+          className="absolute left-3 top-3 border-primary/25 bg-primary/10 text-primary"
+        >
           Owned
-        </span>
+        </Badge>
       </div>
 
       <div className="flex flex-1 flex-col justify-between gap-3 p-4">
@@ -108,7 +111,7 @@ export function DashboardLibraryResourceCard({
               </Button>
             ) : null}
 
-            <Button asChild variant="ghost" density="compact" className="flex-1 gap-1.5">
+            <Button asChild variant="tertiary" density="compact" className="flex-1 gap-1.5">
               <Link href={resourceHref}>
                 <span className="inline-flex items-center gap-1.5">
                   <ExternalLink className="h-3.5 w-3.5" aria-hidden />

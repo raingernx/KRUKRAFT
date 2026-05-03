@@ -63,7 +63,7 @@ export function HeroSurface({
           {badgeText ? (
             <Badge
               variant="neutral"
-              className="w-fit rounded-full border-0 px-2.5 py-1 font-body text-[12px] font-medium leading-[17.4px]"
+              className="w-fit"
               style={{
                 backgroundColor: semanticColors.heroChip,
                 color: semanticColors.heroPanelForeground,
@@ -122,7 +122,6 @@ export function HeroSurface({
               <Badge
                 key={chip}
                 variant="neutral"
-                className="rounded-full border-0 px-3 py-2 text-[14px] font-normal leading-[21px]"
                 style={{
                   backgroundColor: "#202040",
                   color: semanticColors.heroChipForeground,

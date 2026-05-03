@@ -6,9 +6,9 @@ export const fontFamilies = {
 } as const;
 
 export const fontFamilyScale: Record<string, string[]> = {
-  sans: ["var(--font-noto-sans-thai)", "system-ui", "sans-serif"],
-  display: ["var(--font-noto-sans-thai)", "system-ui", "sans-serif"],
-  ui: ["var(--font-noto-sans-thai)", "system-ui", "sans-serif"],
+  sans: ["var(--font-ibm-plex-sans-thai)", "system-ui", "sans-serif"],
+  display: ["var(--font-ibm-plex-sans-thai)", "system-ui", "sans-serif"],
+  ui: ["var(--font-ibm-plex-sans-thai)", "system-ui", "sans-serif"],
   mono: ["var(--font-mono)"],
 };
 

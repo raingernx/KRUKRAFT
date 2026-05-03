@@ -3,7 +3,7 @@
 import { memo, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { FileText } from "@/lib/icons";
-import { RevealImage } from "@/design-system";
+import { Badge, RevealImage } from "@/design-system";
 import {
   beginResourcesNavigation,
   isResourcesSubtreePath,
@@ -148,17 +148,29 @@ function ResourceBadge({
   isNew: boolean;
   isOwned: boolean;
 }) {
-  const base =
-    "absolute left-3 top-3 rounded-full border px-2.5 py-1 text-caption font-medium backdrop-blur-sm";
-
   if (isOwned) {
-    return <span className={`${base} border-primary-100 bg-primary-50/95 text-primary-700`}>Owned</span>;
+    return (
+      <Badge
+        variant="outline"
+        className="absolute left-3 top-3 border-primary-100 bg-primary-50/95 text-primary-700 backdrop-blur-sm"
+      >
+        Owned
+      </Badge>
+    );
   }
   if (featured) {
-    return <span className={`${base} border-amber-100 bg-amber-50/95 text-amber-700`}>Featured</span>;
+    return (
+      <Badge variant="featured" className="absolute left-3 top-3 backdrop-blur-sm">
+        Featured
+      </Badge>
+    );
   }
   if (isNew) {
-    return <span className={`${base} border-info-100 bg-info-50/95 text-info-700`}>New</span>;
+    return (
+      <Badge variant="info" className="absolute left-3 top-3 backdrop-blur-sm">
+        New
+      </Badge>
+    );
   }
   return null;
 }
@@ -230,10 +242,13 @@ function CardBody({
         <>
           <div className="pointer-events-none absolute inset-0 z-10 bg-[hsl(var(--background)/0.72)]" />
           <div className="pointer-events-none absolute inset-x-4 top-4 z-20 flex">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-[hsl(var(--card)/0.95)] px-3 py-1.5 text-caption font-medium text-primary-700 shadow-sm">
+            <Badge
+              variant="outline"
+              className="border-primary-200 bg-[hsl(var(--card)/0.95)] text-primary-700 shadow-sm"
+            >
               <span className="h-2 w-2 rounded-full bg-primary-500" aria-hidden />
               <span>Opening resource…</span>
-            </div>
+            </Badge>
           </div>
         </>
       ) : null}
@@ -280,9 +295,12 @@ function CardBody({
         ) : null}
 
         {resource.highlightBadge ? (
-          <span className="absolute right-3 top-3 rounded-full border border-border-strong/80 bg-[hsl(var(--card)/0.92)] px-2.5 py-1 text-caption font-medium text-foreground backdrop-blur-sm">
+          <Badge
+            variant="outline"
+            className="absolute right-3 top-3 border-border-strong/80 bg-[hsl(var(--card)/0.92)] text-foreground backdrop-blur-sm"
+          >
             {resource.highlightBadge}
-          </span>
+          </Badge>
         ) : null}
       </div>
 

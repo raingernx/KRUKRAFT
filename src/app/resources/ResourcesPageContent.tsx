@@ -33,7 +33,7 @@ import {
   ResourcesContentFallback,
   SidebarFallback,
 } from "@/components/skeletons/ResourcesContentFallback";
-import { Button } from "@/design-system";
+import { Badge, Button } from "@/design-system";
 import { formatNumber, formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";
 import {
@@ -298,7 +298,7 @@ async function ResourcesListingContent({
       : null;
   const spotlightLabel =
     sort === "trending"
-      ? "Trending this week"
+      ? "Trending"
       : sort === "downloads"
         ? "Popular right now"
         : activeCategoryName
@@ -350,12 +350,18 @@ async function ResourcesListingContent({
             ) : null}
           </div>
           <div className="flex flex-wrap items-center gap-2 text-caption">
-            <span className="inline-flex items-center rounded-full border border-border-subtle bg-muted/45 px-3 py-1.5 font-medium text-foreground">
+            <Badge
+              variant="outline"
+              className="border-border-subtle bg-muted/45 text-foreground"
+            >
               {formatNumber(total)} results
-            </span>
-            <span className="inline-flex items-center rounded-full border border-border-subtle bg-background px-3 py-1.5 text-muted-foreground">
+            </Badge>
+            <Badge
+              variant="outline"
+              className="border-border-subtle bg-background text-muted-foreground"
+            >
               {`Sorted by ${sortLabel}`}
-            </span>
+            </Badge>
           </div>
         </div>
       </section>
@@ -423,13 +429,19 @@ async function ResourcesListingContent({
                         </div>
 
                         <div className="flex flex-wrap gap-2">
-                          <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/12 px-3 py-1 text-xs font-medium text-primary">
+                          <Badge
+                            variant="outline"
+                            className="border-primary/30 bg-primary/12 text-primary"
+                          >
                             {sortLabel}
-                          </span>
+                          </Badge>
                           {activeCategoryName ? (
-                            <span className="inline-flex items-center rounded-full border border-border-strong bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground">
+                            <Badge
+                              variant="outline"
+                              className="border-border-strong bg-background/80 text-muted-foreground"
+                            >
                               {activeCategoryName}
-                            </span>
+                            </Badge>
                           ) : null}
                         </div>
 
@@ -553,7 +565,7 @@ async function ResourcesDiscoverLeadDeferredSection({
   const discoverFallbackCards = globalFiltered.slice(0, eagerDiscoverCardCount);
   const trendingResources = (discoverLeadData.trending as ResourceCardData[]).map((resource, index) => ({
     ...resource,
-    highlightBadge: index < 2 ? "Trending this week" : null,
+    highlightBadge: index < 2 ? "Trending" : null,
     socialProofLabel: index < 2 ? "Trending fast this week" : null,
   }));
 
@@ -827,7 +839,7 @@ function ResourcesListingUnavailableState({
         <Button asChild>
           <Link href={retryHref}>Try again</Link>
         </Button>
-        <Button asChild variant="outline">
+        <Button asChild variant="quiet">
           <Link href={routes.marketplace}>Open resources</Link>
         </Button>
       </div>
@@ -994,9 +1006,12 @@ function DiscoverCollectionCard({
             />
           ) : null}
           {badge ? (
-            <span className="absolute left-3 top-3 inline-flex items-center rounded-full border border-border-strong/90 bg-background/92 px-2.5 py-1 text-[11px] font-medium text-primary shadow-sm backdrop-blur-sm">
+            <Badge
+              variant="outline"
+              className="absolute left-3 top-3 border-border-strong/90 bg-background/92 text-primary shadow-sm backdrop-blur-sm"
+            >
               {badge}
-            </span>
+            </Badge>
           ) : null}
         </div>
         <div className="flex flex-1 flex-col gap-3 p-5">

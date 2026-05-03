@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FileText } from "@/lib/icons";
+import { Badge } from "@/design-system";
 import { formatPrice } from "@/lib/format";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 import { routes } from "@/lib/routes";
@@ -42,14 +43,19 @@ function ResourceBadge({
   featured?: boolean;
   isNew: boolean;
 }) {
-  const base =
-    "absolute left-3 top-3 rounded-full border px-2.5 py-1 text-caption font-medium backdrop-blur-sm";
-
   if (featured) {
-    return <span className={`${base} border-amber-100 bg-amber-50/95 text-amber-700`}>Featured</span>;
+    return (
+      <Badge variant="featured" className="absolute left-3 top-3 backdrop-blur-sm">
+        Featured
+      </Badge>
+    );
   }
   if (isNew) {
-    return <span className={`${base} border-info-100 bg-info-50/95 text-info-700`}>New</span>;
+    return (
+      <Badge variant="info" className="absolute left-3 top-3 backdrop-blur-sm">
+        New
+      </Badge>
+    );
   }
   return null;
 }
@@ -106,9 +112,12 @@ export function PublicResourceCard({
         ) : null}
 
         {resource.highlightBadge ? (
-          <span className="absolute right-3 top-3 rounded-full border border-border-strong/80 bg-[hsl(var(--card)/0.92)] px-2.5 py-1 text-caption font-medium text-foreground backdrop-blur-sm">
+          <Badge
+            variant="outline"
+            className="absolute right-3 top-3 border-border-strong/80 bg-[hsl(var(--card)/0.92)] text-foreground backdrop-blur-sm"
+          >
             {resource.highlightBadge}
-          </span>
+          </Badge>
         ) : null}
       </div>
 

@@ -207,7 +207,7 @@ export function ProfileSettings({
               <Button
                 type="button"
                 size="sm"
-                variant="ghost"
+                variant="tertiary"
                 leftIcon={<Trash2 className="size-4" />}
                 disabled={isUploadingAvatar || isSaving}
                 onClick={() => {

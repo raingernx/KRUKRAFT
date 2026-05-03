@@ -655,7 +655,7 @@
   "typography": {
     "body": {
       "value": {
-        "fontFamily": "var(--font-noto-sans-thai), system-ui, sans-serif",
+        "fontFamily": "var(--font-ibm-plex-sans-thai), system-ui, sans-serif",
         "fontWeight": 400,
         "fontSize": 18,
         "lineHeight": 30,
@@ -665,7 +665,7 @@
     },
     "caption": {
       "value": {
-        "fontFamily": "var(--font-noto-sans-thai), system-ui, sans-serif",
+        "fontFamily": "var(--font-ibm-plex-sans-thai), system-ui, sans-serif",
         "fontWeight": 400,
         "fontSize": 14,
         "lineHeight": 20,
@@ -675,7 +675,7 @@
     },
     "display": {
       "value": {
-        "fontFamily": "var(--font-noto-sans-thai), system-ui, sans-serif",
+        "fontFamily": "var(--font-ibm-plex-sans-thai), system-ui, sans-serif",
         "fontWeight": 600,
         "fontSize": "3rem",
         "lineHeight": 56,
@@ -685,7 +685,7 @@
     },
     "h1": {
       "value": {
-        "fontFamily": "var(--font-noto-sans-thai), system-ui, sans-serif",
+        "fontFamily": "var(--font-ibm-plex-sans-thai), system-ui, sans-serif",
         "fontWeight": 600,
         "fontSize": 32,
         "lineHeight": 40,
@@ -695,7 +695,7 @@
     },
     "h2": {
       "value": {
-        "fontFamily": "var(--font-noto-sans-thai), system-ui, sans-serif",
+        "fontFamily": "var(--font-ibm-plex-sans-thai), system-ui, sans-serif",
         "fontWeight": 600,
         "fontSize": 32,
         "lineHeight": 40,
@@ -705,7 +705,7 @@
     },
     "h3": {
       "value": {
-        "fontFamily": "var(--font-noto-sans-thai), system-ui, sans-serif",
+        "fontFamily": "var(--font-ibm-plex-sans-thai), system-ui, sans-serif",
         "fontWeight": 600,
         "fontSize": 18,
         "lineHeight": 30,
@@ -725,7 +725,7 @@
     },
     "small": {
       "value": {
-        "fontFamily": "var(--font-noto-sans-thai), system-ui, sans-serif",
+        "fontFamily": "var(--font-ibm-plex-sans-thai), system-ui, sans-serif",
         "fontWeight": 400,
         "fontSize": 14,
         "lineHeight": 20,

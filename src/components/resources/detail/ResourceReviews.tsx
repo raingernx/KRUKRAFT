@@ -1,3 +1,4 @@
+import { Badge } from "@/design-system";
 import { BadgeCheck, Star } from "@/lib/icons";
 import { formatDate } from "@/lib/format";
 
@@ -58,10 +59,10 @@ export function ResourceReviews({ reviews, resourceTitle }: ResourceReviewsProps
               {review.user.name && (
                 <div className="mt-1 flex items-center gap-2">
                   <p className="text-[12px] font-medium text-foreground">{review.user.name}</p>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                  <Badge variant="success">
                     <BadgeCheck className="h-3 w-3" />
                     Verified buyer
-                  </span>
+                  </Badge>
                 </div>
               )}
               {review.body && (
