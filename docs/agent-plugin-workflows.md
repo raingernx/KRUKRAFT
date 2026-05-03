@@ -145,6 +145,11 @@ Expected behavior:
 
 - keep Prisma as the schema-history authority
 - use Supabase MCP as read-only operational evidence first
+- treat the current Supabase MCP install as verified/active for Krukraft live
+  project metadata, table inspection, and recent platform logs
+- do not treat an empty MCP migration list alone as proof that the connected
+  hosted project has no schema history or no applied changes; compare committed
+  Prisma migrations plus live table/log evidence before claiming drift
 - avoid write-capable DB actions through MCP unless the user explicitly asks
   for them and the repo workflow supports that path
 

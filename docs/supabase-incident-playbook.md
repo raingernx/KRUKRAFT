@@ -33,6 +33,12 @@ Debug order:
 4. verify whether the failure is local-only or remote-only
 5. if remote state is unclear, use Supabase MCP to inspect migrations, tables,
    or logs first
+   note:
+   on the current connected Krukraft project, MCP `list_migrations` may return
+   an empty set even when the hosted schema is clearly populated, so do not
+   stop at the migration list alone
+   cross-check committed Prisma migrations plus live table shape and recent
+   logs before concluding that remote schema history is missing or drifted
 6. if MCP still does not answer the platform-state question, ask the user to
    check Supabase Dashboard for:
    - whether the target project is the right one
@@ -114,6 +120,11 @@ Debug order:
 4. verify whether the issue reproduces locally on a clean DB path
 5. if remote state is still uncertain, use Supabase MCP to inspect schema shape
    and logs first
+   note:
+   if MCP migration rows are empty on the current connected project, treat
+   table shape plus logs as the stronger live evidence and compare that against
+   committed Prisma history instead of over-interpreting the empty migration
+   list
 6. if MCP still leaves uncertainty, ask the user to inspect Supabase Dashboard
    for:
    - current staging project identity

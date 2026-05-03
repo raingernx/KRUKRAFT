@@ -4,6 +4,18 @@ This file defines the recommended Krukraft database workflow when the team uses
 Supabase as the hosted Postgres platform and Codex has a live Supabase MCP
 connection available.
 
+Current connector note:
+
+- the Supabase MCP connection is now verified against the live Krukraft hosted
+  project and can read project metadata, tables, and recent logs successfully
+- on the current connected project, `list_migrations` may return an empty set
+  even when the remote schema is clearly populated, so do not treat that MCP
+  migration list alone as authoritative proof that the hosted database has no
+  applied schema history
+- when migration-state questions are ambiguous, cross-check committed Prisma
+  migrations plus live table shape/log evidence before concluding that remote
+  drift exists
+
 Incident response companion:
 
 - `docs/supabase-incident-playbook.md`
@@ -186,7 +198,9 @@ Use Supabase MCP first for:
 
 - confirming the project URL or project identity
 - listing tables and checking whether expected schema objects exist
-- checking migration history
+- checking migration history, while remembering that the current connected
+  project may not expose useful migration rows through MCP even when the schema
+  is live
 - reading recent platform logs
 - checking security or performance advisors
 - generating current TypeScript types from the connected project

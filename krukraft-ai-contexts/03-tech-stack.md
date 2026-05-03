@@ -156,6 +156,12 @@ Current repo caveat:
   - use Supabase as the hosted environment target
   - use `DATABASE_URL` for app runtime and `DIRECT_URL` for Prisma CLI /
     migration workflows
+  - the live Supabase MCP path is now verified against the connected Krukraft
+    hosted project and should be treated as the first operational evidence
+    source for project identity, table presence, and recent logs
+  - on the current connected project, MCP `list_migrations` can be empty even
+    when the hosted schema is populated, so do not use that list alone to judge
+    remote drift or absence of schema history
   - see `docs/supabase-db-workflow.md` for the canonical repo guidance,
     including the staging/production env contract, branch policy, and the rule
     for when Codex should ask the user to inspect Supabase Dashboard
