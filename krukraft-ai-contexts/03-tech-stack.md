@@ -67,6 +67,14 @@
 - `cpd:verify`: repo-owned CPD guardrail that fails unless `origin` points at the canonical GitHub repo (`https://github.com/raingernx/KRUKRAFT.git`), `HEAD` matches `origin/main`, and GitHub deployment evidence exists for the pushed commit
 - post-deploy perf review is now a layered workflow: use LHCI for local regression floors, then the warmed k6 summary/rollup in GitHub Actions, then Vercel Speed Insights and runtime logs for production-only drift
 - GitHub post-deploy warm workflow supports both `deployment_status` and manual `workflow_dispatch` runs, which covers direct CLI production deploys
+- `postdeploy:warm:prod`: repo-owned manual dispatch helper for the
+  `Post-Deploy Warm Cache` workflow against `https://krukraft.com`
+- `vercel:prod`: canonical production deploy path; it now runs the raw Vercel
+  production deploy first, then dispatches the post-deploy warm/perf workflow
+  through GitHub Actions so CLI-driven production deploys do not silently skip
+  warm/perf verification
+- `vercel:prod:bare`: raw Vercel production deploy fallback when operators
+  intentionally need to bypass the GitHub post-deploy warm/perf dispatch
 - the post-deploy warm workflow now retries `npm ci` and uploads install logs alongside warm artifacts, so failed warm runs do not die without diagnostics
 - the post-deploy warm/perf workflow now installs on Node 24, matching the current local `npm ci` / lockfile resolver behavior and avoiding the old Node 20/npm 10 mismatch
 - the post-deploy warm/perf workflow now uses `actions/checkout@v6`, `actions/setup-node@v6`, and `actions/upload-artifact@v6`, which all declare `node24` runtimes upstream; `grafana/setup-k6-action@v1` remains unchanged because no newer upstream action line with explicit Node 24 guidance was available
@@ -89,7 +97,7 @@
 - `knowledge/`: repo-owned LLM wiki split into `knowledge/raw/` evidence captures, `knowledge/wiki/` synthesized topic pages, and `knowledge/schema/` ingest/query/lint rules; the layer is intentionally lighter-weight than a full external RAG stack and is maintained inside the repo
 - `smoke:local:browser`: local browser-debug entrypoint now mapped to the repo-owned `browser:probe` flow instead of the full Playwright Test CLI smoke bundle, because this macOS environment can still abort during `playwright test` browser launch even when direct Playwright API launch succeeds
 - `smoke:browser:ci`: GitHub Actions-safe Playwright smoke bundle for cloud runners; it keeps the public/auth/navigation/settings coverage but intentionally skips uploader specs that depend on storage configuration beyond the repo-owned local fallback path
-- `.github/workflows/browser-smoke.yml`: cloud CI workflow that provisions Postgres 16, explicitly enables `pg_trgm`, then runs `prisma db push` + `db:seed`, installs Playwright browsers, and runs lint, typecheck, and `npm run smoke:browser:ci`
+- `.github/workflows/browser-smoke.yml`: cloud CI workflow that provisions Postgres 16, explicitly enables `pg_trgm`, then runs `prisma db push` + `db:seed`, installs Playwright browsers, and runs lint, typecheck, and `npm run smoke:browser:ci`; the workflow now also seeds both `STRIPE_PRO_*` and `STRIPE_TEAM_*` placeholder price IDs because `src/env.ts` validates both product families at boot time in CI
 - `.github/workflows/browser-smoke.yml` now follows a layered `core + sentinel` model: it still boots fresh `next dev` instances for the repo-owned core probes (`browser:probe:dashboard` and `browser:probe:pages`) after the Playwright smoke bundle, it adds a separate `browser:probe:sentinel` pass for dropdown-origin navigation, filtered listing pages, and admin resource editors, and it still runs `npm run browser:probe:management` in a separate `Management Browser Probes` job so admin-analytics and creator-management verification executes even if the main smoke bundle flakes first
 - `.github/workflows/post-deploy-warm-cache.yml` now follows a layered perf model too: the main gated perf job remains the core suite, while an extra report-only sentinel perf job runs after deploy for non-core public listing blind spots, and manual `workflow_dispatch` runs can select a specific perf suite (`smoke`, `full`, `sentinel`, or `listing-drilldown`) without editing the workflow file
 - `storybook:smoke`: build-based Storybook smoke for design-system primitives/components

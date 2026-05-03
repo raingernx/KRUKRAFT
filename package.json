@@ -104,7 +104,9 @@
     "ship": "npm run push:retry && npm run deploy",
     "env:pull": "vercel env pull .env.local",
     "vercel:preview": "vercel",
-    "vercel:prod": "vercel --prod"
+    "postdeploy:warm:prod": "gh workflow run post-deploy-warm-cache.yml -f base_url=https://krukraft.com -f perf_suite=smoke",
+    "vercel:prod:bare": "vercel --prod",
+    "vercel:prod": "npm run vercel:prod:bare && npm run postdeploy:warm:prod"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

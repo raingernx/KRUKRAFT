@@ -173,7 +173,7 @@ Database search note:
     → `/api/resources/viewer-state` serves `scope=base|discover` so ownership and recommendation work stay decoupled
     → signed-in discover payloads use short-lived private caching to smooth repeat navigations
     → recommendation impressions are now recorded from client-side section exposure via `/api/recommendations/impression`, not from discover cache misses
-    → post-deploy warm + smoke perf workflow (`deployment_status` + manual `workflow_dispatch` fallback for CLI deploys)
+    → post-deploy warm + smoke perf workflow (`deployment_status` + manual `workflow_dispatch` fallback for CLI deploys), and the canonical local operator path now wires that dispatch into `npm run vercel:prod` itself so CLI production deploys do not rely on someone remembering a second manual warm trigger
     → warm workflow install now retries and uploads npm install logs when it fails before warm artifacts exist
     → post-deploy warm/perf jobs now run `setup-node` on Node 24 to match the current lockfile/npm resolver behavior used locally
     → the same workflow now also uses `checkout@v6` / `setup-node@v6` / `upload-artifact@v6`, aligning the GitHub-maintained actions in that flow with upstream `node24` runtimes

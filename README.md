@@ -169,6 +169,14 @@ npm run db:deploy
 npm run vercel:prod
 ```
 
+Notes:
+
+- `npm run vercel:prod` is the canonical operator path for production app
+  deploys and now dispatches the repo-owned `Post-Deploy Warm Cache` workflow
+  after the Vercel CLI deploy succeeds
+- use `npm run vercel:prod:bare` only when you intentionally need the raw
+  Vercel production deploy without the GitHub post-deploy warm/perf dispatch
+
 ## Repository Structure
 
 ```text
