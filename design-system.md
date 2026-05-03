@@ -665,6 +665,14 @@ For reusable Figma component sets:
   runtime owners on `ResourceGrid` and `categories/[slug]` now reuse the same
   contract, while section-header browse links stay on `PillLink` and
   retry/error pairs remain on `Button`.
+- `ReadOnlyToken` is now a separate runtime-first primitive for content
+  metadata tokens such as `Test Prep learners` and `Self-paced revision`.
+- Keep it scoped to read-only content metadata only for now:
+  runtime adoption starts on the resource-detail identity-target lane, while
+  creator-form context labels, badges, chips, and pill-links remain outside
+  this family. Canonical Figma coverage does not exist yet, so this slice
+  should stay marked `pending-figma` until a dedicated foundations board is
+  promoted intentionally.
 - The 2026-04-29 badge residual cleanup closed the last canonical badge-board
   gaps too: the light/dark `Badge / Variant / Source` wrappers now sit at
   `cornerRadius=0`, and the seven badge labels now bind to dedicated

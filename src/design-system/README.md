@@ -63,6 +63,7 @@ When this file conflicts with code, the code wins.
 - `LoadingSkeleton`
 - `Modal`
 - `PillLink`
+- `ReadOnlyToken`
 - `RevealImage`
 - `SearchInput`
 - `Select`
@@ -785,6 +786,12 @@ Current canonical Figma shared-coverage note:
   runtime owners on `ResourceGrid` and `categories/[slug]` now reuse the same
   contract, while section-header browse links stay on `PillLink` and
   retry/error pairs remain on `Button`.
+- `ReadOnlyToken` is now a separate runtime-first DS primitive for content
+  metadata tokens such as `Test Prep learners` and `Self-paced revision`.
+- Its current scope is intentionally narrow and still `pending-figma`:
+  runtime adoption starts on the resource-detail identity-target lane only.
+  Keep creator-form context labels, badges, chips, and pill-links outside this
+  family until those postures are audited on their own terms.
 - Hero surfaces are not generic `card` surfaces. Use the hero semantic layer
   (`heroBackground`, `heroPanel`, `heroChip`, and related roles) instead of
   rebinding hero UI to default card tokens.

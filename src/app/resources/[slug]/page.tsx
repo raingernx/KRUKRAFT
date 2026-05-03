@@ -27,6 +27,7 @@ import {
   ResourceDetailSuccessSkeleton,
 } from "@/components/resources/detail/ResourceDetailSections";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
+import { ReadOnlyToken } from "@/design-system";
 import {
   getResourceDetailPageBodyContent,
   getResourceDetailPageFooterContent,
@@ -457,12 +458,9 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {identityTargets.map((target) => (
-                      <span
-                        key={target}
-                        className="inline-flex rounded-full border border-border bg-muted px-3 py-1.5 text-small font-medium text-foreground"
-                      >
+                      <ReadOnlyToken key={target}>
                         {target}
-                      </span>
+                      </ReadOnlyToken>
                     ))}
                   </div>
                   <p className="text-small leading-6 text-muted-foreground">

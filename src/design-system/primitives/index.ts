@@ -14,6 +14,7 @@ export {
   emptyStatePillLinkVariants,
 } from "./EmptyStatePillLink";
 export { PillLink, pillLinkVariants } from "./PillLink";
+export { ReadOnlyToken, readOnlyTokenVariants } from "./ReadOnlyToken";
 export {
   Card,
   CardHeader,
