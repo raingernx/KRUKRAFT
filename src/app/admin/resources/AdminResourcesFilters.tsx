@@ -240,7 +240,7 @@ export function AdminResourcesFilters({
             />
             <Button
               type="submit"
-              variant="outline"
+              variant="soft"
               size="sm"
               className="inline-flex items-center gap-1"
             >

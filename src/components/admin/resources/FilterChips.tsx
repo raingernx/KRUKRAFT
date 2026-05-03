@@ -85,7 +85,7 @@ export function FilterChips({
       {chips.length > 1 && onClearAll && (
         <Button
           type="button"
-          variant="ghost"
+          variant="tertiary"
           size="sm"
           className="h-6 px-2 text-[11px] text-muted-foreground"
           onClick={onClearAll}

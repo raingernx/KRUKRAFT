@@ -31,7 +31,7 @@ export default async function AdminResourcesTrashPage() {
         <Button
           asChild
           size="sm"
-          variant="outline"
+          variant="soft"
           className="inline-flex items-center gap-2"
         >
           <Link href={routes.adminResources}>

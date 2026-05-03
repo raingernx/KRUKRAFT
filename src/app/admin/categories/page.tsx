@@ -180,7 +180,7 @@ export default function AdminCategoriesPage() {
               </Modal.Body>
               <Modal.Footer className="flex items-center justify-end gap-2">
                 <Modal.Close asChild>
-                  <Button type="button" variant="outline" size="sm">
+                  <Button type="button" variant="tertiary" size="sm">
                     Cancel
                   </Button>
                 </Modal.Close>

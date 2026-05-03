@@ -120,7 +120,7 @@ export function DashboardAppTopbar({ viewer }: { viewer: DashboardAppViewer }) {
               setIsMobileNavOpen(true);
             }}
             size="icon"
-            variant="ghost"
+            variant="tertiary"
           >
             <Menu className="size-5" aria-hidden />
           </Button>

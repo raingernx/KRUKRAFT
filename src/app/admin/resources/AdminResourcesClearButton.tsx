@@ -21,7 +21,7 @@ export function AdminResourcesClearButton({
   return (
     <Button
       type="button"
-      variant="ghost"
+      variant="tertiary"
       size="sm"
       onClick={() => {
         router.push(routes.adminResources);

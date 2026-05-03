@@ -34,7 +34,7 @@ export default function AdminRouteError({
         <Button type="button" onClick={reset}>
           Try again
         </Button>
-        <Button asChild variant="outline">
+        <Button asChild variant="soft">
           <Link href={routes.admin}>Back to admin</Link>
         </Button>
       </div>

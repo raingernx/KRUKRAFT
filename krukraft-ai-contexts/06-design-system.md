@@ -193,6 +193,24 @@ Use this order when DS docs disagree:
 - `Badge` and `Chip` are now separate DS contracts:
   - `Badge` stays non-interactive and semantic/status-oriented
   - `Chip` is reserved for interactive filter/removable/token behavior
+- Shared interactive controls should default to one focus-visible contract
+  across Figma and runtime:
+  `focus/ring` at `2px`.
+- Do not substitute nearby `action/*`, `state/*`, or product-local tones for
+  focus treatment unless a canonical board explicitly documents that exception.
+- Canonical Figma coverage now exists for both sides of that split:
+  `Badge / Foundations / Light|Dark` remains the bounded semantic-label source,
+  while `Chip / Foundations / Light|Dark` now proves the interactive token
+  side as a Figma-first contract even before a shared runtime `Chip.tsx`
+  primitive exists.
+- The current `Chip / Foundations` slice stays intentionally narrow:
+  it proves `Navigation chip`, `Filter chip`, and `Removable chip` rows only,
+  with selected/active states sharing one selected token family across rows
+  instead of inventing separate active tones per chip type.
+- Current runtime owners still live in product code such as
+  `src/components/marketplace/CategoryChips.tsx` and
+  `src/components/admin/resources/FilterChips.tsx`; compact admin pills remain
+  legacy usage rather than becoming a second canonical chip-size ladder.
 - Dark-shell selected rows, chips, and feedback states should use theme-aware
   emphasis surfaces rather than fixed light-only `*-50` fills.
 - Hero surfaces are not generic `card` surfaces; they should use the hero
@@ -417,6 +435,10 @@ Use this order when DS docs disagree:
     Figma typography primitives; representative `DS Foundations` screenshots
     were rechecked after the family switch and the current typography/dropdown
     boards stayed stable without obvious line-wrap or layout regressions
+  - runtime typography now follows that same family too: shared
+    `heading/body/ui` tokens load `IBM Plex Sans Thai` with only two weights
+    (`400` Regular for reading and `600` SemiBold for hierarchy) so browser
+    text metrics stop drifting from the canonical Figma typography family
   - the control-size contract is now explicit too:
     - typography size/line-height stays in typography variables
     - `Button` size stays a component variant ladder (`xs`, `sm`, `md`, `lg`,
@@ -963,10 +985,21 @@ Use this order when DS docs disagree:
       extra non-canonical variants
     - the next runtime cleanup also normalizes badge sizing back to that same
       canonical Figma recipe instead of inventing route-local mini/large chips:
-      shared badge consumers now default to the live `24px` shell with
-      `text-badge` `12/16`, `space/8` horizontal padding, and the default icon
-      ladder unless a future explicit badge-size family is introduced in the
-      canonical file first
+      shared badge consumers now default to the live `24px` shell with the
+      canonical `12/16` badge recipe, `space/8` horizontal padding, and the
+      default icon ladder unless a future explicit badge-size family is
+      introduced in the canonical file first; `Badge.tsx` now locks that
+      `12/16` recipe at the root via shared font-size/line-height vars instead
+      of relying on a `text-badge` utility that can be stripped when color
+      variants merge onto the same class list, and the primitive now enforces
+      the canonical `24px` shell height directly instead of leaving badges at a
+      shorter content-derived runtime height
+    - the canonical `Badge / Foundations` boards now also carry a
+      `resource-card badge proofs` usage block so product-owned card labels are
+      demonstrated without expanding the primitive family itself:
+      top-left status proves `Owned`, `New`, and `Featured`, while top-right
+      highlight proves `Trending` plus one generic highlight posture
+      (`Recommended`)
     - `Foundation Review` still has text-fill binding but not font-family
       binding on its current text nodes, so it should be treated as a review
       artifact rather than a token-parity proof page

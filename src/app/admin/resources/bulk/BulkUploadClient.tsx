@@ -277,7 +277,7 @@ export function BulkUploadClient() {
                 setParsedItems(null);
                 setParseError(null);
               }}
-              variant="outline"
+              variant="soft"
               size="sm"
               className="mt-3"
               leftIcon={<FileJson className="h-3.5 w-3.5" />}
@@ -343,7 +343,7 @@ export function BulkUploadClient() {
           <Button
             type="button"
             onClick={handleReset}
-            variant="ghost"
+            variant="tertiary"
             size="sm"
             leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
           >
@@ -356,7 +356,7 @@ export function BulkUploadClient() {
               type="button"
               onClick={handleValidate}
               disabled={!rawJson.trim()}
-              variant="outline"
+              variant="soft"
               size="sm"
             >
               Validate JSON
@@ -623,7 +623,7 @@ export function BulkUploadClient() {
             <Button
               type="button"
               onClick={handleReset}
-              variant="outline"
+              variant="soft"
               size="sm"
               leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
             >

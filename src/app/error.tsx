@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
-import { Container } from "@/design-system";
+import { Button, Container } from "@/design-system";
 import { routes } from "@/lib/routes";
 
 export default function RootError({
@@ -38,19 +38,12 @@ export default function RootError({
             </p>
           ) : null}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={reset}
-              className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
-            >
+            <Button type="button" onClick={reset} size="lg">
               Try again
-            </button>
-            <Link
-              href={routes.home}
-              className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
-            >
-              Go home
-            </Link>
+            </Button>
+            <Button asChild size="lg" variant="quiet">
+              <Link href={routes.home}>Go home</Link>
+            </Button>
           </div>
         </Container>
       </main>

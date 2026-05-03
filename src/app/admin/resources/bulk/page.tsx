@@ -25,10 +25,10 @@ export default async function BulkUploadPage() {
               description="Paste a JSON array to create up to 100 resources in one operation."
               actions={
                 <>
-                  <Button asChild size="sm" variant="outline">
+                  <Button asChild size="sm" variant="soft">
                     <Link href={routes.adminResources}>← Resources</Link>
                   </Button>
-                  <Button asChild size="sm" variant="outline">
+                  <Button asChild size="sm" variant="soft">
                     <Link href={routes.admin}>Admin home</Link>
                   </Button>
                 </>

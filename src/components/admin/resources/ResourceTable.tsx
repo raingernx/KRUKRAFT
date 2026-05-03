@@ -327,7 +327,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
             <Button
               type="button"
               size="xs"
-              variant="outline"
+              variant="soft"
               disabled={!!bulkLoading || bulkDraftCount === 0}
               className={
                 bulkDraftCount === 0
@@ -346,7 +346,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
             <Button
               type="button"
               size="xs"
-              variant="outline"
+              variant="soft"
               disabled={!!bulkLoading || bulkNonDraftCount === 0}
               className={
                 bulkNonDraftCount === 0
@@ -365,7 +365,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
             <Button
               type="button"
               size="xs"
-              variant="outline"
+              variant="soft"
               disabled={!!bulkLoading}
               onClick={() => runBulkAction("archive")}
             >
@@ -375,7 +375,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
               <Button
                 type="button"
                 size="xs"
-                variant="outline"
+                variant="soft"
                 disabled={!!bulkLoading}
                 onClick={() => setShowMoveCategoryModal(true)}
               >
@@ -385,8 +385,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
             <Button
               type="button"
               size="xs"
-              variant="outline"
-              className="border-danger-200 text-danger-600 hover:bg-danger-50 hover:text-danger-700"
+              variant="danger"
               disabled={!!bulkLoading}
               onClick={() => setShowBulkDeleteConfirm(true)}
             >
@@ -720,9 +719,8 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
             <div className="mt-6 flex justify-end gap-2">
               <Button
                 type="button"
-                variant="outline"
+                variant="tertiary"
                 size="sm"
-                className="border-border text-muted-foreground hover:bg-muted"
                 disabled={!!bulkLoading}
                 onClick={() => setShowBulkDeleteConfirm(false)}
               >
@@ -731,8 +729,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
               <Button
                 type="button"
                 size="sm"
-                variant="outline"
-                className="border-danger-200 text-danger-600 hover:bg-danger-50 hover:text-danger-700"
+                variant="danger"
                 disabled={!!bulkLoading}
                 onClick={async () => {
                   setShowBulkDeleteConfirm(false);
@@ -773,9 +770,8 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
             <div className="mt-6 flex justify-end gap-2">
               <Button
                 type="button"
-                variant="outline"
+                variant="tertiary"
                 size="sm"
-                className="border-border text-muted-foreground hover:bg-muted"
                 disabled={bulkLoading === "moveToCategory"}
                 onClick={() => {
                   setShowMoveCategoryModal(false);
@@ -787,8 +783,7 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
               <Button
                 type="button"
                 size="sm"
-                variant="outline"
-                className="border-primary-200 text-primary-700 hover:bg-primary-50 hover:text-primary-800"
+                variant="primary"
                 disabled={bulkLoading === "moveToCategory" || !moveCategoryId}
                 onClick={handleBulkMoveToCategory}
               >

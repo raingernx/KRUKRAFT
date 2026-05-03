@@ -33,7 +33,7 @@ export function CreatorWelcomeCard({ creatorName, canCreate }: CreatorWelcomeCar
       </p>
 
       <div className="mt-6 flex flex-wrap gap-3">
-        <Button variant="outline" asChild>
+        <Button variant="soft" asChild>
           <Link href={routes.dashboardCreatorProfile}>Complete your profile</Link>
         </Button>
         {canCreate && (

@@ -319,7 +319,7 @@ export function ActivityLogClient() {
         <div className="flex gap-2">
           <Button
             type="button"
-            variant="outline"
+            variant="soft"
             size="sm"
             disabled={currentPage <= 1}
             onClick={() => handlePageChange(currentPage - 1)}
@@ -328,7 +328,7 @@ export function ActivityLogClient() {
           </Button>
           <Button
             type="button"
-            variant="outline"
+            variant="soft"
             size="sm"
             disabled={currentPage >= totalPages}
             onClick={() => handlePageChange(currentPage + 1)}

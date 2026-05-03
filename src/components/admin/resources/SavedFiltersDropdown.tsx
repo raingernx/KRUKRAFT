@@ -56,7 +56,7 @@ export function SavedFiltersDropdown({
     <div className="relative">
       <Button
         type="button"
-        variant="outline"
+        variant="soft"
         size="sm"
         className="inline-flex items-center gap-1"
         onClick={() => setOpen((prev) => !prev)}

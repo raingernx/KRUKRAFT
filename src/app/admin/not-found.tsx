@@ -21,7 +21,7 @@ export default function AdminRouteNotFound() {
         <Button asChild>
           <Link href={routes.admin}>Admin dashboard</Link>
         </Button>
-        <Button asChild variant="outline">
+        <Button asChild variant="soft">
           <Link href={routes.adminResources}>Manage resources</Link>
         </Button>
       </div>

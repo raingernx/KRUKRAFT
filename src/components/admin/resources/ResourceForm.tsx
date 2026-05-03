@@ -1183,8 +1183,7 @@ export function ResourceForm({
           {isEdit && onDelete ? (
             <Button
               type="button"
-              variant="outline"
-              className="border-danger-200 text-danger-600 hover:bg-danger-50"
+              variant="danger"
               onClick={() => setShowDeleteConfirm(true)}
             >
               Delete resource

@@ -102,7 +102,7 @@ export function CreatorPublishSuccessModal({
           type="button"
           onClick={onClose}
           aria-label="Close"
-          variant="ghost"
+          variant="tertiary"
           size="icon"
           className="absolute right-4 top-4 size-8 rounded-full"
         >
@@ -163,7 +163,7 @@ export function CreatorPublishSuccessModal({
                     <Copy className="h-4 w-4" />
                   )
                 }
-                variant="outline"
+                variant="soft"
                 disabled={!liveUrl}
               >
                 {copied ? "Copied!" : "Copy link"}
@@ -173,7 +173,7 @@ export function CreatorPublishSuccessModal({
                 type="button"
                 onClick={handleCreateAnother}
                 leftIcon={<Plus className="h-4 w-4" />}
-                variant="outline"
+                variant="soft"
               >
                 Create another
               </Button>

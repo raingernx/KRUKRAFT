@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CheckCircle, BookOpen, Download, Library } from "@/lib/icons";
 import { Navbar } from "@/components/layout/Navbar";
-import { Container } from "@/design-system";
+import { Button, Container } from "@/design-system";
 import { CheckoutSuccessTracker } from "@/components/checkout/CheckoutSuccessTracker";
 import { routes } from "@/lib/routes";
 
@@ -72,40 +72,54 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
                       Once the webhook processes, the page automatically shows
                       the Download button — no library navigation required.
                     */}
-                    <Link
-                      href={routes.resourcePaymentSuccess(slug)}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+                    <Button
+                      asChild
+                      size="lg"
+                      fullWidth
                     >
-                      <Download className="h-4 w-4" />
-                      Go back &amp; download
-                    </Link>
-                    <Link
-                      href={routes.dashboardLibrary}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-background px-5 py-2.5 text-sm font-medium text-foreground transition hover:bg-muted"
+                      <Link href={routes.resourcePaymentSuccess(slug)}>
+                        <Download className="h-4 w-4" />
+                        Go back &amp; download
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      size="lg"
+                      variant="quiet"
+                      fullWidth
                     >
-                      <Library className="h-4 w-4" />
-                      View my library
-                    </Link>
+                      <Link href={routes.dashboardLibrary}>
+                        <Library className="h-4 w-4" />
+                        View my library
+                      </Link>
+                    </Button>
                   </>
                 ) : (
                   <>
                     {/* Fallback when no slug — e.g. Xendit flows that drop slug.
                         ?payment=success activates the recovery block on the
                         library page so the buyer can find their purchase. */}
-                    <Link
-                      href={routes.dashboardLibraryPaymentSuccess()}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+                    <Button
+                      asChild
+                      size="lg"
+                      fullWidth
                     >
-                      <Library className="h-4 w-4" />
-                      Go to My Library
-                    </Link>
-                    <Link
-                      href={routes.marketplace}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-background px-5 py-2.5 text-sm font-medium text-foreground transition hover:bg-muted"
+                      <Link href={routes.dashboardLibraryPaymentSuccess()}>
+                        <Library className="h-4 w-4" />
+                        Go to My Library
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      size="lg"
+                      variant="quiet"
+                      fullWidth
                     >
-                      <BookOpen className="h-4 w-4" />
-                      Browse more resources
-                    </Link>
+                      <Link href={routes.marketplace}>
+                        <BookOpen className="h-4 w-4" />
+                        Browse more resources
+                      </Link>
+                    </Button>
                   </>
                 )}
               </div>

@@ -30,8 +30,10 @@ const buttonVariants = cva(
           "bg-primary-quiet text-primary-quiet-foreground hover:bg-primary-quiet active:bg-primary-quiet disabled:bg-muted disabled:text-muted-foreground",
         outline:
           "border-border bg-card text-foreground hover:border-border-strong hover:bg-muted/40 active:bg-muted/55 disabled:border-border disabled:bg-muted disabled:text-muted-foreground",
+        tertiary:
+          "bg-transparent text-muted-foreground hover:bg-transparent hover:text-foreground active:bg-transparent active:text-foreground disabled:bg-transparent disabled:text-[hsl(var(--ink-subtle))]",
         ghost:
-          "bg-action-ghost text-action-ghost-foreground hover:bg-action-ghost active:bg-action-ghost disabled:bg-muted disabled:text-muted-foreground",
+          "bg-transparent text-muted-foreground hover:bg-transparent hover:text-foreground active:bg-transparent active:text-foreground disabled:bg-transparent disabled:text-[hsl(var(--ink-subtle))]",
         danger:
           "bg-destructive text-destructive-foreground hover:bg-destructive/92 active:bg-destructive/84 focus-visible:ring-destructive/30 disabled:bg-muted disabled:text-muted-foreground",
         destructive:
@@ -41,13 +43,13 @@ const buttonVariants = cva(
       },
       size: {
         xs: "h-8 px-3 text-caption",
-        sm: "h-8 px-4 text-sm",
+        sm: "h-9 px-4 text-sm",
         md: "h-10 px-6 text-sm",
         lg: "h-12 px-8 text-sm",
         default: "h-10 px-6 text-sm",
         icon: "size-10",
         "icon-xs": "size-8",
-        "icon-sm": "size-8",
+        "icon-sm": "size-9",
         "icon-lg": "size-12",
       },
     },
@@ -70,6 +72,7 @@ export type ButtonVariant =
   | "primary"
   | "quiet"
   | "soft"
+  | "tertiary"
   | "secondary"
   | "outline"
   | "ghost"
@@ -107,17 +110,19 @@ function Button({
 }: ButtonProps) {
   const Comp = asChild ? Slot : "button"
   const resolvedSize = size ?? (density === "compact" ? "sm" : "md")
+  const resolvedVariant: ButtonVariant =
+    variant === "ghost" ? "tertiary" : variant === "secondary" ? "quiet" : variant
 
   return (
     <Comp
       data-slot="button"
-      data-variant={variant}
+      data-variant={resolvedVariant}
       data-size={resolvedSize}
       data-density={density}
       disabled={disabled || loading}
       className={cn(
-        buttonVariants({ variant, size: resolvedSize }),
-        density === "compact" && variant !== "link" && "rounded-[var(--radius-sm)]",
+        buttonVariants({ variant: resolvedVariant, size: resolvedSize }),
+        density === "compact" && resolvedVariant !== "link" && "rounded-[var(--radius-sm)]",
         fullWidth && "w-full",
         className,
       )}

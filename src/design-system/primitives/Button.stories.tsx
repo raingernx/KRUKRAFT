@@ -28,14 +28,12 @@ export const Variants: Story = {
           <Button variant="primary">Primary</Button>
           <Button variant="quiet">Quiet</Button>
           <Button variant="soft">Soft</Button>
-          <Button variant="ghost">Ghost</Button>
+          <Button variant="tertiary">Tertiary</Button>
         </div>
       </div>
       <div className="space-y-2">
-        <p className="text-sm font-semibold text-muted-foreground">Compatibility variants</p>
+        <p className="text-sm font-semibold text-muted-foreground">Specialized branches</p>
         <div className="flex flex-wrap items-center gap-3">
-          <Button variant="secondary">Secondary (quiet alias)</Button>
-          <Button variant="outline">Outline (legacy)</Button>
           <Button variant="destructive">Destructive</Button>
           <Button variant="danger">Danger</Button>
           <Button variant="link">Link</Button>
@@ -62,8 +60,8 @@ export const Density: Story = {
     <div className="flex flex-wrap items-center gap-3">
       <Button size="sm" variant="soft">Soft action</Button>
       <Button size="md">Primary action</Button>
-      <Button size="lg" variant="ghost">
-        Ghost action
+      <Button size="lg" variant="tertiary">
+        Tertiary action
       </Button>
     </div>
   ),
@@ -75,7 +73,7 @@ export const States: Story = {
       <Button variant="primary">Primary</Button>
       <Button variant="quiet">Quiet</Button>
       <Button variant="soft">Soft</Button>
-      <Button variant="ghost">Ghost</Button>
+      <Button variant="tertiary">Tertiary</Button>
       <Button disabled>Disabled</Button>
       <Button loading>Loading</Button>
     </div>

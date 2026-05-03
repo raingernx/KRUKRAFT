@@ -356,7 +356,7 @@ export function BuyButton({
         onFocus={warmAuthViewer}
         loading={isXenditBusy || isCheckingAccount}
         disabled={isAnyLoading || isCheckingAccount}
-        variant="outline"
+        variant="soft"
         size="lg"
         fullWidth
         className="gap-2"

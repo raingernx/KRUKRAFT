@@ -28,7 +28,7 @@ export const Default: Story = {
   render: () => (
     <Dropdown open modal={false}>
       <DropdownTrigger asChild>
-        <Button variant="outline">Open menu</Button>
+        <Button variant="soft">Open menu</Button>
       </DropdownTrigger>
       <DropdownMenu>
         <DropdownLabel>Quick actions</DropdownLabel>
@@ -49,7 +49,7 @@ export const SelectionStates: Story = {
     return (
       <Dropdown open modal={false}>
         <DropdownTrigger asChild>
-          <Button variant="secondary">Preferences</Button>
+          <Button variant="soft">Preferences</Button>
         </DropdownTrigger>
         <DropdownMenu>
           <DropdownLabel>Preferences</DropdownLabel>

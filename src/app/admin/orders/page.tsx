@@ -231,7 +231,7 @@ export default async function AdminOrdersPage({
               </div>
 
               <div className="w-full sm:ml-auto sm:w-auto">
-                <Button type="submit" variant="outline" size="sm">
+                <Button type="submit" variant="soft" size="sm">
                   Apply filters
                 </Button>
               </div>

@@ -32,7 +32,7 @@ export function DashboardMobileNavigation({
               aria-label="Close dashboard navigation"
               className="absolute right-3 top-3 size-11"
               size="icon"
-              variant="ghost"
+              variant="tertiary"
             >
               <X className="size-4" aria-hidden />
             </Button>

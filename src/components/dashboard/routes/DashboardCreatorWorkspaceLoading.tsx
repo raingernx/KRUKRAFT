@@ -89,7 +89,7 @@ function DashboardCreatorWorkspaceSummaryLoadingContent() {
                 Finish your setup, create your first listing, and keep the launch steps in one place.
               </p>
             </div>
-            <Button asChild size="sm" variant="ghost">
+            <Button asChild size="sm" variant="tertiary">
               <Link href={routes.dashboardCreatorNewResource}>
                 Create resource
                 <ChevronRight className="size-4" aria-hidden />

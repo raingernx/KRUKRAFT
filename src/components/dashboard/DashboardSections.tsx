@@ -247,7 +247,7 @@ export function DashboardResourceRail() {
               Owned resources with stable actions and clear status.
             </p>
           </div>
-          <Button asChild variant="ghost" size="sm">
+          <Button asChild variant="tertiary" size="sm">
             <Link href={routes.dashboardLibrary}>
               Library
               <ChevronRight className="size-4" aria-hidden />

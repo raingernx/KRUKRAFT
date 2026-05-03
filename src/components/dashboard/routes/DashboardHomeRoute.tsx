@@ -166,7 +166,7 @@ function DashboardHomeContinueLearning({
               Your most recent resources, ready to open again.
             </p>
           </div>
-          <Button asChild variant="ghost" size="sm">
+          <Button asChild variant="tertiary" size="sm">
             <Link href={routes.dashboardLibrary}>
               Library
               <ChevronRight className="size-4" aria-hidden />
@@ -396,7 +396,7 @@ export function DashboardHomeLoadingContent() {
                     Your most recent resources, ready to open again.
                   </p>
                 </div>
-                <Button asChild variant="ghost" size="sm">
+                <Button asChild variant="tertiary" size="sm">
                   <Link href={routes.dashboardLibrary}>
                     Library
                     <ChevronRight className="size-4" aria-hidden />

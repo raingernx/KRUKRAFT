@@ -511,10 +511,10 @@ Copy this block before implementing a new Figma-backed component.
 
 - Scope: bounded shared shell only, not route-owned content composition
 - Canonical nodes:
-  - light board `575:144`
-  - dark board `627:633`
-  - light source `575:157`
-  - dark source `627:646`
+  - light source set `575:144`
+  - dark source set `627:633`
+  - light hierarchy card `575:157`
+  - dark hierarchy card `627:646`
 - Runtime owner: `src/design-system/components/Surface.tsx`
 - Variants in scope: `panel | subtle | muted`
 
@@ -523,15 +523,13 @@ Copy this block before implementing a new Figma-backed component.
 - Height: content-owned
 - Padding: parent-owned
 - Gap: parent-owned
-- Radius:
-  - `panel` `16`
-  - `subtle` `12`
-  - `muted` `12`
+- Radius: `16` across the source variants and the current inner hierarchy-demo
+  shells
 - Border: `1`
 - Background:
-  - `panel` semantic card shell
-  - `subtle` semantic card shell
-  - `muted` semantic muted shell
+  - `panel` `bg/surface`
+  - `subtle` `bg/canvas`
+  - `muted` `bg/inset`
 
 #### Child Geometry
 - No owned child geometry; `Surface` is a shell wrapper only
@@ -552,18 +550,21 @@ Copy this block before implementing a new Figma-backed component.
 - Eyebrow/label: parent-owned
 
 #### Variant Rules
-- `panel`: strongest bordered shell with shadow
-- `subtle`: calmer bordered shell without shadow
-- `muted`: quieter muted background shell without shadow
+- `panel`: default shared content shell
+- `subtle`: calmer supporting shell that steps back to the canvas layer
+- `muted`: quieter inset/support shell
 
 #### Runtime Notes
 - Parent-owned: all interior spacing, headings, actions, and dividers
 - Route-owned: content hierarchy and business affordances
-- Known token gaps: hierarchy study copy in Figma still mentions older token-gap
-  guidance more broadly than the live nodes now prove
+- Known token gaps:
+  - hierarchy study copy in Figma still mentions older token-gap guidance more
+    broadly than the live nodes now prove
 
 #### Proof
-- Figma screenshot: `Surface / Variant / Source` dark set `627:646`
+- Figma screenshot:
+  - `Surface / Variant / Source` dark set `627:633`
+  - `Surface / Foundations / Dark` hierarchy card `627:646`
 - Runtime proof: any bounded DS consumer using the shared shell
 
 ### FormSection
@@ -571,8 +572,10 @@ Copy this block before implementing a new Figma-backed component.
 - Scope: composed form shell only, not field-row layout or workflow-specific
   CTA semantics
 - Canonical nodes:
-  - light board `759:251`
-  - dark board `746:275`
+  - light board `759:156`
+  - dark board `759:184`
+  - light source `759:251`
+  - dark source `746:275`
 - Runtime owner: `src/design-system/components/FormSection.tsx`
 - Variants in scope: `flat | card`
 
@@ -581,10 +584,11 @@ Copy this block before implementing a new Figma-backed component.
 - Height: content-owned
 - Padding:
   - `flat` none on outer shell
-  - `card` inherited from shared `Card`
+  - `card` source set now binds top/side shell spacing to nearest shared
+    `space/24` tokens
 - Gap:
-  - `flat` root stack `20`
-  - `flat` header stack `6`
+  - `flat` root stack now binds to `space/24`
+  - `flat` header stack now binds to `space/8`
   - `card` inherited from shared `Card` + `CardHeader`
 - Radius:
   - `flat` none
@@ -616,10 +620,11 @@ Copy this block before implementing a new Figma-backed component.
   rhythm will drift from Figma
 
 #### Typography
-- Title: local `16/20`, semibold in current Figma/runtime
+- Title: live Figma now binds to shared `type/label` (`14/20`, semibold)
 - Description: `14/20`
 - Action: footer-owned, route-owned
-- Eyebrow/label: none owned by `FormSection`
+- Eyebrow/label: none owned by `FormSection`; field labels in the usage shells
+  now also bind to shared `type/label`
 
 #### Variant Rules
 - `flat`: divider-led section with transparent shell
@@ -628,12 +633,20 @@ Copy this block before implementing a new Figma-backed component.
 #### Runtime Notes
 - Parent-owned: actual field grid, submit controls, validation layout
 - Route-owned: footer action semantics and any helper rows inside `children`
-- Known token gaps: current canonical file still keeps explicit local gaps for
-  `16/20` title, `14/20` labels, `20px` card padding, and `border/subtle`
-  semantics
+- Known token gaps: the canonical file no longer keeps local text/spacing/radius
+  debt on the live boards. The remaining gap is parity and semantics instead:
+  Figma now normalizes former local values to nearest shared tokens
+  (`type/label`, `space/8`, `space/24`), while runtime still carries narrower
+  literal geometry in places, and divider/footer separators still wait on a
+  dedicated `border/subtle` semantic instead of the broader `border/default`
+  token used on the board
 
 #### Proof
 - Figma screenshot: `FormSection / Variant / Source` dark board `746:275`
+- Figma usage proofs: `FormSection / Foundations` light/dark boards now also
+  show `flat / no-description` and `card / no-footer` examples as usage-only
+  posture, not as extra variants, and their footer actions now use real shared
+  `Button` instances instead of local action frames
 - Runtime proof: bounded settings/admin forms using the shared component
 
 ### DataPanelTable
@@ -715,18 +728,18 @@ Copy this block before implementing a new Figma-backed component.
 - Scope: shared button primitive only, not route-owned CTA semantics or table
   business-action labels
 - Canonical nodes:
-  - state sets `746:510`, `1276:619`
-  - size sets `553:167`, `746:598`
-  - icon sets `259:92`, `746:635`
+  - state sets `746:510`, `1276:960`
+  - size sets `553:167`, `1276:1021`
+  - icon sets `259:92`, `1276:1058`
 - Runtime owner: `src/design-system/primitives/Button.tsx`
-- Variants in scope: `primary | quiet | soft | ghost`, shared size ladder,
+- Variants in scope: `primary | quiet | soft | tertiary`, shared size ladder,
   icon posture, focus posture
 
 #### Shell
 - Width: content-owned except icon sizes
 - Height:
   - `xs` `32`
-  - `sm` `36` in Figma trial, runtime currently `32`
+  - `sm` `36`
   - `md` `40`
   - `lg` `48`
 - Padding: variant- and size-owned
@@ -738,6 +751,7 @@ Copy this block before implementing a new Figma-backed component.
   - default transparent
   - `quiet` uses `border/quiet`
   - `soft` uses `primary-soft-border`
+  - `tertiary` keeps no rest border; focus alone uses `focus/ring`
 - Background: family-owned by variant
 
 #### Child Geometry
@@ -762,17 +776,22 @@ Copy this block before implementing a new Figma-backed component.
 #### Variant Rules
 - `quiet`: filled tonal shell with `border/quiet` and `focus/ring` at `2px`
 - `soft`: bordered rounded-rect calmer CTA family with lighter rest state
-- `ghost`: airy wash posture
+- `tertiary`: text-first neutral posture; no fill or rest border, no underline
+  on hover, tone shift only (`fg/muted` -> `fg/default` -> `fg/subtle` when
+  disabled); icon variants use the same neutral token for both label and
+  glyph fill/stroke
 - `row action` and `pagination` remain recipe/family contracts outside base
   `Button`
 
 #### Runtime Notes
 - Parent-owned: surrounding layout, CTA grouping, route labels
 - Route-owned: business semantics and icon choice
-- Known token gaps: runtime `sm` ladder still differs from Figma `36px` trial
+- Known token gaps: runtime now mirrors the canonical `tertiary` posture and
+  `sm=36` ladder; keep `ghost` only as a thin compatibility alias until legacy
+  downstream callers disappear
 
 #### Proof
-- Figma screenshot: `Button / State` dark set `1276:619`
+- Figma screenshot: `Button / Foundations / Dark` `294:29`
 - Runtime proof: Storybook button stories and shared consumers
 
 ### Badge
@@ -780,7 +799,7 @@ Copy this block before implementing a new Figma-backed component.
 - Scope: non-interactive status/label primitive only
 - Canonical nodes:
   - light source `736:178`
-  - dark source `746:208`
+  - dark source `1494:1803`
 - Runtime owner: `src/design-system/primitives/Badge.tsx`
 - Variants in scope:
   `neutral | info | success | warning | featured | destructive | outline`
@@ -811,16 +830,23 @@ Copy this block before implementing a new Figma-backed component.
 
 #### Variant Rules
 - `warning` stays on inset-style shell, not generic yellow chip
-- `featured` keeps editorial sand family
+- `featured` keeps editorial sand family:
+  `accent/sand/wash` fill, `accent/sand/dust` stroke, `accent/sand/base` text
 - `outline` remains transparent shell with stronger stroke
 
 #### Runtime Notes
 - Parent-owned: placement and surrounding density
 - Route-owned: icon choice and copy
+- `featured` should consume the canonical sand ladder directly in runtime:
+  `bg-accent-50` fill, `border-accent-300` stroke, `text-accent-200` label
+- `info`, `success`, `warning`, and `destructive` should consume dedicated
+  theme-aware runtime vars that mirror the canonical Figma ladders:
+  `support/info/*`, `support/success/*`, `support/warning/*`, and
+  `state/danger/*`
 - Known token gaps: none for current bounded primitive contract
 
 #### Proof
-- Figma screenshot: `Badge / Variant / Source / Dark` `746:208`
+- Figma screenshot: `Badge / Variant / Source / Dark` `1494:1803`
 - Runtime proof: Storybook or any DS consumer using shared badges
 
 ### Input

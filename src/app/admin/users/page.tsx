@@ -137,7 +137,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
                   placeholder="Search by name or email…"
                 />
               </div>
-              <Button type="submit" variant="outline" size="md" className="self-end">
+              <Button type="submit" variant="soft" size="md" className="self-end">
                 Search
               </Button>
             </TableToolbar>

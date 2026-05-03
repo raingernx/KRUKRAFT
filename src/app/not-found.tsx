@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
-import { Container } from "@/design-system";
+import { Button, Container } from "@/design-system";
 import { routes } from "@/lib/routes";
 
 export const metadata = {
@@ -25,18 +25,12 @@ export default function NotFound() {
             The page you were looking for does not exist or has been moved.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href={routes.marketplace}
-              className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
-            >
-              Browse resources
-            </Link>
-            <Link
-              href={routes.home}
-              className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
-            >
-              Go home
-            </Link>
+            <Button asChild size="lg">
+              <Link href={routes.marketplace}>Browse resources</Link>
+            </Button>
+            <Button asChild size="lg" variant="quiet">
+              <Link href={routes.home}>Go home</Link>
+            </Button>
           </div>
         </Container>
       </main>

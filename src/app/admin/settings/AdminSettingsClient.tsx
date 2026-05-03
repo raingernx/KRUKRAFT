@@ -1164,7 +1164,7 @@ export function AdminSettingsClient({
       </div>
 
       <div className="sticky bottom-4 z-10 flex flex-wrap items-center justify-end gap-3 rounded-2xl border border-border bg-card/95 p-3 shadow-card backdrop-blur">
-        <Button type="button" variant="outline" onClick={handleReset}>
+        <Button type="button" variant="tertiary" onClick={handleReset}>
           Reset
         </Button>
         <Button type="button" onClick={handleSave} loading={isSaving}>

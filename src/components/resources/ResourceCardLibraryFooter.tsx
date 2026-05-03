@@ -59,7 +59,7 @@ export function ResourceCardLibraryFooter({
               </a>
             </Button>
           ) : null}
-          <Button asChild variant="ghost" density="compact" className="flex-1 gap-1.5">
+          <Button asChild variant="tertiary" density="compact" className="flex-1 gap-1.5">
             <IntentPrefetchLink
               href={resourceHref}
               prefetchScope="resource-card-library"

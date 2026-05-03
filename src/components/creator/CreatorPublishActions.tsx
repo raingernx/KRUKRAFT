@@ -46,7 +46,7 @@ export function CreatorPublishActions({
         </div>
 
         <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-          <Button asChild disabled={saving} variant="ghost" size="lg">
+          <Button asChild disabled={saving} variant="tertiary" size="lg">
             <Link href={cancelHref}>
               <X className="h-4 w-4" />
               <span className="hidden sm:inline">Cancel</span>
@@ -57,7 +57,7 @@ export function CreatorPublishActions({
             type="button"
             onClick={onSaveDraft}
             disabled={saving}
-            variant="outline"
+            variant="soft"
             size="lg"
             leftIcon={<Save className="h-4 w-4" />}
           >
@@ -69,7 +69,7 @@ export function CreatorPublishActions({
               type="button"
               onClick={onPreview}
               disabled={saving}
-              variant="outline"
+              variant="soft"
               size="lg"
               leftIcon={<Eye className="h-4 w-4" />}
             >

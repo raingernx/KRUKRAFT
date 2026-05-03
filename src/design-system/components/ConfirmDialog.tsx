@@ -118,7 +118,7 @@ export function ConfirmDialog({
           </div>
           <div className="flex items-center justify-end gap-2 border-t border-border/70 bg-muted/60 px-5 py-3">
             <DialogPrimitive.Close asChild>
-              <Button variant="outline" disabled={isBusy}>
+              <Button variant="tertiary" disabled={isBusy}>
                 {cancelLabel}
               </Button>
             </DialogPrimitive.Close>

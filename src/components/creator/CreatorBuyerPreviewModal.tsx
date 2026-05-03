@@ -132,7 +132,7 @@ export function CreatorBuyerPreviewModal({
             type="button"
             onClick={onClose}
             aria-label="Close preview"
-            variant="ghost"
+            variant="tertiary"
             size="icon"
             className="size-8 shrink-0 rounded-full"
           >
@@ -177,7 +177,7 @@ export function CreatorBuyerPreviewModal({
                   <div className="space-y-2">
                     <Button
                       type="button"
-                      variant="outline"
+                      variant="soft"
                       fullWidth
                       disabled
                       aria-disabled="true"

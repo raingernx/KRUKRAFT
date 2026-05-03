@@ -509,7 +509,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                             <Button
                               type="button"
                               size="md"
-                              variant="ghost"
+                              variant="tertiary"
                               leftIcon={<Trash2 className="size-4" />}
                               disabled={assetControlsDisabled}
                               onClick={() => {
@@ -586,7 +586,7 @@ export function CreatorProfileForm({ profile }: CreatorProfileFormProps) {
                             <Button
                               type="button"
                               size="md"
-                              variant="ghost"
+                              variant="tertiary"
                               leftIcon={<Trash2 className="size-4" />}
                               disabled={assetControlsDisabled}
                               onClick={() => {

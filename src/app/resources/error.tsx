@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
-import { Container } from "@/design-system";
+import { Button, Container } from "@/design-system";
 import { MarketplaceNavbarSearch } from "@/components/marketplace/MarketplaceNavbarSearch";
 import { routes } from "@/lib/routes";
 
@@ -38,19 +38,12 @@ export default function ResourcesRouteError({
             </div>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <button
-                type="button"
-                onClick={reset}
-                className="inline-flex items-center justify-center rounded-xl bg-brand-600 px-5 py-3 text-small font-semibold text-white transition hover:bg-brand-700"
-              >
+              <Button type="button" onClick={reset} size="lg">
                 Try again
-              </button>
-              <Link
-                href={routes.marketplace}
-                className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 text-small font-medium text-foreground transition hover:bg-muted"
-              >
-                Open resources
-              </Link>
+              </Button>
+              <Button asChild size="lg" variant="quiet">
+                <Link href={routes.marketplace}>Open resources</Link>
+              </Button>
             </div>
           </div>
         </Container>

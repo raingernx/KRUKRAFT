@@ -1020,7 +1020,7 @@ export function CreatorResourceForm({
                   <div className="flex flex-wrap items-center gap-2">
                     <Button
                       type="button"
-                      variant="ghost"
+                      variant="tertiary"
                       size="md"
                       onClick={() => setBulkPreviewOpen((prev) => !prev)}
                     >
@@ -1058,7 +1058,7 @@ export function CreatorResourceForm({
                           </div>
                           <Button
                             type="button"
-                            variant="ghost"
+                            variant="tertiary"
                             size="icon"
                             className="size-8 shrink-0 self-start"
                             onClick={() => removePreviewUrlDraft(index)}
@@ -1301,7 +1301,7 @@ export function CreatorResourceForm({
                       {form.fileUrl && !isEditingExternalFileUrl ? (
                         <Button
                           type="button"
-                          variant="ghost"
+                          variant="tertiary"
                           size="md"
                           density="compact"
                           data-testid="creator-linked-file-clear-link"
@@ -1422,7 +1422,7 @@ export function CreatorResourceForm({
                                 <div className="flex flex-wrap items-center gap-2">
                                   <Button
                                     type="button"
-                                    variant="ghost"
+                                    variant="tertiary"
                                     size="md"
                                     density="compact"
                                     data-testid="creator-linked-file-edit"
@@ -1493,7 +1493,7 @@ export function CreatorResourceForm({
               )}
             </div>
             <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-              <Button asChild variant="ghost" size="lg">
+              <Button asChild variant="tertiary" size="lg">
                 <Link href={routes.dashboardCreatorResources}>Cancel</Link>
               </Button>
               <Button type="submit" size="lg" loading={saving}>

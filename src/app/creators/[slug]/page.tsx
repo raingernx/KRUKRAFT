@@ -272,7 +272,7 @@ function CreatorUnavailableState({ slug }: { slug: string }) {
                 <Button asChild>
                   <Link href={`/creators/${slug}`}>Try again</Link>
                 </Button>
-                <Button asChild variant="outline">
+                <Button asChild variant="quiet">
                   <Link href={routes.marketplace}>Open resources</Link>
                 </Button>
               </div>

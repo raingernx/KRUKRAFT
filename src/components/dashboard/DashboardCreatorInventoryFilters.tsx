@@ -75,10 +75,10 @@ function DropdownFilter<T extends string>({
       <DropdownTrigger asChild>
         <Button
           aria-label={ariaLabel}
-          className="min-w-0 justify-between rounded-xl border-border-subtle px-3 hover:border-border-subtle sm:px-4"
+          className="min-w-0 justify-between rounded-xl px-3 sm:px-4"
           fullWidth
           size="sm"
-          variant="outline"
+          variant="soft"
         >
           <span className="min-w-0 truncate text-left">
             <span className="text-foreground">{label}</span>

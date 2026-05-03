@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { XCircle, BookOpen, ArrowLeft, RotateCcw } from "@/lib/icons";
 import { Navbar } from "@/components/layout/Navbar";
-import { Container } from "@/design-system";
+import { Button, Container } from "@/design-system";
 import { routes } from "@/lib/routes";
 
 /**
@@ -57,33 +57,43 @@ export default async function CheckoutCancelPage({ searchParams }: Props) {
               <div className="flex flex-col gap-3">
                 {slug ? (
                   <>
-                    <Link
-                      href={routes.resource(slug)}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+                    <Button
+                      asChild
+                      size="lg"
+                      fullWidth
                     >
-                      <RotateCcw className="h-4 w-4" />
-                      Try again
-                    </Link>
+                      <Link href={routes.resource(slug)}>
+                        <RotateCcw className="h-4 w-4" />
+                        Try again
+                      </Link>
+                    </Button>
                     <p className="text-center text-[11px] text-muted-foreground">
                       Takes you back to the same resource — pick up where you left off
                     </p>
-                    <Link
-                      href={routes.marketplace}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-background px-5 py-2.5 text-sm font-medium text-foreground transition hover:bg-muted"
+                    <Button
+                      asChild
+                      size="lg"
+                      variant="quiet"
+                      fullWidth
                     >
-                      <BookOpen className="h-4 w-4" />
-                      Browse all resources
-                    </Link>
+                      <Link href={routes.marketplace}>
+                        <BookOpen className="h-4 w-4" />
+                        Browse all resources
+                      </Link>
+                    </Button>
                   </>
                 ) : (
                   <>
-                    <Link
-                      href={routes.marketplace}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+                    <Button
+                      asChild
+                      size="lg"
+                      fullWidth
                     >
-                      <ArrowLeft className="h-4 w-4" />
-                      Back to resources
-                    </Link>
+                      <Link href={routes.marketplace}>
+                        <ArrowLeft className="h-4 w-4" />
+                        Back to resources
+                      </Link>
+                    </Button>
                     <p className="text-center text-[11px] text-muted-foreground">
                       Browse and pick up where you left off
                     </p>

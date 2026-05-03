@@ -81,7 +81,7 @@ export function ThemeSwitcher({
             className,
           )}
           size={variant === "icon" ? "icon" : "sm"}
-          variant="ghost"
+          variant="tertiary"
         >
           <ActiveIcon className="size-4" aria-hidden />
           {variant === "compact" ? (

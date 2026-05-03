@@ -136,7 +136,7 @@ function DashboardCreatorWorkspaceResourcesPanel({
       title="Recent resources"
       description="Latest updates across status, revenue, and downloads."
       actions={
-        <Button asChild size="sm" variant="ghost">
+        <Button asChild size="sm" variant="tertiary">
           <Link href={routes.dashboardCreatorResources}>
             All resources
             <ChevronRight className="size-4" aria-hidden />
@@ -301,7 +301,7 @@ function DashboardCreatorWorkspace({
             </p>
           </div>
           {!isFirstTimeCreator ? (
-            <Button asChild size="sm" variant="ghost">
+            <Button asChild size="sm" variant="tertiary">
               <Link href={workspaceCtaHref}>
                 {workspaceCtaLabel}
                 <ChevronRight className="size-4" aria-hidden />

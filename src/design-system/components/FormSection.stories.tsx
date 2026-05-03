@@ -75,7 +75,7 @@ export const CardVariant: Story = {
         variant="card"
         footer={
           <>
-            <Button size="sm" variant="ghost">
+            <Button size="sm" variant="tertiary">
               Cancel
             </Button>
             <Button size="sm">Save plan</Button>
@@ -113,7 +113,7 @@ export const LongContent: Story = {
         description="Longer content blocks should still preserve section rhythm and footer placement."
         footer={
           <div className="flex justify-end gap-2">
-            <Button size="sm" variant="ghost">
+            <Button size="sm" variant="tertiary">
               Back
             </Button>
             <Button size="sm">Continue</Button>

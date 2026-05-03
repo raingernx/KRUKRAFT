@@ -102,7 +102,7 @@ async function AdminResourcesResultsSection({
           Page {currentPage} of {totalPages}
         </span>
         <div className="flex flex-wrap gap-2">
-          <Button asChild variant="outline" size="sm" disabled={currentPage <= 1}>
+          <Button asChild variant="soft" size="sm" disabled={currentPage <= 1}>
             <Link
               href={
                 currentPage <= 1
@@ -118,7 +118,7 @@ async function AdminResourcesResultsSection({
               Previous
             </Link>
           </Button>
-          <Button asChild variant="outline" size="sm" disabled={currentPage >= totalPages}>
+          <Button asChild variant="soft" size="sm" disabled={currentPage >= totalPages}>
             <Link
               href={
                 currentPage >= totalPages
@@ -189,7 +189,7 @@ export default async function AdminResourcesPage({
                 <Button
                   asChild
                   size="sm"
-                  variant="outline"
+                  variant="soft"
                   className="inline-flex items-center gap-2"
                 >
                   <Link href={routes.adminTrash}>
@@ -200,7 +200,7 @@ export default async function AdminResourcesPage({
                 <Button
                   asChild
                   size="sm"
-                  variant="outline"
+                  variant="soft"
                   className="inline-flex items-center gap-2"
                 >
                   <Link href={routes.adminBulkUpload}>

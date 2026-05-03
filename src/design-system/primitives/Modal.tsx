@@ -79,7 +79,7 @@ function ModalContent({
         {showCloseButton && (
           <DialogPrimitive.Close asChild>
             <Button
-              variant="ghost"
+              variant="tertiary"
               size="sm"
               className="absolute right-3 top-3 h-9 w-9 p-0 text-muted-foreground hover:text-foreground"
             >

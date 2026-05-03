@@ -61,7 +61,7 @@ export const Playground: Story = {
       }
       footer={
         <>
-          <Button variant="ghost">Cancel</Button>
+          <Button variant="tertiary">Cancel</Button>
           <Button>Save draft</Button>
         </>
       }
@@ -82,7 +82,7 @@ export const ConfirmPattern: Story = {
       }
       footer={
         <>
-          <Button variant="ghost">Keep listed</Button>
+          <Button variant="tertiary">Keep listed</Button>
           <Button variant="danger">Remove listing</Button>
         </>
       }
@@ -122,7 +122,7 @@ export const LongContent: Story = {
       }
       footer={
         <>
-          <Button variant="ghost">Not now</Button>
+          <Button variant="tertiary">Not now</Button>
           <Button>Upgrade plan</Button>
         </>
       }
@@ -146,8 +146,8 @@ export const FooterActions: Story = {
       }
       footer={
         <>
-          <Button variant="ghost">Back</Button>
-          <Button variant="outline">Save as draft</Button>
+          <Button variant="tertiary">Back</Button>
+          <Button variant="soft">Save as draft</Button>
           <Button>Send invite</Button>
         </>
       }

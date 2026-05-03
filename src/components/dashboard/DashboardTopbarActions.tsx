@@ -55,7 +55,7 @@ function DashboardAppNotifications({ viewer }: { viewer: DashboardAppViewer }) {
           aria-label="Open dashboard notifications"
           className="size-11"
           size="icon"
-          variant="ghost"
+          variant="tertiary"
         >
           <Bell className="size-5" aria-hidden />
         </Button>
