@@ -217,6 +217,14 @@ Use this order when DS docs disagree:
 - The current contract intentionally keeps one `40px` chip family only;
   compact admin pills should normalize into that shell instead of becoming a
   second canonical chip-size ladder.
+- `PillLink` is now the next narrow DS runtime slice after `Chip`, but it is
+  intentionally smaller in scope: use
+  `src/design-system/primitives/PillLink.tsx` only for section-header browse
+  actions such as `View all` and `Browse everything`. The current runtime
+  owners are `ResourcesPageContent` and
+  `ResourcesDiscoverPersonalizedSection`, while empty-state pill links,
+  card-footer text CTAs, and read-only tokens stay outside this primitive
+  until a separate family decision is made.
 - Dark-shell selected rows, chips, and feedback states should use theme-aware
   emphasis surfaces rather than fixed light-only `*-50` fills.
 - Hero surfaces are not generic `card` surfaces; they should use the hero

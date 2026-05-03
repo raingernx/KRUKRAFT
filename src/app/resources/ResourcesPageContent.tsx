@@ -33,7 +33,7 @@ import {
   ResourcesContentFallback,
   SidebarFallback,
 } from "@/components/skeletons/ResourcesContentFallback";
-import { Badge, Button } from "@/design-system";
+import { Badge, Button, pillLinkVariants } from "@/design-system";
 import { formatNumber, formatPrice } from "@/lib/format";
 import { routes } from "@/lib/routes";
 import {
@@ -928,12 +928,10 @@ function SectionHeader({
         prefetchScope="resources-section-view-all"
         prefetchLimit={2}
         resourcesNavigationMode="listing"
-        className="group inline-flex items-center gap-1 self-start rounded-full px-2.5 py-1 text-small font-medium text-primary transition-colors hover:bg-primary/12 hover:text-primary sm:self-auto"
+        className={pillLinkVariants()}
       >
-        <span className="inline-flex items-center gap-1">
-          <span>{viewAllLabel}</span>
-          <ArrowRight className="h-3.5 w-3.5" />
-        </span>
+        <span>{viewAllLabel}</span>
+        <ArrowRight aria-hidden="true" />
       </IntentPrefetchLink>
     </div>
   );

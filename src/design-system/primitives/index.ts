@@ -9,6 +9,7 @@ export {
   chipRemoveButtonVariants,
   chipVariants,
 } from "./Chip";
+export { PillLink, pillLinkVariants } from "./PillLink";
 export {
   Card,
   CardHeader,

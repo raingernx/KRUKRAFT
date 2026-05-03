@@ -4,6 +4,7 @@ import { ArrowRight } from "@/lib/icons";
 import { Skeleton } from "boneyard-js/react";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { RecommendationSection } from "@/components/recommendations/RecommendationSection";
+import { pillLinkVariants } from "@/design-system";
 import {
   ResourceCard,
   type ResourceCardData,
@@ -173,12 +174,10 @@ function ResourcesSectionHeader({
           prefetchScope="resources-section-view-all"
           prefetchLimit={2}
           resourcesNavigationMode="listing"
-          className="group inline-flex items-center gap-1 self-start rounded-full px-2.5 py-1 text-small font-medium text-primary transition-colors hover:bg-accent hover:text-accent-foreground sm:self-auto"
+          className={pillLinkVariants()}
         >
-          <span className="inline-flex items-center gap-1">
-            <span>View all</span>
-            <ArrowRight className="h-3.5 w-3.5" />
-          </span>
+          <span>View all</span>
+          <ArrowRight aria-hidden="true" />
         </IntentPrefetchLink>
       ) : null}
     </div>

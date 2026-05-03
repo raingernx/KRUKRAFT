@@ -4,7 +4,7 @@ import { ArrowRight } from "@/lib/icons";
 import { Skeleton } from "boneyard-js/react";
 import { ResourceCardSkeleton } from "@/design-system/product";
 import { ResourceCard, type ResourceCardResource } from "@/design-system/product";
-import { LoadingSkeleton } from "@/design-system";
+import { LoadingSkeleton, pillLinkVariants } from "@/design-system";
 
 const RESOURCES_DISCOVER_SECTIONS_NAME = "resources-discover-sections";
 const BONES_PREVIEW_IMAGE = "/uploads/c8fef7c0a5fecefa.png";
@@ -195,7 +195,10 @@ function PreviewSectionHeader({
         <p className="text-xl font-semibold tracking-tight text-foreground">{title}</p>
         <p className="text-small text-muted-foreground">{body}</p>
       </div>
-      <p className="text-small font-medium text-primary">{cta}</p>
+      <span className={pillLinkVariants()}>
+        <span>{cta}</span>
+        <ArrowRight aria-hidden="true" />
+      </span>
     </div>
   );
 }

@@ -61,6 +61,7 @@ When this file conflicts with code, the code wins.
 - `Input`
 - `LoadingSkeleton`
 - `Modal`
+- `PillLink`
 - `RevealImage`
 - `SearchInput`
 - `Select`
@@ -738,6 +739,13 @@ Current canonical Figma shared-coverage note:
   Compact admin pills are no longer a second canonical chip-size ladder; they
   now normalize into the shared default shell instead of widening the DS size
   contract prematurely.
+- `PillLink` is now a separate narrow DS primitive for section-header browse
+  actions such as `View all` and `Browse everything`. Keep it scoped to
+  section-header secondary navigation for now: runtime owners on
+  `ResourcesPageContent` and `ResourcesDiscoverPersonalizedSection` now reuse
+  the shared `src/design-system/primitives/PillLink.tsx` contract, while
+  empty-state pill links and card-footer text CTAs remain route-owned until
+  they are intentionally promoted or split into their own family.
 - Hero surfaces are not generic `card` surfaces. Use the hero semantic layer
   (`heroBackground`, `heroPanel`, `heroChip`, and related roles) instead of
   rebinding hero UI to default card tokens.

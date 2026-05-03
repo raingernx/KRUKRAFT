@@ -622,6 +622,13 @@ For reusable Figma component sets:
   contract; future product-specific label needs should be solved by deliberate
   remaps or separate product-bound components, not by reopening ad-hoc badge
   variants.
+- `PillLink` is now a separate narrow runtime primitive for section-header
+  browse actions such as `View all` and `Browse everything`. Its current
+  scope is intentionally smaller than `Chip`: treat it as a section-header
+  secondary-navigation affordance only, routed through
+  `src/design-system/primitives/PillLink.tsx`. Do not pull empty-state pill
+  links, card-footer text CTAs, or read-only tokens into this primitive until
+  those families are audited on their own terms.
 - The 2026-04-29 badge residual cleanup closed the last canonical badge-board
   gaps too: the light/dark `Badge / Variant / Source` wrappers now sit at
   `cornerRadius=0`, and the seven badge labels now bind to dedicated
