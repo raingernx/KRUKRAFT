@@ -290,13 +290,17 @@ Current canonical Figma shared-coverage note:
 - The canonical Figma `FormSection` base now lives in dedicated light/dark
   `FormSection / Foundations` boards, with source sets that cover only
   `variant=flat` and `variant=card`.
+- Those boards now also carry usage-only optional-structure proofs for
+  `flat / no-description` and `card / no-footer`; treat them as contract
+  coverage, not as new variants.
 - Keep `FormSection.flat` as the default stacked settings/admin section shell;
   use `FormSection.card` only when the section genuinely needs a bounded
   secondary shell with a footer action area.
-- The current Figma `FormSection` source set records explicit token gaps rather
-  than hiding them: runtime `16/20` section-title rhythm, `20px` card padding,
-  the `6px` flat-header gap, and the missing `border/subtle` semantic still sit
-  outside the current canonical token scales.
+- The current Figma `FormSection` boards are now fully token-bound for live
+  paints, type, radius, and spacing. The remaining explicit gap is parity, not
+  missing bindings: Figma now uses nearest shared tokens (`type/label`,
+  `space/8`, `space/24`) where runtime still carries narrower literal geometry,
+  and `border/subtle` still has no dedicated canonical Figma semantic.
 - `LoadingSkeleton` is the canonical skeleton primitive. Placeholders should
   stay neutral and use no more than three tones on a single surface.
 - `EmptyState` is no longer a code-only composed component:
@@ -344,8 +348,9 @@ Current canonical Figma shared-coverage note:
 
 ## Current Implementation Rules
 
-- `Button` is now the first themed runtime slice. Treat `primary`, `quiet`,
-  `soft`, and `ghost` as the canonical family for new work.
+- `Button` is now the first themed runtime slice. Canonical Figma and runtime
+  now both use `primary`, `quiet`, `soft`, and `tertiary`; `ghost` remains
+  only as a compatibility alias for legacy callers.
 - `quiet` now uses a family-owned border instead of borrowing the neutral
   `border/default` rail: canonical Figma binds it to `border/quiet`
   derived from `primary/lift`, and runtime mirrors that through the
@@ -355,13 +360,16 @@ Current canonical Figma shared-coverage note:
   affordance rather than just a tonal rest shell.
 - `Button` should read as one pill-shaped family across sizes, icons, and
   disabled/loading states rather than separate button recipes per surface.
-- The canonical Figma `Button / Foundations` boards still go further than the
-  current runtime size contract: light/dark source sets and the runtime family
-  now both cover `primary | quiet | soft | ghost`, and the state matrices
-  explicitly separate airy `ghost` from bounded-neutral `soft`, but the Figma
-  `Button / Size` boards still trial `sm=36` while runtime stays at `32`.
-  Treat that size step as the remaining adoption gap, not the soft tone
-  itself.
+- The canonical Figma `Button / Foundations` boards now also diverge in tone:
+  light/dark source sets cover `primary | quiet | soft | tertiary`, and the
+  `tertiary` matrix is now text-only neutral with no fill or rest border while
+  keeping `focus/ring` for focus only. Runtime now mirrors that posture and
+  the same `sm=36` step too; the only remaining follow-up is eventual cleanup
+  of deprecated `ghost` call sites outside the shared primitive surface.
+- The latest button-icon follow-up closes the old tertiary glyph drift too:
+  `Button / Icon` now keeps the `BookOpen` glyph on the same neutral token as
+  the `tertiary` label in both light and dark boards, including the glyph
+  strokes that had briefly stayed on a stale local accent.
 - `secondary` remains a compatibility alias for quiet-style usage, and
   `outline` remains available for legacy surfaces that still depend on
   explicit borders.
@@ -478,7 +486,7 @@ Current canonical Figma shared-coverage note:
   `bg/surface + border/default + fg/default` at rest, `bg/inset` on
   hover/pressed, and `fg/subtle` on disabled while keeping the same pill
   geometry as the rest of the family. The remaining adoption candidate is the
-  Figma-side `sm=36` size step, not the `soft` tone itself.
+  runtime/Figma button parity, not the `soft` tone itself.
 - Use this decision rule when evaluating new button-looking surfaces:
   - `variant`: promote only when the posture is meant to work across multiple
     contexts as part of the core family
@@ -489,7 +497,9 @@ Current canonical Figma shared-coverage note:
   - `quiet`: canonical low-contrast filled secondary variant
   - `soft`: canonical bounded-neutral action variant that keeps more presence
     than `quiet` without competing with `primary`
-  - `ghost`: canonical airy low-emphasis action variant
+  - `tertiary`: canonical text-first neutral low-emphasis action variant with
+    no fill or rest border; hover/pressed shift tone only and do not underline,
+    and icon derivatives keep glyph fill/stroke on the same neutral label tone
   - `outline`: legacy bordered variant; keep available for existing surfaces
     and evaluate new bordered patterns against it first
   - `row action`: dedicated table-action family on top of the shared button
@@ -533,7 +543,7 @@ Current canonical Figma shared-coverage note:
     - `/admin/resources/[id]/versions`: adopt `RowActionButton size="md"` for
       `Download / Rollback` because the action cell stays a simple two-action
       version-history surface, and keep that route on the row-action
-      `default / muted` ladder instead of older `quiet / ghost` overrides
+      `default / muted` ladder instead of older `quiet / tertiary` overrides
     - `/admin/resources` main table stays out of scope because its publish /
       restore / edit / menu cluster is denser and not yet justified for the
       larger posture
@@ -654,16 +664,37 @@ Current canonical Figma shared-coverage note:
 - `Badge.warning` and `Badge.featured` now intentionally diverge in the
   canonical Figma base: `warning` stays crisp and alert on `bg/inset` through
   the `support/warning/*` ladder, while `featured` reads as a softer editorial
-  highlight through `accent/sand/wash` fill plus `accent/sand/base` border/text
-  in both light and dark.
+  highlight through `accent/sand/wash` fill plus `accent/sand/dust` stroke and
+  `accent/sand/base` text in both light and dark.
 - `Badge` is the non-interactive semantic label primitive. Use it for status,
   metadata, or read-only emphasis.
+- Interactive DS controls should share one focus contract by default:
+  use `focus/ring` at `2px` for focus-visible treatment instead of inventing
+  per-component focus colors from `action/*`, `state/*`, or product-local
+  tones. If a control needs to diverge, that exception should be explicit in
+  the canonical board and runtime owner, not inferred ad hoc.
 - The canonical Figma `Badge` base now covers `neutral`, `info`, `success`,
   `warning`, `featured`, `destructive`, and `outline` through dedicated light
   and dark `Badge / Foundations` boards.
+- Those same `Badge / Foundations` boards now also carry a small
+  `resource-card badge proofs` section as usage-only guidance: top-left status
+  proves `Owned`, `New`, and `Featured`, while top-right highlight proves
+  `Trending` plus one generic highlight posture (`Recommended`) without
+  promoting those product labels into new primitive variants.
 - The runtime `Badge` primitive now stays on the same canonical set as Figma:
   `neutral`, `info`, `success`, `warning`, `featured`, `destructive`, and
   `outline`.
+- `Badge.featured` should consume the canonical sand family directly in code:
+  `bg-accent-50` fill, `border-accent-300` stroke, `text-accent-200` label
+  instead of older yellow alias classes.
+- Runtime `Badge` tones now also expose dedicated theme-aware vars for
+  `support/info/*`, `support/success/*`, `support/warning/*`, and
+  `state/danger/*` so the primitive can mirror canonical Figma across light and
+  dark without borrowing generic light-only scale classes.
+- Runtime typography now follows canonical Figma more closely as well: shared
+  `heading`, `body`, and `ui` tokens load `IBM Plex Sans Thai` with only the
+  two approved weights (`400` Regular for reading, `600` SemiBold for
+  hierarchy) instead of the older `Noto Sans Thai` runtime stack.
 - Older runtime-only badge aliases (`owned`, `new`, `free`, `default`,
   `secondary`, `ghost`, and `link`) have been cleaned out of the primitive
   contract; if a future route needs one of those ideas again, it should be
@@ -673,11 +704,26 @@ Current canonical Figma shared-coverage note:
   the light/dark source-set wrappers now sit at `cornerRadius=0`, and the
   source-set labels now bind to dedicated `type/badge/size` + `type/badge/line`
   variables instead of staying on local `12/16` overrides.
-- Runtime `Badge.tsx` now consumes the matching `text-badge` size token so the
-  primitive and the canonical Figma set share the same `12/16` badge recipe.
+- Runtime `Badge.tsx` now locks that same `12/16` badge recipe at the root via
+  the shared badge font-size and line-height vars instead of relying on a
+  merge-prone `text-badge` utility class, so text-color variants do not strip
+  the canonical size recipe at runtime, and the primitive now enforces the
+  canonical `24px` shell height directly with a shared minimum-height guard.
 - `Chip` is now reserved for interactive token-like controls only, such as
   filter chips, pressed/selected chips, removable chips, or navigation chips.
   Do not expand `Badge` to cover those interactive contracts once `Chip` lands.
+- Canonical Figma coverage for that split now exists too:
+  `DS Primitives` carries `Chip / Foundations / Light` and
+  `Chip / Foundations / Dark` as a Figma-first contract even before a shared
+  runtime `Chip` primitive exists in code.
+- Those `Chip / Foundations` boards keep scope intentionally narrow:
+  they prove `Navigation chip`, `Filter chip`, and `Removable chip` rows only,
+  with state strips that keep all selected/active postures on the shared
+  selected token family instead of minting new semantic chip tones.
+- Current runtime owners are still local product implementations such as
+  `src/components/marketplace/CategoryChips.tsx` and
+  `src/components/admin/resources/FilterChips.tsx`; compact admin pills remain
+  legacy usage, not a second canonical chip size.
 - Hero surfaces are not generic `card` surfaces. Use the hero semantic layer
   (`heroBackground`, `heroPanel`, `heroChip`, and related roles) instead of
   rebinding hero UI to default card tokens.
@@ -720,7 +766,7 @@ them wholesale.
 | Layout primitives | adapt | adopt | adapt | Keep Krukraft layout helpers, but clarify them as box/stack/sidebar primitives instead of letting wrapper drift grow |
 | Runtime theming | adapt | adapt | adopt | Keep Krukraft theme tokens, but use Radix-style runtime controls as the model for scaling, radius, panel treatment, and theme consistency |
 | Radius and scaling | avoid direct copy | adapt | adopt | Move toward contextual radius/scaling behavior rather than hard-coded per-component values where practical |
-| Component variants | adapt | adapt | adopt | Prefer a small, consistent variant set (`solid`, `soft`, `outline`, `ghost`) instead of route-owned one-off variants |
+| Component variants | adapt | adapt | adopt | Prefer a small, consistent variant set (`solid`, `soft`, `outline`, `tertiary`) instead of route-owned one-off variants |
 | Product-bound DS exports | avoid | adapt | avoid | Keep workflow/product components exported if useful, but do not treat them as foundation primitives |
 
 ### What This Means In Practice
@@ -1079,7 +1125,8 @@ Why this is the correct stopping point:
 - `spacing.ts`
   - compact spacing scale used by DS docs and future layout mapping
 - `radius.ts`
-  - shared radius scale for component shells and pills
+  - shared radius scale for component shells and pills, with `sm+ = 12px`
+    inserted between `sm` and `md`
 - `typography.ts`
   - font families, sizes, line-heights, letter-spacing, font weights, and the
     `typography.scale` contract used by DS docs

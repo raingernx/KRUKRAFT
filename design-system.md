@@ -75,6 +75,8 @@ layer itself is being maintained.
 - spacing, radius, and typography collections
 - hero support token collection
 - reusable component-set properties that map cleanly to code props
+- runtime radius tokens now mirror `radius/sm+ = 12px` between `sm` and `md`,
+  while `radius/xs = 4px` remains Figma-first only
 
 ## Figma Ownership Rules
 
@@ -321,23 +323,29 @@ Current runtime contract to mirror:
   - `lg`: `h-12`, `px-8`, body/sm text
   - `icon`: square icon-only affordance
   - default density resolution: `comfortable -> md`, `compact -> sm`
-- The canonical Figma `Button / Foundations` boards now keep both `ghost` and
-  a bounded neutral `soft` tone, and runtime `Button` now matches that tone
-  directly through the approved `primary | quiet | soft | ghost` family.
+- The canonical Figma `Button / Foundations` boards now keep a text-first
+  neutral `tertiary` tone beside the bounded neutral `soft` tone, while
+  runtime `Button` now mirrors that family directly through
+  `primary | quiet | soft | tertiary`, with `ghost` kept only as a thin
+  compatibility alias.
   `quiet` now keeps a dedicated `border/quiet` stroke derived from
   `primary/lift` instead of borrowing the generic `border/default` rail, but
   the shared button focus posture intentionally promotes the stroke to
   semantic `focus/ring` at `2px` instead of staying on the quieter rest rail.
-  The remaining adoption gap is the Figma-side `sm=36` step on the
-  `Button / Size` boards; keep the current runtime size ladder until a
-  deliberate button-size adoption pass decides whether that `36px` step should
-  graduate into code too.
+  The older `sm=36` adoption gap is now closed too: runtime now uses the same
+  `sm` height as the canonical `Button / Size` boards.
+- The latest button-icon follow-up closes the old tertiary glyph drift too:
+  the canonical `Button / Icon` boards now keep `tertiary` glyph fill and
+  stroke on the same neutral token as the label in both light and dark modes,
+  instead of leaving the icon stroke on a stale local accent.
 - Use the current button decision table when mapping Figma posture into DS:
-  - `primary`, `quiet`, `soft`, and `ghost` are the approved runtime family
+  - canonical Figma now uses `primary`, `quiet`, `soft`, and `tertiary`
+  - runtime now exposes `primary`, `quiet`, `soft`, and `tertiary`
+  - `ghost` survives only as a compatibility alias, not as the canonical tone
   - `outline` remains the bordered fallback and should absorb most existing
     table / inline management actions before a new family member is invented
   - table row actions, pagination items, and panel CTAs should start life as
-    recipes on top of `outline` / `ghost` / future `soft` posture rather than
+    recipes on top of `outline` / `tertiary` / `soft` posture rather than
     immediately becoming new top-level variants
   - the current Figma recipe direction now locks `DataPanelTable` row actions,
     pagination items, and panel CTAs to a rounded-rect `radius/sm (8px)`
@@ -373,7 +381,7 @@ Current runtime contract to mirror:
       because each surface behaves like a light table-action column rather than
       a dense multi-action editor cluster
     - `/admin/resources/[id]/versions` now also drops the older
-      `quiet / ghost` button overrides and rides the row-action
+      `quiet / tertiary` button overrides and rides the row-action
       `default / muted` ladder directly
     - `/admin/resources` main table still stays out of scope because its
       publish/restore/edit/menu cluster is denser and would need a separate
@@ -558,17 +566,53 @@ For reusable Figma component sets:
 - Keep `Badge` and `Chip` as separate DS contracts:
   - `Badge` = non-interactive semantic/status label
   - `Chip` = interactive/removable/filter/navigation token surface
+- Keep one shared interactive focus contract across DS surfaces unless a board
+  explicitly documents an exception:
+  `focus-visible = focus/ring at 2px`.
+- Do not remap focus strokes to `action/*`, `state/*`, or product-local tones
+  just because those colors feel visually close. Focus is its own semantic
+  contract and should be mirrored the same way in Figma and runtime.
+- Canonical Figma coverage now exists for both sides of that split:
+  `Badge / Foundations / Light|Dark` remains the non-interactive label source,
+  while `Chip / Foundations / Light|Dark` now documents the interactive token
+  side as a Figma-first contract.
+- The current `Chip / Foundations` slice is intentionally narrow:
+  it proves `Navigation chip`, `Filter chip`, and `Removable chip` rows only,
+  each through bounded state strips rather than through a larger product scene.
+- Selected chip states should keep sharing the same selected token family
+  across those rows instead of inventing separate active tones per chip type.
+- Runtime still has no shared `Chip.tsx` primitive yet; live owners remain
+  product-local implementations such as
+  `src/components/marketplace/CategoryChips.tsx` and
+  `src/components/admin/resources/FilterChips.tsx`, and compact admin pills
+  should migrate into those canonical postures instead of reopening a second
+  chip-size ladder prematurely.
 - The canonical Figma `Badge` base now lives in `Badge / Foundations / Light`
   and `Badge / Foundations / Dark`, with source sets that cover `neutral`,
   `info`, `success`, `warning`, `featured`, `destructive`, and `outline`.
+- Those `Badge / Foundations` boards now also include a usage-only
+  `resource-card badge proofs` block: top-left status proves `Owned`, `New`,
+  and `Featured`, while top-right highlight proves `Trending` plus a generic
+  highlight posture (`Recommended`) without turning those product labels into
+  new primitive variants.
 - The latest canonical badge tuning now separates the two warm semantics on
   purpose: `warning` stays alert through `bg/inset` plus
   `support/warning/base|dust`, while `featured` stays softer and more editorial
-  through `accent/sand/wash` fill with `accent/sand/base` border/text. Keep
-  that split intact instead of collapsing both variants back onto the same warm
-  recipe.
+  through `accent/sand/wash` fill with `accent/sand/dust` stroke and
+  `accent/sand/base` text. Keep that split intact instead of collapsing both
+  variants back onto the same warm recipe.
 - Runtime `Badge.tsx` now stays on that same canonical set and follows the
-  `warning` / `featured` split directly.
+  `warning` / `featured` split directly; `featured` should consume the sand
+  family in runtime through `accent-50` fill, `accent-300` stroke, and
+  `accent-200` text instead of older yellow alias classes. The badge status
+  variants now also use dedicated runtime theme vars for `support/info/*`,
+  `support/success/*`, `support/warning/*`, and `state/danger/*` so dark-mode
+  badge tones can match canonical Figma instead of falling back to light-only
+  generic scales.
+- Runtime typography now follows the same base family as canonical Figma too:
+  shared `heading`, `body`, and `ui` tokens load `IBM Plex Sans Thai` with the
+  same two-weight contract (`400` Regular, `600` SemiBold) instead of the older
+  `Noto Sans Thai` runtime stack.
 - The earlier runtime-only badge aliases (`owned`, `new`, `free`, `default`,
   `secondary`, `ghost`, `link`) have now been removed from the shared primitive
   contract; future product-specific label needs should be solved by deliberate
@@ -579,26 +623,33 @@ For reusable Figma component sets:
   `cornerRadius=0`, and the seven badge labels now bind to dedicated
   `type/badge/size` + `type/badge/line` variables instead of local `12/16`
   overrides.
-- Runtime `Badge.tsx` now consumes the same `text-badge` `12/16` size token,
-  so the primitive and the canonical badge source sets no longer diverge on
-  size/line-height.
+- Runtime `Badge.tsx` now locks the same `12/16` badge recipe at the root via
+  shared badge font-size and line-height vars, so text-color variants no longer
+  strip the canonical size/line-height contract through class merging, and the
+  primitive now enforces the canonical `24px` shell height directly instead of
+  leaving runtime badges at a shorter content-derived height.
 - The current dark source set for that canonical badge block now lives at
-  `746:208`; repo mapping should follow the live node instead of the earlier
-  `736:206` id from the first landing pass.
+  `1494:1803`; repo mapping should follow the live node instead of the earlier
+  `746:208` / `736:206` ids from the first landing pass.
 - Do not solve interactive chip needs by adding more `Badge` variants just
   because the silhouette is similar.
 - The canonical Figma `FormSection` base now lives in
   `FormSection / Foundations / Light` and `FormSection / Foundations / Dark`,
   with source sets that cover only `variant=flat` and `variant=card`.
+- The foundations boards now also carry usage-only optional-structure proofs
+  for `flat / no-description` and `card / no-footer`; these examples exist to
+  prove optional header/footer posture without widening the variant contract.
 - Keep `flat` as the default divider-first settings/admin section shell and
   reserve `card` for clearly bounded secondary sections that intentionally sit
   on top of the `Card` + `Surface` family.
-- The current canonical `FormSection` board keeps its runtime geometry gaps
-  explicit instead of inventing fake tokens:
-  - section titles still use local `16/20`
-  - field labels still use local `14/20`
-  - `card` still keeps local `20px` padding
-  - `flat` still keeps the local `6px` header gap
+- The current canonical `FormSection` boards are now fully bound for live
+  paints, text props, radius, and spacing. The remaining explicit gap is
+  parity rather than missing bindings:
+  - live Figma now normalizes former local title/label values onto shared
+    `type/label` (`14/20`)
+  - live Figma now normalizes former local `6px` and `20px` spacing onto
+    shared `space/8` and `space/24`
+  - runtime still carries narrower literal geometry in places
   - divider/footer separators still rely on `border/default` until a dedicated
     `border/subtle` semantic exists
 - The current dark source set for that canonical `FormSection` block now lives
@@ -637,11 +688,12 @@ For reusable Figma component sets:
   - the table-head fill remains a route-owned local treatment rather than a
     shared semantic token
 - The earlier `ghost action` footer study has now been folded into the Figma
-  button source as a bounded neutral `soft` direction that sits beside
-  `ghost`, not on top of it. That move is no longer Figma-only: runtime now
-  adopts `soft` as a real shared tone too. The remaining open decision is the
-  Figma `sm=36` size trial, not whether the `soft` tone itself belongs in the
-  shared family.
+  button source as a bounded neutral `soft` direction that now sits beside
+  text-first `tertiary`, not the older `ghost` posture. That move is no longer
+  Figma-only: runtime now adopts both `soft` and `tertiary` as real shared
+  tones too. The old `sm=36` size trial is now landed in runtime as well, so
+  the remaining follow-up is deprecating compatibility aliases rather than
+  deciding whether the tone family itself belongs in shared UI.
 
 ## Figma Implementation Fidelity Workflow
 
@@ -695,10 +747,13 @@ At a high level:
   - the same re-audit also confirms the old dark `light recipe` subtitle drift
     is gone
   - that same re-audit also showed a live design-vs-runtime contract gap:
-    Figma now expresses `quiet` / `ghost` state foreground changes more
-    explicitly than the current runtime `Button.tsx` variant contract does, so
-    treat the canonical Figma file as the design base and the runtime button
-    recipe as adoption drift until code is updated
+    Figma now expresses `quiet` / `tertiary` state foreground changes more
+    explicitly than the current runtime `Button.tsx` variant contract does,
+    and the runtime now mirrors that rename directly, so treat any remaining
+    `ghost` references as compatibility cleanup rather than live DS drift
+  - the tertiary icon audit is now closed too: the canonical `Button / Icon`
+    derivatives no longer leave their glyph strokes on a stale orange local
+    paint; label and icon now share the same neutral token in both modes
   - the current `Button recipes` card is now part of that audited truth too:
     `Row action` keeps an `Edit / Open` example row plus a compact
     `Default|Hover|Focus|Pressed|Disabled` state strip, `Pagination item`
@@ -898,9 +953,12 @@ At a high level:
     fills/strokes on the live source/hierarchy blocks remain token-bound too
   - the remaining live `Surface` debt is now narrower than the older repo notes
     claimed:
-    - the only remaining local-radius gap on the live nodes is `shell zone`
-      (`20`) in the hierarchy card
     - the live dark source/hierarchy ids are `627:633` and `627:646`
+    - the hierarchy demo now matches the source-set shell ladder directly too:
+      `panel = bg/surface`, `subtle = bg/canvas`, `muted = bg/inset`, and the
+      inner `panel / subtle / muted / popover / support` shells now all sit on
+      `16px` radius while the outer `shell zone` now binds to `radius/lg (24px)`
+      instead of keeping the older local `20` posture
   - the current `Surface` board copy itself is now partially stale: it still
     warns about a broader token-gap story (`border/subtle`, `bg-muted`,
     `radius/12`, `space/20`) even though the live subtle/muted/popover/support
