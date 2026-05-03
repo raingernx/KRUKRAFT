@@ -631,6 +631,18 @@ For reusable Figma component sets:
 - The current `PillLink / Foundations` slice stays intentionally narrow:
   it proves `section-header pill-link` only, with `default`, `hover`,
   `focus-visible`, and `disabled` states on the compact `32px` shell.
+- The current canonical source sets now live at light `1842:408` and dark
+  `1842:466`, with a `View all` label + shared `ArrowRight` icon instance on
+  the same `32px` shell. The current board geometry also follows the standard
+  foundations pattern now: usage card `24` padding / `8` gap, variants card
+  `32` padding / `24` gap, and source-set shell `12` padding / `12` gap.
+  Current token bindings are explicit:
+  `default = action/primary`, `hover = bg/inset + fg/default`,
+  `focus-visible = focus/ring 2px + action/primary`, and
+  `disabled = fg/subtle`.
+- The shell contract is now explicitly left/right-asymmetric for browse-link
+  posture instead of chip-like symmetry: `height=32`,
+  `padding = 4 / 12 / 4 / 16`, `label-icon gap = 8`, and `icon = 14`.
 - Its scope is intentionally smaller than `Chip`: treat it as a
   section-header secondary-navigation affordance only. Do not pull
   empty-state pill links, card-footer text CTAs, or read-only tokens into this

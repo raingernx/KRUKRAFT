@@ -224,6 +224,18 @@ Use this order when DS docs disagree:
 - The current foundations slice stays intentionally narrow:
   it proves `section-header pill-link` only, with `default`, `hover`,
   `focus-visible`, and `disabled` states on the compact `32px` shell.
+- The current canonical source sets now live at light `1842:408` and dark
+  `1842:466`, with a `View all` label + shared `ArrowRight` icon instance on
+  the same `32px` shell. The current board geometry also follows the standard
+  foundations page rhythm now: usage card `24` padding / `8` gap, variants
+  card `32` padding / `24` gap, and source-set shell `12` padding / `12` gap.
+  Current token bindings are explicit:
+  `default = action/primary`, `hover = bg/inset + fg/default`,
+  `focus-visible = focus/ring 2px + action/primary`, and
+  `disabled = fg/subtle`.
+- The shell contract is explicitly browse-link specific rather than chip-like:
+  `height=32`, `padding = 4 / 12 / 4 / 16`, `label-icon gap = 8`,
+  `icon = 14`, and the arrow remains a DS source instance.
 - Use `src/design-system/primitives/PillLink.tsx` only for section-header
   browse actions such as `View all` and `Browse everything`. The current
   runtime owners are `ResourcesPageContent` and

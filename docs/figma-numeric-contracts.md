@@ -209,6 +209,94 @@ Copy this block before implementing a new Figma-backed component.
 - Runtime proof: `NotificationButton` Storybook counts and `NotificationBell`
   topbar usage
 
+### PillLink
+
+- Scope: bounded section-header browse-link shell only, not empty-state pill
+  links, card-footer text CTAs, or read-only token pills
+- Canonical nodes:
+  - light board `1842:392`
+  - dark board `1842:450`
+  - light source set `1842:408`
+  - dark source set `1842:466`
+- Runtime owner: `src/design-system/primitives/PillLink.tsx`
+- Variants in scope: `state=default|hover|focus-visible|disabled`
+
+#### Shell
+- Width: hug by content
+- Height: `32`
+- Usage card shell:
+  - padding `24`
+  - gap `8`
+  - radius `24`
+- Variants card shell:
+  - padding `32`
+  - gap `24`
+  - radius `24`
+- Source-set shell:
+  - padding `12`
+  - gap `12`
+- Padding:
+  - top `4`
+  - right `12`
+  - bottom `4`
+  - left `16`
+- Gap: `8`
+- Radius: pill / full
+- Border:
+  - default `0`
+  - hover `0`
+  - focus-visible `2`
+  - disabled `0`
+- Background:
+  - default none
+  - hover `bg/inset`
+  - focus-visible none
+  - disabled none
+
+#### Child Geometry
+- Label: `View all`
+- Icon wrapper: DS `ArrowRight` instance
+- Icon: `14 x 14`
+- Label/icon gap: `8`
+
+#### DOM Sibling Structure
+- Parent stack: one inline row only
+- Child order: `label` then `ArrowRight`
+- Sibling groups: none
+- Gap owner: pill-link shell owns `8`
+- Notes on nodes that must stay separate: icon remains a DS source instance,
+  not a typed glyph or ad-hoc vector copy
+
+#### Typography
+- Label: `text-small`, semibold, `20` line-height
+
+#### Variant Rules
+- default:
+  - text/icon `action/primary`
+- hover:
+  - fill `bg/inset`
+  - text/icon `fg/default`
+- focus-visible:
+  - stroke `focus/ring` at `2px`
+  - text/icon `action/primary`
+- disabled:
+  - text/icon `fg/subtle`
+
+#### Runtime Notes
+- Parent-owned: section-header layout, `self-start → sm:self-auto`
+- Route-owned: browse-link copy such as `View all`, `Browse everything`,
+  `Open marketplace`
+- Known token gaps: none for the current bounded shell
+- Figma QA note: light source-set child `1842:411` was repaired back to
+  `state=hover` so the canonical light set once again resolves as a valid
+  four-state source set instead of carrying a broken variant name
+
+#### Proof
+- Figma screenshot:
+  - `PillLink / Foundations / Light` `1842:392`
+  - `PillLink / Foundations / Dark` `1842:450`
+- Runtime proof route/harness: `/resources`
+
 ### PickerControls
 
 - Scope: bounded admin picker shell family only, not upload-progress copy,
