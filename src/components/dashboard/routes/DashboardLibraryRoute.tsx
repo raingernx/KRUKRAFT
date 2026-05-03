@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   CardContent,
+  chipVariants,
   EmptyState,
   Input,
   LoadingSkeleton,
@@ -18,7 +19,6 @@ import type {
   DashboardLibraryFilterKey,
 } from "@/services/dashboard/library.service";
 import { getDashboardLibraryHref } from "@/services/dashboard/library.service";
-import { cn } from "@/lib/utils";
 import { routes } from "@/lib/routes";
 
 const DASHBOARD_LIBRARY_FILTERS: Array<{
@@ -164,12 +164,10 @@ function DashboardLibraryToolbar({ data }: { data: DashboardLibraryData }) {
                   <Link
                     key={entry.key}
                     href={href}
-                    className={cn(
-                      "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
-                      isActive
-                        ? "border border-primary/30 bg-primary/10 text-primary"
-                        : "border border-border-subtle bg-card text-muted-foreground hover:bg-muted hover:text-foreground",
-                    )}
+                    className={chipVariants({
+                      variant: "filter",
+                      selected: isActive,
+                    })}
                   >
                     {entry.label}
                   </Link>
@@ -178,7 +176,7 @@ function DashboardLibraryToolbar({ data }: { data: DashboardLibraryData }) {
               {hasActiveControls ? (
                 <Link
                   href={getDashboardLibraryHref({ payment })}
-                  className="rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  className="inline-flex min-h-10 items-center text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
                   Clear
                 </Link>
@@ -364,12 +362,12 @@ function DashboardLibraryBodyLoadingContent() {
           </div>
           <div className="space-y-3 xl:w-72">
             <LoadingSkeleton className="h-4 w-24 xl:ml-auto" />
-            <div className="flex flex-wrap gap-2 xl:justify-end">
-              {Array.from({ length: 4 }).map((_, index) => (
-                <LoadingSkeleton key={index} className="h-8 w-20 rounded-full" />
-              ))}
+              <div className="flex flex-wrap gap-2 xl:justify-end">
+                {Array.from({ length: 4 }).map((_, index) => (
+                <LoadingSkeleton key={index} className="h-10 w-20 rounded-full" />
+                ))}
+              </div>
             </div>
-          </div>
         </div>
       </div>
 

@@ -852,6 +852,92 @@ Copy this block before implementing a new Figma-backed component.
   - resource cards / discover hero pills / resource detail status labels now
     route through the shared primitive instead of local rounded-pill shells
 
+### Chip
+
+- Scope: interactive token control primitive only, not badge/status labels or
+  pill-style CTA links
+- Canonical nodes:
+  - light board `1757:368`
+  - dark board `1757:411`
+- Runtime owner: `src/design-system/primitives/Chip.tsx`
+- Variants in scope: `navigation | filter | removable`
+
+#### Shell
+- Width: content-owned
+- Height: `40`
+- Padding: `16` horizontal
+- Gap: `8`
+- Radius: full pill
+- Border: `1`
+- Background:
+  - rest shell is variant-owned
+  - selected stays on one shared selected family across chip types
+  - pending stays selected-but-waiting and is subtler than active
+
+#### Child Geometry
+- Optional leading icon: `16`
+- Remove button wrapper: `20 x 20`
+- Remove icon: `16 x 16`
+- Label stays centered in one inline row
+
+#### DOM Sibling Structure
+- Parent stack: one inline-flex row
+- Child order:
+  - navigation/filter = label only
+  - removable = label -> remove button
+- Sibling groups:
+  - removable chips keep the remove affordance as its own button sibling
+  - do not nest remove affordance into the label node
+- Gap owner: chip root owns the inline gap
+- Notes on nodes that must stay separate: removable chips must not collapse
+  into a single button wrapper because the remove affordance needs its own
+  focus target and action semantics
+
+#### Typography
+- Label: shared label recipe `14/20`, semibold
+
+#### Variant Rules
+- `navigation`
+  - default = neutral browse token
+  - `selected` = shared selected family
+  - `pending` = selected-but-waiting posture, subtler than active
+- `filter`
+  - default = applied-control shell
+  - `selected` = shared selected family
+- `removable`
+  - default = applied-token shell with nested remove affordance
+  - `focus-visible` uses `focus/ring` at `2px`
+
+#### Runtime Notes
+- Parent-owned: routing, query semantics, selected sets, remove handlers
+- Route-owned: copy, icon choice, grouping, and dimming rules during async nav
+- Selected runtime surfaces now bind through the shared semantic aliases
+  `--state-selected-fill` and `--state-selected-stroke`, while the active chip
+  label stays on `fg/default` instead of rebinding chip-active UI directly to
+  raw `primary/*` utilities.
+- Shared runtime adoption now covers:
+  - `src/components/marketplace/CategoryChips.tsx`
+  - `src/components/marketplace/HeroSearch.tsx`
+  - `src/components/dashboard/routes/DashboardLibraryRoute.tsx`
+  - `src/components/library/LibraryGridClient.tsx`
+  - `src/components/admin/resources/FilterChips.tsx`
+  - `src/components/admin/resources/TagInput.tsx`
+  - `src/app/admin/analytics/recommendations/page.tsx`
+  - `src/app/admin/analytics/purchases/page.tsx`
+  - `src/app/admin/analytics/creator-activation/page.tsx`
+  - `src/components/resources/detail/TagList.tsx`
+  - `src/components/resources/detail/ResourceDetailSections.tsx`
+- Known token gaps: none for the current bounded primitive contract
+
+#### Proof
+- Figma screenshot:
+  - `Chip / Foundations / Light` `1757:368`
+  - `Chip / Foundations / Dark` `1757:411`
+- Runtime proof:
+  - category navigation chips on `/resources`
+  - admin removable filter pills
+  - selected tag pills in admin tag input
+
 ### Input
 
 - Scope: shared text-field shell only, not search-specific affordances

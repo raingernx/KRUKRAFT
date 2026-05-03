@@ -2,7 +2,7 @@
 
 import { startTransition, useState, useTransition } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { ChipButton } from "@/design-system";
 import { beginResourcesNavigation } from "@/components/marketplace/resourcesNavigationState";
 
 const CATEGORY_CHIP_PREFETCH_LIMIT = 6;
@@ -75,24 +75,18 @@ export function DiscoverButton() {
   }
 
   return (
-    <button
-      type="button"
+    <ChipButton
+      variant="navigation"
       onClick={handleClick}
       onMouseEnter={() => prefetchCategoryChipHref(router, discoverUrl)}
       onFocus={() => prefetchCategoryChipHref(router, discoverUrl)}
       disabled={isPending}
       aria-label="ค้นหาทรัพยากร"
-      aria-busy={isPending}
-      className={cn(
-        "inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-4 text-base font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70",
-        isDiscover
-          ? "border-primary-300 bg-primary-100 text-primary-800 shadow-sm"
-          : "border-border-strong bg-background text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground",
-        isPending && "cursor-wait opacity-70"
-      )}
+      selected={isDiscover}
+      pending={isPending && !isDiscover}
     >
       ค้นหา
-    </button>
+    </ChipButton>
   );
 }
 
@@ -178,32 +172,16 @@ function Chip({
   className?: string;
 }) {
   return (
-    <button
-      type="button"
+    <ChipButton
+      variant="navigation"
       onClick={onClick}
       disabled={anyPending}
-      aria-pressed={active}
-      aria-busy={pending}
-      className={chipClassName(active, pending, anyPending, className)}
+      selected={active}
+      pending={pending}
+      dimmed={anyPending && !pending && !active}
+      className={className}
     >
       {label}
-    </button>
-  );
-}
-
-function chipClassName(
-  active: boolean,
-  pending: boolean,
-  anyPending: boolean,
-  className?: string,
-) {
-  return cn(
-    "inline-flex h-10 shrink-0 items-center whitespace-nowrap rounded-full border px-4 text-base font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70",
-    active || pending
-      ? "border-primary-400 bg-primary-100 text-primary-900 shadow-sm"
-      : "border-border-strong bg-background text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground",
-    pending && "cursor-wait opacity-75",
-    anyPending && !pending && !active && "opacity-40",
-    className,
+    </ChipButton>
   );
 }

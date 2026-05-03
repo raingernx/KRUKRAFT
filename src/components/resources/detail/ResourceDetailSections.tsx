@@ -5,7 +5,7 @@ import { TagList } from "./TagList";
 import { CreatorCard } from "./CreatorCard";
 import { RelatedResources } from "./RelatedResources";
 import { ResourceReviews } from "./ResourceReviews";
-import { LoadingSkeleton } from "@/design-system";
+import { LoadingSkeleton, chipVariants } from "@/design-system";
 import { getBuildSafePlatformConfig } from "@/services/platform";
 import {
   getResourceDetailPageBodyContent,
@@ -76,7 +76,7 @@ export function ResourceDetailFooterFallback() {
         <LoadingSkeleton className="h-5 w-16 rounded-lg" />
         <div className="flex flex-wrap gap-2">
           {[72, 96, 64, 88, 80].map((w) => (
-            <LoadingSkeleton key={w} className="h-8 rounded-full" style={{ width: w }} />
+            <LoadingSkeleton key={w} className="h-10 rounded-full" style={{ width: w }} />
           ))}
         </div>
       </div>
@@ -140,13 +140,13 @@ export function ResourceDetailRelatedQuickLinks({
       <div className="flex flex-wrap gap-2">
         <Link
           href={`/categories/${categorySlug}`}
-          className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-primary-700 transition hover:border-primary-200 hover:bg-primary-50"
+          className={chipVariants({ variant: "navigation" })}
         >
           Browse {categoryName}
         </Link>
         <Link
           href="/resources?sort=newest"
-          className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-primary-700 transition hover:border-primary-200 hover:bg-primary-50"
+          className={chipVariants({ variant: "navigation" })}
         >
           See newest picks
         </Link>

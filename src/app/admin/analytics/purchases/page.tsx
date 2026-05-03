@@ -16,7 +16,7 @@ import {
   CreditCard,
   ArrowDown,
 } from "@/lib/icons";
-import { Button, Input } from "@/design-system";
+import { Button, Input, chipVariants } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { TableToolbar } from "@/components/admin/table";
 import { AdminAnalyticsPurchasesResultsSkeleton } from "@/components/skeletons/AdminAnalyticsRouteSkeletons";
@@ -98,11 +98,7 @@ function PresetButtons({
           <a
             key={p.label}
             href={href}
-            className={`whitespace-nowrap rounded-full px-3 py-1 font-ui text-caption font-medium transition-colors ${
-              isActive
-                ? "bg-primary-700 text-white"
-                : "bg-secondary text-secondary-foreground hover:bg-accent hover:text-foreground"
-            }`}
+            className={chipVariants({ variant: "filter", selected: isActive })}
           >
             {p.label}
           </a>

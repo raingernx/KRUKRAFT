@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Search, X } from "@/lib/icons";
+import { Chip, ChipRemoveButton } from "@/design-system";
 
 export interface TagInputOption {
   id: string;
@@ -123,20 +124,17 @@ export function TagInput({
       {selectedTags.length > 0 && (
         <div className="mb-2 flex flex-wrap gap-2">
           {selectedTags.map((t) => (
-            <span
+            <Chip
               key={t.id}
-              className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-foreground"
+              variant="removable"
+              className="gap-1.5 pr-3"
             >
-              {t.name.toLowerCase()}
-              <button
-                type="button"
+              <span>{t.name.toLowerCase()}</span>
+              <ChipRemoveButton
                 onClick={() => remove(t.id)}
-                className="rounded-full p-0.5 text-muted-foreground transition hover:bg-background hover:text-foreground"
                 aria-label={`Remove tag ${t.name}`}
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </span>
+              />
+            </Chip>
           ))}
         </div>
       )}

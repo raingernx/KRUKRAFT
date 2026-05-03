@@ -3,6 +3,13 @@ export type { ButtonProps, ButtonSize, ButtonVariant } from "./Button";
 export { Avatar } from "./Avatar";
 export { Badge, badgeVariants } from "./Badge";
 export {
+  Chip,
+  ChipButton,
+  ChipRemoveButton,
+  chipRemoveButtonVariants,
+  chipVariants,
+} from "./Chip";
+export {
   Card,
   CardHeader,
   CardFooter,

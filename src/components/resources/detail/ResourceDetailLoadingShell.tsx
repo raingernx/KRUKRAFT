@@ -88,7 +88,7 @@ function ResourceDetailFooterFallback() {
         <LoadingSkeleton className="h-5 w-16 rounded-lg" />
         <div className="flex flex-wrap gap-2">
           {[72, 96, 64, 88, 80].map((w) => (
-            <LoadingSkeleton key={w} className="h-8 rounded-full" style={{ width: w }} />
+            <LoadingSkeleton key={w} className="h-10 rounded-full" style={{ width: w }} />
           ))}
         </div>
       </div>
@@ -147,7 +147,7 @@ function ResourceDetailRelatedQuickLinks({
       </div>
       <div className="flex flex-wrap gap-2">
         {[120, 116].map((width) => (
-          <LoadingSkeleton key={width} className="h-8 rounded-full" style={{ width }} />
+          <LoadingSkeleton key={width} className="h-10 rounded-full" style={{ width }} />
         ))}
       </div>
       <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
@@ -299,7 +299,7 @@ function ManualResourceDetailLoadingShell() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {[112, 132, 120].map((width) => (
-                    <LoadingSkeleton key={width} className="h-8 rounded-full" style={{ width }} />
+                    <LoadingSkeleton key={width} className="h-10 rounded-full" style={{ width }} />
                   ))}
                 </div>
                 <div className="space-y-2">

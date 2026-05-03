@@ -118,6 +118,8 @@
     --on-fill-dark:          30.0 50.0% 99.2%;
     --on-fill-light:         280.0 6.5% 18.0%;
     --danger-text:           0 73.7% 49.0%;
+    --state-selected-fill:   hsl(var(--primary-quiet));
+    --state-selected-stroke: hsl(var(--border-quiet));
     --support-info-soft:     #eff6ff;
     --support-info-base:     #2563eb;
     --support-info-dust:     #1d4ed8;
@@ -209,6 +211,8 @@
     --on-fill-dark:          282.9 28.0% 95.1%;
     --on-fill-light:         246.7 22.0% 8.0%;
     --danger-text:           0 83.2% 67.8%;
+    --state-selected-fill:   hsl(var(--primary-quiet));
+    --state-selected-stroke: hsl(var(--border-quiet));
     --support-info-soft:     #172554;
     --support-info-base:     #60a5fa;
     --support-info-dust:     #93c5fd;

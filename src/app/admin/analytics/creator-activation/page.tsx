@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { chipVariants } from "@/design-system";
 import { getCreatorActivationFunnel } from "@/services/analytics";
 import { ArrowRight, Users, MousePointerClick, FilePlus, Rocket } from "@/lib/icons";
 import { AdminAnalyticsCreatorActivationResultsSkeleton } from "@/components/skeletons/AdminAnalyticsRouteSkeletons";
@@ -56,11 +57,7 @@ function PresetButtons({ start, end }: { start: string | null; end: string | nul
           <a
             key={p.label}
             href={href}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-              isActive
-                ? "bg-foreground text-background"
-                : "bg-secondary text-secondary-foreground hover:bg-accent hover:text-foreground"
-            }`}
+            className={chipVariants({ variant: "filter", selected: isActive })}
           >
             {p.label}
           </a>

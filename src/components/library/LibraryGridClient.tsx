@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal } from "@/lib/icons";
-import { SearchInput } from "@/design-system";
+import { ChipButton, SearchInput } from "@/design-system";
 import { ResourceCard, type ResourceCardResource } from "@/design-system/product";
 import { LIBRARY_GRID_CLASSES } from "./LibraryGrid";
 
@@ -98,14 +98,6 @@ export function LibraryGridClient({ items }: LibraryGridClientProps) {
     });
   }, [preparedItems, search, activeFilter]);
 
-  const makeFilterButtonClass = (key: FilterKey) =>
-    [
-      "rounded-full px-3 py-1.5 text-small font-medium transition-colors whitespace-nowrap",
-      activeFilter === key
-        ? "bg-primary-50 text-primary-700 ring-1 ring-primary-200"
-        : "bg-card text-muted-foreground ring-1 ring-border hover:bg-muted hover:text-foreground",
-    ].join(" ");
-
   return (
     <div className="space-y-5">
       <div className="rounded-lg border border-border bg-card p-4 sm:p-5">
@@ -152,34 +144,34 @@ export function LibraryGridClient({ items }: LibraryGridClientProps) {
               <SlidersHorizontal className="h-3.5 w-3.5" />
               Filter
             </span>
-            <button
-              type="button"
-              className={makeFilterButtonClass("all")}
+            <ChipButton
+              variant="filter"
+              selected={activeFilter === "all"}
               onClick={() => setActiveFilter("all")}
             >
               All
-            </button>
-            <button
-              type="button"
-              className={makeFilterButtonClass("pdf")}
+            </ChipButton>
+            <ChipButton
+              variant="filter"
+              selected={activeFilter === "pdf"}
               onClick={() => setActiveFilter("pdf")}
             >
               PDF
-            </button>
-            <button
-              type="button"
-              className={makeFilterButtonClass("worksheets")}
+            </ChipButton>
+            <ChipButton
+              variant="filter"
+              selected={activeFilter === "worksheets"}
               onClick={() => setActiveFilter("worksheets")}
             >
               Worksheets
-            </button>
-            <button
-              type="button"
-              className={makeFilterButtonClass("templates")}
+            </ChipButton>
+            <ChipButton
+              variant="filter"
+              selected={activeFilter === "templates"}
               onClick={() => setActiveFilter("templates")}
             >
               Templates
-            </button>
+            </ChipButton>
           </div>
         </div>
       </div>

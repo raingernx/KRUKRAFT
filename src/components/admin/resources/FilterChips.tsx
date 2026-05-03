@@ -1,8 +1,6 @@
 "use client";
 
-import { X } from "@/lib/icons";
-
-import { Button } from "@/design-system";
+import { Button, Chip, ChipRemoveButton } from "@/design-system";
 
 type FilterKey = "search" | "status" | "categoryId";
 
@@ -61,25 +59,22 @@ export function FilterChips({
   if (!chips.length) return null;
 
   return (
-    <div className="mb-3 flex flex-wrap items-center gap-2 text-xs">
+    <div className="mb-3 flex flex-wrap items-center gap-2">
       {chips.map((chip) => (
-        <div
+        <Chip
           key={chip.key}
-          className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2.5 py-1 text-xs text-muted-foreground"
+          variant="removable"
+          className="gap-1.5 pr-3"
         >
-          <span className="font-medium">
+          <span className="font-medium text-muted-foreground">
             {chip.label}:{" "}
             <span className="font-normal text-foreground">{chip.value}</span>
           </span>
-          <button
-            type="button"
+          <ChipRemoveButton
             onClick={() => onRemove(chip.key)}
-            className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full text-muted-foreground hover:bg-background hover:text-foreground"
             aria-label={`Clear ${chip.label.toLowerCase()} filter`}
-          >
-            <X className="h-3 w-3" />
-          </button>
-        </div>
+          />
+        </Chip>
       ))}
 
       {chips.length > 1 && onClearAll && (

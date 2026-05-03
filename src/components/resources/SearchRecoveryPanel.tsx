@@ -3,7 +3,7 @@
 import { Skeleton } from "boneyard-js/react";
 import Link from "next/link";
 import { Compass, Search, Sparkles } from "@/lib/icons";
-import { LoadingSkeleton } from "@/design-system";
+import { chipVariants, LoadingSkeleton } from "@/design-system";
 import { routes } from "@/lib/routes";
 import type { SearchRecoveryData } from "@/services/search";
 
@@ -60,7 +60,7 @@ export function SearchRecoveryPanel({
               <Link
                 key={suggestion}
                 href={routes.marketplaceSearch(suggestion)}
-                className="inline-flex items-center rounded-xl border border-border-subtle bg-background px-3.5 py-2 text-sm font-medium text-foreground transition hover:border-border hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className={chipVariants({ variant: "filter" })}
               >
                 {suggestion}
               </Link>
@@ -79,7 +79,7 @@ export function SearchRecoveryPanel({
               <Link
                 key={match.slug}
                 href={routes.marketplaceCategory(match.slug)}
-                className="inline-flex items-center rounded-xl border border-border-subtle bg-background px-3.5 py-2 text-sm font-medium text-foreground transition hover:border-border hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className={chipVariants({ variant: "navigation" })}
               >
                 {match.name}
               </Link>
@@ -98,7 +98,7 @@ export function SearchRecoveryPanel({
               <Link
                 key={match.slug}
                 href={routes.marketplaceTag(match.slug)}
-                className="inline-flex items-center rounded-xl border border-border-subtle bg-background px-3.5 py-2 text-sm font-medium text-foreground transition hover:border-border hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className={chipVariants({ variant: "navigation" })}
               >
                 #{match.name}
               </Link>
@@ -149,26 +149,26 @@ export function SearchRecoveryPanelFallback() {
       <section className="space-y-2.5">
         <LoadingSkeleton className="h-3 w-32 rounded" />
         <div className="flex flex-wrap gap-2">
-          <LoadingSkeleton className="h-9 w-28 rounded-full" />
-          <LoadingSkeleton className="h-9 w-32 rounded-full" />
-          <LoadingSkeleton className="h-9 w-24 rounded-full" />
+          <LoadingSkeleton className="h-10 w-28 rounded-full" />
+          <LoadingSkeleton className="h-10 w-32 rounded-full" />
+          <LoadingSkeleton className="h-10 w-24 rounded-full" />
         </div>
       </section>
 
       <section className="space-y-2.5">
         <LoadingSkeleton className="h-3 w-36 rounded" />
         <div className="flex flex-wrap gap-2">
-          <LoadingSkeleton className="h-9 w-32 rounded-full" />
-          <LoadingSkeleton className="h-9 w-28 rounded-full" />
+          <LoadingSkeleton className="h-10 w-32 rounded-full" />
+          <LoadingSkeleton className="h-10 w-28 rounded-full" />
         </div>
       </section>
 
       <section className="space-y-2.5">
         <LoadingSkeleton className="h-3 w-24 rounded" />
         <div className="flex flex-wrap gap-2">
-          <LoadingSkeleton className="h-9 w-20 rounded-full" />
-          <LoadingSkeleton className="h-9 w-24 rounded-full" />
-          <LoadingSkeleton className="h-9 w-28 rounded-full" />
+          <LoadingSkeleton className="h-10 w-20 rounded-full" />
+          <LoadingSkeleton className="h-10 w-24 rounded-full" />
+          <LoadingSkeleton className="h-10 w-28 rounded-full" />
         </div>
       </section>
 

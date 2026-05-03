@@ -8,6 +8,7 @@ import {
   CardContent,
   Button,
   Input,
+  chipVariants,
 } from "@/design-system";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { TableToolbar } from "@/components/admin/table";
@@ -81,11 +82,7 @@ function PresetButtons({ start, end }: { start: string | null; end: string | nul
           <a
             key={p.label}
             href={href}
-            className={`whitespace-nowrap rounded-full px-3 py-1 font-ui text-caption font-medium transition-colors ${
-              isActive
-                ? "bg-primary-700 text-white"
-                : "bg-muted text-muted-foreground hover:bg-background hover:text-foreground"
-            }`}
+            className={chipVariants({ variant: "filter", selected: isActive })}
           >
             {p.label}
           </a>

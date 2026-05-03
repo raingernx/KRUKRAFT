@@ -710,7 +710,7 @@ function DashboardRouteContentSkeletonBody({
                 {Array.from({ length: 4 }).map((_, index) => (
                   <LoadingSkeleton
                     key={index}
-                    className="h-8 w-20 rounded-full"
+                    className="h-10 w-20 rounded-full"
                   />
                 ))}
               </div>

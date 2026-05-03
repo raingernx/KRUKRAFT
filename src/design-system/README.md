@@ -54,6 +54,7 @@ When this file conflicts with code, the code wins.
 
 - `Avatar`
 - `Badge`
+- `Chip`
 - `Button`
 - `Card`
 - `Dropdown`
@@ -656,11 +657,11 @@ Current canonical Figma shared-coverage note:
   emphasis surfaces such as `bg-accent + semantic border/text color` instead of
   fixed light-only `*-50` fills.
 - The canonical Figma semantic layer now includes
-  `state/selected-fill`, `state/selected-stroke`, and `state/selected-text`,
-  mapped to the primary emphasis ladder (`mist`, `lift`, `base`) for
-  selected rows, chips, and other selected surfaces. Use that family instead of
-  rebinding selected UI directly to raw `primary/*` primitives or action-state
-  tokens.
+  `state/selected-fill` and `state/selected-stroke`, mapped to the primary
+  emphasis ladder (`mist`, `lift`) for selected rows, chips, and other
+  selected surfaces, while active chip labels stay on `fg/default`. Use that
+  family instead of rebinding selected UI directly to raw `primary/*`
+  primitives or action-state tokens.
 - `Badge.warning` and `Badge.featured` now intentionally diverge in the
   canonical Figma base: `warning` stays crisp and alert on `bg/inset` through
   the `support/warning/*` ladder, while `featured` reads as a softer editorial
@@ -714,16 +715,29 @@ Current canonical Figma shared-coverage note:
   Do not expand `Badge` to cover those interactive contracts once `Chip` lands.
 - Canonical Figma coverage for that split now exists too:
   `DS Primitives` carries `Chip / Foundations / Light` and
-  `Chip / Foundations / Dark` as a Figma-first contract even before a shared
-  runtime `Chip` primitive exists in code.
+  `Chip / Foundations / Dark`, and runtime now mirrors that family through
+  the shared `src/design-system/primitives/Chip.tsx` primitive.
 - Those `Chip / Foundations` boards keep scope intentionally narrow:
   they prove `Navigation chip`, `Filter chip`, and `Removable chip` rows only,
   with state strips that keep all selected/active postures on the shared
   selected token family instead of minting new semantic chip tones.
-- Current runtime owners are still local product implementations such as
-  `src/components/marketplace/CategoryChips.tsx` and
-  `src/components/admin/resources/FilterChips.tsx`; compact admin pills remain
-  legacy usage, not a second canonical chip size.
+- Runtime now aliases that selected family through
+  `--state-selected-fill` and `--state-selected-stroke`, while active chip
+  labels stay on `fg/default`, so chip-active UI does not drift back to raw
+  `primary/*` utilities.
+- Runtime adoption now routes the main live owners through that primitive:
+  `src/components/marketplace/CategoryChips.tsx`,
+  `src/components/marketplace/HeroSearch.tsx`,
+  `src/components/dashboard/routes/DashboardLibraryRoute.tsx`,
+  `src/components/library/LibraryGridClient.tsx`,
+  `src/components/admin/resources/FilterChips.tsx`, and
+  `src/components/admin/resources/TagInput.tsx`, plus resource-detail token
+  links and admin analytics preset filters that now reuse the same selected
+  control contract.
+- The current contract intentionally keeps one `40px` chip family only.
+  Compact admin pills are no longer a second canonical chip-size ladder; they
+  now normalize into the shared default shell instead of widening the DS size
+  contract prematurely.
 - Hero surfaces are not generic `card` surfaces. Use the hero semantic layer
   (`heroBackground`, `heroPanel`, `heroChip`, and related roles) instead of
   rebinding hero UI to default card tokens.

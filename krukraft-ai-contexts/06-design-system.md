@@ -201,16 +201,22 @@ Use this order when DS docs disagree:
 - Canonical Figma coverage now exists for both sides of that split:
   `Badge / Foundations / Light|Dark` remains the bounded semantic-label source,
   while `Chip / Foundations / Light|Dark` now proves the interactive token
-  side as a Figma-first contract even before a shared runtime `Chip.tsx`
-  primitive exists.
+  side and is mirrored by the shared runtime `src/design-system/primitives/Chip.tsx`
+  primitive.
 - The current `Chip / Foundations` slice stays intentionally narrow:
   it proves `Navigation chip`, `Filter chip`, and `Removable chip` rows only,
   with selected/active states sharing one selected token family across rows
   instead of inventing separate active tones per chip type.
-- Current runtime owners still live in product code such as
-  `src/components/marketplace/CategoryChips.tsx` and
-  `src/components/admin/resources/FilterChips.tsx`; compact admin pills remain
-  legacy usage rather than becoming a second canonical chip-size ladder.
+- Runtime now aliases that selected family through
+  `--state-selected-fill` and `--state-selected-stroke`, while active chip
+  labels stay on `fg/default`, so chip-active UI does not drift back to raw
+  `primary/*` utilities.
+- Runtime adoption now routes marketplace category/search chips, dashboard
+  library filters, admin removable filters and analytics presets, and
+  resource-detail token links through that shared primitive.
+- The current contract intentionally keeps one `40px` chip family only;
+  compact admin pills should normalize into that shell instead of becoming a
+  second canonical chip-size ladder.
 - Dark-shell selected rows, chips, and feedback states should use theme-aware
   emphasis surfaces rather than fixed light-only `*-50` fills.
 - Hero surfaces are not generic `card` surfaces; they should use the hero
@@ -912,11 +918,10 @@ Use this order when DS docs disagree:
     - geometry still keeps intentional local values (`space/20`, `space/10`,
       and preview-stack symmetry)
   - the canonical Figma semantic layer now also carries
-    `state/selected-fill`, `state/selected-stroke`, and
-    `state/selected-text`, aliased to the primary emphasis ladder
-    (`primary/mist`, `primary/lift`, `primary/base`) so selected rows/chips can
-    share a stable selected-surface contract without rebinding directly to raw
-    primitives
+    `state/selected-fill` and `state/selected-stroke`, aliased to the primary
+    emphasis ladder (`primary/mist`, `primary/lift`), while active chip labels
+    stay on `fg/default`, so selected rows/chips can share a stable
+    selected-surface contract without rebinding directly to raw primitives
   - a full-canvas audit of the canonical Figma file was rerun on `2026-04-27`
     and the repo context is now synced to that file as the base:
     - the file now separates page roles explicitly instead of mixing every

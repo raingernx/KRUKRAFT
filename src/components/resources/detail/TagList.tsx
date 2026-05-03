@@ -1,3 +1,4 @@
+import { chipVariants } from "@/design-system";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
 import { routes } from "@/lib/routes";
 
@@ -25,7 +26,7 @@ export function TagList({ tags }: TagListProps) {
             prefetchScope="resource-detail-tags"
             prefetchLimit={2}
             resourcesNavigationMode="listing"
-            className="inline-flex items-center rounded-full border border-border bg-secondary px-3 py-1.5 text-small font-medium text-secondary-foreground transition hover:bg-accent hover:text-foreground"
+            className={chipVariants({ variant: "navigation" })}
           >
             {tag.name}
           </IntentPrefetchLink>

@@ -11,7 +11,7 @@ import {
 } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Compass, FileText, Search, Sparkles } from "@/lib/icons";
-import { RevealImage, SearchInput } from "@/design-system";
+import { ChipButton, RevealImage, SearchInput } from "@/design-system";
 import { cn } from "@/lib/utils";
 import {
   beginResourcesNavigation,
@@ -481,14 +481,13 @@ export function HeroSearch({
         </p>
         <div className="flex flex-wrap gap-2">
           {recovery.suggestedQueries.map((suggestion) => (
-            <button
+            <ChipButton
               key={suggestion}
-              type="button"
+              variant="filter"
               onClick={() => navigateToSearchQuery(suggestion)}
-              className="inline-flex items-center rounded-full border border-border bg-muted px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-primary/20 hover:bg-background"
             >
               {suggestion}
-            </button>
+            </ChipButton>
           ))}
         </div>
       </div>
@@ -509,14 +508,13 @@ export function HeroSearch({
             </p>
             <div className="flex flex-wrap gap-2">
               {recovery.categoryMatches.map((match) => (
-                <button
+                <ChipButton
                   key={`category-${match.slug}`}
-                  type="button"
+                  variant="navigation"
                   onClick={() => navigateToHref(routes.marketplaceCategory(match.slug))}
-                  className="inline-flex items-center rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-primary/20 hover:bg-muted"
                 >
                   {match.name}
-                </button>
+                </ChipButton>
               ))}
             </div>
           </div>
@@ -529,14 +527,13 @@ export function HeroSearch({
             </p>
             <div className="flex flex-wrap gap-2">
               {recovery.tagMatches.slice(0, 4).map((match) => (
-                <button
+                <ChipButton
                   key={`tag-${match.slug}`}
-                  type="button"
+                  variant="navigation"
                   onClick={() => navigateToHref(routes.marketplaceTag(match.slug))}
-                  className="inline-flex items-center rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-primary/20 hover:bg-muted"
                 >
                   #{match.name}
-                </button>
+                </ChipButton>
               ))}
             </div>
           </div>
@@ -564,14 +561,13 @@ export function HeroSearch({
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {recentSearches.map((query) => (
-                    <button
+                    <ChipButton
                       key={query}
-                      type="button"
+                      variant="filter"
                       onClick={() => navigateToSearchQuery(query)}
-                      className="inline-flex items-center rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-primary/20 hover:bg-muted"
                     >
                       {query}
-                    </button>
+                    </ChipButton>
                   ))}
                 </div>
               </div>
@@ -602,14 +598,13 @@ export function HeroSearch({
               </p>
               <div className="flex flex-wrap gap-2">
                 {QUICK_BROWSE_CATEGORIES.map(({ href, label }) => (
-                  <button
+                  <ChipButton
                     key={label}
-                    type="button"
+                    variant="navigation"
                     onClick={() => navigateToHref(href)}
-                    className="inline-flex items-center rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-primary/20 hover:bg-muted"
                   >
                     {label}
-                  </button>
+                  </ChipButton>
                 ))}
               </div>
             </div>

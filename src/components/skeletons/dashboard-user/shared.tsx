@@ -115,10 +115,10 @@ export function LibraryToolsPreview() {
         <LoadingSkeleton className="h-11 min-w-0 flex-1 rounded-xl" />
         <div className="flex flex-wrap items-center gap-1.5">
           <LoadingSkeleton className="h-4 w-12 rounded-full" />
-          <LoadingSkeleton className="h-8 w-14 rounded-full" />
-          <LoadingSkeleton className="h-8 w-12 rounded-full" />
-          <LoadingSkeleton className="h-8 w-24 rounded-full" />
-          <LoadingSkeleton className="h-8 w-24 rounded-full" />
+          <LoadingSkeleton className="h-10 w-14 rounded-full" />
+          <LoadingSkeleton className="h-10 w-12 rounded-full" />
+          <LoadingSkeleton className="h-10 w-24 rounded-full" />
+          <LoadingSkeleton className="h-10 w-24 rounded-full" />
           <LoadingSkeleton className="h-4 w-20 rounded-full" />
         </div>
       </div>

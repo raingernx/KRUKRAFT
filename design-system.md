@@ -512,10 +512,10 @@ borders and selected states to one bright treatment:
 - `border-border-strong` / `border-input` for controls
 - theme-aware emphasis surfaces for selected rows, chips, and feedback states
 - the canonical Figma semantic layer now carries
-  `state/selected-fill`, `state/selected-stroke`, and `state/selected-text` as
-  the default selected-surface family; use that trio instead of rebinding
-  selected UI directly to raw `primary/*` primitives or overloading
-  `action/*` / `focus/*` semantics
+  `state/selected-fill` and `state/selected-stroke` as the default
+  selected-surface family, while active chip labels stay on `fg/default`; use
+  that combination instead of rebinding selected UI directly to raw
+  `primary/*` primitives or overloading `action/*` / `focus/*` semantics
 
 Hero surfaces should use the hero semantic layer instead of pretending they are
 generic cards.
@@ -575,18 +575,22 @@ For reusable Figma component sets:
 - Canonical Figma coverage now exists for both sides of that split:
   `Badge / Foundations / Light|Dark` remains the non-interactive label source,
   while `Chip / Foundations / Light|Dark` now documents the interactive token
-  side as a Figma-first contract.
+  side and is mirrored by the shared runtime `src/design-system/primitives/Chip.tsx`
+  primitive.
 - The current `Chip / Foundations` slice is intentionally narrow:
   it proves `Navigation chip`, `Filter chip`, and `Removable chip` rows only,
   each through bounded state strips rather than through a larger product scene.
 - Selected chip states should keep sharing the same selected token family
   across those rows instead of inventing separate active tones per chip type.
-- Runtime still has no shared `Chip.tsx` primitive yet; live owners remain
-  product-local implementations such as
-  `src/components/marketplace/CategoryChips.tsx` and
-  `src/components/admin/resources/FilterChips.tsx`, and compact admin pills
-  should migrate into those canonical postures instead of reopening a second
-  chip-size ladder prematurely.
+- Runtime now aliases that selected family through
+  `--state-selected-fill` and `--state-selected-stroke`, while active chip
+  labels stay on `fg/default`, so chip-active UI does not rebind itself to raw
+  `primary/*` utilities.
+- Runtime now has a shared `Chip.tsx` primitive, and live adoption routes
+  marketplace category/search chips, dashboard library filters, admin removable
+  filters and analytics presets, and resource-detail token links through that
+  same `40px` family. Compact admin pills should stay normalized into that
+  canonical shell instead of reopening a second chip-size ladder prematurely.
 - The canonical Figma `Badge` base now lives in `Badge / Foundations / Light`
   and `Badge / Foundations / Dark`, with source sets that cover `neutral`,
   `info`, `success`, `warning`, `featured`, `destructive`, and `outline`.

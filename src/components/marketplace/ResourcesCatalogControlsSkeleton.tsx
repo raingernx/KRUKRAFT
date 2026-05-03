@@ -2,7 +2,7 @@
 
 import { Search } from "@/lib/icons";
 import { Skeleton } from "boneyard-js/react";
-import { Container, LoadingSkeleton } from "@/design-system";
+import { chipVariants, Container, LoadingSkeleton } from "@/design-system";
 import { ScrollableCategoryNav } from "@/components/marketplace/ScrollableCategoryNav";
 
 const RESOURCES_CATALOG_SEARCH_NAME = "resources-catalog-search";
@@ -49,15 +49,15 @@ export function ResourcesCatalogSearchSkeleton() {
 
 export function DiscoverFallback() {
   return (
-    <div className="inline-flex h-10 items-center rounded-full border border-border-strong bg-muted px-4 text-base font-medium text-muted-foreground shadow-sm">
-      <LoadingSkeleton className="h-4 w-16 rounded" />
+    <div className="inline-flex h-10 items-center rounded-full border border-border-strong bg-muted px-4 font-ui text-sm font-semibold text-muted-foreground shadow-sm">
+      <LoadingSkeleton className="h-3.5 w-16 rounded" />
     </div>
   );
 }
 
 function DiscoverPreview() {
   return (
-    <div className="inline-flex h-10 items-center rounded-full border border-border-strong bg-background px-4 text-base font-medium text-foreground shadow-sm">
+    <div className={chipVariants({ variant: "navigation" })}>
       <span>สำรวจ</span>
     </div>
   );
@@ -69,11 +69,11 @@ export function ChipsFallback() {
       {["w-16", "w-24", "w-28", "w-16", "w-24", "w-20"].map((width, index) => (
         <div
           key={`${width}-${index}`}
-          className={`inline-flex h-10 shrink-0 items-center rounded-full border border-border-strong bg-muted px-4 text-base text-muted-foreground ${
+          className={`inline-flex h-10 shrink-0 items-center rounded-full border border-border-strong bg-muted px-4 font-ui text-sm font-semibold text-muted-foreground ${
             index === 0 ? "gap-2 pr-4" : ""
           }`}
         >
-          <LoadingSkeleton className={`h-4 ${width} rounded`} />
+          <LoadingSkeleton className={`h-3.5 ${width} rounded`} />
         </div>
       ))}
     </div>
@@ -87,11 +87,10 @@ function ChipsPreview() {
         (label, index) => (
           <div
             key={label}
-            className={`inline-flex h-10 shrink-0 items-center rounded-full border px-4 text-base shadow-sm ${
-              index === 0
-                ? "border-border-strong bg-secondary text-secondary-foreground"
-                : "border-transparent bg-background text-muted-foreground"
-            }`}
+            className={chipVariants({
+              variant: "navigation",
+              selected: index === 0,
+            })}
           >
             <span>{label}</span>
           </div>
