@@ -82,6 +82,13 @@ Current canonical Figma shared-coverage note:
   standalone `Icon` primitive component in code
 - the canonical file now has `Avatar / Foundations / Light` and
   `Avatar / Foundations / Dark` on `DS Primitives`
+- the latest Avatar re-audit also closes the remaining board-side binding debt:
+  `Avatar / Size` + `Avatar / Source` wrappers now bind `radius/xs`, image and
+  fallback shells bind `radius/pill` plus `border/default`, and initials bind
+  `fg/on-fill-dark` with shared base-family/semibold variables. The old local
+  fallback gradient is gone too: canonical fallback shells now use solid
+  `primary/base`. Only the proportional initials size ladder remains
+  intentionally unbound until avatar-specific type tokens exist.
 - the canonical file now has `Switch / Foundations / Light` and
   `Switch / Foundations / Dark` on `DS Primitives`
 - the canonical file now has `Modal / Foundations / Light` and
@@ -91,8 +98,8 @@ Current canonical Figma shared-coverage note:
 - that slice currently documents the shared `24 / 32 / 40 / 56` ladder plus
   image and fallback states, while `28 / 36 / 72 / 104` remain runtime-owned
   posture extensions
-- image and fallback states now share one stroked circular shell posture across
-  the canonical Figma board and runtime primitive
+- image and fallback states now share one `1px border/default` circular shell
+  posture across the canonical Figma board and runtime primitive
 - the switch slice currently documents the runtime `46×24` track, `20×20`
   thumb, and checked/unchecked + disabled visual states while keeping labels,
   helper copy, and row shells route-owned

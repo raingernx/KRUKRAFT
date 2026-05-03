@@ -84,18 +84,15 @@ function AccountMenuTrigger({
   return (
     <span
       className={cn(
-        "inline-flex size-11 items-center justify-center rounded-full border transition-all group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-background",
-        open
-          ? "border-border-strong bg-shell shadow-card"
-          : "border-border-subtle bg-shell/90 hover:border-border hover:bg-muted/55",
+        "inline-flex size-11 items-center justify-center rounded-full transition-all group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-background",
+        open ? "bg-accent/80" : "hover:bg-accent/65",
       )}
     >
       <Avatar
         src={viewer.image}
         name={viewer.name}
         email={viewer.email}
-        size={32}
-        className="ring-1 ring-border-subtle"
+        size={40}
       />
     </span>
   );

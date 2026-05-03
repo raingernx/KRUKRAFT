@@ -14,6 +14,13 @@ type AvatarProps = {
   className?: string;
 };
 
+const avatarFallbackTextClassNames = {
+  24: "text-[10px] leading-3",
+  32: "text-xs leading-[14px]",
+  40: "text-sm leading-[17px]",
+  56: "text-[20px] leading-6",
+} satisfies Partial<Record<number, string>>;
+
 function getAvatarInitials({
   name,
   email,
@@ -75,13 +82,15 @@ export function Avatar({
     [email, initials, name],
   );
   const imageAlt = alt ?? name ?? email ?? resolvedInitials;
+  const fallbackTextClassName =
+    avatarFallbackTextClassNames[size as keyof typeof avatarFallbackTextClassNames];
 
   React.useEffect(() => {
     setBroken(false);
   }, [normalizedSrc]);
 
   const shellClassName = cn(
-    "relative overflow-hidden rounded-full ring-1 ring-surface-200 bg-surface-100",
+    "relative box-border overflow-hidden rounded-full border border-border",
     className,
   );
 
@@ -115,7 +124,12 @@ export function Avatar({
 
   return (
     <div className={shellClassName} style={dimension}>
-      <span className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 font-semibold text-white">
+      <span
+        className={cn(
+          "flex h-full w-full items-center justify-center rounded-full bg-primary font-semibold text-on-fill-dark",
+          fallbackTextClassName,
+        )}
+      >
         {resolvedInitials}
       </span>
     </div>

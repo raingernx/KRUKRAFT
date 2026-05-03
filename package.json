@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "postinstall": "prisma generate",
-    "dev": "prisma generate && next dev --webpack",
+    "dev": "prisma generate && next dev --turbopack",
     "dev:turbo": "prisma generate && next dev --turbopack",
+    "dev:webpack": "prisma generate && next dev --webpack",
     "build": "prisma generate && next build --webpack",
     "lint": "eslint src scripts prisma eslint.config.mjs middleware.ts next.config.mjs tailwind.config.ts postcss.config.js load-public.js && npm run skeleton:check && npm run figma-map:check && npm run figma-contracts:check && npm run tokens:audit && npm run workflow:check && npm run wiki:lint",
     "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",

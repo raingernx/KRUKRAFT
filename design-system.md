@@ -123,8 +123,15 @@ The canonical Figma file now covers `Avatar`, `Switch`, `Modal`, and
 - nested `Avatar / Size` and `Avatar / Source` component sets
 - the current slice locks the shared `24 / 32 / 40 / 56` ladder plus
   image/name/email/explicit-initials/anonymous fallback states
-- image and fallback states now share the same stroked circular shell posture
-  in both Figma and runtime code
+- image and fallback states now share the same `1px border/default` circular
+  shell posture in both Figma and runtime code
+- the latest binding pass also closes the remaining canonical debt around those
+  nested sets: wrappers bind `radius/xs`, image/fallback shells bind
+  `radius/pill` plus `border/default`, and initials bind `fg/on-fill-dark`
+  with the shared base-family/semibold variables
+- the fallback shell no longer keeps a local gradient in Figma; canonical
+  boards now use a single solid `primary/base` fill and runtime now mirrors
+  that same solid fallback posture
 - runtime-only `28 / 36 / 72 / 104` mounts remain product-owned posture
   extensions until avatar sizing graduates into a shared token ladder
 - `Switch / Foundations / Light`

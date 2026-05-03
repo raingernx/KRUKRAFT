@@ -99,7 +99,11 @@ const sentryWebpackPluginOptions = {
   },
 };
 
-export default withSentryConfig(
-  withBundleAnalyzer(nextConfig),
-  sentryWebpackPluginOptions,
-);
+const baseConfig = withBundleAnalyzer(nextConfig);
+
+const shouldWrapWithSentry =
+  process.env.NODE_ENV === "production" || process.env.SENTRY_ENABLE_DEV === "true";
+
+export default shouldWrapWithSentry
+  ? withSentryConfig(baseConfig, sentryWebpackPluginOptions)
+  : baseConfig;

@@ -94,8 +94,4 @@ export async function proxy(req: NextRequest) {
   return response;
 }
 
-export const config = {
-  matcher: ["/((?!api|_next|brand-assets|.*\\..*).*)"],
-};
-
 export default proxy;

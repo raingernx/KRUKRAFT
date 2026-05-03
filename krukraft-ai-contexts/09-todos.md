@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
 ## Plan Snapshot
 
-Parent Plan: `Composed shared-component coverage`
+Parent Plan: `Local compile-speed remediation`
 
 > [!info] Current Phase
-> `Phase 5 — Close-out / defer decision`
+> `Local compile-speed remediation — complete`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -34,16 +34,17 @@ Parent Plan: `Composed shared-component coverage`
 
 > [!todo] Next Up
 > - No in-plan `Next Up` remains; this parent plan is complete
-> - Open a separate optional parent plan only if the user explicitly reprioritizes `Pagination`, `RowActions`, `ConfirmDialog`, or another DS/Figma bucket
-> - Keep runtime adoption and product-bound exemplar work out of scope unless a new plan is opened
+> - Any additional compile-speed work must open as a separate optional follow-up plan
+> - Keep `dev:webpack` as the maintained fallback while the Turbopack-first path stays the default local workflow
 
 > [!abstract] Partial
-> The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow Figma coverage pass and should not silently reopen broad runtime rollout or product-exemplar work.
+> The previous theme refresh, route rollout audits, legacy DS cleanup, marketplace search-shell audit, hero-search cleanup, and Figma DS audits are complete; this new plan is a narrow local-compile remediation pass and should not silently reopen broad runtime rollout, DS migration, or product-exemplar work.
 
 ## Status Board
 
 | Track            | Status   | Note                                                                                     |
 | ---------------- | -------- | ---------------------------------------------------------------------------------------- |
+| Local Compile Speed | Complete | Turbopack is the default local dev server, middleware is Turbopack-compatible, root-overlay graph slimming is landed, and dev-only Sentry gating delivered the main cold-compile win |
 | Reference Audit  | Kept     | Primer, Atlassian, and Radix Themes stay as the locked reference stack for the new visual pass |
 | DS Baseline      | Frozen   | the previous DS-first migration baseline is complete and should be reused, not repeated |
 | Foundation Align | Kept     | the completed reference-driven plan already locked token/component/chrome boundaries |
@@ -95,7 +96,7 @@ Parent Plan: `Composed shared-component coverage`
 
 ## Progress
 
-Composed shared-component coverage
+Local compile-speed remediation
 `[██████████] 100%`
 
 ```mermaid
@@ -199,144 +200,100 @@ Rules:
 ## Current Phase
 
 ### Name
-Phase 5 — Close-out / defer decision
+Local compile-speed remediation — complete
 
 ### Parent Plan
-Composed shared-component coverage
+Local compile-speed remediation
 
 ### Current Status Inside Parent Plan
-- Primitive follow-up coverage is now closed and acts as the frozen baseline
-  for the next Figma/DS handoff pass.
-- The next unresolved shared-coverage bucket is the remaining composed set
-  still called out in docs and the Figma registry:
-  - `SectionHeader`
-  - `Pagination`
-  - `EmptyState`
-  - `RowActions`
-  - `ConfirmDialog`
-- This new parent plan stays Figma-first and composed-scoped:
-  - first inventory the real runtime/shared ownership and canonical Figma gap
-    for the remaining composed set
-  - then choose one narrow first slice instead of reopening all five at once
-- Runtime adoption, product exemplars, and unrelated primitive follow-ups stay
-  out of scope unless the user reprioritizes.
-- That inventory is now resolved:
-  - `SectionHeader` is live and story-backed, but it still overlaps route-owned
-    local intro/header duplicates and typography decisions more than the other
-    candidates
-  - `Pagination` is live and story-backed, but its visual contract already
-    leaks into `Button` recipe cards and helper-level runtime rollout work
-  - `RowActions` is live and story-backed, but it is tightly coupled to button
-    tones, icon-only triggers, and compact-density table recipes
-  - `ConfirmDialog` is runtime-bounded but story-less today, and its shell
-    overlaps the already-landed `Modal` contract plus async behavior
-  - `EmptyState` is the cleanest bounded shell: icon, title, description,
-    action slot, dashed container posture, one story surface, and broad live
-    route usage across dashboard/admin/creator families
-- That first slice is now landed on `DS Components`:
-  - `EmptyState / Foundations / Light`
-  - `EmptyState / Foundations / Dark`
-  - nested light/dark `EmptyState / Variant / Source` sets
-  - the bounded shared contract is now frozen as centered stack rhythm,
-    dashed rounded container posture, and the shared
-    `icon -> title -> description -> action` slot order
-  - the explicit Figma-only token gap is preserved instead of hidden:
-    runtime uses `border-border-subtle`, while canonical Figma still lacks a
-    semantic `border/subtle` variable, so the dashed rail currently binds to
-    `border/default`
-- That follow-up selection is now resolved too:
-  - `SectionHeader` is the chosen next slice because it is still bounded at the
-    shell level, has Storybook proof, and has broad live route usage without
-    inheriting button-recipe/table-density fanout like `Pagination` or
-    `RowActions`
-  - `ConfirmDialog` stays behind it because it still overlaps `Modal` and
-    async behavior concerns while lacking its own story surface
-  - `Pagination` and `RowActions` remain deferred because both are tightly
-    coupled to existing button recipe and table-density rollout decisions
-- That second composed slice is now landed on `DS Components` too:
-  - `SectionHeader / Foundations / Light`
-  - `SectionHeader / Foundations / Dark`
-  - nested light/dark `SectionHeader / Variant / Source` sets
-  - the bounded shared contract is now frozen as eyebrow, title, description,
-    alignment, and the optional trailing actions slot through
-    `default | centered | with-actions | minimal`
-  - action slots now use neutral placeholders instead of invented CTA
-    examples or component-owned button recipes
-- The plan-level close-out audit is now resolved:
-  - `Pagination` remains better treated as an optional follow-up because its
-    visual contract is still entangled with existing `Button` recipe work and
-    live pagination rollout decisions
-  - `RowActions` remains better treated as an optional follow-up because its
-    visual contract is still entangled with tone, density, and table-action
-    rollout decisions
-  - `ConfirmDialog` remains better treated as an optional follow-up because it
-    still overlaps the already-landed `Modal` shell and async behavior without
-    a dedicated Storybook surface
-- Therefore no remaining in-scope omission is strong enough to keep this
-  parent plan open.
+- This was an explicit optional reprioritization away from DS work, limited to
+  local development compile slowness rather than production runtime perf.
+- Baseline capture established the major avoidable bottlenecks:
+  - `npm run dev` defaulting to Webpack
+  - Turbopack incompatibility from `middleware.ts` re-exporting route `config`
+  - shared root-layout overlay providers eagerly importing heavy dashboard and
+    marketplace skeleton trees
+  - unconditional `withSentryConfig(...)` wrapping in local dev
+- Landed remediation slices:
+  - `npm run dev` now defaults to Turbopack
+  - `dev:webpack` remains as the maintained local fallback
+  - `middleware.ts` now owns a static literal `config.matcher`, removing the
+    Turbopack route-config parse failure
+  - root-layout entry overlays now lazy-load their heavy skeleton branches
+    instead of importing them eagerly at provider evaluation time
+  - `next.config.mjs` now skips `withSentryConfig(...)` in local dev unless
+    `SENTRY_ENABLE_DEV=true`
+- Measured outcome:
+  - original Webpack baseline was severe (`/resources` ~30.3s,
+    resource detail ~30.6s, authenticated dashboard reconnect ~107s)
+  - Turbopack as default produced the first major step down
+  - root-layout graph slimming landed cleanly but did not materially improve
+    cold first-hit numbers by itself
+  - dev-only Sentry gating delivered the strongest remaining win: clean cold
+    `/resources` dropped to about `7.2s`, with only ~`610ms` of Next compile
+    time reported on that first hit
+- Close-out audit result:
+  - no in-scope blocker remains that would invalidate the plan's intended
+    milestone of a materially faster local default dev loop
+  - residual cold hotspots still exist on some routes (`/` and resource detail
+    are heavier than `/resources`), but they are now optional follow-up work,
+    not a reason to keep this parent plan open
 
 ### Goal
-Close the composed shared-component coverage plan cleanly now that the two
-highest-signal bounded slices are landed and the remaining candidates are
-explicitly deferred.
+Close the local compile-speed remediation plan cleanly now that the highest
+signal bounded remediations are landed, measured, and verified.
 
 ### Why this is the current phase
-- The primitive-first Figma coverage pass is now closed cleanly.
-- The two bounded composed slices with the strongest signal are now both
-  landed on `DS Components`.
-- The remaining candidates are still lower-signal or more entangled with
-  existing runtime rollout work than this parent plan should absorb.
+- The plan's main decision points are resolved.
+- The strongest proven remediations are already landed.
+- Remaining work would be a new optional follow-up plan, not required
+  completion work for this one.
 
 ### Definition of Done
-- [x] Open a new active parent plan for the remaining composed shared set
-- [x] Inventory the real shared runtime surface and canonical Figma gap for `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`, and `ConfirmDialog`
-- [x] Choose one narrow first composed-component slice
-- [x] Land and verify that first canonical composed-component slice
-- [x] Sync mapping/docs for the landed composed slice in the same session
-- [x] Choose the next narrow composed-component slice after `EmptyState`
-- [x] Land and verify canonical `SectionHeader` coverage
-- [x] Sync mapping/docs for the landed `SectionHeader` slice in the same session
-- [x] Close the parent plan or defer remaining composed items explicitly after the chosen slice resolves
+- [x] Capture local compile baselines before changing config or graph structure
+- [x] Restore Turbopack compatibility for the repo's middleware path
+- [x] Make Turbopack the default local dev workflow while keeping Webpack as a fallback
+- [x] Test a bounded root-layout graph slimming slice
+- [x] Test a bounded dev-only Sentry gating slice
+- [x] Re-measure the affected local routes after each remediation
+- [x] Run a plan close-out audit and decide whether any remaining hotspot is material enough to keep the plan open
 
 ### Phase Map
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Plan open | complete | the heavier primitive follow-up plan is now closed, and this composed follow-up plan is opened explicitly as a separate optional parent plan |
-| 1 | Composed shared-component inventory | complete | runtime/story/Figma audit now resolves the ownership question across `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`, and `ConfirmDialog` |
-| 2 | EmptyState coverage slice | complete | canonical `EmptyState` coverage is now landed on `DS Components` and synced through the Figma registry plus DS docs |
-| 3 | Remaining composed follow-up selection | complete | `SectionHeader` is the chosen next slice; `Pagination`, `RowActions`, and `ConfirmDialog` stay deferred until that slice resolves |
-| 4 | SectionHeader coverage slice | complete | canonical `SectionHeader` coverage is now landed on `DS Components` and synced through the Figma registry plus DS docs |
-| 5 | Close-out / defer decision | complete | the close-out audit defers `Pagination`, `RowActions`, and `ConfirmDialog` as optional follow-ups and closes the parent plan at `100%` |
+| 0 | Plan open | complete | local compile-speed remediation opened as an explicit optional reprioritization |
+| 1 | Measurement / baseline capture | complete | Webpack vs Turbopack baseline and hotspot candidates were captured |
+| 2 | First remediation selection | complete | Turbopack default + middleware compatibility became the first landed remediation |
+| 3 | Second remediation selection | complete | root-layout graph slimming and dev-only Sentry gating were both tested; Sentry gating delivered the decisive win |
+| 4 | Close-out audit | complete | residual hotspots are now optional follow-up, not blockers |
 
 ---
 
 ## Current Goal
 
 No active in-plan implementation remains. Open a separate optional follow-up
-plan only if the user explicitly reprioritizes another composed/shared bucket.
+plan only if the user explicitly reprioritizes another compile-speed slice.
 
 ---
 
 ## In Progress
 
-- [x] Open the new parent plan `Composed shared-component coverage`
-- [x] Inventory the real shared runtime surface and canonical Figma gap for `SectionHeader`, `Pagination`, `EmptyState`, `RowActions`, and `ConfirmDialog`
-- [x] Choose one narrow first composed-component slice
-- [x] Land canonical `EmptyState` coverage on `DS Components`
-- [x] Verify the `EmptyState` slice against runtime component, Storybook, and representative route-family usage
-- [x] Decide whether `SectionHeader`, `Pagination`, `RowActions`, or `ConfirmDialog` should be the next narrow composed slice
-- [x] Land canonical `SectionHeader` coverage on `DS Components`
-- [x] Verify the `SectionHeader` slice against runtime component, Storybook, and representative route-family usage
-- [x] Defer `Pagination`, `RowActions`, and `ConfirmDialog` explicitly instead of keeping the parent plan open
+- [x] Capture cold-start and first-route local compile baselines
+- [x] Fix Turbopack compatibility for the middleware path
+- [x] Switch the default local dev workflow to Turbopack
+- [x] Keep `dev:webpack` available as a maintained fallback
+- [x] Land and measure a bounded root-layout graph slimming slice
+- [x] Land and measure a bounded dev-only Sentry gating slice
+- [x] Run the plan close-out audit and explicitly decide plan completion
 
 ---
 
 ## Next Up
 
 - [ ] No in-plan `Next Up` remains; this parent plan is complete
-- [ ] Open a separate optional parent plan only if the user explicitly reprioritizes `Pagination`, `RowActions`, `ConfirmDialog`, or another DS/Figma bucket
-- [ ] Keep runtime adoption and product-bound exemplar work out of scope unless a new plan is opened
+- [ ] Open a separate optional follow-up plan only if the user explicitly reprioritizes residual cold-route hotspots or another local dev compile concern
+- [ ] Keep compile-speed follow-ups out of DS/runtime scope unless a new plan is opened
 
 ---
 

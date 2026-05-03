@@ -14,7 +14,6 @@ import { Footer } from "@/components/layout/Footer";
 import { fontVariables } from "@/lib/fonts";
 import { getBuildSafePublicPlatformConfig } from "@/services/platform";
 import { buildPlatformMetadata } from "@/lib/platform/platform-metadata";
-import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import { Providers } from "./providers";
 
 export function generateMetadata(): Metadata {
@@ -41,9 +40,7 @@ export default function RootLayout({
       <body
         className={`${fontVariables} min-h-screen bg-background font-sans text-foreground antialiased`.trim()}
       >
-        <Script id="theme-init" strategy="beforeInteractive">
-          {THEME_INIT_SCRIPT}
-        </Script>
+        <Script id="theme-init" src="/theme-init.js" strategy="beforeInteractive" />
         <BonesRegistryBootstrap />
         <PlatformConfigProvider initialConfig={platform}>
           <ThemeProvider>

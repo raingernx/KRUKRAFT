@@ -204,7 +204,7 @@ Public category route note:
 
 Root rendering note:
 - the root app layout uses build-safe public platform config only and does not read the authenticated server session
-- the root layout now injects a pre-hydration theme bootstrap script that sets `data-theme` / `color-scheme` before React hydration, preventing the old white-first flash on returning dark sessions
+- the root layout injects a pre-hydration `/theme-init.js` bootstrap script through `next/script` so `data-theme` / `color-scheme` can be set before the client theme provider settles, avoiding the older mount-time light bounce while keeping public routes off page-level cookie reads
 - the theme baseline for users with no stored preference is now `system`; explicit `light` and `dark` remain opt-in user preferences rather than the default initial state
 - `UserPreference.theme` now also defaults to `system` at the Prisma/database layer, so new preference rows created outside the client bootstrap path stay aligned with the same runtime baseline
 - the app root `src/app/loading.tsx` is now intentionally neutral and centered rather than page-shaped; if the root fallback still appears before a route-family shell resolves, it should not read as discover/library/dashboard UI
@@ -214,6 +214,11 @@ Root rendering note:
   through the repo-owned `@/lib/icons` adapter instead of importing
   `lucide-react` directly at the feature level
 - the root layout keeps two cross-group overlay bridges: `ResourcesEntryNavigationOverlay` for dashboard/public → `/resources` transitions, and `DashboardEntryNavigationOverlay` for public → `/dashboard/*` transitions. The dashboard entry overlay is intentionally shell-only (`DashboardAppShellSkeleton`) so it reserves only navbar + sidebar while the destination dashboard route mounts its own route-owned content `loading.tsx`.
+- those two root-layout overlay bridges now lazy-load their heavier route
+  skeleton trees inside the client providers instead of importing the full
+  dashboard/resources skeleton modules eagerly at root-provider evaluation time;
+  the overlay providers still mount at the app root, but the heaviest skeleton
+  branches now split behind on-demand chunks plus local lightweight fallbacks
 - dashboard route readiness is now more target-specific than before: overview, library, downloads, purchases, settings, membership, the main creator surfaces, and the creator resource editor routes now expose route-ready markers so handoff overlays can wait for the destination route family instead of clearing on generic dashboard-shell readiness alone
 - the dashboard avatar account menu now exposes an explicit probe contract (`data-dashboard-account-trigger`, `data-dashboard-account-ready`, `data-dashboard-account-menu`, `data-dashboard-account-link`) so browser verification can wait for client hydration before opening the menu instead of racing a server-rendered trigger that is visible but not interactive yet
 - dashboard user pages and creator workspace pages now share a repo-owned page-shell contract in `src/components/layout/dashboard/DashboardPageShell.tsx`; the contract owns the route-ready marker, `min-w-0 space-y-8` rhythm, and narrow-vs-default width policy so route pages, loading shells, and probes stop drifting apart one file at a time

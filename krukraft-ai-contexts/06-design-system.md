@@ -105,8 +105,15 @@ Use this order when DS docs disagree:
   the live source set documents the shared `24 / 32 / 40 / 56` ladder plus
   image/name/email/explicit-initials/anonymous fallback states, while
   `28 / 36 / 72 / 104` still remain runtime-owned posture extensions, all
-  source variants now share the same stroked circular shell posture, and the
-  fallback shell keeps one explicit Figma token gap around gradient/type scale.
+  source variants now share the same `1px border/default` circular shell
+  posture, wrapper
+  sets now bind `radius/xs`, shell rings bind `border/default`, and initials
+  bind shared on-fill/base-family/semibold variables. The canonical fallback
+  shell now uses solid `primary/base` instead of the older local gradient, and
+  runtime now mirrors that same solid fallback fill plus the bounded
+  `10/12`, `12/14`, `14/17`, `20/24` initials ladder for canonical
+  `24|32|40|56`, so the only explicit Figma token gap left is the absence of
+  avatar-specific type tokens for the runtime-only larger mounts.
 - `Switch` now has canonical Figma coverage on `DS Primitives` too:
   the live state set documents the current runtime `46×24` track, `20×20`
   thumb, and checked/unchecked + disabled visual states while keeping labels,
@@ -281,9 +288,9 @@ Use this order when DS docs disagree:
   `src/bones`; it supplements the repo's loading/fallback parity rules and does
   not replace route-owned loading, empty, or error states.
 - `ThemeProvider` now boots from the stored client theme when one exists and
-  avoids clobbering the `beforeInteractive` theme-init result on mount, so a
-  persisted dark choice does not bounce through light mode before shared chrome
-  such as `ThemeSwitcher` settles.
+  avoids clobbering the pre-hydration theme-init result on mount, so a
+  persisted dark choice does not bounce through light mode before shared
+  chrome such as `ThemeSwitcher` settles.
 - Token migration contract is now locked before any real token re-skin pass:
   - `brand` is the primitive hue family
   - `primary` is the semantic action role

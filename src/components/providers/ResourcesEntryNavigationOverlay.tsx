@@ -1,20 +1,86 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { ResourceDetailLoadingShell } from "@/components/resources/detail/ResourceDetailLoadingShell";
 import {
   inferResourcesNavigationMode,
   isResourcesSubtreePath,
   useResourcesNavigationState,
 } from "@/components/marketplace/resourcesNavigationState";
-import { ResourcesRouteSkeleton } from "@/components/skeletons/ResourcesRouteSkeleton";
 import { waitForNavigationSurfaceReady } from "@/components/providers/navigationDomReady";
 import { routes } from "@/lib/routes";
+import { LoadingSkeleton } from "@/design-system";
 
 const RESOURCE_DETAIL_SHELL_SELECTOR = '[data-route-shell-ready="resource-detail"]';
 const RESOURCES_BROWSE_SHELL_SELECTOR = '[data-route-shell-ready="resources-browse"]';
 const MIN_ENTRY_PENDING_MS = 260;
+
+function ResourcesBrowseOverlayFallback() {
+  return (
+    <div className="flex min-h-screen flex-col bg-background">
+      <header className="border-b border-border-subtle bg-background px-4 py-4 sm:px-6">
+        <LoadingSkeleton className="h-11 w-full max-w-5xl rounded-full" />
+        <div className="mt-4 flex flex-wrap gap-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <LoadingSkeleton key={index} className="h-10 w-24 rounded-full" />
+          ))}
+        </div>
+      </header>
+
+      <main className="flex-1">
+        <div className="h-[408px] bg-primary/60" />
+        <div className="space-y-8 px-4 py-8 sm:px-6 lg:px-8">
+          <LoadingSkeleton className="h-8 w-56" />
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <LoadingSkeleton key={index} className="aspect-[5/6] rounded-[28px]" />
+            ))}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function ResourceDetailOverlayFallback() {
+  return (
+    <div className="min-h-screen bg-background px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-8">
+        <div className="space-y-3">
+          <LoadingSkeleton className="h-4 w-40" />
+          <LoadingSkeleton className="h-10 w-3/4 max-w-2xl rounded-2xl" />
+          <LoadingSkeleton className="h-4 w-64" />
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-10">
+          <LoadingSkeleton className="min-h-[420px] rounded-[28px]" />
+          <LoadingSkeleton className="min-h-[480px] rounded-[28px]" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const ResourceDetailLoadingShell = dynamic(
+  () =>
+    import("@/components/resources/detail/ResourceDetailLoadingShell").then(
+      (mod) => mod.ResourceDetailLoadingShell,
+    ),
+  {
+    loading: () => <ResourceDetailOverlayFallback />,
+  },
+);
+
+const ResourcesRouteSkeleton = dynamic(
+  () =>
+    import("@/components/skeletons/ResourcesRouteSkeleton").then(
+      (mod) => mod.ResourcesRouteSkeleton,
+    ),
+  {
+    loading: () => <ResourcesBrowseOverlayFallback />,
+  },
+);
 
 function resolveResourcesOverlayMode(
   pathname: string | null,

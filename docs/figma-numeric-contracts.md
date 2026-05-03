@@ -1684,7 +1684,7 @@ Copy this block before implementing a new Figma-backed component.
   - `40`
   - `56`
 - Radius: full circle
-- Border/ring: stroked circular shell
+- Border/ring: `1px` inside shell border on `border/default`
 - Background: fallback shell family-owned
 
 #### Child Geometry
@@ -1702,18 +1702,32 @@ Copy this block before implementing a new Figma-backed component.
   of shell so it inherits circular clipping and centered posture
 
 #### Typography
-- Fallback initials: size proportional to avatar size, semibold
+- Fallback initials: semibold with bounded ladder
+  - `24` -> `10 / 12`
+  - `32` -> `12 / 14`
+  - `40` -> `14 / 17`
+  - `56` -> `20 / 24`
 
 #### Variant Rules
 - source priority: image -> name initials -> email initials -> explicit initials
   -> anonymous default
-- image and fallback share the same shell radius and stroke posture
+- image and fallback share the same shell radius and `1px` circular border posture
 
 #### Runtime Notes
 - Parent-owned: surrounding layout and any presence badge
 - Route-owned: actual image source and alt/copy context
 - Known token gaps: runtime still supports extra mounts outside canonical Figma
-  ladder and keeps fallback gradient/type sizing locally
+  ladder; fallback type sizing for mounts outside `24|32|40|56` remains
+  product-owned
+- Figma binding note: the latest foundations pass closes the narrow board-side
+  debt too. `Avatar / Size` and `Avatar / Source` wrappers now bind
+  `radius/xs`, all image/fallback shells now bind `radius/pill` plus
+  `border/default`, and initials now bind `fg/on-fill-dark`,
+  `font/family/base`, and `font/weight/semibold`. The old fallback gradient is
+  now retired from the canonical file too: all fallback shells use solid
+  `primary/base`. The only intentional local values left in the canonical file
+  are the proportional initials `size/line` ladder (`10/12`, `12/14`, `14/17`,
+  `20/24`) because no exact avatar-specific type tokens exist yet.
 
 #### Proof
 - Figma screenshot: `Avatar / Foundations / Dark` `1063:367`

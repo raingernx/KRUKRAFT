@@ -22,6 +22,9 @@
 
 ## Runtime / Tooling Notes
 
+- `dev`: `prisma generate && next dev --turbopack`
+- `dev:turbo`: explicit Turbopack alias retained for operator clarity; same command as `dev`
+- `dev:webpack`: explicit fallback path for local debugging when Turbopack-specific behavior needs comparison or isolation
 - `build`: `prisma generate && next build --webpack`
 - `typecheck`: `tsc -p tsconfig.typecheck.json --noEmit`
 - `lint`: scoped ESLint run plus `npm run skeleton:check`, which blocks inline `*Skeleton` / `*Fallback` component declarations inside `src/app/**`
@@ -44,6 +47,10 @@
   `instrumentation-client.ts`, `sentry.server.config.ts`,
   `sentry.edge.config.ts`, and the `withSentryConfig(...)` wrapper in
   `next.config.mjs`
+- local `npm run dev` now skips the `withSentryConfig(...)` wrapper by default
+  so Turbopack dev compile does not pay the full Next/Sentry webpack-plugin
+  integration cost on every cold start; production still wraps with Sentry, and
+  local operators can opt back in with `SENTRY_ENABLE_DEV=true`
 - Sentry is intentionally configured as a minimal first pass:
   error capture plus basic tracing are enabled when a DSN exists, while replay,
   profiling, and Prisma-specific tracing are still intentionally out of scope

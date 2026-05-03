@@ -1,6 +1,7 @@
 import type { ComponentProps, ComponentType, ReactNode } from "react";
 import { Slot, Slottable } from "@radix-ui/react-slot";
 
+import { Avatar } from "@/design-system/primitives";
 import { cn } from "@/lib/utils";
 
 export interface SidebarContainerProps
@@ -176,8 +177,9 @@ export function SidebarItem({
   );
 }
 
-interface SidebarAvatarProps extends ComponentProps<"div"> {
+interface SidebarAvatarProps {
   initials: string;
+  className?: string;
 }
 
 export function SidebarAvatar({
@@ -186,15 +188,12 @@ export function SidebarAvatar({
   ...props
 }: SidebarAvatarProps) {
   return (
-    <div
-      className={cn(
-        "flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground",
-        className,
-      )}
+    <Avatar
+      initials={initials}
+      size={32}
+      className={className}
       {...props}
-    >
-      {initials}
-    </div>
+    />
   );
 }
 
