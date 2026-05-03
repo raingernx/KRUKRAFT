@@ -258,14 +258,17 @@ Use this order when DS docs disagree:
   `Explore all resources`. The current runtime owners are `ResourceGrid` and
   `categories/[slug]`, while section-header browse links stay on `PillLink`
   and retry/error pairs stay on `Button`.
-- `ReadOnlyToken` is now the next runtime-first slice after
+- `ReadOnlyToken` is now the next canonical slice after
   `EmptyStatePillLink`: it covers read-only content metadata tokens such as
   `Test Prep learners` and `Self-paced revision`.
-- Current runtime adoption starts on the resource-detail identity-target lane.
-  Keep this family intentionally separate from badges, chips, pill-links, and
-  creator-form context labels. Canonical Figma coverage does not exist yet, so
-  map this slice as `pending-figma` until a dedicated foundations board is
-  promoted.
+- The current canonical foundations boards now live at light `1863:416` and
+  dark `1863:442`, with `ReadOnlyToken / Content metadata / Source` proving
+  the bounded `34px` shell (`padding 6/12`, `bg/inset`, `border/default`,
+  `type/label` semibold text, no icon).
+- Current runtime adoption still starts on the resource-detail identity-target
+  lane. Keep this family intentionally separate from badges, chips,
+  pill-links, and creator-form context labels until those postures are audited
+  on their own terms.
 - Dark-shell selected rows, chips, and feedback states should use theme-aware
   emphasis surfaces rather than fixed light-only `*-50` fills.
 - Hero surfaces are not generic `card` surfaces; they should use the hero

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const readOnlyTokenVariants = cva(
   [
     "inline-flex shrink-0 items-center rounded-full border border-border bg-muted px-3 py-1.5",
-    "font-ui text-small font-medium text-foreground whitespace-nowrap",
+    "font-ui text-small font-semibold text-foreground whitespace-nowrap",
   ].join(" "),
   {
     variants: {

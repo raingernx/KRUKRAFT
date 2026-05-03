@@ -388,6 +388,79 @@ Copy this block before implementing a new Figma-backed component.
   - `EmptyStatePillLink / Foundations / Light` `1854:416`
   - `EmptyStatePillLink / Foundations / Dark` `1854:458`
 - Runtime proof route/harness:
+
+### ReadOnlyToken
+
+- Scope: bounded read-only content metadata shell only, not creator-form helper
+  labels, status badges, interactive chips, or pill links
+- Canonical nodes:
+  - light board `1863:416`
+  - dark board `1863:442`
+  - light source set `1863:432`
+  - dark source set `1863:458`
+- Runtime owner: `src/design-system/primitives/ReadOnlyToken.tsx`
+- Variants in scope: `variant=content-metadata`
+
+#### Shell
+- Width: hug by content
+- Height: `34`
+- Usage card shell:
+  - padding `24`
+  - gap `8`
+  - radius `24`
+- Variants card shell:
+  - padding `32`
+  - gap `24`
+  - radius `24`
+- Source-set shell:
+  - padding `12`
+  - gap `12`
+- Padding:
+  - top `6`
+  - right `12`
+  - bottom `6`
+  - left `12`
+- Gap: `0`
+- Radius: pill / full
+- Border:
+  - default `border/default` at `1px`
+- Background:
+  - default `bg/inset`
+
+#### Child Geometry
+- Label: `Test Prep learners`
+- No leading or trailing icon in the canonical bounded shell
+
+#### DOM Sibling Structure
+- Parent stack: one inline row only
+- Child order: `label` only
+- Sibling groups: none
+- Gap owner: none; shell is single-label only
+- Notes on nodes that must stay separate: do not fold creator-form helper
+  labels into this primitive; those remain a smaller route-owned posture until
+  they are audited separately.
+
+#### Typography
+- Label: `type/label` semantics, semibold, `14/20`
+
+#### Variant Rules
+- content-metadata:
+  - fill `bg/inset`
+  - stroke `border/default`
+  - text `fg/default`
+
+#### Runtime Notes
+- Parent-owned: surrounding resource-detail copy stack, label grouping, and
+  lane spacing
+- Route-owned: final content metadata copy such as `Test Prep learners` and
+  `Self-paced revision`
+- Known token gaps: none for the current bounded shell
+
+#### Proof
+- Figma screenshot:
+  - `ReadOnlyToken / Foundations / Light` `1863:416`
+  - `ReadOnlyToken / Foundations / Dark` `1863:442`
+- Runtime proof route/harness: `/resources/sat-math-practice-sheet`
   - `/resources`
   - `/categories/mathematics`
 
