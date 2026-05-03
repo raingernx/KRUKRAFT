@@ -1,8 +1,7 @@
 import { Suspense } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { MarketplaceNavbarSearch } from "@/components/marketplace/MarketplaceNavbarSearch";
-import { Container } from "@/design-system";
-import { Badge } from "@/design-system";
+import { Badge, Container, emptyStatePillLinkVariants } from "@/design-system";
 import { PublicResourceCard } from "@/components/resources/PublicResourceCard";
 import {
   CategoryPageResourceCountFallback,
@@ -12,6 +11,7 @@ import Link from "next/link";
 import { ArrowLeft, BookOpen } from "@/lib/icons";
 import { routes } from "@/lib/routes";
 import { getCategoryLandingPageData } from "@/services/resources";
+import { cn } from "@/lib/utils";
 
 const CATEGORY_META: Record<
   string,
@@ -184,7 +184,7 @@ async function CategoryResourcesSection({
           </p>
           <Link
             href={routes.marketplace}
-            className="mt-5 inline-flex items-center rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
+            className={cn(emptyStatePillLinkVariants(), "mt-5")}
           >
             Explore all resources
           </Link>

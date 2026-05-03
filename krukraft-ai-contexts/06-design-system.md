@@ -242,6 +242,14 @@ Use this order when DS docs disagree:
   `ResourcesDiscoverPersonalizedSection`, while empty-state pill links,
   card-footer text CTAs, and read-only tokens stay outside this primitive
   until a separate family decision is made.
+- `EmptyStatePillLink` is now the next runtime-first slice after `PillLink`:
+  it covers bordered `40px` empty-state browse/recovery actions such as
+  `Clear filters` and `Explore all resources`.
+- Current runtime owners are `ResourceGrid` and `categories/[slug]`. Keep this
+  family intentionally separate from `PillLink`: header browse links stay on
+  the compact `32px` shell, while empty-state actions keep the larger bordered
+  shell. Canonical Figma coverage does not exist yet, so map this slice as
+  `pending-figma` until a dedicated empty-state foundations board is promoted.
 - Dark-shell selected rows, chips, and feedback states should use theme-aware
   emphasis surfaces rather than fixed light-only `*-50` fills.
 - Hero surfaces are not generic `card` surfaces; they should use the hero

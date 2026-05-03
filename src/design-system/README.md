@@ -55,6 +55,7 @@ When this file conflicts with code, the code wins.
 - `Avatar`
 - `Badge`
 - `Chip`
+- `EmptyStatePillLink`
 - `Button`
 - `Card`
 - `Dropdown`
@@ -766,6 +767,13 @@ Current canonical Figma shared-coverage note:
   `ResourcesDiscoverPersonalizedSection` now reuse the shared contract, while
   empty-state pill links and card-footer text CTAs remain route-owned until
   they are intentionally promoted or split into their own family.
+- `EmptyStatePillLink` is now a separate runtime-first DS primitive for
+  empty-state browse/recovery actions such as `Clear filters` and
+  `Explore all resources`.
+- Its current scope is intentionally narrow and still `pending-figma`:
+  runtime owners on `ResourceGrid` and `categories/[slug]` now reuse the same
+  bordered `40px` pill shell, while section-header browse links stay on the
+  smaller `PillLink` family and error/retry button pairs remain on `Button`.
 - Hero surfaces are not generic `card` surfaces. Use the hero semantic layer
   (`heroBackground`, `heroPanel`, `heroChip`, and related roles) instead of
   rebinding hero UI to default card tokens.

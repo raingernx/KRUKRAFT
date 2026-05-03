@@ -647,6 +647,15 @@ For reusable Figma component sets:
   section-header secondary-navigation affordance only. Do not pull
   empty-state pill links, card-footer text CTAs, or read-only tokens into this
   primitive until those families are audited on their own terms.
+- `EmptyStatePillLink` is now a separate runtime-first primitive for
+  empty-state browse/recovery actions such as `Clear filters` and
+  `Explore all resources`.
+- Keep it scoped to bordered `40px` empty-state secondary actions for now:
+  runtime owners on `ResourceGrid` and `categories/[slug]` now reuse the same
+  shell, while section-header browse links stay on `PillLink` and error/retry
+  action pairs remain on `Button`. Canonical Figma coverage does not exist yet,
+  so this slice should stay marked `pending-figma` until an empty-state
+  foundations board is promoted intentionally.
 - The 2026-04-29 badge residual cleanup closed the last canonical badge-board
   gaps too: the light/dark `Badge / Variant / Source` wrappers now sit at
   `cornerRadius=0`, and the seven badge labels now bind to dedicated

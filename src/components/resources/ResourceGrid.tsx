@@ -9,10 +9,10 @@ import {
 } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 import { BookOpen, Search } from "@/lib/icons";
-import { Button } from "@/design-system";
+import { Button, emptyStatePillLinkVariants, LoadingSkeleton } from "@/design-system";
 import { IntentPrefetchLink } from "@/components/navigation/IntentPrefetchLink";
-import { LoadingSkeleton } from "@/design-system";
 import { routes } from "@/lib/routes";
+import { cn } from "@/lib/utils";
 import { ResourceCard, type ResourceCardData } from "./ResourceCard";
 import { ResourceCardSkeleton } from "./ResourceCardSkeleton";
 
@@ -157,7 +157,7 @@ function ResourceGridBody({
           <IntentPrefetchLink
             href={clearFiltersHref}
             resourcesNavigationMode="auto"
-            className="mt-5 inline-flex items-center rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
+            className={cn(emptyStatePillLinkVariants(), "mt-5")}
           >
             Clear filters
           </IntentPrefetchLink>
@@ -179,7 +179,7 @@ function ResourceGridBody({
         <IntentPrefetchLink
           href={exploreAllHref}
           resourcesNavigationMode="discover"
-          className="mt-5 inline-flex items-center rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
+          className={cn(emptyStatePillLinkVariants(), "mt-5")}
         >
           Explore all resources
         </IntentPrefetchLink>
