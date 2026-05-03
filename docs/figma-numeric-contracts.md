@@ -1202,8 +1202,8 @@ Copy this block before implementing a new Figma-backed component.
 - Scope: shared text-field shell only, not search-specific affordances
 - Canonical nodes:
   - light state `432:218`
-  - dark state `548:134`
-  - light size `627:780`
+  - light size `548:134`
+  - dark state `627:780`
   - dark size `627:804`
 - Runtime owner: `src/design-system/primitives/Input.tsx`
 - Variants in scope: state + size ladder with optional adornments
@@ -1211,17 +1211,26 @@ Copy this block before implementing a new Figma-backed component.
 #### Shell
 - Width: `100%`
 - Height:
-  - `sm` `32`
   - `md` `40`
-  - `lg` `48`
-  - `field` `56`
+  - `field` `48`
 - Padding:
-  - no adornment `12/16` horizontal depending on size
+  - left start `24`
+  - right end:
+    - `md` `24`
+    - `field` `24`
   - start/end adornment widths `36/40/44`
-- Gap: wrapper `4` to hint/error copy
+- Gap:
+  - shell interior `12`
+  - outer wrapper `8` to hint/error copy
 - Radius: `pill`
-- Border: shared field shell
-- Background: shared field shell
+- Border:
+  - rest/hover/filled/read-only/disabled `border/default`
+  - focus `focus/ring`
+  - error dedicated danger border
+- Background:
+  - rest/filled/read-only/disabled `bg/canvas`
+  - hover/focus `bg/inset`
+  - error dedicated danger fill
 
 #### Child Geometry
 - Optional start adornment lane on left
@@ -1250,17 +1259,34 @@ Copy this block before implementing a new Figma-backed component.
 
 #### Variant Rules
 - state matrix proves rest/hover/focus/disabled/error posture
-- size matrix proves shell heights; captions remain outside the shell
+- size matrix now proves the two live canonical shells only: `md` and `field`
+- captions remain outside the shell
 
 #### Runtime Notes
 - Parent-owned: labels and grid layout
 - Route-owned: actual adornment icons and validation copy
-- Known token gaps: Figma wrappers still carry explicit local component-set
-  radius debt outside the live shell itself
+- Canonical Figma now matches the newer Select-style shell contract directly:
+  `radius/pill`, `space/24` on both left/right shell padding, `bg/inset` for
+  hover/focus, and
+  `radius/xs + space/12` on the state/size source-set wrappers.
+- The canonical Figma size story is now reduced to `md` and `field` only,
+  matching the newer Select foundations policy.
+- Runtime now matches the bounded shared `Input` parity slice too: `Input.tsx`
+  uses `radius/pill`, `space/24` horizontal padding, `space-y-2` shell-to-
+  caption gap, and `md` as the default shared shell while keeping `field`
+  explicit for taller editor-grade mounts. The latest size retune narrows that
+  editor-grade step from `56` down to `48` so resource-editor forms can keep a
+  shared single-line rhythm without jumping all the way to the old oversized
+  shell.
+- The shared `Input` API now matches that reduced story directly: `md` is the
+  default shell and `field` stays as the only taller explicit size.
 
 #### Proof
-- Figma screenshot: `Input / State` dark set `548:134`
-- Runtime proof: bounded admin/settings form routes using shared field shell
+- Figma screenshot:
+  - `Input / Search / Light` `315:56`
+  - `Input / Search / Dark` `360:2`
+- Runtime proof: bounded admin/settings and admin/resources form routes using
+  the shared field shell
 
 ### SearchInput
 
@@ -1268,9 +1294,11 @@ Copy this block before implementing a new Figma-backed component.
   semantics beyond the explicit `hero` variant
 - Canonical nodes:
   - light state `432:276`
-  - dark state `548:166`
-  - light size `627:821`
+  - light size `548:166`
+  - dark state `627:821`
   - dark size `627:842`
+  - light loading proof `1947:396`
+  - dark loading proof `1947:406`
 - Runtime owner: `src/design-system/primitives/SearchInput.tsx`
 - Variants in scope: `default | hero`
 
@@ -1279,13 +1307,25 @@ Copy this block before implementing a new Figma-backed component.
 - Height:
   - `default` shared field ladder
   - `hero` route-owned `40`/responsive product posture
-- Padding: search-specific left/right reserves for icon and clear/loading lane
+- Padding:
+  - left start `24`
+  - right end:
+    - `md` `24`
+    - `field` `24`
+  - search-specific interior reserve still owned by icon and trailing
+    clear/loading lane
 - Gap: outer submit split `12` when submit button is present
 - Radius:
-  - `default` `8`
+  - `default` `pill`
   - `hero` route-owned rounded hero shell
-- Border: shared field shell for `default`
-- Background: shared field shell for `default`
+- Border:
+  - `default` rest/hover/filled/clear `border/default`
+  - `default` focus `focus/ring`
+  - `hero` route-owned
+- Background:
+  - `default` rest/filled/clear `bg/canvas`
+  - `default` hover/focus `bg/inset`
+  - `hero` route-owned
 
 #### Child Geometry
 - Leading search icon
@@ -1309,22 +1349,46 @@ Copy this block before implementing a new Figma-backed component.
 
 #### Typography
 - Field text: `14/20` default; hero remains product-owned
-- Clear action: current runtime compact action label/icon lane
+- Clear action: `14/20` on DS body typography vars
 
 #### Variant Rules
 - `default` stays on shared search field shell
 - `hero` stays as explicit product override within the primitive
+- canonical size set now proves `md` and `field` only
 
 #### Runtime Notes
 - Parent-owned: labels and surrounding toolbar/hero layout
 - Route-owned: hero copy, submit button semantics, and marketplace chrome
-- Known token gaps: public `/resources` hero search remains intentionally
-  route-owned beyond the shared default shell
+- Canonical Figma now matches the newer Select-style shell contract directly:
+  `radius/pill`, `space/24` on both left/right shell padding, `bg/inset` for
+  hover/focus, and
+  `radius/xs + space/12` on the state/size source-set wrappers while keeping
+  search-specific icon and clear-action lanes.
+- The older local `Clear` action typography debt on the foundations boards is
+  now closed too: both light/dark board labels bind DS body size + line vars.
+- The foundations boards now also carry one explicit `Loading lane` proof in
+  the search state cards. It stays on the same shell contract, swaps the
+  trailing clear action for a `20px` subtle spinner, and exists to prove slot
+  size/alignment only; the actual spinner motion remains runtime-owned.
+- Runtime now matches the bounded shared `SearchInput` parity slice too:
+  `variant="default"` uses the same pill family, stays on the shared `md`
+  default shell, keeps the search-specific icon/clear/loading lanes inside that
+  shell, and preserves the route-owned `hero` branch as the only intentional
+  larger exception. The shared default branch still resolves to `md` in product
+  usage, but the explicit `field` rung on the shared ladder now matches
+  `Input`/`Select` at `48` for editor-grade follow-ups.
+- The shared `SearchInput` API now matches the reduced foundations story
+  directly too: `variant="default"` only exposes `md` and `field`, while
+  `hero` remains the intentional route-owned override.
+- Public `/resources` hero search remains intentionally route-owned beyond the
+  shared default shell.
 
 #### Proof
-- Figma screenshot: `SearchInput / State` dark set `548:166`
-- Runtime proof: `/dashboard/library`, admin search mounts, and `/resources`
-  hero search as bounded override
+- Figma screenshot:
+  - `Input / Search / Light` `315:56`
+  - `Input / Search / Dark` `360:2`
+- Runtime proof: `/dashboard/library`, admin search mounts, dashboard topbar
+  search, and `/resources` hero search as bounded override
 
 ### Select
 
@@ -1344,12 +1408,12 @@ Copy this block before implementing a new Figma-backed component.
 - Width: `100%`
 - Height:
   - `md` `40`
-  - `field` `56`
+  - `field` `48`
 - Padding:
   - left `24`
   - right `16`
 - Gap: wrapper `4` to hint/error copy
-- Radius: `8`
+- Radius: `pill`
 - Border: shared field shell
 - Background: shared field shell
 
@@ -1396,7 +1460,9 @@ Copy this block before implementing a new Figma-backed component.
 - Figma QA note: the latest size reduction pass removes `sm` and `lg` from the
   canonical `Select / Size` source sets entirely. `md` is now the shared
   default shell and `field` is the only taller editor-grade shell still
-  represented in Foundations.
+  represented in Foundations. The latest field retune brings that editor-grade
+  shell down from `56` to `48` so resource editors can keep one shared
+  single-line control rhythm across `Input` and `Select`.
 - Figma QA note: the latest caret pass binds every `CaretDown` instance on the
   light/dark boards and source sets to `fg/subtle` instead of the older local
   white / `neutral/ink` posture.

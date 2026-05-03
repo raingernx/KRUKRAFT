@@ -298,9 +298,9 @@ export function CreatorAIDraftGenerator({
                 วิชา / หัวข้อ
               </label>
               <Input
+                size="field"
                 id={subjectInputId}
                 name="subject"
-                size="md"
                 value={draftState.subject}
                 onChange={handleTextChange}
                 placeholder="เช่น เศษส่วน หรือ การจับใจความ"
@@ -315,9 +315,9 @@ export function CreatorAIDraftGenerator({
                 ระดับชั้น
               </label>
               <Input
+                size="field"
                 id={gradeInputId}
                 name="grade"
-                size="md"
                 value={draftState.grade}
                 onChange={handleTextChange}
                 placeholder="เช่น ป.5 หรือ ม.1"
@@ -332,10 +332,10 @@ export function CreatorAIDraftGenerator({
                 จำนวนข้อคำถาม
               </label>
               <Input
+                size="field"
                 id={quizCountInputId}
                 name="quizCount"
                 type="number"
-                size="md"
                 min="3"
                 max="10"
                 value={String(draftState.quizCount)}

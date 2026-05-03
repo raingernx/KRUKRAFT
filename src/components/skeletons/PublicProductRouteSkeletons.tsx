@@ -1,6 +1,7 @@
 "use client";
 
 import { NavbarShell } from "@/components/layout/NavbarShell";
+import { ResourcesCatalogSearchSkeleton } from "@/components/marketplace/ResourcesCatalogControlsSkeleton";
 import { LoadingSkeleton } from "@/design-system";
 import {
   Container,
@@ -10,8 +11,8 @@ import {
 
 function ListingHeaderSearchSkeleton() {
   return (
-    <div className="hidden min-w-0 flex-1 lg:flex">
-      <LoadingSkeleton className="h-10 w-full max-w-[560px] rounded-xl" />
+    <div className="hidden min-w-0 w-full max-w-[780px] lg:block">
+      <ResourcesCatalogSearchSkeleton />
     </div>
   );
 }

@@ -14,18 +14,26 @@ const CONTROLS_BAR_GROUP_CLASS_NAME =
 
 function SearchFallback() {
   return (
-    <div className="flex h-10 w-full items-center gap-3 rounded-xl border border-border-strong bg-card px-4 text-base text-muted-foreground shadow-sm sm:rounded-2xl">
-      <LoadingSkeleton className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25" />
-      <LoadingSkeleton className="h-4 w-44 rounded" />
+    <div className="relative h-10 w-full rounded-full border border-border bg-background text-muted-foreground shadow-none">
+      <span className="pointer-events-none absolute inset-y-0 left-0 flex w-[44px] items-center justify-center">
+        <LoadingSkeleton className="h-[14px] w-[14px] rounded-full bg-muted-foreground/25" />
+      </span>
+      <div className="flex h-full items-center pl-[45px] pr-[45px]">
+        <LoadingSkeleton className="h-4 w-44 rounded" />
+      </div>
     </div>
   );
 }
 
 function CatalogSearchPreview() {
   return (
-    <div className="flex h-10 w-full items-center gap-3 rounded-xl border border-border-strong bg-card px-4 text-base text-muted-foreground shadow-sm sm:rounded-2xl">
-      <Search className="h-4 w-4 text-muted-foreground" />
-      <span>ค้นหาใบงาน แฟลชการ์ด โน้ต...</span>
+    <div className="relative h-10 w-full rounded-full border border-border bg-background text-[16px] font-normal leading-normal text-muted-foreground shadow-none">
+      <span className="pointer-events-none absolute inset-y-0 left-0 flex w-[44px] items-center justify-center text-muted-foreground">
+        <Search className="h-[14px] w-[14px] stroke-[1.75]" aria-hidden />
+      </span>
+      <div className="flex h-full items-center pl-[45px] pr-[45px]">
+        <span>ค้นหาใบงาน แฟลชการ์ด โน้ต...</span>
+      </div>
     </div>
   );
 }

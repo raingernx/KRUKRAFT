@@ -789,9 +789,9 @@ export function CreatorResourceForm({
               Title <span className={requiredFieldAsteriskClassName}>*</span>
             </label>
             <Input
+              size="field"
               id={titleInputId}
               name="title"
-              size="md"
               value={form.title}
               onChange={handleChange}
               placeholder={
@@ -814,9 +814,9 @@ export function CreatorResourceForm({
               <span className="ml-1 text-xs font-normal text-muted-foreground">(auto-generated if left blank)</span>
             </label>
             <Input
+              size="field"
               id={slugInputId}
               name="slug"
-              size="md"
               value={form.slug}
               onChange={handleChange}
               placeholder="grade-5-fractions-worksheet"
@@ -924,10 +924,10 @@ export function CreatorResourceForm({
           >
             <label htmlFor={priceInputId} className="text-sm font-medium text-foreground">Price (THB)</label>
             <Input
+              size="field"
               id={priceInputId}
               name="price"
               type="number"
-              size="md"
               min="0"
               value={form.price}
               onChange={handleChange}

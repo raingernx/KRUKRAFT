@@ -53,10 +53,10 @@ export function DashboardTopbarSearch() {
   };
 
   return (
-    <form className="min-w-0 flex-1" onSubmit={handleSubmit}>
+    <form className="min-w-0 w-full max-w-[40rem]" onSubmit={handleSubmit}>
       <SearchInput
         aria-label="Search your dashboard library"
-        containerClassName="max-w-2xl"
+        containerClassName="w-full"
         id="dashboard-search"
         name="dashboardSearch"
         onChange={(event) => setQuery(event.target.value)}

@@ -15,6 +15,7 @@ import {
 } from "@/lib/icons";
 import {
   Button,
+  Input,
   Select,
   Switch,
   Textarea,
@@ -236,13 +237,14 @@ function PreviewUrlsEditor({
         {urls.map((url, i) => (
           <div key={i} className="flex min-w-0 items-center gap-2">
             <GripVertical className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
-            <input
+            <Input
+              size="field"
               id={i === 0 ? "preview-url-0" : undefined}
               type="text"
               value={url}
               onChange={(e) => update(i, e.target.value)}
               placeholder={i === 0 ? "Thumbnail URL or path (e.g. /uploads/… or https://…)" : "https://… or /uploads/… (preview image)"}
-              className="input-base w-full min-w-0 flex-1"
+              className="min-w-0 flex-1"
             />
             <PickerIconButton
               onClick={() => remove(i)}
@@ -647,7 +649,8 @@ export function ResourceForm({
         <div className="grid w-full min-w-0 gap-4">
           <div className="min-w-0 space-y-1.5">
             <Label htmlFor="title">Title</Label>
-            <input
+            <Input
+              size="field"
               id="title"
               name="title"
               type="text"
@@ -655,7 +658,6 @@ export function ResourceForm({
               minLength={3}
               value={form.title}
               onChange={handleChange}
-              className="input-base w-full"
               placeholder="Enter resource title"
             />
             {fieldErrors.title && (
@@ -682,7 +684,8 @@ export function ResourceForm({
                   <span className="shrink-0 text-muted-foreground">
                     /resources/
                   </span>
-                  <input
+                  <Input
+                    size="field"
                     id="slug"
                     name="slug"
                     type="text"
@@ -695,7 +698,7 @@ export function ResourceForm({
                       }));
                       setSlugEditedManually(true);
                     }}
-                    className="input-base w-full py-1 text-[11px]"
+                    className="w-full"
                     placeholder={slugPreview}
                   />
                   <button
@@ -818,7 +821,8 @@ export function ResourceForm({
             </div>
             <div className="min-w-0 flex-1 space-y-1.5 sm:max-w-[140px]">
               <Label htmlFor="price">Price (THB)</Label>
-              <input
+              <Input
+                size="field"
                 id="price"
                 name="price"
                 type="number"
@@ -827,7 +831,7 @@ export function ResourceForm({
                 value={form.price}
                 onChange={handleChange}
                 placeholder="49"
-                className="input-base w-full disabled:opacity-70"
+                className="disabled:opacity-70"
                 disabled={form.isFree}
               />
               {fieldErrors.price && (
@@ -1044,14 +1048,14 @@ export function ResourceForm({
               >
                 External file URL
               </Label>
-              <input
+              <Input
+                size="field"
                 id="fileUrl"
                 name="fileUrl"
                 type="url"
                 value={form.fileUrl}
                 onChange={handleChange}
                 placeholder="https://example.com/file.pdf"
-                className="input-base w-full"
               />
               <p className="mt-1 text-[11px] text-muted-foreground">
                 Used when the file is hosted externally instead of private

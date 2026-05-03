@@ -18,11 +18,11 @@ export function CreatorResourceFormLoadingShellPreview() {
           <div className="space-y-5">
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-20" />
-              <LoadingSkeleton className="h-10 w-full rounded-xl" />
+              <LoadingSkeleton className="h-12 w-full rounded-full" />
             </div>
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-24" />
-              <LoadingSkeleton className="h-10 w-full rounded-xl" />
+              <LoadingSkeleton className="h-12 w-full rounded-full" />
             </div>
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-28" />
@@ -40,19 +40,19 @@ export function CreatorResourceFormLoadingShellPreview() {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-20" />
-              <LoadingSkeleton className="h-10 w-full rounded-xl" />
+              <LoadingSkeleton className="h-12 w-full rounded-full" />
             </div>
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-24" />
-              <LoadingSkeleton className="h-10 w-full rounded-xl" />
+              <LoadingSkeleton className="h-12 w-full rounded-full" />
             </div>
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-24" />
-              <LoadingSkeleton className="h-10 w-full rounded-xl" />
+              <LoadingSkeleton className="h-12 w-full rounded-full" />
             </div>
             <div className="space-y-3">
               <LoadingSkeleton className="h-4 w-28" />
-              <LoadingSkeleton className="h-10 w-full rounded-xl" />
+              <LoadingSkeleton className="h-12 w-full rounded-full" />
             </div>
           </div>
 
@@ -85,7 +85,7 @@ export function CreatorResourceFormLoadingShellPreview() {
                 <LoadingSkeleton className="h-3 w-64" />
               </div>
               <LoadingSkeleton className="h-28 w-full rounded-3xl" />
-              <LoadingSkeleton className="h-14 w-full rounded-xl" />
+              <LoadingSkeleton className="h-12 w-full rounded-full" />
             </div>
           </div>
         </section>

@@ -17,6 +17,8 @@ export function Topbar({
   children,
   onMenuToggle,
 }: TopbarProps & { onMenuToggle?: () => void }) {
+  const usesDefaultSearchLayout = !children;
+
   return (
     <SharedDashboardTopbar
       variant="admin"
@@ -31,15 +33,9 @@ export function Topbar({
           </p>
         </div>
       }
+      center={usesDefaultSearchLayout ? <AdminGlobalSearch /> : undefined}
       rightClassName="gap-3"
-      right={
-        children ?? (
-          <>
-            <AdminGlobalSearch />
-            <NotificationBell />
-          </>
-        )
-      }
+      right={usesDefaultSearchLayout ? <NotificationBell /> : children}
     />
   );
 }

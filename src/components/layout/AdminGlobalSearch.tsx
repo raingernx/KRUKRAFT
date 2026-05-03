@@ -127,7 +127,7 @@ export function AdminGlobalSearch() {
   return (
     <div
       ref={containerRef}
-      className="relative hidden w-72 md:block"
+      className="relative hidden w-full max-w-[20rem] xl:max-w-[24rem] md:block"
     >
       <SearchInput
         aria-label="Global admin search"
@@ -138,8 +138,7 @@ export function AdminGlobalSearch() {
           setDebouncedQuery("");
           setIsOpen(false);
         }}
-        placeholder="Search resources, users, orders..."
-        className="rounded-full bg-muted"
+        placeholder="Search resources, users, or orders"
       />
 
       {isOpen && (

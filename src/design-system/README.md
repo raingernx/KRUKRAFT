@@ -380,6 +380,20 @@ Current canonical Figma shared-coverage note:
 - `Input` and `SearchInput` are now the second themed runtime slice. Keep
   both on the same quiet field shell, placeholder/value hierarchy, and focus
   ring language for new work.
+- The latest Figma `Input / Search` follow-up now aligns the canonical boards
+  and source sets to the newer Select-style shell contract on the design side:
+  `radius/pill`, `paddingLeft=space/24`, `paddingRight=space/24`,
+  `bg/inset` for hover/focus, and `radius/xs + space/12` cleanup on the
+  wrapper/state-set structure while
+  also narrowing the canonical size story to `md + field` only. The old local
+  `Clear` label type override on the foundations boards is closed too: both
+  light/dark labels now bind DS body size + line vars. Runtime now matches
+  that newer shell for `Input` specifically: the shared primitive uses pill
+  radius, `space/24` horizontal padding, `space-y-2` shell-to-caption rhythm,
+  and `md` as the default shared shell. The shared default `SearchInput` branch
+  now matches the same pill family too while keeping search-specific
+  icon/clear/loading lanes and leaving the route-owned `hero` branch as the
+  only larger exception.
 - `Select` is now the next Figma-first control sibling after `Input` /
   `SearchInput`. The canonical file now carries light/dark
   `Select / Foundations` boards plus `Select / State` and `Select / Size`
@@ -438,7 +452,7 @@ Current canonical Figma shared-coverage note:
   description field keeps the shared shell on both new/edit routes. That
   creator follow-up is now closed too: the delivery/previews linked URL editor
   inputs on `/dashboard/creator/resources/new` and edit now keep the same
-  shared `56px / 8px` field shell, while the bulk preview URL textarea remains
+  shared `48px / pill` field shell, while the bulk preview URL textarea remains
   a route-owned composite editor. The follow-up parser-only proof is now
   closed too: the bulk preview editor still uses the shared `Textarea` shell
   on create/edit routes, but parsing, validation, apply-state, and cover-order
@@ -594,36 +608,40 @@ Current canonical Figma shared-coverage note:
   - keep `density=\"compact\" -> xs` during the first rollout proof instead of
     silently moving compact buttons to `36px`
   - do not drag `Input` / `SearchInput` into that rollout by default
-- `Input` / default-field size contract for Figma and code should stay:
-  - `sm`: `h-8`, `px-3`
-  - `md`: `h-10`, `px-4`
-  - `lg`: `h-12`, `px-4`
-  - `field`: `h-14`, `px-4`
-  - the canonical Figma base now uses `radius/sm (8px)` across `Input` and
-    `SearchInput` state + size sets instead of a split comfortable/compact
-    radius posture
-  - runtime adoption has now started on the shared search branch:
-    - `SearchInput variant="default"` now forces the canonical
-      `radius/sm (8px)` shell at runtime
-    - the first proof routes are `/dashboard/library` toolbar search
-      (`40px / 8px`) and the dashboard topbar search on the same
-      `40px / 8px` ladder
-    - the shared start/loading adornments on that default branch now render
-      through full-height wrappers too, so toolbar and topbar search icons stay
-      vertically centered instead of collapsing to a `16px` corner box
-    - the topbar clear action is now route-proved too once the client shell is
-      hydrated; the proof path verifies that the clear button appears and resets
-      the field locally
-    - the shared default search contract now resolves to `size="md"` (`40px`)
-      before local exceptions; admin global search, admin users, admin
-      resources, admin activity, and admin ranking now route through the same
-      `SearchInput` primitive instead of `Input + local icon wrapper` copies
+- `Input` / default-field height ladder in code still stays:
+  - `Input.tsx` now matches the bounded shared parity slice at runtime:
+    `radius/pill`, `px-6`, `space-y-2`, and `default -> md`
+  - `field` remains the taller editor-grade shell at `h-12`
+  - the canonical Figma base uses `radius/pill` across `Input` and
+    `SearchInput` state + size sets, binds both `paddingLeft=space/24` and
+    `paddingRight=space/24`, binds `bg/inset` for hover/focus, and narrows the
+    Figma size story itself to `md + field`
+  - runtime now follows that same reduced size policy directly: shared
+    `Input` and default `SearchInput` only expose `md` and `field`
+  - the canonical search state card now includes one bounded `Loading lane`
+    mockup too: it proves the trailing spinner slot on the shared shell without
+    promoting spinner motion into a Figma-owned state machine
+  - shared search runtime parity is now landed on the default branch:
+    - `SearchInput variant="default"` now matches the same pill family and
+      shared `md` default shell while keeping search-specific icon, clear, and
+      loading lanes inside the shell
+    - the shared `SearchInput` API is now narrowed to `md | field`; only the
+      route-owned `hero` branch diverges from that reduced size story
+    - the first proof routes are `/dashboard/library` toolbar search (`40px`),
+      the dashboard topbar search, and the widened admin search mounts
+    - the shared start/loading adornments render through full-height wrappers,
+      so toolbar and topbar search icons stay vertically centered instead of
+      collapsing to a `16px` corner box
+    - the topbar clear action is route-proved once the client shell hydrates;
+      the proof path verifies that the clear button appears and resets the
+      field locally
+    - admin global search, admin users, admin resources, admin activity, and
+      admin ranking all route through the same `SearchInput` primitive instead
+      of `Input + local icon wrapper` copies, and `/dashboard/library` toolbar
+      search now follows that shared branch
     - public `/resources` search stays a route-owned product override
       (`h-[40px]`, pill radius) and is intentionally outside this shared-shell
       parity slice
-  - `Input.tsx` now matches the canonical `8px` radius shell at runtime too;
-    `/admin/users` is the first proof route for the shared field primitive
-  - default resolution: `comfortable -> field`, `compact -> sm`
 - `SearchInput variant=\"default\"` should stay on the same field-size ladder as
   `Input`, but the shared default runtime mount now resolves to `size="md"`
   (`40px`) unless a route opts into another rung explicitly; only the hero

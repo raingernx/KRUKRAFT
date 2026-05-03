@@ -2,15 +2,15 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 import {
-  fieldEndAdornmentWidthClassNames,
-  fieldStartAdornmentWidthClassNames,
   fieldEndAdornmentClassName,
   fieldInputBaseClassName,
   fieldStartAdornmentClassName,
-  getFieldControlSizeClassName,
-  resolveFieldControlSize,
+  getInputControlSizeClassName,
+  inputEndAdornmentWidthClassNames,
+  inputStartAdornmentWidthClassNames,
+  resolveInputControlSize,
   type FieldControlDensity,
-  type FieldControlSize,
+  type InputControlSize,
 } from "./fieldRecipe"
 
 export interface InputProps extends Omit<React.ComponentProps<"input">, "prefix" | "size"> {
@@ -19,7 +19,7 @@ export interface InputProps extends Omit<React.ComponentProps<"input">, "prefix"
   error?: string
   hint?: string
   hintClassName?: string
-  size?: FieldControlSize
+  size?: InputControlSize
   density?: FieldControlDensity
 }
 
@@ -45,13 +45,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
     .filter(Boolean)
     .join(" ") || undefined
 
-  const resolvedSize = resolveFieldControlSize(size, density)
-  const inputSizeClassName = getFieldControlSizeClassName(size, density)
-  const startAdornmentSizeClassName = fieldStartAdornmentWidthClassNames[resolvedSize]
-  const endAdornmentSizeClassName = fieldEndAdornmentWidthClassNames[resolvedSize]
+  const resolvedSize = resolveInputControlSize(size)
+  const inputSizeClassName = getInputControlSizeClassName(size, density)
+  const startAdornmentSizeClassName = inputStartAdornmentWidthClassNames[resolvedSize]
+  const endAdornmentSizeClassName = inputEndAdornmentWidthClassNames[resolvedSize]
 
   return (
-    <div className="w-full space-y-1">
+    <div className="w-full space-y-2">
       {leftAdornment || rightAdornment ? (
         <div className="relative">
           {leftAdornment ? (
@@ -74,11 +74,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
               fieldInputBaseClassName,
               "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/18",
               inputSizeClassName,
-              "rounded-[var(--radius-sm)]",
-              leftAdornment &&
-                (resolvedSize === "sm" ? "pl-9" : resolvedSize === "md" ? "pl-10" : "pl-11"),
-              rightAdornment &&
-                (resolvedSize === "sm" ? "pr-9" : resolvedSize === "md" ? "pr-10" : "pr-11"),
+              leftAdornment && (resolvedSize === "field" ? "pl-11" : "pl-10"),
+              rightAdornment && (resolvedSize === "field" ? "pr-11" : "pr-10"),
               className,
             )}
             aria-describedby={describedBy}
@@ -107,7 +104,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
             fieldInputBaseClassName,
             "aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/18",
             inputSizeClassName,
-            "rounded-[var(--radius-sm)]",
             className,
           )}
           aria-describedby={describedBy}

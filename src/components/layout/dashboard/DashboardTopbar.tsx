@@ -8,10 +8,12 @@ import type { DashboardShellVariant } from "./dashboard-nav.types";
 interface DashboardTopbarProps {
   variant: DashboardShellVariant;
   left?: ReactNode;
+  center?: ReactNode;
   right?: ReactNode;
   onMenuToggle?: () => void;
   className?: string;
   leftClassName?: string;
+  centerClassName?: string;
   rightClassName?: string;
 }
 
@@ -44,24 +46,28 @@ const TOPBAR_PADDING_CLASS: Record<DashboardShellVariant, string> = {
 export function DashboardTopbar({
   variant,
   left,
+  center,
   right,
   onMenuToggle,
   className,
   leftClassName,
+  centerClassName,
   rightClassName,
 }: DashboardTopbarProps) {
+  const hasCenter = Boolean(center);
+
   return (
     <header
       className={cn(
-        "flex shrink-0 items-center justify-between gap-4",
+        "flex shrink-0 items-center gap-4",
         TOPBAR_HEIGHT_CLASS[variant],
         TOPBAR_BORDER_CLASS[variant],
         TOPBAR_SURFACE_CLASS[variant],
         TOPBAR_PADDING_CLASS[variant],
         "border-b",
         className
-      )}
-    >
+        )}
+      >
       <div
         className={cn(
           "flex min-w-0 flex-1 items-center gap-2.5",
@@ -81,8 +87,24 @@ export function DashboardTopbar({
         {left}
       </div>
 
+      {center ? (
+        <div
+          className={cn(
+            "min-w-0 flex flex-1 justify-center",
+            centerClassName,
+          )}
+        >
+          {center}
+        </div>
+      ) : null}
+
       {right ? (
-        <div className={cn("ml-3 flex shrink-0 items-center", rightClassName)}>
+        <div
+          className={cn(
+            hasCenter ? "flex shrink-0 items-center justify-end" : "ml-3 flex shrink-0 items-center",
+            rightClassName,
+          )}
+        >
           {right}
         </div>
       ) : null}

@@ -505,10 +505,12 @@ Use this order when DS docs disagree:
     - typography size/line-height stays in typography variables
     - `Button` size stays a component variant ladder (`xs`, `sm`, `md`, `lg`,
       `icon`) with `comfortable -> md` and `compact -> sm`
-    - `Input` / field size stays a component variant ladder (`sm`, `md`, `lg`,
-      `field`) with `comfortable -> field` and `compact -> sm`
-    - `SearchInput variant=\"default\"` should follow the same field-size
-      contract as `Input`; only the hero variant may diverge
+    - `Input` now defaults to `md` at runtime and keeps `field` as the taller
+      explicit shell, and the shared `Input` / default `SearchInput` runtime
+      API is now narrowed to that same `md + field` story directly
+    - `SearchInput variant=\"default\"` now matches the shared pill-shell
+      family and `md` default branch too, while the route-owned `hero` variant
+      remains the only intentional larger exception
   - the canonical Figma foundations now match that control-size contract more
     closely too:
     - `Button / Size` light/dark were rebuilt to include explicit
@@ -701,16 +703,35 @@ Use this order when DS docs disagree:
         buyer-file source toggle. Upload/link branches plus validation/file
         workflow remain route-owned
     - `Input / State`, `SearchInput / State`, `Input / Size`, and
-      `SearchInput / Size` were re-audited on 2026-04-27 and now use
-      `radius/sm (8px)` consistently across light/dark while keeping the shared
-      `field` height ladder, `space/16`, and caption-scale text
-    - the latest control re-audit narrows the remaining Figma debt on those
-      boards to two explicit items only:
-      - the light/dark component-set wrappers still keep local
-        `cornerRadius=5`
-      - the `Clear` action label inside the search-state explainer still uses a
-        local `14/20` type recipe even though its font family and text fill are
-        already bound
+      `SearchInput / Size` were re-audited again on 2026-05-03 and the
+      canonical Figma shell now moves onto the newer Select-style contract:
+      `radius/pill`, `paddingLeft=space/24`, `paddingRight=space/24`,
+      `bg/inset` for hover/focus, and `radius/xs + space/12` on the
+      wrapper/state-set structure while reducing the canonical size story to
+      `md + field`
+    - the bounded runtime `Input` slice now matches that newer shell too:
+      `Input.tsx` uses pill radius, `space/24` horizontal padding, `space-y-2`
+      shell-to-caption rhythm, and `md` as the shared default shell
+    - shared `Input` adoption is widened on the admin resource editor too:
+      standard title, price, preview-URL, and external-file URL fields now
+      route through the primitive instead of local `input-base` shells
+    - shared `SearchInput` adoption is widened on `/dashboard/library` too: the
+      toolbar search now routes through the primitive instead of `Input +` a
+      local search-icon composition
+    - the canonical search state cards now also carry one bounded `Loading
+      lane` mockup in both modes: it proves the trailing spinner slot and
+      `fg/subtle` tone on the shared shell, and that proof now uses the
+      `20px` spinner posture chosen in the live Figma board while the actual
+      motion remains runtime-owned
+    - that Figma-side follow-up closes the earlier wrapper-radius debt too;
+      the light/dark component-set wrappers no longer keep local
+      `cornerRadius=5`
+    - the old board-level `Clear` action typography debt is closed too; both
+      light/dark labels now bind DS body size + line vars instead of staying
+      local
+    - runtime parity has not landed in the same slice; the current shared
+      `Input` / `SearchInput` primitives still trail the newer pill shell until
+      a dedicated runtime follow-up updates code to match
     - the first runtime-normalization follow-up after that parity slice is now
       live too: the shared `SearchInput` default start/loading adornments render
       through full-height wrappers, which fixes the visible top-left icon drift
@@ -820,7 +841,7 @@ Use this order when DS docs disagree:
       - the delivery/previews linked URL follow-up is now closed too:
         `/dashboard/creator/resources/new` and edit keep the preview image URL
         rows plus the external file URL editor on the same shared
-        `56px / 8px` `Input` shell
+        `48px / pill` `Input` shell
       - the bulk preview parser follow-up is now closed too:
         `/dashboard/creator/resources/new` and edit prove that the bulk
         preview textarea already sits on the shared `Textarea` shell, while

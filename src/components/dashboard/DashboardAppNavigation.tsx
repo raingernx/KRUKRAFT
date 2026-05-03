@@ -65,8 +65,8 @@ const DashboardTopbarSearch = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="min-w-0 flex-1">
-        <div className="relative w-full max-w-2xl">
+      <div className="min-w-0 w-full max-w-[40rem]">
+        <div className="relative w-full">
           <span
             className="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-muted-foreground"
             data-testid="dashboard-topbar-search-fallback-adornment"
@@ -77,7 +77,7 @@ const DashboardTopbarSearch = dynamic(
           <input
             aria-label="Search your dashboard library"
             className={cn(
-              "h-10 w-full rounded-[var(--radius-sm)] border border-input bg-background px-3 py-2 pl-10 pr-10 text-sm text-foreground shadow-sm transition-[border-color,box-shadow,background-color] duration-150",
+              "h-10 w-full rounded-full border border-input bg-shell pl-10 pr-10 text-sm text-foreground shadow-none transition-[border-color,box-shadow,background-color] duration-150",
               "placeholder:text-muted-foreground",
             )}
             data-testid="dashboard-topbar-search-fallback"
@@ -107,26 +107,33 @@ export function DashboardAppTopbar({ viewer }: { viewer: DashboardAppViewer }) {
     <>
       <header className="sticky top-0 z-10 border-b border-border-subtle bg-background/95 px-4 pt-3 pb-3 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
-          <Button
-            aria-label="Open dashboard navigation"
-            className="size-11 lg:hidden"
-            onClick={() => {
-              const activeElement = document.activeElement;
-              if (activeElement instanceof HTMLElement) {
-                activeElement.blur();
-              }
+          <div className="flex min-w-0 items-center">
+            <Button
+              aria-label="Open dashboard navigation"
+              className="size-11 lg:hidden"
+              onClick={() => {
+                const activeElement = document.activeElement;
+                if (activeElement instanceof HTMLElement) {
+                  activeElement.blur();
+                }
 
-              setHasOpenedMobileNav(true);
-              setIsMobileNavOpen(true);
-            }}
-            size="icon"
-            variant="tertiary"
-          >
-            <Menu className="size-5" aria-hidden />
-          </Button>
+                setHasOpenedMobileNav(true);
+                setIsMobileNavOpen(true);
+              }}
+              size="icon"
+              variant="tertiary"
+            >
+              <Menu className="size-5" aria-hidden />
+            </Button>
+          </div>
 
-          <DashboardTopbarSearch />
-          <DashboardTopbarActions viewer={viewer} />
+          <div className="min-w-0 flex flex-1 justify-center">
+            <DashboardTopbarSearch />
+          </div>
+
+          <div className="flex shrink-0 items-center justify-end gap-3">
+            <DashboardTopbarActions viewer={viewer} />
+          </div>
         </div>
       </header>
 

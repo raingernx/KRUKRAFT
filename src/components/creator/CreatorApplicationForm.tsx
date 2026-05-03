@@ -237,7 +237,6 @@ export function CreatorApplicationForm({ defaultSlug = "" }: Props) {
         <Input
           id="displayName"
           type="text"
-          size="md"
           value={displayName}
           onChange={(e) => handleNameChange(e.target.value)}
           required

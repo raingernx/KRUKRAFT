@@ -399,14 +399,17 @@ Current runtime contract to mirror:
   during the first rollout proof, and leave `Input` / `SearchInput` on the
   existing field ladder until button impact is proven separately.
 - `Input` / field family
-  - `sm`: `h-8`, `px-3`
-  - `md`: `h-10`, `px-4`
-  - `lg`: `h-12`, `px-4`
-  - `field`: `h-14`, `px-4`
-  - default density resolution: `comfortable -> field`, `compact -> sm`
-- `SearchInput`
-  - `variant=\"default\"` should ride the same field-size contract as `Input`
-  - `variant=\"hero\"` is the only allowed search-shell exception
+  - runtime parity now lands the bounded shared shell on `radius/pill`,
+    `px-6`, and `space-y-2` below the shell
+  - `md`: `h-10`
+  - `field`: `h-12`
+  - default runtime resolution is now `md`
+  - the shared `Input` / default `SearchInput` runtime API is now narrowed to
+    that same `md + field` story directly
+  - `SearchInput`
+  - `variant=\"default\"` now rides the same shared pill family and `md`
+    default shell as `Input` while keeping search-specific icon and clear lanes
+  - `variant=\"hero\"` remains the only allowed search-shell exception
 - `Avatar`
   - canonical Figma ladder: `24`, `32`, `40`, `56`
   - preserve the current shared fallback order in docs and Figma source:
@@ -821,15 +824,24 @@ At a high level:
     shares the same rounded-rect `radius/sm (8px)` geometry, and `Panel CTA`
     now follows the same rounded-rect table posture on the bounded-neutral
     `soft` tone instead of staying on the older primary-pill candidate
-  - the latest `Input / Search` re-audit also confirmed that both
+  - the latest `Input / Search` re-audit now moves the canonical Figma boards
+    and source sets onto the newer Select-style shell contract instead:
     `Input / State` / `SearchInput / State` and `Input / Size` /
-    `SearchInput / Size` now use `radius/sm = 8px` across light and dark; repo
-    runtime code no longer drifts uniformly:
-    - `SearchInput variant="default"` now adopts the canonical `8px` radius
-      shell at runtime
-    - the first route proofs are `/dashboard/library` toolbar search
-      (`40px / 8px`) and dashboard topbar search on that same
-      `40px / 8px` ladder
+    `SearchInput / Size` now bind `radius/pill`, `paddingLeft=space/24`,
+    `paddingRight=space/24`, `bg/inset` for hover/focus, and
+    `radius/xs + space/12` on the
+    wrapper/state-set structure while also narrowing the canonical size story
+    to `md + field`
+    - the search state cards now also include one explicit `Loading lane`
+      mockup in light/dark mode; it proves the trailing spinner slot and
+      subtle tone on the shared shell while keeping the actual spinner motion
+      runtime-owned
+    - runtime `Input.tsx` now matches that newer pill shell directly
+    - runtime `SearchInput` default branch now matches that newer pill shell
+      too while leaving the `hero` branch route-owned
+    - the existing shared search proof routes remain `/dashboard/library`
+      toolbar search (`40px`) and dashboard topbar search on that same shared
+      ladder
     - the shared start/loading adornments on that branch now render through
       full-height wrappers, so the icon stays centered in toolbar/topbar mounts
       instead of collapsing into the top-left corner
@@ -863,14 +875,16 @@ At a high level:
       tracking as opt-in instead of default: the shared `DashboardPageHeader`,
       `AdminPageHeader`, and `DashboardSidebar` patterns no longer inject
       letter-spacing into those labels/headings
-    - `Input.tsx` no longer carries that older radius branch at runtime:
-      the shared field primitive now enforces `radius/sm (8px)` directly, with
-      `/admin/users` as the first proof route
-  - that same control re-audit also keeps two narrow Figma gaps explicit
-    instead of hiding them: the light/dark component-set wrappers still carry a
-    local `cornerRadius=5`, and the `Clear` action label in the search-state
-    explainer still uses a local `14/20` type recipe while staying bound for
-    font family and text fill
+    - `Input.tsx` still reflects the older shared runtime shell today:
+      `radius/sm (8px)` remains the live code posture, with `/admin/users` as
+      the first proof route for that older runtime branch
+  - that same control re-audit closes the old Figma wrapper-radius debt rather
+    than keeping it open: the light/dark component-set wrappers now bind
+    `radius/xs`, and hover/focus samples now bind `bg/inset` plus the new pill
+    shell geometry directly
+  - the old board-level `Clear` action typography debt is closed too: both
+    light/dark labels now bind DS body size + line vars instead of staying on
+    local `14/20`
   - the first follow-up control mapping beyond `Input / Search` now exists too:
     - `Select / Foundations / Light` and `Select / Foundations / Dark` now live
       under `994:244` and `994:421`
@@ -947,7 +961,7 @@ At a high level:
       - the delivery/previews linked URL follow-up is now closed too:
         `/dashboard/creator/resources/new` and edit keep the preview image URL
         rows plus the external file URL editor on the same shared
-        `56px / 8px` `Input` shell
+        `48px / pill` `Input` shell
       - the bulk preview parser follow-up is now closed too:
         `/dashboard/creator/resources/new` and edit prove that the bulk
         preview textarea already sits on the shared `Textarea` shell, while

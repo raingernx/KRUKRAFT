@@ -1,5 +1,7 @@
 export type FieldControlSize = "sm" | "md" | "lg" | "field";
 export type FieldControlDensity = "comfortable" | "compact";
+export type InputControlSize = "md" | "field";
+export type SearchControlSize = "md" | "field";
 
 export const fieldInputBaseClassName = [
   "min-w-0 w-full border border-input bg-shell shadow-none outline-none",
@@ -29,6 +31,34 @@ export const fieldControlSizeClassNames: Record<
   },
 };
 
+export const inputControlSizeClassNames: Record<
+  FieldControlDensity,
+  Record<InputControlSize, string>
+> = {
+  comfortable: {
+    md: "h-10 rounded-full px-6 text-sm",
+    field: "h-12 rounded-full px-6 text-sm",
+  },
+  compact: {
+    md: "h-10 rounded-full px-6 text-sm",
+    field: "h-12 rounded-full px-6 text-sm",
+  },
+};
+
+export const searchControlSizeClassNames: Record<
+  FieldControlDensity,
+  Record<SearchControlSize, string>
+> = {
+  comfortable: {
+    md: "h-10 rounded-full text-sm",
+    field: "h-12 rounded-full text-sm",
+  },
+  compact: {
+    md: "h-10 rounded-full text-sm",
+    field: "h-12 rounded-full text-sm",
+  },
+};
+
 export const selectControlSizeClassNames: Record<
   FieldControlDensity,
   Record<FieldControlSize, string>
@@ -37,13 +67,13 @@ export const selectControlSizeClassNames: Record<
     sm: "h-8 pr-9 text-sm",
     md: "h-10 pr-10 text-sm",
     lg: "h-12 pr-10 text-sm",
-    field: "h-14 pr-10 text-sm",
+    field: "h-12 pr-10 text-sm",
   },
   compact: {
     sm: "h-8 pr-9 text-sm",
     md: "h-10 pr-10 text-sm",
     lg: "h-12 pr-10 text-sm",
-    field: "h-14 pr-10 text-sm",
+    field: "h-12 pr-10 text-sm",
   },
 };
 
@@ -63,6 +93,32 @@ export function getFieldControlSizeClassName(
   density: FieldControlDensity = "comfortable",
 ) {
   return fieldControlSizeClassNames[density][resolveFieldControlSize(size, density)];
+}
+
+export function resolveInputControlSize(
+  size: InputControlSize | undefined,
+): InputControlSize {
+  return size ?? "md";
+}
+
+export function getInputControlSizeClassName(
+  size: InputControlSize | undefined,
+  density: FieldControlDensity = "comfortable",
+) {
+  return inputControlSizeClassNames[density][resolveInputControlSize(size)];
+}
+
+export function resolveSearchControlSize(
+  size: SearchControlSize | undefined,
+): SearchControlSize {
+  return size ?? "md";
+}
+
+export function getSearchControlSizeClassName(
+  size: SearchControlSize | undefined,
+  density: FieldControlDensity = "comfortable",
+) {
+  return searchControlSizeClassNames[density][resolveSearchControlSize(size)];
 }
 
 export function resolveSelectControlSize(
@@ -89,6 +145,26 @@ export const fieldEndAdornmentWidthClassNames: Record<FieldControlSize, string> 
   sm: "w-9",
   md: "w-10",
   lg: "w-11",
+  field: "w-11",
+};
+
+export const inputStartAdornmentWidthClassNames: Record<InputControlSize, string> = {
+  md: "w-10",
+  field: "w-11",
+};
+
+export const inputEndAdornmentWidthClassNames: Record<InputControlSize, string> = {
+  md: "w-10",
+  field: "w-11",
+};
+
+export const searchStartAdornmentWidthClassNames: Record<SearchControlSize, string> = {
+  md: "w-10",
+  field: "w-11",
+};
+
+export const searchEndAdornmentWidthClassNames: Record<SearchControlSize, string> = {
+  md: "w-10",
   field: "w-11",
 };
 

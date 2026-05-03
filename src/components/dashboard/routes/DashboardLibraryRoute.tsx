@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { BookOpen, Clock3, FileText, Search } from "@/lib/icons";
+import { BookOpen, Clock3, FileText } from "@/lib/icons";
 import {
   Badge,
   Button,
@@ -9,8 +9,8 @@ import {
   chipVariants,
   emptyStatePillLinkVariants,
   EmptyState,
-  Input,
   LoadingSkeleton,
+  SearchInput,
 } from "@/design-system";
 import { DashboardRouteIntro } from "@/components/dashboard/DashboardRouteIntro";
 import { DashboardLibraryResourceCard } from "@/components/dashboard/routes/DashboardLibraryResourceCard";
@@ -118,23 +118,13 @@ function DashboardLibraryToolbar({ data }: { data: DashboardLibraryData }) {
                 </p>
               </div>
               <div className="flex w-full items-stretch gap-3">
-                <div className="relative min-w-0 flex-1">
-                  <span
-                    className="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-muted-foreground"
-                    data-testid="search-input-start-adornment"
-                    aria-hidden="true"
-                  >
-                    <Search className="size-4" aria-hidden />
-                  </span>
-                  <Input
-                    type="search"
-                    name="q"
-                    size="md"
-                    defaultValue={data.query}
-                    placeholder="Search your library"
-                    className="pl-10"
-                  />
-                </div>
+                <SearchInput
+                  type="search"
+                  name="q"
+                  defaultValue={data.query}
+                  placeholder="Search your library"
+                  containerClassName="min-w-0 flex-1"
+                />
                 <Button size="md" type="submit">
                   Search
                 </Button>
