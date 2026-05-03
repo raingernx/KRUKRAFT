@@ -383,23 +383,42 @@ Current canonical Figma shared-coverage note:
 - `Select` is now the next Figma-first control sibling after `Input` /
   `SearchInput`. The canonical file now carries light/dark
   `Select / Foundations` boards plus `Select / State` and `Select / Size`
-  sets that mirror the same quiet field shell, `radius/sm (8px)` geometry,
-  helper/error posture, and field-size ladder while keeping option lists
-  route-owned. The first runtime parity slice is now live on
-  `/admin/settings`, where `Select.tsx` keeps the same `8px` radius target in
-  shared admin forms. The first widened follow-up family is now
+  sets that mirror the same quiet field shell, pill radius geometry,
+  helper/error posture, a `paddingLeft=24` field start, and a now-reduced live
+  size story while keeping option lists route-owned. The shared runtime
+  parity slice is now landed too: `Select.tsx` matches the current pill radius,
+  `paddingLeft=24`, and inset hover/focus fill while keeping the select-only
+  caret reserve on the runtime side. The first historical proof family remains
+  `/admin/settings`, and the first widened follow-up family is now
   `admin/resources`: the resource form, listing filters, and move-category
   modal all opt into the same shared select shell without local radius/padding
   overrides. The next widened admin-only follow-up is now the low-risk filter
   bucket on `/admin/activity`, `/admin/audit`, and
-  `/admin/analytics/ranking`, which all prove the same `56px / 8px` select
-  shell without reopening creator-owned forms. The first creator-owned widened
-  follow-up is now `/dashboard/creator/profile`, where the status `Select`
-  explicitly opts into `size="field"` while the rest of the profile form keeps
-  its creator-specific long-form behavior route-owned. The next creator-owned
-  widened slice is now the metadata zone of `/dashboard/creator/resources/*`:
-  the editor's `status` (edit mode only), `type`, and `category` selects now
-  opt into the same shared `field` shell while the delivery/upload zone stays
+  `/admin/analytics/ranking`, which all still prove the same shared select
+  shell without reopening creator-owned forms. The latest size-policy cleanup
+  now aligns runtime with the canonical two-size story too: shared `Select`
+  defaults to `md`, while `field` remains explicit-only for editor-grade
+  forms. `/dashboard/creator/profile` now follows that shared default `md`
+  shell, and the next creator-owned widened slice remains the metadata zone of
+  `/dashboard/creator/resources/*`:
+  the 2026-05-03 Figma audit also closes the exact-match radius binding debt
+  on the boards themselves: usage cards and component-set cards now bind
+  `radius/lg`, and field shells across the light/dark state + size ladders now
+  bind `radius/pill`. The follow-up nearest-token pass closes the remaining
+  wrapper/set drift too: light/dark `Select / State` and `Select / Size` now
+  bind `radius/xs`, and the light/dark `Select / State` sets now bind
+  `space/12` in place of the prior local `11px` gap. The latest padding pass
+  now binds `paddingLeft=space/24` across both ladders. The latest state-fill
+  pass now binds both light/dark `hover` and `focus` shells to `bg/inset`.
+  The latest caret pass now binds every `CaretDown` instance in the light/dark
+  boards and source sets to `fg/subtle`.
+  The latest size cleanup narrows the canonical `Select / Size` set down to the
+  two live sizes only: `md` as the shared default and `field` as the taller
+  editor-grade shell. Runtime now matches the pill radius, left padding, inset
+  hover/focus fill, default `md` sizing policy, and the shared `14px`
+  `ChevronDown` overlay in `fg/subtle`.
+  The editor's `status` (edit mode only), `type`, and `category` selects keep
+  the explicit shared `field` shell there while the delivery/upload zone stays
   route-owned for now.
 - `Textarea` now has matching light/dark `Textarea / Foundations` boards plus
   dedicated `Textarea / State` sets in the canonical file. The multiline

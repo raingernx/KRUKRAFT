@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Card, Input, Button } from "@/design-system";
+import { Card, Input, Button, Select } from "@/design-system";
 import { formatPrice, formatNumber, formatDate } from "@/lib/format";
 import { StatusBadge, type StatusBadgeTone } from "@/components/admin/StatusBadge";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -191,17 +191,17 @@ export default async function AdminOrdersPage({
                 <label htmlFor="status" className="font-ui text-caption text-muted-foreground">
                   Status
                 </label>
-                <select
+                <Select
                   id="status"
                   name="status"
                   defaultValue={statusFilter}
-                  className="input-base w-full sm:w-40"
+                  className="w-full sm:w-40"
                 >
                   <option value="">All</option>
                   <option value="COMPLETED">Completed</option>
                   <option value="REFUNDED">Refunded</option>
                   <option value="FAILED">Failed</option>
-                </select>
+                </Select>
               </div>
 
               <div className="flex w-full flex-col gap-1 sm:w-auto">

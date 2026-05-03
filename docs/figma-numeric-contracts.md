@@ -102,7 +102,7 @@ Copy this block before implementing a new Figma-backed component.
   - error + with-action `130`
 - Padding: `12`
 - Gap: `12`
-- Radius: `8`
+- Radius: `pill`
 - Border: `1`
 - Background: semantic card shell
 
@@ -1219,7 +1219,7 @@ Copy this block before implementing a new Figma-backed component.
   - no adornment `12/16` horizontal depending on size
   - start/end adornment widths `36/40/44`
 - Gap: wrapper `4` to hint/error copy
-- Radius: `8`
+- Radius: `pill`
 - Border: shared field shell
 - Background: shared field shell
 
@@ -1331,21 +1331,23 @@ Copy this block before implementing a new Figma-backed component.
 - Scope: shared field-shell select only, not option-list or route-specific
   filtering UX
 - Canonical nodes:
-  - light board `994:342`
-  - dark board `994:366`
-  - light source `994:519`
-  - dark source `994:543`
+  - light board `994:244`
+  - dark board `994:421`
+  - light state set `994:342`
+  - dark state set `994:519`
+  - light size set `994:366`
+  - dark size set `994:543`
 - Runtime owner: `src/design-system/primitives/Select.tsx`
 - Variants in scope: state + size ladder
 
 #### Shell
 - Width: `100%`
 - Height:
-  - `sm` `32`
   - `md` `40`
-  - `lg` `48`
   - `field` `56`
-- Padding: field-shell horizontal padding plus caret reserve
+- Padding:
+  - left `24`
+  - right `16`
 - Gap: wrapper `4` to hint/error copy
 - Radius: `8`
 - Border: shared field shell
@@ -1353,7 +1355,8 @@ Copy this block before implementing a new Figma-backed component.
 
 #### Child Geometry
 - Native select shell
-- Built-in caret affordance remains part of the field shell contract
+- Caret icon: `14 x 14`
+- Caret tone: `fg/subtle`
 - Hint/error copy below shell
 
 #### DOM Sibling Structure
@@ -1370,17 +1373,48 @@ Copy this block before implementing a new Figma-backed component.
 
 #### Variant Rules
 - state matrix proves shell posture only
-- size matrix follows shared field heights
+- size matrix now proves only the two live sizes: `md` and `field`
+- hover and focus shell fills now bind `bg/inset`
 
 #### Runtime Notes
 - Parent-owned: option content and labels
 - Route-owned: actual option list and business filtering behavior
 - Known token gaps: none called out beyond broader shared field-shell token
   stories
+- Figma QA note: the 2026-05-03 binding pass closed the exact-match radius debt
+  on Select boards. Usage cards and component-set cards now bind
+  `radius/lg`, while field shells across both the state and size ladders now
+  bind `radius/pill`.
+- Figma QA note: the follow-up nearest-token binding pass also closed the last
+  wrapper/set drift on this slice: light/dark `Select / State` and
+  `Select / Size` now bind `radius/xs`, and the light/dark `Select / State`
+  sets now bind `space/12` in place of the prior local `11px` gap.
+- Figma QA note: the latest padding pass now binds `paddingLeft=space/24`
+  across both light/dark state + size ladders.
+- Figma QA note: the latest state-fill pass now binds both light/dark `hover`
+  and `focus` shells to `bg/inset`.
+- Figma QA note: the latest size reduction pass removes `sm` and `lg` from the
+  canonical `Select / Size` source sets entirely. `md` is now the shared
+  default shell and `field` is the only taller editor-grade shell still
+  represented in Foundations.
+- Figma QA note: the latest caret pass binds every `CaretDown` instance on the
+  light/dark boards and source sets to `fg/subtle` instead of the older local
+  white / `neutral/ink` posture.
 
 #### Proof
-- Figma screenshot: `Select / Foundations / Dark` `994:366`
-- Runtime proof: `/admin/settings` and low-risk admin filter routes
+- Figma screenshot: `Select / Foundations / Dark` `994:421`
+- Runtime proof history: `/admin/settings` and low-risk admin filter routes
+- Runtime parity note: `Select.tsx` now matches the current shared Figma slice
+  for pill radius, `paddingLeft=24`, inset hover/focus fill, and the shared
+  `14px` caret icon posture.
+- Runtime size-policy note: shared `Select` now defaults to `md` in code, and
+  `field` is reserved for explicit editor-grade owners such as resource
+  authoring forms.
+- Runtime caret note: the select now renders a shared `ChevronDown` sibling
+  icon in `fg/subtle` instead of the older hardcoded CSS background arrow.
+- Runtime proof note: settings rows, admin filters, `admin/orders`, and
+  `creator/profile` now fall back to the shared default `md` shell, while
+  admin/creator resource authoring keeps explicit `field`.
 
 ### Textarea
 

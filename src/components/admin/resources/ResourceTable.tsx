@@ -754,7 +754,6 @@ export function ResourceTable({ resources: initialResources, categories }: Resou
             </p>
             <div className="mt-4">
               <Select
-                size="field"
                 value={moveCategoryId}
                 onChange={(e) => setMoveCategoryId(e.target.value)}
                 className="w-full"

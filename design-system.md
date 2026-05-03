@@ -877,9 +877,40 @@ At a high level:
     - the verified reusable nodes are `Select / State` (`994:342`, `994:519`)
       and `Select / Size` (`994:366`, `994:543`)
     - the canonical `Select` contract intentionally inherits the shared field
-      shell grammar (`radius/sm = 8px`, shared height ladder, helper/error copy
-      below the shell) and only adds the explicit caret affordance; option
-      lists remain route-owned
+      shell grammar (pill radius, shared height ladder, helper/error copy
+      below the shell) and only adds the explicit caret affordance plus the
+      deeper `paddingLeft=24` field start; option lists remain route-owned
+    - the 2026-05-03 Figma binding pass closes the exact-match radius debt on
+      those boards: usage cards and component-set cards now bind `radius/lg`,
+      and field shells across the state + size ladders now bind
+      `radius/pill`
+    - the follow-up nearest-token binding pass closes the remaining
+      wrapper/set drift too: light/dark `Select / State` and `Select / Size`
+      now bind `radius/xs`, and the light/dark `Select / State` sets now bind
+      `space/12` in place of the prior local `11px` gap
+    - the latest padding pass now binds `paddingLeft=space/24` across both
+      light/dark state + size ladders
+    - the latest state-fill pass now binds both light/dark `hover` and
+      `focus` shells to `bg/inset`
+    - the latest caret pass now binds every `CaretDown` instance on the
+      light/dark boards and source sets to `fg/subtle`
+    - the latest size cleanup narrows the canonical `Select / Size` slice down
+      to the two live sizes only: `md` as the shared default and `field` as
+      the taller editor-grade shell
+    - the shared runtime parity slice is now landed: `Select.tsx` matches the
+      pill radius, `paddingLeft=24`, and inset hover/focus fill from the
+      current foundations source
+    - the shared runtime caret parity is now landed too:
+      - `Select.tsx` renders a real sibling `ChevronDown` overlay instead of
+        the older hardcoded CSS background arrow
+      - the runtime caret now stays on `fg/subtle` to mirror the canonical
+        Figma source
+    - the runtime size-policy cleanup is now landed too:
+      - shared `Select` defaults to `md`
+      - explicit `field` is now reserved for editor-grade forms such as
+        admin/creator resource authoring
+      - admin filters, settings rows, profile controls, and low-risk toolbar
+        filters now fall back to that shared default `md` shell
     - `Textarea / Foundations / Light` and `Textarea / Foundations / Dark` now
       live under `1019:312` and `1019:433`
     - the verified reusable nodes are `Textarea / State`
@@ -888,8 +919,7 @@ At a high level:
       target and helper/error posture, but keeps rows, counters, max length,
       and resize behavior route-owned instead of inventing a fake size ladder
     - the first runtime parity slice is now live too:
-      - `Select.tsx` explicitly overrides its shared field shell back to
-        `radius/sm (8px)` at runtime
+      - `Select.tsx` now follows the canonical pill shell at runtime
       - `Textarea.tsx` now keeps the same `8px` target while preserving
         route-owned rows / counter / resize behavior
       - `/admin/settings` is the first proved route family because it mounts
@@ -902,16 +932,17 @@ At a high level:
       - the next narrowed widening follow-up is now the admin filter-shell
         bucket: `/admin/activity`, `/admin/audit`, and
         `/admin/analytics/ranking` all explicitly keep the same shared `Select`
-        geometry (`56px / 8px`) without reopening creator-owned forms
+        geometry (`40px` default shell, pill radius) without reopening
+        creator-owned forms
       - the first creator-owned widened follow-up is now
-        `/dashboard/creator/profile`: the storefront-status `Select`
-        explicitly opts into the shared `field` shell there, and the creator
-        bio keeps the same `8px` `Textarea` shell while `min-height` plus the
+        `/dashboard/creator/profile`: the storefront-status `Select` now
+        follows the shared default `md` shell there, and the creator bio keeps
+        the same `8px` `Textarea` shell while `min-height` plus the
         character-count affordance remain route-owned
       - the next creator-owned widened slice is now the metadata zone of
         `/dashboard/creator/resources/*`: the edit-only `status` select plus
-        the shared `type` / `category` selects now keep the same `56px / 8px`
-        shell, and the main `description` textarea stays on the shared
+        the shared `type` / `category` selects now keep the explicit `field`
+        shell there, and the main `description` textarea stays on the shared
         multiline shell across both new and edit routes
       - the delivery/previews linked URL follow-up is now closed too:
         `/dashboard/creator/resources/new` and edit keep the preview image URL

@@ -366,14 +366,10 @@
 
   /* Select (dropdown) with custom arrow */
   .select-base {
-    @apply input-base pr-10;
+    @apply input-base rounded-full pl-6 pr-10;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23475569' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.9rem center;
-    background-size: 14px 14px;
   }
 
   /* Gradient text */

@@ -29,6 +29,24 @@ export const fieldControlSizeClassNames: Record<
   },
 };
 
+export const selectControlSizeClassNames: Record<
+  FieldControlDensity,
+  Record<FieldControlSize, string>
+> = {
+  comfortable: {
+    sm: "h-8 pr-9 text-sm",
+    md: "h-10 pr-10 text-sm",
+    lg: "h-12 pr-10 text-sm",
+    field: "h-14 pr-10 text-sm",
+  },
+  compact: {
+    sm: "h-8 pr-9 text-sm",
+    md: "h-10 pr-10 text-sm",
+    lg: "h-12 pr-10 text-sm",
+    field: "h-14 pr-10 text-sm",
+  },
+};
+
 export function resolveFieldControlSize(
   size: FieldControlSize | undefined,
   density: FieldControlDensity = "comfortable",
@@ -45,6 +63,19 @@ export function getFieldControlSizeClassName(
   density: FieldControlDensity = "comfortable",
 ) {
   return fieldControlSizeClassNames[density][resolveFieldControlSize(size, density)];
+}
+
+export function resolveSelectControlSize(
+  size: FieldControlSize | undefined,
+): FieldControlSize {
+  return size ?? "md";
+}
+
+export function getSelectControlSizeClassName(
+  size: FieldControlSize | undefined,
+  density: FieldControlDensity = "comfortable",
+) {
+  return selectControlSizeClassNames[density][resolveSelectControlSize(size)];
 }
 
 export const fieldStartAdornmentWidthClassNames: Record<FieldControlSize, string> = {

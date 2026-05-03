@@ -194,7 +194,6 @@ async function RankingFiltersSection({
               Category
             </label>
             <Select
-              size="field"
               id="category"
               name="category"
               defaultValue={category}
@@ -216,7 +215,6 @@ async function RankingFiltersSection({
               Price
             </label>
             <Select
-              size="field"
               id="price"
               name="price"
               defaultValue={price}
