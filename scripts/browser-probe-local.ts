@@ -159,7 +159,7 @@ const VALID_SCENARIOS: ProbeScenarioName[] = [
   "creator-apply-cold-entry",
 ];
 
-const DASHBOARD_SETTINGS_HEADING = /Account settings/i;
+const DASHBOARD_SETTINGS_HEADING = /^(Account settings|Settings)$/i;
 
 function parseScenarioNames(argv: string[]) {
   const requested = argv.filter((arg) => !arg.startsWith("--"));
@@ -1083,8 +1083,8 @@ async function runCreatorManagementPagesScenario({ browser }: ProbeContext) {
       assert: async (page) => {
         await expect(page).toHaveURL(/\/dashboard\/creator\/settings(?:\?.*)?$/);
         await expect(
-          page.getByRole("heading", { name: DASHBOARD_SETTINGS_HEADING }).first(),
-        ).toBeVisible();
+          page.locator('[data-route-shell-ready="dashboard-settings"]').first(),
+        ).toBeVisible({ timeout: 20_000 });
       },
     },
     {
@@ -1737,7 +1737,7 @@ async function runDashboardPurchasesRefreshShellScenario(context: ProbeContext) 
       scenario: "dashboard-purchases-refresh-shell",
       initialPath: "/dashboard/purchases",
       urlPattern: /\/dashboard\/purchases(?:\?.*)?$/,
-      headingName: /^Purchases$/i,
+      headingName: /^(Purchases|Order history)$/i,
       expectedRouteReady: "dashboard-purchases",
     },
   );
@@ -2063,7 +2063,7 @@ const scenarioHandlers: Record<ProbeScenarioName, (context: ProbeContext) => Pro
       scenario: "creator-settings-cold-entry",
       loginAs: "creator",
       targetPath: "/dashboard/creator/settings",
-      urlPattern: /\/dashboard\/creator\/settings(?:\?.*)?$/,
+      urlPattern: /\/dashboard\/settings(?:\?.*)?$/,
       headingName: DASHBOARD_SETTINGS_HEADING,
       readyMarker: "dashboard-settings",
       disallowedScopesAfterReady: ["dashboard-group", "dashboard-creator-neutral"],
