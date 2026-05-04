@@ -119,6 +119,55 @@ async function expectCreatorDiscoverPersonalization(page: Page) {
   }
 }
 
+async function beginResourcesBrowseLoadingScopeCapture(page: Page) {
+  await page.evaluate(() => {
+    const seenScopes: string[] = [];
+
+    const record = () => {
+      if (document.querySelector('[data-loading-scope="resources-browse"]')) {
+        seenScopes.push("resources-browse");
+      }
+    };
+
+    record();
+
+    const observer = new MutationObserver(() => {
+      record();
+    });
+
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["data-loading-scope"],
+    });
+
+    (
+      window as Window & {
+        __resourcesBrowseScopeObserver?: MutationObserver;
+        __resourcesBrowseSeenScopes?: string[];
+      }
+    ).__resourcesBrowseScopeObserver = observer;
+    (
+      window as Window & {
+        __resourcesBrowseSeenScopes?: string[];
+      }
+    ).__resourcesBrowseSeenScopes = seenScopes;
+  });
+}
+
+async function endResourcesBrowseLoadingScopeCapture(page: Page) {
+  return page.evaluate(() => {
+    const windowWithScopes = window as Window & {
+      __resourcesBrowseScopeObserver?: MutationObserver;
+      __resourcesBrowseSeenScopes?: string[];
+    };
+
+    windowWithScopes.__resourcesBrowseScopeObserver?.disconnect();
+    return windowWithScopes.__resourcesBrowseSeenScopes ?? [];
+  });
+}
+
 test("resources homepage renders hero media without runtime errors", async ({
   page,
 }) => {
@@ -409,6 +458,7 @@ test("creator can return from detail to discover via logo without hitting the ro
     /\/resources\/english-vocabulary-flashcards-500-essential-words(?:\?.*)?$/,
   );
   await expect(page.locator("main h1").first()).toBeVisible();
+  await beginResourcesBrowseLoadingScopeCapture(page);
 
   const logoLink = page.locator('header a[href="/resources"]').first();
   await expect(logoLink).toBeVisible();
@@ -421,6 +471,9 @@ test("creator can return from detail to discover via logo without hitting the ro
   await expect(page.locator('[data-route-shell-ready="resources-browse"]')).toBeVisible();
   await expect(page.getByText("The resource library could not load.")).toHaveCount(0);
   await expectCreatorDiscoverPersonalization(page);
+  expect(await endResourcesBrowseLoadingScopeCapture(page)).not.toContain(
+    "resources-browse",
+  );
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -439,12 +492,16 @@ test("creator can return from detail to discover with browser back without hitti
     /\/resources\/english-vocabulary-flashcards-500-essential-words(?:\?.*)?$/,
   );
   await expect(page.locator("main h1").first()).toBeVisible();
+  await beginResourcesBrowseLoadingScopeCapture(page);
 
   await page.goBack({ waitUntil: "commit" });
   await expect(page).toHaveURL(/\/resources(?:\?.*)?$/);
   await expect(page.locator('[data-route-shell-ready="resources-browse"]')).toBeVisible();
   await expect(page.getByText("The resource library could not load.")).toHaveCount(0);
   await expectCreatorDiscoverPersonalization(page);
+  expect(await endResourcesBrowseLoadingScopeCapture(page)).not.toContain(
+    "resources-browse",
+  );
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);

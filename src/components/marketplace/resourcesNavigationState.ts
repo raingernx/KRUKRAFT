@@ -83,7 +83,12 @@ export function shouldUseResourcesDocumentNavigation(
   pathname: string,
   mode: ResourcesNavigationMode | null,
 ) {
-  return mode === "detail" && isResourcesSubtreePath(pathname);
+  // Keep resources subtree hops on the App Router path so discover/detail
+  // return navigation can reuse the current in-tab route cache instead of
+  // replaying a full document reload.
+  void pathname;
+  void mode;
+  return false;
 }
 
 export function beginResourcesNavigation(
