@@ -2092,7 +2092,7 @@ const scenarioHandlers: Record<ProbeScenarioName, (context: ProbeContext) => Pro
       scenario: "creator-settings-cold-entry",
       loginAs: "creator",
       targetPath: "/dashboard/creator/settings",
-      urlPattern: /\/dashboard\/settings(?:\?.*)?$/,
+      urlPattern: /\/dashboard\/creator\/settings(?:\?.*)?$/,
       headingName: DASHBOARD_SETTINGS_HEADING,
       readyMarker: "dashboard-settings",
       disallowedScopesAfterReady: ["dashboard-group", "dashboard-creator-neutral"],
