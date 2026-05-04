@@ -1,0 +1,42 @@
+name: Setup Browser CI
+description: Prepare Node, dependencies, Playwright Chromium, and the CI database for browser verification jobs.
+
+inputs:
+  node-version:
+    description: Node.js version to install
+    required: false
+    default: "24"
+  playwright-browsers-path:
+    description: Path to the cached Playwright browser bundle
+    required: false
+    default: .cache/ms-playwright
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+
+    - name: Cache Playwright Browsers
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.playwright-browsers-path }}
+        key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('package-lock.json') }}
+
+    - name: Install Dependencies
+      shell: bash
+      run: npm ci
+
+    - name: Install Playwright Browsers
+      shell: bash
+      run: npx playwright install chromium
+
+    - name: Prepare Database
+      shell: bash
+      run: |
+        npx prisma db execute --url "$DIRECT_URL" --file prisma/sql/enable-pg-trgm.sql
+        npx prisma db push --skip-generate
+        npm run db:seed

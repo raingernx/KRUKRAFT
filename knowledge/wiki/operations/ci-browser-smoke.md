@@ -12,6 +12,8 @@ GitHub Actions `Browser Smoke` is the cloud verification workflow for marketplac
 - Recent stabilization work removed flaky auth navigation, invalid admin audit table markup, and detail-shell readiness issues from the main smoke path.
 - Recent route-transition flakes also showed that Browser Smoke can be `success` but still not clean if the log contains `flaky` or `retry #` markers; close-out now requires log review, not workflow status alone.
 - The workflow now intentionally keeps expected CI-only fallback noise quieter: missing R2 env warnings, dev-only missing user-preference warnings, and non-critical `/resources` timeout fallback logs should not flood a green Browser Smoke run anymore.
+- Shared job setup is now repo-owned too: `.github/actions/setup-browser-ci/action.yml` covers Node setup, dependency install, Playwright Chromium provisioning, and CI DB prep for both Browser Smoke and Management Browser Probes so setup drift is not fixed in one job and forgotten in the other.
+- Workflow concurrency is now branch-aware: PRs and non-`main` refs still cancel superseded runs, but `main` no longer auto-cancels prior Browser Smoke runs, which keeps release-history auditing cleaner during CI-fix sequences.
 
 ## Why It Matters
 
@@ -20,6 +22,7 @@ This workflow is the main browser truth source when local browser environments a
 ## Key Files
 
 - `.github/workflows/browser-smoke.yml`
+- `.github/actions/setup-browser-ci/action.yml`
 - `scripts/run-playwright-stable.mjs`
 - `scripts/browser-probe-local.ts`
 - `tests/e2e/*`

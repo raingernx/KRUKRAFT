@@ -7,9 +7,26 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  CI: "1"
+  NODE_ENV: development
+  PORT: 3000
+  DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/krukraft_ci?schema=public
+  DIRECT_URL: postgresql://postgres:postgres@127.0.0.1:5432/krukraft_ci?schema=public
+  NEXTAUTH_URL: http://127.0.0.1:3000
+  NEXTAUTH_SECRET: ci-nextauth-secret
+  STRIPE_SECRET_KEY: sk_test_ci_dummy
+  STRIPE_WEBHOOK_SECRET: whsec_ci_dummy
+  STRIPE_PRO_MONTHLY_PRICE_ID: price_ci_monthly
+  STRIPE_PRO_ANNUAL_PRICE_ID: price_ci_annual
+  STRIPE_TEAM_MONTHLY_PRICE_ID: price_ci_team_monthly
+  STRIPE_TEAM_ANNUAL_PRICE_ID: price_ci_team_annual
+  PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/ms-playwright
+  PLAYWRIGHT_DISABLE_WEBKIT_FALLBACK: "1"
+
 concurrency:
   group: browser-smoke-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   browser_smoke:
@@ -30,50 +47,15 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
-    env:
-      CI: "1"
-      NODE_ENV: development
-      PORT: 3000
-      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/krukraft_ci?schema=public
-      DIRECT_URL: postgresql://postgres:postgres@127.0.0.1:5432/krukraft_ci?schema=public
-      NEXTAUTH_URL: http://127.0.0.1:3000
-      NEXTAUTH_SECRET: ci-nextauth-secret
-      STRIPE_SECRET_KEY: sk_test_ci_dummy
-      STRIPE_WEBHOOK_SECRET: whsec_ci_dummy
-      STRIPE_PRO_MONTHLY_PRICE_ID: price_ci_monthly
-      STRIPE_PRO_ANNUAL_PRICE_ID: price_ci_annual
-      STRIPE_TEAM_MONTHLY_PRICE_ID: price_ci_team_monthly
-      STRIPE_TEAM_ANNUAL_PRICE_ID: price_ci_team_annual
-      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/ms-playwright
-      PLAYWRIGHT_DISABLE_WEBKIT_FALLBACK: "1"
-
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - name: Setup Browser CI
+        uses: ./.github/actions/setup-browser-ci
         with:
-          node-version: 24
-          cache: npm
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Cache Playwright Browsers
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
-          key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium
-
-      - name: Prepare Database
-        run: |
-          npx prisma db execute --url "$DIRECT_URL" --file prisma/sql/enable-pg-trgm.sql
-          npx prisma db push --skip-generate
-          npm run db:seed
+          node-version: "24"
+          playwright-browsers-path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
 
       - name: Lint
         run: npm run lint
@@ -133,50 +115,15 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
-    env:
-      CI: "1"
-      NODE_ENV: development
-      PORT: 3000
-      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/krukraft_ci?schema=public
-      DIRECT_URL: postgresql://postgres:postgres@127.0.0.1:5432/krukraft_ci?schema=public
-      NEXTAUTH_URL: http://127.0.0.1:3000
-      NEXTAUTH_SECRET: ci-nextauth-secret
-      STRIPE_SECRET_KEY: sk_test_ci_dummy
-      STRIPE_WEBHOOK_SECRET: whsec_ci_dummy
-      STRIPE_PRO_MONTHLY_PRICE_ID: price_ci_monthly
-      STRIPE_PRO_ANNUAL_PRICE_ID: price_ci_annual
-      STRIPE_TEAM_MONTHLY_PRICE_ID: price_ci_team_monthly
-      STRIPE_TEAM_ANNUAL_PRICE_ID: price_ci_team_annual
-      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/ms-playwright
-      PLAYWRIGHT_DISABLE_WEBKIT_FALLBACK: "1"
-
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - name: Setup Browser CI
+        uses: ./.github/actions/setup-browser-ci
         with:
-          node-version: 24
-          cache: npm
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Cache Playwright Browsers
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
-          key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium
-
-      - name: Prepare Database
-        run: |
-          npx prisma db execute --url "$DIRECT_URL" --file prisma/sql/enable-pg-trgm.sql
-          npx prisma db push --skip-generate
-          npm run db:seed
+          node-version: "24"
+          playwright-browsers-path: ${{ env.PLAYWRIGHT_BROWSERS_PATH }}
 
       - name: Run Management Browser Probes
         run: |
