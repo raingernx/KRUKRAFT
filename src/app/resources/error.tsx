@@ -1,11 +1,51 @@
 "use client";
 
-import { useEffect } from "react";
-import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Button, Container } from "@/design-system";
 import { MarketplaceNavbarSearch } from "@/components/marketplace/MarketplaceNavbarSearch";
 import { routes } from "@/lib/routes";
+
+const RESOURCES_ROUTE_ERROR_AUTORETRY_KEY = "krukraft.resources.route-error-autoretry";
+const RESOURCES_ROUTE_ERROR_AUTORETRY_TTL_MS = 5_000;
+const RESOURCES_ROUTE_ERROR_AUTORETRY_DELAY_MS = 350;
+
+function canAutoRetryResourcesRouteError() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  try {
+    const raw = window.sessionStorage.getItem(RESOURCES_ROUTE_ERROR_AUTORETRY_KEY);
+    if (!raw) {
+      return true;
+    }
+
+    const parsed = Number.parseInt(raw, 10);
+    if (!Number.isFinite(parsed)) {
+      return true;
+    }
+
+    return Date.now() - parsed > RESOURCES_ROUTE_ERROR_AUTORETRY_TTL_MS;
+  } catch {
+    return false;
+  }
+}
+
+function markResourcesRouteErrorAutoRetry() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem(
+      RESOURCES_ROUTE_ERROR_AUTORETRY_KEY,
+      String(Date.now()),
+    );
+  } catch {
+    // Best-effort retry guard only.
+  }
+}
 
 export default function ResourcesRouteError({
   error,
@@ -14,9 +54,30 @@ export default function ResourcesRouteError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const autoRetryTriggeredRef = useRef(false);
+  const [isAutoRetrying, setIsAutoRetrying] = useState(false);
+
   useEffect(() => {
     console.error("[RESOURCES_ROUTE_ERROR]", error);
   }, [error]);
+
+  useEffect(() => {
+    if (autoRetryTriggeredRef.current || !canAutoRetryResourcesRouteError()) {
+      return;
+    }
+
+    autoRetryTriggeredRef.current = true;
+    markResourcesRouteErrorAutoRetry();
+    setIsAutoRetrying(true);
+
+    const timeoutId = window.setTimeout(() => {
+      reset();
+    }, RESOURCES_ROUTE_ERROR_AUTORETRY_DELAY_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [reset]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -33,16 +94,18 @@ export default function ResourcesRouteError({
                 The resource library could not load.
               </h1>
               <p className="text-body leading-7 text-muted-foreground">
-                Try again, or return to the main resource index and reopen the library.
+                {isAutoRetrying
+                  ? "Trying the library again now. If the refresh still fails, you can retry manually or reopen the main resource index."
+                  : "Try again, or return to the main resource index and reopen the library."}
               </p>
             </div>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button type="button" onClick={reset} size="lg">
-                Try again
+              <Button type="button" onClick={reset} size="lg" disabled={isAutoRetrying}>
+                {isAutoRetrying ? "Retrying…" : "Try again"}
               </Button>
               <Button asChild size="lg" variant="quiet">
-                <Link href={routes.marketplace}>Open resources</Link>
+                <a href={routes.marketplace}>Open resources</a>
               </Button>
             </div>
           </div>

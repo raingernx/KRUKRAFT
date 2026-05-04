@@ -20,6 +20,7 @@
 - The route owner now applies that same resilience policy to the async navbar catalog-controls subtree too, because client return navigation into `/resources` can re-render that server branch independently of the main content path.
 - Detail → discover returns now also avoid automatic sibling-route prefetch bursts: marketplace navbar links, detail breadcrumbs, discover quick-browse cards, and signed-in personalized discover cards prefer intent/click prefetch only, which keeps `/resources` from issuing a wave of speculative listing/detail RSC requests right as the route remounts.
 - The signed-in viewer-state APIs that power discover/detail hydration now also fail soft for transient Prisma/Supabase pooler issues, returning safe empty/null payloads instead of 500s when recommendation, ownership, or review hydration loses a best-effort background read during return navigation.
+- Immediate detail → discover returns now also have a client-side recovery layer: the shared logo forces a full document navigation when leaving `/resources/[slug]` for `/resources`, and the route error boundary auto-retries once in a short session-scoped window before it leaves the user on the manual “resource library could not load” shell.
 
 ## Why It Matters
 

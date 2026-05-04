@@ -298,9 +298,19 @@ export function Logo({
   }
 
   function handleLogoClick(event: MouseEvent<HTMLAnchorElement>) {
+    const isReturningFromResourceDetail =
+      pathname.startsWith(`${routes.marketplace}/`) &&
+      pathname !== routes.marketplace;
+
     beginResourcesNavigation("discover", routes.marketplace, {
       overlay: !isResourcesSubtreePath(pathname),
     });
+
+    if (isReturningFromResourceDetail) {
+      event.preventDefault();
+      window.location.assign(routes.marketplace);
+      return;
+    }
 
     const isAlreadyDiscoverRoute =
       pathname === routes.marketplace &&
