@@ -1059,6 +1059,7 @@ async function runCreatorManagementPagesScenario({ browser }: ProbeContext) {
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
   const pages: Array<{
     path: string;
+    urlPattern?: RegExp;
     assert: (page: Page) => Promise<void>;
   }> = [
     {
@@ -1080,10 +1081,11 @@ async function runCreatorManagementPagesScenario({ browser }: ProbeContext) {
     },
     {
       path: "/dashboard/creator/settings",
+      urlPattern: /\/dashboard\/settings(?:\?.*)?$/,
       assert: async (page) => {
-        await expect(page).toHaveURL(/\/dashboard\/creator\/settings(?:\?.*)?$/);
+        await expect(page).toHaveURL(/\/dashboard\/settings(?:\?.*)?$/);
         await expect(
-          page.locator('[data-route-shell-ready="dashboard-settings"]').first(),
+          page.getByRole("heading", { name: DASHBOARD_SETTINGS_HEADING }).first(),
         ).toBeVisible({ timeout: 20_000 });
       },
     },
@@ -1119,7 +1121,8 @@ async function runCreatorManagementPagesScenario({ browser }: ProbeContext) {
     for (const target of pages) {
       await page.goto(target.path, { waitUntil: "domcontentloaded" });
       await expect(page).toHaveURL(
-        new RegExp(`${target.path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`),
+        target.urlPattern ??
+          new RegExp(`${target.path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`),
       );
       await target.assert(page);
       await expectNoVisibleDashboardFullShellOverlap(
