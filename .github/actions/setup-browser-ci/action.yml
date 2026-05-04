@@ -21,7 +21,7 @@ runs:
         cache: npm
 
     - name: Cache Playwright Browsers
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ${{ inputs.playwright-browsers-path }}
         key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('package-lock.json') }}

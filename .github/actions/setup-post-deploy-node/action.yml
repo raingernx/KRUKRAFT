@@ -1,0 +1,62 @@
+name: Setup Post-Deploy Node
+description: Prepare Node.js and install dependencies for post-deploy workflows, with optional retry handling.
+
+inputs:
+  node-version:
+    description: Node.js version to install
+    required: false
+    default: "24"
+  retry-npm-ci:
+    description: Retry npm ci with backoff and artifact logs
+    required: false
+    default: "false"
+  artifact-dir:
+    description: Directory for retry logs when retry-npm-ci is enabled
+    required: false
+    default: artifacts
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+
+    - name: Install Dependencies
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        if [ "${{ inputs.retry-npm-ci }}" != "true" ]; then
+          npm ci
+          exit 0
+        fi
+
+        artifact_dir="${{ inputs.artifact-dir }}"
+        mkdir -p "${artifact_dir}/npm-logs"
+
+        max_attempts=3
+        attempt=1
+
+        while [ "$attempt" -le "$max_attempts" ]; do
+          echo "[post-deploy-warm] npm ci attempt ${attempt}/${max_attempts}"
+
+          if npm ci 2>&1 | tee "${artifact_dir}/npm-ci-attempt-${attempt}.log"; then
+            exit 0
+          fi
+
+          cp -R ~/.npm/_logs/. "${artifact_dir}/npm-logs/" 2>/dev/null || true
+
+          if [ "$attempt" -lt "$max_attempts" ]; then
+            backoff_seconds=$((attempt * 5))
+            echo "[post-deploy-warm] npm ci failed on attempt ${attempt}; retrying in ${backoff_seconds}s"
+            sleep "$backoff_seconds"
+          fi
+
+          attempt=$((attempt + 1))
+        done
+
+        echo "[post-deploy-warm] npm ci failed after ${max_attempts} attempts"
+        exit 1

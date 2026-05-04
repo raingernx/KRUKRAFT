@@ -13,6 +13,7 @@ The post-deploy warm workflow warms critical public routes, then runs a k6-backe
 - `Run Post-Deploy Performance Verification` executes `npm run perf:post-deploy`, which runs the smoke k6 suite and fails the job when any route exceeds its p95 budget or crosses a 1% failure rate.
 - The generated `artifacts/perf-summary.json` now includes a rollup with overall status, pass/fail counts, the worst p95 route, and the route nearest its budget.
 - The workflow summary now includes that rollup directly, so reviewers do not need to download artifacts first to see which route regressed.
+- `.github/actions/setup-post-deploy-node/action.yml` now owns the shared Node/dependency bootstrap for the warm, perf, and sentinel jobs; only the warm job keeps the retrying `npm ci` path and npm-log capture because that is the one step that historically needed extra install resilience.
 
 ## Why It Matters
 
@@ -21,6 +22,7 @@ This workflow is the repo-owned production perf truth source after deploy. It ve
 ## Key Files
 
 - `.github/workflows/post-deploy-warm-cache.yml`
+- `.github/actions/setup-post-deploy-node/action.yml`
 - `scripts/run-post-deploy-perf.ts`
 - `artifacts/perf-summary.json`
 
@@ -70,4 +72,4 @@ This workflow is the repo-owned production perf truth source after deploy. It ve
 
 ## Last Reviewed
 
-- 2026-04-08
+- 2026-05-04

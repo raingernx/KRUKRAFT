@@ -147,41 +147,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - name: Setup Post-Deploy Node
+        uses: ./.github/actions/setup-post-deploy-node
         with:
-          node-version: 24
-          cache: npm
-
-      - name: Install Dependencies
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p artifacts/npm-logs
-
-          max_attempts=3
-          attempt=1
-
-          while [ "$attempt" -le "$max_attempts" ]; do
-            echo "[post-deploy-warm] npm ci attempt ${attempt}/${max_attempts}"
-
-            if npm ci 2>&1 | tee "artifacts/npm-ci-attempt-${attempt}.log"; then
-              exit 0
-            fi
-
-            cp -R ~/.npm/_logs/. artifacts/npm-logs/ 2>/dev/null || true
-
-            if [ "$attempt" -lt "$max_attempts" ]; then
-              backoff_seconds=$((attempt * 5))
-              echo "[post-deploy-warm] npm ci failed on attempt ${attempt}; retrying in ${backoff_seconds}s"
-              sleep "$backoff_seconds"
-            fi
-
-            attempt=$((attempt + 1))
-          done
-
-          echo "[post-deploy-warm] npm ci failed after ${max_attempts} attempts"
-          exit 1
+          node-version: "24"
+          retry-npm-ci: "true"
+          artifact-dir: artifacts
 
       - name: Validate BASE_URL
         shell: bash
@@ -259,14 +230,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - name: Setup Post-Deploy Node
+        uses: ./.github/actions/setup-post-deploy-node
         with:
-          node-version: 24
-          cache: npm
-
-      - name: Install Dependencies
-        run: npm ci
+          node-version: "24"
 
       - name: Setup k6
         uses: grafana/setup-k6-action@v1
@@ -333,14 +300,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - name: Setup Post-Deploy Node
+        uses: ./.github/actions/setup-post-deploy-node
         with:
-          node-version: 24
-          cache: npm
-
-      - name: Install Dependencies
-        run: npm ci
+          node-version: "24"
 
       - name: Setup k6
         uses: grafana/setup-k6-action@v1
