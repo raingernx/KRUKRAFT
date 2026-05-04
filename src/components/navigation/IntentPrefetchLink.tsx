@@ -15,6 +15,7 @@ import {
   canonicalizeResourcesHref,
   inferResourcesNavigationMode,
   isResourcesSubtreePath,
+  shouldUseResourcesDocumentNavigation,
   type ResourcesNavigationMode,
   useResourcesNavigationState,
 } from "@/components/marketplace/resourcesNavigationState";
@@ -130,6 +131,15 @@ const IntentPrefetchLinkBase = forwardRef<HTMLAnchorElement, IntentPrefetchLinkB
       beginResourcesNavigation(mode, href, {
         overlay: !isResourcesSubtreePath(pathname ?? ""),
       });
+    }
+
+    if (
+      mode &&
+      typeof window !== "undefined" &&
+      shouldUseResourcesDocumentNavigation(pathname ?? "", mode)
+    ) {
+      event.preventDefault();
+      window.location.assign(href);
     }
   }
 

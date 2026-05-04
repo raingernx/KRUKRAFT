@@ -79,6 +79,13 @@ export function isResourcesSubtreePath(pathname: string) {
   return pathname === routes.marketplace || pathname.startsWith(`${routes.marketplace}/`);
 }
 
+export function shouldUseResourcesDocumentNavigation(
+  pathname: string,
+  mode: ResourcesNavigationMode | null,
+) {
+  return mode === "detail" && isResourcesSubtreePath(pathname);
+}
+
 export function beginResourcesNavigation(
   mode: ResourcesNavigationMode,
   href: string,

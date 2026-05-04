@@ -17,6 +17,7 @@ import {
   beginResourcesNavigation,
   inferResourcesNavigationMode,
   isResourcesSubtreePath,
+  shouldUseResourcesDocumentNavigation,
 } from "@/components/marketplace/resourcesNavigationState";
 import { shouldBypassImageOptimizer } from "@/lib/imageDelivery";
 import {
@@ -205,6 +206,16 @@ export function HeroSearch({
       beginResourcesNavigation(mode, href, {
         overlay: !isResourcesSubtreePath(pathname),
       });
+
+      if (
+        typeof window !== "undefined" &&
+        shouldUseResourcesDocumentNavigation(pathname, mode)
+      ) {
+        setIsDropdownOpen(false);
+        setActiveIndex(-1);
+        window.location.assign(href);
+        return;
+      }
     }
 
     setIsDropdownOpen(false);
@@ -219,6 +230,17 @@ export function HeroSearch({
     beginResourcesNavigation("detail", href, {
       overlay: !isResourcesSubtreePath(pathname),
     });
+
+    if (
+      typeof window !== "undefined" &&
+      shouldUseResourcesDocumentNavigation(pathname, "detail")
+    ) {
+      setIsDropdownOpen(false);
+      setActiveIndex(-1);
+      window.location.assign(href);
+      return;
+    }
+
     setIsDropdownOpen(false);
     setActiveIndex(-1);
     startTransition(() => {

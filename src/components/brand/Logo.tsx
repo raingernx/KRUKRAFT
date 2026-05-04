@@ -308,6 +308,28 @@ export function Logo({
 
     if (isReturningFromResourceDetail) {
       event.preventDefault();
+      if (typeof window !== "undefined") {
+        try {
+          const referrer = new URL(document.referrer);
+          const sameOriginReferrer = referrer.origin === window.location.origin;
+          const referrerPath = `${referrer.pathname}${referrer.search}`;
+
+          if (
+            sameOriginReferrer &&
+            referrer.pathname === routes.marketplace &&
+            window.history.length > 1
+          ) {
+            beginResourcesNavigation("discover", referrerPath, {
+              overlay: false,
+            });
+            window.history.back();
+            return;
+          }
+        } catch {
+          // Fall back to a document navigation below when referrer parsing fails.
+        }
+      }
+
       window.location.assign(routes.marketplace);
       return;
     }
