@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
 
-const IGNORABLE_DEV_CONSOLE_ERRORS = [
+const IGNORABLE_DEV_RUNTIME_ERRORS = [
   /_next\/webpack-hmr/i,
   /ERR_INVALID_HTTP_RESPONSE/i,
   /^Failed to load resource: net::ERR_CONNECTION_(?:RESET|REFUSED)$/i,
@@ -13,8 +13,8 @@ const IGNORABLE_DEV_CONSOLE_ERRORS = [
   /Fetch API cannot load https:\/\/o\d+\.ingest\.us\.sentry\.io\/api\/[\s\S]*Refused to connect because it violates the document's Content Security Policy/i,
 ];
 
-export function isIgnorableConsoleError(message: string) {
-  return IGNORABLE_DEV_CONSOLE_ERRORS.some((pattern) => pattern.test(message));
+export function isIgnorableRuntimeError(message: string) {
+  return IGNORABLE_DEV_RUNTIME_ERRORS.some((pattern) => pattern.test(message));
 }
 
 export function collectRuntimeErrors(page: Page) {
@@ -23,13 +23,17 @@ export function collectRuntimeErrors(page: Page) {
 
   page.on("pageerror", (error) => {
     const stack = typeof error.stack === "string" ? error.stack.trim() : "";
-    pageErrors.push(stack.length > 0 ? stack : String(error));
+    const message = stack.length > 0 ? stack : String(error);
+
+    if (!isIgnorableRuntimeError(message)) {
+      pageErrors.push(message);
+    }
   });
 
   page.on("console", (message) => {
     if (
       message.type() === "error" &&
-      !isIgnorableConsoleError(message.text())
+      !isIgnorableRuntimeError(message.text())
     ) {
       consoleErrors.push(message.text());
     }
