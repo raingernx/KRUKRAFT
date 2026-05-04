@@ -18,12 +18,22 @@ type ResourcesDiscoverPersonalizedSectionProps = {
 
 let resourcesDiscoverPersonalizedSectionLoader:
   Promise<ComponentType<ResourcesDiscoverPersonalizedSectionProps>> | null = null;
+let resourcesDiscoverPersonalizedSectionComponent:
+  ComponentType<ResourcesDiscoverPersonalizedSectionProps> | null = null;
 
 async function loadResourcesDiscoverPersonalizedSection() {
+  if (resourcesDiscoverPersonalizedSectionComponent) {
+    return resourcesDiscoverPersonalizedSectionComponent;
+  }
+
   if (!resourcesDiscoverPersonalizedSectionLoader) {
     resourcesDiscoverPersonalizedSectionLoader = import(
       "@/components/resources/ResourcesDiscoverPersonalizedSection"
-    ).then((module) => module.ResourcesDiscoverPersonalizedSection);
+    ).then((module) => {
+      resourcesDiscoverPersonalizedSectionComponent =
+        module.ResourcesDiscoverPersonalizedSection;
+      return resourcesDiscoverPersonalizedSectionComponent;
+    });
   }
 
   return resourcesDiscoverPersonalizedSectionLoader;
@@ -45,7 +55,7 @@ export function LazyResourcesDiscoverPersonalizedSection({
     ResourcesDiscoverPersonalizedSection,
     setResourcesDiscoverPersonalizedSection,
   ] = useState<ComponentType<ResourcesDiscoverPersonalizedSectionProps> | null>(
-    null,
+    resourcesDiscoverPersonalizedSectionComponent,
   );
 
   useEffect(() => {

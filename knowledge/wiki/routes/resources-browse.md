@@ -12,6 +12,7 @@
 - The resources transition overlay now mounts from `src/app/resources/layout.tsx` instead of the root layout, so unrelated routes do not hydrate resources-only navigation UI.
 - Signed-in personalized discover content now mounts behind a dedicated lazy client boundary, so the main discover route can paint before recommendation-specific client logic hydrates.
 - Signed-in hard refreshes now rehydrate the discover island from short-lived viewer-scoped session-storage payloads when available, so the route does not always repaint the generic public fallback rows before personalized recommendations return.
+- Once the personalized discover island has already loaded in the current tab, later returns to `/resources` can remount that same client section synchronously instead of replaying the generic server fallback rows while the lazy import resolves again.
 - Personalized discover no longer waits for the owned-id base-state fetch to finish before starting the `scope=discover` request, removing the old client-side `auth -> base -> discover` waterfall on refresh.
 - The streamed discover `lead` and `collections` sections now share one cache-backed homepage bundle on the cold path instead of fetching separate resource pools for each section.
 - The route no longer forces those discover sections through hard 600ms timeout fallbacks during normal slow-but-healthy requests; the quick-browse shell still streams first, but the section-level `Suspense` fallbacks now own the waiting state until real data arrives.

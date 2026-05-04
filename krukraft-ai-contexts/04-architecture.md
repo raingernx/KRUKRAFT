@@ -270,6 +270,7 @@ Browser verification workflow note:
 - `/api/auth/viewer` now resolves directly from the signed JWT token via `next-auth/jwt` instead of `getServerSession`, so lightweight auth chrome does not spend Prisma connections just to confirm the signed-in snapshot
 - `/api/resources/viewer-state` and `/api/resources/[id]/viewer-state` now resolve the same auth snapshot from the signed JWT token instead of calling `getServerSession`, so owned-state/detail-state hydration no longer burns Prisma connections on session reads before the feature-specific queries start
 - lightweight client JSON fetches now use a small browser-side dedupe/TTL cache for repeat personalized requests, and sign-out clears that cache alongside auth viewer state
+- the signed-in discover island on `/resources` now also keeps the already-loaded personalized section component itself in a tiny module-level browser cache, so returning to the route in the same tab can remount personalized discover immediately instead of repainting the generic server fallback rows first and only then swapping back to personalized content
 
 ## Verification Stack Policy
 
