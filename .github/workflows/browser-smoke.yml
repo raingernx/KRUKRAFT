@@ -86,78 +86,21 @@ jobs:
 
       - name: Run Dashboard Browser Probes
         run: |
-          pkill -f 'next dev --turbopack' || true
-          pkill -f 'next dev --webpack' || true
-          npm run dev:webpack > /tmp/dashboard-browser-probe.log 2>&1 &
-          DEV_PID=$!
-          cleanup() {
-            kill "$DEV_PID" 2>/dev/null || true
-          }
-          trap cleanup EXIT
-
-          for _ in $(seq 1 60); do
-            if ! kill -0 "$DEV_PID" 2>/dev/null; then
-              cat /tmp/dashboard-browser-probe.log || true
-              exit 1
-            fi
-            if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null; then
-              break
-            fi
-            sleep 2
-          done
-
-          curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null
-          BASE_URL=http://127.0.0.1:3000 npm run browser:probe:dashboard
+          bash scripts/run-browser-probe-ci.sh \
+            /tmp/dashboard-browser-probe.log \
+            npm run browser:probe:dashboard
 
       - name: Run Public/Admin Page Browser Probes
         run: |
-          pkill -f 'next dev --turbopack' || true
-          pkill -f 'next dev --webpack' || true
-          npm run dev:webpack > /tmp/page-browser-probe.log 2>&1 &
-          DEV_PID=$!
-          cleanup() {
-            kill "$DEV_PID" 2>/dev/null || true
-          }
-          trap cleanup EXIT
-
-          for _ in $(seq 1 60); do
-            if ! kill -0 "$DEV_PID" 2>/dev/null; then
-              cat /tmp/page-browser-probe.log || true
-              exit 1
-            fi
-            if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null; then
-              break
-            fi
-            sleep 2
-          done
-
-          curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null
-          BASE_URL=http://127.0.0.1:3000 npm run browser:probe:pages
+          bash scripts/run-browser-probe-ci.sh \
+            /tmp/page-browser-probe.log \
+            npm run browser:probe:pages
 
       - name: Run Browser Sentinel Probes
         run: |
-          pkill -f 'next dev --turbopack' || true
-          pkill -f 'next dev --webpack' || true
-          npm run dev:webpack > /tmp/sentinel-browser-probe.log 2>&1 &
-          DEV_PID=$!
-          cleanup() {
-            kill "$DEV_PID" 2>/dev/null || true
-          }
-          trap cleanup EXIT
-
-          for _ in $(seq 1 60); do
-            if ! kill -0 "$DEV_PID" 2>/dev/null; then
-              cat /tmp/sentinel-browser-probe.log || true
-              exit 1
-            fi
-            if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null; then
-              break
-            fi
-            sleep 2
-          done
-
-          curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null
-          BASE_URL=http://127.0.0.1:3000 npm run browser:probe:sentinel
+          bash scripts/run-browser-probe-ci.sh \
+            /tmp/sentinel-browser-probe.log \
+            npm run browser:probe:sentinel
 
       - name: Upload Playwright Artifacts
         if: always()
@@ -237,28 +180,9 @@ jobs:
 
       - name: Run Management Browser Probes
         run: |
-          pkill -f 'next dev --turbopack' || true
-          pkill -f 'next dev --webpack' || true
-          npm run dev:webpack > /tmp/management-browser-probe.log 2>&1 &
-          DEV_PID=$!
-          cleanup() {
-            kill "$DEV_PID" 2>/dev/null || true
-          }
-          trap cleanup EXIT
-
-          for _ in $(seq 1 60); do
-            if ! kill -0 "$DEV_PID" 2>/dev/null; then
-              cat /tmp/management-browser-probe.log || true
-              exit 1
-            fi
-            if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null; then
-              break
-            fi
-            sleep 2
-          done
-
-          curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null
-          BASE_URL=http://127.0.0.1:3000 npm run browser:probe:management
+          bash scripts/run-browser-probe-ci.sh \
+            /tmp/management-browser-probe.log \
+            npm run browser:probe:management
 
       - name: Upload Management Probe Artifacts
         if: always()
