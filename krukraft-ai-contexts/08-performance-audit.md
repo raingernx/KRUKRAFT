@@ -272,6 +272,7 @@ Current perf-hardening baseline for the production UX initiative is:
   - signed-in `/resources` return navigation now avoids one extra generic-to-personalized repaint class too: once the personalized discover island chunk has loaded in the current tab, the route can remount that same client section synchronously on later visits instead of replaying the generic server fallback rows while the dynamic import resolves again
 - public route resilience audit (2026-04-09)
   - `/resources` listing/search-recovery/discover controls now treat transient Prisma infrastructure failures as fail-soft and surface an in-page unavailable state or omit the deferred section instead of throwing the entire route into `resources/error.tsx`
+  - the route owner now also wraps the async catalog-controls navbar subtree in the same fail-soft policy, so a transient pool error during `/resources` client return navigation cannot bypass the content-level guard and trip the full route error boundary
   - `/resources/[slug]` and `/creators/[slug]` now also degrade more gracefully on transient infrastructure failures: metadata falls back to safe defaults, critical shell reads can render dedicated temporary-unavailable states, and non-critical creator-resource sections can resolve to empty results instead of tearing down the page shell
 
 ## Protected Dashboard Dev-Compile Notes

@@ -84,6 +84,10 @@ function ResourcesRouteUnavailableState() {
   );
 }
 
+function ResourcesCatalogControlsUnavailableState() {
+  return <ResourcesCatalogControlsSkeleton />;
+}
+
 export default async function ResourcesPage({ searchParams }: ResourcesPageProps) {
   const resolvedParams = searchParams ? await searchParams : {};
 
@@ -132,6 +136,25 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
             className: "shadow-none",
           })
         : null;
+      const catalogControlsPromise = ResourcesCatalogControls().catch((error) => {
+        if (!isResourcesRouteFailSoftError(error)) {
+          throw error;
+        }
+
+        console.error("[RESOURCES_ROUTE_CATALOG_CONTROLS_FALLBACK]", {
+          category: category ?? "all",
+          currentPage,
+          mode: isDiscoverMode ? "discover" : "listing",
+          sort,
+          error:
+            error instanceof Error
+              ? { message: error.message, name: error.name }
+              : String(error),
+          fallbackApplied: true,
+        });
+
+        return <ResourcesCatalogControlsUnavailableState />;
+      });
       const contentPromise = ResourcesPageContent({
         isDiscoverMode,
         search,
@@ -176,7 +199,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
             }
             secondaryRow={
               <Suspense fallback={<ResourcesCatalogControlsSkeleton />}>
-                <ResourcesCatalogControls />
+                <AwaitResolvedNode promise={catalogControlsPromise} />
               </Suspense>
             }
           />

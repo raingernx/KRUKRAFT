@@ -17,6 +17,7 @@
 - The streamed discover `lead` and `collections` sections now share one cache-backed homepage bundle on the cold path instead of fetching separate resource pools for each section.
 - The route no longer forces those discover sections through hard 600ms timeout fallbacks during normal slow-but-healthy requests; the quick-browse shell still streams first, but the section-level `Suspense` fallbacks now own the waiting state until real data arrives.
 - The route entry now also has a last-resort transient-infrastructure fail-soft guard for `/resources`, so if a Prisma/Supabase pooler issue escapes the narrower listing/discover catches, the marketplace shell can still render a temporary-unavailable state instead of immediately dropping into `src/app/resources/error.tsx`.
+- The route owner now applies that same resilience policy to the async navbar catalog-controls subtree too, because client return navigation into `/resources` can re-render that server branch independently of the main content path.
 
 ## Why It Matters
 
