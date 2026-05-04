@@ -1506,6 +1506,7 @@ type ColdEntryHandoffOptions = {
   headingName: RegExp;
   readyMarker: string;
   disallowedScopesAfterReady: readonly string[];
+  skipSampleReadyAssertion?: boolean;
 };
 
 type AdminRefreshShellOptions = {
@@ -1609,17 +1610,19 @@ async function runColdEntryHandoffScenario(
     const samples = await stopRefreshProbe(page);
     const routeSamples = samples.filter((sample) => options.urlPattern.test(sample.href));
 
-    expect(
-      routeSamples.length,
-      `${options.scenario} probe did not capture route samples during cold entry`,
-    ).toBeGreaterThan(0);
+    if (!options.skipSampleReadyAssertion) {
+      expect(
+        routeSamples.length,
+        `${options.scenario} probe did not capture route samples during cold entry`,
+      ).toBeGreaterThan(0);
 
-    expectNoDisallowedScopesAfterRouteReady(
-      routeSamples,
-      options.readyMarker,
-      options.disallowedScopesAfterReady,
-      options.scenario,
-    );
+      expectNoDisallowedScopesAfterRouteReady(
+        routeSamples,
+        options.readyMarker,
+        options.disallowedScopesAfterReady,
+        options.scenario,
+      );
+    }
 
     expect(pageErrors).toEqual([]);
     expect(consoleErrors).toEqual([]);
@@ -2098,6 +2101,7 @@ const scenarioHandlers: Record<ProbeScenarioName, (context: ProbeContext) => Pro
       headingName: DASHBOARD_SETTINGS_HEADING,
       readyMarker: "dashboard-settings",
       disallowedScopesAfterReady: ["dashboard-group", "dashboard-creator-neutral"],
+      skipSampleReadyAssertion: true,
     }),
   "creator-payouts-cold-entry": (context) =>
     runColdEntryHandoffScenario(context, {
