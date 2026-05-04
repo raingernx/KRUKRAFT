@@ -24,7 +24,7 @@ const HERO_CONTENT = {
 const HERO_SKELETON_LIGHT = "bg-muted";
 const HERO_SKELETON_DARK_SOFT = "bg-white/10";
 const HERO_SKELETON_DARK_STRONG = "bg-white/18";
-const HERO_DESKTOP_ARTWORK_SRC = "/uploads/3e268ab454ba5ffe.jpg";
+const HERO_DESKTOP_ARTWORK_SRC = "/marketing/discover-hero.jpg";
 
 function normalizeOptionalString(value: string | null | undefined) {
   const trimmed = value?.trim();
