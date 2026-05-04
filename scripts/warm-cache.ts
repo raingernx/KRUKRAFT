@@ -31,6 +31,11 @@ const warmSecret = process.env.PERFORMANCE_WARM_SECRET?.trim();
 // warm step — it has no effect on the hot request path.
 const timeoutMs = 15000;
 const userAgent = "Krukraft-Warmup/1.0";
+const RESOURCES_HOME_STABILITY_THRESHOLD_MS = 900;
+const RESOURCES_HOME_STABILITY_ATTEMPTS = 4;
+const RESOURCES_HOME_STABILITY_PROBE_BURST = 5;
+const RESOURCES_HOME_STABILITY_PROBE_PASSES = 2;
+const RESOURCES_HOME_STABILITY_REHEAT_BURST = 6;
 
 if (!baseUrl) {
   console.error(
@@ -72,11 +77,14 @@ const routes: WarmRoute[] = [
     // Hit the public home shell twice so the deployment-status workflow is
     // less likely to hand the k6 smoke suite a just-born instance on its
     // first measured request.
-    repeat: 3,
+    repeat: 4,
     // k6 ramps `/resources` up to 5 VUs. A small concurrent burst warms more
     // than one fresh instance so the later ramp is less likely to hit an
-    // unwarmed discover-home stream on a newly scaled worker.
-    burst: 5,
+    // unwarmed discover-home stream on a newly scaled worker. Use a slightly
+    // larger fanout than the smoke-VU ceiling because post-deploy runs can
+    // still spill onto one extra fresh worker while image optimization and
+    // listing/detail reheats are happening in parallel on Vercel.
+    burst: 6,
     required: true,
   },
   {
@@ -202,8 +210,11 @@ const routes: WarmRoute[] = [
     // Discover-home now closes the final warm band. Manual baseline runs
     // showed `/resources` could still become the stalest warmed public shell
     // when its tail reheat happened before later category/creator passes.
-    burst: 5,
-    repeat: 2,
+    // Keep one extra reheat pass and slightly larger fanout here because the
+    // post-deploy perf suite measures `/resources` first, so any one late
+    // fresh worker disproportionately hurts the suite p95.
+    burst: 6,
+    repeat: 3,
     required: true,
   },
 ];
@@ -343,6 +354,131 @@ async function warmRoute(route: WarmRoute): Promise<WarmResult> {
       bodyBytes: null,
       error: error instanceof Error ? error.message : String(error),
     };
+  }
+}
+
+function computePercentile(values: number[], percentile: number) {
+  if (values.length === 0) {
+    return null;
+  }
+
+  const sorted = [...values].sort((a, b) => a - b);
+  const rank = Math.ceil((percentile / 100) * sorted.length) - 1;
+  const index = Math.min(sorted.length - 1, Math.max(0, rank));
+  return sorted[index] ?? null;
+}
+
+async function probeRouteLatency(
+  path: string,
+  headers?: Record<string, string>,
+): Promise<WarmResult> {
+  const url = new URL(path, baseUrl);
+  const startedAt = Date.now();
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "user-agent": userAgent,
+        ...headers,
+      },
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+
+    const body = await response.text();
+
+    return {
+      label: `probe:${path}`,
+      url: url.toString(),
+      ok: response.ok,
+      status: response.status,
+      elapsedMs: Date.now() - startedAt,
+      bodyBytes: body.length,
+    };
+  } catch (error) {
+    return {
+      label: `probe:${path}`,
+      url: url.toString(),
+      ok: false,
+      status: null,
+      elapsedMs: Date.now() - startedAt,
+      bodyBytes: null,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+async function stabilizeResourcesHome() {
+  const probePath = "/resources";
+  const reheatRoute: WarmRoute = {
+    label: "resources-home-stability-reheat",
+    path: probePath,
+    burst: RESOURCES_HOME_STABILITY_REHEAT_BURST,
+  };
+
+  for (let attempt = 1; attempt <= RESOURCES_HOME_STABILITY_ATTEMPTS; attempt += 1) {
+    const probeResults: WarmResult[] = [];
+
+    for (let pass = 1; pass <= RESOURCES_HOME_STABILITY_PROBE_PASSES; pass += 1) {
+      console.log(
+        `[warm-cache] Probing resources-home stability (attempt ${attempt}/${RESOURCES_HOME_STABILITY_ATTEMPTS}, pass ${pass}/${RESOURCES_HOME_STABILITY_PROBE_PASSES})`,
+      );
+
+      const burstResults = await Promise.all(
+        Array.from({ length: RESOURCES_HOME_STABILITY_PROBE_BURST }, () =>
+          probeRouteLatency(probePath),
+        ),
+      );
+
+      probeResults.push(...burstResults);
+    }
+
+    const failedResults = probeResults.filter((result) => !result.ok);
+    const durations = probeResults
+      .filter((result) => result.ok)
+      .map((result) => result.elapsedMs);
+    const p95 = computePercentile(durations, 95);
+    const max = durations.length > 0 ? Math.max(...durations) : null;
+
+    console.log(
+      `[warm-cache] resources-home stability attempt ${attempt}: ok=${probeResults.length - failedResults.length}/${probeResults.length} p95=${p95 ?? "n/a"}ms max=${max ?? "n/a"}ms`,
+    );
+
+    if (failedResults.length === 0 && p95 !== null && p95 <= RESOURCES_HOME_STABILITY_THRESHOLD_MS) {
+      return;
+    }
+
+    if (attempt === RESOURCES_HOME_STABILITY_ATTEMPTS) {
+      console.error(
+        `[warm-cache] resources-home stability probe failed after ${attempt} attempts (p95=${p95 ?? "n/a"}ms, max=${max ?? "n/a"}ms, failures=${failedResults.length})`,
+      );
+      process.exit(1);
+    }
+
+    console.warn(
+      `[warm-cache] resources-home stability miss (attempt ${attempt}) — reheating /resources before retry`,
+    );
+
+    const reheatResults = await Promise.all(
+      Array.from({ length: reheatRoute.burst ?? 1 }, async (_, index) => {
+        const result = await warmRoute(reheatRoute);
+        const shard = `[burst ${index + 1}/${reheatRoute.burst ?? 1}]`;
+        if (result.ok) {
+          console.log(
+            `[warm-cache] OK ${result.status} ${reheatRoute.label} ${shard} ${result.elapsedMs}ms bodyBytes=${result.bodyBytes ?? "n/a"}`,
+          );
+        } else {
+          console.warn(
+            `[warm-cache] FAIL ${result.status ?? "ERR"} ${reheatRoute.label} ${shard} ${result.elapsedMs}ms${result.error ? ` ${result.error}` : ""}`,
+          );
+        }
+        return result;
+      }),
+    );
+
+    if (reheatResults.some((result) => !result.ok)) {
+      console.error("[warm-cache] resources-home stability reheat failed");
+      process.exit(1);
+    }
   }
 }
 
@@ -530,6 +666,8 @@ async function main() {
   if (successCount === 0) {
     process.exit(1);
   }
+
+  await stabilizeResourcesHome();
 }
 
 main().catch((error) => {
