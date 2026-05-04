@@ -47,7 +47,9 @@ const DISCOVER_COLLECTIONS_DATA_SINGLE_FLIGHT_KEY = "discover-collections-data:r
 const DISCOVER_FREE_RESOURCES_SINGLE_FLIGHT_KEY = "discover-free-resources:refresh";
 const DISCOVER_SECTION_SOURCE_LIMIT = 6;
 const DISCOVER_SECTION_DISPLAY_LIMIT = 4;
-const DISCOVER_SECTION_SOURCE_CONCURRENCY = 1;
+// These section sources are independent and each only returns a small ID set.
+// Running them serially stretches the cold /resources path for no benefit.
+const DISCOVER_SECTION_SOURCE_CONCURRENCY = 4;
 
 type DiscoverResourceRow = Awaited<ReturnType<typeof findDiscoverResourcesByIds>>[number];
 type DiscoverResource = DiscoverResourceRow & { previewUrl: string | null };

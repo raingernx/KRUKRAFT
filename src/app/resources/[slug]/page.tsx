@@ -34,6 +34,7 @@ import {
   getResourceDetailPageMetadata,
   getResourceDetailPagePurchaseMeta,
   getResourceDetailPageResource,
+  getResourceDetailPageRelatedSection,
   getResourceDetailPageReviewList,
   getResourceDetailPageTrustSummary,
 } from "@/services/resources";
@@ -295,6 +296,30 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
           timeoutMs: 900,
         },
       );
+      const relatedSectionPromise = runNonCriticalResourceDetailTask(
+        () =>
+          traceServerStep(
+            "resource_detail.getRelatedSection",
+            () =>
+              getResourceDetailPageRelatedSection({
+                resourceId: resource.id,
+                categoryId: resource.categoryId,
+                take: 4,
+              }),
+            { slug },
+          ),
+        {
+          fallback: {
+            relatedResources: [],
+          },
+          context: {
+            resourceId: resource.id,
+            section: "related-resources",
+            slug,
+          },
+          timeoutMs: 900,
+        },
+      );
 
       const hasFile = Boolean(resource.fileUrl ?? resource.fileKey);
       const isReturningFromCheckout = paymentStatus === "success";
@@ -416,13 +441,12 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
               }
             >
               <ResourceDetailRelatedSection
+                relatedSectionPromise={relatedSectionPromise}
                 currentDownloads={resource.resourceStat?.downloads ?? resource.downloadCount ?? 0}
                 currentIsFree={resource.isFree || resource.price === 0}
                 currentPrice={resource.price ?? 0}
                 currentRating={0}
                 currentSales={resource.resourceStat?.purchases ?? 0}
-                categoryId={resource.categoryId}
-                resourceId={resource.id}
               />
             </Suspense>
 

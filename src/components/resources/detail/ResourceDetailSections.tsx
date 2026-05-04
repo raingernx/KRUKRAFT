@@ -226,41 +226,23 @@ export async function ResourceDetailBodySection({
 }
 
 export async function ResourceDetailRelatedSection({
-  resourceId,
-  categoryId,
+  relatedSectionPromise,
   currentIsFree,
   currentPrice,
   currentRating,
   currentSales,
   currentDownloads,
 }: {
-  resourceId: string;
-  categoryId?: string | null;
+  relatedSectionPromise: Promise<
+    Awaited<ReturnType<typeof getResourceDetailPageRelatedSection>>
+  >;
   currentIsFree: boolean;
   currentPrice: number;
   currentRating: number;
   currentSales: number;
   currentDownloads: number;
 }) {
-  const { relatedResources } =
-    await runNonCriticalResourceDetailTask(
-      () =>
-        getResourceDetailPageRelatedSection({
-          resourceId,
-          categoryId,
-          take: 4,
-        }),
-      {
-        context: {
-          resourceId,
-          section: "related-resources",
-        },
-        fallback: {
-          relatedResources: [],
-        },
-        timeoutMs: 900,
-      },
-    );
+  const { relatedResources } = await relatedSectionPromise;
 
   const relatedResourcesWithBadges = relatedResources.map((resource) => {
     const relatedIsFree = resource.isFree || (resource.price ?? 0) === 0;
