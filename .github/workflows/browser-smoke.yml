@@ -100,13 +100,13 @@ jobs:
               cat /tmp/dashboard-browser-probe.log || true
               exit 1
             fi
-            if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null; then
+            if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null; then
               break
             fi
             sleep 2
           done
 
-          curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null
+          curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null
           BASE_URL=http://127.0.0.1:3000 npm run browser:probe:dashboard
 
       - name: Run Public/Admin Page Browser Probes
@@ -125,13 +125,13 @@ jobs:
               cat /tmp/page-browser-probe.log || true
               exit 1
             fi
-            if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null; then
+            if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null; then
               break
             fi
             sleep 2
           done
 
-          curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null
+          curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null
           BASE_URL=http://127.0.0.1:3000 npm run browser:probe:pages
 
       - name: Run Browser Sentinel Probes
@@ -150,13 +150,13 @@ jobs:
               cat /tmp/sentinel-browser-probe.log || true
               exit 1
             fi
-            if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null; then
+            if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null; then
               break
             fi
             sleep 2
           done
 
-          curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null
+          curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null
           BASE_URL=http://127.0.0.1:3000 npm run browser:probe:sentinel
 
       - name: Upload Playwright Artifacts
@@ -251,13 +251,13 @@ jobs:
               cat /tmp/management-browser-probe.log || true
               exit 1
             fi
-            if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null; then
+            if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null; then
               break
             fi
             sleep 2
           done
 
-          curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null
+          curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null 2>/dev/null
           BASE_URL=http://127.0.0.1:3000 npm run browser:probe:management
 
       - name: Upload Management Probe Artifacts
