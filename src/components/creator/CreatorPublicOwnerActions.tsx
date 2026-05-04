@@ -12,7 +12,7 @@ export function CreatorPublicOwnerActions({
   creatorUserId: string;
   editHref: string;
 }) {
-  const viewer = useAuthViewer({ hydrateFromCache: false });
+  const viewer = useAuthViewer({ strategy: "eager" });
 
   if (!viewer.isReady || !viewer.authenticated || !viewer.user) {
     return null;

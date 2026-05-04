@@ -185,7 +185,7 @@ Database search note:
 
 Public creator route note:
 - `/creators/[slug]` stays public/request-cacheable at the page level and does not read `cookies()`, `headers()`, or server-session state in the route entry
-- creator-owner affordances on that public route now hydrate through the same lightweight `/api/auth/viewer` path used by other public auth-aware chrome instead of relying on `useSession()` directly, so signed-in creators/admins can recover the `Edit profile` CTA without turning the page entry into a request-bound session surface
+- creator-owner affordances on that public route now hydrate through the same lightweight `/api/auth/viewer` path used by other public auth-aware chrome instead of relying on `useSession()` directly, and that owner-action island now reuses the persisted auth-viewer snapshot eagerly in the same tab so signed-in creators/admins can recover the `Edit profile` CTA faster after a hard refresh without turning the page entry into a request-bound session surface
 - creator page metadata now uses a lighter cached metadata reader instead of reusing the full public-profile payload
 - the full creator public-profile cache now reads the creator momentum/status-badge fields from the main profile query itself instead of issuing a second `creatorStat` repository call inside the cached loader
 - the creator public route now splits its cached data path into a lighter shell reader plus a separate published-resource reader; the page starts both promises together, awaits only the shell at the route entry, and streams the published-resources section behind its own structural `Suspense` fallback

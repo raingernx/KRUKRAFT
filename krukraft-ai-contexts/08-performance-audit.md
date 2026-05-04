@@ -267,6 +267,7 @@ Current perf-hardening baseline for the production UX initiative is:
 - public route request-binding audit (2026-04-08)
   - `/resources`, `/resources/[slug]`, `/creators/[slug]`, and `/categories/[slug]` do not currently read `cookies()`, `headers()`, or server-session state at the page level
   - the remaining perf work should therefore focus on cache reuse, streaming shape, and hydration scope rather than re-removing obvious page-level request binding
+  - public creator owner chrome now also follows that rule with a lighter client-side path: the `Edit profile` affordance on `/creators/[slug]` reuses the persisted auth-viewer snapshot eagerly instead of waiting for a fresh viewer fetch after every hard refresh in the same tab
 - public route resilience audit (2026-04-09)
   - `/resources` listing/search-recovery/discover controls now treat transient Prisma infrastructure failures as fail-soft and surface an in-page unavailable state or omit the deferred section instead of throwing the entire route into `resources/error.tsx`
   - `/resources/[slug]` and `/creators/[slug]` now also degrade more gracefully on transient infrastructure failures: metadata falls back to safe defaults, critical shell reads can render dedicated temporary-unavailable states, and non-critical creator-resource sections can resolve to empty results instead of tearing down the page shell
