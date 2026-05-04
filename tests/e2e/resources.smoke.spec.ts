@@ -45,6 +45,14 @@ async function clickDetailLinkUntilNavigationStarts(
   throw new Error(`Detail navigation did not start for ${href}`);
 }
 
+async function getFirstVisibleDiscoverDetailHref(page: Page) {
+  const resourceLinks = page.locator('main a[href^="/resources/"]:not([href*="?"])');
+  await expect(resourceLinks.first()).toBeVisible({ timeout: 20_000 });
+  const href = await resourceLinks.first().getAttribute("href");
+  expect(href).toBeTruthy();
+  return href!;
+}
+
 test("resources homepage renders hero media without runtime errors", async ({
   page,
 }) => {
@@ -343,6 +351,54 @@ test("creator discover shell does not expose misleading personalized CTAs", asyn
     await expect(page).toHaveURL(new RegExp(`category=${discover.recentCategorySlug}`));
     await expect(page).toHaveURL(/sort=newest/);
   }
+
+  expect(pageErrors).toEqual([]);
+  expect(consoleErrors).toEqual([]);
+});
+
+test("creator can return from detail to discover via logo without hitting the route error shell", async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+
+  await loginAsCreator(page, "/resources");
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+
+  const detailHref = await getFirstVisibleDiscoverDetailHref(page);
+  await clickDetailLinkUntilNavigationStarts(page, detailHref);
+  await expect(page.locator("main h1").first()).toBeVisible();
+
+  const logoLink = page.locator('header a[href="/resources"]').first();
+  await expect(logoLink).toBeVisible();
+
+  await Promise.all([
+    page.waitForURL(/\/resources(?:\?.*)?$/),
+    logoLink.click(),
+  ]);
+
+  await expect(page.locator('[data-route-shell-ready="resources-browse"]')).toBeVisible();
+  await expect(page.getByText("The resource library could not load.")).toHaveCount(0);
+
+  expect(pageErrors).toEqual([]);
+  expect(consoleErrors).toEqual([]);
+});
+
+test("creator can return from detail to discover with browser back without hitting the route error shell", async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+
+  await loginAsCreator(page, "/resources");
+  const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
+
+  const detailHref = await getFirstVisibleDiscoverDetailHref(page);
+  await clickDetailLinkUntilNavigationStarts(page, detailHref);
+  await expect(page.locator("main h1").first()).toBeVisible();
+
+  await page.goBack({ waitUntil: "commit" });
+  await expect(page).toHaveURL(/\/resources(?:\?.*)?$/);
+  await expect(page.locator('[data-route-shell-ready="resources-browse"]')).toBeVisible();
+  await expect(page.getByText("The resource library could not load.")).toHaveCount(0);
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);

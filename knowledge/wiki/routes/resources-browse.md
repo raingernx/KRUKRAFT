@@ -19,6 +19,7 @@
 - The route entry now also has a last-resort transient-infrastructure fail-soft guard for `/resources`, so if a Prisma/Supabase pooler issue escapes the narrower listing/discover catches, the marketplace shell can still render a temporary-unavailable state instead of immediately dropping into `src/app/resources/error.tsx`.
 - The route owner now applies that same resilience policy to the async navbar catalog-controls subtree too, because client return navigation into `/resources` can re-render that server branch independently of the main content path.
 - Detail → discover returns now also avoid automatic sibling-route prefetch bursts: marketplace navbar links, detail breadcrumbs, discover quick-browse cards, and signed-in personalized discover cards prefer intent/click prefetch only, which keeps `/resources` from issuing a wave of speculative listing/detail RSC requests right as the route remounts.
+- The signed-in viewer-state APIs that power discover/detail hydration now also fail soft for transient Prisma/Supabase pooler issues, returning safe empty/null payloads instead of 500s when recommendation, ownership, or review hydration loses a best-effort background read during return navigation.
 
 ## Why It Matters
 

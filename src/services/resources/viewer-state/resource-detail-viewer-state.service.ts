@@ -1,4 +1,7 @@
-import { isMissingTableError } from "@/lib/prismaErrors";
+import {
+  isMissingTableError,
+  isTransientPrismaInfrastructureError,
+} from "@/lib/prismaErrors";
 import type {
   ResourceDetailViewerBaseState,
   ResourceDetailViewerReview,
@@ -48,7 +51,10 @@ export async function getResourceDetailViewerBaseState(input: {
       isOwned: ownership.isOwned,
     };
   } catch (error) {
-    if (!isMissingTableError(error)) {
+    if (
+      !isMissingTableError(error) &&
+      !isTransientPrismaInfrastructureError(error)
+    ) {
       throw error;
     }
 
@@ -80,7 +86,10 @@ export async function getResourceDetailViewerReviewState(input: {
         }
       : null;
   } catch (error) {
-    if (!isMissingTableError(error)) {
+    if (
+      !isMissingTableError(error) &&
+      !isTransientPrismaInfrastructureError(error)
+    ) {
       throw error;
     }
 
