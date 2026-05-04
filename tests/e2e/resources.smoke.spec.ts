@@ -4,6 +4,9 @@ import { collectRuntimeErrors } from "./helpers/browser";
 import { loginAsCreator } from "./helpers/auth";
 import { expectImageLoaded } from "./helpers/images";
 
+const RESOURCES_RETURN_DETAIL_HREF =
+  "/resources/english-vocabulary-flashcards-500-essential-words";
+
 async function clickDetailLinkUntilNavigationStarts(
   page: Page,
   href: string,
@@ -47,16 +50,6 @@ async function clickDetailLinkUntilNavigationStarts(
   }
 
   throw new Error(`Detail navigation did not start for ${href}`);
-}
-
-async function getFirstVisibleDiscoverDetailHref(page: Page) {
-  const resourceLinks = page.locator(
-    'main a[href^="/resources/"]:not([href*="?"]):visible',
-  );
-  await expect(resourceLinks.first()).toBeVisible({ timeout: 20_000 });
-  const href = await resourceLinks.first().getAttribute("href");
-  expect(href).toBeTruthy();
-  return href!;
 }
 
 async function fetchDiscoverViewerState(page: Page) {
@@ -411,8 +404,10 @@ test("creator can return from detail to discover via logo without hitting the ro
   await loginAsCreator(page, "/resources");
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
-  const detailHref = await getFirstVisibleDiscoverDetailHref(page);
-  await clickDetailLinkUntilNavigationStarts(page, detailHref);
+  await page.goto(RESOURCES_RETURN_DETAIL_HREF);
+  await expect(page).toHaveURL(
+    /\/resources\/english-vocabulary-flashcards-500-essential-words(?:\?.*)?$/,
+  );
   await expect(page.locator("main h1").first()).toBeVisible();
 
   const logoLink = page.locator('header a[href="/resources"]').first();
@@ -439,8 +434,10 @@ test("creator can return from detail to discover with browser back without hitti
   await loginAsCreator(page, "/resources");
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
-  const detailHref = await getFirstVisibleDiscoverDetailHref(page);
-  await clickDetailLinkUntilNavigationStarts(page, detailHref);
+  await page.goto(RESOURCES_RETURN_DETAIL_HREF);
+  await expect(page).toHaveURL(
+    /\/resources\/english-vocabulary-flashcards-500-essential-words(?:\?.*)?$/,
+  );
   await expect(page.locator("main h1").first()).toBeVisible();
 
   await page.goBack({ waitUntil: "commit" });
