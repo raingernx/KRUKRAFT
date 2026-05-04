@@ -1534,7 +1534,9 @@ async function runDashboardRefreshShellScenario(
     await startRefreshProbe(page);
     await page.reload({ waitUntil: "domcontentloaded" });
     await expect(page).toHaveURL(options.urlPattern);
-    await expect(page.getByRole("heading", { name: options.headingName }).first()).toBeVisible();
+    await expect(
+      page.locator(`[data-route-shell-ready="${options.expectedRouteReady}"]`).first(),
+    ).toBeVisible();
     await page.waitForTimeout(500);
 
     const samples = await stopRefreshProbe(page);
