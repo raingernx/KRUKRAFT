@@ -86,8 +86,9 @@ jobs:
 
       - name: Run Dashboard Browser Probes
         run: |
+          pkill -f 'next dev --turbopack' || true
           pkill -f 'next dev --webpack' || true
-          npm run dev > /tmp/dashboard-browser-probe.log 2>&1 &
+          npm run dev:webpack > /tmp/dashboard-browser-probe.log 2>&1 &
           DEV_PID=$!
           cleanup() {
             kill "$DEV_PID" 2>/dev/null || true
@@ -95,6 +96,10 @@ jobs:
           trap cleanup EXIT
 
           for _ in $(seq 1 60); do
+            if ! kill -0 "$DEV_PID" 2>/dev/null; then
+              cat /tmp/dashboard-browser-probe.log || true
+              exit 1
+            fi
             if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null; then
               break
             fi
@@ -106,8 +111,9 @@ jobs:
 
       - name: Run Public/Admin Page Browser Probes
         run: |
+          pkill -f 'next dev --turbopack' || true
           pkill -f 'next dev --webpack' || true
-          npm run dev > /tmp/page-browser-probe.log 2>&1 &
+          npm run dev:webpack > /tmp/page-browser-probe.log 2>&1 &
           DEV_PID=$!
           cleanup() {
             kill "$DEV_PID" 2>/dev/null || true
@@ -115,6 +121,10 @@ jobs:
           trap cleanup EXIT
 
           for _ in $(seq 1 60); do
+            if ! kill -0 "$DEV_PID" 2>/dev/null; then
+              cat /tmp/page-browser-probe.log || true
+              exit 1
+            fi
             if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null; then
               break
             fi
@@ -126,8 +136,9 @@ jobs:
 
       - name: Run Browser Sentinel Probes
         run: |
+          pkill -f 'next dev --turbopack' || true
           pkill -f 'next dev --webpack' || true
-          npm run dev > /tmp/sentinel-browser-probe.log 2>&1 &
+          npm run dev:webpack > /tmp/sentinel-browser-probe.log 2>&1 &
           DEV_PID=$!
           cleanup() {
             kill "$DEV_PID" 2>/dev/null || true
@@ -135,6 +146,10 @@ jobs:
           trap cleanup EXIT
 
           for _ in $(seq 1 60); do
+            if ! kill -0 "$DEV_PID" 2>/dev/null; then
+              cat /tmp/sentinel-browser-probe.log || true
+              exit 1
+            fi
             if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null; then
               break
             fi
@@ -222,7 +237,9 @@ jobs:
 
       - name: Run Management Browser Probes
         run: |
-          npm run dev > /tmp/management-browser-probe.log 2>&1 &
+          pkill -f 'next dev --turbopack' || true
+          pkill -f 'next dev --webpack' || true
+          npm run dev:webpack > /tmp/management-browser-probe.log 2>&1 &
           DEV_PID=$!
           cleanup() {
             kill "$DEV_PID" 2>/dev/null || true
@@ -230,6 +247,10 @@ jobs:
           trap cleanup EXIT
 
           for _ in $(seq 1 60); do
+            if ! kill -0 "$DEV_PID" 2>/dev/null; then
+              cat /tmp/management-browser-probe.log || true
+              exit 1
+            fi
             if curl -fsS http://127.0.0.1:3000/api/internal/ready >/dev/null; then
               break
             fi

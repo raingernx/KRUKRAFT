@@ -218,6 +218,9 @@ Root rendering note:
   skeleton trees inside the client providers instead of importing the full
   dashboard/resources skeleton modules eagerly at root-provider evaluation time;
   the overlay providers still mount at the app root, but the heaviest skeleton
+
+Browser verification workflow note:
+- the main GitHub Actions browser smoke suite still exercises the app under the repo-default `npm run dev` path, but the follow-up dashboard/page/sentinel/management browser-probe restart steps now deliberately use `npm run dev:webpack` because the extra restart phase could trigger a Turbopack panic on GitHub-hosted Linux after the heavier smoke phase completed
   branches now split behind on-demand chunks plus local lightweight fallbacks
 - dashboard route readiness is now more target-specific than before: overview, library, downloads, purchases, settings, membership, the main creator surfaces, and the creator resource editor routes now expose route-ready markers so handoff overlays can wait for the destination route family instead of clearing on generic dashboard-shell readiness alone
 - the dashboard avatar account menu now exposes an explicit probe contract (`data-dashboard-account-trigger`, `data-dashboard-account-ready`, `data-dashboard-account-menu`, `data-dashboard-account-link`) so browser verification can wait for client hydration before opening the menu instead of racing a server-rendered trigger that is visible but not interactive yet
