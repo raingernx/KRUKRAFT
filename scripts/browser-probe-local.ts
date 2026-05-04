@@ -947,7 +947,7 @@ async function runPublicProductPagesScenario({ browser }: ProbeContext) {
   const page = await context.newPage();
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
   const pages: Array<{ path: string; heading: RegExp }> = [
-    { path: "/membership", heading: /Simple, transparent pricing/i },
+    { path: "/membership", heading: /^Pricing$/i },
     { path: "/privacy", heading: /^Privacy Policy$/i },
     { path: "/terms", heading: /^Terms of Service$/i },
     { path: "/cookies", heading: /^Cookie Policy$/i },
@@ -1867,8 +1867,10 @@ async function runDarkThemeLogoScenario({ browser }: ProbeContext) {
   const page = await context.newPage();
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
 
+  await page.emulateMedia({ colorScheme: "dark" });
+
   await page.addInitScript(() => {
-    window.localStorage.setItem("user_theme", "dark");
+    window.localStorage.removeItem("user_theme");
   });
 
   await page.route("**/*", async (route) => {
@@ -1889,7 +1891,13 @@ async function runDarkThemeLogoScenario({ browser }: ProbeContext) {
   try {
     await page.goto("/resources", { waitUntil: "domcontentloaded" });
     await expect(page).toHaveURL(/\/resources$/);
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await page.waitForLoadState("load");
+    await expect
+      .poll(() => page.locator("html").getAttribute("data-theme"), {
+        timeout: 20_000,
+        message: "expected /resources to settle into dark theme before asserting the logo stack",
+      })
+      .toBe("dark");
 
     const logoStack = page.locator("header .theme-logo-stack").first();
     await expect(logoStack).toBeVisible();
@@ -1927,8 +1935,29 @@ async function runDarkThemeLogoScenario({ browser }: ProbeContext) {
     }
 
     expect(state.theme).toBe("dark");
-    expect((state.dark.opacity ?? 0) > 0.5).toBeTruthy();
-    expect((state.light.opacity ?? 1) < 0.1).toBeTruthy();
+    await expect
+      .poll(
+        async () =>
+          page.evaluate(`
+            (() => {
+              const node = document.querySelector("header .theme-logo-stack");
+              const readOpacity = (selector) => {
+                const layer = node ? node.querySelector(selector) : null;
+                return layer ? Number.parseFloat(window.getComputedStyle(layer).opacity) : null;
+              };
+
+              return {
+                darkVisible: (readOpacity(".theme-logo-layer--dark") ?? 0) > 0.5,
+                lightHidden: (readOpacity(".theme-logo-layer--light") ?? 1) < 0.1,
+              };
+            })()
+          `),
+        {
+          timeout: 20_000,
+          message: "expected the dark logo layer to become visible after theme settlement",
+        },
+      )
+      .toEqual({ darkVisible: true, lightHidden: true });
 
     const darkSrc = `${state.dark.src ?? ""} ${state.dark.currentSrc ?? ""}`;
     expect(/krukraft-(logo|mark)-dark/i.test(darkSrc)).toBeTruthy();
