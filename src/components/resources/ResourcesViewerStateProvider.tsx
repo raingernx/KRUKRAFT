@@ -11,16 +11,20 @@ import { useFetchJson } from "@/lib/use-fetch-json";
 import type { ResourcesViewerBaseState } from "@/lib/resources/viewer-state";
 
 type ResourcesViewerContextValue = {
+  userId: string | null;
   ownedResourceIds: string[];
   ownedIdSet: Set<string>;
   isAuthenticated: boolean;
+  isAuthReady: boolean;
   isReady: boolean;
 };
 
 const EMPTY_VIEWER_STATE: ResourcesViewerContextValue = {
+  userId: null,
   ownedResourceIds: [],
   ownedIdSet: new Set<string>(),
   isAuthenticated: false,
+  isAuthReady: false,
   isReady: false,
 };
 
@@ -34,7 +38,7 @@ export function ResourcesViewerStateProvider({
 }: {
   children: ReactNode;
 }) {
-  const authViewer = useAuthViewer({ strategy: "idle", idleTimeoutMs: 800 });
+  const authViewer = useAuthViewer({ strategy: "eager" });
   const shouldLoadOwnedState = authViewer.isReady && authViewer.authenticated;
   const viewerCacheKey =
     authViewer.user?.id
@@ -45,16 +49,20 @@ export function ResourcesViewerStateProvider({
     cacheKey: viewerCacheKey,
     ttlMs: shouldLoadOwnedState ? RESOURCES_VIEWER_BASE_TTL_MS : 0,
     enabled: shouldLoadOwnedState,
+    persist: "session",
   });
 
   const value = useMemo<ResourcesViewerContextValue>(
     () => ({
+      userId: authViewer.user?.id ?? null,
       ownedResourceIds: viewerState?.ownedResourceIds ?? [],
       ownedIdSet: new Set(viewerState?.ownedResourceIds ?? []),
       isAuthenticated: authViewer.authenticated,
+      isAuthReady: authViewer.isReady,
       isReady: authViewer.isReady && (!shouldLoadOwnedState || isReady),
     }),
     [
+      authViewer.user?.id,
       authViewer.authenticated,
       authViewer.isReady,
       isReady,

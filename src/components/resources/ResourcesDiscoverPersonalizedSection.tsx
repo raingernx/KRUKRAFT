@@ -232,12 +232,17 @@ export function ResourcesDiscoverPersonalizedSection({
   eagerCardCount?: number;
   eagerPreviewUrls?: string[];
 }) {
-  const { isAuthenticated, isReady } = useResourcesViewerState();
+  const { isAuthenticated, isAuthReady, userId } = useResourcesViewerState();
+  const discoverCacheKey =
+    userId
+      ? `resources-viewer-discover:${userId}`
+      : "resources-viewer-discover:anonymous";
   const { data: discover } = useFetchJson<ResourcesViewerDiscoverState>({
-    cacheKey: "resources-viewer-discover",
+    cacheKey: discoverCacheKey,
     ttlMs: 15_000,
     url: "/api/resources/viewer-state?scope=discover",
-    enabled: isReady && isAuthenticated,
+    enabled: isAuthReady && isAuthenticated,
+    persist: "session",
   });
 
   const recommendationVariant = discover?.recommendationVariant ?? null;

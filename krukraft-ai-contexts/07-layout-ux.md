@@ -91,6 +91,7 @@
   - a curated collections grid that links deeper into stable listing modes such as newest, featured when featured inventory exists, most-downloaded, or a `Top picks` fallback when the featured slot would otherwise dead-end into an empty listing
 - discover collection cards should stay honest to live inventory: the featured-slot entry only points at `featured=true` when featured inventory exists; otherwise the slot falls back to a stable `sort=recommended` / `Top picks` listing instead of advertising an empty featured filter
 - viewer-aware personalization hydrates after the public shell instead of blocking the initial route render
+- signed-in hard refreshes on `/resources` should now prefer the last short-lived viewer-scoped personalized payload from session storage before background revalidation, so the route does not intentionally flash back to the generic public recommendation fallback every refresh in the same tab
 - discover-section CTAs should only appear when the target listing matches the section's promise; purely personalized rows can omit `View all` rather than sending users to a generic fallback list
 
 **Listing mode**

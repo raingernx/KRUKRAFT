@@ -230,9 +230,17 @@ export function useAuthViewer(options: UseAuthViewerOptions = {}): AuthViewerSta
     idleTimeoutMs = 800,
     hydrateFromCache = true,
   } = options;
+  const initialViewer =
+    (hydrateFromCache ? cachedViewer : null) ??
+    (hydrateFromCache ? readPersistedAuthViewer() : null);
+
+  if (hydrateFromCache && !cachedViewer && initialViewer) {
+    cachedViewer = initialViewer;
+  }
+
   const [state, setState] = useState<AuthViewerState>(() => ({
-    ...((hydrateFromCache ? cachedViewer : null) ?? EMPTY_AUTH_VIEWER),
-    isReady: hydrateFromCache ? Boolean(cachedViewer) : false,
+    ...(initialViewer ?? EMPTY_AUTH_VIEWER),
+    isReady: hydrateFromCache ? Boolean(initialViewer) : false,
   }));
 
   useEffect(() => {

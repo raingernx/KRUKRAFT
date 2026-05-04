@@ -40,7 +40,7 @@ export function LazyResourcesDiscoverPersonalizedSection({
   eagerPreviewUrls?: string[];
   children: ReactNode;
 }) {
-  const authViewer = useAuthViewer({ strategy: "idle", idleTimeoutMs: 800 });
+  const authViewer = useAuthViewer({ strategy: "eager" });
   const [
     ResourcesDiscoverPersonalizedSection,
     setResourcesDiscoverPersonalizedSection,
