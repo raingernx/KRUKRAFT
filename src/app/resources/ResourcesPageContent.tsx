@@ -818,10 +818,10 @@ function ResourcesListingUnavailableState({
 
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Button asChild>
-          <Link href={retryHref}>Try again</Link>
+          <a href={retryHref}>Try again</a>
         </Button>
         <Button asChild variant="quiet">
-          <Link href={routes.marketplace}>Open resources</Link>
+          <a href={routes.marketplace}>Open resources</a>
         </Button>
       </div>
     </div>

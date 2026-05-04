@@ -47,9 +47,16 @@ function markResourcesRouteErrorAutoRetry() {
   }
 }
 
+function reloadCurrentResourcesRoute() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.location.replace(window.location.href);
+}
+
 export default function ResourcesRouteError({
   error,
-  reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
@@ -71,13 +78,13 @@ export default function ResourcesRouteError({
     setIsAutoRetrying(true);
 
     const timeoutId = window.setTimeout(() => {
-      reset();
+      reloadCurrentResourcesRoute();
     }, RESOURCES_ROUTE_ERROR_AUTORETRY_DELAY_MS);
 
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [reset]);
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -101,7 +108,12 @@ export default function ResourcesRouteError({
             </div>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button type="button" onClick={reset} size="lg" disabled={isAutoRetrying}>
+              <Button
+                type="button"
+                onClick={reloadCurrentResourcesRoute}
+                size="lg"
+                disabled={isAutoRetrying}
+              >
                 {isAutoRetrying ? "Retrying…" : "Try again"}
               </Button>
               <Button asChild size="lg" variant="quiet">

@@ -13,6 +13,10 @@ async function clickDetailLinkUntilNavigationStarts(
   );
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
+    if (targetUrl.test(page.url())) {
+      return;
+    }
+
     const link = page.locator(`main a[href="${href}"]`).first();
     await expect(link).toBeVisible();
     await link.scrollIntoViewIfNeeded();
@@ -28,14 +32,14 @@ async function clickDetailLinkUntilNavigationStarts(
     await link.hover().catch(() => undefined);
     await link.click().catch(() => undefined);
 
-    if (await committedNavigation) {
+    if ((await committedNavigation) || targetUrl.test(page.url())) {
       return;
     }
 
     await link.focus().catch(() => undefined);
     await page.keyboard.press("Enter").catch(() => undefined);
 
-    if (await committedNavigation) {
+    if ((await committedNavigation) || targetUrl.test(page.url())) {
       return;
     }
 

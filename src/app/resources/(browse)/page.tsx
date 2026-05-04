@@ -77,7 +77,7 @@ function ResourcesRouteUnavailableState() {
 
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Button asChild size="lg">
-          <Link href={routes.marketplace}>Try resources again</Link>
+          <a href={routes.marketplace}>Try resources again</a>
         </Button>
       </div>
     </div>
