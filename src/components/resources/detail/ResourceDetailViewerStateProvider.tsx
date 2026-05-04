@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { useAuthViewer } from "@/lib/auth/use-auth-viewer";
-import { fetchJson } from "@/lib/use-fetch-json";
+import { fetchJson, peekFetchJsonCache } from "@/lib/use-fetch-json";
 import type { ResourceDetailViewerBaseState } from "@/lib/resources/resource-detail-viewer-state";
 
 type ResourceDetailViewerContextValue = ResourceDetailViewerBaseState & {
@@ -43,16 +43,25 @@ export function ResourceDetailViewerStateProvider({
   children: ReactNode;
   resourceId: string;
 }) {
-  const authViewer = useAuthViewer({ strategy: "idle", idleTimeoutMs: 800 });
-  const [viewerState, setViewerState] = useState<ResourceDetailViewerBaseState>(
-    EMPTY_RESOURCE_DETAIL_VIEWER_BASE_STATE,
-  );
-  const [isReady, setIsReady] = useState(false);
+  const authViewer = useAuthViewer({ strategy: "eager" });
   const shouldLoadViewerState = authViewer.isReady && authViewer.authenticated;
   const viewerCacheKey =
     authViewer.user?.id
       ? `resource-detail-viewer-base:${resourceId}:${authViewer.user.id}`
       : null;
+  const initialCachedState = viewerCacheKey
+    ? peekFetchJsonCache<ResourceDetailViewerBaseState>({
+        cacheKey: viewerCacheKey,
+        ttlMs: RESOURCE_DETAIL_VIEWER_BASE_TTL_MS,
+        persist: "session",
+      })
+    : { hit: false, data: null };
+  const [viewerState, setViewerState] = useState<ResourceDetailViewerBaseState>(
+    initialCachedState.data ?? EMPTY_RESOURCE_DETAIL_VIEWER_BASE_STATE,
+  );
+  const [isReady, setIsReady] = useState(
+    !shouldLoadViewerState || initialCachedState.hit,
+  );
 
   const load = useCallback(async (options?: { fresh?: boolean }) => {
     if (!viewerCacheKey) {
@@ -72,14 +81,13 @@ export function ResourceDetailViewerStateProvider({
       cacheKey: viewerCacheKey,
       ttlMs: RESOURCE_DETAIL_VIEWER_BASE_TTL_MS,
       fresh: options?.fresh,
+      persist: "session",
     });
     setViewerState(data ?? EMPTY_RESOURCE_DETAIL_VIEWER_BASE_STATE);
   }, [resourceId, viewerCacheKey]);
 
   useEffect(() => {
     let cancelled = false;
-
-    setIsReady(false);
 
     if (authViewer.isReady && !authViewer.authenticated) {
       setViewerState(EMPTY_RESOURCE_DETAIL_VIEWER_BASE_STATE);
@@ -90,9 +98,26 @@ export function ResourceDetailViewerStateProvider({
     }
 
     if (!shouldLoadViewerState) {
+      setViewerState(EMPTY_RESOURCE_DETAIL_VIEWER_BASE_STATE);
+      setIsReady(false);
       return () => {
         cancelled = true;
       };
+    }
+
+    const cached = viewerCacheKey
+      ? peekFetchJsonCache<ResourceDetailViewerBaseState>({
+          cacheKey: viewerCacheKey,
+          ttlMs: RESOURCE_DETAIL_VIEWER_BASE_TTL_MS,
+          persist: "session",
+        })
+      : { hit: false, data: null };
+
+    if (cached.hit) {
+      setViewerState(cached.data ?? EMPTY_RESOURCE_DETAIL_VIEWER_BASE_STATE);
+      setIsReady(true);
+    } else {
+      setIsReady(false);
     }
 
     void load()
@@ -113,7 +138,13 @@ export function ResourceDetailViewerStateProvider({
     return () => {
       cancelled = true;
     };
-  }, [authViewer.authenticated, authViewer.isReady, load, shouldLoadViewerState]);
+  }, [
+    authViewer.authenticated,
+    authViewer.isReady,
+    load,
+    shouldLoadViewerState,
+    viewerCacheKey,
+  ]);
 
   const refresh = useCallback(async () => {
     if (!authViewer.authenticated) {

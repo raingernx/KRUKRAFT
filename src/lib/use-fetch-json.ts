@@ -290,6 +290,18 @@ export async function fetchJson<T>({
   });
 }
 
+export function peekFetchJsonCache<T>({
+  ttlMs = 0,
+  cacheKey,
+  persist,
+}: {
+  ttlMs?: number;
+  cacheKey: string;
+  persist?: "session";
+}): { hit: boolean; data: T | null } {
+  return getCacheEntry<T>(cacheKey, ttlMs, { persist });
+}
+
 export function useFetchJson<T>({
   url,
   enabled = true,

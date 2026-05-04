@@ -187,7 +187,7 @@ Current perf-hardening baseline for the production UX initiative is:
 - `/resources/[slug]` detail viewer-state is now split into `scope=base` and `scope=review` so purchase/success/ownership UI does not wait on the owner-review query
 - anonymous `/resources/[slug]` visits now skip the private detail viewer-state API entirely until the lightweight auth viewer confirms the user is signed in
 - viewer-state hydration now starts without waiting for NextAuth client-session readiness to settle first
-- repeated signed-in ownership reads now use short-lived private `unstable_cache` entries, detail refresh can bypass them after checkout, and detail base viewer-state now also has a short-lived browser cache to smooth remounts/revisits
+- repeated signed-in ownership reads now use short-lived private `unstable_cache` entries, detail refresh can bypass them after checkout, and detail base viewer-state now also has a short-lived browser cache plus session-storage persistence to smooth remounts, revisits, and hard refreshes in the same tab
 - the detail purchase rail now shows a structural "Checking your library…" placeholder while deferred ownership state resolves, preventing buy-CTA flicker for signed-in owners after auth probing moved to idle
 - pricing and buy-button CTA components now reuse idle auth-viewer resolution and explicitly prime on user intent, which removes the remaining eager auth probe from those public CTAs without making first interaction feel dead
 - the shared auth-viewer hook now lets callers opt out of cache-hydrated first

@@ -296,6 +296,7 @@ The repo now treats verification as a layered stack instead of a single-tool dec
     → detail params/searchParams now resolve in parallel and route metadata reads its own lighter cached metadata loader instead of the public detail shell payload
     → the detail viewer-state provider is now scoped to the success/purchase/owner-review subtree instead of wrapping the whole page shell, so gallery/header/public body sections stay outside the personalization boundary
     → detail base viewer-state now reuses a short-lived browser cache keyed by resource + viewer
+    → signed-in hard refreshes can now rehydrate that detail base viewer-state from session storage in the same tab instead of rebuilding from an empty client state every time
     → owner review form hydrates in a second client fetch after ownership is known
     → the owner-review form bundle is now lazy-loaded only after the base viewer-state confirms the signed-in viewer owns the resource, so anonymous and non-owner detail visits do not pay that review-form client payload up front
     → refresh polling can bypass the short-lived private ownership cache after checkout
@@ -458,7 +459,7 @@ This separation exists to avoid Prisma build-time warnings and DB dependency in 
 - the detail preview gallery now marks both the main preview image and the currently active matching thumbnail as eager/high-priority so duplicate-src thumbnails do not re-trigger Next dev LCP warnings by overwriting the main priority image entry
 - `/resources` discover hero is now a fixed repo-owned banner contract, so the route no longer carries the older hero resolver/cache/analytics path at all
 - `/resources/[slug]` no longer reads session/cookies at the page level; ownership/success now hydrate ahead of owner-review state from the client-side detail viewer-state API, and post-checkout refresh can bypass the short-lived ownership cache
-- `/resources/[slug]` detail viewer-state now waits for the lightweight auth viewer before calling the private detail viewer-state API, so anonymous detail visits skip that extra request
+- `/resources/[slug]` detail viewer-state now waits for the lightweight auth viewer before calling the private detail viewer-state API, so anonymous detail visits skip that extra request; signed-in refreshes can still reuse the persisted auth-viewer snapshot and short-lived detail base-state cache in the same tab before background revalidation
 - `/resources/[slug]` detail purchase rail now holds a structural "Checking your library…" placeholder instead of flashing a buy CTA before deferred ownership state resolves
 - marketplace search and admin user lookup now have trigram index coverage on their joined text columns plus the `Resource.slug`, `Category.slug`, and `Tag.slug` fields that the ranked SQL also searches via `ILIKE`/similarity
 - private ownership checks now use short-lived per-user/per-resource `unstable_cache` reads to reduce repeat signed-in viewer-state DB work

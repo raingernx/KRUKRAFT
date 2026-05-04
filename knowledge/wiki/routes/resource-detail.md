@@ -10,6 +10,7 @@
 - Multiple detail sections are streamed or deferred independently.
 - Shell/body/footer/purchase-meta now share one cache-backed detail bundle read instead of repeating same-slug Prisma reads across separate readers.
 - Streamed detail branches no longer force hard sub-second timeout fallbacks during normal slow-but-healthy requests; structural `Suspense` fallbacks remain the primary loading owner and fail-soft behavior is reserved for actual errors.
+- Signed-in detail ownership/success state now rehydrates from a short-lived viewer-scoped session-storage cache when available, so hard refreshes in the same tab do not always start from an empty purchase-state shell.
 - Browser verification now treats the detail shell as the stable route-ready marker instead of waiting only on `main h1`.
 - The client loading shell now owns its own fallback markup instead of importing `ResourceDetailSections.tsx`, so navigation overlays do not drag server-only platform/viewer-state dependencies into the browser bundle.
 
