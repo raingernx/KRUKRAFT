@@ -8,9 +8,9 @@ import { ResourcesRouteSkeleton } from "@/components/skeletons/ResourcesRouteSke
 import { routes } from "@/lib/routes";
 
 const RESOURCES_ROUTE_ERROR_AUTORETRY_KEY = "krukraft.resources.route-error-autoretry";
-const RESOURCES_ROUTE_ERROR_AUTORETRY_TTL_MS = 5_000;
+const RESOURCES_ROUTE_ERROR_AUTORETRY_TTL_MS = 12_000;
 const RESOURCES_ROUTE_ERROR_AUTORETRY_DELAY_MS = 350;
-const RESOURCES_ROUTE_ERROR_MANUAL_FALLBACK_DELAY_MS = 1_200;
+const RESOURCES_ROUTE_ERROR_MANUAL_FALLBACK_DELAY_MS = 5_000;
 
 function canAutoRetryResourcesRouteError() {
   if (typeof window === "undefined") {

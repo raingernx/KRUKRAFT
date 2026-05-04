@@ -12,6 +12,7 @@ import {
 } from "@/components/resources/ResourceCard";
 import { routes } from "@/lib/routes";
 import { useFetchJson } from "@/lib/use-fetch-json";
+import { RESOURCES_VIEWER_SESSION_TTL_MS } from "@/lib/resources/viewerCacheConfig";
 import type { ResourcesViewerDiscoverState } from "@/lib/resources/viewer-state";
 import { useResourcesViewerState } from "./ResourcesViewerStateProvider";
 import { ViewerAwareResourceCard } from "./ViewerAwareResourceCard";
@@ -239,7 +240,7 @@ export function ResourcesDiscoverPersonalizedSection({
       : "resources-viewer-discover:anonymous";
   const { data: discover, isReady: isDiscoverReady } = useFetchJson<ResourcesViewerDiscoverState>({
     cacheKey: discoverCacheKey,
-    ttlMs: 5 * 60_000,
+    ttlMs: RESOURCES_VIEWER_SESSION_TTL_MS,
     url: "/api/resources/viewer-state?scope=discover",
     enabled: isAuthReady && isAuthenticated,
     persist: "session",

@@ -1,0 +1,1 @@
+export const RESOURCES_VIEWER_SESSION_TTL_MS = 5 * 60_000;

@@ -13,6 +13,7 @@
 - Signed-in detail ownership/success state now rehydrates from a five-minute viewer-scoped session-storage cache when available, so hard refreshes and short route hops in the same tab do not always start from an empty purchase-state shell.
 - The detail purchase rail now applies that cached viewer-state only after mount rather than during the first hydrated render, because consuming the cached ownership snapshot too early can mismatch the server-rendered placeholder and trigger a hydration regeneration during fast entry or immediate return-to-discover flows.
 - Signed-in owner-review state now uses the same short-lived viewer-scoped session-storage cache pattern, with explicit cache-key invalidation on successful review writes so refreshes can reuse the last review payload without leaving stale review content behind after edits.
+- While the user is on detail, a client-only `ResourcesReturnWarmup` helper now prefetches `/resources`, warms the signed-in `scope=base` and `scope=discover` viewer-state payloads into the shared five-minute session cache window, and preloads the lazy discover personalization chunk so immediate detail → discover returns are less likely to fall back to a colder route/data path.
 - Browser verification now treats the detail shell as the stable route-ready marker instead of waiting only on `main h1`.
 - The client loading shell now owns its own fallback markup instead of importing `ResourceDetailSections.tsx`, so navigation overlays do not drag server-only platform/viewer-state dependencies into the browser bundle.
 

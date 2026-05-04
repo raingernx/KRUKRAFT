@@ -59,6 +59,73 @@ async function getFirstVisibleDiscoverDetailHref(page: Page) {
   return href!;
 }
 
+async function fetchDiscoverViewerState(page: Page) {
+  return page.evaluate(async () => {
+    const response = await fetch("/api/resources/viewer-state?scope=discover", {
+      cache: "no-store",
+      credentials: "same-origin",
+    });
+
+    if (!response.ok) {
+      throw new Error(`discover viewer-state failed: ${response.status}`);
+    }
+
+    const json = (await response.json()) as {
+      data?: {
+        recommendedForYou?: Array<{ id: string }>;
+        recommendedForLevel?: Array<{ id: string }>;
+        becauseYouStudied?: Array<{ id: string }>;
+        recentStudyTitle?: string | null;
+        recentCategorySlug?: string | null;
+      } | null;
+    };
+
+    return json.data ?? null;
+  });
+}
+
+async function expectCreatorDiscoverPersonalization(page: Page) {
+  const discover = await fetchDiscoverViewerState(page);
+
+  if (!discover) {
+    await expect(
+      page.getByRole("heading", { name: "Recommended for you" }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("heading", { name: "Recommended for your level" }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("heading", { name: /Because you studied / }),
+    ).toHaveCount(0);
+    return;
+  }
+
+  if ((discover.recommendedForYou?.length ?? 0) > 0) {
+    await expect(
+      page.getByRole("heading", { name: "Recommended for you" }).first(),
+    ).toBeVisible({ timeout: 20_000 });
+  }
+
+  if ((discover.recommendedForLevel?.length ?? 0) > 0) {
+    await expect(
+      page.getByRole("heading", { name: "Recommended for your level" }).first(),
+    ).toBeVisible({ timeout: 20_000 });
+  }
+
+  if (
+    (discover.becauseYouStudied?.length ?? 0) > 0 &&
+    discover.recentStudyTitle
+  ) {
+    await expect(
+      page
+        .getByRole("heading", {
+          name: `Because you studied ${discover.recentStudyTitle}`,
+        })
+        .first(),
+    ).toBeVisible({ timeout: 20_000 });
+  }
+}
+
 test("resources homepage renders hero media without runtime errors", async ({
   page,
 }) => {
@@ -261,33 +328,7 @@ test("creator discover shell does not expose misleading personalized CTAs", asyn
 
   const { pageErrors, consoleErrors } = collectRuntimeErrors(page);
   await expect(page).toHaveURL(/\/resources$/);
-
-  async function fetchDiscoverState() {
-    return page.evaluate(async () => {
-      const response = await fetch("/api/resources/viewer-state?scope=discover", {
-        cache: "no-store",
-        credentials: "same-origin",
-      });
-
-      if (!response.ok) {
-        throw new Error(`discover viewer-state failed: ${response.status}`);
-      }
-
-      const json = (await response.json()) as {
-        data?: {
-          recommendedForYou?: Array<{ id: string }>;
-          recommendedForLevel?: Array<{ id: string }>;
-          becauseYouStudied?: Array<{ id: string }>;
-          recentStudyTitle?: string | null;
-          recentCategorySlug?: string | null;
-        } | null;
-      };
-
-      return json.data ?? null;
-    });
-  }
-
-  const discover = await fetchDiscoverState();
+  const discover = await fetchDiscoverViewerState(page);
 
   if (!discover) {
     await expect(
@@ -384,6 +425,7 @@ test("creator can return from detail to discover via logo without hitting the ro
 
   await expect(page.locator('[data-route-shell-ready="resources-browse"]')).toBeVisible();
   await expect(page.getByText("The resource library could not load.")).toHaveCount(0);
+  await expectCreatorDiscoverPersonalization(page);
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -405,6 +447,7 @@ test("creator can return from detail to discover with browser back without hitti
   await expect(page).toHaveURL(/\/resources(?:\?.*)?$/);
   await expect(page.locator('[data-route-shell-ready="resources-browse"]')).toBeVisible();
   await expect(page.getByText("The resource library could not load.")).toHaveCount(0);
+  await expectCreatorDiscoverPersonalization(page);
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);

@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useAuthViewer } from "@/lib/auth/use-auth-viewer";
 import { useFetchJson } from "@/lib/use-fetch-json";
+import { RESOURCES_VIEWER_SESSION_TTL_MS } from "@/lib/resources/viewerCacheConfig";
 import type { ResourcesViewerBaseState } from "@/lib/resources/viewer-state";
 
 type ResourcesViewerContextValue = {
@@ -31,8 +32,6 @@ const EMPTY_VIEWER_STATE: ResourcesViewerContextValue = {
 const ResourcesViewerStateContext =
   createContext<ResourcesViewerContextValue>(EMPTY_VIEWER_STATE);
 
-const RESOURCES_VIEWER_BASE_TTL_MS = 5 * 60_000;
-
 export function ResourcesViewerStateProvider({
   children,
 }: {
@@ -47,7 +46,7 @@ export function ResourcesViewerStateProvider({
   const { data: viewerState, isReady } = useFetchJson<ResourcesViewerBaseState>({
     url: "/api/resources/viewer-state?scope=base",
     cacheKey: viewerCacheKey,
-    ttlMs: shouldLoadOwnedState ? RESOURCES_VIEWER_BASE_TTL_MS : 0,
+    ttlMs: shouldLoadOwnedState ? RESOURCES_VIEWER_SESSION_TTL_MS : 0,
     enabled: shouldLoadOwnedState,
     persist: "session",
   });

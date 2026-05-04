@@ -11,6 +11,7 @@ import {
 } from "react";
 import { useAuthViewer } from "@/lib/auth/use-auth-viewer";
 import { fetchJson, peekFetchJsonCache } from "@/lib/use-fetch-json";
+import { RESOURCES_VIEWER_SESSION_TTL_MS } from "@/lib/resources/viewerCacheConfig";
 import type { ResourceDetailViewerBaseState } from "@/lib/resources/resource-detail-viewer-state";
 
 type ResourceDetailViewerContextValue = ResourceDetailViewerBaseState & {
@@ -33,8 +34,6 @@ const EMPTY_VIEWER_STATE: ResourceDetailViewerContextValue = {
 
 const ResourceDetailViewerStateContext =
   createContext<ResourceDetailViewerContextValue>(EMPTY_VIEWER_STATE);
-
-const RESOURCE_DETAIL_VIEWER_BASE_TTL_MS = 5 * 60_000;
 
 function isTransientResourceDetailViewerStateError(error: unknown) {
   if (!(error instanceof Error)) {
@@ -83,7 +82,7 @@ export function ResourceDetailViewerStateProvider({
     const data = await fetchJson<ResourceDetailViewerBaseState>({
       url: `/api/resources/${resourceId}/viewer-state${query}`,
       cacheKey: viewerCacheKey,
-      ttlMs: RESOURCE_DETAIL_VIEWER_BASE_TTL_MS,
+      ttlMs: RESOURCES_VIEWER_SESSION_TTL_MS,
       fresh: options?.fresh,
       persist: "session",
     });
@@ -112,7 +111,7 @@ export function ResourceDetailViewerStateProvider({
     const cached = viewerCacheKey
       ? peekFetchJsonCache<ResourceDetailViewerBaseState>({
           cacheKey: viewerCacheKey,
-          ttlMs: RESOURCE_DETAIL_VIEWER_BASE_TTL_MS,
+          ttlMs: RESOURCES_VIEWER_SESSION_TTL_MS,
           persist: "session",
         })
       : { hit: false, data: null };

@@ -8,6 +8,7 @@ import { AlertCircle, BookOpen } from "@/lib/icons";
 import { ResourceHeader } from "@/components/resources/detail/ResourceHeader";
 import { ResourceGallery } from "@/components/resources/detail/ResourceGallery";
 import { PurchaseCardSkeleton } from "@/components/resources/detail/PurchaseCardSkeleton";
+import { ResourcesReturnWarmup } from "@/components/resources/ResourcesReturnWarmup";
 import { ResourceDetailShell } from "@/components/resources/detail/ResourceDetailShell";
 import { ResourceDetailViewerStateProvider } from "@/components/resources/detail/ResourceDetailViewerStateProvider";
 import {
@@ -330,6 +331,7 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
 
       return (
         <ResourceDetailShell>
+          <ResourcesReturnWarmup />
           <div className="space-y-6 lg:space-y-9">
             <ResourceHeader
               breadcrumb={[

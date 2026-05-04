@@ -28,6 +28,8 @@
 - The hidden discover-personalization ready marker is now hydration-safe on anonymous mounts: the lazy personalized island keeps the marker on `pending` until after the first client hydration pass before it can flip to `skip`, which removes the React hydration-mismatch warning class that was poisoning Browser Smoke `consoleErrors` on `/resources`.
 - `getResourceTrustSummary(resourceId)` now treats transient Prisma/Supabase pooler failures as a best-effort trust enrichment miss, returning `averageRating: null`, `totalReviews: 0`, and `totalSales: 0` plus a targeted fallback warning instead of throwing the route back into the error boundary.
 - Signed-in discover viewer-state now reuses a five-minute session-backed cache window instead of expiring after fifteen seconds, so returning to `/resources` from detail or nearby pages in the same tab can reopen `Recommended for you` / related personalized sections without immediately re-fetching the same viewer JSON.
+- The `/resources/[slug]` detail route now also prewarms that same signed-in discover/base viewer-state cache window plus the lazy personalized discover island module while the user is on detail, so immediate returns to `/resources` have a warmer route/data path before the discover page remounts.
+- Browser smoke now treats that return-navigation path as a contract too: authenticated `/resources` return tests navigate into a real detail page, return by logo and browser back, and then verify any expected personalized discover sections can reappear instead of checking only that the route no longer shows the manual library-error shell.
 
 ## Why It Matters
 

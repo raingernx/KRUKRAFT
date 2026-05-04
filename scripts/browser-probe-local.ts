@@ -1811,7 +1811,7 @@ async function runCreatorEditorRefreshShellScenario({ browser }: ProbeContext) {
     await loginAsCreator(page, "/dashboard/creator/resources/new");
     await expect(page).toHaveURL(/\/dashboard\/creator\/resources\/new$/);
     await expect(
-      page.getByRole("heading", { name: /Create your first resource|New resource/i }).first(),
+      page.locator('[data-route-shell-ready="dashboard-creator-resource-editor"]').first(),
     ).toBeVisible();
 
     await startRefreshProbe(page);

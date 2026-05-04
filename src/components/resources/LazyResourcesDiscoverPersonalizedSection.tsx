@@ -39,6 +39,10 @@ async function loadResourcesDiscoverPersonalizedSection() {
   return resourcesDiscoverPersonalizedSectionLoader;
 }
 
+export function warmResourcesDiscoverPersonalizedSection() {
+  return loadResourcesDiscoverPersonalizedSection();
+}
+
 export function LazyResourcesDiscoverPersonalizedSection({
   fallbackCards,
   eagerCardCount = 0,
