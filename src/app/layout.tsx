@@ -1,6 +1,5 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -12,6 +11,7 @@ import { PlatformConfigProvider } from "@/components/providers/PlatformConfigPro
 import { PublicSiteFooter } from "@/components/layout/PublicSiteFooter";
 import { Footer } from "@/components/layout/Footer";
 import { fontVariables } from "@/lib/fonts";
+import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import { getBuildSafePublicPlatformConfig } from "@/services/platform";
 import { buildPlatformMetadata } from "@/lib/platform/platform-metadata";
 import { Providers } from "./providers";
@@ -37,10 +37,15 @@ export default function RootLayout({
       className="min-h-screen bg-background"
       suppressHydrationWarning
     >
+      <head>
+        <script
+          id="theme-init"
+          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+        />
+      </head>
       <body
         className={`${fontVariables} min-h-screen bg-background font-sans text-foreground antialiased`.trim()}
       >
-        <Script id="theme-init" src="/theme-init.js" strategy="beforeInteractive" />
         <BonesRegistryBootstrap />
         <PlatformConfigProvider initialConfig={platform}>
           <ThemeProvider>

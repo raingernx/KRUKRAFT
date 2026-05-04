@@ -26,9 +26,10 @@
   `border-border-subtle` for passive shells/dividers,
   `border-border` for chrome boundaries,
   and `border-border-strong` / `border-input` for controls.
-- Root layout now injects a pre-hydration theme bootstrap script that sets
-  `document.documentElement.dataset.theme` before React hydration, which avoids
-  the previous white-first flash when a returning `dark` or `system -> dark`
+- Root layout now inlines the pre-hydration theme bootstrap script in
+  `<head>` so `document.documentElement.dataset.theme` is set during document
+  parse, not later from an external body-level script. This avoids the
+  previous white-first flash when a returning `dark` or `system -> dark`
   session refreshed the page.
 - Root layout no longer imports the generated bones registry as a side effect.
   Generated skeleton sets are now bootstrapped by the client-only

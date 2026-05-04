@@ -209,7 +209,7 @@ Public category route note:
 
 Root rendering note:
 - the root app layout uses build-safe public platform config only and does not read the authenticated server session
-- the root layout injects a pre-hydration `/theme-init.js` bootstrap script through `next/script` so `data-theme` / `color-scheme` can be set before the client theme provider settles, avoiding the older mount-time light bounce while keeping public routes off page-level cookie reads
+- the root layout now inlines the pre-hydration theme bootstrap directly in `<head>`, so `data-theme` / `color-scheme` can be set during document parse instead of waiting on an external body-level script; this removes the remaining light-first refresh flash for returning `dark` users while still keeping public routes off page-level cookie reads
 - the theme baseline for users with no stored preference is now `system`; explicit `light` and `dark` remain opt-in user preferences rather than the default initial state
 - `UserPreference.theme` now also defaults to `system` at the Prisma/database layer, so new preference rows created outside the client bootstrap path stay aligned with the same runtime baseline
 - the app root `src/app/loading.tsx` is now intentionally neutral and centered rather than page-shaped; if the root fallback still appears before a route-family shell resolves, it should not read as discover/library/dashboard UI
