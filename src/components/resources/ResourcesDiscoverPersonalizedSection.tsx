@@ -239,7 +239,7 @@ export function ResourcesDiscoverPersonalizedSection({
       : "resources-viewer-discover:anonymous";
   const { data: discover, isReady: isDiscoverReady } = useFetchJson<ResourcesViewerDiscoverState>({
     cacheKey: discoverCacheKey,
-    ttlMs: 15_000,
+    ttlMs: 5 * 60_000,
     url: "/api/resources/viewer-state?scope=discover",
     enabled: isAuthReady && isAuthenticated,
     persist: "session",

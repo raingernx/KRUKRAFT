@@ -10,6 +10,7 @@ import { routes } from "@/lib/routes";
 const RESOURCES_ROUTE_ERROR_AUTORETRY_KEY = "krukraft.resources.route-error-autoretry";
 const RESOURCES_ROUTE_ERROR_AUTORETRY_TTL_MS = 5_000;
 const RESOURCES_ROUTE_ERROR_AUTORETRY_DELAY_MS = 350;
+const RESOURCES_ROUTE_ERROR_MANUAL_FALLBACK_DELAY_MS = 1_200;
 
 function canAutoRetryResourcesRouteError() {
   if (typeof window === "undefined") {
@@ -63,38 +64,43 @@ export default function ResourcesRouteError({
   reset: () => void;
 }) {
   const autoRetryTriggeredRef = useRef(false);
-  const [isAutoRetrying, setIsAutoRetrying] = useState(() =>
-    canAutoRetryResourcesRouteError(),
-  );
+  const shouldAutoRetry = canAutoRetryResourcesRouteError();
+  const [showManualFallback, setShowManualFallback] = useState(false);
 
   useEffect(() => {
     console.error("[RESOURCES_ROUTE_ERROR]", error);
   }, [error]);
 
   useEffect(() => {
-    if (autoRetryTriggeredRef.current || !canAutoRetryResourcesRouteError()) {
+    if (autoRetryTriggeredRef.current) {
       return;
     }
 
     autoRetryTriggeredRef.current = true;
-    markResourcesRouteErrorAutoRetry();
-    setIsAutoRetrying(true);
 
     const timeoutId = window.setTimeout(() => {
-      reloadCurrentResourcesRoute();
-    }, RESOURCES_ROUTE_ERROR_AUTORETRY_DELAY_MS);
+      if (shouldAutoRetry) {
+        markResourcesRouteErrorAutoRetry();
+        reloadCurrentResourcesRoute();
+        return;
+      }
+
+      setShowManualFallback(true);
+    }, shouldAutoRetry
+      ? RESOURCES_ROUTE_ERROR_AUTORETRY_DELAY_MS
+      : RESOURCES_ROUTE_ERROR_MANUAL_FALLBACK_DELAY_MS);
 
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, []);
+  }, [shouldAutoRetry]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar headerSearch={<MarketplaceNavbarSearch />} />
 
       <main className="flex-1">
-        {isAutoRetrying ? (
+        {!showManualFallback ? (
           <Container className="py-5 sm:py-6 lg:py-8">
             <ResourcesRouteSkeleton mode="discover" />
           </Container>
@@ -109,9 +115,7 @@ export default function ResourcesRouteError({
                 The resource library could not load.
               </h1>
               <p className="text-body leading-7 text-muted-foreground">
-                {isAutoRetrying
-                  ? "Trying the library again now. If the refresh still fails, you can retry manually or reopen the main resource index."
-                  : "Try again, or return to the main resource index and reopen the library."}
+                Try again, or return to the main resource index and reopen the library.
               </p>
             </div>
 
@@ -120,9 +124,8 @@ export default function ResourcesRouteError({
                 type="button"
                 onClick={reloadCurrentResourcesRoute}
                 size="lg"
-                disabled={isAutoRetrying}
               >
-                {isAutoRetrying ? "Retrying…" : "Try again"}
+                Try again
               </Button>
               <Button asChild size="lg" variant="quiet">
                 <a href={routes.marketplace}>Open resources</a>

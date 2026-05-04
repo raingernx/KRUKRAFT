@@ -10,7 +10,7 @@
 - Multiple detail sections are streamed or deferred independently.
 - Shell/body/footer/purchase-meta now share one cache-backed detail bundle read instead of repeating same-slug Prisma reads across separate readers.
 - Streamed detail branches no longer force hard sub-second timeout fallbacks during normal slow-but-healthy requests; structural `Suspense` fallbacks remain the primary loading owner and fail-soft behavior is reserved for actual errors.
-- Signed-in detail ownership/success state now rehydrates from a short-lived viewer-scoped session-storage cache when available, so hard refreshes in the same tab do not always start from an empty purchase-state shell.
+- Signed-in detail ownership/success state now rehydrates from a five-minute viewer-scoped session-storage cache when available, so hard refreshes and short route hops in the same tab do not always start from an empty purchase-state shell.
 - The detail purchase rail now applies that cached viewer-state only after mount rather than during the first hydrated render, because consuming the cached ownership snapshot too early can mismatch the server-rendered placeholder and trigger a hydration regeneration during fast entry or immediate return-to-discover flows.
 - Signed-in owner-review state now uses the same short-lived viewer-scoped session-storage cache pattern, with explicit cache-key invalidation on successful review writes so refreshes can reuse the last review payload without leaving stale review content behind after edits.
 - Browser verification now treats the detail shell as the stable route-ready marker instead of waiting only on `main h1`.

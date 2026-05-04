@@ -34,7 +34,7 @@ const EMPTY_VIEWER_STATE: ResourceDetailViewerContextValue = {
 const ResourceDetailViewerStateContext =
   createContext<ResourceDetailViewerContextValue>(EMPTY_VIEWER_STATE);
 
-const RESOURCE_DETAIL_VIEWER_BASE_TTL_MS = 15_000;
+const RESOURCE_DETAIL_VIEWER_BASE_TTL_MS = 5 * 60_000;
 
 function isTransientResourceDetailViewerStateError(error: unknown) {
   if (!(error instanceof Error)) {

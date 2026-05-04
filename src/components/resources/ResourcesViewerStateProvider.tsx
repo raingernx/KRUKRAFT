@@ -31,7 +31,7 @@ const EMPTY_VIEWER_STATE: ResourcesViewerContextValue = {
 const ResourcesViewerStateContext =
   createContext<ResourcesViewerContextValue>(EMPTY_VIEWER_STATE);
 
-const RESOURCES_VIEWER_BASE_TTL_MS = 15_000;
+const RESOURCES_VIEWER_BASE_TTL_MS = 5 * 60_000;
 
 export function ResourcesViewerStateProvider({
   children,
