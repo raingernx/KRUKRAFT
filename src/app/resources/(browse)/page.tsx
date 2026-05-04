@@ -1,6 +1,7 @@
 import { Suspense, type ReactNode } from "react";
+import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
-import { Container, colorScales } from "@/design-system";
+import { Button, Container, colorScales } from "@/design-system";
 import { DEFAULT_SORT, getEffectiveMarketplaceSort } from "@/config/sortOptions";
 import { HeroSearch } from "@/components/marketplace/HeroSearch";
 import { ResourcesContentFallback } from "@/components/skeletons/ResourcesContentFallback";
@@ -18,6 +19,11 @@ import {
 import {
   withRequestPerformanceTrace,
 } from "@/lib/performance/observability";
+import {
+  isMissingTableError,
+  isTransientPrismaInfrastructureError,
+} from "@/lib/prismaErrors";
+import { routes } from "@/lib/routes";
 
 export const metadata = {
   title: "Discover Study Resources",
@@ -44,6 +50,38 @@ async function AwaitResolvedNode({
   promise: Promise<ReactNode>;
 }) {
   return <>{await promise}</>;
+}
+
+function isResourcesRouteFailSoftError(error: unknown) {
+  return (
+    isMissingTableError(error) ||
+    isTransientPrismaInfrastructureError(error)
+  );
+}
+
+function ResourcesRouteUnavailableState() {
+  return (
+    <div className="rounded-[28px] border border-border-subtle bg-card px-6 py-10 text-center shadow-sm sm:px-8 sm:py-12">
+      <div className="space-y-3">
+        <p className="text-small font-medium text-muted-foreground">
+          Temporary service issue
+        </p>
+        <h2 className="font-display text-3xl font-semibold text-foreground">
+          This library view could not refresh right now.
+        </h2>
+        <p className="mx-auto max-w-2xl text-body leading-7 text-muted-foreground">
+          The marketplace shell is still here, but part of the resource data hit a temporary service issue.
+          Try again or jump back to the main resource index.
+        </p>
+      </div>
+
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <Button asChild size="lg">
+          <Link href={routes.marketplace}>Try resources again</Link>
+        </Button>
+      </div>
+    </div>
+  );
 }
 
 export default async function ResourcesPage({ searchParams }: ResourcesPageProps) {
@@ -104,6 +142,24 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
         sort,
         effectiveSort: sort,
         currentPage,
+      }).catch((error) => {
+        if (!isResourcesRouteFailSoftError(error)) {
+          throw error;
+        }
+
+        console.error("[RESOURCES_ROUTE_CONTENT_FALLBACK]", {
+          category: category ?? "all",
+          currentPage,
+          mode: isDiscoverMode ? "discover" : "listing",
+          sort,
+          error:
+            error instanceof Error
+              ? { message: error.message, name: error.name }
+              : String(error),
+          fallbackApplied: true,
+        });
+
+        return <ResourcesRouteUnavailableState />;
       });
 
       return (
