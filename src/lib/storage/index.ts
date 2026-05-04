@@ -26,10 +26,11 @@ import { R2Provider } from "./r2Provider";
 import { env } from "@/env";
 
 const useR2 = env.r2Configured;
+const isCiRuntime = process.env.CI === "true";
 
 if (useR2) {
   console.info("[storage] Using R2Provider (Cloudflare R2)");
-} else {
+} else if (!isCiRuntime) {
   console.warn(
     "[storage] R2 env vars not set — falling back to LocalStorageProvider. " +
       "Set R2_ENDPOINT, R2_BUCKET, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY for production."

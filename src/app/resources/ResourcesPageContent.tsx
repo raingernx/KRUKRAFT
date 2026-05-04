@@ -774,6 +774,7 @@ async function loadDiscoverLeadDataSafe(): Promise<DiscoverLeadData | null> {
         timeoutMs: DISCOVER_LEAD_TIMEOUT_MS,
         fallback: null,
         warningLabel: "[RESOURCES_DISCOVER_LEAD_TIMEOUT]",
+        suppressWarningInCI: true,
       },
     );
   } catch (error) {
@@ -800,6 +801,7 @@ async function loadDiscoverCollectionsDataSafe(): Promise<DiscoverCollectionsDat
         timeoutMs: DISCOVER_COLLECTIONS_TIMEOUT_MS,
         fallback: null,
         warningLabel: "[RESOURCES_DISCOVER_COLLECTIONS_TIMEOUT]",
+        suppressWarningInCI: true,
       },
     );
   } catch (error) {

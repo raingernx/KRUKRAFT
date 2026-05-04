@@ -50,8 +50,19 @@ export function logResourceDetailFailure(
     : context.critical
       ? "[RESOURCE_DETAIL_CRITICAL_ERROR]"
       : "[RESOURCE_DETAIL_NON_CRITICAL_ERROR]";
+  const suppressExpectedCiTimeout =
+    process.env.CI === "true" &&
+    event === "[RESOURCE_DETAIL_TIMEOUT]" &&
+    !context.critical &&
+    options?.fallbackApplied;
 
-  console.error(event, {
+  if (suppressExpectedCiTimeout) {
+    return;
+  }
+
+  const log = event === "[RESOURCE_DETAIL_TIMEOUT]" ? console.warn : console.error;
+
+  log(event, {
     critical: Boolean(context.critical),
     elapsedMs,
     fallbackApplied: Boolean(options?.fallbackApplied),

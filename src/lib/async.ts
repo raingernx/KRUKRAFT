@@ -60,13 +60,17 @@ export async function runWithTimeoutFallback<T>(
     timeoutMs: number;
     fallback: T;
     warningLabel?: string;
+    suppressWarningInCI?: boolean;
   },
 ): Promise<T> {
   let timeoutHandle: ReturnType<typeof setTimeout> | null = null;
+  const shouldWarn =
+    options.warningLabel &&
+    !(options.suppressWarningInCI && process.env.CI === "true");
 
   const timeoutPromise = new Promise<T>((resolve) => {
     timeoutHandle = setTimeout(() => {
-      if (options.warningLabel) {
+      if (shouldWarn) {
         console.warn(options.warningLabel, { timeoutMs: options.timeoutMs });
       }
       resolve(options.fallback);

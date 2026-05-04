@@ -11,6 +11,7 @@ GitHub Actions `Browser Smoke` is the cloud verification workflow for marketplac
 - The management/browser-probe lane now also covers hard-refresh shell checks across the main dashboard, creator, and admin entry routes, so repeated-refresh fallback regressions are part of CI instead of relying only on manual reproduction.
 - Recent stabilization work removed flaky auth navigation, invalid admin audit table markup, and detail-shell readiness issues from the main smoke path.
 - Recent route-transition flakes also showed that Browser Smoke can be `success` but still not clean if the log contains `flaky` or `retry #` markers; close-out now requires log review, not workflow status alone.
+- The workflow now intentionally keeps expected CI-only fallback noise quieter: missing R2 env warnings, dev-only missing user-preference warnings, and non-critical `/resources` timeout fallback logs should not flood a green Browser Smoke run anymore.
 
 ## Why It Matters
 
@@ -38,6 +39,7 @@ This workflow is the main browser truth source when local browser environments a
 - CI failures should be interpreted from the final failing assertion or probe, not from startup-noise lines.
 - A green Browser Smoke run is only clean after log review confirms there were no hidden flaky retries.
 - When a browser-smoke failure turns out to be a probe/test assertion problem rather than a product regression, record that failure class explicitly instead of silently treating the suite as flaky by nature.
+- If a green run starts printing repeated storage-fallback, missing-preference, or non-critical discover/detail timeout warnings again, treat that as CI hygiene drift and fix the log owner instead of normalizing the noise.
 
 ## Known Risks
 
@@ -60,4 +62,4 @@ This workflow is the main browser truth source when local browser environments a
 
 ## Last Reviewed
 
-- 2026-04-08
+- 2026-05-04

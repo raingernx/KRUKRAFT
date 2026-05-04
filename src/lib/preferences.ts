@@ -50,6 +50,9 @@ export const DEFAULT_USER_PREFERENCES: UserPreferences = {
   marketingEmails: false,
 };
 
+const isCiRuntime = process.env.CI === "true";
+const warnedMissingPreferenceUsers = new Set<string>();
+
 function normalizeUserPreferences(
   preferences: Partial<Record<keyof UserPreferences, string | boolean>> | null,
 ): UserPreferences {
@@ -115,7 +118,13 @@ export async function getUserPreferences(userId: string): Promise<UserPreference
     select: USER_PREFERENCE_SELECT,
   });
 
-  if (!preferences && env.NODE_ENV !== "production") {
+  if (
+    !preferences &&
+    env.NODE_ENV !== "production" &&
+    !isCiRuntime &&
+    !warnedMissingPreferenceUsers.has(userId)
+  ) {
+    warnedMissingPreferenceUsers.add(userId);
     console.warn(
       `getUserPreferences: no preference row for user ${userId}; returning defaults`,
     );
