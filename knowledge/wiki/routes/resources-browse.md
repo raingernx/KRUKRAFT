@@ -18,6 +18,7 @@
 - The route no longer forces those discover sections through hard 600ms timeout fallbacks during normal slow-but-healthy requests; the quick-browse shell still streams first, but the section-level `Suspense` fallbacks now own the waiting state until real data arrives.
 - The route entry now also has a last-resort transient-infrastructure fail-soft guard for `/resources`, so if a Prisma/Supabase pooler issue escapes the narrower listing/discover catches, the marketplace shell can still render a temporary-unavailable state instead of immediately dropping into `src/app/resources/error.tsx`.
 - The route owner now applies that same resilience policy to the async navbar catalog-controls subtree too, because client return navigation into `/resources` can re-render that server branch independently of the main content path.
+- Detail → discover returns now also avoid automatic sibling-route prefetch bursts: marketplace navbar links, detail breadcrumbs, discover quick-browse cards, and signed-in personalized discover cards prefer intent/click prefetch only, which keeps `/resources` from issuing a wave of speculative listing/detail RSC requests right as the route remounts.
 
 ## Why It Matters
 

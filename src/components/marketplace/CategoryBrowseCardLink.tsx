@@ -18,7 +18,7 @@ export function CategoryBrowseCardLink({
     <IntentPrefetchLink
       href={href}
       className={className}
-      prefetchMode="viewport"
+      prefetchMode="intent"
       prefetchScope="category-browse-card"
       prefetchLimit={4}
       resourcesNavigationMode="listing"

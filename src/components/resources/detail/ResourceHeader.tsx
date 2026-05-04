@@ -43,7 +43,11 @@ export function ResourceHeader({
       <nav className="flex flex-wrap items-center gap-2 text-caption text-muted-foreground">
         {breadcrumb.map((item) => (
           <span key={item.href} className="flex items-center gap-2">
-            <Link href={item.href} className="transition hover:text-foreground">
+            <Link
+              href={item.href}
+              prefetch={false}
+              className="transition hover:text-foreground"
+            >
               {item.label}
             </Link>
             <span>/</span>
@@ -70,6 +74,7 @@ export function ResourceHeader({
             {creatorHref ? (
               <Link
                 href={creatorHref}
+                prefetch={false}
                 className="font-medium text-foreground transition hover:text-primary-700"
               >
                 {creatorName}

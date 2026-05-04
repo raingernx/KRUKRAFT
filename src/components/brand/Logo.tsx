@@ -316,6 +316,7 @@ export function Logo({
   return (
     <Link
       href={routes.marketplace}
+      prefetch={false}
       scroll
       onClick={handleLogoClick}
       className={cn(

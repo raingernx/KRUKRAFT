@@ -214,7 +214,7 @@ function ResourceCardRow({
             key={resource.id}
             resource={decoratedResource}
             variant="marketplace"
-            linkPrefetchMode="viewport"
+            linkPrefetchMode="intent"
             imageLoading={imageLoading}
           />
         );
@@ -293,7 +293,7 @@ export function ResourcesDiscoverPersonalizedSection({
                       <ViewerAwareResourceCard
                         resource={resource}
                         variant="marketplace"
-                        linkPrefetchMode="viewport"
+                        linkPrefetchMode="intent"
                         imageLoading={imageLoading}
                       />
                     </div>

@@ -548,6 +548,7 @@ function NavbarInner({
                   <Link
                     key={item.label}
                     href={item.href}
+                    prefetch={false}
                     onClick={() => handleMarketplaceNavigation(item.mode, item.href)}
                     className={marketplaceCategoryItemClassName(
                       pathname === routes.marketplace &&
@@ -566,6 +567,7 @@ function NavbarInner({
                 <Link
                   key={item.label}
                   href={item.href}
+                  prefetch={false}
                   onClick={() => handleMarketplaceNavigation(item.mode, item.href)}
                   className={marketplaceCategoryItemClassName(
                     pathname === routes.marketplace &&
@@ -596,6 +598,7 @@ function NavbarInner({
                       <li key={item.label}>
                         <Link
                           href={item.href}
+                          prefetch={false}
                           onClick={() => handleMarketplaceNavigation(item.mode, item.href)}
                           className={cn(
                             "flex rounded-xl px-3 py-2.5 text-[14px] leading-[22px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/25 focus-visible:ring-offset-2",
