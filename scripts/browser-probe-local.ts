@@ -1427,7 +1427,7 @@ async function runCreatorRefreshShellScenario({ browser }: ProbeContext) {
     await page.reload({ waitUntil: "domcontentloaded" });
     await expect(page).toHaveURL(/\/dashboard\/creator\/resources$/);
     await expect(
-      page.getByRole("heading", { name: /^Creator resources$/i }).first(),
+      page.locator('[data-route-shell-ready="dashboard-creator-resources"]').first(),
     ).toBeVisible();
     await page.waitForTimeout(500);
 
@@ -1811,7 +1811,7 @@ async function runCreatorEditorRefreshShellScenario({ browser }: ProbeContext) {
     await page.reload({ waitUntil: "domcontentloaded" });
     await expect(page).toHaveURL(/\/dashboard\/creator\/resources\/new$/);
     await expect(
-      page.getByRole("heading", { name: /Create your first resource|New resource/i }).first(),
+      page.locator('[data-route-shell-ready="dashboard-creator-resource-editor"]').first(),
     ).toBeVisible();
     await page.waitForTimeout(500);
 
