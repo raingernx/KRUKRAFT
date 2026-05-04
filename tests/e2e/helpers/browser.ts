@@ -4,6 +4,7 @@ const IGNORABLE_DEV_CONSOLE_ERRORS = [
   /_next\/webpack-hmr/i,
   /ERR_INVALID_HTTP_RESPONSE/i,
   /^Failed to load resource: net::ERR_CONNECTION_(?:RESET|REFUSED)$/i,
+  /Internal Next\.js error: Router action dispatched before initialization[\s\S]*next\/dist\/client\/dev\/hot-reloader/i,
   /\[RESOURCE_DETAIL_TIMEOUT\]/i,
   /\[RESOURCES_DISCOVER_LEAD_TIMEOUT\]/i,
   /\[RESOURCES_DISCOVER_COLLECTIONS_TIMEOUT\]/i,
