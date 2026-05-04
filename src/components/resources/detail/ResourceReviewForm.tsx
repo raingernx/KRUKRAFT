@@ -3,8 +3,10 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Textarea } from "@/design-system";
+import { clearFetchJsonCacheKey } from "@/lib/use-fetch-json";
 
 interface ResourceReviewFormProps {
+  cacheKey: string;
   resourceId: string;
   resourceTitle: string;
   existingReview?: {
@@ -16,6 +18,7 @@ interface ResourceReviewFormProps {
 const RATING_OPTIONS = [1, 2, 3, 4, 5] as const;
 
 export function ResourceReviewForm({
+  cacheKey,
   resourceId,
   resourceTitle,
   existingReview = null,
@@ -80,6 +83,7 @@ export function ResourceReviewForm({
 
       setSuccess(existingReview ? "Your review was updated." : "Your review was published.");
       setComment("");
+      clearFetchJsonCacheKey(cacheKey, { persist: "session" });
       router.refresh();
     } catch (reviewError) {
       setError(reviewError instanceof Error ? reviewError.message : "Failed to save your review.");

@@ -61,11 +61,16 @@ export function ResourceDetailOwnerReviewClient({
   resourceTitle: string;
 }) {
   const viewer = useResourceDetailViewerState();
+  const reviewCacheKey =
+    viewer.userId
+      ? `resource-detail-review:${resourceId}:${viewer.userId}`
+      : `resource-detail-review:${resourceId}:anonymous`;
   const { data: viewerReview, isReady } = useFetchJson<ResourceDetailViewerReview>({
-    cacheKey: `resource-detail-review:${resourceId}`,
+    cacheKey: reviewCacheKey,
     ttlMs: 5_000,
     url: `/api/resources/${resourceId}/viewer-state?scope=review`,
     enabled: viewer.isReady && viewer.authenticated && viewer.isOwned,
+    persist: "session",
   });
 
   if (!viewer.authenticated || !viewer.isOwned) {
@@ -78,6 +83,7 @@ export function ResourceDetailOwnerReviewClient({
 
   return (
     <ResourceReviewForm
+      cacheKey={reviewCacheKey}
       resourceId={resourceId}
       resourceTitle={resourceTitle}
       existingReview={viewerReview}

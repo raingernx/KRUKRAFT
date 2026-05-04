@@ -80,7 +80,7 @@ export function BuyButton({
   const redirectingRef = useRef(false);
   const downloadResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const authViewer = useAuthViewer({ strategy: "idle", idleTimeoutMs: 800 });
+  const authViewer = useAuthViewer({ strategy: "eager" });
   const router = useRouter();
 
   async function resolveAuthViewer() {

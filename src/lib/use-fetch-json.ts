@@ -276,6 +276,22 @@ export function clearFetchJsonCache() {
   clearPersistedFetchJsonCache();
 }
 
+export function clearFetchJsonCacheKey(
+  cacheKey: string,
+  options?: { persist?: "session" },
+) {
+  fetchJsonCache.delete(cacheKey);
+  fetchJsonInFlight.delete(cacheKey);
+
+  if (options?.persist === "session" && canUseSessionStorage()) {
+    try {
+      window.sessionStorage.removeItem(getSessionStorageKey(cacheKey));
+    } catch {
+      // Best-effort cache only.
+    }
+  }
+}
+
 export async function fetchJson<T>({
   url,
   ttlMs = 0,

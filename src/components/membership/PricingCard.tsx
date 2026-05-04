@@ -48,7 +48,7 @@ export function MembershipTierAction({
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [isCheckingAccount, setIsCheckingAccount] = useState(false);
-  const authViewer = useAuthViewer({ strategy: "idle", idleTimeoutMs: 800 });
+  const authViewer = useAuthViewer({ strategy: "eager" });
   const router = useRouter();
 
   async function handleSubscribe() {

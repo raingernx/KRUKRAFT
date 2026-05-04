@@ -184,12 +184,12 @@ Current perf-hardening baseline for the production UX initiative is:
 - the CSP header now allowlists `https://va.vercel-scripts.com`, so local/runtime browser verification no longer reports Vercel Analytics / Speed Insights scripts as blocked console errors
 - the app now serves a generated `robots.txt` from `src/app/robots.ts` using build-safe public platform config, closing the old local/public 404 without making metadata generation DB-bound
 - `/resources/[slug]` stopped reading cookies/session at the page level; ownership, payment-success recovery, and owner-review UI now hydrate from `/api/resources/[id]/viewer-state`
-- `/resources/[slug]` detail viewer-state is now split into `scope=base` and `scope=review` so purchase/success/ownership UI does not wait on the owner-review query
+- `/resources/[slug]` detail viewer-state is now split into `scope=base` and `scope=review` so purchase/success/ownership UI does not wait on the owner-review query; the owner-review branch now also uses viewer-scoped session-storage persistence with explicit invalidation on successful review writes so hard refreshes in the same tab do not always restart from an empty review slot
 - anonymous `/resources/[slug]` visits now skip the private detail viewer-state API entirely until the lightweight auth viewer confirms the user is signed in
 - viewer-state hydration now starts without waiting for NextAuth client-session readiness to settle first
 - repeated signed-in ownership reads now use short-lived private `unstable_cache` entries, detail refresh can bypass them after checkout, and detail base viewer-state now also has a short-lived browser cache plus session-storage persistence to smooth remounts, revisits, and hard refreshes in the same tab
 - the detail purchase rail now shows a structural "Checking your library…" placeholder while deferred ownership state resolves, preventing buy-CTA flicker for signed-in owners after auth probing moved to idle
-- pricing and buy-button CTA components now reuse idle auth-viewer resolution and explicitly prime on user intent, which removes the remaining eager auth probe from those public CTAs without making first interaction feel dead
+- pricing and buy-button CTA components still prime on user intent, but they now also reuse the persisted auth-viewer snapshot immediately when available so returning signed-in users do not always pay the older idle-only account check before CTA decisions settle
 - the shared auth-viewer hook now lets callers opt out of cache-hydrated first
   render, and the public navbar uses that stable loading-first path so hard
   refreshes on public pages like `/membership` no longer risk hydrating from a
