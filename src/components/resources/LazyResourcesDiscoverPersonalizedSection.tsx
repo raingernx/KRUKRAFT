@@ -51,12 +51,17 @@ export function LazyResourcesDiscoverPersonalizedSection({
   children: ReactNode;
 }) {
   const authViewer = useAuthViewer({ strategy: "eager" });
+  const [hasHydrated, setHasHydrated] = useState(false);
   const [
     ResourcesDiscoverPersonalizedSection,
     setResourcesDiscoverPersonalizedSection,
   ] = useState<ComponentType<ResourcesDiscoverPersonalizedSectionProps> | null>(
     () => resourcesDiscoverPersonalizedSectionComponent,
   );
+
+  useEffect(() => {
+    setHasHydrated(true);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -79,7 +84,9 @@ export function LazyResourcesDiscoverPersonalizedSection({
   }, [authViewer.authenticated, authViewer.isReady]);
 
   const personalizationReadyState =
-    !authViewer.isReady
+    !hasHydrated
+      ? "pending"
+      : !authViewer.isReady
       ? "pending"
       : !authViewer.authenticated
         ? "skip"

@@ -54,19 +54,19 @@ export function ResourcesNavigationOverlay() {
   );
   const previousHrefRef = useRef(currentHref);
   const [forcedOverlay, setForcedOverlay] = useState(false);
-  const returnedFromResourcesDetail =
-    previousHrefRef.current?.startsWith(`${routes.marketplace}/`) &&
-    currentHref === routes.marketplace;
+  const returnedToResourcesDiscover =
+    currentHref === routes.marketplace &&
+    previousHrefRef.current !== currentHref;
 
   useEffect(() => {
-    if (returnedFromResourcesDetail) {
+    if (returnedToResourcesDiscover) {
       setForcedOverlay(true);
     } else if (!isResourcesSubtreePath(pathname ?? "")) {
       setForcedOverlay(false);
     }
 
     previousHrefRef.current = currentHref;
-  }, [currentHref, pathname, returnedFromResourcesDetail]);
+  }, [currentHref, pathname, returnedToResourcesDiscover]);
 
   useEffect(() => {
     if (!forcedOverlay) {

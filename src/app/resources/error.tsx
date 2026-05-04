@@ -63,7 +63,9 @@ export default function ResourcesRouteError({
   reset: () => void;
 }) {
   const autoRetryTriggeredRef = useRef(false);
-  const [isAutoRetrying, setIsAutoRetrying] = useState(false);
+  const [isAutoRetrying, setIsAutoRetrying] = useState(() =>
+    canAutoRetryResourcesRouteError(),
+  );
 
   useEffect(() => {
     console.error("[RESOURCES_ROUTE_ERROR]", error);
