@@ -23,6 +23,7 @@ env:
   STRIPE_TEAM_ANNUAL_PRICE_ID: price_ci_team_annual
   PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/ms-playwright
   PLAYWRIGHT_DISABLE_WEBKIT_FALLBACK: "1"
+  BROWSER_PROBE_ARTIFACT_DIR: artifacts/browser-probes
 
 concurrency:
   group: browser-smoke-${{ github.workflow }}-${{ github.ref }}
@@ -68,23 +69,26 @@ jobs:
 
       - name: Run Dashboard Browser Probes
         run: |
+          mkdir -p "${BROWSER_PROBE_ARTIFACT_DIR}"
           bash scripts/run-browser-probe-ci.sh \
-            /tmp/dashboard-browser-probe.log \
+            "${BROWSER_PROBE_ARTIFACT_DIR}/dashboard.log" \
             npm run browser:probe:dashboard
 
       - name: Run Public/Admin Page Browser Probes
         run: |
+          mkdir -p "${BROWSER_PROBE_ARTIFACT_DIR}"
           bash scripts/run-browser-probe-ci.sh \
-            /tmp/page-browser-probe.log \
+            "${BROWSER_PROBE_ARTIFACT_DIR}/pages.log" \
             npm run browser:probe:pages
 
       - name: Run Browser Sentinel Probes
         run: |
+          mkdir -p "${BROWSER_PROBE_ARTIFACT_DIR}"
           bash scripts/run-browser-probe-ci.sh \
-            /tmp/sentinel-browser-probe.log \
+            "${BROWSER_PROBE_ARTIFACT_DIR}/sentinel.log" \
             npm run browser:probe:sentinel
 
-      - name: Upload Playwright Artifacts
+      - name: Upload Browser Smoke Artifacts
         if: always()
         uses: actions/upload-artifact@v6
         with:
@@ -92,10 +96,22 @@ jobs:
           path: |
             playwright-report/**
             test-results/**
-            /tmp/dashboard-browser-probe.log
-            /tmp/page-browser-probe.log
-            /tmp/sentinel-browser-probe.log
+            artifacts/browser-probes/**
           if-no-files-found: warn
+
+      - name: Write Browser Smoke Workflow Summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Browser smoke"
+            echo ""
+            echo "- Playwright artifact: browser-smoke-artifacts"
+            echo "- Probe logs: ${BROWSER_PROBE_ARTIFACT_DIR}"
+            echo "- Dashboard probe log: ${BROWSER_PROBE_ARTIFACT_DIR}/dashboard.log"
+            echo "- Pages probe log: ${BROWSER_PROBE_ARTIFACT_DIR}/pages.log"
+            echo "- Sentinel probe log: ${BROWSER_PROBE_ARTIFACT_DIR}/sentinel.log"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   management_probes:
     name: Management Browser Probes
@@ -127,16 +143,28 @@ jobs:
 
       - name: Run Management Browser Probes
         run: |
+          mkdir -p "${BROWSER_PROBE_ARTIFACT_DIR}"
           bash scripts/run-browser-probe-ci.sh \
-            /tmp/management-browser-probe.log \
+            "${BROWSER_PROBE_ARTIFACT_DIR}/management.log" \
             npm run browser:probe:management
 
-      - name: Upload Management Probe Artifacts
+      - name: Upload Management Browser Probe Artifacts
         if: always()
         uses: actions/upload-artifact@v6
         with:
           name: management-browser-probe-artifacts
           path: |
             test-results/**
-            /tmp/management-browser-probe.log
+            artifacts/browser-probes/management.log
           if-no-files-found: warn
+
+      - name: Write Management Browser Probe Summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Management browser probes"
+            echo ""
+            echo "- Artifact: management-browser-probe-artifacts"
+            echo "- Probe log: ${BROWSER_PROBE_ARTIFACT_DIR}/management.log"
+          } >> "$GITHUB_STEP_SUMMARY"
