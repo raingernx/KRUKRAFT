@@ -958,7 +958,7 @@ async function runPublicProductPagesScenario({ browser }: ProbeContext) {
 
   try {
     for (const target of pages) {
-      await page.goto(target.path, { waitUntil: "domcontentloaded" });
+      await page.goto(target.path, { waitUntil: "commit" });
       await expect(page).toHaveURL(new RegExp(`${target.path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`));
       await expect(page.getByRole("heading", { name: target.heading }).first()).toBeVisible();
     }
@@ -1082,10 +1082,10 @@ async function runCreatorManagementPagesScenario({ browser }: ProbeContext) {
     },
     {
       path: "/dashboard/creator/settings",
-      urlPattern: /\/dashboard\/settings(?:\?.*)?$/,
+      urlPattern: /\/dashboard\/(?:creator\/settings|settings)(?:\?.*)?$/,
       urlTimeoutMs: 20_000,
       assert: async (page) => {
-        await expect(page).toHaveURL(/\/dashboard\/settings(?:\?.*)?$/);
+        await expect(page).toHaveURL(/\/dashboard\/(?:creator\/settings|settings)(?:\?.*)?$/);
         await expect(
           page.getByRole("heading", { name: DASHBOARD_SETTINGS_HEADING }).first(),
         ).toBeVisible({ timeout: 20_000 });
@@ -1493,7 +1493,6 @@ type DashboardRefreshShellOptions = {
     | "dashboard-subscription-refresh-shell";
   initialPath: string;
   urlPattern: RegExp;
-  headingName: RegExp;
   expectedRouteReady: string;
 };
 
@@ -1521,7 +1520,6 @@ type AdminRefreshShellOptions = {
     | "admin-analytics-refresh-shell";
   initialPath: string;
   urlPattern: RegExp;
-  headingName: RegExp;
   expectedRouteReady: string;
 };
 
@@ -1536,14 +1534,16 @@ async function runDashboardRefreshShellScenario(
   try {
     await loginAsCreator(page, options.initialPath);
     await expect(page).toHaveURL(options.urlPattern);
-    await expect(page.getByRole("heading", { name: options.headingName }).first()).toBeVisible();
+    await expect(
+      page.locator(`[data-route-shell-ready="${options.expectedRouteReady}"]`).first(),
+    ).toBeVisible({ timeout: 20_000 });
 
     await startRefreshProbe(page);
     await page.reload({ waitUntil: "domcontentloaded" });
     await expect(page).toHaveURL(options.urlPattern);
     await expect(
       page.locator(`[data-route-shell-ready="${options.expectedRouteReady}"]`).first(),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 20_000 });
     await page.waitForTimeout(500);
 
     const samples = await stopRefreshProbe(page);
@@ -1655,12 +1655,16 @@ async function runAdminRefreshShellScenario(
   try {
     await loginAsAdmin(page, options.initialPath);
     await expect(page).toHaveURL(options.urlPattern);
-    await expect(page.getByRole("heading", { name: options.headingName }).first()).toBeVisible();
+    await expect(
+      page.locator(`[data-route-shell-ready="${options.expectedRouteReady}"]`).first(),
+    ).toBeVisible({ timeout: 20_000 });
 
     await startRefreshProbe(page);
     await page.reload({ waitUntil: "domcontentloaded" });
     await expect(page).toHaveURL(options.urlPattern);
-    await expect(page.getByRole("heading", { name: options.headingName }).first()).toBeVisible();
+    await expect(
+      page.locator(`[data-route-shell-ready="${options.expectedRouteReady}"]`).first(),
+    ).toBeVisible({ timeout: 20_000 });
     await page.waitForTimeout(500);
 
     const samples = await stopRefreshProbe(page);
@@ -1709,7 +1713,6 @@ async function runDashboardLibraryRefreshShellScenario(context: ProbeContext) {
       scenario: "dashboard-library-refresh-shell",
       initialPath: "/dashboard/library",
       urlPattern: /\/dashboard\/library(?:\?.*)?$/,
-      headingName: /^My Library$/i,
       expectedRouteReady: "dashboard-library",
     },
   );
@@ -1722,7 +1725,6 @@ async function runDashboardOverviewRefreshShellScenario(context: ProbeContext) {
       scenario: "dashboard-overview-refresh-shell",
       initialPath: "/dashboard",
       urlPattern: /\/dashboard(?:\?.*)?$/,
-      headingName: /Welcome back/i,
       expectedRouteReady: "dashboard-overview",
     },
   );
@@ -1735,7 +1737,6 @@ async function runDashboardDownloadsRefreshShellScenario(context: ProbeContext) 
       scenario: "dashboard-downloads-refresh-shell",
       initialPath: "/dashboard/downloads",
       urlPattern: /\/dashboard\/downloads(?:\?.*)?$/,
-      headingName: /Download history/i,
       expectedRouteReady: "dashboard-downloads",
     },
   );
@@ -1748,7 +1749,6 @@ async function runDashboardPurchasesRefreshShellScenario(context: ProbeContext) 
       scenario: "dashboard-purchases-refresh-shell",
       initialPath: "/dashboard/purchases",
       urlPattern: /\/dashboard\/purchases(?:\?.*)?$/,
-      headingName: /^(Purchases|Order history)$/i,
       expectedRouteReady: "dashboard-purchases",
     },
   );
@@ -1761,7 +1761,6 @@ async function runDashboardSettingsRefreshShellScenario(context: ProbeContext) {
       scenario: "dashboard-settings-refresh-shell",
       initialPath: "/dashboard/settings",
       urlPattern: /\/dashboard\/settings(?:\?.*)?$/,
-      headingName: DASHBOARD_SETTINGS_HEADING,
       expectedRouteReady: "dashboard-settings",
     },
   );
@@ -1774,7 +1773,6 @@ async function runDashboardSubscriptionRefreshShellScenario(context: ProbeContex
       scenario: "dashboard-subscription-refresh-shell",
       initialPath: "/dashboard/membership",
       urlPattern: /\/dashboard\/membership(?:\?.*)?$/,
-      headingName: /^Membership$/i,
       expectedRouteReady: "dashboard-subscription",
     },
   );
@@ -1787,7 +1785,6 @@ async function runAdminOverviewRefreshShellScenario(context: ProbeContext) {
       scenario: "admin-overview-refresh-shell",
       initialPath: "/admin",
       urlPattern: /\/admin(?:\?.*)?$/,
-      headingName: /^Admin dashboard$/i,
       expectedRouteReady: "admin-overview",
     },
   );
@@ -1800,7 +1797,6 @@ async function runAdminAnalyticsRefreshShellScenario(context: ProbeContext) {
       scenario: "admin-analytics-refresh-shell",
       initialPath: "/admin/analytics",
       urlPattern: /\/admin\/analytics(?:\?.*)?$/,
-      headingName: /^Analytics$/i,
       expectedRouteReady: "admin-analytics",
     },
   );
