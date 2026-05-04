@@ -55,7 +55,7 @@ export function LazyResourcesDiscoverPersonalizedSection({
     ResourcesDiscoverPersonalizedSection,
     setResourcesDiscoverPersonalizedSection,
   ] = useState<ComponentType<ResourcesDiscoverPersonalizedSectionProps> | null>(
-    resourcesDiscoverPersonalizedSectionComponent,
+    () => resourcesDiscoverPersonalizedSectionComponent,
   );
 
   useEffect(() => {

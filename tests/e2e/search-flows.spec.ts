@@ -73,6 +73,9 @@ test("resources top-bar search submit navigates to canonical results route", asy
 
   const searchInput = page.getByRole("combobox", { name: "Search resources" });
 
+  await searchInput.click();
+  await expect(page.getByText("ลัดไปที่")).toBeVisible();
+
   await searchInput.fill("worksheet");
   await submitSearchAndWait(page, searchInput, /\/resources\?search=worksheet/);
 

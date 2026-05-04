@@ -36,6 +36,19 @@ const ResourceDetailViewerStateContext =
 
 const RESOURCE_DETAIL_VIEWER_BASE_TTL_MS = 15_000;
 
+function isTransientResourceDetailViewerStateError(error: unknown) {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return (
+    error.name === "AbortError" ||
+    /failed to fetch/i.test(error.message) ||
+    /networkerror/i.test(error.message) ||
+    /load failed/i.test(error.message)
+  );
+}
+
 export function ResourceDetailViewerStateProvider({
   children,
   resourceId,
@@ -49,19 +62,10 @@ export function ResourceDetailViewerStateProvider({
     authViewer.user?.id
       ? `resource-detail-viewer-base:${resourceId}:${authViewer.user.id}`
       : null;
-  const initialCachedState = viewerCacheKey
-    ? peekFetchJsonCache<ResourceDetailViewerBaseState>({
-        cacheKey: viewerCacheKey,
-        ttlMs: RESOURCE_DETAIL_VIEWER_BASE_TTL_MS,
-        persist: "session",
-      })
-    : { hit: false, data: null };
   const [viewerState, setViewerState] = useState<ResourceDetailViewerBaseState>(
-    initialCachedState.data ?? EMPTY_RESOURCE_DETAIL_VIEWER_BASE_STATE,
+    EMPTY_RESOURCE_DETAIL_VIEWER_BASE_STATE,
   );
-  const [isReady, setIsReady] = useState(
-    !shouldLoadViewerState || initialCachedState.hit,
-  );
+  const [isReady, setIsReady] = useState(false);
 
   const load = useCallback(async (options?: { fresh?: boolean }) => {
     if (!viewerCacheKey) {
@@ -126,7 +130,9 @@ export function ResourceDetailViewerStateProvider({
           return;
         }
 
-        console.error("[RESOURCE_DETAIL_VIEWER_STATE]", error);
+        if (!isTransientResourceDetailViewerStateError(error)) {
+          console.error("[RESOURCE_DETAIL_VIEWER_STATE]", error);
+        }
         setViewerState(EMPTY_RESOURCE_DETAIL_VIEWER_BASE_STATE);
       })
       .finally(() => {
