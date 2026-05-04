@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Button, Container } from "@/design-system";
 import { MarketplaceNavbarSearch } from "@/components/marketplace/MarketplaceNavbarSearch";
+import { ResourcesRouteSkeleton } from "@/components/skeletons/ResourcesRouteSkeleton";
 import { routes } from "@/lib/routes";
 
 const RESOURCES_ROUTE_ERROR_AUTORETRY_KEY = "krukraft.resources.route-error-autoretry";
@@ -91,6 +92,11 @@ export default function ResourcesRouteError({
       <Navbar headerSearch={<MarketplaceNavbarSearch />} />
 
       <main className="flex-1">
+        {isAutoRetrying ? (
+          <Container className="py-5 sm:py-6 lg:py-8">
+            <ResourcesRouteSkeleton mode="discover" />
+          </Container>
+        ) : (
         <Container className="py-10 sm:py-12 lg:py-14">
           <div className="mx-auto max-w-2xl rounded-[28px] border border-border bg-card px-6 py-10 text-center shadow-sm sm:px-8 sm:py-12">
             <div className="space-y-3">
@@ -122,6 +128,7 @@ export default function ResourcesRouteError({
             </div>
           </div>
         </Container>
+        )}
       </main>
     </div>
   );

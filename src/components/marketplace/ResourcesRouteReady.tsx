@@ -13,6 +13,9 @@ import { waitForNavigationSurfaceReady } from "@/components/providers/navigation
 const MIN_PENDING_MS = 260;
 const RESOURCE_DETAIL_SHELL_SELECTOR = '[data-route-shell-ready="resource-detail"]';
 const RESOURCES_BROWSE_SHELL_SELECTOR = '[data-route-shell-ready="resources-browse"]';
+const RESOURCES_DISCOVER_PERSONALIZATION_READY_SELECTOR =
+  '[data-resources-discover-personalization-ready="true"], [data-resources-discover-personalization-ready="skip"]';
+const RESOURCES_DISCOVER_PERSONALIZATION_WAIT_MS = 1_500;
 
 export function ResourcesRouteReady() {
   const pathname = usePathname();
@@ -35,6 +38,7 @@ export function ResourcesRouteReady() {
     const routeShellSelector = navigationState.mode === "detail"
       ? RESOURCE_DETAIL_SHELL_SELECTOR
       : RESOURCES_BROWSE_SHELL_SELECTOR;
+    const shouldWaitForDiscoverPersonalization = navigationState.mode === "discover";
 
     return waitForNavigationSurfaceReady(
       routeShellSelector,
@@ -43,6 +47,12 @@ export function ResourcesRouteReady() {
       },
       MIN_PENDING_MS,
       navigationState.startedAt,
+      shouldWaitForDiscoverPersonalization
+        ? {
+            extraReadySelector: RESOURCES_DISCOVER_PERSONALIZATION_READY_SELECTOR,
+            maxWaitMs: RESOURCES_DISCOVER_PERSONALIZATION_WAIT_MS,
+          }
+        : undefined,
     );
   }, [currentHref, navigationState]);
 

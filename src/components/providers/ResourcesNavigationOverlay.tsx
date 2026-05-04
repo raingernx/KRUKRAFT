@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ResourceDetailLoadingShell } from "@/components/resources/detail/ResourceDetailLoadingShell";
 import { ResourcesRouteSkeleton } from "@/components/skeletons/ResourcesRouteSkeleton";
 import {
+  canonicalizeResourcesHref,
   inferResourcesNavigationMode,
   isResourcesSubtreePath,
   useResourcesNavigationState,
@@ -14,6 +15,9 @@ import { routes } from "@/lib/routes";
 
 const RESOURCE_DETAIL_SHELL_SELECTOR = '[data-route-shell-ready="resource-detail"]';
 const RESOURCES_BROWSE_SHELL_SELECTOR = '[data-route-shell-ready="resources-browse"]';
+const RESOURCES_DISCOVER_PERSONALIZATION_READY_SELECTOR =
+  '[data-resources-discover-personalization-ready="true"], [data-resources-discover-personalization-ready="skip"]';
+const RESOURCES_DISCOVER_PERSONALIZATION_WAIT_MS = 1_500;
 
 function resolveResourcesOverlayMode(
   pathname: string | null,
@@ -42,22 +46,27 @@ function resolveResourcesOverlayMode(
 
 export function ResourcesNavigationOverlay() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const navigationState = useResourcesNavigationState();
-  const previousPathRef = useRef(pathname);
+  const currentSearch = searchParams.toString();
+  const currentHref = canonicalizeResourcesHref(
+    currentSearch ? `${pathname}?${currentSearch}` : pathname,
+  );
+  const previousHrefRef = useRef(currentHref);
   const [forcedOverlay, setForcedOverlay] = useState(false);
-  const crossedIntoResources =
-    isResourcesSubtreePath(pathname ?? "") &&
-    !isResourcesSubtreePath(previousPathRef.current ?? "");
+  const returnedFromResourcesDetail =
+    previousHrefRef.current?.startsWith(`${routes.marketplace}/`) &&
+    currentHref === routes.marketplace;
 
   useEffect(() => {
-    if (crossedIntoResources) {
+    if (returnedFromResourcesDetail) {
       setForcedOverlay(true);
     } else if (!isResourcesSubtreePath(pathname ?? "")) {
       setForcedOverlay(false);
     }
 
-    previousPathRef.current = pathname;
-  }, [crossedIntoResources, pathname]);
+    previousHrefRef.current = currentHref;
+  }, [currentHref, pathname, returnedFromResourcesDetail]);
 
   useEffect(() => {
     if (!forcedOverlay) {
@@ -67,6 +76,7 @@ export function ResourcesNavigationOverlay() {
     const routeShellSelector = pathname === "/resources"
       ? RESOURCES_BROWSE_SHELL_SELECTOR
       : RESOURCE_DETAIL_SHELL_SELECTOR;
+    const shouldWaitForDiscoverPersonalization = currentHref === routes.marketplace;
 
     return waitForNavigationSurfaceReady(
       routeShellSelector,
@@ -75,8 +85,14 @@ export function ResourcesNavigationOverlay() {
       },
       0,
       Date.now(),
+      shouldWaitForDiscoverPersonalization
+        ? {
+            extraReadySelector: RESOURCES_DISCOVER_PERSONALIZATION_READY_SELECTOR,
+            maxWaitMs: RESOURCES_DISCOVER_PERSONALIZATION_WAIT_MS,
+          }
+        : undefined,
     );
-  }, [forcedOverlay, pathname]);
+  }, [currentHref, forcedOverlay, pathname]);
 
   const stateDrivenOverlay = Boolean(
     navigationState.mode && navigationState.href && navigationState.overlay,
@@ -84,7 +100,7 @@ export function ResourcesNavigationOverlay() {
   const overlayMode = resolveResourcesOverlayMode(pathname, navigationState.href);
   const overlayScope = overlayMode === "detail" ? "resource-detail" : "resources-browse";
 
-  if (!stateDrivenOverlay && !forcedOverlay && !crossedIntoResources) {
+  if (!stateDrivenOverlay && !forcedOverlay) {
     return null;
   }
 

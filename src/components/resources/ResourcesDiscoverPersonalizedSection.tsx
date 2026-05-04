@@ -237,7 +237,7 @@ export function ResourcesDiscoverPersonalizedSection({
     userId
       ? `resources-viewer-discover:${userId}`
       : "resources-viewer-discover:anonymous";
-  const { data: discover } = useFetchJson<ResourcesViewerDiscoverState>({
+  const { data: discover, isReady: isDiscoverReady } = useFetchJson<ResourcesViewerDiscoverState>({
     cacheKey: discoverCacheKey,
     ttlMs: 15_000,
     url: "/api/resources/viewer-state?scope=discover",
@@ -258,6 +258,12 @@ export function ResourcesDiscoverPersonalizedSection({
 
   return (
     <>
+      <span
+        hidden
+        data-resources-discover-personalization-ready={
+          isDiscoverReady ? "true" : "pending"
+        }
+      />
       {uniqueRecommendedForYou.length > 0 ? (
         <section className="space-y-5">
           <ResourcesSectionHeader

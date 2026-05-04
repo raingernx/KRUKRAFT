@@ -17,9 +17,15 @@ export function waitForNavigationSurfaceReady(
   callback: () => void,
   minPendingMs: number,
   startedAt: number,
+  options?: {
+    extraReadySelector?: string;
+    maxWaitMs?: number;
+  },
 ) {
   const elapsed = Date.now() - startedAt;
   const remaining = Math.max(0, minPendingMs - elapsed);
+  const extraReadySelector = options?.extraReadySelector ?? null;
+  const maxWaitMs = options?.maxWaitMs ?? Infinity;
 
   let timeoutId = 0;
   let rafId = 0;
@@ -28,6 +34,15 @@ export function waitForNavigationSurfaceReady(
     const routeShell = document.querySelector(routeShellSelector);
 
     if (!routeShell || !hasStableMainSurface()) {
+      rafId = window.requestAnimationFrame(attempt);
+      return;
+    }
+
+    if (
+      extraReadySelector &&
+      !document.querySelector(extraReadySelector) &&
+      Date.now() - startedAt < maxWaitMs
+    ) {
       rafId = window.requestAnimationFrame(attempt);
       return;
     }

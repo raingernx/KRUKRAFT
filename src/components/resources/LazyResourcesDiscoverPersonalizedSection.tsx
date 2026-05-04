@@ -78,12 +78,31 @@ export function LazyResourcesDiscoverPersonalizedSection({
     };
   }, [authViewer.authenticated, authViewer.isReady]);
 
+  const personalizationReadyState =
+    !authViewer.isReady
+      ? "pending"
+      : !authViewer.authenticated
+        ? "skip"
+        : ResourcesDiscoverPersonalizedSection
+          ? null
+          : "pending";
+
   if (
     !authViewer.isReady ||
     !authViewer.authenticated ||
     !ResourcesDiscoverPersonalizedSection
   ) {
-    return <>{children}</>;
+    return (
+      <>
+        <span
+          hidden
+          data-resources-discover-personalization-ready={
+            personalizationReadyState ?? "pending"
+          }
+        />
+        {children}
+      </>
+    );
   }
 
   return (

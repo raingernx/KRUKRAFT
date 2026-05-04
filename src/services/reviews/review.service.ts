@@ -26,6 +26,7 @@ import {
   runSingleFlight,
   setCachedJson,
 } from "@/lib/cache";
+import { isTransientPrismaInfrastructureError } from "@/lib/prismaErrors";
 
 export class ReviewServiceError extends Error {
   status: number;
@@ -326,22 +327,43 @@ export async function getResourceTrustSummary(resourceId: string) {
     async function _getResourceTrustSummary() {
       // Redis layer: cross-instance cache so cold lambda instances never hit
       // the DB for a trust summary that is already warm on other instances.
-      return rememberJson(
-        CACHE_KEYS.resourceTrustSummary(resourceId),
-        CACHE_TTLS.stats,
-        () =>
-          runSingleFlight(`resource-trust-summary:${resourceId}`, () =>
-            Promise.all([
-              getCachedResourceRatingSummary(resourceId),
-              getCachedCompletedSalesCount(resourceId),
-            ]).then(([ratingSummary, totalSales]) => ({
-              averageRating: normalizeAverageRating(ratingSummary._avg.rating),
-              totalReviews: ratingSummary._count._all,
-              totalSales,
-            })),
-          ),
-        { metricName: "review.resourceTrustSummary", details: { resourceId } },
-      );
+      try {
+        return await rememberJson(
+          CACHE_KEYS.resourceTrustSummary(resourceId),
+          CACHE_TTLS.stats,
+          () =>
+            runSingleFlight(`resource-trust-summary:${resourceId}`, () =>
+              Promise.all([
+                getCachedResourceRatingSummary(resourceId),
+                getCachedCompletedSalesCount(resourceId),
+              ]).then(([ratingSummary, totalSales]) => ({
+                averageRating: normalizeAverageRating(ratingSummary._avg.rating),
+                totalReviews: ratingSummary._count._all,
+                totalSales,
+              })),
+            ),
+          { metricName: "review.resourceTrustSummary", details: { resourceId } },
+        );
+      } catch (error) {
+        if (!isTransientPrismaInfrastructureError(error)) {
+          throw error;
+        }
+
+        console.warn("[RESOURCE_TRUST_SUMMARY_FALLBACK]", {
+          resourceId,
+          fallbackApplied: true,
+          error:
+            error instanceof Error
+              ? { message: error.message, name: error.name }
+              : String(error),
+        });
+
+        return {
+          averageRating: null,
+          totalReviews: 0,
+          totalSales: 0,
+        };
+      }
     },
     ["resource-trust-summary", resourceId],
     {

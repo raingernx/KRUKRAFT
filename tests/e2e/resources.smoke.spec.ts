@@ -50,7 +50,9 @@ async function clickDetailLinkUntilNavigationStarts(
 }
 
 async function getFirstVisibleDiscoverDetailHref(page: Page) {
-  const resourceLinks = page.locator('main a[href^="/resources/"]:not([href*="?"])');
+  const resourceLinks = page.locator(
+    'main a[href^="/resources/"]:not([href*="?"]):visible',
+  );
   await expect(resourceLinks.first()).toBeVisible({ timeout: 20_000 });
   const href = await resourceLinks.first().getAttribute("href");
   expect(href).toBeTruthy();

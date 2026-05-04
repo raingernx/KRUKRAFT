@@ -22,6 +22,9 @@
 - Detail → discover returns now also avoid automatic sibling-route prefetch bursts: marketplace navbar links, detail breadcrumbs, discover quick-browse cards, and signed-in personalized discover cards prefer intent/click prefetch only, which keeps `/resources` from issuing a wave of speculative listing/detail RSC requests right as the route remounts.
 - The signed-in viewer-state APIs that power discover/detail hydration now also fail soft for transient Prisma/Supabase pooler issues, returning safe empty/null payloads instead of 500s when recommendation, ownership, or review hydration loses a best-effort background read during return navigation.
 - Immediate detail → discover returns now also have a client-side recovery layer: the shared logo forces a full document navigation when leaving `/resources/[slug]` for `/resources`, and the route error boundary now reopens the current `/resources` URL as a full document load once inside a short session-scoped window before it leaves the user on the manual “resource library could not load” shell.
+- Browser-back returns from `/resources/[slug]` now share that same resources-family recovery path: the route group can force a discover overlay even without an explicit navigation signal, and that overlay waits briefly for the discover personalization ready marker before exposing the browse route again.
+- While the route is still inside that one-shot autoretry window, `src/app/resources/error.tsx` now renders the standard discover skeleton instead of flashing the manual error card first.
+- `getResourceTrustSummary(resourceId)` now treats transient Prisma/Supabase pooler failures as a best-effort trust enrichment miss, returning `averageRating: null`, `totalReviews: 0`, and `totalSales: 0` plus a targeted fallback warning instead of throwing the route back into the error boundary.
 
 ## Why It Matters
 
