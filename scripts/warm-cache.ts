@@ -12,6 +12,14 @@ const hotCreator =
   process.env.HOT_CREATOR?.trim() ||
   "kru-mint";
 const categorySlug = process.env.CATEGORY?.trim() || "science";
+const rankingExperimentCookieName =
+  process.env.RANKING_EXPERIMENT_COOKIE_NAME?.trim() || "ranking_variant";
+const rankingControlVariant =
+  process.env.RANKING_CONTROL_VARIANT?.trim() || "A";
+const rankingRecommendedVariant =
+  process.env.RANKING_RECOMMENDED_VARIANT?.trim() || "B";
+const rankingControlCookie = `${rankingExperimentCookieName}=${rankingControlVariant}`;
+const rankingRecommendedCookie = `${rankingExperimentCookieName}=${rankingRecommendedVariant}`;
 
 const warmSecret = process.env.PERFORMANCE_WARM_SECRET?.trim();
 
@@ -90,6 +98,7 @@ const routes: WarmRoute[] = [
     // match the later smoke fanout up front.
     burst: 5,
     repeat: 2,
+    headers: { Cookie: rankingRecommendedCookie },
     required: true,
   },
   {
@@ -102,6 +111,7 @@ const routes: WarmRoute[] = [
     // shell and query path are both hot across the small fresh-instance fanout.
     burst: 5,
     repeat: 3,
+    headers: { Cookie: rankingControlCookie },
     required: true,
   },
   {
@@ -144,6 +154,7 @@ const routes: WarmRoute[] = [
     // surfaces by the time k6 measured them.
     burst: 5,
     repeat: 2,
+    headers: { Cookie: rankingRecommendedCookie },
     required: true,
   },
   {
@@ -153,6 +164,7 @@ const routes: WarmRoute[] = [
     // listing variants finish as the last warmed public pages before k6.
     burst: 5,
     repeat: 2,
+    headers: { Cookie: rankingControlCookie },
     required: true,
   },
   {
