@@ -53,7 +53,6 @@ import { getMarketplaceResources } from "@/services/resources";
 import {
   traceServerStep,
 } from "@/lib/performance/observability";
-import { runWithTimeoutFallback } from "@/lib/async";
 
 const BLOG_SECTION_ENABLED = false;
 const QUICK_BROWSE_TILES = [
@@ -96,8 +95,6 @@ const DISCOVER_COLLECTION_FALLBACKS = {
     category: { name: "Science", slug: "science" },
   } satisfies ResourceCardData,
 } as const;
-const DISCOVER_LEAD_TIMEOUT_MS = 600;
-const DISCOVER_COLLECTIONS_TIMEOUT_MS = 600;
 
 function summarizeResourcesRouteError(error: unknown) {
   if (error instanceof Error) {
@@ -765,17 +762,8 @@ async function SearchRecoveryPanelDeferred({
 
 async function loadDiscoverLeadDataSafe(): Promise<DiscoverLeadData | null> {
   try {
-    return await runWithTimeoutFallback(
-      () =>
-        traceServerStep("resources.getDiscoverLeadData", () =>
-          getDiscoverLeadData(),
-        ),
-      {
-        timeoutMs: DISCOVER_LEAD_TIMEOUT_MS,
-        fallback: null,
-        warningLabel: "[RESOURCES_DISCOVER_LEAD_TIMEOUT]",
-        suppressWarningInCI: true,
-      },
+    return await traceServerStep("resources.getDiscoverLeadData", () =>
+      getDiscoverLeadData(),
     );
   } catch (error) {
     if (!isResourcesFailSoftError(error)) {
@@ -792,17 +780,8 @@ async function loadDiscoverLeadDataSafe(): Promise<DiscoverLeadData | null> {
 
 async function loadDiscoverCollectionsDataSafe(): Promise<DiscoverCollectionsData | null> {
   try {
-    return await runWithTimeoutFallback(
-      () =>
-        traceServerStep("resources.getDiscoverCollectionsData", () =>
-          getDiscoverCollectionsData(),
-        ),
-      {
-        timeoutMs: DISCOVER_COLLECTIONS_TIMEOUT_MS,
-        fallback: null,
-        warningLabel: "[RESOURCES_DISCOVER_COLLECTIONS_TIMEOUT]",
-        suppressWarningInCI: true,
-      },
+    return await traceServerStep("resources.getDiscoverCollectionsData", () =>
+      getDiscoverCollectionsData(),
     );
   } catch (error) {
     if (!isResourcesFailSoftError(error)) {

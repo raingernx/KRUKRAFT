@@ -37,12 +37,9 @@ import {
   findCategoryBySlug,
   findCategoriesOrderedByName,
   findMarketplaceSearchResources,
-  findPublicResourceDetailBodyContentBySlug,
+  findPublicResourceDetailBundleBySlug,
   findMarketplaceResourceCards,
-  findPublicResourceDetailFooterContentBySlug,
   findPublicResourceDetailMetadataBySlug,
-  findPublicResourceDetailPurchaseMetaBySlug,
-  findPublicResourceDetailShellBySlug,
   findRelatedListedResources,
   type FindActivationRankedResourcesRow,
   type RankedSearchResourceRow,
@@ -1101,47 +1098,48 @@ const RESOURCE_DETAIL_REVALIDATE_SECONDS = CACHE_TTLS.resourceDetail;
 // would defeat unstable_cache deduplication (it keys partly on function identity).
 // Per-slug tags are preserved so revalidateTag(getResourceCacheTag(slug)) still works.
 type CachedFn<T> = () => Promise<T>;
-const _resourceDetailCacheMap = new Map<string, CachedFn<Awaited<ReturnType<typeof findPublicResourceDetailShellBySlug>>>>();
+const _resourceDetailBundleCacheMap = new Map<string, CachedFn<Awaited<ReturnType<typeof findPublicResourceDetailBundleBySlug>>>>();
 const _resourceMetadataCacheMap = new Map<string, CachedFn<Awaited<ReturnType<typeof findPublicResourceDetailMetadataBySlug>>>>();
-const _resourcePurchaseMetaCacheMap = new Map<string, CachedFn<Awaited<ReturnType<typeof findPublicResourceDetailPurchaseMetaBySlug>>>>();
-const _resourceDetailBodyContentCacheMap = new Map<string, CachedFn<Awaited<ReturnType<typeof findPublicResourceDetailBodyContentBySlug>>>>();
-const _resourceDetailFooterContentCacheMap = new Map<string, CachedFn<Awaited<ReturnType<typeof findPublicResourceDetailFooterContentBySlug>>>>();
 
-/** Returns the public detail shell data by slug, or null if not found. */
-export async function getResourceBySlug(slug: string) {
-  recordCacheCall("getResourceBySlug", { slug });
+async function _getResourceDetailBundleBySlug(slug: string) {
+  recordCacheCall("getResourceDetailBundleBySlug", { slug });
 
-  let cachedFn = _resourceDetailCacheMap.get(slug);
+  let cachedFn = _resourceDetailBundleCacheMap.get(slug);
   if (!cachedFn) {
-    const singleFlightKey = `resource-detail:${slug}`;
+    const singleFlightKey = `resource-detail-bundle:${slug}`;
     cachedFn = unstable_cache(
-      async function _getResourceBySlug() {
-        recordCacheMiss("getResourceBySlug", { slug });
-        logPerformanceEvent("cache_execute:getResourceBySlug", { slug });
-        // rememberJson adds a Redis cross-instance layer on top of unstable_cache.
-        // Cold Vercel lambda instances return the cached resource shell in <10 ms
-        // instead of running the full DB fetch. Only public, non-user-specific
-        // shell data is stored here — title, pricing, author, category, previews,
-        // and the stats needed above the fold.
+      async function __getResourceDetailBundleBySlug() {
+        recordCacheMiss("getResourceDetailBundleBySlug", { slug });
+        logPerformanceEvent("cache_execute:getResourceDetailBundleBySlug", {
+          slug,
+        });
         return rememberJson(
           CACHE_KEYS.resourceDetail(slug),
           RESOURCE_DETAIL_REVALIDATE_SECONDS,
-          () => runSingleFlight(singleFlightKey, () =>
-            findPublicResourceDetailShellBySlug(slug),
-          ),
-          { metricName: "resource.getResourceBySlug", details: { slug } },
+          () =>
+            runSingleFlight(singleFlightKey, () =>
+              findPublicResourceDetailBundleBySlug(slug),
+            ),
+          { metricName: "resource.detailBundle", details: { slug } },
         );
       },
-      ["public-resource-detail", slug],
+      ["public-resource-detail-bundle", slug],
       {
         revalidate: RESOURCE_DETAIL_REVALIDATE_SECONDS,
         tags: [getResourceCacheTag(slug)],
       },
     );
-    _resourceDetailCacheMap.set(slug, cachedFn);
+    _resourceDetailBundleCacheMap.set(slug, cachedFn);
   }
 
   return cachedFn();
+}
+
+const getResourceDetailBundleBySlug = cache(_getResourceDetailBundleBySlug);
+
+/** Returns the public detail shell data by slug, or null if not found. */
+export async function getResourceBySlug(slug: string) {
+  return getResourceDetailBundleBySlug(slug);
 }
 
 export async function getResourceMetadataBySlug(slug: string) {
@@ -1182,116 +1180,52 @@ export async function getResourceMetadataBySlug(slug: string) {
 }
 
 export async function getResourceDetailPurchaseMetaBySlug(slug: string) {
-  recordCacheCall("getResourceDetailPurchaseMetaBySlug", { slug });
-
-  let cachedFn = _resourcePurchaseMetaCacheMap.get(slug);
-  if (!cachedFn) {
-    const singleFlightKey = `resource-purchase-meta:${slug}`;
-    cachedFn = unstable_cache(
-      async function _getResourceDetailPurchaseMetaBySlug() {
-        recordCacheMiss("getResourceDetailPurchaseMetaBySlug", { slug });
-        logPerformanceEvent("cache_execute:getResourceDetailPurchaseMetaBySlug", {
-          slug,
-        });
-        return rememberJson(
-          CACHE_KEYS.resourcePurchaseMeta(slug),
-          RESOURCE_DETAIL_REVALIDATE_SECONDS,
-          () =>
-            runSingleFlight(singleFlightKey, () =>
-              findPublicResourceDetailPurchaseMetaBySlug(slug),
-            ),
-          {
-            metricName: "resource.purchaseMeta",
-            details: { slug },
-          },
-        );
-      },
-      ["public-resource-detail-purchase-meta", slug],
-      {
-        revalidate: RESOURCE_DETAIL_REVALIDATE_SECONDS,
-        tags: [getResourceCacheTag(slug)],
-      },
-    );
-    _resourcePurchaseMetaCacheMap.set(slug, cachedFn);
+  const bundle = await getResourceDetailBundleBySlug(slug);
+  if (!bundle) {
+    return null;
   }
 
-  return cachedFn();
+  return {
+    mimeType: bundle.mimeType,
+    fileSize: bundle.fileSize,
+    updatedAt: bundle.updatedAt,
+    resourceStat: bundle.resourceStat
+      ? {
+          last30dDownloads: bundle.resourceStat.last30dDownloads,
+          last30dPurchases: bundle.resourceStat.last30dPurchases,
+        }
+      : null,
+  };
 }
 
 async function _getResourceDetailBodyContent(slug: string) {
-  recordCacheCall("getResourceDetailBodyContent", { slug });
-  const singleFlightKey = `resource-detail-body:${slug}`;
-
-  let cachedFn = _resourceDetailBodyContentCacheMap.get(slug);
-  if (!cachedFn) {
-    cachedFn = unstable_cache(
-      async function __getResourceDetailBodyContent() {
-        recordCacheMiss("getResourceDetailBodyContent", { slug });
-        logPerformanceEvent("cache_execute:getResourceDetailBodyContent", {
-          slug,
-        });
-        return rememberJson(
-          CACHE_KEYS.resourceBodyContent(slug),
-          RESOURCE_DETAIL_REVALIDATE_SECONDS,
-          () =>
-            runSingleFlight(singleFlightKey, () =>
-              findPublicResourceDetailBodyContentBySlug(slug),
-            ),
-          {
-            metricName: "resource.bodyContent",
-            details: { slug },
-          },
-        );
-      },
-      ["public-resource-detail-body", slug],
-      {
-        revalidate: RESOURCE_DETAIL_REVALIDATE_SECONDS,
-        tags: [getResourceCacheTag(slug)],
-      },
-    );
-    _resourceDetailBodyContentCacheMap.set(slug, cachedFn);
+  const bundle = await getResourceDetailBundleBySlug(slug);
+  if (!bundle) {
+    return null;
   }
 
-  return cachedFn();
+  return {
+    description: bundle.description,
+    fileName: bundle.fileName,
+    fileSize: bundle.fileSize,
+    fileUrl: bundle.fileUrl,
+    fileKey: bundle.fileKey,
+    type: bundle.type,
+  };
 }
 
 export const getResourceDetailBodyContent = cache(_getResourceDetailBodyContent);
 
 async function _getResourceDetailFooterContent(slug: string) {
-  recordCacheCall("getResourceDetailFooterContent", { slug });
-  const singleFlightKey = `resource-detail-footer:${slug}`;
-
-  let cachedFn = _resourceDetailFooterContentCacheMap.get(slug);
-  if (!cachedFn) {
-    cachedFn = unstable_cache(
-      async function __getResourceDetailFooterContent() {
-        recordCacheMiss("getResourceDetailFooterContent", { slug });
-        logPerformanceEvent("cache_execute:getResourceDetailFooterContent", {
-          slug,
-        });
-        return rememberJson(
-          CACHE_KEYS.resourceFooterContent(slug),
-          RESOURCE_DETAIL_REVALIDATE_SECONDS,
-          () =>
-            runSingleFlight(singleFlightKey, () =>
-              findPublicResourceDetailFooterContentBySlug(slug),
-            ),
-          {
-            metricName: "resource.footerContent",
-            details: { slug },
-          },
-        );
-      },
-      ["public-resource-detail-footer", slug],
-      {
-        revalidate: RESOURCE_DETAIL_REVALIDATE_SECONDS,
-        tags: [getResourceCacheTag(slug)],
-      },
-    );
-    _resourceDetailFooterContentCacheMap.set(slug, cachedFn);
+  const bundle = await getResourceDetailBundleBySlug(slug);
+  if (!bundle) {
+    return null;
   }
 
-  return cachedFn();
+  return {
+    author: bundle.author,
+    tags: bundle.tags,
+  };
 }
 
 export const getResourceDetailFooterContent = cache(_getResourceDetailFooterContent);

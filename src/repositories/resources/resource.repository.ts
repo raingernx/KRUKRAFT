@@ -200,6 +200,71 @@ const RESOURCE_DETAIL_FOOTER_CONTENT_SELECT = {
   },
 } as const;
 
+const RESOURCE_DETAIL_BUNDLE_SELECT = {
+  id: true,
+  title: true,
+  slug: true,
+  description: true,
+  type: true,
+  status: true,
+  featured: true,
+  level: true,
+  isFree: true,
+  price: true,
+  fileName: true,
+  fileSize: true,
+  fileUrl: true,
+  fileKey: true,
+  mimeType: true,
+  previewUrl: true,
+  downloadCount: true,
+  categoryId: true,
+  updatedAt: true,
+  author: {
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      creatorSlug: true,
+    },
+  },
+  category: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+  },
+  previews: {
+    take: 5,
+    orderBy: { order: "asc" as const },
+    select: {
+      id: true,
+      imageUrl: true,
+      order: true,
+    },
+  },
+  resourceStat: {
+    select: {
+      downloads: true,
+      purchases: true,
+      last30dDownloads: true,
+      last30dPurchases: true,
+    },
+  },
+  tags: {
+    select: {
+      tag: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
+    },
+  },
+} as const;
+
 const SEARCH_RESOURCE_SELECT = {
   id: true,
   title: true,
@@ -1405,6 +1470,13 @@ export async function findPublicResourceDetailPurchaseMetaBySlug(slug: string) {
   return prisma.resource.findUnique({
     where: { slug },
     select: RESOURCE_DETAIL_PURCHASE_META_SELECT,
+  });
+}
+
+export async function findPublicResourceDetailBundleBySlug(slug: string) {
+  return prisma.resource.findUnique({
+    where: { slug },
+    select: RESOURCE_DETAIL_BUNDLE_SELECT,
   });
 }
 

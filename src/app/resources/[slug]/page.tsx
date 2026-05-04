@@ -182,7 +182,6 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
             section: "body-content",
             slug,
           },
-          timeoutMs: 700,
         },
       );
       const footerContentPromise = runNonCriticalResourceDetailTask(
@@ -198,7 +197,6 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
             section: "footer-content",
             slug,
           },
-          timeoutMs: 700,
         },
       );
       const purchaseMetaPromise = runNonCriticalResourceDetailTask(
@@ -214,7 +212,6 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
             section: "purchase-meta",
             slug,
           },
-          timeoutMs: 800,
         },
       );
 
@@ -274,7 +271,6 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
             section: "trust-summary",
             slug,
           },
-          timeoutMs: 700,
         },
       );
       // Fetch public reviews in parallel with ownership — reviews are public
@@ -293,7 +289,6 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
             section: "review-list",
             slug,
           },
-          timeoutMs: 900,
         },
       );
       const relatedSectionPromise = runNonCriticalResourceDetailTask(
@@ -317,7 +312,6 @@ export default async function ResourceDetailPage({ params, searchParams }: Props
             section: "related-resources",
             slug,
           },
-          timeoutMs: 900,
         },
       );
 

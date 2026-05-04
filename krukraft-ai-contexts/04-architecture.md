@@ -134,6 +134,7 @@ Used heavily in:
 - reviews / related content
 - platform settings
 - the post-deploy route warm pass now burst-aligns the hot `/resources` home shell, resource-detail, creator-detail, category, and listing-control routes to the same 5-VU class that the production smoke suite later measures, and it reheats the hot resource-detail, category, creator-detail, listing-control routes, plus `/resources` home again at the tail of the warm sequence so those route classes are freshest when k6 starts, with `/resources` home now closing the final warm band
+- the discover lead + collections readers behind `/resources` now share one cache-backed homepage cold path instead of loading separate resource pools on a cold request; the route still consumes split `lead` and `collections` interfaces, but the heavy shared work now converges behind one homepage bundle loader
 
 Database search note:
 - marketplace/admin text search still uses Postgres `ILIKE`/Prisma `contains`
@@ -167,8 +168,10 @@ Database search note:
     → the discover "Top picks" row now server-renders as the default section for everyone, while the heavier personalized discover client module is only loaded for authenticated viewers and can replace that fallback later
     → the discover `Trending now` row no longer shares the personalized viewer-state provider boundary; it patches owned badges through its own deferred base-state fetch so the provider scope is limited to the personalized module itself
     → the discover home no longer awaits a monolithic `getDiscoverData()` bundle for every curated section; `/resources` now starts separate cached `lead` (Top picks + Trending) and `collections` (New releases / Featured / Most downloaded / Top creator) readers in parallel, renders the quick-browse shell immediately, and streams those server subtrees behind structural `Suspense` boundaries
+    → those split `lead` and `collections` readers now also share one underlying homepage bundle cache, so a cold `/resources` request no longer pays for two separate resource-pool fetches just because the UI streams them in separate sections
     → the compatibility `getDiscoverData()` reader now composes those split section caches for viewer-state and warm callers, so route entry no longer has to wait on the whole discover payload just to unlock the first curated rows
     → the `/resources` browse route no longer marks deferred hero/content, discover lead/collections, or no-results recovery promises as tracked request work; request tracing now records the route shell without waiting for those Suspense subtrees to settle, restoring real streaming behavior on the hottest public browse path
+    → `/resources` no longer races discover lead/collections against hard 600ms timeout fallbacks when those sections already have structural `Suspense` fallbacks; the quick-browse shell still paints first, but the discover sections now stream to completion instead of degrading early to `null`
     → viewer-state can start before any heavier personalized discover work is resolved
     → `/api/resources/viewer-state` serves `scope=base|discover` so ownership and recommendation work stay decoupled
     → signed-in discover payloads use short-lived private caching to smooth repeat navigations
@@ -191,6 +194,8 @@ Public creator route note:
 - creator warm coverage now seeds creator metadata, shell, and published-resource caches directly in addition to the compatibility full-profile cache, so the live route and warm path prime the same public cache surfaces
 - this keeps creator detail page and metadata requests on separate lighter cache keys while preserving the shared creator-public revalidation tags
 - resource-detail warm coverage now seeds the same cache surfaces the live `/resources/[slug]` route renders against: shell, metadata, purchase meta, body content, footer content, public review list, and related resources. The warm path no longer relies on the older compatibility `getPublicResourcePageData()` wrapper for hot detail slugs.
+- `/resources/[slug]` now collapses the shell/body/footer/purchase-meta slug reads onto one shared cache-backed detail bundle query, so the cold detail path stops paying for repeated same-row Prisma reads just to feed separately streamed server sections
+- the same resource-detail route no longer races body/footer/purchase/trust/review/related branches against hard sub-second timeout fallbacks when those branches already sit behind structural `Suspense` fallbacks; fail-soft behavior still applies for real errors, but normal slow secondary sections now stream to completion instead of degrading early
 
 Public category route note:
 - `/categories/[slug]` now starts the marketplace listing read once at the route entry and streams the hero count pill plus listing section through separate `Suspense` subtrees instead of awaiting the full category listing before any shell HTML can render

@@ -4,10 +4,10 @@ Use this file as the single source of truth for active implementation state.
 
 ## Plan Snapshot
 
-Parent Plan: `Local compile-speed remediation`
+Parent Plan: `Public marketplace perf stabilization`
 
 > [!info] Current Phase
-> `Local compile-speed remediation — complete`
+> `Public marketplace perf stabilization — complete`
 
 > [!success] Completed
 > The previous DS-first migration baseline is complete and now acts as the frozen implementation starting point
@@ -32,9 +32,12 @@ Parent Plan: `Local compile-speed remediation`
 > [!success] Completed
 > `Composed shared-component coverage` is now closed. `DS Components` now carries paired light/dark canonical boards for both `EmptyState` and `SectionHeader`, and the close-out audit found no remaining in-scope omission strong enough to keep this parent plan open. `Pagination`, `RowActions`, and `ConfirmDialog` remain explicit optional follow-ups because they are still more entangled with button recipes, table-density rollout work, or modal/async behavior than this composed-coverage pass should absorb.
 
+> [!success] Completed
+> `Public marketplace perf stabilization` is now closed. `/resources` lead + collections now share one homepage cold path, `/resources/[slug]` shell/body/footer/purchase-meta now share one detail bundle read, and the streamed discover/detail secondary sections no longer force hard timeout fallbacks during normal slow-but-healthy requests. The targeted local `/resources` + `/resources/[slug]` Playwright scenario now passes cleanly without the old discover/detail timeout warning class.
+
 > [!todo] Next Up
 > - No in-plan `Next Up` remains; this parent plan is complete
-> - Any additional compile-speed work must open as a separate optional follow-up plan
+> - Any additional `/resources` or `/resources/[slug]` perf work should open as a separate optional follow-up plan
 > - Keep `dev:webpack` as the maintained fallback while the Turbopack-first path stays the default local workflow
 
 > [!abstract] Partial
@@ -44,6 +47,7 @@ Parent Plan: `Local compile-speed remediation`
 
 | Track            | Status   | Note                                                                                     |
 | ---------------- | -------- | ---------------------------------------------------------------------------------------- |
+| Public Marketplace Perf | Complete | `/resources` and `/resources/[slug]` now share homepage/detail cold-path bundles and the targeted local resource smoke scenario passes without timeout fallback warnings |
 | Local Compile Speed | Complete | Turbopack is the default local dev server, middleware is Turbopack-compatible, root-overlay graph slimming is landed, and dev-only Sentry gating delivered the main cold-compile win |
 | Reference Audit  | Kept     | Primer, Atlassian, and Radix Themes stay as the locked reference stack for the new visual pass |
 | DS Baseline      | Frozen   | the previous DS-first migration baseline is complete and should be reused, not repeated |
@@ -96,7 +100,7 @@ Parent Plan: `Local compile-speed remediation`
 
 ## Progress
 
-Local compile-speed remediation
+Public marketplace perf stabilization
 `[██████████] 100%`
 
 ```mermaid
@@ -200,52 +204,45 @@ Rules:
 ## Current Phase
 
 ### Name
-Local compile-speed remediation — complete
+Public marketplace perf stabilization — complete
 
 ### Parent Plan
-Local compile-speed remediation
+Public marketplace perf stabilization
 
 ### Current Status Inside Parent Plan
-- This was an explicit optional reprioritization away from DS work, limited to
-  local development compile slowness rather than production runtime perf.
-- Baseline capture established the major avoidable bottlenecks:
-  - `npm run dev` defaulting to Webpack
-  - Turbopack incompatibility from `middleware.ts` re-exporting route `config`
-  - shared root-layout overlay providers eagerly importing heavy dashboard and
-    marketplace skeleton trees
-  - unconditional `withSentryConfig(...)` wrapping in local dev
+- This was an explicit user reprioritization after the local compile-speed plan
+  was already closed, limited to actual public-route performance on
+  `/resources` and `/resources/[slug]`.
 - Landed remediation slices:
-  - `npm run dev` now defaults to Turbopack
-  - `dev:webpack` remains as the maintained local fallback
-  - `middleware.ts` now owns a static literal `config.matcher`, removing the
-    Turbopack route-config parse failure
-  - root-layout entry overlays now lazy-load their heavy skeleton branches
-    instead of importing them eagerly at provider evaluation time
-  - `next.config.mjs` now skips `withSentryConfig(...)` in local dev unless
-    `SENTRY_ENABLE_DEV=true`
-- Measured outcome:
-  - original Webpack baseline was severe (`/resources` ~30.3s,
-    resource detail ~30.6s, authenticated dashboard reconnect ~107s)
-  - Turbopack as default produced the first major step down
-  - root-layout graph slimming landed cleanly but did not materially improve
-    cold first-hit numbers by itself
-  - dev-only Sentry gating delivered the strongest remaining win: clean cold
-    `/resources` dropped to about `7.2s`, with only ~`610ms` of Next compile
-    time reported on that first hit
+  - `/resources` discover `lead` and `collections` now derive from one shared
+    homepage bundle cache instead of repeating cold resource-pool work across
+    two separate section loaders
+  - `/resources/[slug]` shell/body/footer/purchase-meta now derive from one
+    shared detail bundle query instead of repeating same-slug Prisma reads
+    across four separate cached readers
+  - streamed discover/detail secondary branches no longer race against hard
+    sub-second timeout fallbacks when they already sit behind structural
+    `Suspense` fallbacks; fail-soft behavior stays in place for real errors
+- Verification outcome:
+  - targeted local scenario only:
+    `tests/e2e/resources.smoke.spec.ts` +
+    `tests/e2e/resource-detail.spec.ts`
+  - latest local rerun passed cleanly with no
+    `[RESOURCES_DISCOVER_*_TIMEOUT]` or `[RESOURCE_DETAIL_TIMEOUT]` warnings in
+    the server output
 - Close-out audit result:
-  - no in-scope blocker remains that would invalidate the plan's intended
-    milestone of a materially faster local default dev loop
-  - residual cold hotspots still exist on some routes (`/` and resource detail
-    are heavier than `/resources`), but they are now optional follow-up work,
-    not a reason to keep this parent plan open
+  - no in-scope blocker remains for this narrow route-class stabilization pass
+  - any deeper work should be a new optional plan aimed at route latency or
+    cache-warm strategy, not more hygiene churn inside this slice
 
 ### Goal
-Close the local compile-speed remediation plan cleanly now that the highest
-signal bounded remediations are landed, measured, and verified.
+Close the narrow `/resources` and `/resources/[slug]` perf stabilization slice
+cleanly now that the shared cold-path reads are reduced and the targeted local
+scenario is warning-clean again.
 
 ### Why this is the current phase
-- The plan's main decision points are resolved.
-- The strongest proven remediations are already landed.
+- The route-class bottlenecks we chose for this slice are resolved.
+- The targeted scenario we used as proof is now clean.
 - Remaining work would be a new optional follow-up plan, not required
   completion work for this one.
 
@@ -292,8 +289,8 @@ plan only if the user explicitly reprioritizes another compile-speed slice.
 ## Next Up
 
 - [ ] No in-plan `Next Up` remains; this parent plan is complete
-- [ ] Open a separate optional follow-up plan only if the user explicitly reprioritizes residual cold-route hotspots or another local dev compile concern
-- [ ] Keep compile-speed follow-ups out of DS/runtime scope unless a new plan is opened
+- [ ] Open a separate optional follow-up plan only if the user explicitly reprioritizes residual `/resources` route latency or cache-warm work
+- [ ] Keep extra public-perf follow-ups out of DS/runtime scope unless a new plan is opened
 
 ---
 

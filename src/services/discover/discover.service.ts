@@ -42,8 +42,7 @@ import {
 
 const DAY_MS = 86_400_000;
 const TRENDING_WINDOW_DAYS = 30;
-const DISCOVER_LEAD_DATA_SINGLE_FLIGHT_KEY = "discover-lead-data:refresh";
-const DISCOVER_COLLECTIONS_DATA_SINGLE_FLIGHT_KEY = "discover-collections-data:refresh";
+const DISCOVER_HOMEPAGE_DATA_SINGLE_FLIGHT_KEY = "discover-homepage-data:refresh";
 const DISCOVER_FREE_RESOURCES_SINGLE_FLIGHT_KEY = "discover-free-resources:refresh";
 const DISCOVER_SECTION_SOURCE_LIMIT = 6;
 const DISCOVER_SECTION_DISPLAY_LIMIT = 4;
@@ -74,6 +73,11 @@ export type DiscoverSupplementalData = {
 export type DiscoverData = DiscoverLeadData &
   DiscoverCollectionsData &
   DiscoverSupplementalData;
+
+type DiscoverHomepageData = {
+  leadData: DiscoverLeadData;
+  collectionsData: DiscoverCollectionsData;
+};
 
 function isDiscoverPoolPressureError(error: unknown) {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -318,45 +322,133 @@ type DiscoverSectionSources = {
  * The function has no request-scoped dependencies (no session, no params),
  * which is what makes the `unstable_cache` wrapper safe and effective.
  */
-const readDiscoverLeadData = unstable_cache(
-  async function _getDiscoverLeadData() {
-    recordCacheMiss("getDiscoverLeadData");
-    logPerformanceEvent("cache_execute:getDiscoverLeadData");
+const readDiscoverHomepageData = unstable_cache(
+  async function _getDiscoverHomepageData() {
+    recordCacheMiss("getDiscoverHomepageData");
+    logPerformanceEvent("cache_execute:getDiscoverHomepageData");
     return rememberJson(
-      CACHE_KEYS.discoverLeadData,
+      CACHE_KEYS.discoverHomepageData,
       CACHE_TTLS.homepageList,
       () =>
-        runSingleFlight(DISCOVER_LEAD_DATA_SINGLE_FLIGHT_KEY, async () => {
-          const trendingIds = await traceServerStep(
-            "discover.loadLeadSources",
-            () => getTrendingResourceIds(DISCOVER_SECTION_SOURCE_LIMIT),
-            { sectionLimit: DISCOVER_SECTION_SOURCE_LIMIT },
+        runSingleFlight(DISCOVER_HOMEPAGE_DATA_SINGLE_FLIGHT_KEY, async () => {
+          const [trendingIds, { popularIds, newestIds, featuredIds, topCreator }] =
+            await Promise.all([
+              traceServerStep(
+                "discover.loadLeadSources",
+                () => getTrendingResourceIds(DISCOVER_SECTION_SOURCE_LIMIT),
+                { sectionLimit: DISCOVER_SECTION_SOURCE_LIMIT },
+              ),
+              traceServerStep(
+                "discover.loadCollectionsSources",
+                async () => {
+                  const sectionSourceEntries = await runWithConcurrencyLimit(
+                    [
+                      {
+                        key: "popularIds" as const,
+                        load: () =>
+                          getDiscoverSectionIds({
+                            cacheKey: CACHE_KEYS.popularResources,
+                            limit: DISCOVER_SECTION_SOURCE_LIMIT,
+                            metricName: "discover.popularResources",
+                            primaryLoader: () =>
+                              findTopDownloadedResourceIds(DISCOVER_SECTION_SOURCE_LIMIT),
+                            fallbackOrderBy: [
+                              { downloadCount: "desc" },
+                              { createdAt: "desc" },
+                            ],
+                          }),
+                      },
+                      {
+                        key: "newestIds" as const,
+                        load: () =>
+                          getDiscoverSectionIds({
+                            cacheKey: CACHE_KEYS.newestResources,
+                            limit: DISCOVER_SECTION_SOURCE_LIMIT,
+                            metricName: "discover.newestResources",
+                            primaryLoader: () =>
+                              findNewestResourceIds(DISCOVER_SECTION_SOURCE_LIMIT),
+                            fallbackOrderBy: { createdAt: "desc" },
+                          }),
+                      },
+                      {
+                        key: "featuredIds" as const,
+                        load: () =>
+                          getDiscoverSectionIds({
+                            cacheKey: CACHE_KEYS.featuredResources,
+                            limit: DISCOVER_SECTION_SOURCE_LIMIT,
+                            metricName: "discover.featuredResources",
+                            primaryLoader: () =>
+                              findFeaturedResourceIds(DISCOVER_SECTION_SOURCE_LIMIT),
+                            fallbackOrderBy: [
+                              { downloadCount: "desc" },
+                              { createdAt: "desc" },
+                            ],
+                            fallbackWhere: { featured: true },
+                          }),
+                      },
+                      {
+                        key: "topCreator" as const,
+                        load: () => getTopCreatorForDiscover(),
+                      },
+                    ],
+                    DISCOVER_SECTION_SOURCE_CONCURRENCY,
+                    async (entry) => ({
+                      key: entry.key,
+                      value: await entry.load(),
+                    }),
+                  );
+
+                  return Object.fromEntries(
+                    sectionSourceEntries.map(({ key, value }) => [key, value]),
+                  ) as Pick<
+                    DiscoverSectionSources,
+                    "popularIds" | "newestIds" | "featuredIds" | "topCreator"
+                  >;
+                },
+                {
+                  sectionLimit: DISCOVER_SECTION_SOURCE_LIMIT,
+                  sectionConcurrency: DISCOVER_SECTION_SOURCE_CONCURRENCY,
+                },
+              ),
+            ]);
+
+          const resourceIds = Array.from(
+            new Set([...trendingIds, ...popularIds, ...newestIds, ...featuredIds]),
           );
 
           const pool = await traceServerStep(
-            "discover.loadLeadResourcePool",
-            () => loadDiscoverResourcesByIds(trendingIds),
-            { resourceCount: trendingIds.length },
+            "discover.loadHomepageResourcePool",
+            () => loadDiscoverResourcesByIds(resourceIds),
+            { resourceCount: resourceIds.length },
           );
 
           const trending = mapDiscoverSection(trendingIds, pool);
 
           return {
-            trending,
-            recommended: [...trending],
-          };
+            leadData: {
+              trending,
+              recommended: [...trending],
+            },
+            collectionsData: {
+              newReleases: mapDiscoverSection(newestIds, pool),
+              featured: mapDiscoverSection(featuredIds, pool),
+              mostDownloaded: mapDiscoverSection(popularIds, pool),
+              topCreator,
+            },
+          } satisfies DiscoverHomepageData;
         }),
-      { metricName: "discover.leadData" },
+      { metricName: "discover.homepageData" },
     );
   },
-  ["discover-lead-data"],
+  ["discover-homepage-data"],
   { revalidate: CACHE_TTLS.homepageList, tags: ["discover"] }
 );
 
 export async function getDiscoverLeadData() {
   recordCacheCall("getDiscoverLeadData");
   try {
-    return await readDiscoverLeadData();
+    const { leadData } = await readDiscoverHomepageData();
+    return leadData;
   } catch (error) {
     if (!isDiscoverPoolPressureError(error)) throw error;
     console.warn("[DISCOVER_LEAD_DATA_BEST_EFFORT]", error);
@@ -364,117 +456,11 @@ export async function getDiscoverLeadData() {
   }
 }
 
-const readDiscoverCollectionsData = unstable_cache(
-  async function _getDiscoverCollectionsData() {
-    recordCacheMiss("getDiscoverCollectionsData");
-    logPerformanceEvent("cache_execute:getDiscoverCollectionsData");
-    return rememberJson(
-      CACHE_KEYS.discoverCollectionsData,
-      CACHE_TTLS.homepageList,
-      () =>
-        runSingleFlight(DISCOVER_COLLECTIONS_DATA_SINGLE_FLIGHT_KEY, async () => {
-          const { popularIds, newestIds, featuredIds, topCreator } =
-            await traceServerStep(
-              "discover.loadCollectionsSources",
-              async () => {
-                const sectionSourceEntries = await runWithConcurrencyLimit(
-                  [
-                    {
-                      key: "popularIds" as const,
-                      load: () =>
-                        getDiscoverSectionIds({
-                          cacheKey: CACHE_KEYS.popularResources,
-                          limit: DISCOVER_SECTION_SOURCE_LIMIT,
-                          metricName: "discover.popularResources",
-                          primaryLoader: () =>
-                            findTopDownloadedResourceIds(DISCOVER_SECTION_SOURCE_LIMIT),
-                          fallbackOrderBy: [
-                            { downloadCount: "desc" },
-                            { createdAt: "desc" },
-                          ],
-                        }),
-                    },
-                    {
-                      key: "newestIds" as const,
-                      load: () =>
-                        getDiscoverSectionIds({
-                          cacheKey: CACHE_KEYS.newestResources,
-                          limit: DISCOVER_SECTION_SOURCE_LIMIT,
-                          metricName: "discover.newestResources",
-                          primaryLoader: () =>
-                            findNewestResourceIds(DISCOVER_SECTION_SOURCE_LIMIT),
-                          fallbackOrderBy: { createdAt: "desc" },
-                        }),
-                    },
-                    {
-                      key: "featuredIds" as const,
-                      load: () =>
-                        getDiscoverSectionIds({
-                          cacheKey: CACHE_KEYS.featuredResources,
-                          limit: DISCOVER_SECTION_SOURCE_LIMIT,
-                          metricName: "discover.featuredResources",
-                          primaryLoader: () =>
-                            findFeaturedResourceIds(DISCOVER_SECTION_SOURCE_LIMIT),
-                          fallbackOrderBy: [
-                            { downloadCount: "desc" },
-                            { createdAt: "desc" },
-                          ],
-                          fallbackWhere: { featured: true },
-                        }),
-                    },
-                    {
-                      key: "topCreator" as const,
-                      load: () => getTopCreatorForDiscover(),
-                    },
-                  ],
-                  DISCOVER_SECTION_SOURCE_CONCURRENCY,
-                  async (entry) => ({
-                    key: entry.key,
-                    value: await entry.load(),
-                  }),
-                );
-
-                return Object.fromEntries(
-                  sectionSourceEntries.map(({ key, value }) => [key, value]),
-                ) as Pick<
-                  DiscoverSectionSources,
-                  "popularIds" | "newestIds" | "featuredIds" | "topCreator"
-                >;
-              },
-              {
-                sectionLimit: DISCOVER_SECTION_SOURCE_LIMIT,
-                sectionConcurrency: DISCOVER_SECTION_SOURCE_CONCURRENCY,
-              },
-            );
-
-          const resourceIds = Array.from(
-            new Set([...popularIds, ...newestIds, ...featuredIds]),
-          );
-
-          const pool = await traceServerStep(
-            "discover.loadCollectionsResourcePool",
-            () => loadDiscoverResourcesByIds(resourceIds),
-            { resourceCount: resourceIds.length },
-          );
-
-          return {
-            newReleases: mapDiscoverSection(newestIds, pool),
-            featured: mapDiscoverSection(featuredIds, pool),
-            mostDownloaded: mapDiscoverSection(popularIds, pool),
-            topCreator,
-          };
-        }),
-      { metricName: "discover.collectionsData" },
-    );
-  },
-  ["discover-collections-data"],
-  { revalidate: CACHE_TTLS.homepageList, tags: ["discover"] }
-);
-
 export async function getDiscoverCollectionsData() {
   recordCacheCall("getDiscoverCollectionsData");
   try {
-    return await readDiscoverCollectionsData();
+    const { collectionsData } = await readDiscoverHomepageData();
+    return collectionsData;
   } catch (error) {
     if (!isDiscoverPoolPressureError(error)) throw error;
     console.warn("[DISCOVER_COLLECTIONS_DATA_BEST_EFFORT]", error);

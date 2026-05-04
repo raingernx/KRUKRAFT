@@ -64,6 +64,7 @@ export const CACHE_KEYS = {
   freeResources: "free_resources",
   topCreator: "top_creator",
   discoverData: "discover_data",
+  discoverHomepageData: "discover_homepage_data",
   discoverLeadData: "discover_lead_data",
   discoverCollectionsData: "discover_collections_data",
   discoverFreeResources: "discover_free_resources",
@@ -187,6 +188,7 @@ export async function deleteCachedKey(key: string) {
 export async function deleteDiscoverRedisKeys(): Promise<void> {
   await Promise.all([
     deleteCachedKey(CACHE_KEYS.discoverData),
+    deleteCachedKey(CACHE_KEYS.discoverHomepageData),
     deleteCachedKey(CACHE_KEYS.discoverLeadData),
     deleteCachedKey(CACHE_KEYS.discoverCollectionsData),
     deleteCachedKey(CACHE_KEYS.discoverFreeResources),

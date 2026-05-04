@@ -11,6 +11,8 @@
 - Route-level loading and skeleton shells are now intentionally maintained to match discover and listing geometry.
 - The resources transition overlay now mounts from `src/app/resources/layout.tsx` instead of the root layout, so unrelated routes do not hydrate resources-only navigation UI.
 - Signed-in personalized discover content now mounts behind a dedicated lazy client boundary, so the main discover route can paint before recommendation-specific client logic hydrates.
+- The streamed discover `lead` and `collections` sections now share one cache-backed homepage bundle on the cold path instead of fetching separate resource pools for each section.
+- The route no longer forces those discover sections through hard 600ms timeout fallbacks during normal slow-but-healthy requests; the quick-browse shell still streams first, but the section-level `Suspense` fallbacks now own the waiting state until real data arrives.
 
 ## Why It Matters
 
@@ -62,4 +64,4 @@ This route carries the highest amount of public browsing traffic and is central 
 
 ## Last Reviewed
 
-- 2026-04-07
+- 2026-05-04
