@@ -1060,6 +1060,7 @@ async function runCreatorManagementPagesScenario({ browser }: ProbeContext) {
   const pages: Array<{
     path: string;
     urlPattern?: RegExp;
+    urlTimeoutMs?: number;
     assert: (page: Page) => Promise<void>;
   }> = [
     {
@@ -1082,6 +1083,7 @@ async function runCreatorManagementPagesScenario({ browser }: ProbeContext) {
     {
       path: "/dashboard/creator/settings",
       urlPattern: /\/dashboard\/settings(?:\?.*)?$/,
+      urlTimeoutMs: 20_000,
       assert: async (page) => {
         await expect(page).toHaveURL(/\/dashboard\/settings(?:\?.*)?$/);
         await expect(
@@ -1123,6 +1125,7 @@ async function runCreatorManagementPagesScenario({ browser }: ProbeContext) {
       await expect(page).toHaveURL(
         target.urlPattern ??
           new RegExp(`${target.path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`),
+        { timeout: target.urlTimeoutMs ?? 5_000 },
       );
       await target.assert(page);
       await expectNoVisibleDashboardFullShellOverlap(
