@@ -55,7 +55,7 @@ export default async function CreatorPublicProfilePage({
       throw error;
     }
 
-    console.error("[CREATOR_PUBLIC_RESOURCES_FALLBACK]", {
+    console.warn("[CREATOR_PUBLIC_RESOURCES_FALLBACK]", {
       slug,
       error:
         error instanceof Error

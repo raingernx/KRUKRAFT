@@ -143,18 +143,36 @@ export async function createReview(
 export async function getResourceReviews(resourceId: string, take: number) {
   return unstable_cache(
     async function _getResourceReviews() {
-      return rememberJson(
-        CACHE_KEYS.resourceReviews(resourceId, take),
-        CACHE_TTLS.resourceDetail,
-        () =>
-          runSingleFlight(`resource-reviews:${resourceId}:${take}`, () =>
-            findResourceReviews(resourceId, take),
-          ),
-        {
-          metricName: "review.resourceReviews",
-          details: { resourceId, take },
-        },
-      );
+      try {
+        return await rememberJson(
+          CACHE_KEYS.resourceReviews(resourceId, take),
+          CACHE_TTLS.resourceDetail,
+          () =>
+            runSingleFlight(`resource-reviews:${resourceId}:${take}`, () =>
+              findResourceReviews(resourceId, take),
+            ),
+          {
+            metricName: "review.resourceReviews",
+            details: { resourceId, take },
+          },
+        );
+      } catch (error) {
+        if (!isTransientPrismaInfrastructureError(error)) {
+          throw error;
+        }
+
+        console.warn("[RESOURCE_REVIEWS_FALLBACK]", {
+          resourceId,
+          take,
+          fallbackApplied: true,
+          error:
+            error instanceof Error
+              ? { message: error.message, name: error.name }
+              : String(error),
+        });
+
+        return [];
+      }
     },
     ["resource-reviews", resourceId, String(take)],
     {

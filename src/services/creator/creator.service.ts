@@ -11,6 +11,7 @@ import {
   rememberJson,
   runSingleFlight,
 } from "@/lib/cache";
+import { isTransientPrismaInfrastructureError } from "@/lib/prismaErrors";
 import { logPerformanceEvent } from "@/lib/performance/observability";
 import { logActivity } from "@/lib/activity";
 import { slugify } from "@/lib/utils";
@@ -1739,29 +1740,46 @@ async function loadCreatorPublicProfileLegacy(slug: string) {
 async function loadCreatorPublicMetadata(slug: string) {
   const cacheKey = CACHE_KEYS.creatorPublicMetadata(slug);
 
-  return rememberJson(
-    cacheKey,
-    CACHE_TTLS.publicPage,
-    () =>
-      runSingleFlight(cacheKey, async () => {
-        const creator =
-          (await findCreatorPublicMetadataBySlug(slug)) ??
-          (await findCreatorPublicMetadataById(slug));
+  try {
+    return await rememberJson(
+      cacheKey,
+      CACHE_TTLS.publicPage,
+      () =>
+        runSingleFlight(cacheKey, async () => {
+          const creator =
+            (await findCreatorPublicMetadataBySlug(slug)) ??
+            (await findCreatorPublicMetadataById(slug));
 
-        if (!creator) {
-          return null;
-        }
+          if (!creator) {
+            return null;
+          }
 
-        return {
-          displayName: creator.creatorDisplayName ?? creator.name ?? "Creator",
-          bio: creator.creatorBio,
-        };
-      }),
-    {
-      metricName: "creator.publicMetadata",
-      details: { identifier: slug },
-    },
-  );
+          return {
+            displayName: creator.creatorDisplayName ?? creator.name ?? "Creator",
+            bio: creator.creatorBio,
+          };
+        }),
+      {
+        metricName: "creator.publicMetadata",
+        details: { identifier: slug },
+      },
+    );
+  } catch (error) {
+    if (!isTransientPrismaInfrastructureError(error)) {
+      throw error;
+    }
+
+    console.warn("[CREATOR_PUBLIC_METADATA_FALLBACK]", {
+      slug,
+      fallbackApplied: true,
+      error:
+        error instanceof Error
+          ? { message: error.message, name: error.name }
+          : String(error),
+    });
+
+    return null;
+  }
 }
 
 export async function getCreatorPublicProfile(slug: string) {

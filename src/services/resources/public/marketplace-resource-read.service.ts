@@ -22,6 +22,7 @@ import {
   rememberJson,
   runSingleFlight,
 } from "@/lib/cache";
+import { isTransientPrismaInfrastructureError } from "@/lib/prismaErrors";
 import {
   logPerformanceEvent,
   recordCacheCall,
@@ -1255,18 +1256,34 @@ export async function getRelatedResources(
         excludeId,
         take,
       });
-      return rememberJson(
-        CACHE_KEYS.relatedResources(categoryId, excludeId, take),
-        CACHE_TTLS.homepageList,
-        () =>
-          runSingleFlight(singleFlightKey, async () => {
-            const baseResources = (
-              await findRelatedListedResources(categoryId, excludeId, take)
-            ).map(withPreview);
-            return baseResources;
-          }),
-        { metricName: "resource.related", details: { categoryId, excludeId, take } },
-      );
+      try {
+        return await rememberJson(
+          CACHE_KEYS.relatedResources(categoryId, excludeId, take),
+          CACHE_TTLS.homepageList,
+          () =>
+            runSingleFlight(singleFlightKey, async () => {
+              const baseResources = (
+                await findRelatedListedResources(categoryId, excludeId, take)
+              ).map(withPreview);
+              return baseResources;
+            }),
+          { metricName: "resource.related", details: { categoryId, excludeId, take } },
+        );
+      } catch (error) {
+        if (!isTransientPrismaInfrastructureError(error)) {
+          throw error;
+        }
+
+        console.warn("[RESOURCE_RELATED_FALLBACK]", {
+          categoryId,
+          excludeId,
+          take,
+          fallbackApplied: true,
+          ...getResourceDetailErrorSummary(error),
+        });
+
+        return [];
+      }
     },
     ["resource-related", categoryId, excludeId, String(take)],
     {
@@ -1277,15 +1294,7 @@ export async function getRelatedResources(
 }
 
 function isResourceDetailPoolPressureError(error: unknown) {
-  if (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === "P2024"
-  ) {
-    return true;
-  }
-
-  const message = error instanceof Error ? error.message : String(error);
-  return message.includes("Timed out fetching a new connection from the connection pool");
+  return isTransientPrismaInfrastructureError(error);
 }
 
 function getResourceDetailErrorSummary(error: unknown) {

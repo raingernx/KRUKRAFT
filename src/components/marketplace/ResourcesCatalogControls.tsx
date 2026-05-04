@@ -69,7 +69,7 @@ export async function ResourcesCatalogControls() {
       throw error;
     }
 
-    console.error("[RESOURCES_CATALOG_CATEGORIES_FALLBACK]", {
+    console.warn("[RESOURCES_CATALOG_CATEGORIES_FALLBACK]", {
       error:
         error instanceof Error
           ? { message: error.message, name: error.name }

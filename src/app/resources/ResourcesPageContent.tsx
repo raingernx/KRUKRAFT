@@ -122,7 +122,7 @@ function logResourcesRouteFallback(
   error: unknown,
   context: Record<string, unknown>,
 ) {
-  console.error(label, {
+  console.warn(label, {
     ...context,
     error: summarizeResourcesRouteError(error),
     fallbackApplied: true,

@@ -141,7 +141,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
           throw error;
         }
 
-        console.error("[RESOURCES_ROUTE_CATALOG_CONTROLS_FALLBACK]", {
+        console.warn("[RESOURCES_ROUTE_CATALOG_CONTROLS_FALLBACK]", {
           category: category ?? "all",
           currentPage,
           mode: isDiscoverMode ? "discover" : "listing",
@@ -170,7 +170,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
           throw error;
         }
 
-        console.error("[RESOURCES_ROUTE_CONTENT_FALLBACK]", {
+        console.warn("[RESOURCES_ROUTE_CONTENT_FALLBACK]", {
           category: category ?? "all",
           currentPage,
           mode: isDiscoverMode ? "discover" : "listing",
